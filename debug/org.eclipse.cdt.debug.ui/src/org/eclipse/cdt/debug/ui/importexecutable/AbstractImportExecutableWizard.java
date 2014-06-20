@@ -70,6 +70,8 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	/**
 	 * Adds the executables to a new or existing project. The executables are
 	 * added as external links.
+	 * If an executable of the same name already exists then the existing linked
+	 * resource's location is replaced by the local location's value.
 	 * 
 	 * @param project -
 	 *            project receiving the executables
@@ -83,13 +85,10 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 			IPath location = Path.fromOSString(executables[i]);
 			String executableName = location.toFile().getName();
 			IFile exeFile = project.getProject().getFile(executableName);
-			if (!exeFile.exists())
-			{
-				try {
-					exeFile.createLink(location, 0, null);
-				} catch (Exception e) {
-					this.getImportExecutablePage2().setErrorMessage("Error importing: " + executables[i]);
-				}
+			try {
+				exeFile.createLink(location, IResource.REPLACE, null);
+			} catch (Exception e) {
+				this.getImportExecutablePage2().setErrorMessage("Error importing: " + executables[i]);
 			}
 		}
 	}

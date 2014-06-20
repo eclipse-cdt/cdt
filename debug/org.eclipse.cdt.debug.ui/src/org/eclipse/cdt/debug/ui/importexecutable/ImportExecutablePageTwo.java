@@ -11,24 +11,31 @@
 package org.eclipse.cdt.debug.ui.importexecutable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -400,6 +407,7 @@ public class ImportExecutablePageTwo extends WizardPage {
     @Override
 	public boolean isPageComplete() {
     	setErrorMessage(null);
+    	setWarningMessage(null);
 		if (isCreateNewProjectSelected()) {
 			if (getNewProjectName().length() == 0) {
 
@@ -421,6 +429,20 @@ public class ImportExecutablePageTwo extends WizardPage {
 				setErrorMessage(Messages.ImportExecutablePageTwo_BadProjectName);
 				return false;
 			}
+			
+			// check if executables with same names already exist in the existing project
+			String[] executables = wizard.getImportExecutablePage().getSelectedExecutables();
+			List<String> existingNames = new ArrayList<String>();
+			for (String executable : executables) {
+				IFile exeFile = getExecutableFile(project.getProject(), executable);
+				if (exeFile.exists()) {
+					existingNames.add(exeFile.getName());
+				}
+			}
+			if (!existingNames.isEmpty()) {
+				setWarningMessage(NLS.bind(Messages.ImportExecutablePageTwo_ExecutableAlreadyExists, 
+						StringUtil.join(existingNames, ", "))); //$NON-NLS-1$
+			}
 
 		}
 		if (isCreateLaunchConfigurationSelected() && getNewConfigurationName().length() == 0) {
@@ -430,6 +452,26 @@ public class ImportExecutablePageTwo extends WizardPage {
 		}
 		return super.isPageComplete();
 	}
+    
+    /**
+     * Returns the executable resource having the specified path within the project.
+     * @param project - the project of the executable file
+     * @param executable - the string path of the executable
+     * @return the executable file
+     */
+    private IFile getExecutableFile(IProject project, String executable) {
+		IPath location = Path.fromOSString(executable);
+		String name = location.toFile().getName();
+		return project.getFile(name);
+    }
+    
+    /**
+     * Sets or clears the warning message for this page.
+     * @param message - the message, or <code>null</code> to clear the message
+     */
+    private void setWarningMessage(String message) {
+    	setMessage(message, IMessageProvider.WARNING);
+    }
 
 
 }

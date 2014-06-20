@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
@@ -44,7 +45,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -598,7 +598,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 */
 	public void consumeStatementGoto() {
 		IASTName name = createName(stream.getRuleTokens().get(1));
-		IASTGotoStatement gotoStat = nodeFactory.newGotoStatement(name);
+		IASTStatement gotoStat = nodeFactory.newGotoStatement(name);
 		setOffsetAndLength(gotoStat);
 		astStack.push(gotoStat);
 	}

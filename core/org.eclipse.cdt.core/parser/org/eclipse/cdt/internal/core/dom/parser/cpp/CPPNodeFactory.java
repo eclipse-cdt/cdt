@@ -9,6 +9,7 @@
  *     Mike Kucera (IBM) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -31,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -430,8 +430,13 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 	
 	@Override
-	public IASTGotoStatement newGotoStatement(IASTName name) {
+	public IASTStatement newGotoStatement(IASTName name) {
 		return new CPPASTGotoStatement(name);
+	}
+
+	@Override
+	public IASTStatement newGotoStatement(IASTExpression expression) {
+		return new GNUCPPASTGotoStatement(expression);
 	}
 
 	@Override

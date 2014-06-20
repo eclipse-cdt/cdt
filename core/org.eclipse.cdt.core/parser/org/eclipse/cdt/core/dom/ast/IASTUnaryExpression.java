@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -104,24 +105,30 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 */
 	@Deprecated
 	public static final int op_typeof = 14;
-
+	
+	/**
+	 * For GCC parsers, only. {@code op_labelReference} is used for &&label type
+	 * expressions.
+	 */
+	public static final int op_labelReference = 15;
+	
 	/**
 	 * For GCC parsers, only. {@code op_alignOf} is used for __alignOf( unaryExpression ) type
 	 * expressions.
 	 */
-	public static final int op_alignOf = 15;
+	public static final int op_alignOf = 16;
 
 	/**
 	 * For C++, only: 'sizeof... ( parameterPack )'
 	 * @since 5.2
 	 */
-	public static final int op_sizeofParameterPack = 16;
+	public static final int op_sizeofParameterPack = 17;
 
 	/**
 	 * For C++, only: noexcept ( expression )
 	 * @since 5.5
 	 */
-	public static final int op_noexcept = 17;
+	public static final int op_noexcept = 18;
 
 	/**
 	 * {@code op_last} is made available for subclasses.

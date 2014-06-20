@@ -517,6 +517,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 * text field, and in a future version should expand the browser to this
 	 * location if it exists.
 	 * 
+	 * NOTE: This must be called *before* {@link #setConnection(IRemoteConnection)} to have any effect.
+	 * 
 	 * @param path
 	 */
 	public void setInitialPath(String path) {

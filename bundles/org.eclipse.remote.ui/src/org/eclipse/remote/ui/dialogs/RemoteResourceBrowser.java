@@ -116,11 +116,11 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		} else {
 			setTitle(fDialogTitle);
 		}
-		if (fConnection != null) {
-			fResourceBrowserWidget.setConnection(fConnection);
-		}
 		if (fInitialPath != null) {
 			fResourceBrowserWidget.setInitialPath(fInitialPath);
+		}
+		if (fConnection != null) {
+			fResourceBrowserWidget.setConnection(fConnection);
 		}
 		updateDialog();
 		return contents;

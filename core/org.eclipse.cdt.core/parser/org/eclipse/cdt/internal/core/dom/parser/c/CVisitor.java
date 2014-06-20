@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -57,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -104,6 +106,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLabel;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
@@ -455,7 +458,17 @@ public class CVisitor extends ASTQueries {
 		IBinding binding = null;
 		IASTNode parent = name.getParent();
 		
-		if (parent instanceof CASTIdExpression) {
+		// GNU Goto label reference
+		//
+		//   void* labelPtr = &&foo; <-- label reference
+		// foo:
+		//
+		boolean labelReference = isLabelReference(parent);
+		
+		if (labelReference) {
+			IASTUnaryExpression expression = (IASTUnaryExpression) parent.getParent();
+			binding = createLabelReferenceBinding(name, expression);
+		} else if (parent instanceof CASTIdExpression) {
 			binding = resolveBinding(parent);
 		} else if (parent instanceof ICASTTypedefNameSpecifier) {
 			binding = resolveBinding(parent);
@@ -596,6 +609,56 @@ public class CVisitor extends ASTQueries {
 		return null;
 	}
 	
+
+	private static boolean isLabelReference(IASTNode node) {
+		boolean labelReference = false;
+		IASTNode parent = node.getParent();
+		
+		if (parent instanceof IASTUnaryExpression) {
+			int operator = ((IASTUnaryExpression) parent).getOperator();
+			labelReference = operator == IASTUnaryExpression.op_labelReference; 
+		}
+		
+		return labelReference;
+	}
+
+	private static IBinding createLabelReferenceBinding(IASTName name, IASTUnaryExpression expression) {
+		IBinding binding = null;
+		
+		// Find function scope for r-value expression
+		//   void* labelPtr = &&foo;
+		// foo:                 ^^^
+		//   return
+	    IScope scope = getContainingScope(name);
+	    IASTInternalScope s = (IASTInternalScope) scope;
+	    IASTNode node = s.getPhysicalNode();
+	    
+	    while (node != null && !(node instanceof IASTFunctionDefinition)) {
+	    	node = node.getParent();
+	    }
+	    	
+	    if (node != null) {
+		    IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
+		    CASTFunctionDeclarator declarator = (CASTFunctionDeclarator) definition.getDeclarator();
+		    scope = declarator.getFunctionScope();
+		    
+	        if (scope != null) {
+			    binding = scope.getBinding(name, false);
+				if (binding == null || !(binding instanceof ILabel)) {
+				    binding = new CPPLabel(name);
+				    ASTInternal.addName(scope, name);
+				}
+		    } 
+	    }
+	    
+        if (binding == null) {
+	    	binding = new ProblemBinding(expression, IProblemBinding.SEMANTIC_BAD_SCOPE,
+		    		expression.getRawSignature().toCharArray());
+	    }
+    
+	    return binding;
+	}
+
 	/**
 	 * if prefix == false, return an IBinding or null
 	 * if prefix == true, return an IBinding[] or null

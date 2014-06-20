@@ -13,6 +13,7 @@
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
  *     Marc-Andre Laperle
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -178,6 +179,7 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -299,7 +301,18 @@ public class CPPVisitor extends ASTQueries {
 			id.resolveBinding();
 			return name.getBinding();
 		}
-		if (parent instanceof IASTIdExpression) {
+		
+		// GNU Goto label reference
+		//
+		//   void* labelPtr = &&foo; <-- label reference
+		// foo:
+		//
+		boolean labelReference = isLabelReference(parent);
+		
+		if (labelReference) {
+			IASTUnaryExpression expression = (IASTUnaryExpression) parent.getParent();
+			return createLabelReferenceBinding(name, expression);
+		} else if (parent instanceof IASTIdExpression) {
 			return resolveBinding(parent);
 		} else if (parent instanceof ICPPASTFieldReference) {
 			return resolveBinding(parent);
@@ -374,6 +387,55 @@ public class CPPVisitor extends ASTQueries {
 		}
 
 		return scope == inScope;
+	}
+
+	private static boolean isLabelReference(IASTNode node) {
+		boolean labelReference = false;
+		IASTNode parent = node.getParent();
+		
+		if (parent instanceof IASTUnaryExpression) {
+			int operator = ((IASTUnaryExpression) parent).getOperator();
+			labelReference = operator == IASTUnaryExpression.op_labelReference; 
+		}
+		
+		return labelReference;
+	}
+
+	private static IBinding createLabelReferenceBinding(IASTName name, IASTUnaryExpression expression) {
+		IBinding binding = null;
+		
+		// Find function scope for r-value expression
+		//   void* labelPtr = &&foo;
+		// foo:                 ^^^
+		//   return
+	    IScope scope = getContainingScope(name);
+	    IASTInternalScope s = (IASTInternalScope) scope;
+	    IASTNode node = s.getPhysicalNode();
+	    
+	    while (node != null && !(node instanceof IASTFunctionDefinition)) {
+	    	node = node.getParent();
+	    }
+	    	
+	    if (node != null) {
+		    IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
+		    CPPASTFunctionDeclarator declarator = (CPPASTFunctionDeclarator) definition.getDeclarator();
+		    scope = declarator.getFunctionScope();
+		    
+	        if (scope != null) {
+			    binding = scope.getBinding(name, false);
+				if (!(binding instanceof ILabel)) {
+				    binding = new CPPLabel(name);
+				    ASTInternal.addName(scope, name);
+				}
+		    } 
+	    }
+	    
+        if (binding == null) {
+	    	binding = new CPPScope.CPPScopeProblem(expression, IProblemBinding.SEMANTIC_BAD_SCOPE,
+		    		expression.getRawSignature().toCharArray());
+	    }
+    
+	    return binding;
 	}
 
 	private static IBinding createBinding(IASTGotoStatement gotoStatement) {

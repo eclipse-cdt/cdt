@@ -48,6 +48,10 @@ public class Messages extends NLS {
 	public static String ImportExecutablePageTwo_CreateLaunch;
 	public static String ImportExecutablePageTwo_Name;
 	public static String ImportExecutablePageTwo_DefaultProjectPrefix;
+	/**
+	 * @since 7.5
+	 */
+	public static String ImportExecutablePageTwo_ExecutableAlreadyExists;
 
 	private Messages() {
 	}

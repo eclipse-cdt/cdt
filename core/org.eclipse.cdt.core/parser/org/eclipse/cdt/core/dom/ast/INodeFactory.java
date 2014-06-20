@@ -120,7 +120,9 @@ public interface INodeFactory {
 
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
 	
-	public IASTGotoStatement newGotoStatement(IASTName name);
+	public IASTStatement newGotoStatement(IASTName name);
+	
+	public IASTStatement newGotoStatement(IASTExpression expression);
 	
 	public IASTIdExpression newIdExpression(IASTName name);
 

@@ -1327,6 +1327,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return unaryExpression(IASTUnaryExpression.op_star, ctx, strat);
         case IToken.tAMPER:
             return unaryExpression(IASTUnaryExpression.op_amper, ctx, strat);
+        case IToken.tAND:
+            return unaryExpression(IASTUnaryExpression.op_labelReference, ctx, strat);
         case IToken.tPLUS:
             return unaryExpression(IASTUnaryExpression.op_plus, ctx, strat);
         case IToken.tMINUS:

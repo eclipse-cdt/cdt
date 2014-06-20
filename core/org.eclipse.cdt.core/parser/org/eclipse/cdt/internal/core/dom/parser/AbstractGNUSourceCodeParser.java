@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -112,7 +111,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
-    protected static class Decl extends Exception {
+    protected static class Decl {
     	public Decl() {
     	}
 
@@ -1991,10 +1990,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IASTStatement parseGotoStatement() throws EndOfFileException, BacktrackException {
         int startOffset = consume().getOffset(); // t_goto
-        IASTName goto_label_name = identifier();
+        IASTStatement goto_statement = null;
+        
+        if (LT(1) == IToken.tSTAR)
+        {
+	        IASTExpression goto_label_name_expression = expression();
+	        goto_statement = nodeFactory.newGotoStatement(goto_label_name_expression);
+        } else {
+        	IASTName goto_label_name = identifier();
+	        goto_statement = nodeFactory.newGotoStatement(goto_label_name);
+        }
+        
         int lastOffset = consume(IToken.tSEMI).getEndOffset();
-
-        IASTGotoStatement goto_statement = nodeFactory.newGotoStatement(goto_label_name);
         ((ASTNode) goto_statement).setOffsetAndLength(startOffset, lastOffset - startOffset);
         return goto_statement;
     }

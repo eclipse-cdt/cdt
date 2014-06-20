@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -298,8 +297,13 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	}
 	
 	@Override
-	public IASTGotoStatement newGotoStatement(IASTName name) {
+	public IASTStatement newGotoStatement(IASTName name) {
 		return new CASTGotoStatement(name);
+	}
+	
+	@Override
+	public IASTStatement newGotoStatement(IASTExpression expression) {
+		return new GNUCASTGotoStatement(expression);
 	}
 	
 	@Override

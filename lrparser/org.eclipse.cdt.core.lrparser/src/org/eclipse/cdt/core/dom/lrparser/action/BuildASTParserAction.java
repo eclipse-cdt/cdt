@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -598,7 +597,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 */
 	public void consumeStatementGoto() {
 		IASTName name = createName(stream.getRuleTokens().get(1));
-		IASTGotoStatement gotoStat = nodeFactory.newGotoStatement(name);
+		IASTStatement gotoStat = nodeFactory.newGotoStatement(name);
 		setOffsetAndLength(gotoStat);
 		astStack.push(gotoStat);
 	}

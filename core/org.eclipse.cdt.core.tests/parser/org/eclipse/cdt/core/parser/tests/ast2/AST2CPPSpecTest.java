@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -1010,6 +1011,19 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
 
+	//	void f()
+	//	{
+	//	// ...
+	//     void* labelPtr;
+	//     labelPtr = &&foo;
+	//     goto *labelPtr;
+	//	foo:
+	//     return;
+	//	}
+	public void test6_bug84144() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+	
 	// int foo(int i)
 	// {
 	// static int s = foo(2*i); // recursive call - undefined

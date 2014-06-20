@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google) 
  *     Thoams Corbat (IFS)
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -120,7 +121,9 @@ public interface INodeFactory {
 
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
 	
-	public IASTGotoStatement newGotoStatement(IASTName name);
+	public IASTStatement newGotoStatement(IASTName name);
+	
+	public IASTStatement newGotoStatement(IASTExpression expression);
 	
 	public IASTIdExpression newIdExpression(IASTName name);
 

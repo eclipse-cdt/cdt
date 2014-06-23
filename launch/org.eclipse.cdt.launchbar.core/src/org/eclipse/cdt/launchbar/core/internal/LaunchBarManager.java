@@ -43,7 +43,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private List<Listener> listeners = new LinkedList<>();
 	private List<ProviderExtensionDescriptor> providers = new ArrayList<>();
 	private Map<String, ILaunchConfigurationDescriptor> configDescs = new HashMap<>();
-	private ILaunchConfigurationDescriptor activeConfigDesc;
+	private ILaunchConfigurationDescriptor lastConfigDesc, activeConfigDesc;
 	private ILaunchMode[] launchModes;
 	private ILaunchMode activeLaunchMode;
 
@@ -201,6 +201,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	public void setActiveLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) throws CoreException {
 		if (activeConfigDesc == configDesc)
 			return;
+		lastConfigDesc = activeConfigDesc;
 		activeConfigDesc = configDesc;
 		
 		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
@@ -283,10 +284,15 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		// Fix up the active config if this one was it
 		if (activeConfigDesc.equals(configDesc)) {
 			try {
-				if (configDescs.isEmpty())
+				if (configDescs.isEmpty()) {
 					setActiveLaunchConfigurationDescriptor(null);
-				else
+				} else if (lastConfigDesc != null) {
+					setActiveLaunchConfigurationDescriptor(lastConfigDesc);
+					// Clear out the last desc since we just used it
+					lastConfigDesc = null;
+				} else {
 					setActiveLaunchConfigurationDescriptor(configDescs.values().iterator().next());
+				}
 			} catch (CoreException e) {
 				// TODO log
 				e.printStackTrace();

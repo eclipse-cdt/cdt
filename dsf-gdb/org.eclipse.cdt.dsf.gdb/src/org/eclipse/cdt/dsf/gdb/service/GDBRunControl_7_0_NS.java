@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Marc Khouzam (Ericsson) - Support for operations on multiple execution contexts (bug 330974)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Bug 415362
+ *     Marc Khouzam (Ericsson) - Wait for *stopped event when suspending (bug 429621)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -102,8 +104,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
 
@@ -501,7 +505,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done(doCanSuspend(context));
 	}
 		
-	private boolean doCanSuspend(IExecutionDMContext context) {
+	/**
+	 * @since 4.5
+	 */
+	protected boolean doCanSuspend(IExecutionDMContext context) {
 		// Thread case
 		if (context instanceof IMIExecutionDMContext) {
 			MIThreadRunState threadState = fThreadRunStates.get(context);
@@ -548,7 +555,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done();
 	}
 
-	private void doSuspend(IMIExecutionDMContext context, final RequestMonitor rm) {
+	/**
+	 * Request the suspend for a single thread and wait for a proper *stopped event before
+	 * indicating success.
+	 */
+	private void doSuspend(final IMIExecutionDMContext context, final RequestMonitor rm) {
 		if (!doCanSuspend(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -556,10 +567,35 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		// Start the job before sending the interrupt command
+		// to make sure we don't miss the *stopped event
+		final MonitorSuspendJob monitorJob = new MonitorSuspendJob(context, 0, rm);
+		fConnection.queueCommand(
+				fCommandFactory.createMIExecInterrupt(context), 
+				new ImmediateDataRequestMonitor<MIInfo>() {
+					@Override
+					protected void handleSuccess() {
+						// Nothing to do in the case of success, the monitoring job
+						// will take care of completing the RM once it gets the
+						// *stopped event.
+					}
+					
+					@Override
+					protected void handleFailure() {
+						// In case of failure, we must cancel the monitoring job
+						// and indicate the failure in the rm.
+						monitorJob.cleanAndCancel();
+						rm.done(getStatus());
+					}
+				});
 	}
 
-	private void doSuspend(IMIContainerDMContext context, final RequestMonitor rm) {
+	/**
+	 * Request the suspend for a process.  In this case we don't wait for any *stopped events explicitly
+	 * because we would need to wait for one per thread and manage all those events.  It is not necessary.
+	 * @since 4.5
+	 */
+	protected void doSuspend(IMIContainerDMContext context, final RequestMonitor rm) {
 		if (!doCanSuspend(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -570,6 +606,85 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		String groupId = context.getGroupId();
 		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
+	
+    /**
+     * Job that waits for a *stopped event after a suspend operation on a thread.
+     * 
+     * If the suspend operation receives its corresponding *stopped event in time,
+     * the job will mark the RM with a success status.  If the event is not received 
+     * before the timeout, the job will fail the request monitor.
+     * 
+     * @since 4.5
+     */
+    protected class MonitorSuspendJob extends Job {
+    	// Bug 310274.  Until we have a preference to configure timeouts,
+    	// we need a large enough default timeout to accommodate slow
+    	// remote sessions.
+    	private final static int TIMEOUT_DEFAULT_VALUE = 5000;
+
+        private final RequestMonitor fRequestMonitor;
+        private final IMIExecutionDMContext fThread;
+
+        public MonitorSuspendJob(IMIExecutionDMContext dmc, int timeout, RequestMonitor rm) {
+            super("Suspend monitor job."); //$NON-NLS-1$
+            setSystem(true);
+            fThread = dmc;
+            fRequestMonitor = rm;
+            
+            if (timeout <= 0) {
+            	timeout = TIMEOUT_DEFAULT_VALUE; // default of 5 seconds
+            }
+            
+            // Register to listen for the stopped event
+    		getSession().addServiceEventListener(this, null);
+
+           	schedule(timeout);
+        }
+
+        /**
+         * Cleanup job and cancel it.
+         * This method is required because super.canceling() is only called
+         * if the job is actually running.
+         */
+        public boolean cleanAndCancel() {
+        	if (getExecutor().isInExecutorThread()) {
+        		getSession().removeServiceEventListener(this);        		
+        	} else {
+        		getExecutor().submit(
+       				new DsfRunnable() {
+       					@Override
+       					public void run() {
+       						getSession().removeServiceEventListener(MonitorSuspendJob.this);
+       					}
+       				});
+        	}
+        	return cancel();
+        }
+        
+        @DsfServiceEventHandler
+    	public void eventDispatched(MIStoppedEvent e) {
+    		if (fThread.equals(e.getDMContext())) {
+    			// The thread we were waiting for did stop
+    			if (cleanAndCancel()) {
+    				fRequestMonitor.done();
+    			}
+    		}
+    	}
+    	
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+        	// This will be called when the timeout is hit and no *stopped event was received
+        	getExecutor().submit(
+                new DsfRunnable() {
+                  	@Override
+                    public void run() {
+                		getSession().removeServiceEventListener(MonitorSuspendJob.this);
+                       	fRequestMonitor.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Suspend operation timeout.", null)); //$NON-NLS-1$
+                    }
+                });
+        	return Status.OK_STATUS;
+        }
+    }
 
 	// ------------------------------------------------------------------------
 	// Resume

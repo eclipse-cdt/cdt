@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_15987549",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Can return value of this be ever different from getLaunchConfiguration().getType()?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_358f7104",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Comment ends abruptly. It is not apparently to me what the lifecycle here - how a launch configuration can not be created, and what would instance of ILaunchConfigurationDescriptor mean in that case?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_d579dd6d",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "What does it mean for configuration to be managed by a descriptor?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_35dc91db",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchTarget.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Is this interface useful? It does not appear like it has any behaviour, in particular it does not appear I can customize launch behaviour by creating new implementations of this interface - say for remote launch.",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f5f8593f",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/LaunchBarInjector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "I could be missing something, but would it be possible to use dependency injection here so that our product could use a custom class, derived from LaunchBarControl, instead of LaunchBarControl itself?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f55fb9f0",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CButton.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Possibly needs a comment to describe what this does? \u0027CButton\u0027 does not appear intuitive to me.",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_755ba902",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Could you add a comment describing what this does and how it looks?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_955645d9",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Can we avoid hardcoded RGB colors?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_154a352d",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Would it be better to use font size to determine arrow dimensions (e.g. height by em), as opposed to hardcoding size? Would it be better to use FontAwesome instead -- say, this symbol might work - http://fortawesome.github.io/Font-Awesome/icon/angle-down/",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_75c60915",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Can we not trim the image to hardcoded size unconditionally? We might want to use 32x32 icons in our product, for example.",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_d5cb9d19",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "It appears like disposeImage is set to \u0027false\u0027 earlier, and never changed?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_b522615f",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/LaunchBarControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-06-23T08:27:14Z",
+      "side": 1,
+      "message": "Do these need to be private? That will prevent me from extending this class - e.g. to use a different set of buttons or use custom images for buttons.\n\nAlso, do we really need concrete types here? I might want to implement mode selection in a different way, not related to CSelector class. Maybe ISelectionProvide is all we need? I see some class of isDisposed() and getDisplay() on this, but maybe they can be retargeted to work on entire control - especially getDisplay()",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_b0bc2f25",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "Yes, the descriptor doesn\u0027t require the config to exist. It can also represent a potential config that will get created when needed. I\u0027ll show this for CDT projects.",
+      "parentUuid": "e76c2f17_15987549",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_358f7104",
         "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-23T08:27:14Z",
       "side": 1,
       "message": "Comment ends abruptly. It is not apparently to me what the lifecycle here - how a launch configuration can not be created, and what would instance of ILaunchConfigurationDescriptor mean in that case?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_10c1a397",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "I guess I missed the period. As mentioned above. the launch config can be created when needed.",
+      "parentUuid": "e76c2f17_358f7104",
       "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_30c81fb9",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchConfigurationDescriptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "If a new launch config comes along that the user created that this descriptor is interested in, it can take it over and throw away the one it automatically created or was going to create. I\u0027ll discuss this more in the API docs when I get there.",
+      "parentUuid": "e76c2f17_d579dd6d",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_35dc91db",
         "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchTarget.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-06-23T08:27:14Z",
       "side": 1,
       "message": "Is this interface useful? It does not appear like it has any behaviour, in particular it does not appear I can customize launch behaviour by creating new implementations of this interface - say for remote launch.",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9094939b",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/ILaunchTarget.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "It will be ;). In Momentics, we used our target management system, but I want to make it more generic to handle others. Work in progress...",
+      "parentUuid": "e76c2f17_35dc91db",
       "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_7099f7d0",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/LaunchBarInjector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "I\u0027m still learning this stuff, but these processors seem to be at the top of the food chain. We may be able to parameterize this in the product extension. If you have thoughts on how to do it, please add it to the bug.",
+      "parentUuid": "e76c2f17_f5f8593f",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_f55fb9f0",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CButton.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2014-06-23T08:27:14Z",
       "side": 1,
       "message": "Possibly needs a comment to describe what this does? \u0027CButton\u0027 does not appear intuitive to me.",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_d08e0b8b",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CButton.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "Yes, it was kind of put together at the last minute. It\u0027s essentially a button with an image that\u0027s drawn with the paint listener to give more control over the size. Native buttons have attitude, especially on Mac.",
+      "parentUuid": "e76c2f17_f55fb9f0",
       "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_10a883d7",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "Sure. It\u0027s just a fancy Combo. There\u0027s three of them in the launch bar. My blog has a screenshot.",
+      "parentUuid": "e76c2f17_755ba902",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_955645d9",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2014-06-23T08:27:14Z",
       "side": 1,
       "message": "Can we avoid hardcoded RGB colors?",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f0a4e704",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "Absolutely. These widgets fail in dark mode, for example. I\u0027ll create preferences for them all.",
+      "parentUuid": "e76c2f17_955645d9",
       "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_50a2fbf6",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "We could but this is just for the arrow that points up or down when the popup is open and is aligned with the 16 pixel icons we use as defaults.",
+      "parentUuid": "e76c2f17_154a352d",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_75c60915",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
         "patchSetId": 2
@@ -166,6 +328,24 @@
       "writtenOn": "2014-06-23T08:27:14Z",
       "side": 1,
       "message": "Can we not trim the image to hardcoded size unconditionally? We might want to use 32x32 icons in our product, for example.",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_70845763",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "The biggest problem we have is that launch config types only have 16 pixel icons. Scaling them up would look like crap. And so does entries with different icon sizes. So we went with the lowest common denominator. I\u0027d like to have a strategy for these legacy icons in hand before allowing these to be bigger.",
+      "parentUuid": "e76c2f17_75c60915",
       "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_d089eb7b",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/CSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "Cool. This may be a leftover from some bug. We need to go over all image management to make sure we\u0027re not leaking anywhere.",
+      "parentUuid": "e76c2f17_d5cb9d19",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_b522615f",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/LaunchBarControl.java",
         "patchSetId": 2
@@ -200,6 +398,24 @@
       "writtenOn": "2014-06-23T08:27:14Z",
       "side": 1,
       "message": "Do these need to be private? That will prevent me from extending this class - e.g. to use a different set of buttons or use custom images for buttons.\n\nAlso, do we really need concrete types here? I might want to implement mode selection in a different way, not related to CSelector class. Maybe ISelectionProvide is all we need? I see some class of isDisposed() and getDisplay() on this, but maybe they can be retargeted to work on entire control - especially getDisplay()",
+      "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_1073630b",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/LaunchBarControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-06-23T13:59:59Z",
+      "side": 1,
+      "message": "Good point. I usually try to avoid privates.\n\nIf you want to override these, you may want to implement you\u0027re own control class and register it as discussed over in the injector.",
+      "parentUuid": "e76c2f17_b522615f",
       "revId": "c2da55547c2cf7e36b2f21022a60a4986e5ca918",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

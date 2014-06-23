@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Ericsson and others.
+ * Copyright (c) 2011, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Wait for *stopped event when suspending (bug 429621)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -105,31 +106,16 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262
 	@Override
-	public void suspend(final IExecutionDMContext context, final RequestMonitor rm) {
-		assert context != null;
-
-		IMIExecutionDMContext thread = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-		IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
-		if (thread == null && container == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
-			rm.done();
+	protected void doSuspend(IMIContainerDMContext context, RequestMonitor rm) {
+		if (!doCanSuspend(context)) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-
-		canSuspend(context, new ImmediateDataRequestMonitor<Boolean>(rm) {
-			@Override
-			protected void handleSuccess() {
-				if (getData()) {
-					fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-				} else {
-					rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
-							"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-					rm.done();
-				}
-			}
-		});
+		
+		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
-
+	
 	// Now that the flag --thread-group is globally supported
 	// by GDB 7.2, we have to make sure not to use it twice.
 	// Bug 340262

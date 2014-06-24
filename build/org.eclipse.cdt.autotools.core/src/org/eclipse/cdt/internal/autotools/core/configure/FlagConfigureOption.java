@@ -21,12 +21,12 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	
 	public FlagConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
-		this.value = ""; // $NON-NLS-1$
+		this.value = name;
 	}
 	
 	public FlagConfigureOption(String name, String msgName, AutotoolsConfiguration cfg) {
 		super(name, msgName, cfg);
-		this.value = ""; // $NON-NLS-1$
+		this.value = name;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -40,7 +40,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	public String getParameter() {
 		StringBuffer parms = new StringBuffer();
 		// Multiple flags are designated by putting multiple flags together using "|" as delimiter
-		String[] flagNames = getName().split("\\|"); //$NON-NLS-1$
+		String[] flagNames = getValue().split("\\|"); //$NON-NLS-1$
 		String flagSeparator = "";
 		for (String flagName : flagNames) {
 			parms.append(flagSeparator);
@@ -84,7 +84,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	}
 
 	public void setValue(String value) {
-		// can't occur
+		this.value = value;
 	}
 
 	public IConfigureOption copy(AutotoolsConfiguration config) {

@@ -105,7 +105,7 @@ public class AutotoolsCategoryPropertyOptionPage extends
 				break;
 			case IConfigureOption.FLAG:
 				parent = getFieldEditorParent();
-				FieldEditor l = createLabelEditor(parent, option.getName());
+				FieldEditor l = createLabelEditor(parent, option.getDescription());
 				addField(l);
 				fieldEditors.add(l);
 				break;

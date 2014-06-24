@@ -201,7 +201,7 @@ public class UpdateConfigureTest extends TestCase {
 		assertFalse(k.canUpdate());
 		assertEquals(k.getType(), IAutotoolsOption.CATEGORY);
 
-		k = opts.get(AutotoolsOptionConstants.FLAG_CFLAGS_CXXFLAGS);
+		k = opts.get(AutotoolsOptionConstants.FLAG_CFLAGS);
 		assertFalse(k.canUpdate());
 		assertEquals(k.getType(), IAutotoolsOption.FLAG);
 		

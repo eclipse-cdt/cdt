@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Red Hat Inc.
+ * Copyright (c) 2011, 2014 Red Hat Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Red Hat Inc. - initial API and implementation
+ *     Red Hat Inc. - add support for specifying multiple flag names at once
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core.configure;
 
@@ -37,27 +38,35 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 	}
 	
 	public String getParameter() {
-		StringBuffer parm = new StringBuffer(getName()+"=\""); //$NON-NLS-1$
-		boolean haveParm = false;
-		if (isParmSet()) {
-			String separator = "";
-			for (int i = 0; i < children.size(); ++i) {
-				String fvname = children.get(i);
-				IConfigureOption o = cfg.getOption(fvname);
-				if (o.isParmSet()) {
-					if (o instanceof IFlagConfigureValueOption) {
-						parm.append(separator + ((IFlagConfigureValueOption)o).getFlags()); //$NON-NLS-1$
-						separator = " ";
-						haveParm = true;
+		StringBuffer parms = new StringBuffer();
+		// Multiple flags are designated by putting multiple flags together using "|" as delimiter
+		String[] flagNames = getName().split("\\|"); //$NON-NLS-1$
+		String flagSeparator = "";
+		for (String flagName : flagNames) {
+			parms.append(flagSeparator);
+			flagSeparator = " "; //$NON-NLS-1$
+			StringBuffer parm = new StringBuffer(flagName+"=\""); //$NON-NLS-1$
+			boolean haveParm = false;
+			if (isParmSet()) {
+				String separator = "";
+				for (int i = 0; i < children.size(); ++i) {
+					String fvname = children.get(i);
+					IConfigureOption o = cfg.getOption(fvname);
+					if (o.isParmSet()) {
+						if (o instanceof IFlagConfigureValueOption) {
+							parm.append(separator + ((IFlagConfigureValueOption)o).getFlags()); //$NON-NLS-1$
+							separator = " ";
+							haveParm = true;
+						}
 					}
 				}
-			}
-			if (haveParm) {
-				parm.append("\""); //$NON-NLS-1$
-				return parm.toString();
+				if (haveParm) {
+					parm.append("\""); //$NON-NLS-1$
+					parms.append(parm);
+				}
 			}
 		}
-		return "";  //$NON-NLS-1$
+		return parms.toString();
 	}
 
 	public String getParameterName() {

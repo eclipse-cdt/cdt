@@ -103,7 +103,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", IConfigureOption.STRING), // $NON-NLS-1$
 		new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
 		new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option(AutotoolsOptionConstants.FLAG_CFLAGS, IConfigureOption.FLAG),
+		new Option(AutotoolsOptionConstants.FLAG_CFLAGS_CXXFLAGS, IConfigureOption.FLAG),
 		new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$
 		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
 		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 

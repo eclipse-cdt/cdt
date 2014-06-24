@@ -12,8 +12,8 @@
 package org.eclipse.cdt.autotools.tests;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,6 +63,101 @@ public class UpdateConfigureTest extends TestCase {
     }
 	
     /**
+     * Test setting the special advanced options for gcov, gprof, and debug flags.  Verify that
+     * the configure script sets both the C and C++ flags.
+     * @throws Exception
+     */
+	public void testGprofGcovDebugFlagOptions() throws Exception {
+		Path p = new Path("zip/project2.zip");
+		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null);
+		assertTrue(testProject.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+		ProjectTools.setConfigDir(testProject, "src");
+		ProjectTools.markExecutable(testProject, "src/autogen.sh");
+		assertTrue(ProjectTools.build());
+		ICConfigurationDescription cfgDes = CoreModel.getDefault().getProjectDescription(testProject).getActiveConfiguration();
+		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDes);
+		assertTrue(cfg.getName().equals("Build (GNU)"));
+		Map<String, IAutotoolsOption> opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
+		
+		IAutotoolsOption k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GPROF);
+		k.setValue("true");
+		
+		// Now update the options we changed
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		
+		// Rebuild project
+		assertTrue(ProjectTools.build());
+		
+		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("config.log");
+		assertTrue(testProject.exists(x));
+		
+		IResource r = testProject.findMember(x);
+		
+		File f = r.getLocation().toFile();
+		
+		FileReader fr = new FileReader(f);
+		
+		char[] cbuf = new char[2000];
+		fr.read(cbuf);
+		
+		String s = new String(cbuf);
+		
+		assertTrue(s.contains("testProject2/src/configure CFLAGS=-pg CXXFLAGS=-pg"));
+		
+		fr.close();
+		
+		// Reset gprof opt and set gcov opt
+		opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
+		k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GPROF);
+		k.setValue("false");
+		
+		k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GCOV);
+		k.setValue("true");
+		
+		// Now update the options we changed
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		
+		// Rebuild project
+		assertTrue(ProjectTools.build());
+		
+		r = testProject.findMember(x);
+		f = r.getLocation().toFile();
+		fr = new FileReader(f);
+		fr.read(cbuf);
+		
+		s = new String(cbuf);
+		
+		assertTrue(s.contains("testProject2/src/configure CFLAGS=-fprofile-arcs -ftest-coverage CXXFLAGS=-fprofile-arcs -ftest-coverage"));
+
+		fr.close();
+		
+		// Reset gcov opt and set debug opt
+		opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
+		k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_GCOV);
+		k.setValue("false");
+		
+		k = opts.get(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG);
+		k.setValue("true");
+		
+		// Now update the options we changed
+		AutotoolsPlugin.getDefault().updateAutotoolCfgOptions(testProject, cfg.getId(), opts);
+		
+		// Rebuild project
+		assertTrue(ProjectTools.build());
+		
+		r = testProject.findMember(x);
+		f = r.getLocation().toFile();
+		fr = new FileReader(f);
+		fr.read(cbuf);
+		
+		s = new String(cbuf);
+		
+		assertTrue(s.contains("testProject2/src/configure CFLAGS=-g CXXFLAGS=-g"));
+		
+		fr.close();
+	}
+		
+    /**
      * Test getting and updating configuration options for an Autotools Project. The top-level 
      * contains autogen.sh which will build configure, but not run it.
      * @throws Exception
@@ -106,7 +201,7 @@ public class UpdateConfigureTest extends TestCase {
 		assertFalse(k.canUpdate());
 		assertEquals(k.getType(), IAutotoolsOption.CATEGORY);
 
-		k = opts.get(AutotoolsOptionConstants.FLAG_CFLAGS);
+		k = opts.get(AutotoolsOptionConstants.FLAG_CFLAGS_CXXFLAGS);
 		assertFalse(k.canUpdate());
 		assertEquals(k.getType(), IAutotoolsOption.FLAG);
 		

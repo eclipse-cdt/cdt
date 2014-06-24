@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
+import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -238,7 +239,12 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 								// read in flag values
 								NamedNodeMap optionAttrs = child.getAttributes();
 								Node id = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
-								IConfigureOption opt = cfg.getOption(id.getNodeValue());
+								String idValue = id.getNodeValue();
+								// Retain compatibility with older Autotools projects that may
+								// have settings for CFLAGS and this should now be CFLAGS|CXXFLAGS
+								if (AutotoolsOptionConstants.FLAG_CFLAGS.equals(idValue))
+									idValue = AutotoolsOptionConstants.FLAG_CFLAGS_CXXFLAGS;
+								IConfigureOption opt = cfg.getOption(idValue);
 								if (opt instanceof FlagConfigureOption) {
 									NodeList l2 = child.getChildNodes();
 									for (int z = 0; z < l2.getLength(); ++z) {

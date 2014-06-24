@@ -25,6 +25,8 @@ import org.eclipse.cdt.launchbar.core.ILaunchConfigurationsProvider;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -48,7 +50,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private ILaunchMode activeLaunchMode;
 
 	private final LocalTargetType localTargetType = new LocalTargetType();
-	
+
 	private static final String PREF_ACTIVE_CONFIG_DESC = "activeConfigDesc";
 	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode";
 	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget";
@@ -74,22 +76,22 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	public LaunchBarManager() throws CoreException {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-				Activator.PLUGIN_ID,
-				"launchConfigProvider");
-		for (IConfigurationElement element : elements) {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchConfigProvider");
+		IExtension[] extensions = point.getExtensions();
+		for (IExtension extension : extensions) {
+			// provider is manditory
+			IConfigurationElement element = extension.getConfigurationElements()[0];
 			ILaunchConfigurationsProvider provider = (ILaunchConfigurationsProvider) element.createExecutableExtension("class");
 			String priorityString = element.getAttribute("priority");
-			int priority = 1; // Default is 1
-
+			int priority = 100;
 			if (priorityString != null) {
 				try {
 					priority = Integer.parseInt(priorityString);
 				} catch (NumberFormatException e) {
-					Activator.throwCoreException(e);
+					// Log it but keep going with the default
+					Activator.log(e);
 				}
 			}
-			
 			providers.add(new ProviderExtensionDescriptor(provider, priority));
 		}
 
@@ -106,7 +108,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 					return 0;
 			}
 		});
-		
+
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
 			ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(configuration);
@@ -115,20 +117,20 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			}
 			configDescs.put(configDesc.getName(), configDesc);
 		}
-		
+
 		for (ProviderExtensionDescriptor providerDesc : providers) {
 			providerDesc.getProvider().init(this);
 		}
 
 		launchManager.addLaunchConfigurationListener(this);
-		
+
 		// Load up the active from the preferences or pick reasonable defaults
 		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		String activeConfigDescName = store.get(PREF_ACTIVE_CONFIG_DESC, null);
 		if (activeConfigDescName == null && !configDescs.isEmpty()) {
 			activeConfigDescName = configDescs.values().iterator().next().getName();
 		}
-		
+
 		if (activeConfigDescName != null) {
 			ILaunchConfigurationDescriptor configDesc = configDescs.get(activeConfigDescName);
 			if (configDesc != null) {
@@ -155,14 +157,14 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		ILaunchConfigurationDescriptor configDesc = getLaunchConfigurationDescriptor(configuration);
 		if (configDesc != null)
 			removeLaunchConfigurationDescriptor(configDesc);
 	}
-	
+
 	@Override
 	public ILaunchConfigurationDescriptor[] getLaunchConfigurationDescriptors() {
 		ILaunchConfigurationDescriptor[] descs = configDescs.values().toArray(new ILaunchConfigurationDescriptor[configDescs.size()]);
@@ -186,13 +188,13 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		ILaunchConfigurationDescriptor configDesc = configDescs.get(configuration.getName());
 		if (configDesc.matches(configuration))
 			return configDesc;
-		
+
 		// Nope, try all descs
 		for (ILaunchConfigurationDescriptor cd : configDescs.values()) {
 			if (cd.matches(configuration))
 				return cd;
 		}
-		
+
 		// nothing, weird
 		return null;
 	}
@@ -203,7 +205,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			return;
 		lastConfigDesc = activeConfigDesc;
 		activeConfigDesc = configDesc;
-		
+
 		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		if (activeConfigDesc != null) {
 			store.put(PREF_ACTIVE_CONFIG_DESC, activeConfigDesc.getName());
@@ -280,7 +282,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	@Override
 	public void removeLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) {
 		configDescs.remove(configDesc.getName());
-		
+
 		// Fix up the active config if this one was it
 		if (activeConfigDesc.equals(configDesc)) {
 			try {
@@ -355,19 +357,19 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	@Override
 	public void setActiveLaunchTarget(ILaunchTarget target) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addLaunchTarget(ILaunchTarget target) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeLaunchTarget(ILaunchTarget target) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

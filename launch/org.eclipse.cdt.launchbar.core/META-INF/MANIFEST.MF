@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: LaunchBar Core
-Bundle-SymbolicName: org.eclipse.cdt.launchbar.core
+Bundle-SymbolicName: org.eclipse.cdt.launchbar.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.launchbar.core.internal.Activator
 Bundle-Vendor: Eclipse CDT

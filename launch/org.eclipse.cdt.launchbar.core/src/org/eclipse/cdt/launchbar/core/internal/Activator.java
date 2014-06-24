@@ -13,25 +13,22 @@ package org.eclipse.cdt.launchbar.core.internal;
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
-public class Activator implements BundleActivator {
+public class Activator extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.launchbar.core";
-	private static BundleContext context;
+	private static Plugin plugin;
 	private LaunchBarManager launchBarManager;
 
-	static BundleContext getContext() {
-		return context;
-	}
-
 	public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
+		super.start(bundleContext);
+		plugin = this;
 		
 		bundleContext.registerService(ILaunchBarManager.class, new ServiceFactory<ILaunchBarManager>() {
 			@Override
@@ -56,12 +53,21 @@ public class Activator implements BundleActivator {
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
+		super.stop(bundleContext);
+		plugin = null;
 		launchBarManager = null;
 	}
 
 	public static void throwCoreException(Exception e) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, e.getLocalizedMessage(), e));
+	}
+
+	public static void log(IStatus status) {
+		plugin.getLog().log(status);
+	}
+
+	public static void log(Exception exception) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, exception.getLocalizedMessage(), exception));
 	}
 
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="cdtLaunchConfigProvider"
+         name="CDT Launch Config Provider"
+         point="org.eclipse.cdt.launchbar.core.launchConfigProvider">
+      <provider
+            class="org.eclipse.cdt.launchbar.cdt.core.internal.CDTLaunchConfigProvider"
+            priority="5"></provider>
+   </extension>
+
+</plugin>

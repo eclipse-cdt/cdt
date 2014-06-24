@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_7d3b8f50",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMatch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-24T15:08:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_cde2ff91",
+      "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_2df3b360",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_dddbc399",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-24T15:08:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_2df3b360",
+      "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_cd1ddf26",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2014-06-17T16:36:01Z",
       "side": 1,
       "message": "Hide -\u003e Hides",
+      "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_bde08743",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-24T15:08:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_cd1ddf26",
       "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -122,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_1de6db5e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/CSearchResult.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-24T15:08:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_ad22235f",
+      "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_0d07d7d5",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/HideReadWriteReferences.java",
         "patchSetId": 2
@@ -133,6 +205,24 @@
       "writtenOn": "2014-06-17T16:36:01Z",
       "side": 1,
       "message": "Please try to avoid comment lines longer than 100 characters.",
+      "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_5dcfb3d5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/search/HideReadWriteReferences.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-06-24T15:08:43Z",
+      "side": 1,
+      "message": "Done. The formatter\u0027s project setting is at 110 BTW. Do you think we should change it? (in a separate patch)",
+      "parentUuid": "e76c2f17_0d07d7d5",
       "revId": "5fb245f0b6e56592b473bd30e8e62f3baf7be402",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

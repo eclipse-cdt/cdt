@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Binding for c++ function
+ * Binding for C++ function
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
 	public static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null);
@@ -612,10 +612,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 			final ICPPParameter p = pars[i];
 			if (p.hasDefaultValue() || p.isParameterPack()) {
 				result--;
-//			} else {
-//				if (pars.length == 1 && SemanticUtil.isVoidType(p.getType())) {
-//					return 0;
-//				}
 			}
 		}
 		return result;

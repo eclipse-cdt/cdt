@@ -17,19 +17,19 @@ import java.util.Comparator;
  */
 public class HashTable implements Cloneable {
 	protected static final int minHashSize = 2;
+
 	protected int currEntry = -1;
+	protected int[] hashTable;
+	protected int[] nextTable;
 	
     public boolean isEmpty() {
-        return currEntry == -1;
+        return currEntry < 0;
     }
     
 	public final int size() {
 	    return currEntry + 1;
 	}
     
-	protected int[] hashTable;
-	protected int[] nextTable;
-
 	public HashTable(int initialSize) {
 		int size = 1;
 		while (size < initialSize)
@@ -50,7 +50,7 @@ public class HashTable implements Cloneable {
         try {
             newTable = (HashTable) super.clone();
         } catch (CloneNotSupportedException e) {
-            //shouldn't happen because object supports clone.
+            // Shouldn't happen because object supports clone.
             return null;
         }
         
@@ -73,7 +73,7 @@ public class HashTable implements Cloneable {
 	public void clear() {
 		currEntry = -1; 
 		
-		// clear the table
+		// Clear the table.
 		if (hashTable == null)
 			return;
 		
@@ -83,27 +83,29 @@ public class HashTable implements Cloneable {
 	        nextTable[i] = 0;
         }
 	}
+
 	protected void rehash() {
 		if (nextTable == null)
 			return;
 		
-		// clear the table (don't call clear() or else the subclasses stuff will be cleared too)
+		// Clear the table (don't call clear() or else the subclasses stuff will be cleared too).
 		for (int i = 0; i < capacity(); i++) {
             hashTable[2 * i] = 0;
             hashTable[2 * i + 1] = 0;
             nextTable[i] = 0;
 	    }
-		// Need to rehash everything
+		// Need to rehash everything.
 		for (int i = 0; i <= currEntry; ++i) {
 			linkIntoHashTable(i, hash(i));
 		}
 	}
+
 	protected void resize(int size) {
 		if (size > minHashSize) {
 			hashTable = new int[size * 2];
 			nextTable = new int[size];
 			
-			// Need to rehash everything
+			// Need to rehash everything.
 			for (int i = 0; i <= currEntry; ++i) {
 				linkIntoHashTable(i, hash(i));
 			}
@@ -111,7 +113,7 @@ public class HashTable implements Cloneable {
 	}
 	
 	protected int hash(int pos) {
-		// return the hash value of the element in the key table 
+		// Return the hash value of the element in the key table. 
 		throw new UnsupportedOperationException();
 	}
 	
@@ -122,7 +124,7 @@ public class HashTable implements Cloneable {
 		if (hashTable[hash] == 0) {
 			hashTable[hash] = i + 1;
 		} else {
-			// need to link
+			// Need to link.
 			int j = hashTable[hash] - 1;
 			while (nextTable[j] != 0) {
 //				if (nextTable[j] - 1 == j) {
@@ -134,7 +136,7 @@ public class HashTable implements Cloneable {
 		}
 	}
 	
-	final public int capacity() {
+	public final int capacity() {
 		if (nextTable == null)
 			return minHashSize;
 		return nextTable.length;
@@ -146,11 +148,11 @@ public class HashTable implements Cloneable {
 			return;
 		}
 		
-		// Remove the hash entry
+		// Remove the hash entry.
 		if (hashTable[hash] == i + 1) {
 			hashTable[hash] = nextTable[i];
 		} else { 
-			// find entry pointing to me
+			// Find entry pointing to me.
 			int j = hashTable[hash] - 1;
 			while (nextTable[j] != 0 && nextTable[j] != i + 1)
 				j = nextTable[j] - 1;
@@ -158,10 +160,10 @@ public class HashTable implements Cloneable {
 		}
 		
 		if (i < currEntry) {
-			// shift everything over
+			// Shift everything over.
 			System.arraycopy(nextTable, i + 1, nextTable, i, currEntry - i);
 			
-			// adjust hash and next entries for things that moved
+			// Adjust hash and next entries for things that moved.
 			for (int j = 0; j < hashTable.length; ++j) {
 				if (hashTable[j] > i + 1)
 					--hashTable[j];
@@ -173,18 +175,19 @@ public class HashTable implements Cloneable {
 			}
 		}
 
-		// last entry is now free
+		// Last entry is now free.
 		nextTable[currEntry] = 0;
 		--currEntry;
 	}
 
-    final public void sort(Comparator<Object> c) {
+    public final void sort(Comparator<Object> c) {
         if (size() > 1) {
 	        quickSort(c, 0, size() - 1);       
 	        rehash();
         }
     }	
-    final private void quickSort(Comparator<Object> c, int p, int r) {
+
+    private void quickSort(Comparator<Object> c, int p, int r) {
         if (p < r) {
             int q = partition(c, p, r);
             if (p < q)   quickSort(c, p, q);

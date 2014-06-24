@@ -708,27 +708,27 @@ public class CPPVisitor extends ASTQueries {
 
 		IASTName name= declarator.getName().getLastName();
 
-		// in case the binding was created starting from another name within the declarator.
+		// In case the binding was created starting from another name within the declarator.
 		IBinding candidate= name.getBinding();
 		if (candidate != null) {
 			return candidate;
 		}
 
-		// function type
+		// Function type.
 		if (parent instanceof IASTTypeId)
 		    return CPPSemantics.resolveBinding(name);
 
-		// function type for non-type template parameter
+		// Function type for non-type template parameter.
 		ASTNodeProperty prop = parent.getPropertyInParent();
 		if (prop == ICPPASTTemplateDeclaration.PARAMETER || prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER) {
 			return CPPTemplates.createBinding((ICPPASTTemplateParameter) parent);
 		}
 
-		// explicit instantiations
+		// Explicit instantiations.
 		if (prop == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION)
 			return CPPSemantics.resolveBinding(name);
 
-		// explicit specializations
+		// Explicit specializations.
 		ICPPASTTemplateDeclaration tmplDecl= CPPTemplates.getTemplateDeclaration(name);
 		if (tmplDecl instanceof ICPPASTTemplateSpecialization) {
 			IBinding b= CPPSemantics.resolveBinding(name);
@@ -740,13 +740,13 @@ public class CPPVisitor extends ASTQueries {
 			return b;
 		}
 
-		// parameter declarations
+		// Parameter declarations.
         if (parent instanceof ICPPASTParameterDeclaration) {
 			ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration) parent;
 			parent = param.getParent();
 			if (parent instanceof IASTStandardFunctionDeclarator) {
 				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
-				// Create parameter bindings only if the declarator declares a function
+				// Create parameter bindings only if the declarator declares a function.
 				if (findTypeRelevantDeclarator(fdtor) != fdtor)
 					return null;
 
@@ -771,7 +771,7 @@ public class CPPVisitor extends ASTQueries {
 			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_TYPE);
         }
 
-		// function declaration/definition
+		// Function declaration/definition.
 		IBinding binding= null;
 		final boolean template= tmplDecl != null;
 		boolean isFriendDecl= false;
@@ -798,7 +798,7 @@ public class CPPVisitor extends ASTQueries {
         } else if (parent instanceof IASTSimpleDeclaration) {
         	IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
         	if (simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-        		// Typedef declaration
+        		// Typedef declaration.
         		if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
         			IType t1 = ((ITypedef) binding).getType();
         			IType t2 = createType(declarator);
@@ -808,26 +808,27 @@ public class CPPVisitor extends ASTQueries {
         			}
         			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
         		}
-        		// If we don't resolve the target type first, we get a problem binding in case the typedef
-        		// redeclares the target type, otherwise it is safer to defer the resolution of the target type.
+        		// If we don't resolve the target type first, we get a problem binding in case
+        		// the typedef redeclares the target type, otherwise it is safer to defer
+        		// the resolution of the target type.
         		IType targetType= createType(declarator);
         		CPPTypedef td= new CPPTypedef(name);
         		td.setType(targetType);
         		binding = td;
         	} else if (typeRelevantDtor instanceof IASTFunctionDeclarator) {
-        		// Function declaration via function declarator
+        		// Function declaration via function declarator.
     			isFunction= true;
     		} else {
-        		// Looks like a variable declaration
+        		// Looks like a variable declaration.
         	    IType t1 = createType(declarator);
         	    if (SemanticUtil.getNestedType(t1, TDEF) instanceof IFunctionType) {
         	    	// Function declaration via a typedef for a function type
         	    	isFunction= true;
         	    } else if (binding instanceof IParameter) {
-        	    	// Variable declaration redeclaring a parameter
+        	    	// Variable declaration redeclaring a parameter.
         	    	binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
         	    } else {
-        	    	// Variable declaration
+        	    	// Variable declaration.
         	    	IType t2= null;
         	    	if (binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)) {
         	    		t2 = ((IVariable) binding).getType();

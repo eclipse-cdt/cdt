@@ -134,7 +134,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	@Override
 	public boolean hasParameterPack() {
 		ICPPParameter[] pars= getParameters();
-		return pars.length > 0 && pars[pars.length-1].isParameterPack();
+		return pars.length > 0 && pars[pars.length - 1].isParameterPack();
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		int tdeclLen= decls == null ? 0 : decls.length;
     	for (int i= -1; i < tdeclLen; i++) {
     		IASTDeclarator tdecl;
-    		if (i == -1) {
+    		if (i < 0) {
     			tdecl= getDeclaratorByName(getDefinition());
     			if (tdecl == null)
     				continue;
@@ -236,7 +236,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     	int tdeclLen= decls == null ? 0 : decls.length;
     	for (int i= -1; i < tdeclLen && k < updateParams.length; i++) {
     		IASTDeclarator tdecl;
-    		if (i == -1) {
+    		if (i < 0) {
     			tdecl= getDeclaratorByName(getDefinition());
     			if (tdecl == null)
     				continue;

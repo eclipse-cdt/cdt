@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
+import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -238,7 +239,8 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 								// read in flag values
 								NamedNodeMap optionAttrs = child.getAttributes();
 								Node id = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
-								IConfigureOption opt = cfg.getOption(id.getNodeValue());
+								String idValue = id.getNodeValue();
+								IConfigureOption opt = cfg.getOption(idValue);
 								if (opt instanceof FlagConfigureOption) {
 									NodeList l2 = child.getChildNodes();
 									for (int z = 0; z < l2.getLength(); ++z) {
@@ -407,7 +409,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 						Option option = optionList[j];
 						IConfigureOption opt = cfg.getOption(option.getName());
 						if (opt.isFlag()) {
-							p.println("<flag id=\"" + option.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+							p.println("<flag id=\"" + option.getName() + "\" value=\"" + xmlEscape(option.getDefaultValue()) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							FlagConfigureOption fco = (FlagConfigureOption)opt;
 							ArrayList<String> children = fco.getChildren();
 							for (int k = 0; k < children.size(); ++k) {

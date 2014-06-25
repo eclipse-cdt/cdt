@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,7 +259,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		while (declNames.length == 0 && binding instanceof ICPPSpecialization) {
 			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 			if (binding != null && !(binding instanceof IProblemBinding)) {
-				declNames = findNames(fIndex, ast, NameKind.DEFINITION, binding);
+				declNames = findNames(fIndex, ast, NameKind.REFERENCE, binding);
 			}
 		}
 		if (declNames.length == 0 && binding instanceof ICPPMethod) {
@@ -280,12 +280,12 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (kind == NameKind.DEFINITION) {
 			declNames= findDeclarations(index, ast, binding);
 		} else {
-			declNames= findDefinitions(index, ast, kind, binding);
+			declNames= findDefinitions(index, ast, binding);
 		}
 
 		if (declNames.length == 0) {
 			if (kind == NameKind.DEFINITION) {
-				declNames= findDefinitions(index, ast, kind, binding);
+				declNames= findDefinitions(index, ast, binding);
 			} else {
 				declNames= findDeclarations(index, ast, binding);
 			}
@@ -293,8 +293,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return declNames;
 	}
 
-	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
-		List<IASTName> declNames= new ArrayList<IASTName>();
+	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {
+		List<IASTName> declNames= new ArrayList<>();
 		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
 			IASTName name= i.next();
@@ -333,7 +333,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				astNames[i]= null;
 			} else if (CPPVisitor.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
 				if (usingDeclarations == null)
-					usingDeclarations = new ArrayList<IASTName>(1);
+					usingDeclarations = new ArrayList<>(1);
 				usingDeclarations.add(name);
 				astNames[i]= null;
 			}
@@ -483,7 +483,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private boolean navigateViaCElements(ICProject project, IIndex index, IName[] declNames) {
-		final ArrayList<ICElement> elements= new ArrayList<ICElement>();
+		final ArrayList<ICElement> elements= new ArrayList<>();
 		convertToCElements(project, index, declNames, elements);
 		return navigateCElements(elements);
 	}
@@ -498,10 +498,10 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			uniqueElements= elements;
 		} else {
 			// Make sure only one element per location is proposed
-			Set<String> sigs= new HashSet<String>();
+			Set<String> sigs= new HashSet<>();
 			sigs.add(null);
 			
-			uniqueElements= new ArrayList<ICElement>();
+			uniqueElements= new ArrayList<>();
 			for (ICElement elem : elements) {
 				if (sigs.add(getLocationSignature((ISourceReference) elem))) {
 					uniqueElements.add(elem);
@@ -636,10 +636,10 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			try {
 				final ICProject project = fTranslationUnit.getCProject();
 				final char[] name = fSelectedText.toCharArray();
-				List<ICElement> elems= new ArrayList<ICElement>();
+				List<ICElement> elems= new ArrayList<>();
 	
 				// Bug 252549, search for names in the AST first.
-				Set<IBinding> primaryBindings= new HashSet<IBinding>();
+				Set<IBinding> primaryBindings= new HashSet<>();
 				ASTNameCollector nc= new ASTNameCollector(fSelectedText);
 				ast.accept(nc);
 				IASTName[] candidates= nc.getNames();
@@ -743,7 +743,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private Collection<IBinding> cppRemoveSecondaryBindings(Set<IBinding> primaryBindings, IASTName sourceName) {
-		List<IBinding> result= new ArrayList<IBinding>();
+		List<IBinding> result= new ArrayList<>();
 		String[] sourceQualifiedName= null;
 		int funcArgCount= -1;
 		if (sourceName != null) {
@@ -768,8 +768,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					continue;
 				}
 			}
-			if (funcArgCount != -1) {
-				// For c++ we can check the number of parameters.
+			if (funcArgCount >= 0) {
+				// For C++ we can check the number of parameters.
 				if (binding instanceof ICPPFunction) {
 					ICPPFunction f= (ICPPFunction) binding;
 					if (f.getRequiredArgumentCount() > funcArgCount) {

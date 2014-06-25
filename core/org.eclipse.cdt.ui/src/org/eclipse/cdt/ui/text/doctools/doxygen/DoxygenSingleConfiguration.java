@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 
@@ -50,7 +49,7 @@ public class DoxygenSingleConfiguration extends AbstractGenericTagDocCommentView
 	 */
 	@Override
 	public IAutoEditStrategy createAutoEditStrategy() {
-		return new DefaultIndentLineAutoEditStrategy();
+		return new DoxygenSingleAutoEditStrategy();
 	}
 
 	/*

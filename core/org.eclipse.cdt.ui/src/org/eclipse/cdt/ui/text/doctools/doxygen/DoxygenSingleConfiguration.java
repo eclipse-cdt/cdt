@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 
@@ -50,7 +49,7 @@ public class DoxygenSingleConfiguration extends AbstractGenericTagDocCommentView
 	 */
 	@Override
 	public IAutoEditStrategy createAutoEditStrategy() {
-		return new DefaultIndentLineAutoEditStrategy();
+		return new DoxygenSingleAutoEditStrategy();
 	}
 
 	/*

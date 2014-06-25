@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -43,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -169,23 +169,46 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	@Override
 	public ICPPParameter[] getParameters() {
-	    IASTStandardFunctionDeclarator dtor = getPreferredDtor();
-	    if (dtor == null) {
+        ICPPASTFunctionDeclarator declarator = getDefinition();
+        IASTDeclarator[] dtors = getDeclarations();
+        if (dtors != null) {
+    		// In case of multiple function declarations we select the one with the most
+    		// default parameter values. 
+			int defaultValuePosition = -1;
+        	for (IASTDeclarator dtor : dtors) {
+        		if (dtor instanceof ICPPASTFunctionDeclarator) {
+        			if (declarator == null) {
+        				declarator = (ICPPASTFunctionDeclarator) dtor;
+        			} else {
+        				ICPPASTFunctionDeclarator contender = (ICPPASTFunctionDeclarator) dtor;
+        				if (defaultValuePosition < 0)
+        					defaultValuePosition = findFirstDefaultValue(declarator.getParameters());
+        				int pos = findFirstDefaultValue(contender.getParameters());
+        				if (pos < defaultValuePosition) {
+        					declarator = contender;
+        					defaultValuePosition = pos;
+        				}
+        			}
+        		}
+        	}
+        }
+
+        if (declarator == null) {
 			return CPPBuiltinParameter.createParameterList(getType());
 	    }
-		IASTParameterDeclaration[] params = dtor.getParameters();
+		IASTParameterDeclaration[] params = declarator.getParameters();
 		int size = params.length;
 		ICPPParameter[] result = new ICPPParameter[size];
 		if (size > 0) {
 			for (int i = 0; i < size; i++) {
-				IASTParameterDeclaration p = params[i];
-				final IASTName name = getParamName(p);
+				IASTParameterDeclaration param = params[i];
+				final IASTName name = getParamName(param);
 				final IBinding binding= name.resolveBinding();
 				if (binding instanceof ICPPParameter) {
 					result[i]= (ICPPParameter) binding;
 				} else {
-					result[i] = new CPPParameter.CPPParameterProblem(p,
-							IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
+					result[i] = new CPPParameter.CPPParameterProblem(
+							param, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
 				}
 			}
 
@@ -193,6 +216,18 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 				return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY; // f(void) is the same as f()
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the position of the first parameter that has a default value.
+	 * If none of the parameters has a default value, return the number of parameters.
+	 */
+	static int findFirstDefaultValue(ICPPASTParameterDeclaration[] parameters) {
+		for (int i = parameters.length; --i >= 0;) {
+			if (parameters[i].getDeclarator().getInitializer() == null)
+				return i + 1;
+		}
+		return 0;
 	}
 
 	@Override
@@ -595,10 +630,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         if (dtors != null) {
         	for (IASTDeclarator declarator : dtors) {
         		if (declarator instanceof ICPPASTFunctionDeclarator)
-        			return (ICPPASTFunctionDeclarator) declarator;
+         			return (ICPPASTFunctionDeclarator) declarator;
         	}
         }
-        return null;
+        return dtor;
 	}
 
 	@Override

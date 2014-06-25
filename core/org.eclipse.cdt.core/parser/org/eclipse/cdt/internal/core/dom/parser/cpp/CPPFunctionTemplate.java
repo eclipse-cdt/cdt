@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
- * Implementation of function templates
+ * Implementation of function templates.
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition
 		implements ICPPFunctionTemplate, ICPPInternalFunction {
@@ -99,23 +99,51 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 
 	@Override
 	public ICPPParameter[] getParameters() {
-		ICPPASTFunctionDeclarator fdecl= getFirstFunctionDtor();
-		if (fdecl != null) {
-			IASTParameterDeclaration[] params = fdecl.getParameters();
+		ICPPASTFunctionDeclarator declarator= null;
+		IASTDeclarator dtor= getDeclaratorByName(getDefinition());
+        if (dtor instanceof ICPPASTFunctionDeclarator) 
+        	declarator = (ICPPASTFunctionDeclarator) dtor;
+
+        IASTNode[] decls = getDeclarations();
+        if (decls != null) {
+    		// In case of multiple function declarations we select the one with the most
+    		// default parameter values. 
+			int defaultValuePosition = -1;
+        	for (IASTNode decl : decls) {
+        		dtor= getDeclaratorByName(decl);
+        		if (dtor instanceof ICPPASTFunctionDeclarator) {
+        			if (declarator == null) {
+        				declarator = (ICPPASTFunctionDeclarator) dtor;
+        			} else {
+        				ICPPASTFunctionDeclarator contender = (ICPPASTFunctionDeclarator) dtor;
+        				if (defaultValuePosition < 0)
+        					defaultValuePosition = CPPFunction.findFirstDefaultValue(declarator.getParameters());
+        				int pos = CPPFunction.findFirstDefaultValue(contender.getParameters());
+        				if (pos < defaultValuePosition) {
+        					declarator = contender;
+        					defaultValuePosition = pos;
+        				}
+        			}
+        		}
+        	}
+        }
+
+        if (declarator != null) {
+			IASTParameterDeclaration[] params = declarator.getParameters();
 			int size = params.length;
 			if (size == 0) {
 				return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 			}
 			ICPPParameter[] result = new ICPPParameter[size];
 			for (int i = 0; i < size; i++) {
-				IASTParameterDeclaration p = params[i];
-				final IASTName pname = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
+				IASTParameterDeclaration param = params[i];
+				final IASTName pname = ASTQueries.findInnermostDeclarator(param.getDeclarator()).getName();
 				final IBinding binding= pname.resolveBinding();
 				if (binding instanceof ICPPParameter) {
 					result[i]= (ICPPParameter) binding;
 				} else {
-					result[i] = new CPPParameter.CPPParameterProblem(p,
-							IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());
+					result[i] = new CPPParameter.CPPParameterProblem(
+							param, IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());
 				}
 			}
 

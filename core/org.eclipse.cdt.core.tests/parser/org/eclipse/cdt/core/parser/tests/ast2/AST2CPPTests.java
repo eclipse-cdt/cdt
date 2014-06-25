@@ -6891,6 +6891,27 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(g1, g2);
 	}
 
+	//	template <typename T>
+	//	class A {
+	//	  template <typename U>
+	//	  friend int func(int i);
+	//	};
+	//
+	//	template <typename U>
+	//	int func(int i = 0);
+	//
+	//	template <typename U>
+	//	int func(int i) { return i; }
+	public void testFriendFunction_438114() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPFunction f1= bh.assertNonProblemOnFirstIdentifier("func(int i);");
+		ICPPFunction f2= bh.assertNonProblemOnFirstIdentifier("func(int i = 0);");
+		ICPPFunction f3= bh.assertNonProblemOnFirstIdentifier("func(int i) {");
+		assertSame(f1, f2);
+		assertSame(f2, f3);
+		assertEquals(0, f1.getRequiredArgumentCount());
+	}
+
 	// class A {
 	// public:
 	//    void foo() const volatile;

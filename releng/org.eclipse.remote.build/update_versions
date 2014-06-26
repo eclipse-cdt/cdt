@@ -32,7 +32,7 @@ if [ $# -gt 2 ]; then
 	BRANCH=$3
 fi
 
-if [ -f fix_versions ]; then
+if [ -d fix_versions ]; then
 	echo "please remove fix_versions first"
 	exit 1
 fi
@@ -53,12 +53,12 @@ update_manifest() {
 	mv $1/META-INF/MANIFEST.MF.tmp $1/META-INF/MANIFEST.MF
 }
 
-for feature in org.eclipse.remote/*-feature; do
+for feature in org.eclipse.remote/features/*-feature; do
 	echo "Updating $feature..."
 	update_feature $feature $version
 done
 
-(cd org.eclipse.remote && \
+(cd org.eclipse.remote/releng/org.eclipse.remote.build && \
 	mvn versions:set -DnewVersion="${version}-SNAPSHOT" && \
 	mvn org.eclipse.tycho:tycho-versions-plugin:0.14.0:update-pom)
 

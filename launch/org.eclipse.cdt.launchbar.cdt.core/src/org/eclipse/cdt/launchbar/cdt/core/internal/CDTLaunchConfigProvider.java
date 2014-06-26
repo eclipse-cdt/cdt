@@ -18,7 +18,7 @@ public class CDTLaunchConfigProvider implements ILaunchConfigurationsProvider {
 
 	@Override
 	public ILaunchConfigurationDescriptor filterDescriptor(ILaunchConfigurationDescriptor descriptor) {
-		return null;
+		return descriptor;
 	}
 
 }

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.remote_1.0.0.qualifier.jar" id="org.eclipse.remote" version="1.0.0.qualifier"/>
+   <feature url="features/org.eclipse.remote_0.0.0.qualifier.jar" id="org.eclipse.remote" version="0.0.0"/>
 </site>

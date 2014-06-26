@@ -10,7 +10,7 @@
 
 	<groupId>org.eclipse.remote</groupId>
 	<artifactId>remote-parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Remote Parent</name>
 

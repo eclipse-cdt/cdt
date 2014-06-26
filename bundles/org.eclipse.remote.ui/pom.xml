@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.eclipse.remote</groupId>
     <artifactId>remote-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
   </parent>
 

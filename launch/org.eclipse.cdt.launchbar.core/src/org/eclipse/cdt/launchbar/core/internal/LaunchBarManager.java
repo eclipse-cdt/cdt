@@ -46,7 +46,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private List<ProviderExtensionDescriptor> providers = new ArrayList<>();
 	private Map<String, ILaunchConfigurationDescriptor> configDescs = new HashMap<>();
 	private ILaunchConfigurationDescriptor lastConfigDesc, activeConfigDesc;
-	private ILaunchMode[] launchModes;
+	private ILaunchMode[] launchModes = new ILaunchMode[0];
 	private ILaunchMode activeLaunchMode;
 
 	private final LocalTargetType localTargetType = new LocalTargetType();
@@ -112,6 +112,8 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
 			ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(configuration);
+			
+			
 			for (ProviderExtensionDescriptor provider : providers) {
 				configDesc = provider.getProvider().filterDescriptor(configDesc);
 			}

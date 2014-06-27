@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_e43b7ff2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugImages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "OK. Removed image I had added and using existing one instead - good catch!",
+      "parentUuid": "e76c2f17_411ea598",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_c103d54a",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugImages.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-26T19:55:21Z",
       "side": 1,
       "message": "Can you make this ..._OPEN_NEW_VIEW",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_c43c83f1",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugImages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_c103d54a",
       "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_04379b09",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/CDebugImages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_a1085968",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_211ba9a7",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/ActionMessages.properties",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-06-26T19:55:21Z",
       "side": 1,
       "message": "I\u0027m not sure when this one is used but I think it is safer to put \"Open New View\"",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_64476f72",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/ActionMessages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_211ba9a7",
       "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_a4ace7a8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/OpenNewViewAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_81739dd7",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_c13c75f1",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/OpenNewViewAction.java",
         "patchSetId": 2
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_e4b6dff2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/OpenNewViewAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_c13c75f1",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_6115a16e",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/OpenNewViewAction.java",
         "patchSetId": 2
@@ -115,6 +223,24 @@
       "writtenOn": "2014-06-26T19:55:21Z",
       "side": 1,
       "message": "I would call this init() to be more future-proof, in case you need to do something more then just set the view.  Unless you feel a \u0027setView\u0027 is also useful, in which case I would keep it and add an init() which calls it.",
+      "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_449b537f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/OpenNewViewAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-06-27T10:31:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_6115a16e",
       "revId": "5255dae26e18e9d176f8a70b86c49c085e92fc4b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

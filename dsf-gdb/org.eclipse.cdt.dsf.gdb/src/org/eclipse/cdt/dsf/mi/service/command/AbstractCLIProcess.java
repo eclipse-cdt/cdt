@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson 		  	- Modified for additional features in DSF Reference implementation
+ *     Freescale 			- Redirect monitor commands to gdb console
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MILogStreamOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITargetStreamOutput;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -358,9 +360,39 @@ public abstract class AbstractCLIProcess extends Process
     			!(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
         {
             fSuppressConsoleOutputCounter--;
+        } else if (fSuppressConsoleOutputCounter == 0 && isMonitorOperation(command)) {
+        	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=208950
+        	// Monitor commands will be send to GDB-MI client as target stream, instead of spitting 
+        	// it to target program console send them to gdb console  
+    		for (MIOOBRecord oobr : ((MIInfo)result).getMIOutput().getMIOOBRecords()) {
+    			if (oobr instanceof MITargetStreamOutput) {
+	    			MITargetStreamOutput out = (MITargetStreamOutput) oobr;
+	                String str = out.getString();
+	                if (str != null) {
+	                    try {
+	                    	if (fMIOutConsolePipe != null) {
+	                    		fMIOutConsolePipe.write(str.getBytes());
+	                    		fMIOutConsolePipe.flush();
+	                    	}
+	                    } catch (IOException e) {
+	                    }
+	                }
+    			}
+    		}
         }
+    	
      }
 
+	boolean isMonitorOperation(ICommand<?> command) {
+		if (command instanceof ProcessMIInterpreterExecConsole) {
+			// remote monitor commands: "monitor ..."
+			// first param is "console" injected by  MIInterpreterExecConsole.
+        	String[] params = ((ProcessMIInterpreterExecConsole) command).getParameters() ;
+        	return params.length >= 2 && (params[1].startsWith("mo") || params[1].startsWith("monitor"));  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		return false;
+	}
+	
     void setPrompt(String line) {
         fPrompt = PromptType.IN_PRIMARY_PROMPT;
         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=109733

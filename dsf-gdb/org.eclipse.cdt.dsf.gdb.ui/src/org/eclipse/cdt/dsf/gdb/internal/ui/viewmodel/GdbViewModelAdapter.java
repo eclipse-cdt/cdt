@@ -52,7 +52,7 @@ public class GdbViewModelAdapter extends AbstractDebugVMAdapter
         } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
             return new GdbExpressionVMProvider(this, context, getSession());
         } else if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(context.getId()) ) {
-            return new GdbExpressionVMProvider(this, context, getSession());
+            return new GdbHoverExpressionVMProvider(this, context, getSession());
         } else if (IDebugUIConstants.ID_MODULE_VIEW.equals(context.getId()) ) {
             return new ModulesVMProvider(this, context, getSession());
         } else if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {

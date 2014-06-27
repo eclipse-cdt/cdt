@@ -16,12 +16,10 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.DisabledExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionManagerVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.SingleExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterBitFieldVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode;
@@ -107,13 +105,8 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
         /*
          * Now the Over-arching management node.
          */
-        if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(getPresentationContext().getId())) {
-        	SingleExpressionVMNode expressionManagerNode = new SingleExpressionVMNode(this);
-        	addChildNodes(rootNode, new IVMNode[] { expressionManagerNode });
-        } else {
-            ExpressionManagerVMNode expressionManagerNode = new ExpressionManagerVMNode(this);
-            addChildNodes(rootNode, new IVMNode[] {expressionManagerNode});
-        }
+        ExpressionManagerVMNode expressionManagerNode = new ExpressionManagerVMNode(this);
+        addChildNodes(rootNode, new IVMNode[] {expressionManagerNode});
         
         // Disabled expression node intercepts disabled expressions and prevents them from being
         // evaluated by other nodes.

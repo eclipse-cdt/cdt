@@ -384,6 +384,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
 				@Override
 				public void viewerUpdatesComplete() {
+					fViewer.removeViewerUpdateListener(this);
                     fViewer.getDisplay().timerExec(100, new Runnable() {
                         @Override
 						public void run() {

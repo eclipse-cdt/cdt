@@ -74,15 +74,6 @@
                id="gnu.c.link.option.noshared"
                valueType="boolean">
          </option>
-         <option
-			  category="gnu.c.link.category.general"
-			  command="-ftest-coverage -fprofile-arcs"
-			  defaultValue="false"
-			  id="gnu.c.link.option.codecov"
-			  name="%Option.codecov"
-			  tip="%Option.codecovTip"
-			  valueType="boolean">
-		  </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
                name="%OptionCategory.Libs"
@@ -229,6 +220,14 @@
                name="%Option.Posix.Debug.gprof"
                valueType="boolean">
          </option>
+         <option
+         	  applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GcovAppCalculator"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.c.link.option.debugging.codecov"
+			  name="%Option.codecov"
+			  valueType="boolean">
+		  </option>
       </tool>
       <tool
             natureFilter="ccnature"
@@ -284,15 +283,6 @@
                id="gnu.cpp.link.option.strip"
                valueType="boolean">
          </option>
-         <option
-			  category="gnu.cpp.link.category.options"
-			  command="-ftest-coverage -fprofile-arcs"
-			  defaultValue="false"
-			  id="gnu.cpp.link.option.codecov"
-			  name="%Option.codecov"
-			  tip="%Option.codecovTip"
-			  valueType="boolean">
-		  </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
                name="%OptionCategory.Libs"
@@ -439,6 +429,14 @@
                name="%Option.Posix.Debug.gprof"
                valueType="boolean">
          </option>
+         <option
+         	  applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GcovAppCalculator"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.cpp.link.option.debugging.codecov"
+			  name="%Option.codecov"
+			  valueType="boolean">
+		  </option>
       </tool>
       <tool
             natureFilter="both"
@@ -1215,6 +1213,15 @@
 			  id="gnu.c.compiler.option.debugging.gprof"
 			  valueType="boolean">
 		  </option>
+		  <option
+	          category="gnu.c.compiler.category.debug"
+	          command="-ftest-coverage -fprofile-arcs"
+	          defaultValue="false"
+	          id="gnu.c.compiler.option.debugging.codecov"
+	          name="%Option.codecov"
+	          tip="%Option.codecovTip"
+	          valueType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Warn"
@@ -1319,15 +1326,6 @@
 			  id="gnu.c.compiler.option.misc.pic"
 			  name="%Option.PIC"
 			  valueType="boolean">
-		  </option>
-		  <option
-	          category="gnu.c.compiler.category.other"
-	          command="-ftest-coverage -fprofile-arcs"
-	          defaultValue="false"
-	          id="gnu.c.compiler.option.misc.codecov"
-	          name="%Option.codecov"
-	          tip="%Option.codecovTip"
-	          valueType="boolean">
 		  </option>
           <inputType
               sourceContentType="org.eclipse.cdt.core.cSource"
@@ -1593,6 +1591,15 @@
 			  id="gnu.cpp.compiler.option.debugging.gprof"
 			  valueType="boolean">
 		  </option>
+		  <option
+		 	  defaultValue="false"
+		 	  name="%Option.codecov"
+			  category="gnu.cpp.compiler.category.debug"
+			  command="-ftest-coverage -fprofile-arcs"
+			  id="gnu.cpp.compiler.option.debugging.codecov"
+			  tip="%Option.codecovTip"
+			  valueType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
 			  name="%OptionCategory.Warn"
@@ -1688,15 +1695,6 @@
 			  defaultValue="false"
 			  id="gnu.cpp.compiler.option.other.pic"
 			  name="%Option.PIC"
-			  valueType="boolean">
-		  </option>
-		 <option
-			  category="gnu.cpp.compiler.category.other"
-			  command="-ftest-coverage -fprofile-arcs"
-			  defaultValue="false"
-			  id="gnu.cpp.compiler.option.other.codecov"
-			  name="%Option.codecov"
-			  tip="%Option.codecovTip"
 			  valueType="boolean">
 		  </option>
           <inputType

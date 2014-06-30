@@ -1,0 +1,463 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_6bfe1aa2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/EnableLoadMetersAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "I find it strange that we enable/disable the load meters using this method.  Normally, the run() method must be called to actually trigger the action.\n\nIf the visualizer must update its loadMeter state, it probably should be done through the visualizer itself, not this action.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_700e09f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/IVisualizerModelDataSource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "If dispose() is in a base interface, you wouldn\u0027t put it again here.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_0b37a609",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/IVisualizerModelDataSource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "May not need the three interfaces below, if we can handle the listener automatically.  See comment in DSFSessionState.java",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_1070754e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Risk of NPE here.  Although I suggest removing this method altogether.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_7025695c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Is this method worth having?  Why not use getModelDataSrc().getId()?  It simplifies the API.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f039798c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "As Bill mentioned, don\u0027t use \u0027src\u0027 use the full word \u0027getModelDataSource()\u0027",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_305db1c2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Maybe name getCurrentModel()",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_ab5af253",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Should not need \u0027synchronized\u0027 on something that runs on the DSF Executor",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_d0b71d71",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "We should explain the new behaviour.  A listener is associated with a single model and keeps updating that model even when it is not currently being displayed.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_7089e9ac",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "I\u0027m hoping this can be removed.  See comment in constructor.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_10c235ce",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "I\u0027m uncomfortable with this.  We pass in a global Visualizer, but a specific \u0027model\u0027.  I find it confusing.  Since this listener is associated with a single model, it should update the model without having to access the visualizer itself.  The model could then deal with the visualizer.\n\nI find it risky that this object can do fVisualizer.getModel().  I don\u0027t think it should have such access.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6b70daca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Previously, we had one listener for all sessions.  Therefore, as we changed sessions, we had to remove this listener from the old session and add it to the new one.  That is why the adding/removing was handled by the MulticoreVisualizer class.\n\nNow that we have a listener per session that never gets re-assigned, it would be possible to have the listener add/remove itself directly, which is the pattern used elsewhere in DSF.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f0c699e0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "This seems wrong.  What if it is not this model that is being displayed?  I think instead the model should be marked as needing to be updated.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_50ab0d0d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "How do we know the visualizer must be refreshed?  The model was updated which is right, but we don\u0027t know if it is displayed or not.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f09df9ec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "I\u0027d put an \n  assert fModel !\u003d null;\n\nas this listener is now associated to a single model so it should never be null.  I figure even the constructor of this class should not be getting a null for the model.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_5092edda",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "same comment as above about dealing with null",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_d009ddbd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Same comment about checking for null",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_b00ee1c2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Why are we handling the bundleContext differently? I don\u0027t believe it can ever be null.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_1014f5ce",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerEventListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "To follow with above comments, I guess we should be setting a state in the model now, saying it is fully built.  The visualizer can then pick it up somehow, without being called directly from here.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_cba76ec3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "I wonder if this method must be in this class or if it should be directly in the MulticoreVisualizer?  I\u0027m having trouble figuring out if this pattern is meant to allow for extensions or not.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_0b25e6e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Is there value in having this method?  Can we do the below logic directly in DSFSessionState?",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_501dcdf1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModelListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Maybe the param should be IVisualizerModelDataSource",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6b473a72",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModelListener.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "This could potentially be removed if we have the MulticoreVisualizer class listen for the sessionEnded event directly.  Let\u0027s see if we end up doing that or now.\n\nIf we kee this, I don\u0027t think the method name is appropriate.  If all that was needed was to dispose of the data source, I would suggest having the data source itself listen for the DSF session ended event.  However, it looks like the multicore visualizer class must also do things when the session ends, not just dispose of the data source.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_4b507e29",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFSessionState.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Since this class is now seen as the \u0027data source\u0027, maybe it should handle keeping its data up-to-date itself.  Which means it could handle the creation/registration/removal/destruction of the event listener directly in this class.",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6b157a6e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFSessionState.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "It feels like a hack to have these two new caches in this class.  Can\u0027t we access them from the model?",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_cb2aceb4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFSessionState.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Avoid unnecessary setting to null",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_ab2f92c3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFSessionState.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-06-30T18:46:23Z",
+      "side": 1,
+      "message": "Avoid unnecessary setting to null",
+      "revId": "b835e8cfe400e104173fbfa2e5a41db200772826",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

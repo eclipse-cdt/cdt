@@ -692,12 +692,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			sel instanceof GDBProcess ||
 			sel instanceof IDMVMContext)
 		{
-			result = 1;
+			result = 2;
 		}
-		else {
-			result = 0;
-		}
-		
 		// While we're here, see if we need to attach debug view listener
 		updateDebugViewListener();
 		

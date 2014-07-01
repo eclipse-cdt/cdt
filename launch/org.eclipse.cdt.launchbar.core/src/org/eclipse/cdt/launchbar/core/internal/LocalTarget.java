@@ -11,24 +11,19 @@
 package org.eclipse.cdt.launchbar.core.internal;
 
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
-import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
 
 public class LocalTarget implements ILaunchTarget {
 
-	private final LocalTargetType type;
+	public static final String ID = "org.eclipse.cdt.local";
 	
-	public LocalTarget(LocalTargetType type) {
-		this.type = type;
+	@Override
+	public String getId() {
+		return ID;
 	}
 
 	@Override
 	public String getName() {
-		return "Local Machine";
-	}
-
-	@Override
-	public ILaunchTargetType getType() {
-		return type;
+		return "Local Machine"; // TODO externalize
 	}
 	
 }

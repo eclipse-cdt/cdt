@@ -8,16 +8,18 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.cdt.launchbar.core.internal;
+package org.eclipse.cdt.launchbar.core;
 
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.cdt.launchbar.core.internal.LocalTarget;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchMode;
 
 public class DefaultLaunchConfigurationDescriptor implements ILaunchConfigurationDescriptor {
 
-	final ILaunchConfiguration config;
+	protected ILaunchConfiguration config;
 	
 	public DefaultLaunchConfigurationDescriptor(ILaunchConfiguration config) {
 		this.config = config;
@@ -41,6 +43,26 @@ public class DefaultLaunchConfigurationDescriptor implements ILaunchConfiguratio
 	@Override
 	public boolean matches(ILaunchConfiguration launchConfiguration) {
 		return config.equals(launchConfiguration);
+	}
+
+	@Override
+	public ILaunchTarget getLaunchTarget(String id) {
+		return LocalTarget.ID.equals(id) ? LaunchBarManager.getLocalLaunchTarget() : null;
+	}
+
+	@Override
+	public ILaunchTarget[] getLaunchTargets() {
+		return new ILaunchTarget[] { LaunchBarManager.getLocalLaunchTarget() };
+	}
+
+	@Override
+	public void setActiveLaunchTarget(ILaunchTarget target) {
+		// nothing to do 
+	}
+
+	@Override
+	public void setActiveLaunchMode(ILaunchMode mode) {
+		// nothing to do
 	}
 
 }

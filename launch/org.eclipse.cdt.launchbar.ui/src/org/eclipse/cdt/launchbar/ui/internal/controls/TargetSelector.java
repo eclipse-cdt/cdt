@@ -89,7 +89,7 @@ public class TargetSelector extends CSelector {
 					if (labelProvider != null) {
 						return labelProvider.getText(element);
 					}
-					return target.getName();
+					return target.getId();
 				}
 				return super.getText(element);
 			}

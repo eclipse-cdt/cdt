@@ -1,7 +1,7 @@
 package org.eclipse.cdt.launchbar.cdt.core.internal;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
+import org.eclipse.cdt.launchbar.core.DefaultLaunchConfigurationDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -12,17 +12,17 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 
-public class CDTLaunchConfigDescriptor implements ILaunchConfigurationDescriptor {
+public class CDTLaunchConfigDescriptor extends DefaultLaunchConfigurationDescriptor {
 
 	private String projectName;
-	private ILaunchConfiguration config;
 
 	public CDTLaunchConfigDescriptor(IProject project) {
+		super(null);
 		projectName = project.getName();
 	}
 
 	public CDTLaunchConfigDescriptor(ILaunchConfiguration config) {
-		this.config = config;
+		super(config);
 	}
 
 	@Override
@@ -53,6 +53,7 @@ public class CDTLaunchConfigDescriptor implements ILaunchConfigurationDescriptor
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(projectName));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
 			wc.setMappedResources(new IResource[] { getProject() });
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 
 			// TODO finish this off
 
@@ -63,9 +64,7 @@ public class CDTLaunchConfigDescriptor implements ILaunchConfigurationDescriptor
 
 	@Override
 	public boolean matches(ILaunchConfiguration launchConfiguration) {
-		// TODO Auto-generated method stub
-
-		// matches if it's the same project
+		// TODO matches if it's the same project
 		return false;
 	}
 

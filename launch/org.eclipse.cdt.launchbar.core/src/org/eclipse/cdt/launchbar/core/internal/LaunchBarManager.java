@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.launchbar.core.DefaultLaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchConfigurationsProvider;
@@ -45,11 +46,14 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private List<Listener> listeners = new LinkedList<>();
 	private List<ProviderExtensionDescriptor> providers = new ArrayList<>();
 	private Map<String, ILaunchConfigurationDescriptor> configDescs = new HashMap<>();
-	private ILaunchConfigurationDescriptor lastConfigDesc, activeConfigDesc;
+	private ILaunchConfigurationDescriptor lastConfigDesc;
 	private ILaunchMode[] launchModes = new ILaunchMode[0];
+	
+	private ILaunchConfigurationDescriptor activeConfigDesc;
 	private ILaunchMode activeLaunchMode;
+	private ILaunchTarget activeLaunchTarget;
 
-	private final LocalTargetType localTargetType = new LocalTargetType();
+	private static final LocalTarget localLaunchTarget = new LocalTarget();
 
 	private static final String PREF_ACTIVE_CONFIG_DESC = "activeConfigDesc";
 	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode";
@@ -346,22 +350,27 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public ILaunchTarget[] getLaunchTargets() {
-		// TODO for reals
-		return new ILaunchTarget[] { localTargetType.getTarget() };
+		if (activeConfigDesc != null)
+			return activeConfigDesc.getLaunchTargets();
+		else
+			return new ILaunchTarget[0];
 	}
 
 	@Override
 	public ILaunchTarget getActiveLaunchTarget() {
-		// TODO for reals
-		return localTargetType.getTarget();
+		return activeLaunchTarget;
 	}
 
 	@Override
 	public void setActiveLaunchTarget(ILaunchTarget target) {
-		// TODO Auto-generated method stub
-
+		activeLaunchTarget = target;
+		activeConfigDesc.setActiveLaunchTarget(target);
 	}
 
+	public static LocalTarget getLocalLaunchTarget() {
+		return localLaunchTarget;
+	}
+	
 	@Override
 	public void addLaunchTarget(ILaunchTarget target) {
 		// TODO Auto-generated method stub

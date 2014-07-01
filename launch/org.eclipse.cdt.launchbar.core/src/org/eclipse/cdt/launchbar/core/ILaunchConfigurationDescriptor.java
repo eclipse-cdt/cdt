@@ -13,6 +13,7 @@ package org.eclipse.cdt.launchbar.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchMode;
 
 public interface ILaunchConfigurationDescriptor {
 
@@ -46,5 +47,36 @@ public interface ILaunchConfigurationDescriptor {
 	 * @return
 	 */
 	boolean matches(ILaunchConfiguration launchConfiguration);
+
+	/**
+	 * Return the list of launch targets this configuration can launcht to.
+	 * 
+	 * @return launch targets
+	 */
+	ILaunchTarget[] getLaunchTargets();
 	
+	/**
+	 * Return the launch target with the given id.
+	 * 
+	 * @param id id of target
+	 * @return launch target
+	 */
+	ILaunchTarget getLaunchTarget(String id);
+
+	/**
+	 * Set the active launch mode. Allows the descriptor to prepare for a
+	 * launch in that mode.
+	 * 
+	 * @param mode the new active launch mode
+	 */
+	void setActiveLaunchMode(ILaunchMode mode);
+
+	/**
+	 * Set the active launch target. Allows the descriptor to prepare for
+	 * a launch on that target.
+	 * 
+	 * @param target the new active launch target
+	 */
+	void setActiveLaunchTarget(ILaunchTarget target);
+
 }

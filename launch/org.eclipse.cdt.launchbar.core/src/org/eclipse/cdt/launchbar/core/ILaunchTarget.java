@@ -12,8 +12,18 @@ package org.eclipse.cdt.launchbar.core;
 
 public interface ILaunchTarget {
 
+	/**
+	 * Get the id for the target. The id of the active target is
+	 * stored in the preference store.
+	 * 
+	 * @return id
+	 */
+	String getId();
+
+	/**
+	 * Returns a name to show in the UI for this target.
+	 * 
+	 * @return name
+	 */
 	String getName();
-
-	ILaunchTargetType getType();
-
 }

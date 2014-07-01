@@ -1507,6 +1507,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 3.0
 	 */
 	protected class MakeTargetAvailableStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+	    public MakeTargetAvailableStep() {
+	    }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			// Interrupt every first thread of the running processes
@@ -1545,6 +1550,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 4.0
 	 */
 	protected class ExecuteQueuedOperationsStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+	    public ExecuteQueuedOperationsStep() {
+	    }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			fCurrentlyExecutingSteps = true;
@@ -1581,6 +1591,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 3.0
 	 */
 	protected class RestoreTargetStateStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+	    public RestoreTargetStateStep() {
+	    }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			// Resume every thread we had interrupted

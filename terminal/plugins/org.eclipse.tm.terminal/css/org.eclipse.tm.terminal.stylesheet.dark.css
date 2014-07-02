@@ -9,7 +9,7 @@
  * Lars Vogel <Lars.Vogel@gmail.com> - initial API and implementation
  ******************************************************************************/
 
-IEclipsePreferences {
+IEclipsePreferences#org-eclipse-tm-terminal {
 	preferences:
 	"TerminalPrefInvertColors=true"
 }

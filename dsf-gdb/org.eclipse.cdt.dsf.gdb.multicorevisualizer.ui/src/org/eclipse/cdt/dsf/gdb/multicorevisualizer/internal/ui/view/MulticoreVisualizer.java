@@ -17,6 +17,7 @@
  *     Marc-Andre Laperle (Ericsson) - Bug 411634
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Xavier Raynaud (kalray) - Bug 431935
+ *     Xavier Raynaud (kalray) - Bug 438627
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -692,12 +693,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			sel instanceof GDBProcess ||
 			sel instanceof IDMVMContext)
 		{
-			result = 1;
+			result = 10;
 		}
-		else {
-			result = 0;
-		}
-		
 		// While we're here, see if we need to attach debug view listener
 		updateDebugViewListener();
 		

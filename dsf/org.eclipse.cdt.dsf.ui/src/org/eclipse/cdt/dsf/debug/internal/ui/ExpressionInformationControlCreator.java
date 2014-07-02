@@ -125,6 +125,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		private Composite fDetailPaneComposite;
 		private DetailPaneProxy fDetailPane;
 		private Tree fTree;
+		private IViewerUpdateListener fViewerUpdateListener;
 
 		private ViewerInputService fInputService;
 
@@ -311,7 +312,15 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		@Override
 		public void setVisible(boolean visible) {
-			if (!visible) {		
+			if (!visible) {
+				if (fViewer != null && fViewerUpdateListener != null) {
+					// Remove update listener to avoid refreshing variables that were
+					// previously shown in a hover at every step
+					// Bug 438367
+					fViewer.removeViewerUpdateListener(fViewerUpdateListener);
+					fViewerUpdateListener = null;
+				}
+
 				persistSettings(getShell());
 			}
 			super.setVisible(visible);
@@ -381,7 +390,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			initSashWeights();
 
 			// add update listener to auto-select and display details of root expression
-			fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
+			fViewerUpdateListener = new IViewerUpdateListener() {
 				@Override
 				public void viewerUpdatesComplete() {
                     fViewer.getDisplay().timerExec(100, new Runnable() {
@@ -409,7 +418,9 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				@Override
 				public void updateComplete(IViewerUpdate update) {
 				}
-			});
+			};
+			
+			fViewer.addViewerUpdateListener(fViewerUpdateListener);
 
             setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));

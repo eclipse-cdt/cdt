@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_1c852be8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T11:52:53Z",
+      "side": 1,
+      "message": "Bug 438635 - executeWithTargetAvailable steps need public constructors",
+      "revId": "5f5ac746450789d68d0606b285580d5607c794a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_3c8467e8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1511,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T11:52:53Z",
+      "side": 1,
+      "message": "Missing\n\t    /** @since 4.5 */",
+      "revId": "5f5ac746450789d68d0606b285580d5607c794a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9c981b4c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1554,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T11:52:53Z",
+      "side": 1,
+      "message": "Missing\n\t    /** @since 4.5 */",
+      "revId": "5f5ac746450789d68d0606b285580d5607c794a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_7c953f10",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1595,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T11:52:53Z",
+      "side": 1,
+      "message": "Missing\n\t    /** @since 4.5 */",
+      "revId": "5f5ac746450789d68d0606b285580d5607c794a9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -13,6 +13,7 @@
  *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Bug 415362
+ *     Xavier Raynaud (Kalray) - Bug 438635
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -1296,6 +1297,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 * @since 3.0
 	 */
 	protected class MakeTargetAvailableStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+        /** @since 4.5 */
+        public MakeTargetAvailableStep() {
+        }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			if (!isTargetAvailable()) {
@@ -1330,6 +1337,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 * @since 4.0
 	 */
 	protected class ExecuteQueuedOperationsStep extends Sequence.Step {
+
+        /* public constructor required, so upper classes can override executeWithTargetAvailable */
+        /** @since 4.5 */
+        public ExecuteQueuedOperationsStep() {
+        }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			fCurrentlyExecutingSteps = true;
@@ -1366,6 +1379,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 * @since 3.0
 	 */
 	protected class RestoreTargetStateStep extends Sequence.Step {
+
+        /* public constructor required, so upper classes can override executeWithTargetAvailable */
+        /** @since 4.5 */
+        public RestoreTargetStateStep() {
+        }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			if (!isTargetAvailable()) {

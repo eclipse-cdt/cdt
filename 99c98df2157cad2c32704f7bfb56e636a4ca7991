@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_0b7d0dd5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/EnableLoadMetersAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-07-02T12:21:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_9024ace7",
+      "revId": "99c98df2157cad2c32704f7bfb56e636a4ca7991",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_b01a88a0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/IVisualizerModelDataSource.java",
         "patchSetId": 2
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_2b6ba911",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-07-02T12:21:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_30415863",
+      "revId": "99c98df2157cad2c32704f7bfb56e636a4ca7991",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_90366c0b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 2
@@ -64,6 +100,24 @@
       "writtenOn": "2014-06-11T16:00:41Z",
       "side": 1,
       "message": "Function naming convention: avoid abbreviations in function names.\n(\"Src\" -\u003e \"Source\")",
+      "revId": "99c98df2157cad2c32704f7bfb56e636a4ca7991",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_4b66e549",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-07-02T12:21:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_90366c0b",
       "revId": "99c98df2157cad2c32704f7bfb56e636a4ca7991",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

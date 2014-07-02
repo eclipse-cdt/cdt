@@ -13,6 +13,7 @@
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Bug 415362
  *     Marc Khouzam (Ericsson) - Wait for *stopped event when suspending (bug 429621)
+ *     Xavier Raynaud (Kalray) - Bug 438635
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -1507,6 +1508,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 3.0
 	 */
 	protected class MakeTargetAvailableStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+	    /** @since 4.5 */
+	    public MakeTargetAvailableStep() {
+	    }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			// Interrupt every first thread of the running processes
@@ -1545,6 +1552,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 4.0
 	 */
 	protected class ExecuteQueuedOperationsStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+        /** @since 4.5 */
+	    public ExecuteQueuedOperationsStep() {
+	    }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			fCurrentlyExecutingSteps = true;
@@ -1581,6 +1594,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 3.0
 	 */
 	protected class RestoreTargetStateStep extends Sequence.Step {
+
+	    /* public constructor required, so upper classes can override executeWithTargetAvailable */
+        /** @since 4.5 */
+	    public RestoreTargetStateStep() {
+	    }
+
 		@Override
 		public void execute(final RequestMonitor rm) {
 			// Resume every thread we had interrupted

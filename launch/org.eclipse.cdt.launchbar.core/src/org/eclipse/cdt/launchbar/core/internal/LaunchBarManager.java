@@ -277,6 +277,19 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			}
 		}
 
+		// Set active target
+		String activeTargetId = store.node(activeConfigDesc.getName()).get(PREF_ACTIVE_LAUNCH_TARGET, null);
+		ILaunchTarget target = null;
+		if (activeTargetId != null) {
+			target = activeConfigDesc.getLaunchTarget(activeTargetId);
+		}
+		if (target == null) {
+			ILaunchTarget[] targets = activeConfigDesc.getLaunchTargets();
+			if (targets.length > 0) {
+				target = targets[0];
+			}
+		}
+		setActiveLaunchTarget(target);
 	}
 
 	@Override
@@ -344,6 +357,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			e.printStackTrace();
 		}
 
+		activeConfigDesc.setActiveLaunchMode(mode);
 		for (Listener listener : listeners)
 			listener.activeLaunchModeChanged();
 	}
@@ -363,8 +377,25 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public void setActiveLaunchTarget(ILaunchTarget target) {
+		if (activeLaunchTarget == target) return;
+		
 		activeLaunchTarget = target;
+		Preferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).node(activeConfigDesc.getName());
+		if (target != null) {
+			store.put(PREF_ACTIVE_LAUNCH_TARGET, target.getId());
+		} else {
+			store.remove(PREF_ACTIVE_LAUNCH_TARGET);
+		}
+		try {
+			store.flush();
+		} catch (BackingStoreException e) {
+			// TODO log
+			e.printStackTrace();
+		}
+
 		activeConfigDesc.setActiveLaunchTarget(target);
+		for (Listener listener : listeners)
+			listener.activeLaunchTargetChanged();
 	}
 
 	public static LocalTarget getLocalLaunchTarget() {

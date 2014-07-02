@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_5cede3b1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T11:42:15Z",
+      "side": 1,
+      "message": "Probably should not only increase to two.  We should give ourselves some space for other visualizer to come in between, so maybe go to 10?",
+      "revId": "f30f0d97e19bd293abb771e50bd8587f20bebee3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

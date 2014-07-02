@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_0209406b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T15:34:48Z",
+      "side": 1,
+      "message": "How about: DSF-GDB test fragment",
+      "revId": "9b15160468cff9c8932370b8e149d3733d9b950e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_620e3475",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T15:34:48Z",
+      "side": 1,
+      "message": "The previous fragment was marked as a singleton. Do we want the same now?\n org.eclipse.cdt.dsf.gdb.tests;singleton:\u003dtrue",
+      "revId": "9b15160468cff9c8932370b8e149d3733d9b950e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_a2f7acc5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T15:34:48Z",
+      "side": 1,
+      "message": "I don\u0027t think we should have a version above",
+      "revId": "9b15160468cff9c8932370b8e149d3733d9b950e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

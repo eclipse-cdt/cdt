@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "e76c2f17_9ce65bd3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-02T11:43:07Z",
+      "side": 1,
+      "message": "Should be:\n\nBug 438627 - handleSelection returns 2 when selection can be displayed",
+      "revId": "f30f0d97e19bd293abb771e50bd8587f20bebee3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_5cede3b1",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 1

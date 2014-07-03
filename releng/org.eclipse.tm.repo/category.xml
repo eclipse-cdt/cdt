@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/org.eclipse.rse_3.5.0.qualifier.jar" id="org.eclipse.rse" version="3.5.0.qualifier">
-      <category name="tm_35_main"/>
+      <category name="tm_36_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.sdk_3.5.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.5.0.qualifier">
-      <category name="tm_35_main"/>
+      <category name="tm_36_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_1.1.500.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.500.qualifier">
-      <category name="tm_35_main"/>
+      <category name="tm_36_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_3.1.400.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.400.qualifier">
-      <category name="tm_35_optional"/>
+      <category name="tm_36_optional"/>
    </feature>
    <feature url="features/org.eclipse.rse.scp_0.2.100.qualifier.jar" id="org.eclipse.rse.scp" version="0.2.100.qualifier">
-      <category name="tm_35_optional"/>
+      <category name="tm_36_optional"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.100.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.100.qualifier">
-      <category name="tm_35_optional"/>
+      <category name="tm_36_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.3.300.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.300.qualifier">
-      <category name="tm_35_main"/>
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.3.400.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.400.qualifier">
+      <category name="tm_36_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.300.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.300.qualifier">
-      <category name="tm_35_main"/>
+   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.400.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.400.qualifier">
+      <category name="tm_36_main"/>
    </feature>
    
-   <category-def name="tm_35_main" label="TM and RSE 3.5 Main Features">
+   <category-def name="tm_36_main" label="TM Terminal and RSE 3.6 Main Features">
       <description>
-         TM and RSE Main Features
+         TM Terminal and RSE Main Features
       </description>
    </category-def>
-   <category-def name="tm_35_optional" label="TM and RSE 3.5 Optional Add-Ons">
+   <category-def name="tm_36_optional" label="TM Terminal and RSE 3.6 Optional Add-Ons">
       <description>
          Examples, Tests and Incubation Plug-ins.
       </description>

@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.launchbar.core.DefaultLaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchConfigurationsProvider;
@@ -35,7 +34,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.osgi.service.prefs.BackingStoreException;
@@ -47,7 +45,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private List<ProviderExtensionDescriptor> providers = new ArrayList<>();
 	private Map<String, ILaunchConfigurationDescriptor> configDescs = new HashMap<>();
 	private ILaunchConfigurationDescriptor lastConfigDesc;
-	private ILaunchMode[] launchModes = new ILaunchMode[0];
 	
 	private ILaunchConfigurationDescriptor activeConfigDesc;
 	private ILaunchMode activeLaunchMode;
@@ -115,11 +112,11 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
-			ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(configuration);
+			ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(this, configuration);
 			
 			
 			for (ProviderExtensionDescriptor provider : providers) {
-				configDesc = provider.getProvider().filterDescriptor(configDesc);
+				configDesc = provider.getProvider().filterDescriptor(this, configDesc);
 			}
 			configDescs.put(configDesc.getName(), configDesc);
 		}
@@ -147,9 +144,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(configuration);
+		ILaunchConfigurationDescriptor configDesc = new DefaultLaunchConfigurationDescriptor(this, configuration);
 		for (ProviderExtensionDescriptor provider : providers) {
-			configDesc = provider.getProvider().filterDescriptor(configDesc);
+			configDesc = provider.getProvider().filterDescriptor(this, configDesc);
 		}
 		try {
 			addLaunchConfigurationDescriptor(configDesc);
@@ -166,9 +163,13 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		ILaunchConfigurationDescriptor configDesc = getLaunchConfigurationDescriptor(configuration);
-		if (configDesc != null)
-			removeLaunchConfigurationDescriptor(configDesc);
+		try {
+			ILaunchConfigurationDescriptor configDesc = getLaunchConfigurationDescriptor(configuration);
+			if (configDesc != null)
+				removeLaunchConfigurationDescriptor(configDesc);
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
 	}
 
 	@Override
@@ -189,7 +190,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	@Override
-	public ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration) {
+	public ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration) throws CoreException {
 		// Check by name
 		ILaunchConfigurationDescriptor configDesc = configDescs.get(configuration.getName());
 		if (configDesc.matches(configuration))
@@ -231,20 +232,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			return;
 		}
 
-		// Get the launch modes
-		List<ILaunchMode> mymodes = new ArrayList<>();
-		ILaunchConfigurationType type = activeConfigDesc.getLaunchConfigurationType();
-		ILaunchMode[] modes = DebugPlugin.getDefault().getLaunchManager().getLaunchModes();
-		for (ILaunchMode mode : modes) {
-			if (type.supportsMode(mode.getIdentifier())) {
-				mymodes.add(mode);
-			}
-		}
-		launchModes = mymodes.toArray(new ILaunchMode[mymodes.size()]);
-
-		// Get the launch targets
-		// TODO
-
 		// Send notifications
 		for (Listener listener : listeners) {
 			listener.activeConfigurationDescriptorChanged();
@@ -252,6 +239,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 		// Set active mode
 		String activeModeName = store.node(activeConfigDesc.getName()).get(PREF_ACTIVE_LAUNCH_MODE, null);
+		ILaunchMode[] launchModes = activeConfigDesc.getLaunchModes();
 		boolean foundMode = false;
 		if (activeModeName != null) {
 			for (ILaunchMode mode : launchModes) {
@@ -264,9 +252,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 		if (!foundMode) {
 			if (launchModes.length > 0) {
-				ILaunchMode mode = getLaunchMode("debug");
+				ILaunchMode mode = activeConfigDesc.getLaunchMode("debug");
 				if (mode == null) {
-					mode = getLaunchMode("run");
+					mode = activeConfigDesc.getLaunchMode("run");
 				}
 				if (mode == null) {
 					mode = launchModes[0];
@@ -322,18 +310,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	@Override
-	public ILaunchMode[] getLaunchModes() throws CoreException {
-		return launchModes;
-	}
-
-	public ILaunchMode getLaunchMode(String id) {
-		for (ILaunchMode mode : launchModes)
-			if (id.equals(mode.getIdentifier()))
-				return mode;
-		return null;
-	}
-
-	@Override
 	public ILaunchMode getActiveLaunchMode() {
 		return activeLaunchMode;
 	}
@@ -344,6 +320,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			return;
 		activeLaunchMode = mode;
 
+		if (activeConfigDesc == null)
+			return;
+		
 		Preferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).node(activeConfigDesc.getName());
 		if (mode != null) {
 			store.put(PREF_ACTIVE_LAUNCH_MODE, mode.getIdentifier());
@@ -363,14 +342,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	@Override
-	public ILaunchTarget[] getLaunchTargets() {
-		if (activeConfigDesc != null)
-			return activeConfigDesc.getLaunchTargets();
-		else
-			return new ILaunchTarget[0];
-	}
-
-	@Override
 	public ILaunchTarget getActiveLaunchTarget() {
 		return activeLaunchTarget;
 	}
@@ -380,6 +351,10 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		if (activeLaunchTarget == target) return;
 		
 		activeLaunchTarget = target;
+		
+		if (activeConfigDesc == null)
+			return;
+
 		Preferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).node(activeConfigDesc.getName());
 		if (target != null) {
 			store.put(PREF_ACTIVE_LAUNCH_TARGET, target.getId());
@@ -398,7 +373,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			listener.activeLaunchTargetChanged();
 	}
 
-	public static LocalTarget getLocalLaunchTarget() {
+	public LocalTarget getLocalLaunchTarget() {
 		return localLaunchTarget;
 	}
 	

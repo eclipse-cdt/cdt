@@ -19,10 +19,8 @@ import org.eclipse.cdt.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -44,7 +42,8 @@ public class TargetSelector extends CSelector {
 
 	private final LaunchBarUIManager uiManager;
 	
-	private static final ISelection nullSelection = new StructuredSelection("---");
+	private static final String[] noTargets = new String[] { "---" };
+	
 
 	public TargetSelector(Composite parent, int style) {
 		super(parent, style);
@@ -64,7 +63,10 @@ public class TargetSelector extends CSelector {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return getManager().getLaunchTargets();
+				ILaunchTarget[] targets = getManager().getActiveLaunchConfigurationDescriptor().getLaunchTargets();
+				if (targets.length > 0)
+					return targets;
+				return noTargets;
 			}
 		});
 
@@ -89,7 +91,7 @@ public class TargetSelector extends CSelector {
 					if (labelProvider != null) {
 						return labelProvider.getText(element);
 					}
-					return target.getId();
+					return target.getName();
 				}
 				return super.getText(element);
 			}
@@ -227,4 +229,11 @@ public class TargetSelector extends CSelector {
 		return (ILaunchBarManager) getInput();
 	}
 
+	@Override
+	public void setSelection(Object element) {
+		if (element == null)
+			element = noTargets[0];
+		super.setSelection(element);
+	}
+	
 }

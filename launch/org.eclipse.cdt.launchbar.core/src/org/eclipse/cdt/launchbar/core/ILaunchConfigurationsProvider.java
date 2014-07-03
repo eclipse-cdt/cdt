@@ -29,6 +29,6 @@ public interface ILaunchConfigurationsProvider {
 	 * @param descriptor candidate descriptor
 	 * @return the best descriptor
 	 */
-	ILaunchConfigurationDescriptor filterDescriptor(ILaunchConfigurationDescriptor descriptor);
+	ILaunchConfigurationDescriptor filterDescriptor(ILaunchBarManager manager, ILaunchConfigurationDescriptor descriptor);
 
 }

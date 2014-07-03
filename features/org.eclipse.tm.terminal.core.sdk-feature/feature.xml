@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.tm.terminal.core.sdk"
       label="%featureName"
-      version="3.3.300.qualifier"
+      version="3.3.400.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
@@ -31,8 +31,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
    </url>
 
    <includes

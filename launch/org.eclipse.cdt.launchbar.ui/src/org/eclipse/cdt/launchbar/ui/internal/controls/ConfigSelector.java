@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
+import org.eclipse.cdt.launchbar.core.internal.DefaultLaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.cdt.launchbar.ui.internal.dialogs.LaunchConfigurationEditDialog;
@@ -61,6 +62,8 @@ public class ConfigSelector extends CSelector {
 
 	private LaunchBarUIManager uiManager;
 	
+	private static final String[] noConfigs = new String[] { "No Launch Configurations" };
+	
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
 
@@ -76,11 +79,9 @@ public class ConfigSelector extends CSelector {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				ILaunchConfigurationDescriptor[] descs = getManager().getLaunchConfigurationDescriptors();
-				if (descs.length == 0) {
-					return new String[] { "No Launch Configurations" };
-				} else {
+				if (descs.length > 0)
 					return descs;
-				}
+				return noConfigs; 
 			}
 		});
 
@@ -103,19 +104,21 @@ public class ConfigSelector extends CSelector {
 					}
 
 					// Default
-					try {
-						ILaunchConfigurationType type = configDesc.getLaunchConfigurationType();
-						ImageDescriptor imageDescriptor = DebugUITools.getDefaultImageDescriptor(type);
-						if (imageDescriptor != null) {
-							Image image = images.get(imageDescriptor);
-							if (image == null) {
-								image = imageDescriptor.createImage();
-								images.put(imageDescriptor, image);
+					if (element instanceof DefaultLaunchConfigurationDescriptor) {
+						try {
+							ILaunchConfigurationType type = configDesc.getLaunchConfiguration().getType();
+							ImageDescriptor imageDescriptor = DebugUITools.getDefaultImageDescriptor(type);
+							if (imageDescriptor != null) {
+								Image image = images.get(imageDescriptor);
+								if (image == null) {
+									image = imageDescriptor.createImage();
+									images.put(imageDescriptor, image);
+								}
+								return image;
 							}
-							return image;
+						} catch (CoreException e) {
+							Activator.log(e);
 						}
-					} catch (CoreException e) {
-						Activator.log(e);
 					}
 				}
 				// Default
@@ -275,4 +278,11 @@ public class ConfigSelector extends CSelector {
 		uiManager = (LaunchBarUIManager) ((ILaunchBarManager) input).getAdapter(LaunchBarUIManager.class);
 	}
 
+	@Override
+	public void setSelection(Object element) {
+		if (element == null)
+			element = noConfigs[0];
+		super.setSelection(element);
+	}
+	
 }

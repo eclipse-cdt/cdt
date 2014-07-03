@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings("restriction")
 public class ModeSelector extends CSelector {
 
+	private static final String[] noModes = new String[] { "---" };
+	
 	public ModeSelector(Composite parent, int style) {
 		super(parent, style);
 
@@ -47,11 +49,13 @@ public class ModeSelector extends CSelector {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				try {
-					return getManager().getLaunchModes();
+					ILaunchMode[] modes = getManager().getActiveLaunchConfigurationDescriptor().getLaunchModes();
+					if (modes.length > 0)
+						return modes;
 				} catch (CoreException e) {
 					Activator.log(e);
-					return new Object[0];
 				}
+				return noModes;
 			}
 		});
 
@@ -69,20 +73,15 @@ public class ModeSelector extends CSelector {
 				ILaunchConfigurationDescriptor config = getManager().getActiveLaunchConfigurationDescriptor();
 				if (config != null && element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					try {
-						ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-								.getLaunchGroup(config.getLaunchConfigurationType(), mode.getIdentifier());
-						if (group != null) {
-							ImageDescriptor imageDesc = group.getImageDescriptor();
-							Image image = images.get(imageDesc);
-							if (image == null) {
-								image = imageDesc.createImage();
-								images.put(imageDesc, image);
-							}
-							return image;
+					ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLaunchGroup(mode.getIdentifier());
+					if (group != null) {
+						ImageDescriptor imageDesc = group.getImageDescriptor();
+						Image image = images.get(imageDesc);
+						if (image == null) {
+							image = imageDesc.createImage();
+							images.put(imageDesc, image);
 						}
-					} catch (CoreException e) {
-						Activator.log(e);
+						return image;
 					}
 				}
 				return super.getImage(element);
@@ -92,14 +91,9 @@ public class ModeSelector extends CSelector {
 				ILaunchConfigurationDescriptor config = getManager().getActiveLaunchConfigurationDescriptor();
 				if (config != null && element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					try {
-						ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-								.getLaunchGroup(config.getLaunchConfigurationType(), mode.getIdentifier());
-						if (group != null) {
-							return group.getLabel().replace("&", "");
-						}
-					} catch (CoreException e) {
-						Activator.log(e);
+					ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLaunchGroup(mode.getIdentifier());
+					if (group != null) {
+						return group.getLabel().replace("&", "");
 					}
 				}
 				return super.getText(element);
@@ -153,4 +147,11 @@ public class ModeSelector extends CSelector {
 		return (ILaunchBarManager) getInput();
 	}
 
+	@Override
+	public void setSelection(Object element) {
+		if (element == null)
+			element = noModes[0];
+		super.setSelection(element);
+	}
+	
 }

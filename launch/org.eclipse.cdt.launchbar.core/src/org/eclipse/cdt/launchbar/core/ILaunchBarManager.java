@@ -27,15 +27,11 @@ public interface ILaunchBarManager extends IAdaptable {
 	
 	void removeLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc);
 	
-	ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration);
+	ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration) throws CoreException;
 
-	ILaunchMode[] getLaunchModes() throws CoreException;
-	
 	ILaunchMode getActiveLaunchMode();
 	
 	void setActiveLaunchMode(ILaunchMode mode);
-	
-	ILaunchTarget[] getLaunchTargets();
 	
 	ILaunchTarget getActiveLaunchTarget();
 	
@@ -44,6 +40,8 @@ public interface ILaunchBarManager extends IAdaptable {
 	void addLaunchTarget(ILaunchTarget target);
 	
 	void removeLaunchTarget(ILaunchTarget target);
+	
+	ILaunchTarget getLocalLaunchTarget();
 
 	interface Listener {
 

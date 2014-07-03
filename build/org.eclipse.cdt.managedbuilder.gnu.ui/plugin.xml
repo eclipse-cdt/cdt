@@ -220,6 +220,14 @@
                name="%Option.Posix.Debug.gprof"
                valueType="boolean">
          </option>
+         <option
+			  applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GcovAppCalculator"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.c.link.option.debugging.codecov"
+			  name="%Option.codecov"
+			  valueType="boolean">
+		  </option>
       </tool>
       <tool
             natureFilter="ccnature"
@@ -421,6 +429,14 @@
                name="%Option.Posix.Debug.gprof"
                valueType="boolean">
          </option>
+         <option
+			  applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GcovAppCalculator"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.cpp.link.option.debugging.codecov"
+			  name="%Option.codecov"
+			  valueType="boolean">
+		  </option>
       </tool>
       <tool
             natureFilter="both"
@@ -1197,6 +1213,15 @@
 			  id="gnu.c.compiler.option.debugging.gprof"
 			  valueType="boolean">
 		  </option>
+		  <option
+			  category="gnu.c.compiler.category.debug"
+			  command="-ftest-coverage -fprofile-arcs"
+			  defaultValue="false"
+			  id="gnu.c.compiler.option.debugging.codecov"
+			  name="%Option.codecov"
+			  tip="%Option.codecovTip"
+			  valueType="boolean">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Warn"
@@ -1564,6 +1589,15 @@
 			  category="gnu.cpp.compiler.category.debug"
 			  command="-pg"
 			  id="gnu.cpp.compiler.option.debugging.gprof"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="%Option.codecov"
+			  category="gnu.cpp.compiler.category.debug"
+			  command="-ftest-coverage -fprofile-arcs"
+			  id="gnu.cpp.compiler.option.debugging.codecov"
+			  tip="%Option.codecovTip"
 			  valueType="boolean">
 		  </option>
 		  <optionCategory

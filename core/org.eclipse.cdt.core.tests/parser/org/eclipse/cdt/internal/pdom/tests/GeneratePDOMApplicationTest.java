@@ -76,7 +76,6 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		toDeleteOnTearDown.clear();
 		target= File.createTempFile("test", "pdom");
-		target.delete();
 	}
 
 	@Override
@@ -85,6 +84,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			ICProject cproject= (ICProject) i.next();
 			cproject.getProject().delete(true, new NullProgressMonitor());
 		}
+		target.delete();
 	}	
 
 	public void testBrokenExportProjectProvider1() throws Exception {

@@ -215,6 +215,7 @@ public class ResourceLookupTests extends TestCase {
 		fProject.open(new NullProgressMonitor());
 		createFolder(fProject, "folder1");
 		File f= File.createTempFile("extern", "h");
+		f.deleteOnExit();
 		IPath location= Path.fromOSString(f.getAbsolutePath());
 		IFile file1= fProject.getFile("linked1");
 		IFile file2= fProject.getFile("linked2.h");

@@ -135,6 +135,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 			assertFalse("Reindexex project pdom ID equals exported pdom ID", id4.equals(id));
 		} finally {
 			pdom.releaseReadLock();
+			tmp.delete();
 		}
 	}
 

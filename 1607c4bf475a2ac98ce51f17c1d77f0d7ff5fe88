@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_dd5a8dc8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1335,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:52:36Z",
+      "side": 1,
+      "message": "Bunch of code assigns this variable but it is not used, what is the point?",
+      "revId": "1607c4bf475a2ac98ce51f17c1d77f0d7ff5fe88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_7d5d39c1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1339,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:52:36Z",
+      "side": 1,
+      "message": "switching on that is not good idea, because if another constant\nwill be added this will likely will be missed.\nIf there limited number of actual types opt.getDefaultValue() can be why not to switch on that? (If else)",
+      "revId": "1607c4bf475a2ac98ce51f17c1d77f0d7ff5fe88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9d601579",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1342,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:52:36Z",
+      "side": 1,
+      "message": "Boolean.FALSE",
+      "revId": "1607c4bf475a2ac98ce51f17c1d77f0d7ff5fe88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_bd57d19e",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:52:36Z",
+      "side": 1,
+      "message": "remove that line",
+      "revId": "1607c4bf475a2ac98ce51f17c1d77f0d7ff5fe88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_1db88561",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1380,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:52:36Z",
+      "side": 1,
+      "message": "Add bug number here if you want to keep the explanation",
+      "revId": "1607c4bf475a2ac98ce51f17c1d77f0d7ff5fe88",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

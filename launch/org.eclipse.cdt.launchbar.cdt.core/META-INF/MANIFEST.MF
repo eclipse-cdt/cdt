@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: LaunchBar for CDT Core
 Bundle-SymbolicName: org.eclipse.cdt.launchbar.cdt.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.cdt.launchbar.cdt.core.Activator
+Bundle-Activator: org.eclipse.cdt.launchbar.cdt.core.internal.Activator
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.launchbar.core,

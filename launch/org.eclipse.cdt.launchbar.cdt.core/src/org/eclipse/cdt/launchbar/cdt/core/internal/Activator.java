@@ -1,4 +1,4 @@
-package org.eclipse.cdt.launchbar.cdt.core;
+package org.eclipse.cdt.launchbar.cdt.core.internal;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

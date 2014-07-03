@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_3d9e21e9",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CSpecTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1742,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T01:20:08Z",
+      "side": 1,
+      "message": "What happened to getAboveComment() function?\nIt is not in this base test case? Maybe it is good time to copy it\nfrom CPPSpecTest class?",
+      "revId": "2137e14a7e9bb88d578466a3694a720c16de0678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9d92d5d8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T01:20:08Z",
+      "side": 1,
+      "message": "First is redundant check \n!(binding instanceof ILabel) would be sufficient to catch the null case",
+      "revId": "2137e14a7e9bb88d578466a3694a720c16de0678",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

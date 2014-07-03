@@ -206,6 +206,8 @@
 		
 		<module>launch/org.eclipse.cdt.launchbar.core</module>
 		<module>launch/org.eclipse.cdt.launchbar.ui</module>
+		<module>launch/org.eclipse.cdt.launchbar.cdt.core</module>
+		<module>launch/org.eclipse.cdt.launchbar-feature</module>
 
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>

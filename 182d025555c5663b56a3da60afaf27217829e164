@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_ddb56d65",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractCLIProcess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:58:06Z",
+      "side": 1,
+      "message": "code formatting is extra bad",
+      "revId": "182d025555c5663b56a3da60afaf27217829e164",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_7da8990f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractCLIProcess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-03T00:58:06Z",
+      "side": 1,
+      "message": "word monitor starts with mo, isn\u0027t second check redundant?",
+      "revId": "182d025555c5663b56a3da60afaf27217829e164",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -229,5 +229,8 @@ public class ResourceLookupTests extends TestCase {
 
 		files= ResourceLookup.findFilesByName(new Path("linked2.h"), prjs, false);
 		assertEquals(0, files.length);
+
+		// cleanup
+		f.delete();
 	}
 }

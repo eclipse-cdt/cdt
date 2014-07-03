@@ -121,6 +121,9 @@ public class PDOMProviderTests extends PDOMTestBase {
 		} finally {
 			index.releaseReadLock();
 		}
+
+		// cleanup
+		tempPDOM.delete();
 	}
 
 	public void testCommonSDK() throws Exception {
@@ -239,6 +242,9 @@ public class PDOMProviderTests extends PDOMTestBase {
 				index.releaseReadLock();
 			}		
 		}
+
+		// cleanup
+		tempPDOM.delete();
 	}
 	
 	public void testVersionMismatchOfExternalPDOM_178998() throws Exception {
@@ -303,5 +309,8 @@ public class PDOMProviderTests extends PDOMTestBase {
 			ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(cproject2.getProject(), false);
 			assertEquals(0, ipm.getProvidedIndexFragments(pd.getActiveConfiguration(), -1).length);
 		}
+
+		// cleanup
+		tempPDOM.delete();
 	}
 }

@@ -1113,9 +1113,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
             String s = path.toString();
             if (getOSName().equals(Platform.OS_WIN32)) {
             	if (getWinOSType().equals("cygwin")) {
-                    s = s.replaceAll("^([A-Z])(:)", "/cygdrive/$1");            		
+                    s = s.replaceAll("^([a-zA-Z]):", "/cygdrive/$1");            		
             	} else {
-                    s = s.replaceAll("^([A-Z])(:)", "/$1");            		
+                    s = s.replaceAll("^([a-zA-Z]):", "/$1");            		
             	}
             }
             return s;

@@ -50,6 +50,8 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		GridLayout layout = new GridLayout(7, false);
+		layout.marginHeight = 8;
+		layout.marginWidth = 8;
 		container.setLayout(layout);
 		container.addDisposeListener(new DisposeListener() {
 			@Override

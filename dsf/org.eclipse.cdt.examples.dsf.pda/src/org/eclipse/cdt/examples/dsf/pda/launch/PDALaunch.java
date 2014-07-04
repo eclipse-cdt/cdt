@@ -245,7 +245,6 @@ implements ITerminate
                     DsfSession.endSession(fSession);
                     // endSession takes a full dispatch to distribute the 
                     // session-ended event, finish step only after the dispatch.
-                    fExecutor.shutdown();
                     fireTerminate();
 
                     rm.setStatus(getStatus());
@@ -261,5 +260,13 @@ implements ITerminate
         // the model proxy adapter for DSF-based debug elements.
         Platform.getAdapterManager().loadAdapter(this, adapter.getName());
         return super.getAdapter(adapter);
+    }
+    
+    @Override
+	public void launchRemoved(ILaunch launch) {
+		if (this.equals(launch)) {
+    		fExecutor.shutdown();
+    	}
+    	super.launchRemoved(launch);
     }
 }

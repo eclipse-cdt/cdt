@@ -48,6 +48,7 @@ public class PDAAdapterFactory implements IAdapterFactory
         if (session == null) return null;
 
         SessionAdapterSet adapterSet = PDAUIPlugin.getDefault().getAdapterSet(launch);
+        if (adapterSet == null) return null;
         
         // Returns the adapter type for the launch object.
         if (adapterType.equals(IElementContentProvider.class)) return adapterSet.fViewModelAdapter;

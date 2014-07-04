@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Fix MinGW and Cygwin build (Bug 438476)
  *******************************************************************************/
 package org.eclipse.cdt.remote.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
@@ -36,6 +36,8 @@ import org.eclipse.remote.core.RemoteServices;
 
 public class RemoteCommandLauncher implements ICommandLauncher {
 	
+	private static final String CYGWIN_PREFIX = "cygdrive"; //$NON-NLS-1$
+
 	/**
 	 * Convert a local (workspace) path into the remote equivalent. If the local path is not
 	 * absolute, then do nothing.
@@ -68,12 +70,33 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		if (!localPath.isAbsolute()) {
 			return localPath;
 		}
-		IPath relativePath = localPath.makeRelativeTo(remote.getResource().getLocation());
+		
+		IPath remoteLocation = remote.getResource().getLocation();
 		IPath remotePath = new Path(remote.getActiveLocationURI().getPath());
+		
+		// Device mismatch, we might be in the presence of Cygwin or MinGW
+		if (remoteLocation.getDevice() != null && localPath.getDevice() == null) {
+			boolean isCygwin = localPath.segment(0).equals(CYGWIN_PREFIX);
+			remoteLocation = new Path(getPathString(remoteLocation, isCygwin));
+			remotePath = new Path(getPathString(remotePath, isCygwin));
+		}
+
+		IPath relativePath = localPath.makeRelativeTo(remoteLocation);
 		if (!relativePath.isEmpty()) {
 			remotePath = remotePath.append(relativePath);
 		}
 		return remotePath;
+	}
+	
+	private static String getPathString(IPath path, boolean isCygwin) {
+		String s = path.toString();
+		if (isCygwin) {
+			s = s.replaceAll("^([a-zA-Z]):", "/" + CYGWIN_PREFIX + "/$1");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		} else {
+			s = s.replaceAll("^([a-zA-Z]):", "/$1"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		return s;
 	}
 	
 	private final ICommandLauncher fLocalLauncher = new CommandLauncher();

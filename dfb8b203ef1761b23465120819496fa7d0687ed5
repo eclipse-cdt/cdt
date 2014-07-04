@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_7e4a4c2e",
+        "filename": "remote/org.eclipse.cdt.remote.core/src/org/eclipse/cdt/remote/core/RemoteCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-04T23:08:24Z",
+      "side": 1,
+      "message": "what is the point of having constant if it is used only in once place? (And in second place cygdrive is just part of the string on line 94)",
+      "revId": "dfb8b203ef1761b23465120819496fa7d0687ed5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

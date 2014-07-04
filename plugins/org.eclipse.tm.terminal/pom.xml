@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.tm.terminal</artifactId>
-  <version>3.2.400.qualifier</version>
+  <version>3.2.301.qualifier</version>
   <packaging>eclipse-plugin</packaging>
 </project>

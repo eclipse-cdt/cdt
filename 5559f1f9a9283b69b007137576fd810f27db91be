@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_7e636cbc",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/tests/ResourceLookupTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-04T23:03:38Z",
+      "side": 1,
+      "message": "this has to be in finally block or better just do f.deleteOnExit\nright after creation\n(otherwise if test is failed file still will be there)",
+      "revId": "5559f1f9a9283b69b007137576fd810f27db91be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_5e6030ae",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMProviderTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-04T23:03:38Z",
+      "side": 1,
+      "message": "in finally block",
+      "revId": "5559f1f9a9283b69b007137576fd810f27db91be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_be6d04a9",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMProviderTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-04T23:03:38Z",
+      "side": 1,
+      "message": "in finally block",
+      "revId": "5559f1f9a9283b69b007137576fd810f27db91be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9e6ac88c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/PDOMProviderTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-04T23:03:38Z",
+      "side": 1,
+      "message": "in finally block",
+      "revId": "5559f1f9a9283b69b007137576fd810f27db91be",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

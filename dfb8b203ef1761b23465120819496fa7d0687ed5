@@ -16,6 +16,24 @@
       "revId": "dfb8b203ef1761b23465120819496fa7d0687ed5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_fe02dc7e",
+        "filename": "remote/org.eclipse.cdt.remote.core/src/org/eclipse/cdt/remote/core/RemoteCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-07-05T15:05:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_7e4a4c2e",
+      "revId": "dfb8b203ef1761b23465120819496fa7d0687ed5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

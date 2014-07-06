@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_1e8fd87f",
+        "filename": "remote/org.eclipse.cdt.remote.core/src/org/eclipse/cdt/remote/core/RemoteCommandLauncher.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-06T00:31:13Z",
+      "side": 1,
+      "message": "Why : is in brackets?\nWhy you only check capitals, you sure drive letter cannot be lowercase? I think windows case insensitive so it could be if user typed lowercase.",
+      "revId": "a01e69ace2e6602f55a34913220b090e21f898b9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

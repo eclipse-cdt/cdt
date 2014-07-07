@@ -173,12 +173,12 @@
 		<module>build/org.eclipse.cdt.make.core.tests</module>
 		<module>build/org.eclipse.cdt.make.ui.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
-		
+
 		<module>build/org.eclipse.cdt.autotools.core</module>
 		<module>build/org.eclipse.cdt.autotools.docs</module>
 		<module>build/org.eclipse.cdt.autotools.tests</module>
 		<module>build/org.eclipse.cdt.autotools.ui</module>
-		<!--<module>build/org.eclipse.cdt.autotools.ui.tests</module>-->
+		<module>build/org.eclipse.cdt.autotools.ui.tests</module>
 		<module>build/org.eclipse.cdt.autotools-feature</module>
 		<module>build/org.eclipse.cdt.autotools.source-feature</module>
 		<module>build/org.eclipse.linuxtools.cdt.autotools.core</module>
@@ -191,25 +191,25 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.source.feature</module>
 
-		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>		
+		<module>llvm/org.eclipse.cdt.managedbuilder.llvm.ui</module>
 		<module>llvm/org.eclipse.cdt.managedbuilder.llvm-feature</module>
-		
+
 		<module>qt/org.eclipse.cdt.qt.core</module>
 		<module>qt/org.eclipse.cdt.qt.ui</module>
 		<module>qt/org.eclipse.cdt.qt.tests</module>
 		<module>qt/org.eclipse.cdt.qt-feature</module>
 
 		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
-		
+
 		<module>remote/org.eclipse.cdt.remote.core</module>
 		<module>remote/org.eclipse.cdt.remote-feature</module>
-		
+
 		<module>launch/org.eclipse.cdt.launchbar.core</module>
 		<module>launch/org.eclipse.cdt.launchbar.ui</module>
 		<module>launch/org.eclipse.cdt.launchbar.cdt.core</module>
 		<module>launch/org.eclipse.cdt.launchbar-feature</module>
 
-<!-- 
+<!--
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>
 		<module>xlc/org.eclipse.cdt.core.lrparser.xlc.tests</module>
@@ -219,7 +219,7 @@
 		<module>releng/org.eclipse.cdt.testing</module>
 		<module>releng/org.eclipse.cdt.testing-feature</module>
 		<module>releng/org.eclipse.cdt.testing.repo</module>
-		
+
 		<module>releng/org.eclipse.cdt.repo</module>
 	</modules>
 

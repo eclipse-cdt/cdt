@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_b4f6c34e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTUnaryExpression.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Adding the constant would require increase of plug-in version (core). It should be added after op_noexcept as number 18.\n\n@since tag is missing",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_94f3c75e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/IASTUnaryExpression.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Please do not add unneccessary white space.",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_b411a30d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/INodeFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "There is no need to change the return type. This would require increase of plug-in version too.",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9425875f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/INodeFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Missing @since tag\n\nWhy don\u0027t you use IGNUASTGotoStatement here?",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_3470f34e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/gnu/IGNUASTGotoStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Should be since 5.8",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_74070bd5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/BacktrackException.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Is this addition related to this bug?",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_1475f73e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCASTGotoStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Should be since 5.8",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_9480e799",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPASTGotoStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "Should be @since 5.8",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f43afb81",
+        "filename": "lrparser/org.eclipse.cdt.core.lrparser/src/org/eclipse/cdt/core/dom/lrparser/action/BuildASTParserAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-07T12:33:28Z",
+      "side": 1,
+      "message": "This is not required if newGotoStatement(IASTName) stays as is.",
+      "revId": "8649b655701c4e56d00da6ff0f7361ff71572e2b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

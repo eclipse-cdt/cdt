@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <category-def name="main" label="CDT Main Features"/>
+   <category-def name="extra" label="CDT Optional Features"/>
    <feature url="features/org.eclipse.cdt_0.0.0.qualifier.jar" id="org.eclipse.cdt" version="0.0.0">
       <category name="main"/>
    </feature>
@@ -84,6 +86,7 @@
    <feature url="features/org.eclipse.cdt.debug.standalone.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.standalone.source" version="0.0.0">
       <category name="extra"/>
    </feature>
-   <category-def name="main" label="CDT Main Features"/>
-   <category-def name="extra" label="CDT Optional Features"/>
+   <feature id="org.eclipse.cdt.launchbar" version="0.0.0">
+      <category name="extra"/>
+   </feature>
 </site>

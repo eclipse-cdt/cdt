@@ -1333,51 +1333,20 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		IOption[] opts = holder.getOptions();
 		for (IOption opt : opts) {
 			Object val = opt.getDefaultValue();
-			if (val == null)
-				val = opt.getValue();
-			try {
-				switch(opt.getValueType()){
-				case IOption.BOOLEAN:
-					if (val == null)
-						val = new Boolean(false);
-					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)opt.getDefaultValue());
-					break;
-				case IOption.ENUMERATED:
-				case IOption.TREE:
-				case IOption.STRING:
-					if (val == null)
-						val = ""; //$NON-NLS-1$
-					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String)opt.getDefaultValue());
-					break;
-				case IOption.STRING_LIST:
-				case IOption.INCLUDE_PATH:
-				case IOption.PREPROCESSOR_SYMBOLS:
-				case IOption.LIBRARIES:
-				case IOption.OBJECTS:
-				case IOption.INCLUDE_FILES:
-				case IOption.LIBRARY_PATHS:
-				case IOption.LIBRARY_FILES:
-				case IOption.MACRO_FILES:
-				case IOption.UNDEF_INCLUDE_PATH:
-				case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-				case IOption.UNDEF_INCLUDE_FILES:
-				case IOption.UNDEF_LIBRARY_PATHS:
-				case IOption.UNDEF_LIBRARY_FILES:
-				case IOption.UNDEF_MACRO_FILES:
-					if (val == null)
-						val = new String[0];
-					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String[])opt.getDefaultValue());
-					break;
+			if (val != null) {
+				if (val instanceof Boolean) {
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)val);
+				} else if (val instanceof String[]) {
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String[])val);
+				} else {
+					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String)val);
 				}
-			} catch (BuildException e) {
-				continue;
 			}
 		}
 	}
 	
 	public void resetOptionSettings() {
-		// We just need to remove all Options [Deprecated]
-		// Removing all the options and relying on automatic creating when modifying/using the option
+		// (Bug 438367) Removing all the options and relying on automatic creating when modifying/using the option
 		// will result in problems in the following cases:
 		// 		-	When changing an option affects values of other options.
 		// 		-	When the option has a FieldEditor that holds an instance of the option, that

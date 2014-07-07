@@ -18,7 +18,7 @@ import org.junit.runners.Suite;
   SetConfigurationParameter.class,
   TestToolActions.class,
   TestEnvironmentVars.class,
-  TestMakeTargets.class,
+  TestMakeTargets.class
 })
 public class AllTests {
     // needed for this class to compile

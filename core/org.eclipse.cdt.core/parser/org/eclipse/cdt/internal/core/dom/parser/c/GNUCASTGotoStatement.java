@@ -24,14 +24,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
  *   void *labelPtr = &&foo;
  *   goto *labelPtr; // this is the statement
  * </code>
- *  @since 8.4
+ * 
+ * @since 5.8
  */
-public class GNUCASTGotoStatement extends ASTAttributeOwner
-		implements IGNUASTGotoStatement {
-    private IASTExpression fExpression;
-    
-    public GNUCASTGotoStatement() {
-    }
+public class GNUCASTGotoStatement extends ASTAttributeOwner implements IGNUASTGotoStatement {
+	private IASTExpression fExpression;
+
+	public GNUCASTGotoStatement() {
+	}
 
 	public GNUCASTGotoStatement(IASTExpression expression) {
 		setLabelNameExpression(expression);
@@ -41,7 +41,7 @@ public class GNUCASTGotoStatement extends ASTAttributeOwner
 	public GNUCASTGotoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public GNUCASTGotoStatement copy(CopyStyle style) {
 		GNUCASTGotoStatement copy = new GNUCASTGotoStatement();
@@ -49,24 +49,27 @@ public class GNUCASTGotoStatement extends ASTAttributeOwner
 		return copy(copy, style);
 	}
 
-    @Override
+	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
+		if (action.shouldVisitExpressions) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-      
+
 		if (fExpression != null && !fExpression.accept(action))
-			return false;        
+			return false;
 
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
 		return true;
-    }
+	}
 
 	@Override
 	public IASTExpression getLabelNameExpression() {
@@ -77,13 +80,13 @@ public class GNUCASTGotoStatement extends ASTAttributeOwner
 	public void setLabelNameExpression(IASTExpression expression) {
 		assertNotFrozen();
 		this.fExpression = expression;
-		
+
 		if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(LABEL_NAME);
-		}		
+		}
 	}
-	
+
 	@Override
 	public int getRoleForName(IASTName n) {
 		return r_unclear;

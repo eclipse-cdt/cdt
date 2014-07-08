@@ -25,12 +25,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
  *   goto *labelPtr; // this is the statement
  * </code>
  * 
- * @since 8.4
+ * @since 5.8
  */
 public class GNUCPPASTGotoStatement extends ASTAttributeOwner implements IGNUASTGotoStatement {
 	private IASTExpression expression;
-	
-    public GNUCPPASTGotoStatement() {
+
+	public GNUCPPASTGotoStatement() {
 	}
 
 	public GNUCPPASTGotoStatement(IASTExpression expression) {
@@ -41,35 +41,44 @@ public class GNUCPPASTGotoStatement extends ASTAttributeOwner implements IGNUAST
 	public GNUCPPASTGotoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public GNUCPPASTGotoStatement copy(CopyStyle style) {
-		GNUCPPASTGotoStatement copy = new GNUCPPASTGotoStatement(expression == null ? null : expression.copy(style));
+		GNUCPPASTGotoStatement copy = new GNUCPPASTGotoStatement(expression == null ? null
+				: expression.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitStatements) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
 
-        if (!acceptByAttributeSpecifiers(action)) return false;
-        if (expression != null && !expression.accept(action)) return false;
+		if (!acceptByAttributeSpecifiers(action))
+			return false;
+		if (expression != null && !expression.accept(action))
+			return false;
 
-        if (action.shouldVisitStatements) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitStatements) {
+			switch (action.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT:
+				return false;
+			case ASTVisitor.PROCESS_SKIP:
+				return true;
+			default:
+				break;
+			}
 		}
-        return true;
-    }
+		return true;
+	}
 
 	@Override
 	public IASTExpression getLabelNameExpression() {
@@ -78,15 +87,15 @@ public class GNUCPPASTGotoStatement extends ASTAttributeOwner implements IGNUAST
 
 	@Override
 	public void setLabelNameExpression(IASTExpression expression) {
-    	assertNotFrozen();
-    	this.expression = expression;
-    	
-    	if (expression != null) {
-    		expression.setParent(this);
-    		expression.setPropertyInParent(LABEL_NAME);
-    	}
+		assertNotFrozen();
+		this.expression = expression;
+
+		if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(LABEL_NAME);
+		}
 	}
-	
+
 	@Override
 	public int getRoleForName(IASTName n) {
 		return r_unclear;

@@ -107,28 +107,29 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_typeof = 14;
 	
 	/**
-	 * For GCC parsers, only. {@code op_labelReference} is used for &&label type
-	 * expressions.
-	 */
-	public static final int op_labelReference = 15;
-	
-	/**
 	 * For GCC parsers, only. {@code op_alignOf} is used for __alignOf( unaryExpression ) type
 	 * expressions.
 	 */
-	public static final int op_alignOf = 16;
+	public static final int op_alignOf = 15;
 
 	/**
 	 * For C++, only: 'sizeof... ( parameterPack )'
 	 * @since 5.2
 	 */
-	public static final int op_sizeofParameterPack = 17;
+	public static final int op_sizeofParameterPack = 16;
 
 	/**
 	 * For C++, only: noexcept ( expression )
 	 * @since 5.5
 	 */
-	public static final int op_noexcept = 18;
+	public static final int op_noexcept = 17;
+
+	/**
+	 * For GCC parsers, only. {@code op_labelReference} is used for &&label type
+	 * expressions.
+	 * @since 5.8
+	 */
+	public static final int op_labelReference = 18;
 
 	/**
 	 * {@code op_last} is made available for subclasses.

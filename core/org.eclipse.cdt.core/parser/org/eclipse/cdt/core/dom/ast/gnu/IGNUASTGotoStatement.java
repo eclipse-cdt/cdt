@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
  *   goto *labelPtr;
  * </code>
  * 
- * @since 8.4
+ * @since 5.8
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -430,7 +431,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 	
 	@Override
-	public IASTStatement newGotoStatement(IASTName name) {
+	public IASTGotoStatement newGotoStatement(IASTName name) {
 		return new CPPASTGotoStatement(name);
 	}
 

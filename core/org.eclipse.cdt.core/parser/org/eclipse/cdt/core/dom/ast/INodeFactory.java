@@ -121,10 +121,14 @@ public interface INodeFactory {
 
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
 	
-	public IASTStatement newGotoStatement(IASTName name);
-	
+	public IASTGotoStatement newGotoStatement(IASTName name);
+
+	/**
+	 * Note: Adding as separate function to avoid changing API.
+	 * @since 5.8
+	 */
 	public IASTStatement newGotoStatement(IASTExpression expression);
-	
+
 	public IASTIdExpression newIdExpression(IASTName name);
 
 	public IASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);

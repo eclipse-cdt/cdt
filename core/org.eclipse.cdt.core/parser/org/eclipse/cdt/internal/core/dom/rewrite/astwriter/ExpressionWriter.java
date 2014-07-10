@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -110,6 +111,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String MODULO_OP = " % "; //$NON-NLS-1$
 	private static final String DIVIDE_OP = " / "; //$NON-NLS-1$
 	private static final String MULTIPLY_OP = " * "; //$NON-NLS-1$
+	private static final String LABEL_REFERENCE_OP = "&&"; //$NON-NLS-1$
 	private static final String THIS = "this"; //$NON-NLS-1$
 	private static final String THROW = "throw "; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;
@@ -248,7 +250,8 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_throw:
 		case ICPPASTUnaryExpression.op_typeid:
-		case IASTUnaryExpression.op_alignOf: 
+		case IASTUnaryExpression.op_alignOf:
+		case IASTUnaryExpression.op_labelReference:
 			return true;
 
 		default:
@@ -302,6 +305,8 @@ public class ExpressionWriter extends NodeWriter{
 			return TYPEID_OP;
 		case IASTUnaryExpression.op_alignOf:
 			return ALIGNOF_OP;
+		case IASTUnaryExpression.op_labelReference:
+			return LABEL_REFERENCE_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 		throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
@@ -380,7 +385,7 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private void writeUnaryExpression(IASTUnaryExpression unExp) {
-		if (isPrefixExpression(unExp )) {
+		if (isPrefixExpression(unExp)) {
 			scribe.print(getPrefixOperator(unExp));
 		}
 		visitNodeIfNotNull(unExp.getOperand());

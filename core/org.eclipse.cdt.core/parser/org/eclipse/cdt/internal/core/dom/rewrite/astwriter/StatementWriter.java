@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -106,6 +107,8 @@ public class StatementWriter extends NodeWriter {
 		} else if (statement instanceof IASTGotoStatement) {
 			writeGotoStatement((IASTGotoStatement) statement);
 //			usually newLine
+		} else if (statement instanceof IGNUASTGotoStatement) {
+			writeGNUASTGotoStatement((IGNUASTGotoStatement) statement);
 		} else if (statement instanceof IASTLabelStatement) {
 			writeLabelStatement((IASTLabelStatement) statement);
 			newLine = false;
@@ -263,6 +266,12 @@ public class StatementWriter extends NodeWriter {
 	private void writeGotoStatement(IASTGotoStatement gotoStatement) {
 		scribe.print(GOTO);
 		gotoStatement.getName().accept(visitor);
+		scribe.printSemicolon();
+	}
+
+	private void writeGNUASTGotoStatement(IGNUASTGotoStatement gotoStatement) {
+		scribe.print(GOTO);
+		gotoStatement.getLabelNameExpression().accept(visitor);
 		scribe.printSemicolon();
 	}
 

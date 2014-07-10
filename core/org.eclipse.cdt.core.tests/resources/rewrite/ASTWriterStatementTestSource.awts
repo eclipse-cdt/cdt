@@ -109,6 +109,25 @@ int f()
     goto badStyle;
 }
 
+//!CPP GNU Goto Expression Statement Test
+//%CPP GNU
+void f()
+{
+    void* labelPtr = &&foo;
+    goto *labelPtr;
+    foo:
+    return;
+}
+
+//!C GNU Goto Expression Statement Test
+//%CPP GNU
+void f()
+{
+    void* labelPtr = &&foo;
+    goto *labelPtr;
+    foo:
+    return;
+}
 
 //!IfStatementTest
 //%CPP

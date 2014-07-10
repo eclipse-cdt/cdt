@@ -533,7 +533,33 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrences(0, 0);
 		assertOccurrencesInWidget();
 	}
-	
+
+	public void testMarkLabelReference() {
+		try {
+			fMatch = fFindReplaceDocumentAdapter.find(0, "labelPointer", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+
+		assertOccurrences(2, 1);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkReferencedLabel() {
+		try {
+			fMatch = fFindReplaceDocumentAdapter.find(0, "referencedLabel", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+
+		assertOccurrences(2, 0);
+		assertOccurrencesInWidget();
+	}
+
 	private void assertOccurrencesInWidget() {
 		EditorTestHelper.runEventQueue(100);
 

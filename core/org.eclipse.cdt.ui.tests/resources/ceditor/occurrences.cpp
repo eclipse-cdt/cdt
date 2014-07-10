@@ -127,3 +127,10 @@ ConstantTemplate<5> c52;
 ConstantTemplate<4> c4;
 
 const int c= c5.getNumber(0);
+
+void functionWithLabelReferenceGoto() {
+	void * labelPointer = &&referencedLabel;
+	goto *labelPointer;
+	referencedLabel:
+	return;
+}

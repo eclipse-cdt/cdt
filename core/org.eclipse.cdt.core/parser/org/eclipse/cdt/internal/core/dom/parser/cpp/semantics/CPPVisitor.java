@@ -1713,7 +1713,7 @@ public class CPPVisitor extends ASTQueries {
 
 			switch (kind) {
 			case KIND_LABEL:
-				if (prop == IASTGotoStatement.NAME)
+				if (prop == IASTGotoStatement.NAME || prop == IASTIdExpression.ID_NAME)
 					break;
 				return PROCESS_CONTINUE;
 

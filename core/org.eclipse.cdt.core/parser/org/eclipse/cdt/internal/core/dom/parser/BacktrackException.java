@@ -72,7 +72,6 @@ public class BacktrackException extends Exception {
         length = l;
     }
 
-
     /**
      * @return Returns the length.
      */
@@ -85,15 +84,15 @@ public class BacktrackException extends Exception {
     public int getOffset() {
         return offset;
     }
-    
+
     @Override
     public Throwable fillInStackTrace() {
-    	// Do nothing, performance optimization
-    	return this;
+        // Do nothing, performance optimization
+        return this;
     }
-    
+
     @Override
     public StackTraceElement[] getStackTrace() {
-    	return EMPTY_STACK;
+        return EMPTY_STACK;
     }
 }

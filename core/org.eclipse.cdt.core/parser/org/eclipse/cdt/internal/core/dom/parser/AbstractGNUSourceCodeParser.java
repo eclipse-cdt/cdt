@@ -1990,21 +1990,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected IASTStatement parseGotoStatement() throws EndOfFileException, BacktrackException {
-        int startOffset = consume().getOffset(); // t_goto
-        IASTStatement goto_statement = null;
-        
+        int startOffset = consume(IToken.t_goto).getOffset();
+        IASTStatement gotoStatement = null;
+
         if (LT(1) == IToken.tSTAR)
         {
-	        IASTExpression goto_label_name_expression = expression();
-	        goto_statement = nodeFactory.newGotoStatement(goto_label_name_expression);
+            IASTExpression gotoLabelNameExpression = expression();
+            gotoStatement = nodeFactory.newGotoStatement(gotoLabelNameExpression);
         } else {
-        	IASTName goto_label_name = identifier();
-	        goto_statement = nodeFactory.newGotoStatement(goto_label_name);
+            IASTName gotoLabelName = identifier();
+            gotoStatement = nodeFactory.newGotoStatement(gotoLabelName);
         }
-        
+
         int lastOffset = consume(IToken.tSEMI).getEndOffset();
-        ((ASTNode) goto_statement).setOffsetAndLength(startOffset, lastOffset - startOffset);
-        return goto_statement;
+        ((ASTNode) gotoStatement).setOffsetAndLength(startOffset, lastOffset - startOffset);
+        return gotoStatement;
     }
 
     protected IASTStatement parseBreakStatement() throws EndOfFileException, BacktrackException {

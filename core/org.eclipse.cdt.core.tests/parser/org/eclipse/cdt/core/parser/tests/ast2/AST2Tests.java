@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
+ *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -150,9 +151,14 @@ public class AST2Tests extends AST2TestBase {
 	}
 
 	private void parseAndCheckBindings() throws Exception {
+		parseAndCheckBindings(false);
+	}
+
+	private void parseAndCheckBindings(boolean useGnuExtensions) throws Exception {
 		String code= getAboveComment();
-		parseAndCheckBindings(code, C);
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings(code, C, useGnuExtensions);
+		parseAndCheckBindings(code, CPP, useGnuExtensions);
+		
 	}
 
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
@@ -7547,5 +7553,18 @@ public class AST2Tests extends AST2TestBase {
 	//	#endif
 	public void testU8TokenAfterIfdef_429361() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	void f()
+	//	{
+	//	// ...
+	//		void* labelPtr;
+	//		labelPtr = &&foo;
+	//		goto *labelPtr;
+	//	foo:
+	//		return;
+	//	}
+	public void testExpressionLabelReference_84144() throws Exception {
+		parseAndCheckBindings(true);
 	}
 }

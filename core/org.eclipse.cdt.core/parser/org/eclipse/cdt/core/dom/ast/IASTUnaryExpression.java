@@ -125,8 +125,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_noexcept = 17;
 
 	/**
-	 * For GCC parsers, only. {@code op_labelReference} is used for &&label type
-	 * expressions.
+	 * For GCC parsers, only. {@code op_labelReference} is used for &&label type expressions.
 	 * @since 5.8
 	 */
 	public static final int op_labelReference = 18;

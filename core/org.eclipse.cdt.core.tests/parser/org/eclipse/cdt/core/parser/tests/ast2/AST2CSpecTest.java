@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Anders Dahlberg (Ericsson) - bug 84144
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -1727,19 +1726,6 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 		buffer.append("goto lab4; // invalid: going INTO scope of VLA.\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);
-	}
-	
-	//	void f()
-	//	{
-	//	// ...
-	//     void* labelPtr;
-	//     labelPtr = &&foo;
-	//     goto *labelPtr;
-	//	foo:
-	//     return;
-	//	}
-	public void test6_bug84144() throws Exception {
-		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	/**

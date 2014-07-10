@@ -120,11 +120,10 @@ public interface INodeFactory {
 	public IGCCASTAttributeSpecifier newGCCAttributeSpecifier();
 
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement);
-	
+
 	public IASTGotoStatement newGotoStatement(IASTName name);
 
 	/**
-	 * Note: Adding as separate function to avoid changing API.
 	 * @since 5.8
 	 */
 	public IASTStatement newGotoStatement(IASTExpression expression);

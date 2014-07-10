@@ -58,7 +58,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -106,7 +105,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLabel;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
@@ -466,8 +464,7 @@ public class CVisitor extends ASTQueries {
 		boolean labelReference = isLabelReference(parent);
 		
 		if (labelReference) {
-			IASTUnaryExpression expression = (IASTUnaryExpression) parent.getParent();
-			binding = createLabelReferenceBinding(name, expression);
+			binding = createLabelReferenceBinding(name);
 		} else if (parent instanceof CASTIdExpression) {
 			binding = resolveBinding(parent);
 		} else if (parent instanceof ICASTTypedefNameSpecifier) {
@@ -608,55 +605,33 @@ public class CVisitor extends ASTQueries {
 		}
 		return null;
 	}
-	
 
-	private static boolean isLabelReference(IASTNode node) {
-		boolean labelReference = false;
-		IASTNode parent = node.getParent();
-		
-		if (parent instanceof IASTUnaryExpression) {
-			int operator = ((IASTUnaryExpression) parent).getOperator();
-			labelReference = operator == IASTUnaryExpression.op_labelReference; 
-		}
-		
-		return labelReference;
-	}
-
-	private static IBinding createLabelReferenceBinding(IASTName name, IASTUnaryExpression expression) {
-		IBinding binding = null;
-		
+	private static IBinding createLabelReferenceBinding(IASTName name) {
 		// Find function scope for r-value expression
 		//   void* labelPtr = &&foo;
 		// foo:                 ^^^
 		//   return
-	    IScope scope = getContainingScope(name);
-	    IASTInternalScope s = (IASTInternalScope) scope;
-	    IASTNode node = s.getPhysicalNode();
-	    
-	    while (node != null && !(node instanceof IASTFunctionDefinition)) {
-	    	node = node.getParent();
-	    }
-	    	
-	    if (node != null) {
-		    IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
-		    CASTFunctionDeclarator declarator = (CASTFunctionDeclarator) definition.getDeclarator();
-		    scope = declarator.getFunctionScope();
-		    
-	        if (scope != null) {
-			    binding = scope.getBinding(name, false);
+		IBinding binding = null;
+		IBinding enclosingFunction = findEnclosingFunction(name);
+		if (enclosingFunction instanceof IFunction) {
+			IFunction function = (IFunction) enclosingFunction;
+			IScope functionScope = function.getFunctionScope();
+			if (functionScope != null) {
+				binding = functionScope.getBinding(name, false);
 				if (!(binding instanceof ILabel)) {
-				    binding = new CPPLabel(name);
-				    ASTInternal.addName(scope, name);
+					binding = new CLabel(name);
+					ASTInternal.addName(functionScope, name);
 				}
-		    } 
-	    }
-	    
-        if (binding == null) {
-	    	binding = new ProblemBinding(expression, IProblemBinding.SEMANTIC_BAD_SCOPE,
-		    		expression.getRawSignature().toCharArray());
-	    }
-    
-	    return binding;
+			}
+		}
+
+		if (binding == null) {
+			IASTNode parentExpression = name.getParent();
+			binding = new ProblemBinding(parentExpression, IProblemBinding.SEMANTIC_BAD_SCOPE,
+					parentExpression.getRawSignature().toCharArray());
+		}
+
+		return binding;
 	}
 
 	/**
@@ -1724,26 +1699,6 @@ public class CVisitor extends ASTQueries {
 	    }
 	    
 	    return true; 
-	}
-
-	/**
-	 * Searches for the function enclosing the given node. May return <code>null</code>.
-	 */
-	public static IBinding findEnclosingFunction(IASTNode node) {
-		while (node != null && !(node instanceof IASTFunctionDefinition)) {
-			node= node.getParent();
-		}
-		if (node == null)
-			return null;
-		
-		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
-		if (dtor != null) {
-			IASTName name= dtor.getName();
-			if (name != null) {
-				return name.resolveBinding();
-			}
-		}
-		return null;
 	}
 
 	/**

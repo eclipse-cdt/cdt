@@ -179,7 +179,6 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -301,17 +300,16 @@ public class CPPVisitor extends ASTQueries {
 			id.resolveBinding();
 			return name.getBinding();
 		}
-		
+
 		// GNU Goto label reference
 		//
 		//   void* labelPtr = &&foo; <-- label reference
 		// foo:
 		//
 		boolean labelReference = isLabelReference(parent);
-		
+
 		if (labelReference) {
-			IASTUnaryExpression expression = (IASTUnaryExpression) parent.getParent();
-			return createLabelReferenceBinding(name, expression);
+			return createLabelReferenceBinding(name);
 		} else if (parent instanceof IASTIdExpression) {
 			return resolveBinding(parent);
 		} else if (parent instanceof ICPPASTFieldReference) {
@@ -389,53 +387,32 @@ public class CPPVisitor extends ASTQueries {
 		return scope == inScope;
 	}
 
-	private static boolean isLabelReference(IASTNode node) {
-		boolean labelReference = false;
-		IASTNode parent = node.getParent();
-		
-		if (parent instanceof IASTUnaryExpression) {
-			int operator = ((IASTUnaryExpression) parent).getOperator();
-			labelReference = operator == IASTUnaryExpression.op_labelReference; 
-		}
-		
-		return labelReference;
-	}
-
-	private static IBinding createLabelReferenceBinding(IASTName name, IASTUnaryExpression expression) {
-		IBinding binding = null;
-		
+	private static IBinding createLabelReferenceBinding(IASTName name) {
 		// Find function scope for r-value expression
 		//   void* labelPtr = &&foo;
 		// foo:                 ^^^
 		//   return
-	    IScope scope = getContainingScope(name);
-	    IASTInternalScope s = (IASTInternalScope) scope;
-	    IASTNode node = s.getPhysicalNode();
-	    
-	    while (node != null && !(node instanceof IASTFunctionDefinition)) {
-	    	node = node.getParent();
-	    }
-	    	
-	    if (node != null) {
-		    IASTFunctionDefinition definition = (IASTFunctionDefinition) node;
-		    CPPASTFunctionDeclarator declarator = (CPPASTFunctionDeclarator) definition.getDeclarator();
-		    scope = declarator.getFunctionScope();
-		    
-	        if (scope != null) {
-			    binding = scope.getBinding(name, false);
+		IBinding binding = null;
+		IBinding enclosingFunction = findEnclosingFunction(name);
+		if (enclosingFunction instanceof IFunction) {
+			IFunction function = (IFunction) enclosingFunction;
+			IScope functionScope = function.getFunctionScope();
+			if (functionScope != null) {
+				binding = functionScope.getBinding(name, false);
 				if (!(binding instanceof ILabel)) {
-				    binding = new CPPLabel(name);
-				    ASTInternal.addName(scope, name);
+					binding = new CPPLabel(name);
+					ASTInternal.addName(functionScope, name);
 				}
-		    } 
-	    }
-	    
-        if (binding == null) {
-	    	binding = new CPPScope.CPPScopeProblem(expression, IProblemBinding.SEMANTIC_BAD_SCOPE,
-		    		expression.getRawSignature().toCharArray());
-	    }
-    
-	    return binding;
+			}
+		}
+
+		if (binding == null) {
+			IASTNode parentExpression = name.getParent();
+			binding = new CPPScope.CPPScopeProblem(parentExpression, IProblemBinding.SEMANTIC_BAD_SCOPE,
+					parentExpression.getRawSignature().toCharArray());
+		}
+
+		return binding;
 	}
 
 	private static IBinding createBinding(IASTGotoStatement gotoStatement) {
@@ -2530,26 +2507,6 @@ public class CPPVisitor extends ASTQueries {
 	public static boolean isLValueReference(IType t) {
 		t= SemanticUtil.getNestedType(t, TDEF);
 		return t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference();
-	}
-
-	/**
-	 * Searches for the function enclosing the given node. May return <code>null</code>.
-	 */
-	public static IBinding findEnclosingFunction(IASTNode node) {
-		while (node != null && !(node instanceof IASTFunctionDefinition)) {
-			node= node.getParent();
-		}
-		if (node == null)
-			return null;
-
-		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
-		if (dtor != null) {
-			IASTName name= dtor.getName();
-			if (name != null) {
-				return name.resolveBinding();
-			}
-		}
-		return null;
 	}
 
 	/**

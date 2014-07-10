@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -124,7 +127,27 @@ public class ASTQueries {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * Searches for the function enclosing the given node. May return <code>null</code>.
+	 */
+	public static IBinding findEnclosingFunction(IASTNode node) {
+		while (node != null && !(node instanceof IASTFunctionDefinition)) {
+			node= node.getParent();
+		}
+		if (node == null)
+			return null;
+
+		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+		if (dtor != null) {
+			IASTName name= dtor.getName();
+			if (name != null) {
+				return name.resolveBinding();
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Extracts the active declarations from an array of declarations.
 	 */
@@ -182,5 +205,17 @@ public class ASTQueries {
 			descendant = descendant.getParent();
 		} while (descendant != null);
 		return false;
+	}
+
+	protected static boolean isLabelReference(IASTNode node) {
+		boolean labelReference = false;
+		IASTNode parent = node.getParent();
+
+		if (parent instanceof IASTUnaryExpression) {
+			int operator = ((IASTUnaryExpression) parent).getOperator();
+			labelReference = operator == IASTUnaryExpression.op_labelReference; 
+		}
+
+		return labelReference;
 	}
 }

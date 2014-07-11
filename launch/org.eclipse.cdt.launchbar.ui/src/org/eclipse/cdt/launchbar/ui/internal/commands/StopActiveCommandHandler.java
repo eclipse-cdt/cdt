@@ -10,16 +10,96 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui.internal.commands;
 
+import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
+import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
+import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class StopActiveCommandHandler extends AbstractHandler {
+	private ILaunchBarManager launchBarManager;
+
+	public StopActiveCommandHandler() {
+		launchBarManager = Activator.getService(ILaunchBarManager.class);
+	}
 
 	@Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO
+		stop();
 		return null;
     }
+
+	public void stop() {
+		stopBuild();
+		stopActiveLaunches();
+	}
+
+	protected void stopActiveLaunches() {
+		ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		ILaunchConfigurationDescriptor desc = launchBarManager.getActiveLaunchConfigurationDescriptor();
+		ILaunchConfiguration activeLaunchConfiguration;
+		try {
+			activeLaunchConfiguration = desc.getLaunchConfiguration();
+		} catch (CoreException e) {
+			Activator.log(e);
+			return;
+		}
+		for (int i = 0; i < activeLaunches.length; i++) {
+			final ILaunch launch = activeLaunches[i];
+			if (!launch.isTerminated() && activeLaunchConfiguration != null
+			        && matches(activeLaunchConfiguration, launch.getLaunchConfiguration())) {
+				Job job = new Job("Stopping " + activeLaunchConfiguration.getName()) {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							launch.terminate();
+						} catch (DebugException e) {
+							Activator.log(e);
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
+			}
+		}
+	}
+
+	protected boolean matches(ILaunchConfiguration activeLaunchConfiguration, ILaunchConfiguration launchConfiguration) {
+		return activeLaunchConfiguration.getName().equals(launchConfiguration.getName()); // just name for now
+	}
+
+	protected void stopBuild() {
+		Job job = new Job("Stopping build") {
+			@Override
+			protected IStatus run(IProgressMonitor progress) {
+				// stops all builds
+				final IJobManager jobManager = Job.getJobManager();
+				Job[] jobs = jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD);
+				for (int i = 0; i < jobs.length; i++) {
+					Job job = jobs[i];
+					job.cancel();
+				}
+				jobs = jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD);
+				for (int i = 0; i < jobs.length; i++) {
+					Job job = jobs[i];
+					job.cancel();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+	}
 
 }

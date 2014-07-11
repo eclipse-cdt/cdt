@@ -73,7 +73,7 @@ public class ModeSelector extends CSelector {
 				ILaunchConfigurationDescriptor config = getManager().getActiveLaunchConfigurationDescriptor();
 				if (config != null && element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLaunchGroup(mode.getIdentifier());
+					ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
 					if (group != null) {
 						ImageDescriptor imageDesc = group.getImageDescriptor();
 						Image image = images.get(imageDesc);
@@ -91,7 +91,7 @@ public class ModeSelector extends CSelector {
 				ILaunchConfigurationDescriptor config = getManager().getActiveLaunchConfigurationDescriptor();
 				if (config != null && element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLaunchGroup(mode.getIdentifier());
+					ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
 					if (group != null) {
 						return group.getLabel().replace("&", "");
 					}
@@ -127,6 +127,19 @@ public class ModeSelector extends CSelector {
 				return 0;
 			}
 		});
+	}
+
+
+	protected ILaunchGroup getLaunchGroup(String mode) {
+		ILaunchGroup[] groups = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroups();
+		ILaunchGroup extension = null;
+		for (int i = 0; i < groups.length; i++) {
+			extension = groups[i];
+			if (extension.getMode().equals(mode)) {
+				return extension;
+			}
+		}
+		return null;
 	}
 
 	@Override

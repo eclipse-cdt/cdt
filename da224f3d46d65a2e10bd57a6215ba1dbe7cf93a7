@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_ea2b2405",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1336,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-11T23:53:29Z",
+      "side": 1,
+      "message": "You can remove check for null if all other cases\nusing instanceof expression",
+      "revId": "da224f3d46d65a2e10bd57a6215ba1dbe7cf93a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_8a343066",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-11T23:53:29Z",
+      "side": 1,
+      "message": "else if (val instanceof String)\n\nto make sure",
+      "revId": "da224f3d46d65a2e10bd57a6215ba1dbe7cf93a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <introContent>
     <extensionContent id="orgeclipsecdtdocuserwelcome-introExtension" 
-                      alt-style="swt/tutorial.properties"
+                      alt-style="swt/whatsnew.properties"
                       style="css/sample.css" name="Sample Extension" path="whatsnew/@">
 		<group style-id="content-group" id="orgeclipsecdtdocuserwelcome-introLink-group">
        		<link label="C/C++ Development" 

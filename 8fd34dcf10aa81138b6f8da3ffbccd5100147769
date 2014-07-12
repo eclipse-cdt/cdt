@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_0a4020b9",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/cdtdebug.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-12T00:02:51Z",
+      "side": 1,
+      "message": "why you escaping : (column)?\ntechnically all args with variable should be double\nquotes in case they contain spaces, i.e.\n-data \"$HOME/workspace-cdtdebug\" ...",
+      "revId": "8fd34dcf10aa81138b6f8da3ffbccd5100147769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6a3f143e",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/install.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-12T00:02:51Z",
+      "side": 1,
+      "message": "You testing not where script is found but where is run from,\ni..e working directory\nbut error message said something about script location.\nTo test where script is you have to use $0 paths kind of",
+      "revId": "8fd34dcf10aa81138b6f8da3ffbccd5100147769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

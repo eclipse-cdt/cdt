@@ -1333,14 +1333,12 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		IOption[] opts = holder.getOptions();
 		for (IOption opt : opts) {
 			Object val = opt.getDefaultValue();
-			if (val != null) {
-				if (val instanceof Boolean) {
-					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)val);
-				} else if (val instanceof String[]) {
-					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String[])val);
-				} else {
-					ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String)val);
-				}
+			if (val instanceof Boolean) {
+				ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (Boolean)val);
+			} else if (val instanceof String[]) {
+				ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String[])val);
+			} else if (val instanceof String){
+				ManagedBuildManager.setOption(toolChain.getParent(), holder, opt, (String)val);
 			}
 		}
 	}

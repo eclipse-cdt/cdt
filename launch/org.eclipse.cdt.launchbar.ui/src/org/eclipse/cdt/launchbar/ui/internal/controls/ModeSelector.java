@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchMode;
@@ -49,7 +48,7 @@ public class ModeSelector extends CSelector {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				try {
-					ILaunchMode[] modes = getManager().getActiveLaunchConfigurationDescriptor().getLaunchModes();
+					ILaunchMode[] modes = getManager().getLaunchModes();
 					if (modes.length > 0)
 						return modes;
 				} catch (CoreException e) {
@@ -70,8 +69,7 @@ public class ModeSelector extends CSelector {
 			}
 			@Override
 			public Image getImage(Object element) {
-				ILaunchConfigurationDescriptor config = getManager().getActiveLaunchConfigurationDescriptor();
-				if (config != null && element instanceof ILaunchMode) {
+				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
 					ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
 					if (group != null) {
@@ -88,8 +86,7 @@ public class ModeSelector extends CSelector {
 			}
 			@Override
 			public String getText(Object element) {
-				ILaunchConfigurationDescriptor config = getManager().getActiveLaunchConfigurationDescriptor();
-				if (config != null && element instanceof ILaunchMode) {
+				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
 					ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
 					if (group != null) {
@@ -147,7 +144,11 @@ public class ModeSelector extends CSelector {
 		Object selected = getSelection();
 		if (selected instanceof ILaunchMode) {
 			ILaunchMode mode = (ILaunchMode) selected;
-			getManager().setActiveLaunchMode(mode);
+			try {
+				getManager().setActiveLaunchMode(mode);
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
 		}
 	}
 	

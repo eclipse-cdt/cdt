@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="launchBarUIContributions" name="launchBar UI Contributions" schema="schema/launchBarUIContributions.exsd"/>
    <extension
          id="launchBarInjector"
          point="org.eclipse.e4.workbench.model">
@@ -57,6 +58,17 @@
             id="org.eclipse.cdt.launchbar.ui.prefPage"
             name="Launch Bar">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.launchbar.ui.launchBarUIContributions">
+      <descriptorUI
+            descriptorTypeId="org.eclipse.cdt.launchbar.core.descriptor.default"
+            labelProvider="org.eclipse.cdt.launchbar.ui.internal.DefaultDescriptorLabelProvider">
+      </descriptorUI>
+      <targetUI
+            labelProvider="org.eclipse.cdt.launchbar.ui.internal.LocalTargetLabelProvider"
+            targetTypeId="org.eclipse.cdt.launchbar.core.target.local">
+      </targetUI>
    </extension>
 
 </plugin>

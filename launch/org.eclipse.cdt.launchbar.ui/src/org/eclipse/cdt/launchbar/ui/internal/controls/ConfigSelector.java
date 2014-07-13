@@ -11,12 +11,10 @@
 package org.eclipse.cdt.launchbar.ui.internal.controls;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
-import org.eclipse.cdt.launchbar.core.internal.DefaultLaunchConfigurationDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.cdt.launchbar.ui.internal.dialogs.LaunchConfigurationEditDialog;
@@ -26,13 +24,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -78,58 +75,35 @@ public class ConfigSelector extends CSelector {
 			}
 			@Override
 			public Object[] getElements(Object inputElement) {
-				ILaunchConfigurationDescriptor[] descs = getManager().getLaunchConfigurationDescriptors();
-				if (descs.length > 0)
-					return descs;
+				try {
+					ILaunchDescriptor[] descs = getManager().getLaunchDescriptors();
+					if (descs.length > 0)
+						return descs;
+				} catch (CoreException e) {
+					Activator.log(e.getStatus());
+				}
 				return noConfigs; 
 			}
 		});
 
 		setLabelProvider(new LabelProvider() {
-			private Map<ImageDescriptor, Image> images = new HashMap<>();
-			@Override
-			public void dispose() {
-				super.dispose();
-				for (Image image : images.values()) {
-					image.dispose();
-				}
-			}
 			@Override
 			public Image getImage(Object element) {
-				if (element instanceof ILaunchConfigurationDescriptor) {
-					ILaunchConfigurationDescriptor configDesc = (ILaunchConfigurationDescriptor)element;
+				if (element instanceof ILaunchDescriptor) {
+					ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
 					ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
 					if (labelProvider != null) {
 						return labelProvider.getImage(element);
 					}
-
-					// Default
-					if (element instanceof DefaultLaunchConfigurationDescriptor) {
-						try {
-							ILaunchConfigurationType type = configDesc.getLaunchConfiguration().getType();
-							ImageDescriptor imageDescriptor = DebugUITools.getDefaultImageDescriptor(type);
-							if (imageDescriptor != null) {
-								Image image = images.get(imageDescriptor);
-								if (image == null) {
-									image = imageDescriptor.createImage();
-									images.put(imageDescriptor, image);
-								}
-								return image;
-							}
-						} catch (CoreException e) {
-							Activator.log(e);
-						}
-					}
 				}
-				// Default
-				return null;
+				return super.getImage(element);
 			}
 			@Override
 			public String getText(Object element) {
 				if (element instanceof String) {
 					return (String)element;
-				} else if (element instanceof ILaunchConfigurationDescriptor) {
-					ILaunchConfigurationDescriptor configDesc = (ILaunchConfigurationDescriptor)element;
+				} else if (element instanceof ILaunchDescriptor) {
+					ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
 					ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
 					if (labelProvider != null) {
 						return labelProvider.getText(element);
@@ -137,8 +111,7 @@ public class ConfigSelector extends CSelector {
 					// Default
 					return configDesc.getName();
 				}
-
-				return null;
+				return super.getText(element);
 			}
 		});
 
@@ -155,10 +128,10 @@ public class ConfigSelector extends CSelector {
 	@Override
 	protected void fireSelectionChanged() {
 		Object selected = getSelection();
-		if (selected instanceof ILaunchConfigurationDescriptor) {
-			ILaunchConfigurationDescriptor configDesc = (ILaunchConfigurationDescriptor) selected;
+		if (selected instanceof ILaunchDescriptor) {
+			ILaunchDescriptor configDesc = (ILaunchDescriptor) selected;
 			try {
-				getManager().setActiveLaunchConfigurationDescriptor(configDesc);
+				getManager().setActiveLaunchDescriptor(configDesc);
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
@@ -167,20 +140,22 @@ public class ConfigSelector extends CSelector {
 	
 	@Override
 	public boolean isEditable(Object element) {
-		return element instanceof ILaunchConfigurationDescriptor;
+		return element instanceof ILaunchDescriptor;
 	}
 
 	@Override
 	public void handleEdit(Object element) {
 		try {
-			ILaunchConfigurationDescriptor config = (ILaunchConfigurationDescriptor) element;
+			ILaunchDescriptor desc = (ILaunchDescriptor) element;
 			ILaunchMode mode = getManager().getActiveLaunchMode();
-			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-					.getLaunchGroup(config.getLaunchConfiguration().getType(), mode.getIdentifier());
+			ILaunchTarget target = getManager().getActiveLaunchTarget();
+			ILaunchConfigurationType configType = getManager().getLaunchConfigurationType(desc, target);
+			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType, mode.getIdentifier());
 			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
 			if (groupExt != null) {
-				final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config.getLaunchConfiguration(), groupExt);
+				ILaunchConfiguration config = getManager().getLaunchConfiguration(desc, target);
+				final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config, groupExt);
 				dialog.setInitialStatus(Status.OK_STATUS);
 				dialog.open();
 			}

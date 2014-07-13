@@ -12,6 +12,9 @@ package org.eclipse.cdt.launchbar.ui;
 
 public interface ILaunchBarUIConstants {
 
+	/**
+	 * Parameter name for the edit target command.
+	 */
 	public static final String TARGET_NAME = "targetName";
 
 }

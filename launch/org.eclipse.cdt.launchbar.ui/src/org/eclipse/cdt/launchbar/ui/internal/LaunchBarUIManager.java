@@ -17,7 +17,6 @@ import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
-import org.eclipse.cdt.launchbar.core.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -38,7 +37,7 @@ public class LaunchBarUIManager {
 	public LaunchBarUIManager(ILaunchBarManager manager) {
 		this.manager = manager;
 
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarContributions");
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarUIContributions");
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {
 			for (IConfigurationElement element : extension.getConfigurationElements()) {

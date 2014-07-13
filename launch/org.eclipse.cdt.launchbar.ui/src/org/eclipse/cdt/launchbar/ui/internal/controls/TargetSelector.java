@@ -18,14 +18,13 @@ import org.eclipse.cdt.launchbar.ui.IHoverProvider;
 import org.eclipse.cdt.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -63,9 +62,13 @@ public class TargetSelector extends CSelector {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				ILaunchTarget[] targets = getManager().getActiveLaunchConfigurationDescriptor().getLaunchTargets();
-				if (targets.length > 0)
-					return targets;
+				try {
+					ILaunchTarget[] targets = getManager().getLaunchTargets();
+					if (targets.length > 0)
+						return targets;
+				} catch (CoreException e) {
+					Activator.log(e.getStatus());
+				}
 				return noTargets;
 			}
 		});
@@ -151,7 +154,10 @@ public class TargetSelector extends CSelector {
 
 	@Override
 	public boolean hasActionArea() {
-		return uiManager.getAddTargetCommand(getManager().getActiveLaunchConfigurationDescriptor()) != null;
+			// TODO need an add target command similar to the add configuration that allows the user
+			// to select the target type.
+//			return uiManager.getAddTargetCommand(getManager().getActiveLaunchDescriptor()) != null;
+			return false;
 	}
 
 	@Override
@@ -184,15 +190,19 @@ public class TargetSelector extends CSelector {
 		createLabel.setText("Add New Target...");
 		createLabel.setBackground(white);
 
-		final String command = uiManager.getAddTargetCommand(getManager().getActiveLaunchConfigurationDescriptor());
-		MouseListener mouseListener = new MouseAdapter() {
-			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
-				Activator.runCommand(command);
-			}
-		};
-
-		createButton.addMouseListener(mouseListener);
-		createLabel.addMouseListener(mouseListener);
+//		try {
+//			final String command = uiManager.getAddTargetCommand(getManager().getActiveLaunchDescriptor());
+//			MouseListener mouseListener = new MouseAdapter() {
+//				public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
+//					Activator.runCommand(command);
+//				}
+//			};
+//
+//			createButton.addMouseListener(mouseListener);
+//			createLabel.addMouseListener(mouseListener);
+//		} catch (CoreException e) {
+//			Activator.log(e.getStatus());
+//		}
 
 		MouseTrackListener mouseTrackListener = new MouseTrackAdapter() {
 			@Override
@@ -216,7 +226,11 @@ public class TargetSelector extends CSelector {
 		Object selection = getSelection();
 		if (selection instanceof ILaunchTarget) {
 			ILaunchTarget target = (ILaunchTarget) selection;
-			uiManager.getManager().setActiveLaunchTarget(target);
+			try {
+				uiManager.getManager().setActiveLaunchTarget(target);
+			} catch (CoreException e) {
+				Activator.log(e.getStatus());
+			}
 		}
 	}
 	

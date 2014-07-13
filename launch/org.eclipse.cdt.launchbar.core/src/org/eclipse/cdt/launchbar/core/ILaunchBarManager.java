@@ -13,48 +13,53 @@ package org.eclipse.cdt.launchbar.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchMode;
 
 public interface ILaunchBarManager extends IAdaptable {
 
-	ILaunchConfigurationDescriptor[] getLaunchConfigurationDescriptors();
+	ILaunchDescriptor[] getLaunchDescriptors() throws CoreException;
 
-	ILaunchConfigurationDescriptor getActiveLaunchConfigurationDescriptor();
+	ILaunchDescriptor getActiveLaunchDescriptor() throws CoreException;
 
-	void setActiveLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) throws CoreException;
-	
-	void addLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc) throws CoreException;
-	
-	void removeLaunchConfigurationDescriptor(ILaunchConfigurationDescriptor configDesc);
-	
-	ILaunchConfigurationDescriptor getLaunchConfigurationDescriptor(ILaunchConfiguration configuration) throws CoreException;
+	void setActiveLaunchDescriptor(ILaunchDescriptor configDesc) throws CoreException;
 
-	ILaunchMode getActiveLaunchMode();
+	ILaunchMode[] getLaunchModes() throws CoreException;
+
+	ILaunchMode getActiveLaunchMode() throws CoreException;
+
+	void setActiveLaunchMode(ILaunchMode mode) throws CoreException;
+
+	ILaunchTarget[] getLaunchTargets() throws CoreException;
 	
-	void setActiveLaunchMode(ILaunchMode mode);
-	
-	ILaunchTarget getActiveLaunchTarget();
-	
-	void setActiveLaunchTarget(ILaunchTarget target);
-	
-	void addLaunchTarget(ILaunchTarget target);
-	
-	void removeLaunchTarget(ILaunchTarget target);
-	
-	ILaunchTarget getLocalLaunchTarget();
+	ILaunchTarget getLaunchTarget(String id) throws CoreException;
+
+	ILaunchTarget getActiveLaunchTarget() throws CoreException;
+
+	void setActiveLaunchTarget(ILaunchTarget target) throws CoreException;
+
+	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException;
+
+	ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException;
+
+	ILaunchDescriptor launchObjectAdded(Object element) throws CoreException;
+
+	void launchObjectRemoved(Object element) throws CoreException;
 
 	interface Listener {
 
 		void activeConfigurationDescriptorChanged();
 
 		void activeLaunchModeChanged();
-		
+
 		void activeLaunchTargetChanged();
+
+		void launchDescriptorRemoved(ILaunchDescriptor descriptor);
 
 	}
 
 	void addListener(Listener listener);
-	
+
 	void removeListener(Listener listener);
 
 }

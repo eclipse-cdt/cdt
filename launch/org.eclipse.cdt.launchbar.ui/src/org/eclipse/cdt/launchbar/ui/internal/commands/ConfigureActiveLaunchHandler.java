@@ -11,7 +11,8 @@
 package org.eclipse.cdt.launchbar.ui.internal.commands;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -37,22 +38,15 @@ public class ConfigureActiveLaunchHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ILaunchConfigurationDescriptor activeLaunchConfiguration = launchBarManager.getActiveLaunchConfigurationDescriptor();
-		ILaunchMode activeLaunchMode = launchBarManager.getActiveLaunchMode();
-		
-		if (activeLaunchConfiguration == null)
-			return Status.OK_STATUS;
-		
-		ILaunchConfiguration launchConfiguration;
 		try {
-			launchConfiguration = activeLaunchConfiguration.getLaunchConfiguration();
-		} catch (CoreException e1) {
-			return e1.getStatus();
-		}
-			
-		try {
+			ILaunchDescriptor desc = launchBarManager.getActiveLaunchDescriptor();
+			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
+			ILaunchConfiguration launchConfiguration = launchBarManager.getLaunchConfiguration(desc, target);
+			if (launchConfiguration == null)
+				return Status.OK_STATUS;
 			ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
-			// TODO, gah, this is internal. Get it added to DebugUIUtil
+
+			ILaunchMode activeLaunchMode = launchBarManager.getActiveLaunchMode();
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchConfiguration.getType(), activeLaunchMode.getIdentifier());
 			
 			if (DebugUITools.openLaunchConfigurationPropertiesDialog(HandlerUtil.getActiveShell(event), wc, group.getIdentifier()) == Window.OK)
@@ -60,11 +54,6 @@ public class ConfigureActiveLaunchHandler extends AbstractHandler {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		
 		return Status.OK_STATUS;
-	}
-
-	protected String getMode() {
-		return "config"; //$NON-NLS-1$
 	}
 }

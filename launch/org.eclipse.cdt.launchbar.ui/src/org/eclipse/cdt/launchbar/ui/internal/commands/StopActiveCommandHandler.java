@@ -11,13 +11,11 @@
 package org.eclipse.cdt.launchbar.ui.internal.commands;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationDescriptor;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,7 +24,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class StopActiveCommandHandler extends AbstractHandler {
 	private ILaunchBarManager launchBarManager;
@@ -47,37 +44,23 @@ public class StopActiveCommandHandler extends AbstractHandler {
 	}
 
 	protected void stopActiveLaunches() {
-		ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		ILaunchConfigurationDescriptor desc = launchBarManager.getActiveLaunchConfigurationDescriptor();
-		ILaunchConfiguration activeLaunchConfiguration;
-		try {
-			activeLaunchConfiguration = desc.getLaunchConfiguration();
-		} catch (CoreException e) {
-			Activator.log(e);
-			return;
-		}
-		for (int i = 0; i < activeLaunches.length; i++) {
-			final ILaunch launch = activeLaunches[i];
-			if (!launch.isTerminated() && activeLaunchConfiguration != null
-			        && matches(activeLaunchConfiguration, launch.getLaunchConfiguration())) {
-				Job job = new Job("Stopping " + activeLaunchConfiguration.getName()) {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
+		final ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		if (activeLaunches != null && activeLaunches.length > 0) {
+			new Job("Stopping launches") {
+				protected IStatus run(IProgressMonitor monitor) {
+					// TODO only stop the launches for the active launch descriptor
+					// Not sure we have the API to map that out yet.
+					for (ILaunch launch : activeLaunches) {
 						try {
 							launch.terminate();
 						} catch (DebugException e) {
-							Activator.log(e);
+							return e.getStatus();
 						}
-						return Status.OK_STATUS;
 					}
+					return Status.OK_STATUS;
 				};
-				job.schedule();
-			}
+			}.schedule();
 		}
-	}
-
-	protected boolean matches(ILaunchConfiguration activeLaunchConfiguration, ILaunchConfiguration launchConfiguration) {
-		return activeLaunchConfiguration.getName().equals(launchConfiguration.getName()); // just name for now
 	}
 
 	protected void stopBuild() {

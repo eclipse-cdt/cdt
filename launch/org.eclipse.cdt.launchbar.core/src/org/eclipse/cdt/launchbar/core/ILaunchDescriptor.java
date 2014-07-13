@@ -10,33 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
-public interface ILaunchTarget {
+
+/**
+ * Represents a thing that can be launched.
+ */
+public interface ILaunchDescriptor {
 
 	/**
-	 * Get the id for the target. The id of the active target is
-	 * stored in the preference store.
+	 * Name to show in the launch descriptor selector.
 	 * 
-	 * @return id
-	 */
-	String getId();
-
-	/**
-	 * Returns a name to show in the UI for this target.
-	 * 
-	 * @return name
+	 * @return name of the launch descriptor
 	 */
 	String getName();
 
 	/**
-	 * Returns the type for this target.
+	 * The type of launch descriptor.
 	 * 
-	 * @return target type
+	 * @return provider
 	 */
-	ILaunchTargetType getType();
-
-	/**
-	 * This target has been made active.
-	 */
-	void setActive();
+	ILaunchDescriptorType getType();
 
 }

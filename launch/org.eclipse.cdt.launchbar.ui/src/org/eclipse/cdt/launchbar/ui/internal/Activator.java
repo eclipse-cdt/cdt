@@ -125,11 +125,13 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
-	public static void log(CoreException e) {
-		plugin.getLog().log(e.getStatus());
+	public static void log(IStatus status) {
+		plugin.getLog().log(status);
 	}
 
 	public static void log(Exception e) {
+		if (e instanceof CoreException)
+			log(((CoreException) e).getStatus());
 		plugin.getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, e.getLocalizedMessage(), e));
 	}
 

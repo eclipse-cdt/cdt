@@ -10,33 +10,35 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
-public interface ILaunchTarget {
+public interface ILaunchTargetType {
 
 	/**
-	 * Get the id for the target. The id of the active target is
-	 * stored in the preference store.
+	 * Called by the launchbar manager to initialize and pass a hendle to itself.
 	 * 
-	 * @return id
+	 * @param manager
+	 */
+	void init(ILaunchBarManager manager);
+
+	/**
+	 * The id of the target type.
+	 * 
+	 * @return target type id
 	 */
 	String getId();
 
 	/**
-	 * Returns a name to show in the UI for this target.
+	 * Return the list of targets for this type.
 	 * 
-	 * @return name
+	 * @return targets
 	 */
-	String getName();
+	ILaunchTarget[] getTargets();
 
 	/**
-	 * Returns the type for this target.
+	 * Return the target with the specified id.
 	 * 
-	 * @return target type
+	 * @param id
+	 * @return target
 	 */
-	ILaunchTargetType getType();
-
-	/**
-	 * This target has been made active.
-	 */
-	void setActive();
+	ILaunchTarget getTarget(String id);
 
 }

@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * Provides the list of launch configurations
  *
  */
-public interface ILaunchConfigurationsProvider {
+public interface ILaunchDescriptorType {
+
+	/**
+	 * The id for the provider.
+	 * 
+	 * @return provider id
+	 */
+	String getId();
 
 	/**
 	 * Called after existing launch configs have been added. The provider
@@ -23,12 +32,33 @@ public interface ILaunchConfigurationsProvider {
 	void init(ILaunchBarManager manager);
 
 	/**
-	 * If the provider has a better descriptor than the suggested one, return a better one.
-	 * Otherwise, return the one that was passed in.
+	 * Does this type own this launch element.
+	 * 
+	 * @param element
+	 * @return owns element
+	 * @throws CoreException 
+	 */
+	boolean ownsLaunchObject(Object element) throws CoreException;
+	
+	/**
+	 * Return a descriptor for the given element. The element can be a launch
+	 * configuration, a project, or anything else that gets fed to the
+	 * launch bar manager.
+	 * 
+	 * May return null to essentially eat the element so no other types
+	 * create a descriptor for it.
 	 * 
 	 * @param descriptor candidate descriptor
 	 * @return the best descriptor
+	 * @throws CoreException 
 	 */
-	ILaunchConfigurationDescriptor filterDescriptor(ILaunchBarManager manager, ILaunchConfigurationDescriptor descriptor);
+	ILaunchDescriptor getDescriptor(Object element) throws CoreException;
+
+	/**
+	 * Return a handle to the launch bar manager.
+	 * 
+	 * @return launchbar manager
+	 */
+	ILaunchBarManager getManager();
 
 }

@@ -10,36 +10,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core.internal;
 
-import org.eclipse.cdt.launchbar.core.ILaunchTarget;
-import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
+import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
-public class LocalTarget implements ILaunchTarget {
+public class DefaultLaunchDescriptor implements ILaunchDescriptor {
 
-	private final LocalTargetType type;
+	private final DefaultLaunchDescriptorType type;
+	private final ILaunchConfiguration config;
 	
-	public LocalTarget(LocalTargetType type) {
+	public DefaultLaunchDescriptor(DefaultLaunchDescriptorType type, ILaunchConfiguration config) {
 		this.type = type;
-	}
-	
-	@Override
-	public String getId() {
-		// Use the same ID as the type since we're really a singleton
-		return type.getId();
+		this.config = config;
 	}
 
 	@Override
 	public String getName() {
-		return "Local Machine"; // TODO externalize
+		return config.getName();
 	}
 
 	@Override
-	public ILaunchTargetType getType() {
+	public ILaunchDescriptorType getType() {
 		return type;
 	}
 
-	@Override
-	public void setActive() {
-		// nothing to do
+	public ILaunchConfiguration getConfig() {
+		return config;
 	}
-	
+
 }

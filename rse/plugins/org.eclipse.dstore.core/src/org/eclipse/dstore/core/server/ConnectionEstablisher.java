@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@
  * David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
  * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
  * David McKnight   (IBM)  - [390681] [dstore] need to merge differences between HEAD stream and 3.2 in ConnectionEstablisher.finished()
+ * David McKnight  (IBM)   [439545][dstore] potential deadlock on senders during shutdown
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -224,11 +225,7 @@ public class ConnectionEstablisher
 		if (_dataStore.getClient() != null) {
 			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher.finished()"); //$NON-NLS-1$
 		}
-		if (_dataStore.getClient() != null) {
-			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher - removing sender"); //$NON-NLS-1$
-		}
-		_updateHandler.removeSenderWith(receiver.socket());
-		
+
 		if (_dataStore.getClient() != null) {
 			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher - removing receiver"); //$NON-NLS-1$
 		}
@@ -247,6 +244,12 @@ public class ConnectionEstablisher
 				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher - finishing update handler"); //$NON-NLS-1$
 			}
 			_updateHandler.finish();
+			
+			if (_dataStore.getClient() != null) {
+				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher - removing sender"); //$NON-NLS-1$
+			}
+			_updateHandler.removeSenderWith(receiver.socket());
+			
 			
 			if (_dataStore.getClient() != null) {
 				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher - finishing DataStore"); //$NON-NLS-1$

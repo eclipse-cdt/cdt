@@ -18,7 +18,7 @@
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * David McKnight  (IBM)   [388873][dstore] ServerUpdateHandler _senders list should be synchronized
  * David McKnight  (IBM)   [404082][dstore] race condition on finish, removing senders
- * David McKnight  (IBM)   [439545][dstore] potential deadlock on senders during shutdown 
+ * David McKnight  (IBM)   [439545][dstore] potential deadlock on senders during shutdown  
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;

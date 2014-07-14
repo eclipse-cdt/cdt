@@ -31,7 +31,7 @@
  * David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
  * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
  * David McKnight   (IBM)  - [390681] [dstore] need to merge differences between HEAD stream and 3.2 in ConnectionEstablisher.finished()
- * David McKnight  (IBM)   [439545][dstore] potential deadlock on senders during shutdown  
+ * David McKnight  (IBM)   [439545][dstore] potential deadlock on senders during shutdown   
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;

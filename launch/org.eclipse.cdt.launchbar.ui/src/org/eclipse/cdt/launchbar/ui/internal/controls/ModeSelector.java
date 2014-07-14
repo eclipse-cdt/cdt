@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.ILaunchGroup;
@@ -128,13 +129,11 @@ public class ModeSelector extends CSelector {
 
 
 	protected ILaunchGroup getLaunchGroup(String mode) {
-		ILaunchGroup[] groups = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroups();
-		ILaunchGroup extension = null;
-		for (int i = 0; i < groups.length; i++) {
-			extension = groups[i];
-			if (extension.getMode().equals(mode)) {
-				return extension;
-			}
+		try {
+			ILaunchConfigurationType type = getManager().getLaunchConfigurationType(getManager().getActiveLaunchDescriptor(), getManager().getActiveLaunchTarget());
+			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, mode);
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
 		}
 		return null;
 	}

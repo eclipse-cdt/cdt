@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_d5f7e8c4",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-07-14T22:15:38Z",
+      "side": 1,
+      "message": "I think that the top part of this file should be moved to a routine called initConfigParm and then the remainder that is actually performing a test should be canSetConfigParm which is an actual test.  As opposed to having this be part of beforeClass.",
+      "revId": "6c3266187a5ed49758012f871d4a78d2a19e05b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_b5f22cd3",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-07-14T22:15:38Z",
+      "side": 1,
+      "message": "I think this should be removed and canBuildWithConfigParm be its own test.  This should be fine as long as the initConfigParm is part of beforeClass so --enable-jeff is always performed.",
+      "revId": "6c3266187a5ed49758012f871d4a78d2a19e05b2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

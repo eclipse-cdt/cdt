@@ -137,6 +137,10 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			}
 		});
 
+		// Load up the active from the preferences before loading the descriptors
+		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		String activeConfigDescName = store.get(PREF_ACTIVE_CONFIG_DESC, null);
+
 		for (ILaunchDescriptorType descriptorType : descriptorTypes) {
 			descriptorType.init(this);
 		}
@@ -162,9 +166,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 		launchManager.addLaunchConfigurationListener(this);
 
-		// Load up the active from the preferences or pick reasonable defaults
-		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		String activeConfigDescName = store.get(PREF_ACTIVE_CONFIG_DESC, null);
+		// Now that all the descriptors are loaded, set the one
 		if (activeConfigDescName == null && !descriptors.isEmpty()) {
 			activeConfigDescName = descriptors.values().iterator().next().getName();
 		}

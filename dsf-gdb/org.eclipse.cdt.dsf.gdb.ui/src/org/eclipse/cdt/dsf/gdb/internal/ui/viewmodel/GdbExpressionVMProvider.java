@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Freescale Semiconductor. and others.
+ * Copyright (c) 2010, 2014 Freescale Semiconductor. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,16 @@
  *     Freescale Semiconductor - initial API and implementation
  *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Marc Khouzam (Ericsson) - Enable per-expression formatting (Bug 439624)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionGroupDMContext;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.DisabledExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionManagerVMNode;
@@ -34,7 +37,9 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbVariableVMNode.Incomplet
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -232,5 +237,28 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
 			    }
 			});
 		}
+	}
+	
+	@Override
+	public boolean supportFormat(IVMContext context) {
+		if (context instanceof IDMVMContext) {
+			IDMContext dmc = ((IDMVMContext)context).getDMContext();
+			// The expressions view supports expression groups, which have not value,
+			// so we should not support formatting for expression groups.
+			if (dmc instanceof IExpressionDMContext &&
+					!(dmc instanceof IExpressionGroupDMContext)) return true;
+		}
+		return false;
+	}
+	
+	@Override
+	protected String getElementKey(IVMContext context) {
+		if (context instanceof IDMVMContext) {
+			IDMContext dmc = ((IDMVMContext)context).getDMContext();
+			if (dmc instanceof IExpressionDMContext) {
+				return ((IExpressionDMContext)dmc).getExpression();
+			}
+		}
+		return null;
 	}
 }

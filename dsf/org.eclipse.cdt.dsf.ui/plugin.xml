@@ -890,4 +890,11 @@
             targetId="org.eclipse.cdt.ui.cCode">            
       </hyperlinkDetector>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementFormatPersistableFactory"
+            id="org.eclipse.cdt.dsf.ui.elementFormatPersistableFactory">
+      </factory>
+   </extension>
 </plugin>

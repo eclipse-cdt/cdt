@@ -7,22 +7,26 @@
  *
  * Contributors:
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
+ *     Marc Khouzam (Ericsson) - Base available formats on each element (Bug 439624)
  *****************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.VMHandlerUtils;
 import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.ICacheEntry;
+import org.eclipse.cdt.dsf.ui.viewmodel.update.ICachingVMProviderExtension2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
@@ -30,7 +34,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -99,40 +102,37 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		if (selection == null || selection.isEmpty() || selection instanceof ITreeSelection == false) {
 			return NO_ITEMS;
 		}
+		
 		IVMProvider provider = VMHandlerUtils.getVMProviderForSelection(selection);
-		if (FORMATS.size() == 0) {
+		if (provider instanceof IElementFormatProvider == false) {
 			return NO_ITEMS;
 		}
-		IPresentationContext context = provider.getPresentationContext();
+		
+		IPresentationContext context = provider.getPresentationContext();		
+		Object viewerInput = VMHandlerUtils.getViewerInput(context);
 		TreePath[] elementPaths = ((ITreeSelection) selection).getPaths();
-		IVMNode[] nodes = new IVMNode[elementPaths.length];
-		final String[] formats = new String[elementPaths.length];
-		Object viewerInput = null;
-		if (context.getPart() instanceof AbstractDebugView) {
-			Viewer viewer = ((AbstractDebugView)context.getPart()).getViewer();
-			if (viewer != null) {
-				viewerInput = viewer.getInput();
-			}
+		List<String> availableFormats = getAvailableFormats(provider, viewerInput, elementPaths);
+		if (availableFormats.size() == 0) {
+			return NO_ITEMS;
 		}
-		// Here we keep using hard-coded formats, which are common formats.
-		// We expect clients may add extra formats before and after these formats.
-		// For details, please refer to 371012.
-		// For now, we do not use vm provider's cache entry to get available formats
-		// because it shows something extra than what we have been expecting. See 371012 comment #2.
-		final List<SelectFormatAction> actions = new ArrayList<SelectFormatAction>(FORMATS.size());
-		for (String formatId : FORMATS) {
+
+		IVMNode[] nodes = new IVMNode[elementPaths.length];
+		final List<SelectFormatAction> actions = new ArrayList<SelectFormatAction>(availableFormats.size());
+		for (String formatId : availableFormats) {
 			actions.add(new SelectFormatAction((IElementFormatProvider) provider,
 					context, nodes, viewerInput, elementPaths, formatId));
 		}
+
+		final String[] elementActiveFormats = new String[elementPaths.length];
 		CountingRequestMonitor crm = new CountingRequestMonitor(SimpleDisplayExecutor.getSimpleDisplayExecutor(Display.getDefault()), null) {
 			@Override
 			protected void handleCompleted() {
 				String activeFormat = null;
-				for (int i = 0; i < formats.length; i++) {
+				for (int i = 0; i < elementActiveFormats.length; i++) {
 					if (i == 0) {
-						activeFormat = formats[i];
+						activeFormat = elementActiveFormats[i];
 					} else if (activeFormat != null
-							&& activeFormat.equals(formats[i]) == false) {
+							&& activeFormat.equals(elementActiveFormats[i]) == false) {
 						activeFormat = null;
 						break;
 					}
@@ -159,7 +159,7 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 					new DataRequestMonitor<String>(ImmediateExecutor.getInstance(), crm) {
 				@Override
 				protected void handleSuccess() {
-					formats[index] = this.getData();
+					elementActiveFormats[index] = this.getData();
 					super.handleSuccess();
 				}
 			});
@@ -167,9 +167,48 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		crm.setDoneCount(elementPaths.length);
 		int count = actions.size();
 		IContributionItem[] items = new IContributionItem[count];
-		for (int i = 0; i < actions.size(); i++) {
+		for (int i = 0; i < items.length; i++) {
 			items[i] = new ActionContributionItem(actions.get(i));
 		}
 		return items;
+	}
+
+	/**
+	 * Get the available formats for all elements in the selection.  If all elements have the same
+	 * available formats, return that list; if not, return the default list.
+	 */
+	private List<String> getAvailableFormats(IVMProvider provider, Object viewerInput, TreePath[] paths) {
+		if (provider instanceof ICachingVMProviderExtension2) {
+			ICachingVMProviderExtension2 cachingProvider = (ICachingVMProviderExtension2)provider;
+
+			String[] formats = null;
+			for (TreePath path : paths) {
+				IVMNode node = VMHandlerUtils.getVMNode(viewerInput, path);
+				if (node != null) {
+					ICacheEntry cacheEntry = cachingProvider.getCacheEntry(node, viewerInput, path);
+					if (cacheEntry != null && cacheEntry.getProperties() != null) {
+						String[] entryFormats = (String[]) cacheEntry.getProperties().get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
+						if (entryFormats == null) {
+							// At least one element has no formats.  Use the default ones.
+							return FORMATS;
+						}
+						if (formats == null) {
+							// First set of formats
+							formats = entryFormats;
+						} else {
+							// Found another set of formats.  Make sure it is the same as the set we already have.
+							// If not, return the default set of formats.
+							if (!Arrays.equals(formats, entryFormats)) {
+								return FORMATS;
+							}
+						}
+					}
+				}
+			}
+			if (formats != null) {
+				return Arrays.asList(formats);
+			}
+		}
+		return FORMATS;
 	}
 }

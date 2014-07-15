@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems and others.
+ * Copyright (c) 2008, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,20 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.actions;
 
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.ISelectionService;
@@ -151,5 +155,35 @@ public class VMHandlerUtils {
         }
         return null;
     }
+    
+    /**
+     * Returns the viewer input element for the viewer in the given 
+     * presentation context.  The input element is retrieved only if the 
+     * presentation context's view is based on the {@link AbstractDebugView}.
+     * Returns <code>null</code> if not found.
+     * @since 2.5
+     */
+    public static Object getViewerInput(IPresentationContext context) {
+    	if (context.getPart() instanceof AbstractDebugView) {
+    		Viewer viewer = ((AbstractDebugView)context.getPart()).getViewer();
+    		if (viewer != null) {
+    			return viewer.getInput();
+    		}
+    	}
+    	return null;
+    }
 
+    /**
+     * Returns the {@link IVMNode} associated with the element in the 
+     * given path.  Returns <code>null</code> if not found.
+     * 
+     * @since 2.5
+     */
+    public static IVMNode getVMNode(Object viewerInput, TreePath path) {
+    	if (path.getSegmentCount() != 0) {
+    		return (IVMNode) DebugPlugin.getAdapter(path.getLastSegment(), IVMNode.class);
+    	} else {
+    		return (IVMNode) DebugPlugin.getAdapter(viewerInput, IVMNode.class);
+    	}
+    }
 }

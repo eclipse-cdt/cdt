@@ -890,4 +890,11 @@
             targetId="org.eclipse.cdt.ui.cCode">            
       </hyperlinkDetector>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.dsf.debug.ui.viewmodel.SimpleMapPersistableFactory"
+            id="org.eclipse.cdt.dsf.ui.simpleMapPersistableFactory">
+      </factory>
+   </extension>
 </plugin>

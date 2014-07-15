@@ -105,13 +105,6 @@
       </factory>
    </extension>
    <extension
-         point="org.eclipse.ui.elementFactories">
-      <factory
-            class="org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.VariablePersistableFactory"
-            id="org.eclipse.cdt.examples.dsf.pda.ui.variablePersitableFactory">
-      </factory>
-   </extension>
-   <extension
          point="org.eclipse.cdt.debug.ui.breakpointContribution">
       <breakpointEditors
             debugModelId="org.eclipse.cdt.examples.dsf.pda.debugModel"

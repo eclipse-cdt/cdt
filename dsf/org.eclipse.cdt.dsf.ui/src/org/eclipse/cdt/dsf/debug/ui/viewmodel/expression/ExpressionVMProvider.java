@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Enable per-element formatting (Bug 439624)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.expression;
 
@@ -20,12 +21,14 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionGroupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.AbstractElementVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterBitFieldVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode;
@@ -38,10 +41,10 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.DefaultVMContentProviderStrategy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
@@ -70,7 +73,7 @@ import org.eclipse.jface.viewers.TreePath;
  * should implement {@link IExpressionVMNode}.
  */ 
 @SuppressWarnings("restriction")
-public class ExpressionVMProvider extends AbstractDMVMProvider 
+public class ExpressionVMProvider extends AbstractElementVMProvider 
     implements IExpressionsListener2
 {
     private IExpressionVMNode[] fExpressionNodes;
@@ -442,4 +445,17 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         }
         super.update(update);
     }
+    
+	@Override
+	public boolean supportFormat(IVMContext context) {
+		if (context instanceof IDMVMContext) {
+			// The expressions view supports expression groups, which have no value,
+			// so we should not support formatting for expression groups.
+			if (((IDMVMContext)context).getDMContext() instanceof IExpressionGroupDMContext) { 
+				return false;
+			}
+		}
+
+		return super.supportFormat(context);
+	}
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.model.ICastToArray;
@@ -59,6 +60,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelTe
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.ElementFormatEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -1257,7 +1259,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
                  ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             return IModelDelta.CONTENT;
-        } 
+        }
+        
+        if ( e instanceof ElementFormatEvent ) 
+        {
+            return IModelDelta.STATE;
+        }         
 
         return IModelDelta.NO_CHANGE;
     }
@@ -1275,6 +1282,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
                  ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+        } 
+        else if ( e instanceof ElementFormatEvent ) 
+        {
+        	Set<Object> elements = ((ElementFormatEvent) e).getElements();
+        	for (Object elem : elements) {
+        		parentDelta.addNode(elem, IModelDelta.STATE);
+        	}
         } 
 
         requestMonitor.done();
@@ -1295,6 +1309,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
         {
             return IModelDelta.CONTENT;
         }
+        
+        if ( event instanceof ElementFormatEvent ) 
+        {
+            return IModelDelta.STATE;
+        }         
 
         return IModelDelta.NO_CHANGE;
     }
@@ -1312,6 +1331,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
         			((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }         
+        else if ( event instanceof ElementFormatEvent ) 
+        {
+        	Set<Object> elements = ((ElementFormatEvent) event).getElements();
+        	for (Object elem : elements) {
+        		parentDelta.addNode(elem, IModelDelta.STATE);
+        	}
+        } 
 
         rm.done();
     }

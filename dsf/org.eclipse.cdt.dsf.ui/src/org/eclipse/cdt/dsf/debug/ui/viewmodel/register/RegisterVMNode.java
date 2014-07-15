@@ -12,6 +12,7 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNod
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.ElementFormatEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableLabelFont;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -684,7 +686,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             return IModelDelta.CONTENT;
         } 
         
-        if (e instanceof IRegisterChangedDMEvent) {
+        if (e instanceof IRegisterChangedDMEvent ||
+        	e instanceof ElementFormatEvent ) {
             return IModelDelta.STATE;
         }
         
@@ -714,7 +717,14 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         if (e instanceof IRegisterChangedDMEvent) {
             parentDelta.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
-        
+        else if ( e instanceof ElementFormatEvent ) 
+        {
+        	Set<Object> elements = ((ElementFormatEvent) e).getElements();
+        	for (Object elem : elements) {
+        		parentDelta.addNode(elem, IModelDelta.STATE);
+        	}
+        } 
+
         rm.done();
     }
 

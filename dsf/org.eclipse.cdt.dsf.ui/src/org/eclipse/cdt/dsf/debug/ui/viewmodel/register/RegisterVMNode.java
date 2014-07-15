@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
+ *     Marc Khouzam (Ericsson) - Enable per-element formatting (Bug 439624)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -38,7 +40,9 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IElementFormatProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.ElementFormatEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableLabelFont;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -96,6 +100,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * @since 2.0
      */
     private static final String PROP_REGISTER_SHOW_TYPE_NAMES = "register_show_type_names"; //$NON-NLS-1$
+    
+    /** @since 2.5 */
+    private static final String PROP_PREFIX_FORMAT_KEY = "register."; //$NON-NLS-1$
     
     protected class RegisterVMC extends DMVMContext
         implements IFormattedValueVMContext
@@ -238,8 +245,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
   
     protected IElementLabelProvider createLabelProvider() {
     	/*
-   	 * Create background which is responsive to the preference color changes.
-   	 */
+    	 * Create background which is responsive to the preference color changes.
+    	 */
     	columnIdValueBackground = new LabelBackground(
     			DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
     	{
@@ -604,6 +611,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         update.setProperty(IRegisterVMConstants.PROP_IS_WRITEABLE, data.isWriteable());
         update.setProperty(IRegisterVMConstants.PROP_IS_WRITEONCE, data.isWriteOnce());
         
+        update.setProperty(IElementFormatProvider.PROP_FORMAT_KEY, PROP_PREFIX_FORMAT_KEY + data.getName());
+        
         /*
          * If this node has an expression then it has already been filled in by the higher
          * level logic. If not then we need to supply something.  In the  previous version
@@ -688,6 +697,13 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             return IModelDelta.STATE;
         }
         
+        if (e instanceof ElementFormatEvent) {
+        	int depth = ((ElementFormatEvent)e).getApplyDepth();
+        	if (depth == 0) return IModelDelta.NO_CHANGE;
+        	if (depth == 1) return IModelDelta.STATE;
+            return IModelDelta.CONTENT;
+        }
+        
         return IModelDelta.NO_CHANGE;
     }
 
@@ -714,7 +730,20 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         if (e instanceof IRegisterChangedDMEvent) {
             parentDelta.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
-        
+        else if ( e instanceof ElementFormatEvent ) 
+        {
+        	int depth = ((ElementFormatEvent)e).getApplyDepth();
+        	if (depth != 0) {
+        		int deltaType = IModelDelta.CONTENT;
+        		if (depth == 1) deltaType = IModelDelta.STATE;
+
+        		Set<Object> elements = ((ElementFormatEvent)e).getElements();
+        		for (Object elem : elements) {
+        			parentDelta.addNode(elem, deltaType);
+        		}
+        	}
+        }
+
         rm.done();
     }
 

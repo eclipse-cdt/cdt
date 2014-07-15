@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2011 Texas Instruments and others
+ * Copyright (c) 2011, 2014 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.TreePath;
 
@@ -27,6 +28,15 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public interface IElementFormatProvider 
 {
+	/**
+	 * Standard property key to use with {@link IElementPropertiesProvider} to represent
+	 * an element in the map of per-element number formats.   
+	 * 
+	 * @see ElementNumberFormatProvider
+	 * @since 2.5
+	 */
+	public static final String PROP_FORMAT_KEY = "PROP_FORMAT_KEY"; //$NON-NLS-1$
+
 	/**
 	 * Get active format for a given element.
 	 * @param context presentation context

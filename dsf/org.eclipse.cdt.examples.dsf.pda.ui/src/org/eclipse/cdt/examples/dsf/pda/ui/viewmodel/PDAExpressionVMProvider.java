@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2011 Texas Instruments and others
+ * Copyright (c) 2011, 2014 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.SimpleMapPersistable;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IElementFormatProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
@@ -39,22 +40,23 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		super(adapter, context, session);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void getActiveFormat(IPresentationContext context, IVMNode node, Object viewerInput, TreePath elementPath,
 			DataRequestMonitor<String> rm) {
 		Object p = context.getProperty(myPersistId);
-		if (p instanceof VariablePersistable == false) {
+		if (p instanceof SimpleMapPersistable == false) {
 			rm.setData(null);
 			rm.done();
 			return;
 		}
-		VariablePersistable persistable = (VariablePersistable) p;
+	    SimpleMapPersistable<String> persistable = (SimpleMapPersistable<String>) p;
 		Object x = elementPath.getLastSegment();
 		if (x instanceof VariableVMNode.VariableExpressionVMC) {
 			IExpressionDMContext ctx = DMContexts.getAncestorOfType(((VariableVMNode.VariableExpressionVMC) x).getDMContext(), IExpressionDMContext.class);
 			if (ctx == null) {
 				rm.setData(null);
 			} else {
-				rm.setData(persistable.getFormat(ctx.getExpression()));
+				rm.setData(persistable.getValue(ctx.getExpression()));
 			}
 			rm.done();
 			return;
@@ -66,7 +68,7 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 			if (y == null) {
 				rm.setData(null);
 			} else {
-				rm.setData(persistable.getFormat(y.getExpressionText()));
+				rm.setData(persistable.getValue(y.getExpressionText()));
 			}
 			rm.done();
 			return;
@@ -76,13 +78,14 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 		return;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setActiveFormat(IPresentationContext context, IVMNode[] node, Object viewerInput, TreePath[] elementPath, String format) {
 		Object p = context.getProperty(myPersistId);
-		VariablePersistable persistable = null;
-		if (p instanceof VariablePersistable) {
-			persistable = (VariablePersistable) p;
+		SimpleMapPersistable<String> persistable = null;
+		if (p instanceof SimpleMapPersistable) {
+		    persistable = (SimpleMapPersistable<String>) p;
 		} else {
-			persistable = new VariablePersistable();
+			persistable = new SimpleMapPersistable<String>(String.class);
 			context.setProperty(myPersistId, persistable);
 		}
 		ArrayList<IDMVMContext> changed = new ArrayList<IDMVMContext>(elementPath.length);
@@ -92,13 +95,13 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 				IExpressionDMContext ctx = DMContexts.getAncestorOfType(((VariableVMNode.VariableExpressionVMC) x).getDMContext(), IExpressionDMContext.class);
 				if (ctx == null)
 					continue;
-				persistable.setFormat(ctx.getExpression(), format);
+				persistable.setValue(ctx.getExpression(), format);
 				changed.add((IDMVMContext) x);
 			} else if (x instanceof IDMVMContext) {
 				IExpression y = (IExpression) ((IVMContext) x).getAdapter(IExpression.class);
 				if (y == null)
 					continue;
-				persistable.setFormat(y.getExpressionText(), format);
+				persistable.setValue(y.getExpressionText(), format);
 			}
 		}
 		if (changed.size() > 0) {

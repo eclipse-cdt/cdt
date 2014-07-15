@@ -441,6 +441,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     
     @Override
 	public void refresh() {
+    	baseRefresh();
+    }
+    
+    protected void baseRefresh() {
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(ManualUpdatePolicy.REFRESH_EVENT);
         
         for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {

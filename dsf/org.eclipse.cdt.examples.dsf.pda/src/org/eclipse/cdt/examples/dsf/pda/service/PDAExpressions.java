@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,9 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class PDAExpressions extends AbstractDsfService implements ICachingService, IExpressions {
-
+	
+	private static final String FORMAT_MY_FORMAT = "My format";
+	
     @Immutable
     private static class ExpressionDMContext extends AbstractDMContext implements IExpressionDMContext {
 
@@ -104,10 +106,6 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         }
 
         public IRegisterDMContext getRegister() {
-            return null;
-        }
-
-        public String getStringValue() {
             return null;
         }
 
@@ -338,7 +336,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                 protected void handleSuccess() {
                     try {
                         Integer.parseInt(getData().getFormattedValue());
-                        rm.setData(new String[] { DECIMAL_FORMAT, HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT });                        
+                        rm.setData(new String[] { DECIMAL_FORMAT, HEX_FORMAT, OCTAL_FORMAT, BINARY_FORMAT, FORMAT_MY_FORMAT });                        
                         rm.done();
                     } catch (NumberFormatException e) {
                         rm.setData(new String[] { STRING_FORMAT });
@@ -388,7 +386,6 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                                         rm.setData(new FormattedValueDMData(getData().fResponseText));
                                         rm.done();
                                     } else {                                        
-                                        int result;
                                         try {
                                             int intResult = Integer.parseInt(getData().fResponseText);
                                             String formattedResult = "";
@@ -418,8 +415,10 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                                                 formattedResult = prefix.toString();
                                             } else if (DECIMAL_FORMAT.equals(formatId)) {
                                                 formattedResult = Integer.toString(intResult);                                                
+                                            } else if (FORMAT_MY_FORMAT.equals(formatId)) {
+                                                formattedResult = "This value is in my format";                                             
                                             } else {
-                                                PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid format");
+                                                PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid format " + formatId);
                                             }
                                             rm.setData(new FormattedValueDMData(formattedResult));
                                             rm.done();
@@ -453,7 +452,6 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
     {
         String value = null;
         try {
-            int intValue = 0;
             if (HEX_FORMAT.equals(formatId)) {
                 if (formattedExprValue.startsWith("0x")) formattedExprValue = formattedExprValue.substring(2); 
                 value = Integer.toString( Integer.parseInt(formattedExprValue, 16) );

@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.AbstractElementVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.DebugManualUpdatePolicy;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -35,7 +36,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.IVMUpdatePolicy;
@@ -49,7 +49,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  *  Provides the VIEW MODEL for the DEBUG MODEL REGISTER view.
  */
-public class RegisterVMProvider extends AbstractDMVMProvider 
+public class RegisterVMProvider extends AbstractElementVMProvider 
 {
     private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
         @Override

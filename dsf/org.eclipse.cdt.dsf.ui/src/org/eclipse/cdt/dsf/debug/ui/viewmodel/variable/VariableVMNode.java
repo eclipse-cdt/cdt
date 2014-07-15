@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.model.ICastToArray;
@@ -59,6 +60,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelTe
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueRetriever;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueVMUtil;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.update.ElementFormatEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -1257,7 +1259,15 @@ public class VariableVMNode extends AbstractExpressionVMNode
                  ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             return IModelDelta.CONTENT;
-        } 
+        }
+        
+        if ( e instanceof ElementFormatEvent ) 
+        {
+        	int depth = ((ElementFormatEvent)e).getApplyDepth();
+        	if (depth == 0) return IModelDelta.NO_CHANGE;
+        	if (depth == 1) return IModelDelta.STATE;
+            return IModelDelta.CONTENT;
+        }
 
         return IModelDelta.NO_CHANGE;
     }
@@ -1275,7 +1285,20 @@ public class VariableVMNode extends AbstractExpressionVMNode
                  ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
-        } 
+        }
+        else if ( e instanceof ElementFormatEvent ) 
+        {
+        	int depth = ((ElementFormatEvent)e).getApplyDepth();
+        	if (depth != 0) {
+        		int deltaType = IModelDelta.CONTENT;
+        		if (depth == 1) deltaType = IModelDelta.STATE;
+
+        		Set<Object> elements = ((ElementFormatEvent)e).getElements();
+        		for (Object elem : elements) {
+        			parentDelta.addNode(elem, deltaType);
+        		}
+        	}
+        }
 
         requestMonitor.done();
     }
@@ -1295,6 +1318,14 @@ public class VariableVMNode extends AbstractExpressionVMNode
         {
             return IModelDelta.CONTENT;
         }
+        
+        if (event instanceof ElementFormatEvent) 
+        {
+        	int depth = ((ElementFormatEvent)event).getApplyDepth();
+        	if (depth == 0) return IModelDelta.NO_CHANGE;
+        	if (depth == 1) return IModelDelta.STATE;
+            return IModelDelta.CONTENT;
+        }
 
         return IModelDelta.NO_CHANGE;
     }
@@ -1312,6 +1343,19 @@ public class VariableVMNode extends AbstractExpressionVMNode
         			((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }         
+        else if (event instanceof ElementFormatEvent ) 
+        {
+        	int depth = ((ElementFormatEvent)event).getApplyDepth();
+        	if (depth != 0) {
+        		int deltaType = IModelDelta.CONTENT;
+        		if (depth == 1) deltaType = IModelDelta.STATE;
+
+        		Set<Object> elements = ((ElementFormatEvent)event).getElements();
+        		for (Object elem : elements) {
+        			parentDelta.addNode(elem, deltaType);
+        		}
+        	}
+        }
 
         rm.done();
     }

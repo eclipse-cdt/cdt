@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anders Dahlberg (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 

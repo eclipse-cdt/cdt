@@ -36,18 +36,6 @@
 						<include>**/AutomatedSuite.*</include>
 					</includes>
 					<testFailureIgnore>true</testFailureIgnore>
-					<dependencies>
-						<dependency>
-							<artifactId>org.eclipse.platform.feature.group</artifactId>
-							<version>3.7.0</version>
-							<type>p2-installable-unit</type>
-						</dependency>
-						<dependency>
-							<artifactId>org.eclipse.cdt.feature.group</artifactId>
-							<version>8.2.0.${buildQualifier}</version>
-							<type>p2-installable-unit</type>
-						</dependency>
-					</dependencies>
 				</configuration>
 			</plugin>
 		</plugins>

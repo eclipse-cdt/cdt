@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2014 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Branko Drevensek (Beyond Semiconductor) - fixed bug 389823
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.cdtvariables;
 
@@ -43,7 +44,7 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 			String value = var.getOperation() != IEnvironmentVariable.ENVVAR_REMOVE ?
 					var.getValue() : null;
 			
-			if(isTextList(value,delimiter)){
+			if(isNondegenerateTextList(value,delimiter)){
 				fType = VALUE_TEXT_LIST;
 				if(value != null){
 					List<String> list = EnvVarOperationProcessor.convertToList(value,delimiter);
@@ -100,12 +101,31 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 		fEnvironmentProvider = varProvider;
 	}
 	
+	/**
+	 * This method checks if string contains delimited text list.
+	 * Example of such strings: "a:b:c", "a::b::c", "one:two:three"
+	 * (assuming delimiter is colon).
+	 */
 	private static boolean isTextList(String str, String delimiter) {
 		if (delimiter == null || "".equals(delimiter)) //$NON-NLS-1$
 			return false;
 		
-		// Regex: ([^:]+:)+[^:]*
-		String patternStr = "([^" + delimiter + "]+" + delimiter + ")+[^" + delimiter + "]*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+		// Regex: ([^:]+:+)+[^:]*
+		String patternStr = "([^" + delimiter + "]+" + delimiter + "+)+[^" + delimiter + "]*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+		return Pattern.matches(patternStr, str);
+	}
+	
+	/**
+	 * This method checks if string contains delimited text and at least
+	 * once only a single delimiter is used.
+	 * Example of such text lists: "a:b:c", "a::b:c", but NOT "a::b::c".
+	 */
+	private static boolean isNondegenerateTextList(String str, String delimiter) {
+		if (!isTextList(str, delimiter))
+			return false;
+		
+		// Regex: .*([^:]+:([^:]+|$))+.*
+		String patternStr = ".*([^" + delimiter + "]+" + delimiter + "([^" + delimiter + "]+|$)).*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 		return Pattern.matches(patternStr, str);
 	}
 	

@@ -104,8 +104,8 @@ public class EnvironmentVariableSupplier extends CoreMacroSupplierBase {
 		if (delimiter == null || "".equals(delimiter)) //$NON-NLS-1$
 			return false;
 		
-		// Regex: ([^:]+:)+[^:]*
-		String patternStr = "([^" + delimiter + "]+" + delimiter + ")+[^" + delimiter + "]*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+		// Regex: ([^:]+:+)+[^:]*
+		String patternStr = "([^" + delimiter + "]+" + delimiter + "+)+[^" + delimiter + "]*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 		return Pattern.matches(patternStr, str);
 	}
 	

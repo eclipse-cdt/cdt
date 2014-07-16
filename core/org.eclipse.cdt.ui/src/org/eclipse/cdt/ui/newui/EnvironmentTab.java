@@ -11,9 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -41,6 +48,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -275,7 +283,9 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				Messages.EnvironmentTab_6,
 				Messages.EnvironmentTab_7,
 				Messages.EnvironmentTab_8,
-				Messages.EnvironmentTab_9
+				Messages.EnvironmentTab_9,
+				Messages.EnvironmentTab_25,
+				Messages.EnvironmentTab_26
 			});
 	}
 
@@ -296,6 +306,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			break;
 		case 4: // Undefine
 			handleEnvUndefButtonSelected(table.getSelectionIndex());
+			break;
+		case 5: // Import
+			handleEnvImportButtonSelected();
+			break;
+		case 6: // Export
+			handleEnvExportButtonSelected();
 			break;
 		}
 		table.setFocus();
@@ -513,6 +529,114 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			}
 		}
 	}
+	
+	private void handleEnvImportButtonSelected() {
+		FileDialog dialog = new FileDialog(usercomp.getShell(),SWT.SAVE);
+		dialog.setText(Messages.EnvironmentTab_25);
+		String filename = dialog.open();
+		ICConfigurationDescription[] cfgs;
+		cfgs = new ICConfigurationDescription[] {cfgd};
+		HashMap<String, String> envMap = parseEnvScript(filename);
+		if (envMap == null)
+        {
+          System.out.println("ENV var hasmap is NULL, Please check ENV script File!");
+          return;
+        }
+        Iterator<String> iter = envMap.keySet().iterator();
+        while (iter.hasNext())
+           {
+              String sKey = (String)iter.next();
+              String sValue = (String)envMap.get(sKey);
+              for (ICConfigurationDescription cfg : cfgs) {
+              ce.addVariable(sKey, sValue, IEnvironmentVariable.ENVVAR_REPLACE, SEPARATOR,cfg);
+              }
+        }
+
+
+	}
+	
+	private static HashMap<String, String> parseEnvScript(String sFileName) {
+        try {
+                HashMap<String, String> envMap = new HashMap<String, String>();
+            File file = new File(sFileName);
+
+            if (file.exists()) {
+                BufferedReader input = new BufferedReader(new FileReader(file));
+                try {
+                    String line = null;
+
+                while ((line = input.readLine()) != null) {
+                    if (!line.startsWith("export")) {
+                            continue;
+                    }
+                    String sKey = line.substring("export".length() + 1, line.indexOf('='));
+                    String sValue = line.substring(line.indexOf('=') + 1);
+                    if (sValue.startsWith("\"") && sValue.endsWith("\""))
+                        sValue = sValue.substring(sValue.indexOf('"') + 1, sValue.lastIndexOf('"'));
+                        /* If PATH ending with $PATH, we need to join with current system path */
+                    if (sKey.equalsIgnoreCase("PATH")) {
+                                     if (sValue.lastIndexOf("$PATH") >= 0)
+                                        sValue = sValue.substring(0, sValue.lastIndexOf("$PATH")) + System.getenv("PATH");
+                    }
+                    envMap.put(sKey, sValue);
+                    System.out.printf("get env key %s value %s\n", sKey, sValue);
+                }
+             } finally {
+                          input.close();
+             }
+         }
+         return envMap;
+
+         } catch (IOException e) {
+                                         e.printStackTrace();
+                                          return null;
+                                 }
+}
+
+	
+	private void handleEnvExportButtonSelected() {
+		FileDialog dialog = new FileDialog(usercomp.getShell(),SWT.SAVE);
+		dialog.setText(Messages.EnvironmentTab_26);
+		String filename = dialog.open();
+		ICConfigurationDescription[] cfgs;
+		cfgs = new ICConfigurationDescription[] {cfgd};
+		for (ICConfigurationDescription cfg: cfgs){
+			for(IEnvironmentVariable var: ce.getVariables(cfg)){
+                String sName= var.getName();
+                String sValue= var.getValue();
+                writeToFile(filename,sName,sValue);	
+				}
+		
+		}
+	}
+	 private static void writeToFile(String filename,String name,String value) {
+
+         BufferedWriter bufferedWriter = null;
+
+         try {
+
+         //Construct the BufferedWriter object
+         bufferedWriter = new BufferedWriter(new FileWriter(filename,true));
+
+         //Start writing to the output stream
+         String str= "export " + name + "=" + value;
+         bufferedWriter.write(str );
+         bufferedWriter.newLine();
+
+         } catch (IOException ex) {
+         ex.printStackTrace();
+         } finally {
+         //Close the BufferedWriter
+         try {
+         if (bufferedWriter != null) {
+         bufferedWriter.flush();
+         bufferedWriter.close();
+         }
+         } catch (IOException ex) {
+         ex.printStackTrace();
+         }
+         }
+         }
 
 	private void handleEnvSelectButtonSelected() {
 		// get Environment Variables from the OS

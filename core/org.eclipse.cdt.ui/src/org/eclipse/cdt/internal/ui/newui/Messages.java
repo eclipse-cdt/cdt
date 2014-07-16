@@ -142,6 +142,8 @@ public class Messages extends NLS {
 	public static String EnvironmentTab_7;
 	public static String EnvironmentTab_8;
 	public static String EnvironmentTab_9;
+	public static String EnvironmentTab_25;
+	public static String EnvironmentTab_26;
 	public static String ErrorParsTab_error_IllegalCharacter;
 	public static String ErrorParsTab_error_NonEmptyName;
 	public static String ErrorParsTab_error_NonUniqueID;

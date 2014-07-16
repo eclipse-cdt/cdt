@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e76c2f17_96e613a4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/EnvironmentVariableSupplier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-16T20:31:46Z",
+      "side": 1,
+      "message": "Please replace 2009 with 2014",
+      "revId": "80e52fb0287b2d2d67e5b4e31ce7726b8e8fc4cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_f6fca734",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/EnvironmentVariableSupplier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-16T20:31:46Z",
+      "side": 1,
+      "message": "Add a line saying:\n\nBranko Drevensek (\u003cyourCompany\u003e) - Accept double delimiter as empty element of a text list (bug 389823)",
+      "revId": "80e52fb0287b2d2d67e5b4e31ce7726b8e8fc4cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

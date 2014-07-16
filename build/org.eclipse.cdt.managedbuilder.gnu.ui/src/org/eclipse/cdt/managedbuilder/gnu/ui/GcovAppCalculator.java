@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.managedbuilder.gnu.ui;
 
+/**
+ * @since 8.3
+ */
 public class GcovAppCalculator extends ProfAppCalculator {
 	@Override
 	protected String getOptionIdPattern() {

@@ -89,7 +89,7 @@ public class AsyncCompletionWaitor {
 		fNumWaiting = 0;
 	}
 	
-	public boolean isOK() {
+	public synchronized boolean isOK() {
 		if ( fStatus == null ) {
 			// We timed out
 			return false;
@@ -98,7 +98,7 @@ public class AsyncCompletionWaitor {
 		return fStatus.isOK();
 	}
 	
-	public String getMessage() {
+	public synchronized String getMessage() {
 		if ( fStatus == null ) {
 			return "Timed out";  //$NON-NLS-1$
 		}
@@ -115,15 +115,15 @@ public class AsyncCompletionWaitor {
 		return fullMessage.length() <= 2 ? fullMessage : fullMessage.substring(0, fullMessage.length() - 2);
 	}
 	
-	public void setReturnInfo(Object info) {
+	public synchronized void setReturnInfo(Object info) {
 		fReturnInfo = info ;
 	}
 	
-	public Object getReturnInfo() {
+	public synchronized Object getReturnInfo() {
 		return fReturnInfo;
 	}
 	
-	public void increment() {
+	public synchronized void increment() {
 		if (fWaitFinished) {
 			((MultiStatus)fStatus).merge(
 					new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,

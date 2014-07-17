@@ -22,8 +22,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -217,40 +215,8 @@ public class MIMemoryTest extends BaseTestCase {
 	 */
 	private IAddress evaluateExpression(IDMContext ctx, String expression) throws Throwable
 	{
-		// Create the expression and format contexts 
-		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
-		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService, expressionDMC, IFormattedValues.HEX_FORMAT);
-
-		// Create the DataRequestMonitor which will store the operation result in the wait object
-		final DataRequestMonitor<FormattedValueDMData> drm =
-			new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), null) {
-			@Override
-			protected void handleCompleted() {
-				if (isSuccess()) {
-					fWait.setReturnInfo(getData());
-				}
-				fWait.waitFinished(getStatus());
-			}
-		};
-
-		// Evaluate the expression (asynchronously)
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
-			}
-		});
-
-		// Wait for completion
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertTrue(fWait.getMessage(), fWait.isOK());
-
-		// Return the string formatted by the back-end
-		String result = "";
-		Object returnInfo = fWait.getReturnInfo();
-		if (returnInfo instanceof FormattedValueDMData)
-			result = ((FormattedValueDMData) returnInfo).getFormattedValue();
-		return new Addr64(result);
+		IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
+		return new Addr64(SyncUtil.getExpressionValue(expressionDMC, IFormattedValues.HEX_FORMAT));
 	}
 
 	/* ------------------------------------------------------------------------

@@ -798,7 +798,7 @@ class ASTFileLocation implements IASTFileLocation {
 			return false;
 		if (fLength != other.fLength)
 			return false;
-		return Objects.equals(fLocationCtx, fLocationCtx);
+		return Objects.equals(fLocationCtx, other.fLocationCtx);
 	}
 }
 

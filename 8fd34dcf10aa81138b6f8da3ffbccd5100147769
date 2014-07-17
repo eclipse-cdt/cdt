@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_0c467275",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/cdtdebug.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-17T18:22:34Z",
+      "side": 1,
+      "message": "This was the orignal code.  It seems to work without escaping the colon, but I leave it up to Jeff for that change, just in case.\n\nAs for double quotes, you are right.  However, most variables here should not have a space in them, or else our parsing has a bug in it.  Maybe it is safer to actually not quote them to notice that bug faster.\n\n$HOME and $ECLIPSE_HOME could technically have a space, but none of the scripts are prepared for that.  This should be a different bug if we want to support spaces in directories.",
+      "parentUuid": "e76c2f17_0a4020b9",
+      "revId": "8fd34dcf10aa81138b6f8da3ffbccd5100147769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_6a3f143e",
         "filename": "debug/org.eclipse.cdt.debug.application/scripts/install.sh",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-12T00:02:51Z",
       "side": 1,
       "message": "You testing not where script is found but where is run from,\ni..e working directory\nbut error message said something about script location.\nTo test where script is you have to use $0 paths kind of",
+      "revId": "8fd34dcf10aa81138b6f8da3ffbccd5100147769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e76c2f17_6c8566e7",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/install.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-17T18:22:34Z",
+      "side": 1,
+      "message": "You are right.  The current approach requires to be in the directory where the script is AND have the script be in a certain place relative to the eclipse installation.\n\nWe can easily remove the first requirement and allow to run the script from anywhere, as long as the script is located properly with respect to the eclipse installation.\n\nSo now we need to run\nsh ./install.sh\n\nand with the proposed change, we could also run\n\nsh scripts/install.sh\n\nor\n\nsh /home/user/eclipseDir/org.eclipse.cdt.debug.application_1.0.0.201406111759/scripts/install.sh\n\nI will make the change in both scripts.",
+      "parentUuid": "e76c2f17_6a3f143e",
       "revId": "8fd34dcf10aa81138b6f8da3ffbccd5100147769",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

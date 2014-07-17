@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "e76c2f17_4740435e",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/cdtdebug.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-07-17T18:35:21Z",
+      "side": 1,
+      "message": "This was done because the configuration file and any other file names are escaped this way in the .ini files that Eclipse uses (e.g. config.ini or eclipse.ini).",
+      "parentUuid": "e76c2f17_0c467275",
+      "revId": "8fd34dcf10aa81138b6f8da3ffbccd5100147769",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_6a3f143e",
         "filename": "debug/org.eclipse.cdt.debug.application/scripts/install.sh",
         "patchSetId": 2

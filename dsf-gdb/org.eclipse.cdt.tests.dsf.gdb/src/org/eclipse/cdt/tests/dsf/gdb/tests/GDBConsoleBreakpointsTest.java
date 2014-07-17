@@ -320,10 +320,21 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
 		// Remove the platform breakpoint and verify that 
 		// the target breakpoint is deleted.
 		deletePlatformBreakpoint(plBpt);
-		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		
+		// Don't fail right away if we don't get the breakpoint event
+		// as we can't tell the true cause.
+		// Let further checks happen to help figure things out.
+		String failure = null;
+		try {
+			waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			failure = e.getMessage();
+		}
 		Assert.assertTrue(getPlatformBreakpointCount() == 0);
 		miBpts = getTargetBreakpoints();
 		Assert.assertTrue(miBpts.length == 0);
+		Assert.assertNull(failure, failure);
 	}
 
   	private void setConsoleLineBreakpoint(String fileName, int lineNumber) throws Throwable {

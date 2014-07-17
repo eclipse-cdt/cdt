@@ -456,19 +456,19 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		try {
-			boolean owned = false;
+			boolean added = false;
 			// TODO filter by launch configuration type
 			
 			for (Map<String, ILaunchConfigurationProvider> targetMap : configProviders.values()) {
 				for (ILaunchConfigurationProvider configProvider : targetMap.values()) {
-					if (configProvider.ownsLaunchConfiguration(configuration)) {
-						owned = true;
+					if (configProvider.launchConfigurationAdded(configuration)) {
+						added = true;
 						break;
 					}
 				}
 			}
 
-			if (!owned) {
+			if (!added) {
 				launchObjectAdded(configuration);
 			}
 		} catch (CoreException e) {
@@ -484,8 +484,25 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		// TODO Auto-generated method stub
-		
+		try {
+			boolean removed = false;
+			// TODO filter by launch configuration type
+			
+			for (Map<String, ILaunchConfigurationProvider> targetMap : configProviders.values()) {
+				for (ILaunchConfigurationProvider configProvider : targetMap.values()) {
+					if (configProvider.launchConfigurationRemoved(configuration)) {
+						removed = true;
+						break;
+					}
+				}
+			}
+
+			if (!removed) {
+				launchObjectRemoved(configuration);
+			}
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
 	}
 
 }

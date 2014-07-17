@@ -29,10 +29,10 @@ public interface ILaunchConfigurationProvider {
 	 * is properly constructed by sending in a launch object to the launch manager.
 	 * 
 	 * @param configuration
-	 * @return
+	 * @return boolean - was the launch configuration added by this provider?
 	 * @throws CoreException
 	 */
-	boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException;
+	boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException;
 	
 	/**
 	 * Returns the launch configuration type used to launch the descriptor on this target type.
@@ -58,8 +58,9 @@ public interface ILaunchConfigurationProvider {
 	 * A launch configuration has been removed.
 	 * 
 	 * @param configuration
+	 * @return boolean - was the launch configuration removed by this provider?
 	 * @throws CoreException
 	 */
-	void launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException;
+	boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException;
 
 }

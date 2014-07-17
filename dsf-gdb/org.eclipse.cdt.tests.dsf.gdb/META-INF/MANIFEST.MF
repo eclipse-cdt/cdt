@@ -19,7 +19,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.variables
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: .
+Eclipse-ExtensibleAPI: true
+Bundle-ClassPath: library.jar,
+ .
 Export-Package: org.eclipse.cdt.dsf.mi.service;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.framework;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.launching;x-internal:=true,

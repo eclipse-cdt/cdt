@@ -15,7 +15,7 @@ public class DefaultLaunchConfigurationProvider implements ILaunchConfigurationP
 	}
 
 	@Override
-	public boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
+	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
 		// We may own it but return false to let it percolate through to the descriptor type.
 		return false;
 	}
@@ -37,8 +37,8 @@ public class DefaultLaunchConfigurationProvider implements ILaunchConfigurationP
 	}
 
 	@Override
-	public void launchConfigurationRemoved(ILaunchConfiguration configation) throws CoreException {
-		// The descriptor will handle the remove.
+	public boolean launchConfigurationRemoved(ILaunchConfiguration configation) throws CoreException {
+		return false;
 	}
 	
 }

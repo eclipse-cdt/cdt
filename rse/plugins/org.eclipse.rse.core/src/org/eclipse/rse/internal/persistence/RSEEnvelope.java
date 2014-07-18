@@ -10,6 +10,7 @@
  * David Dykstal (IBM) - [216858] Need the ability to Import/Export RSE connections for sharing
  * David Dykstal (IBM) - [233876] Filters lost after restart
  * David McKnight (IBM)- [433696] RSE profile merge does not handle property sets
+ * David McKnight (IBM) -[439921] profile merge should allow optional host merge
  *********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -229,6 +230,16 @@ public class RSEEnvelope {
 	 * @param profile the profile which is updated with the changes. The profile may be active or inactive.
 	 */
 	public void mergeWith(ISystemProfile profile) throws CoreException {
+		mergeWith(profile, true);
+	}
+		
+		
+   /**
+    * Merges the contents of the envelope into the profile.
+    * @param profile the profile which is updated with the changes. The profile may be active or inactive.
+    * @param allowDuplicateHosts indicates whether existing hosts should be merged or appended
+	*/
+	public void mergeWith(ISystemProfile profile, boolean allowDuplicateHosts) throws CoreException {
 		List hostNodes = new ArrayList(10);
 		List filterPoolNodes = new ArrayList(10);
 		List propertySetNodes = new ArrayList(10);
@@ -252,7 +263,7 @@ public class RSEEnvelope {
 			for (Iterator z = hostNodes.iterator(); z.hasNext();) {
 				RSEDOMNode hostNode = (RSEDOMNode) z.next();
 				String originalName = hostNode.getName();
-				IHost host = mergeHost(profile, hostNode);
+				IHost host = mergeHost(profile, hostNode, allowDuplicateHosts);
 				hostMap.put(originalName, host);
 			}
 			// create the filter pools
@@ -282,11 +293,16 @@ public class RSEEnvelope {
 	}
 	
 	private IHost mergeHost(ISystemProfile profile, RSEDOMNode hostNode) {
+		return mergeHost(profile, hostNode, true);
+	}
+	
+	
+	private IHost mergeHost(ISystemProfile profile, RSEDOMNode hostNode, boolean allowDuplicates) {
 		IHost host = null;
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		String baseHostName = hostNode.getName();
 		String hostName = baseHostName;
-		if (registry.getHost(profile, hostName) != null) {
+		if (allowDuplicates && registry.getHost(profile, hostName) != null) {
 			int n = 0;
 			while (registry.getHost(profile, hostName) != null) {
 				n++;

@@ -13,7 +13,7 @@
  * David McKnight (IBM) -[439921] profile merge should allow optional host merge
  *********************************************************************************/
 
-package org.eclipse.rse.internal.persistence;
+package org.eclipse.rse.internal.persistence; 
 
 import java.io.BufferedReader;
 import java.io.File;

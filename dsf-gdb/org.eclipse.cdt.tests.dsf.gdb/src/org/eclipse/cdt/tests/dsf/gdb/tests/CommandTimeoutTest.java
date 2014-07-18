@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Mentor Graphics and others.
+ * Copyright (c) 2012, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,32 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Update tests to use long timeouts (Bug 439926)
  *******************************************************************************/
 
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import junit.framework.Assert;
-
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelect;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
+import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.debug.core.DebugException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +42,11 @@ public class CommandTimeoutTest extends BaseTestCase {
 
 	private static boolean fgTimeoutEnabled = false;
 	private static int fgTimeout = IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT;
+	private static boolean fgAutoTerminate;
 	
     @BeforeClass
 	public static void doBeforeClass() throws Exception {
+		// Save the original values of the timeout-related preferences
 		fgTimeoutEnabled = Platform.getPreferencesService().getBoolean( 
 				GdbPlugin.PLUGIN_ID, 
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, 
@@ -44,99 +57,124 @@ public class CommandTimeoutTest extends BaseTestCase {
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 
 				IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT,
 				null );		
+		fgAutoTerminate = Platform.getPreferencesService().getBoolean( 
+				GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, 
+				true,
+				null );		
     }
-    
+
     @Override
 	public void doBeforeTest() throws Exception {
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some 
 		// parameters.  The individual tests will be responsible for starting the launch. 
-		// Save the original values of the timeout-related preferences
     }
 
 	@Override
 	public void doAfterTest() throws Exception {
-		// Don't call super here, as the launch is already terminated
+		// Don't call super here, as each test needs to deal with the launch in its own way
 
-		// Restore the timeout preferences
+		// Restore the different preferences we might have changed
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
 		node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, fgTimeoutEnabled );
 		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, fgTimeout );
-	}
-
-	protected void performLaunchAndTerminate() throws Exception {
-	   	// perform the launch
-        doLaunch();
-        // terminate the launch right away
-		super.doAfterTest();
-	}
-
-	@Override
-	protected boolean reallyLaunchGDBServer() {
-		return false;
+		node.putBoolean( IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, fgAutoTerminate );
 	}
 
 	/**
-	 * Enables the timeout support and sets the timeout value to minimal - 1.
-	 * Launch is expected to timeout on the first gdb command.
+	 * Sends a command to which GDB will take a long time to reply, so as to generate a timeout.
+	 * This is done after the launch has completed and while the debug session is ongoing.
 	 */
 	@Test
-	public void firstCommandTimedOut() {
+	public void commandTimedOutDuringSession() throws Exception {
+		// Enable timeout
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
 		node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, true );
-		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1 );
+		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 2000 );
 
+		// Note that sending a "target-select" command when a program is running will kill the program.
+		// If that triggers us to kill GDB, then our testcase won't have time to timeout.
+		// Therefore we set the preference to keep GDB alive even if the program is no longer running
+		node.putBoolean( IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, false );
+		
+		doLaunch();
+		
+		final DsfSession session = getGDBLaunch().getSession();
+        ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+        		session,
+        		ICommandControlShutdownDMEvent.class);
+
+		// Send the command that will timeout
+		Query<MIInfo> query = new Query<MIInfo>() {
+			@Override
+			protected void execute( DataRequestMonitor<MIInfo> rm ) {
+				DsfServicesTracker tracker = new DsfServicesTracker( TestsPlugin.getBundleContext(), session.getId() );
+			    ICommandControlService commandService = tracker.getService( ICommandControlService.class );
+				tracker.dispose();
+				commandService.queueCommand( new MITargetSelect( commandService.getContext(), "localhost", "1", false ), rm );
+			}
+		};
 		try {
-			performLaunchAndTerminate();
+			session.getExecutor().execute( query );
+			query.get();
+			// Cleanup in case the query does not throw the expected exception
+			super.doAfterTest();
+			Assert.fail( "Command is expected to timeout" );
+		}
+		catch( Exception e ) {
+			processException( e );
+		}
+		
+		// Make sure we receive a shutdown event to confirm we have aborted the session
+        shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
+	}
+
+	/**
+	 * Sends a command to which GDB will take a long time to reply, so as to generate a timeout.
+	 * This is done during the launch to verify that we properly handle that case.
+	 */
+	@Test
+	public void commandTimedOutDuringLaunch() {
+		// Enable timeout
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
+		node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, true );
+		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 2000 );
+
+		// Setup a remote launch so that it sends a "-target-remote" as part of the 
+		// launch steps.
+		setLaunchAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, 
+				            IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE );
+		// We won't start gdbserver, so the command will timeout
+		setLaunchAttribute( ITestConstants.LAUNCH_GDB_SERVER, false);
+		
+		try {
+			doLaunch();
+			
+			// Cleanup in case the launch does not throw the expected exception
+			super.doAfterTest();
 			Assert.fail( "Launch is expected to fail" );
 		}
 		catch( Exception e ) {
 			processException( e );
 		}
 	}
-
-	/**
-	 * Tries to connect to gdbserver without starting it.
-	 * Launch is expected to timeout on "target-remote" command.
-	 */
-	@Test
-	public void remoteConnectionTimedOut() {
-		if ( !isRemoteSession() )
-			return;
-
-		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
-		node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, true );
-		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1000 );
-
-		try {
-			performLaunchAndTerminate();
-			Assert.fail( "Launch is expected to fail" );
-		}
-		catch( Exception e ) {
-			processException( e );
-		}
-	}
-
+	
 	/**
 	 * Checks whether the given exception is an instance of {@link CoreException} 
 	 * with the status code 20100 which indicates that a gdb command has been timed out.
 	 */
 	private void processException( Exception e ) {
-		if ( e instanceof DebugException ) {
-			Throwable t = getExceptionCause( e );
-			Assert.assertTrue(
+		Throwable t = getExceptionCause( e );
+		Assert.assertTrue(
 				"Unexpected exception",
 				t instanceof CoreException && ((CoreException)t).getStatus().getCode() == 20100 );
-		}
-		else {
-			Assert.fail( "Unexpected exception type" );
-		}
 	}
 
 	private Throwable getExceptionCause(Throwable e) {
 		Throwable current = e;
-		while ( current instanceof CoreException ) {
-			Throwable t = ((CoreException)current).getCause();
+		while ( true ) {
+			Throwable t = (current).getCause();
 			if ( t == null )
 				break;
 			current = t;

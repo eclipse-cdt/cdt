@@ -60,7 +60,7 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.IRSEDOMConstants;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 import org.eclipse.rse.persistence.dom.RSEDOMNode;
- 
+  
 /**
  * An envelope holds a version of a DOM that can be used for import and export of host, filterpool, and propertyset
  * information. The envelope is capable of adding its contents to a profile (an import) and can also be used for generating a 

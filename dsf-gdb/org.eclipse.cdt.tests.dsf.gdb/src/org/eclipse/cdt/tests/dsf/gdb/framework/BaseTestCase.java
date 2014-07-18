@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.DsfSession.SessionStartedListener;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -215,7 +216,8 @@ public class BaseTestCase {
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");
-    	
+    	launchAttributes.put(ITestConstants.LAUNCH_GDB_SERVER, true);
+
     	setGdbVersion();
     	
     	// Set the global launch attributes
@@ -236,9 +238,7 @@ public class BaseTestCase {
  		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
 	                                               .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
  		
- 		// First check if we should launch gdbserver in the case of a remote session
- 		if (reallyLaunchGDBServer())
- 			launchGdbServer();
+		launchGdbServer();
 		
  		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
  		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType("org.eclipse.cdt.tests.dsf.gdb.TestLaunch");
@@ -315,6 +315,12 @@ public class BaseTestCase {
  	 * If the user specified a different host, things won't work.
  	 */
  	private void launchGdbServer() {
+ 		// First check if we should not launch gdbserver even for a remote session
+ 		if (launchAttributes.get(ITestConstants.LAUNCH_GDB_SERVER).equals(false)) {
+ 			System.out.println("Forcing to not start gdbserver for this test");
+ 			return;
+ 		}
+
  		if (launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
  				              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
  			if (launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
@@ -390,16 +396,6 @@ public class BaseTestCase {
         	// If we cannot run GDB, just ignore the test case.
         	Assume.assumeNoException(e);
         }
- 	}
- 	
- 	/**
- 	 * In some tests we need to start a gdbserver session without starting gdbserver. 
- 	 * This method allows super classes of this class control the launch of gdbserver.
- 	 * 
- 	 * @return whether gdbserver should be started
- 	 */
- 	protected boolean reallyLaunchGDBServer() {
- 		return true;
  	}
 
 	@BeforeClass

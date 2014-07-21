@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.sdk"
       label="%featureName"
-      version="3.5.0.qualifier"
+      version="3.6.1.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
@@ -31,7 +31,7 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 

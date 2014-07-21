@@ -1,22 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.ssh.source" version="3.0.500.qualifier" label="%featureName" provider-name="%providerName" 
-	license-feature="org.eclipse.license"
-      license-feature-version="1.0.1.qualifier"	>
-	<description >
-		%description
-	</description>
-	<copyright >
-		%copyright
-	</copyright>
-	<license url="%licenseURL">
-		%license
-	</license>
-	<url>
-		<update url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
-		<discovery url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
-	</url>
-	<plugin id="org.eclipse.rse.services.ssh.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.connectorservice.ssh.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.subsystems.files.ssh.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.subsystems.shells.ssh.source" version="0.0.0"     unpack="false"/>
+<feature
+      id="org.eclipse.rse.ssh.source"
+      label="%featureName"
+      version="3.6.1.qualifier"
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+   </url>
+
+   <plugin
+         id="org.eclipse.rse.services.ssh.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.connectorservice.ssh.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.subsystems.files.ssh.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.subsystems.shells.ssh.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

@@ -19,7 +19,7 @@
 <feature
       id="org.eclipse.rse.dstore"
       label="%featureName"
-      version="3.4.100.qualifier"
+      version="3.6.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.dstore"
       license-feature="org.eclipse.license"
@@ -38,7 +38,7 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 

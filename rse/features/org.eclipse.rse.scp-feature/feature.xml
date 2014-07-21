@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.rse.scp"
       label="%featureName"
-      version="0.2.100.qualifier"
+      version="3.6.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.subsystems.files.scp"
       image="eclipse_update_120.jpg"
@@ -33,7 +33,7 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 

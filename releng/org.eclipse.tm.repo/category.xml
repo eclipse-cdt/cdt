@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.rse_3.5.0.qualifier.jar" id="org.eclipse.rse" version="3.5.0.qualifier">
+   <feature url="features/org.eclipse.rse_0.0.0.jar" id="org.eclipse.rse" version="0.0.0">
       <category name="tm_36_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_3.5.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.5.0.qualifier">
+   <feature url="features/org.eclipse.rse.sdk_0.0.0.jar" id="org.eclipse.rse.sdk" version="0.0.0">
       <category name="tm_36_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.useractions_1.1.500.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.500.qualifier">
+   <feature url="features/org.eclipse.rse.useractions_0.0.0.jar" id="org.eclipse.rse.useractions" version="0.0.0">
       <category name="tm_36_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_3.1.400.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.400.qualifier">
+   <feature url="features/org.eclipse.rse.examples_0.0.0.jar" id="org.eclipse.rse.examples" version="0.0.0">
       <category name="tm_36_optional"/>
    </feature>
-   <feature url="features/org.eclipse.rse.scp_0.2.100.qualifier.jar" id="org.eclipse.rse.scp" version="0.2.100.qualifier">
+   <feature url="features/org.eclipse.rse.scp_0.0.0.jar" id="org.eclipse.rse.scp" version="0.0.0">
       <category name="tm_36_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.100.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.100.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.0.0">
       <category name="tm_36_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.3.301.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.301.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.sdk" version="0.0.0">
       <category name="tm_36_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.301.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.301.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.core.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.core.sdk" version="0.0.0">
       <category name="tm_36_main"/>
    </feature>
    

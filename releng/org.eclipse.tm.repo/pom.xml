@@ -40,7 +40,7 @@
                   <target>
                     <property name="buildDirectory" value="${project.build.directory}/../../../"/>
                     <property name="builder" value="${project.build.directory}/../../../releng/"/>
-                    <property name="buildId" value="3.5.0"/>
+                    <property name="buildId" value="3.6"/>
                     <ant antfile="${project.build.directory}/../../../dstoreTargets-git.xml">
                       <target name="serverruntime"/>
                     </ant>

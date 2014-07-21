@@ -13,7 +13,7 @@
   <packaging>eclipse-repository</packaging>
   <properties>
     <tm-stream>luna</tm-stream>
-    <tm-zipfile>${project.artifactId}-${project.version}.zip</tm-zipfile>
+    <tm-zipfile>${project.artifactId}.zip</tm-zipfile>
     <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${tm-stream}/nightly</tm-install>
   </properties>
   <pluginRepositories>
@@ -90,7 +90,7 @@
       <id>local-build</id>
       <properties>
         <tm-install>${project.build.directory}/../../../../</tm-install>
-        <tm-zipfile>${project.artifactId}-${project.version}.zip</tm-zipfile>
+        <tm-zipfile>${project.artifactId}.zip</tm-zipfile>
       </properties>
       <build>
         <plugins>

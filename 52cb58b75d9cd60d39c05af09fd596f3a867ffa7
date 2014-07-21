@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_786f3d74",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ITestConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-07-21T18:23:18Z",
+      "side": 1,
+      "message": "Should be \"allow tests\" or \" allows a test\".",
+      "revId": "52cb58b75d9cd60d39c05af09fd596f3a867ffa7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

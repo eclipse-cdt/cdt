@@ -30,6 +30,7 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -146,12 +147,16 @@ public class ConfigSelector extends CSelector {
 	@Override
 	public void handleEdit(Object element) {
 		try {
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			ILaunchDescriptor desc = (ILaunchDescriptor) element;
 			ILaunchMode mode = getManager().getActiveLaunchMode();
 			ILaunchTarget target = getManager().getActiveLaunchTarget();
+			if (target == null) {
+				MessageDialog.openError(shell, "No Active Target", "You must create a target to edit this launch configuration.");
+				return;
+			}
 			ILaunchConfigurationType configType = getManager().getLaunchConfigurationType(desc, target);
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType, mode.getIdentifier());
-			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
 			if (groupExt != null) {
 				ILaunchConfiguration config = getManager().getLaunchConfiguration(desc, target);

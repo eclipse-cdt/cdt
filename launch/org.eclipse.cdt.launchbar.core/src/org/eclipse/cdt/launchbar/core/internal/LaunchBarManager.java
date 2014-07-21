@@ -430,7 +430,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
-		if (activeLaunchDesc == null)
+		if (activeLaunchDesc == null || target == null)
 			return null;
 
 		Map<String, ILaunchConfigurationProvider> targetMap = configProviders.get(descriptor.getType().getId());

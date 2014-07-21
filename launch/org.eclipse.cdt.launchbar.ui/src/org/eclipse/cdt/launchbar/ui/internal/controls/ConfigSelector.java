@@ -30,6 +30,7 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -155,9 +156,13 @@ public class ConfigSelector extends CSelector {
 			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
 			if (groupExt != null) {
 				ILaunchConfiguration config = getManager().getLaunchConfiguration(desc, target);
-				final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config, groupExt);
-				dialog.setInitialStatus(Status.OK_STATUS);
-				dialog.open();
+				if (config != null) {
+					final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config, groupExt);
+					dialog.setInitialStatus(Status.OK_STATUS);
+					dialog.open();
+				} else {
+					MessageDialog.openError(shell, "No Active Target", "You must create a target to edit this launch configuration.");
+				}
 			}
 		} catch (CoreException e2) {
 			Activator.log(e2);

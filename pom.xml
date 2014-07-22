@@ -18,6 +18,7 @@
 		<tycho-version>0.20.0</tycho-version>
 		<tycho-extras-version>0.20.0</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<cdt-site>http://hudson.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
 	</properties>
@@ -232,6 +233,16 @@
   	</pluginRepositories>
 
 	<profiles>
+		<profile>
+			<id>cdtRepo</id>
+			<repositories>
+				<repository>
+					<id>cdt.repo</id>
+					<url>${cdt-site}</url>
+					<layout>p2</layout>
+				</repository>
+			</repositories>
+		</profile>
 		<profile>
 			<id>macosx</id>
 			<activation>

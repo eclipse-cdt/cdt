@@ -15,15 +15,6 @@
 	<artifactId>org.eclipse.cdt.tests.dsf.gdb</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	
-	<!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
-	<!-- <repositories>
-		<repository>
-			<id>cdt.repo</id>
-			<url>file:/${basedir}/../../releng/org.eclipse.cdt.repo/target/repository</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>-->
-
 	<properties>
 		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/shared/common/gdb</gdbPathOption>
 		<gdbTestSuite>AutomatedSuite.java</gdbTestSuite>

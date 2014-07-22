@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -189,13 +190,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			try {
 				if (descriptorType.ownsLaunchObject(element)) {
 					desc = descriptorType.getDescriptor(element);
-					if (desc != null) {
-						descriptors.put(desc.getName(), desc);
-						objectDescriptorMap.put(element, desc);
+					if (doAddDescriptor(element, desc))
 						setActiveLaunchDescriptor(desc);
-						return desc;
-					}
-					break;
+					return desc;
 				}
 			} catch (CoreException e) {
 				Activator.log(e.getStatus());
@@ -204,12 +201,53 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		return null;
 	}
 
+	protected boolean doAddDescriptor(Object element, ILaunchDescriptor desc) {
+		if (desc == null)
+			return false;
+		objectDescriptorMap.put(element, desc);
+		String name = desc.getName();
+		ILaunchDescriptor old = descriptors.get(name);
+		if (old != null && !old.equals(desc)) {
+			int indexConflict = descriptorTypes.indexOf(old.getType());
+			int index = descriptorTypes.indexOf(desc.getType());
+			if (indexConflict < index) {
+				return false; // previous descriptor is higher priority, don't change name mapping
+			}
+		}
+		descriptors.put(name, desc);
+		return true;
+	}
+
+	protected boolean doRemoveDescriptor(Object element, ILaunchDescriptor desc) {
+		if (desc == null)
+			return false;
+		String name = desc.getName();
+		descriptors.remove(name);
+		objectDescriptorMap.remove(element);
+		// is there something else we can use which has same name?
+		int index = -1;
+		for (Iterator<ILaunchDescriptor> iterator = objectDescriptorMap.values().iterator(); iterator.hasNext();) {
+			ILaunchDescriptor idesc = iterator.next();
+			if (idesc.getName().equals(name)) {
+				ILaunchDescriptor old = descriptors.get(name);
+				int indexConflict = descriptorTypes.indexOf(old.getType());
+				if (indexConflict < index) {
+					continue; // previous descriptor is higher priority, don't change name mapping
+				}
+				descriptors.put(name, idesc);
+				index = descriptorTypes.indexOf(idesc.getType());
+			}
+		}
+		if (index >= 0)
+			return false;
+		return true;
+	}
+
 	@Override
 	public void launchObjectRemoved(Object element) throws CoreException {
 		ILaunchDescriptor desc = objectDescriptorMap.get(element);
 		if (desc != null) {
-			descriptors.remove(desc.getName());
-			objectDescriptorMap.remove(element);
+			doRemoveDescriptor(element, desc);
 			if (desc.equals(activeLaunchDesc)) {
 				// Roll back to the last one and make sure we don't come back
 				ILaunchDescriptor nextDesc = lastLaunchDesc;

@@ -1,0 +1,10 @@
+Code-Review+2: Doug Schaefer <dschaefer@qnx.com>
+Verified+1: Hudson CI
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Code-Review+1: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Submitted-by: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-at: Tue, 22 Jul 2014 16:34:35 -0400
+Reviewed-on: https://git.eclipse.org/r/30285
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

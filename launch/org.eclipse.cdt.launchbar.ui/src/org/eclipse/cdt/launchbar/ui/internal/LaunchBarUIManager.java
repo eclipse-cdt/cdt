@@ -58,9 +58,13 @@ public class LaunchBarUIManager {
 						ILabelProvider labelProvider = (ILabelProvider) element.createExecutableExtension("labelProvider");
 						targetLabelProviders.put(targetTypeId, labelProvider);
 						
-						IHoverProvider hoverProvider = (IHoverProvider) element.createExecutableExtension("hoverProvider");
-						if (hoverProvider != null)
-							targetHoverProviders.put(targetTypeId, hoverProvider);
+						try {
+							IHoverProvider hoverProvider = (IHoverProvider) element.createExecutableExtension("hoverProvider");
+							if (hoverProvider != null)
+								targetHoverProviders.put(targetTypeId, hoverProvider);
+						} catch (CoreException e) {
+							// ignore
+						}
 						
 						String editCommandId = element.getAttribute("editCommandId");
 						if (editCommandId != null && editCommandId.length() > 0)

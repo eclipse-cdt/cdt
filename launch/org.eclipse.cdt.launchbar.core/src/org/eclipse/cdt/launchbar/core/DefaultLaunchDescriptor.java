@@ -8,18 +8,16 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.cdt.launchbar.core.internal;
+package org.eclipse.cdt.launchbar.core;
 
-import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
-import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class DefaultLaunchDescriptor implements ILaunchDescriptor {
 
-	private final DefaultLaunchDescriptorType type;
+	private final ILaunchDescriptorType type;
 	private final ILaunchConfiguration config;
 	
-	public DefaultLaunchDescriptor(DefaultLaunchDescriptorType type, ILaunchConfiguration config) {
+	public DefaultLaunchDescriptor(ILaunchDescriptorType type, ILaunchConfiguration config) {
 		this.type = type;
 		this.config = config;
 	}

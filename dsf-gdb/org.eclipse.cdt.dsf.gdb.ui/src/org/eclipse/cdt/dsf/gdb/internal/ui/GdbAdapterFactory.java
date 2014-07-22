@@ -66,9 +66,10 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbSelectPrevTraceRecordComm
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStartTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStopTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbUncallCommand;
-import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.cdt.dsf.gdb.ui.viewmodel.GdbViewModelAdapter;
+import org.eclipse.cdt.dsf.gdb.ui.viewmodel.IGdbViewModelServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -147,7 +148,7 @@ public class GdbAdapterFactory
             fSteppingController = new SteppingController(session);
             session.registerModelAdapter(SteppingController.class, fSteppingController);
 
-            fViewModelAdapter = new GdbViewModelAdapter(session, fSteppingController);
+            fViewModelAdapter = createGdbViewModelAdapter(launch);
             session.registerModelAdapter(IViewerInputProvider.class, fViewModelAdapter);
             
             if (launch.getSourceLocator() instanceof ISourceLookupDirector) {
@@ -236,6 +237,18 @@ public class GdbAdapterFactory
             session.registerModelAdapter(ICEditorTextHover.class, fDebugTextHover);
         }
         
+		protected GdbViewModelAdapter createGdbViewModelAdapter(GdbLaunch launch) {
+			DsfSession session = launch.getSession();
+			
+			IGdbViewModelServicesFactory adapter = (IGdbViewModelServicesFactory) 
+					launch.getAdapter(IGdbViewModelServicesFactory.class);
+			if(adapter != null) {
+				// Bug 432323 : Allow IDE extensions to customize Debug UI for non C/C++ languages
+				return adapter.createGdbViewModelAdapter(session, fSteppingController);
+			}
+			return new GdbViewModelAdapter(session, fSteppingController);
+		}
+		
         void dispose() {
             DsfSession session = fLaunch.getSession();
             

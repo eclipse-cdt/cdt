@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
+package org.eclipse.cdt.dsf.gdb.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
@@ -24,8 +24,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-/* 
- * 
+/**
+ * @since 2.5
  */
 @ThreadSafe
 public class GdbViewModelAdapter extends AbstractDebugVMAdapter

@@ -29,10 +29,12 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
+import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
+import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryExtensions;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -486,7 +488,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	protected IDsfDebugServicesFactory newServiceFactory(String version) {
 
 		if (fIsNonStopSession && isNonStopSupportedInGdbVersion(version)) {
-			return new GdbDebugServicesFactoryNS(version);
+			return new GdbDebugServicesFactoryNS_LangExtension(version);
 		}
 		
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
@@ -494,13 +496,13 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 			// 6.3.50-20050815APPLE1346, we extract the gdb version and apple version
 			String versions [] = version.split(LaunchUtils.MACOS_GDB_MARKER);
 			if (versions.length == 2) {
-				return new MacOSGdbDebugServicesFactory(versions[0], versions[1]);
+				return new MacOSGdbDebugServicesFactory_LangExtension(versions[0], versions[1]);
 			}
 		}
 
-		return new GdbDebugServicesFactory(version);
+		return new GdbDebugServicesFactory_LangExtension(version);
 	}
-
+	
 	/**
 	 * Method called to create the services factory for this debug session.
 	 * A subclass can override this method and provide its own ServiceFactory.
@@ -512,7 +514,57 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
 		return newServiceFactory(version);
 	}
-
+	
+	/**
+	 * @since 4.5
+	 */
+	protected final GdbDebugServicesFactoryExtensions servicesExtensions = createDebugServicesExtensions();
+	
+	/**
+	 * Override point to allow customization of certain aspects of GdbDebugServicesFactory.
+	 * @since 4.5
+	 */
+	protected GdbDebugServicesFactoryExtensions createDebugServicesExtensions() {
+		return new GdbDebugServicesFactoryExtensions();
+	}
+	
+	private class GdbDebugServicesFactoryNS_LangExtension extends GdbDebugServicesFactoryNS {
+		
+		public GdbDebugServicesFactoryNS_LangExtension(String version) {
+			super(version);
+		}
+		
+		@Override
+		protected IExpressions createExpressionService(DsfSession session) {
+			// See super.createExpressionService(session);
+			return servicesExtensions.createExpressionService(session);
+		}
+	}
+	
+	private class GdbDebugServicesFactory_LangExtension extends GdbDebugServicesFactory {
+		public GdbDebugServicesFactory_LangExtension(String version) {
+			super(version);
+		}
+		
+		@Override
+		protected IExpressions createExpressionService(DsfSession session) {
+			// See super.createExpressionService(session);
+			return servicesExtensions.createExpressionService(session);
+		}
+	}
+	
+	private class MacOSGdbDebugServicesFactory_LangExtension extends MacOSGdbDebugServicesFactory {
+		public MacOSGdbDebugServicesFactory_LangExtension(String gdbVersion, String appleVersion) {
+			super(gdbVersion, appleVersion);
+		}
+		
+		@Override
+		protected IExpressions createExpressionService(DsfSession session) {
+			// See super.createExpressionService(session);
+			return servicesExtensions.createExpressionService(session);
+		}
+	}
+	
 	@Override
 	protected String getPluginID() {
 		return GdbPlugin.PLUGIN_ID;

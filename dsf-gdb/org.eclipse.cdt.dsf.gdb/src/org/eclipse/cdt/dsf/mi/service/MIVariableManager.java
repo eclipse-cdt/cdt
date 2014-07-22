@@ -1689,7 +1689,14 @@ public class MIVariableManager implements ICommandControl {
 		protected MIVariableObject createChild(final VariableObjectId childId,
 				final String childFullExpression, final int indexInParent,
 				final MIVar childData) {
-			
+			return createChild_override(this, childId, childFullExpression, indexInParent, childData);
+		}
+		
+		/**
+		 * @since 4.5
+		 */
+		protected MIVariableObject doCreateChild(final VariableObjectId childId, final String childFullExpression,
+				final int indexInParent, final MIVar childData) {
 			MIVariableObject var = createVariableObject(childId, this);
 			ExpressionInfo childInfo = new ExpressionInfo(childFullExpression,
 					childData.getExp(), childData.isDynamic(), exprInfo,
@@ -2084,7 +2091,18 @@ public class MIVariableManager implements ICommandControl {
 			MIVariableObject parentObj, boolean needsCreation) {
 		return new MIVariableObject(id, parentObj, needsCreation);
 	}
-
+	
+	/***
+	 * Allow the {@link MIVariableManager} to customize the creation 
+	 * of child elements of {@link MIVariableObject}s
+	 * @since 4.5
+	 */
+	protected MIVariableObject createChild_override(MIVariableObject miVariableObject, 
+			final VariableObjectId childId, final String childFullExpression, final int indexInParent, 
+			final MIVar childData) {
+		return miVariableObject.doCreateChild(childId, childFullExpression, indexInParent, childData);
+	}
+	
 	/**
      * @since 3.0
      */
@@ -2621,7 +2639,10 @@ public class MIVariableManager implements ICommandControl {
 		return lruVariableList;
 	}
 	
-	private GDBTypeParser getGDBTypeParser() {
+	/**
+	 * @since 4.5
+	 */
+	protected GDBTypeParser getGDBTypeParser() {
 		if (fGDBTypeParser == null) {
 			fGDBTypeParser = createGDBTypeParser();
 		}

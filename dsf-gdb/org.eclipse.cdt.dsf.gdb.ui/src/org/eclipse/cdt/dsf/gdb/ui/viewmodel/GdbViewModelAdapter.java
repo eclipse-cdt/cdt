@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
+package org.eclipse.cdt.dsf.gdb.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
@@ -24,8 +24,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-/* 
- * 
+/**
+ * @since 2.5
  */
 @ThreadSafe
 public class GdbViewModelAdapter extends AbstractDebugVMAdapter
@@ -44,20 +44,45 @@ public class GdbViewModelAdapter extends AbstractDebugVMAdapter
     @Override
     protected IVMProvider createViewModelProvider(IPresentationContext context) {
         if ( IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId()) ) {
-            return new LaunchVMProvider(this, context, getSession()); 
+            return createLaunchVMProvider(context); 
         } else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) ) {
-            return new GdbVariableVMProvider(this, context, getSession());
+            return createGdbVariableVMProvider(context);
         } else if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId()) ) {
-            return new RegisterVMProvider(this, context, getSession());
+            return createRegisterVMProvider(context);
         } else if (IDebugUIConstants.ID_EXPRESSION_VIEW.equals(context.getId()) ) {
-            return new GdbExpressionVMProvider(this, context, getSession());
+            return createGdbExpressionVMProvider(context);
         } else if (IDsfDebugUIConstants.ID_EXPRESSION_HOVER.equals(context.getId()) ) {
-            return new GdbExpressionVMProvider(this, context, getSession());
+            return createGdbExpressionVMProvider(context);
         } else if (IDebugUIConstants.ID_MODULE_VIEW.equals(context.getId()) ) {
-            return new ModulesVMProvider(this, context, getSession());
+            return createModulesVMProvider(context);
         } else if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {
-            return new GdbBreakpointVMProvider(this, context, getSession());
+            return createGdbBreakpointVMProvider(context);
         }
         return null;
-    }    
+    }
+    
+    protected LaunchVMProvider createLaunchVMProvider(IPresentationContext context) {
+    	return new LaunchVMProvider(this, context, getSession());
+    }
+    
+    protected GdbVariableVMProvider createGdbVariableVMProvider(IPresentationContext context) {
+    	return new GdbVariableVMProvider(this, context, getSession());
+    }
+    
+    protected RegisterVMProvider createRegisterVMProvider(IPresentationContext context) {
+    	return new RegisterVMProvider(this, context, getSession());
+    }
+    
+    protected GdbExpressionVMProvider createGdbExpressionVMProvider(IPresentationContext context) {
+    	return new GdbExpressionVMProvider(this, context, getSession());
+    }
+    
+    protected ModulesVMProvider createModulesVMProvider(IPresentationContext context) {
+    	return new ModulesVMProvider(this, context, getSession());
+    }
+    
+    protected GdbBreakpointVMProvider createGdbBreakpointVMProvider(IPresentationContext context) {
+    	return new GdbBreakpointVMProvider(this, context, getSession());
+    }
+    
 }

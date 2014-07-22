@@ -10,7 +10,7 @@
  *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
+package org.eclipse.cdt.dsf.gdb.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -27,10 +27,10 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbVariableVMNode.IncompleteChildrenVMC;
+import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.FetchMoreChildrenEvent;
+import org.eclipse.cdt.dsf.gdb.ui.viewmodel.GdbVariableVMNode.IncompleteChildrenVMC;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
@@ -49,6 +49,7 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * A specialization of ExpressionVMProvider that uses a GDB-specific variable VM
  * node. To understand why this is necessary, see GdbVariableVMNode.
+ * @since 2.5
  */
 public class GdbExpressionVMProvider extends ExpressionVMProvider {
 
@@ -138,12 +139,12 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
          *  view comes in as a fully qualified expression so we go directly to the SubExpression layout
          *  node.
          */
-        IExpressionVMNode variableNode =  new GdbVariableVMNode(this, getSession(), syncvarDataAccess);
+        GdbVariableVMNode variableNode = createGdbVariableVMNode(syncvarDataAccess);
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
         /* Wire up the casting support. IExpressions2 service is always available
 		 * for gdb. No need to call hookUpCastingSupport */
-		((VariableVMNode) variableNode).setCastToTypeSupport(
+		variableNode.setCastToTypeSupport(
 				new DsfCastToTypeSupport(getSession(), GdbExpressionVMProvider.this, syncvarDataAccess));
 		
         /*
@@ -164,6 +165,10 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
          */
         setRootNode(rootNode);
     }
+    
+	protected GdbVariableVMNode createGdbVariableVMNode(SyncVariableDataAccess syncvarDataAccess) {
+		return new GdbVariableVMNode(this, getSession(), syncvarDataAccess);
+	}
     
 	@Override
 	public void handleEvent(Object event, final RequestMonitor rm) {

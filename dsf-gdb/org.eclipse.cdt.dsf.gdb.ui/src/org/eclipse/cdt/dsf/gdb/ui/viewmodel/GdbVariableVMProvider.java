@@ -10,18 +10,18 @@
  *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)     
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
+package org.eclipse.cdt.dsf.gdb.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbVariableVMNode.IncompleteChildrenVMC;
+import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.FetchMoreChildrenEvent;
+import org.eclipse.cdt.dsf.gdb.ui.viewmodel.GdbVariableVMNode.IncompleteChildrenVMC;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * A specialization of VariableVMProvider that uses a GDB-specific variable VM
  * node. To understand why this is necessary, see GdbVariableVMNode.
+ * @since 2.5
  */
 public class GdbVariableVMProvider extends VariableVMProvider {
 
@@ -89,19 +90,23 @@ public class GdbVariableVMProvider extends VariableVMProvider {
         setRootNode(rootNode);
         
         // Create the next level which represents members of structs/unions/enums and elements of arrays.
-        IVMNode subExpressioNode = new GdbVariableVMNode(this, getSession(), varAccess);
+        GdbVariableVMNode subExpressioNode = createGdbVariableVMNode(varAccess);
         addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
 
 		/* Wire up the casting support. IExpressions2 service is always available
 		 * for gdb. No need to call hookUpCastingSupport */
-		((VariableVMNode) subExpressioNode).setCastToTypeSupport(
+		subExpressioNode.setCastToTypeSupport(
 				new DsfCastToTypeSupport(getSession(), GdbVariableVMProvider.this, varAccess));
         
         // Configure the sub-expression node to be a child of itself.  This way the content
         // provider will recursively drill-down the variable hierarchy.
         addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
     }
-
+    
+	protected GdbVariableVMNode createGdbVariableVMNode(SyncVariableDataAccess varAccess) {
+		return new GdbVariableVMNode(this, getSession(), varAccess);
+	}
+	
 	@Override
 	public void handleEvent(Object event, final RequestMonitor rm) {
         if (event instanceof DoubleClickEvent && !isDisposed()) {

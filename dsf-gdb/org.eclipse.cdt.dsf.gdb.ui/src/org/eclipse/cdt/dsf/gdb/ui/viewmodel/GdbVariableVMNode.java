@@ -11,7 +11,7 @@
  *     Marc Khouzam (Ericsson) - Add support disable "View Memory" action (bug 418710)
  *     Marc Khouzam (Ericsson) - Turn off "watch" action for return values of methods (bug 341731)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
+package org.eclipse.cdt.dsf.gdb.ui.viewmodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +34,8 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.FetchMoreChildrenEvent;
+import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.Messages;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -56,6 +58,7 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * Specialization of DSF's VariableVMNode. See
  * {@link GdbVariableVMNode#createVMContext(IDMContext)} for why this is needed.
+ * @since 2.5
  */
 public class GdbVariableVMNode extends VariableVMNode {
 

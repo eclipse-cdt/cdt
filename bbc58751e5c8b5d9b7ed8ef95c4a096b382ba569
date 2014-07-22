@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_6465d438",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-07-22T20:13:13Z",
+      "side": 1,
+      "message": "This class is no longer abstract although this can still be abstract since there is no instances created with new.\n  since its not intended to be instantiated directly I think it should become abstract.\n\nAny thoughts ?",
+      "revId": "bbc58751e5c8b5d9b7ed8ef95c4a096b382ba569",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 package org.eclipse.cdt.launchbar.core.internal;
 
+import org.eclipse.cdt.launchbar.core.DefaultLaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;

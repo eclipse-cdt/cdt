@@ -456,21 +456,37 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		try {
-			boolean added = false;
-			// TODO filter by launch configuration type
-			
-			for (Map<String, ILaunchConfigurationProvider> targetMap : configProviders.values()) {
+			// TODO filter by launch configuration type to avoid loading plug-ins
+			for (ILaunchDescriptorType descriptorType : descriptorTypes) {
+				Map<String, ILaunchConfigurationProvider> targetMap = configProviders.get(descriptorType.getId());
 				for (ILaunchConfigurationProvider configProvider : targetMap.values()) {
 					if (configProvider.launchConfigurationAdded(configuration)) {
-						added = true;
-						break;
+						return;
 					}
 				}
 			}
 
-			if (!added) {
-				launchObjectAdded(configuration);
+			// No one claimed it, send it through the descriptorTypes
+			launchObjectAdded(configuration);
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
+	}
+
+	@Override
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		try {
+			// TODO filter by launch configuration type
+			for (ILaunchDescriptorType descriptorType : descriptorTypes) {
+				Map<String, ILaunchConfigurationProvider> targetMap = configProviders.get(descriptorType.getId());
+				for (ILaunchConfigurationProvider configProvider : targetMap.values()) {
+					if (configProvider.launchConfigurationRemoved(configuration)) {
+						return;
+					}
+				}
 			}
+
+			launchObjectRemoved(configuration);
 		} catch (CoreException e) {
 			Activator.log(e.getStatus());
 		}
@@ -478,31 +494,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		try {
-			boolean removed = false;
-			// TODO filter by launch configuration type
-			
-			for (Map<String, ILaunchConfigurationProvider> targetMap : configProviders.values()) {
-				for (ILaunchConfigurationProvider configProvider : targetMap.values()) {
-					if (configProvider.launchConfigurationRemoved(configuration)) {
-						removed = true;
-						break;
-					}
-				}
-			}
-
-			if (!removed) {
-				launchObjectRemoved(configuration);
-			}
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
-		}
+		// Nothing to do on changes
 	}
 
 }

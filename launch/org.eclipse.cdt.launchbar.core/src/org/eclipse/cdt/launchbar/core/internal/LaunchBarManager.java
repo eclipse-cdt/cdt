@@ -104,20 +104,21 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 				} else if (elementName.equals("configProvider")) {
 					String descriptorType = element.getAttribute("descriptorType");
 					String targetType = element.getAttribute("targetType");
+					String isDefault = element.getAttribute("isDefault");
 					// TODO don't instantiate this until we need it
 					ILaunchConfigurationProvider configProvider = (ILaunchConfigurationProvider) element.createExecutableExtension("class");
-
-					Map<String, ILaunchConfigurationProvider> targetTypes = configProviders.get(descriptorType);
-					if (targetTypes == null) {
-						targetTypes = new HashMap<>();
-						configProviders.put(descriptorType, targetTypes);
-					}
-					targetTypes.put(targetType, configProvider);
-					
+					addConfigProvider(descriptorType, targetType, Boolean.valueOf(isDefault), configProvider);
+				} else if (elementName.equals("defaultConfigProvider")) {
+					String descriptorType = element.getAttribute("descriptorType");
+					String targetType = element.getAttribute("targetType");
+					String launchType = element.getAttribute("launchConfigurationType");
 					String isDefault = element.getAttribute("isDefault");
-					if (isDefault != null && Boolean.valueOf(isDefault)) {
-						defaultTargetTypes.put(descriptorType, targetType);
-					}
+					ILaunchConfigurationProvider configProvider = new TypeBasedLaunchConfigurationProvider(launchType);
+					addConfigProvider(descriptorType, targetType, Boolean.valueOf(isDefault), configProvider);
+
+					ILaunchDescriptorType type = new TypeBasedLaunchDescriptorType(descriptorType, launchType);
+					descriptorTypes.add(type);
+					typePriorities.put(type, 2); // TODO: fix priority
 				}
 			}
 		}
@@ -179,6 +180,19 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 	}
 
+	protected void addConfigProvider(String descriptorType, String targetType, boolean isDefaultB,
+	        ILaunchConfigurationProvider configProvider) {
+		Map<String, ILaunchConfigurationProvider> targetTypes = configProviders.get(descriptorType);
+		if (targetTypes == null) {
+			targetTypes = new HashMap<>();
+			configProviders.put(descriptorType, targetTypes);
+		}
+		targetTypes.put(targetType, configProvider);
+		if (isDefaultB) {
+			defaultTargetTypes.put(descriptorType, targetType);
+		}
+	}
+
 	@Override
 	public ILaunchDescriptor launchObjectAdded(Object element) {
 		ILaunchDescriptor desc = objectDescriptorMap.get(element);
@@ -193,8 +207,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 						String id = getId(desc);
 						ILaunchDescriptor old = descriptors.get(id);
 						if (old != null && !desc.equals(old))
-							throw new IllegalStateException(
-							        "Name of descriptor must be unique within same type (or descriptors with same name must be equal)");
+							Activator.log(new IllegalStateException(
+							        "Name of descriptor must be unique within same type "
+							                + "(or descriptors with same name must be equal)"));
 						descriptors.put(id, desc);
 						objectDescriptorMap.put(element, desc);
 						setActiveLaunchDescriptor(desc);

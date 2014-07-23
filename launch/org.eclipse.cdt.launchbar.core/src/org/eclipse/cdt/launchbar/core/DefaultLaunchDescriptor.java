@@ -13,12 +13,11 @@ package org.eclipse.cdt.launchbar.core;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class DefaultLaunchDescriptor implements ILaunchDescriptor {
-
-	private final ILaunchDescriptorType type;
+	private final ILaunchDescriptorType id;
 	private final ILaunchConfiguration config;
 	
 	public DefaultLaunchDescriptor(ILaunchDescriptorType type, ILaunchConfiguration config) {
-		this.type = type;
+		this.id = type;
 		this.config = config;
 	}
 
@@ -29,11 +28,33 @@ public class DefaultLaunchDescriptor implements ILaunchDescriptor {
 
 	@Override
 	public ILaunchDescriptorType getType() {
-		return type;
+		return id;
 	}
 
 	public ILaunchConfiguration getConfig() {
 		return config;
 	}
 
+	public String getId() {
+		return config.getName() + "." + id.getId();
+	}
+
+	@Override
+	public int hashCode() {
+		return 17 + getId().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof DefaultLaunchDescriptor))
+			return false;
+		DefaultLaunchDescriptor other = (DefaultLaunchDescriptor) obj;
+		if (!getId().equals(other.getId()))
+			return false;
+		return true;
+	}
 }

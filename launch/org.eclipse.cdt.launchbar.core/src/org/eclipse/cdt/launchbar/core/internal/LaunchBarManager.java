@@ -375,6 +375,13 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	public void setActiveLaunchTarget(ILaunchTarget target) {
 		if (activeLaunchTarget == target) return;
 
+		if (target == null) {
+			// try and select another target
+			ILaunchTarget[] targets = getLaunchTargets();
+			if (targets.length > 0) {
+				target = targets[0];
+			}
+		}
 		activeLaunchTarget = target;
 
 		for (Listener listener : listeners)
@@ -385,6 +392,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 		Preferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).node(activeLaunchDesc.getName());
 		if (target != null) {
+			target.setActive();
 			store.put(PREF_ACTIVE_LAUNCH_TARGET, target.getId());
 		} else {
 			store.remove(PREF_ACTIVE_LAUNCH_TARGET);
@@ -395,8 +403,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			// TODO log
 			e.printStackTrace();
 		}
-
-		target.setActive();
 	}
 
 	@Override

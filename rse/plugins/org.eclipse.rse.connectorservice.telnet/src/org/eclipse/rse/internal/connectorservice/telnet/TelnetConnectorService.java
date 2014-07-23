@@ -370,17 +370,6 @@ public class TelnetConnectorService extends StandardConnectorService implements
 
 		public void run() {
 			Shell shell = getShell();
-			// TODO need a more correct message for "session lost"
-			// TODO allow users to reconnect from this dialog
-			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
-
-			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-					ICommonMessageIds.MSG_CONNECT_CANCELLED,
-					IStatus.CANCEL,
-					NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED, _connection.getHost().getAliasName()));
-
-			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
-			dialog.open();
 			try {
 				// TODO I think we should better use a Job for disconnecting?
 				// But what about error messages?
@@ -394,21 +383,20 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 				sr.connectedStatusChange(_connection.getPrimarySubSystem(),
 						false, true, true);
-			} catch (InterruptedException exc) // user cancelled
-			{
-				if (shell != null)
-					showDisconnectCancelledMessage(shell, _connection
-							.getHostName(), _connection.getPort());
-			} catch (java.lang.reflect.InvocationTargetException invokeExc) // unexpected error
-			{
-				Exception exc = (Exception) invokeExc.getTargetException();
-				if (shell != null)
-					showDisconnectErrorMessage(shell,
-							_connection.getHostName(), _connection.getPort(),
-							exc);
 			} catch (Exception e) {
 				SystemBasePlugin.logError(TelnetConnectorResources.TelnetConnectorService_ErrorDisconnecting, e);
 			}
+			// TODO need a more correct message for "session lost"
+			// TODO allow users to reconnect from this dialog
+			// SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_UNKNOWNHOST);
+
+			SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+					ICommonMessageIds.MSG_CONNECT_CANCELLED,
+					IStatus.CANCEL,
+					NLS.bind(CommonMessages.MSG_CONNECT_CANCELLED, _connection.getHost().getAliasName()));
+
+			SystemMessageDialog dialog = new SystemMessageDialog(getShell(), msg);
+			dialog.open();
 		}
 
 		public void run(IProgressMonitor monitor)

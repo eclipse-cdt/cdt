@@ -139,7 +139,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 		// Load up the active from the preferences before loading the descriptors
 		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-		String activeConfigDescName = store.get(PREF_ACTIVE_CONFIG_DESC, null);
+		String activeConfigDescId = store.get(PREF_ACTIVE_CONFIG_DESC, null);
 
 		for (ILaunchDescriptorType descriptorType : descriptorTypes) {
 			descriptorType.init(this);
@@ -167,12 +167,12 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		launchManager.addLaunchConfigurationListener(this);
 
 		// Now that all the descriptors are loaded, set the one
-		if (activeConfigDescName == null && !descriptors.isEmpty()) {
-			activeConfigDescName = descriptors.values().iterator().next().getName();
+		if (activeConfigDescId == null && !descriptors.isEmpty()) {
+			activeConfigDescId = getId(descriptors.values().iterator().next());
 		}
 
-		if (activeConfigDescName != null) {
-			ILaunchDescriptor configDesc = descriptors.get(activeConfigDescName);
+		if (activeConfigDescId != null) {
+			ILaunchDescriptor configDesc = descriptors.get(activeConfigDescId);
 			if (configDesc != null) {
 				setActiveLaunchDescriptor(configDesc);
 			}
@@ -189,8 +189,15 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			try {
 				if (descriptorType.ownsLaunchObject(element)) {
 					desc = descriptorType.getDescriptor(element);
-					if (desc != null) {
-						descriptors.put(desc.getName(), desc);
+					if (desc != null) { // own the object but do not create descriptor to ignore it
+						String id = getId(desc);
+						ILaunchDescriptor old = descriptors.get(id);
+						if (old != null && !desc.equals(old)) {
+							Activator.log(new IllegalStateException(
+							        "Name of descriptor must be unique within same type "
+							                + "(or descriptors with same name must be equal)"));
+						}
+						descriptors.put(id, desc);
 						objectDescriptorMap.put(element, desc);
 						setActiveLaunchDescriptor(desc);
 						return desc;
@@ -204,11 +211,15 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		return null;
 	}
 
+	private String getId(ILaunchDescriptor desc) {
+		return desc.getId();
+	}
+
 	@Override
 	public void launchObjectRemoved(Object element) throws CoreException {
 		ILaunchDescriptor desc = objectDescriptorMap.get(element);
 		if (desc != null) {
-			descriptors.remove(desc.getName());
+			descriptors.remove(getId(desc));
 			objectDescriptorMap.remove(element);
 			if (desc.equals(activeLaunchDesc)) {
 				// Roll back to the last one and make sure we don't come back
@@ -245,7 +256,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 		if (activeLaunchDesc != null) {
-			store.put(PREF_ACTIVE_CONFIG_DESC, activeLaunchDesc.getName());
+			store.put(PREF_ACTIVE_CONFIG_DESC, getId(activeLaunchDesc));
 		} else {
 			store.remove(PREF_ACTIVE_CONFIG_DESC);
 		}

@@ -143,6 +143,54 @@
       </complexType>
    </element>
 
+   <element name="defaultConfigProvider">
+      <annotation>
+         <documentation>
+            default provider provides direct mapping between launch configuration types
+and launch objects/types without any extra classes involved. The object for this provider is launch configuration, and descriptor is DefaultLaunchDescriptor
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="launchConfigurationType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="descriptorType" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.launchbar.core.launchBarContributions/descriptorType/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="targetType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.launchbar.core.launchBarContributions/targetType/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="isDefault" type="boolean">
+            <annotation>
+               <documentation>
+                  Is this the default target type for this descriptor type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="objectProvider">
       <complexType>
          <attribute name="id" type="string" use="required">

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -197,6 +198,9 @@ public class ASTWriter {
 	 * expansion.
 	 */
 	private static boolean doNodesHaveSameOffset(IASTNode node1, IASTNode node2) {
-		return node1.getFileLocation().getNodeOffset() == node2.getFileLocation().getNodeOffset();
+		IASTFileLocation fileLocation1 = node1.getFileLocation();
+		IASTFileLocation fileLocation2 = node2.getFileLocation();
+		return fileLocation1 != null && fileLocation2 != null &&
+				fileLocation1.getNodeOffset() == fileLocation2.getNodeOffset();
 	}
 }

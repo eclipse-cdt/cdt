@@ -24,6 +24,13 @@ public interface ILaunchDescriptor {
 	String getName();
 
 	/**
+	 * Unique id of the descriptor (globally)
+	 * 
+	 * @return the non null string representing id of the launch descriptor
+	 */
+	String getId();
+
+	/**
 	 * The type of launch descriptor.
 	 * 
 	 * @return provider

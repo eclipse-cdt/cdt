@@ -320,6 +320,13 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 		setActiveLaunchMode(foundMode);
 	}
+	
+	@Override
+	public void updateActiveLaunchDescriptor() {
+		for (Listener listener : listeners) {
+			listener.activeConfigurationDescriptorChanged();
+		}
+	}
 
 	@Override
 	public ILaunchMode[] getLaunchModes() throws CoreException {
@@ -427,6 +434,12 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			// TODO log
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void updateActiveLaunchTarget() {
+		for (Listener listener : listeners)
+			listener.activeLaunchTargetChanged();
 	}
 
 	@Override

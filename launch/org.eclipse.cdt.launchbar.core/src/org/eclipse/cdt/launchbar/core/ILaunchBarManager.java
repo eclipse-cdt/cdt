@@ -23,6 +23,8 @@ public interface ILaunchBarManager extends IAdaptable {
 	ILaunchDescriptor getActiveLaunchDescriptor() throws CoreException;
 
 	void setActiveLaunchDescriptor(ILaunchDescriptor configDesc) throws CoreException;
+	
+	void updateActiveLaunchDescriptor() throws CoreException;
 
 	ILaunchMode[] getLaunchModes() throws CoreException;
 
@@ -37,6 +39,8 @@ public interface ILaunchBarManager extends IAdaptable {
 	ILaunchTarget getActiveLaunchTarget() throws CoreException;
 
 	void setActiveLaunchTarget(ILaunchTarget target) throws CoreException;
+	
+	void updateActiveLaunchTarget() throws CoreException;
 
 	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException;
 

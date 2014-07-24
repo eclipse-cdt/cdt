@@ -389,6 +389,13 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	protected IEclipsePreferences getPreferenceStore() {
 	    return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
     }
+	
+	@Override
+	public void updateLaunchDescriptor(ILaunchDescriptor configDesc) {
+		for (Listener listener : listeners) {
+			listener.activeConfigurationDescriptorChanged();
+		}
+	}
 
 	@Override
 	public ILaunchMode[] getLaunchModes() throws CoreException {
@@ -501,6 +508,12 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		if (supportsTargetType(activeLaunchDesc, target.getType()))
 			setPreference(getPreferenceStore().node(activeLaunchDesc.getName()),
 			        PREF_ACTIVE_LAUNCH_TARGET, target.getId());
+	}
+	
+	@Override
+	public void updateLaunchTarget(ILaunchTarget target) {
+		for (Listener listener : listeners)
+			listener.activeLaunchTargetChanged();
 	}
 
 	protected ILaunchTarget getDeafultLaunchTarget() {

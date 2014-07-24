@@ -63,7 +63,10 @@ public class Activator extends Plugin {
 	}
 
 	public static void log(IStatus status) {
-		plugin.getLog().log(status);
+		if (plugin != null)
+			plugin.getLog().log(status);
+		else
+			System.err.println(status.getMessage());
 	}
 
 	public static void log(Exception exception) {

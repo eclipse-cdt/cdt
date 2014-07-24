@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,7 +144,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		IPath buildDirectory = b.getBuildLocation();
 		if (buildDirectory == null || buildDirectory.isEmpty()) {
 			// default build directory to project directory
-			buildDirectory = project.getLocation();
+			buildDirectory = getProjectLocation();
 		}
 		buildLocation = buildDirectory;
 		buildDir = buildDirectory.toString();
@@ -243,7 +242,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		IPath path = new Path(dirName);
 		boolean rc = true;
 		if (dirName.length() == 0 || dirName.equals("."))
-			path = project.getLocation().append(dirName);
+			path = getProjectLocation().append(dirName);
 		File f = path.toFile();
 		if (!f.exists()) {
 			rc = f.mkdirs();
@@ -387,9 +386,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// to
 			// regenerate the makefile
 			IPath configfile = buildLocation.append(CONFIG_STATUS);
-			IPath topConfigFile = project.getLocation().append(CONFIG_STATUS);
+			IPath topConfigFile = getProjectLocation().append(CONFIG_STATUS);
 			IPath makefilePath = buildLocation.append(MAKEFILE);
-			IPath topMakefilePath = project.getLocation().append(MAKEFILE);
+			IPath topMakefilePath = getProjectLocation().append(MAKEFILE);
 			File configStatus = configfile.toFile();
 			File topConfigStatus = topConfigFile.toFile();
 			File makefile = makefilePath.toFile();
@@ -419,7 +418,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					}
 					makeargs[makeargs.length - 1] = target;
 					rc = runCommand(makeCmd,
-							project.getLocation(),
+							getProjectLocation(),
 							makeargs,
 							AutotoolsPlugin.getResourceString("MakeGenerator.clean.topdir"), //$NON-NLS-1$
 							errMsg, console, consoleStart);
@@ -551,7 +550,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							IPath reconfCmdPath = new Path(reconfCmd);
 							reconfArgs[0] = "-i"; //$NON-NLS-1$
 							rc = runScript(reconfCmdPath,
-									project.getLocation().append(srcDir),
+									getSourcePath(),
 									reconfArgs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", new String[]{buildDir}), //$NON-NLS-1$
 									errMsg, console, null, consoleStart);
@@ -584,13 +583,13 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				IPath makeCmd = builder.getBuildCommand();
 				makeargs[0] = "-f" + getMakefileCVSPath().toOSString(); //$NON-NLS-1$
 				rc = runCommand(makeCmd,
-						project.getLocation().append(buildDir),
+						getProjectLocation().append(buildDir),
 						makeargs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.makefile.cvs", new String[]{buildDir}), //$NON-NLS-1$
 						errMsg, console, consoleStart);
 				consoleStart = false;
 				if (rc != IStatus.ERROR) {
-					File makefileFile = project.getLocation().append(buildDir)
+					File makefileFile = getProjectLocation().append(buildDir)
 					.append(MAKEFILE).toFile();
 					addMakeTargetsToManager(makefileFile);
 					toolsCfg.setDirty(false);
@@ -605,7 +604,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				IPath reconfCmdPath = new Path(reconfCmd);
 				reconfArgs[0] = "-i"; //$NON-NLS-1$
 				rc = runScript(reconfCmdPath,
-						project.getLocation().append(srcDir),
+						getSourcePath(),
 						reconfArgs,
 						AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", new String[]{buildDir}), //$NON-NLS-1$
 						errMsg, console, null, consoleStart);
@@ -754,6 +753,10 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return str;
 	}
 
+	private IPath getProjectLocation() {
+		return project.getLocation();
+	}
+	
 	private IPath getBuildPath(){
 		return new Path(this.buildDir); 
 	}
@@ -761,9 +764,14 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private IPath getSourcePath(){
 		IPath sourcePath;
 		if (srcDir.equals(""))
-			sourcePath = project.getLocation();
-		else
-			sourcePath = project.getLocation().append(srcDir);
+			sourcePath = getProjectLocation();
+		else { // find location of source directory which may be a virtual folder
+			IResource sourceResource = project.findMember(srcDir);
+			if (sourceResource.exists() && sourceResource.getType() == IResource.FOLDER)
+				sourcePath = sourceResource.getLocation();
+			else // punt and let configure fail if directory is not found by then
+				sourcePath = getProjectLocation().append(srcDir);
+		}
 		return sourcePath;
 	}
 	
@@ -783,22 +791,14 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (Path.fromOSString(command).isAbsolute()) {
 			configPath = new Path(command);
 		} else {
-			if (srcDir.equals(""))
-				configPath = project.getLocation().append(command);
-			else
-				configPath = project.getLocation().append(srcDir)
-						.append(command);
+			configPath = getSourcePath().append(command);
 		}
 		return configPath;
 	}
 
 	protected IPath getMakefileCVSPath() {
 		IPath makefileCVSPath;
-		if (srcDir.equals(""))
-			makefileCVSPath = project.getLocation().append(MAKEFILE_CVS);
-		else
-			makefileCVSPath= project.getLocation().append(srcDir).append(
-					MAKEFILE_CVS);
+		makefileCVSPath = getSourcePath().append(MAKEFILE_CVS);
 		return makefileCVSPath;
 	}
 	
@@ -821,10 +821,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				cmdParms.add(tokens[i]);
 		}
 			
-		if (srcDir.equals(""))
-			autogenPath = project.getLocation().append(command);
-		else
-			autogenPath = project.getLocation().append(srcDir).append(command);
+		autogenPath = getSourcePath().append(command);
 		return autogenPath;
 	}
 	

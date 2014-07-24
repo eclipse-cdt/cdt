@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_b45f19f2",
+        "filename": "launch/org.eclipse.cdt.launchbar.core/src/org/eclipse/cdt/launchbar/core/internal/LaunchBarManager.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-07-24T02:27:34Z",
+      "side": 1,
+      "message": "Really? This was worth creating? It doesn\u0027t even save any characters when you call this.",
+      "revId": "f3bdfa569ab3d7b6fc492dd934ad5157eb3a6e52",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

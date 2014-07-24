@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.launchbar"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="8.5.0.qualifier"
       provider-name="%providerName">
 
    <description>

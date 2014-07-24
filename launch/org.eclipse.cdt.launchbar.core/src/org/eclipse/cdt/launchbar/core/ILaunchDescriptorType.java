@@ -13,8 +13,9 @@ package org.eclipse.cdt.launchbar.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Provides the list of launch configurations
- *
+ * Provides mapping between launch objects and launch descriptors.
+ * 
+ * It is strongly recommended to extend AbstarctLaunchDescriptorType instead of implementing this directly
  */
 public interface ILaunchDescriptorType {
 

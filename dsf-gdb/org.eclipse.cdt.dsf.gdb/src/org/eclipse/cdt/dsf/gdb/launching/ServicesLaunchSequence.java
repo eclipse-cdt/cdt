@@ -41,26 +41,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ServicesLaunchSequence extends Sequence {
 
+    DsfSession fSession;
+    GdbLaunch fLaunch;
+
+    ICommandControlService fCommandControl;
+    IMIProcesses fProcService;
+    CSourceLookup fSourceLookup;
+    
     Step[] fSteps = new Step[] {
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                // Create the back end GDB service.
-                //
-                fLaunch.getServiceFactory().createService(IMIBackend.class, fSession, fLaunch.getLaunchConfiguration()).initialize(requestMonitor);
-            }
-        },
-        // Create and initialize the Connection service.
-        new Step() { 
-            @Override
-            public void execute(RequestMonitor requestMonitor) {
-                //
-                // Create the connection.
-                //
-                fCommandControl = fLaunch.getServiceFactory().createService(ICommandControlService.class, fSession, fLaunch.getLaunchConfiguration());
-                fCommandControl.initialize(requestMonitor);
-            }
-        },
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+            fLaunch.getServiceFactory().createService(IMIBackend.class, fSession, fLaunch.getLaunchConfiguration()).initialize(requestMonitor);
+        }},
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+            fCommandControl = fLaunch.getServiceFactory().createService(ICommandControlService.class, fSession, fLaunch.getLaunchConfiguration());
+            fCommandControl.initialize(requestMonitor);
+        }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
         	IGDBHardwareAndOS hwService = fLaunch.getServiceFactory().createService(IGDBHardwareAndOS.class, fSession, fLaunch.getLaunchConfiguration());
@@ -133,29 +130,18 @@ public class ServicesLaunchSequence extends Sequence {
         }},
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {
-            // Create breakpoint synchronization service.
         	fLaunch.getServiceFactory().createService(MIBreakpointsSynchronizer.class, fSession).initialize(requestMonitor); 
         }},
     };
-
-    DsfSession fSession;
-    GdbLaunch fLaunch;
-
-    ICommandControlService fCommandControl;
-    IMIProcesses fProcService;
-    CSourceLookup fSourceLookup;
     
     public ServicesLaunchSequence(DsfSession session, GdbLaunch launch, IProgressMonitor pm) {
         super(session.getExecutor(), pm, LaunchMessages.getString("ServicesLaunchSequence_0"), LaunchMessages.getString("ServicesLaunchSequence_1"));   //$NON-NLS-1$ //$NON-NLS-2$
         fSession = session;
         fLaunch = launch;
     }
-    
+
     @Override
     public Step[] getSteps() {
         return fSteps;
     }
-    
-
-
 }

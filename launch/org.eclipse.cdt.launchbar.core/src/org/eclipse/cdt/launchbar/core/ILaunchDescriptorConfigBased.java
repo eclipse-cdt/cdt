@@ -12,10 +12,6 @@ package org.eclipse.cdt.launchbar.core;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 
-
-public class DefaultLaunchDescriptor extends ConfigBasedLaunchDescriptor {
-
-	public DefaultLaunchDescriptor(ILaunchDescriptorType type, ILaunchConfiguration config) {
-		super(type, config);
-	}
+public interface ILaunchDescriptorConfigBased extends ILaunchDescriptor {
+	public ILaunchConfiguration getConfig();
 }

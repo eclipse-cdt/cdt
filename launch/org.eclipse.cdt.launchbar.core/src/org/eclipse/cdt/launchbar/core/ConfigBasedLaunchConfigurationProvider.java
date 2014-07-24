@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright (c) 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
@@ -7,30 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems (Elena Laskavaia) - Initial API and implementation
+ * Elena Laskavaia - Initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.launchbar.core;
 
-package org.eclipse.cdt.launchbar.core.internal;
-
-import org.eclipse.cdt.launchbar.core.DefaultLaunchDescriptor;
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
-import org.eclipse.cdt.launchbar.core.ILaunchConfigurationProvider;
-import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 
-public class TypeBasedLaunchConfigurationProvider implements ILaunchConfigurationProvider {
-	protected ILaunchBarManager manager;
+public class ConfigBasedLaunchConfigurationProvider extends AbstractLaunchConfigurationProvider implements
+        ILaunchConfigurationProvider {
 	private String typeId;
 
-	public TypeBasedLaunchConfigurationProvider(String launchConfigurationTypeId) {
+	public ConfigBasedLaunchConfigurationProvider(String launchConfigurationTypeId) {
 		this.typeId = launchConfigurationTypeId;
-	}
-
-	@Override
-	public void init(ILaunchBarManager manager) throws CoreException {
-		this.manager = manager;
 	}
 
 	public boolean ownsConfiguration(ILaunchConfiguration element) {
@@ -60,18 +48,7 @@ public class TypeBasedLaunchConfigurationProvider implements ILaunchConfiguratio
 	}
 
 	@Override
-	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor) throws CoreException {
-		if (descriptor instanceof DefaultLaunchDescriptor) {
-			return ((DefaultLaunchDescriptor) descriptor).getConfig();
-		}
-		return null;
-	}
-
-	@Override
-	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor) throws CoreException {
-		if (descriptor instanceof DefaultLaunchDescriptor) {
-			return ((DefaultLaunchDescriptor) descriptor).getConfig().getType();
-		}
-		return null;
+	public String toString() {
+		return "Provider for " + typeId;
 	}
 }

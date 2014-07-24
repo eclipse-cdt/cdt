@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
@@ -168,8 +169,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 
         // Create and invoke the launch sequence to create the debug control and services
         IProgressMonitor subMon1 = new SubProgressMonitor(monitor, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK); 
-        final ServicesLaunchSequence servicesLaunchSequence = 
-            new ServicesLaunchSequence(launch.getSession(), launch, subMon1);
+        Sequence servicesLaunchSequence = getServicesSequence(launch.getSession(), launch, subMon1);
         
         launch.getSession().getExecutor().execute(servicesLaunchSequence);
         boolean succeed = false;
@@ -397,6 +397,19 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
      */
     protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator) throws CoreException {
     	return new GdbLaunch(configuration, mode, locator);
+    }
+
+    /**
+     * Returns a sequence that will create and initialize the different DSF services.
+     * Subclasses that wish to add/remove services can override this method.
+     * 
+     * @param session The current DSF session
+     * @param launch  The current launch
+     * @param rm      The progress monitor that is to be used to cancel the sequence if so desired.
+     * @since 4.5
+     */
+    protected Sequence getServicesSequence(DsfSession session, ILaunch launch, IProgressMonitor rm) {
+   		return new ServicesLaunchSequence(session, (GdbLaunch)launch, rm);
     }
 
     /**

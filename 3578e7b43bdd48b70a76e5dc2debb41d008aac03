@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_ed970019",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-07-24T20:43:41Z",
+      "side": 1,
+      "message": "It is always expected that launch would be an instance of GdbLaunch, I don\u0027t think the check is required.",
+      "revId": "3578e7b43bdd48b70a76e5dc2debb41d008aac03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

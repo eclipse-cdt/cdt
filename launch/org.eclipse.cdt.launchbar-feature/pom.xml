@@ -11,7 +11,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>1.0.0-SNAPSHOT</version>
+	<version>8.5.0-SNAPSHOT</version>
 	<groupId>org.eclipse.cdt.features</groupId>
 	<artifactId>org.eclipse.cdt.launchbar</artifactId>
 	<packaging>eclipse-feature</packaging>

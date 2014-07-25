@@ -21,6 +21,7 @@
 		<cdt-site>http://hudson.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
+		<target-platform>cdt-e4.4</target-platform>
 	</properties>
 
 	<licenses>
@@ -406,7 +407,8 @@
 					<target>
 						<artifact>
 							<groupId>org.eclipse.cdt</groupId>
-							<artifactId>cdt-e4.4</artifactId>
+							<artifactId>org.eclipse.cdt.target</artifactId>
+							<classifier>${target-platform}</classifier>
 							<version>1.0.0</version>
 						</artifact>
 					</target>

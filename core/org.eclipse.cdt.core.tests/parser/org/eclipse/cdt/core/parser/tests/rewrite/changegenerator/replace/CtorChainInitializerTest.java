@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -33,8 +33,13 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "TestClass::TestClass(int a):beta(b){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "TestClass::TestClass(int a): alpha(a){\n}\n\n"; //$NON-NLS-1$
+		source = "TestClass::TestClass(int a):beta(b){\n"
+				+ "}\n"
+				+ "\n"; //$NON-NLS-1$
+		expectedSource = "TestClass::TestClass(int a) :\n"
+				+ "		alpha(a) {\n"
+				+ "}\n"
+				+ "\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 

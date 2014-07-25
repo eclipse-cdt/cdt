@@ -44,6 +44,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 
 	@Override
 	protected void setUp() throws Exception {
+		
 		CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, new NullProgressMonitor());
 		super.setUp();
 	}

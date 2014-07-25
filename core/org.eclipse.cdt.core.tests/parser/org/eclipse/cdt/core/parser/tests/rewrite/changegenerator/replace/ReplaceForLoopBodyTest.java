@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -30,8 +30,8 @@ public class ReplaceForLoopBodyTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n\r\n  }\r\n\r\n  for(int j = 0; j < 10; j++){\r\n\r\n  }\r\n\r\n}"; //$NON-NLS-1$
-		expectedSource = "void foo(){\r\n\r\n  for(;;);\r\n\r\n  for(int j = 0; j < 10; j++){\r\n\r\n  }\r\n\r\n}"; //$NON-NLS-1$
+		source = "void foo() {\r\n\r\n  for(int i = 0; i < 10; i++){\r\n\r\n  }\r\n\r\n  for(int j = 0; j < 10; j++){\r\n\r\n  }\r\n\r\n}"; //$NON-NLS-1$
+		expectedSource = "void foo() {\r\n\r\n\tfor (;;)\r\n\t\t;\r\n\r\n\r\n  for(int j = 0; j < 10; j++){\r\n\r\n  }\r\n\r\n}"; //$NON-NLS-1$
 		forReplaced = false;
 		super.setUp();
 	}

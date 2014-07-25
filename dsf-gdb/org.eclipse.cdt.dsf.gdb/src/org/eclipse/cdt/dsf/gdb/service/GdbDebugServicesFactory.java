@@ -121,7 +121,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			return (V)createBreakpointsSynchronizerService(session);
 		} 
 
-        return super.createService(clazz, session);
+        return super.createService(clazz, session, optionalArguments);
 	}
 
 	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {

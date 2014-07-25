@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -24,13 +24,23 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 	
 	public MultilineWhitespaceHandlingTest(){
-		super("Whitespace Handling in Replace"); //$NON-NLS-1$
+		super("Multiline Whitespace Handling in Replace"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n\r\n  }\r\n\r\n"; //$NON-NLS-1$
-		expectedSource = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){    int i;\r\n    int j;\r\n\r\n  }\r\n\r\n"; //$NON-NLS-1$
+		source =
+				"void foo() {\n" +
+				"\n" +
+				"  for(int i = 0; i < 10; i++){\n" +
+				"\n" +
+				"  }\n" +
+				"\n";
+		expectedSource = 
+				"void foo() {\n" +
+				"	for (int i = 0; i < 10; i++) {\n" +
+				"	}\n" +
+				"}";
 		super.setUp();
 	}
 

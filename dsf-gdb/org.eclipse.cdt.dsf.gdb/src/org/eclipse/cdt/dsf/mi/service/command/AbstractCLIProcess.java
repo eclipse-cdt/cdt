@@ -354,7 +354,7 @@ public abstract class AbstractCLIProcess extends Process
     	fPrompt = PromptType.IN_PRIMARY_PROMPT;
     	
         ICommand<?> command = token.getCommand();
-    	if (token.getCommand() instanceof CLICommand<?> &&
+    	if (command instanceof CLICommand<?> &&
     			!(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
         {
             fSuppressConsoleOutputCounter--;

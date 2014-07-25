@@ -52,33 +52,33 @@ you have selected to debug a core file (-c specified) or not.</p>
 <h2>Automated Set-up</h3>
 
 <p>As mentioned, the Stand-alone Debugger will initialize Eclipse objects on your behalf on
-start-up so you can immediately start debugging.  For starters, the executable you specify is
+start-up so you can immediately start debugging.  For starters, the executable you specify
 is imported on your behalf into an Eclipse
 C/C++ project within the Workspace.  An Eclipse project is a virtual container object that contains folders, files, etc.  and has a particular
 nature.  Folders and files may be virtual and may actually link to objects outside of the workspace.  In this particular
 case, the debug info of the executable specified is used to determine the location of the source files.  Each source
 file is imported in the project, virtually, via a link.  This is done so that the C/C++ indexer, which usually works on
-a project being developed within Eclipse, has access to all code when it is parsing.
+a project being developed within Eclipse, has access to all code when it is parsing.  Usually, the name of the default C/C++ project 
+will be <strong>Executables</strong>, the default project for importing executables into the CDT via the <strong>Executables</strong> view.
 <p>The nature of a project determines what menus, actions, and views are valid for that project.
 Menus, actions, and views that are not valid are not made visible.
 This helps to remove the clutter of all contributed plug-ins to what is pertinent to the task at hand
 (e.g. if the C/C++ and Java IDE plug-ins are both present, one does not want to see Java tasks when
 working on a C/C++ project).  Many of the plug-ins being used in the Stand-alone debugger only
-work on C/C++ projects.  In most cases, the name of the C/C++ project being used will be <strong>Executables</strong>.
-This project is reserved for importing executables into the CDT without creating a project first.</p>
-<p>Another Eclipse concept is the Perspective.  An Eclipse perspective is a set of views and the layout of the main Eclipse
-Window.  A perspective will have a default layout and can be modified the end-user for future reference (e.g. adding or removing 
+work on C/C++ projects anyway.</p>
+<p>Another Eclipse concept is the Perspective.  An Eclipse perspective defines the set of views and how they are placed in the
+main Eclipse Window.  A perspective will have a default layout associated with it which can be modified and saved by the end-user for 
+future reference (e.g. adding or removing 
 views).  For the purposes of debugging,
-one should use the Debug Perspective.  The Stand-alone Debugger opens the Debug Perspective by default for you which brings
-up the various views needed to debug your program.</p>
-<p>To debug and executable, one needs to launch it via the debugger and to provide options both for the executable and the
-debugger (in this case, GDB).  All the information required to launch and debug the executable is stored
+the Debug Perspective is the appropriate perspective to use and therefore the Stand-alone Debugger opens the Debug Perspective automatically for 
+you.  The perspective has all the various views needed to debug your program.</p>
+<p>To debug an executable, one needs to launch it via the debugger and to provide options both for the executable and the
+debugger (in this case, GDB).  All the information required to launch and debug is stored
 in an Eclipse object known as a Launch Configuration.  Various plug-ins can contribute different forms of Launch Configuration
 which can in turn provide UI elements for settings.  In the case of the Stand-alone Debugger, debugging an executable
-results in the automatic creation of a C/C++ Local Application Launch configuration.  This just means that the particular
-launch configuration is meant to be used for a local application.  This launch configuration is shared for debugging purposes
-and when debugging, additional parameters are available in the UI for gdb settings (e.g. gdb path, reverse debugging).
-You do not need to create a launch configuration yourself, but you may wish to edit the one created on your behalf.</p>
+results in the automatic creation of a C/C++ Local Application Launch configuration.  This type of launch is meant
+for launching an executable that is local to the current host.  Additional parameters are available via the Launch Configuration
+View such as gdb settings (e.g. gdb path, reverse debugging) and environment variables.</p>
 
 <h2>Initial Debugger Layout</h3>
 

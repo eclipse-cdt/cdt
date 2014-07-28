@@ -5,3 +5,5 @@ Bundle-SymbolicName: org.eclipse.cdt.debug.application.doc;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %provider
 Bundle-Localization: plugin
+Require-Bundle: org.eclipse.help
+

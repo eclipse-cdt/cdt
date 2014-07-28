@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	}
 
 	protected void assertCompletionResults(String[] expected) throws Exception {
-		assertContentAssistResults(fCursorOffset, expected, true, AbstractContentAssistTest.COMPARE_ID_STRINGS);
+		assertContentAssistResults(fCursorOffset, expected, true, CompareType.ID);
 	}
 	
 	//void test() {

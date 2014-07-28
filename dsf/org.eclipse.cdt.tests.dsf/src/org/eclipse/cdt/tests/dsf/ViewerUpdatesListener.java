@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf;
 
+import static org.junit.Assert.fail;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdateListener;
@@ -245,13 +245,13 @@ public class ViewerUpdatesListener
         }
         
         if (fFailOnRedundantUpdates && !fRedundantUpdates.isEmpty()) {
-            Assert.fail("Redundant Updates: " + fRedundantUpdates.toString());
+            fail("Redundant Updates: " + fRedundantUpdates.toString());
         }
         if (fFailOnMultipleLabelUpdateSequences && !fMultipleLabelUpdateSequencesObserved) {
-            Assert.fail("Multiple label update sequences detected");
+            fail("Multiple label update sequences detected");
         }
         if (fFailOnMultipleModelUpdateSequences && fMultipleModelUpdateSequencesObserved) {
-            Assert.fail("Multiple viewer update sequences detected");
+            fail("Multiple viewer update sequences detected");
         }
 
         if ( (flags & LABEL_SEQUENCE_COMPLETE) != 0) {

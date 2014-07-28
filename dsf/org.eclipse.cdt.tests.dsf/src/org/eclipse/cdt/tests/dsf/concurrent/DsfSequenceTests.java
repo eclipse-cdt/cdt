@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
+import static org.junit.Assert.*;
+
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
@@ -85,18 +85,18 @@ public class DsfSequenceTests {
         Sequence sequence = new Sequence(fExecutor) {
             @Override public Step[] getSteps() { return steps; }
         };
-        Assert.assertFalse(sequence.isDone());
-        Assert.assertFalse(sequence.isCancelled());
+        assertFalse(sequence.isDone());
+        assertFalse(sequence.isCancelled());
         
         fExecutor.execute(sequence);
         sequence.get();
 
         // Check the count
-        Assert.assertTrue(stepCounter.fInteger == 2);
+        assertTrue(stepCounter.fInteger == 2);
         
         // Check post conditions
-        Assert.assertTrue(sequence.isDone());
-        Assert.assertFalse(sequence.isCancelled());
+        assertTrue(sequence.isDone());
+        assertFalse(sequence.isCancelled());
     }
 
 
@@ -133,18 +133,18 @@ public class DsfSequenceTests {
         SimpleReflectionSequence sequence = new SimpleReflectionSequence();
 
         //Sequence sequence = new SimpleReflectionSequence();
-        Assert.assertFalse(sequence.isDone());
-        Assert.assertFalse(sequence.isCancelled());
+        assertFalse(sequence.isDone());
+        assertFalse(sequence.isCancelled());
         
         fExecutor.execute(sequence);
         sequence.get();
 
         // Check the count
-        Assert.assertTrue(sequence.fStepCounter == 2);
+        assertTrue(sequence.fStepCounter == 2);
         
         // Check post conditions
-        Assert.assertTrue(sequence.isDone());
-        Assert.assertFalse(sequence.isCancelled());
+        assertTrue(sequence.isDone());
+        assertFalse(sequence.isCancelled());
     }
 
     
@@ -192,15 +192,15 @@ public class DsfSequenceTests {
             sequence.get();
         } finally {
             // Both steps should be performed
-            Assert.assertTrue(stepCounter.fInteger == 2);
+            assertTrue(stepCounter.fInteger == 2);
             // Only one step is rolled back, the first one.
-            Assert.assertTrue(rollBackCounter.fInteger == 1);
+            assertTrue(rollBackCounter.fInteger == 1);
             
             // Check state from Future interface
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertFalse(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertFalse(sequence.isCancelled());            
         }
-        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+        assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
 
     @Test (expected = ExecutionException.class)
@@ -248,15 +248,15 @@ public class DsfSequenceTests {
             sequence.get();
         } finally {
             // Both steps should be performed
-            Assert.assertTrue(stepCounter.fInteger == 2);
+            assertTrue(stepCounter.fInteger == 2);
             // No steps should be rolled back.
-            Assert.assertTrue(rollBackCounter.fInteger == 0);
+            assertTrue(rollBackCounter.fInteger == 0);
             
             // Check state from Future interface
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertFalse(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertFalse(sequence.isCancelled());            
         }
-        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+        assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
 
     
@@ -311,15 +311,15 @@ public class DsfSequenceTests {
             sequence.get();
         } finally {
             // Both steps should be performed
-            Assert.assertEquals(2, sequence.fStepCounter);
+            assertEquals(2, sequence.fStepCounter);
             // Only one step is rolled back, the first one.
-            Assert.assertEquals(1, sequence.fRollBackCounter);
+            assertEquals(1, sequence.fRollBackCounter);
             
             // Check state from Future interface
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertFalse(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertFalse(sequence.isCancelled());            
         }
-        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+        assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
     
     public class RollBackReflectionSequence2 extends ReflectionSequence {
@@ -373,16 +373,16 @@ public class DsfSequenceTests {
             sequence.get();
         } finally {
             // All three steps should be performed
-            Assert.assertEquals(3, sequence.fStepCounter);
+            assertEquals(3, sequence.fStepCounter);
             // Two steps are rolled back, but only the first one has
             // a rollback method.
-            Assert.assertEquals(1, sequence.fRollBackCounter);
+            assertEquals(1, sequence.fRollBackCounter);
             
             // Check state from Future interface
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertFalse(sequence.isCancelled());                        
+            assertTrue(sequence.isDone());
+            assertFalse(sequence.isCancelled());                        
         }
-        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+        assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
 
     
@@ -411,10 +411,10 @@ public class DsfSequenceTests {
             sequence.get();
         } finally {
             // Check state from Future interface
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertFalse(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertFalse(sequence.isCancelled());            
         }
-        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+        assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
 
     
@@ -424,7 +424,7 @@ public class DsfSequenceTests {
         final Sequence.Step[] steps = new Sequence.Step[] {
                 new Sequence.Step() { 
                     @Override public void execute(RequestMonitor requestMonitor) {
-                        Assert.assertTrue("Sequence was cancelled, it should not be called.", false); //$NON-NLS-1$
+                        assertTrue("Sequence was cancelled, it should not be called.", false); //$NON-NLS-1$
                     }
                 }
             };
@@ -435,8 +435,8 @@ public class DsfSequenceTests {
         // Cancel before invoking the sequence.
         sequence.cancel(false);
 
-        Assert.assertFalse(sequence.isDone());
-        Assert.assertTrue(sequence.isCancelled());
+        assertFalse(sequence.isDone());
+        assertTrue(sequence.isCancelled());
 
         // Start the sequence
         fExecutor.execute(sequence);
@@ -445,10 +445,10 @@ public class DsfSequenceTests {
         try {
             sequence.get();
         } finally {
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertTrue(sequence.isCancelled());            
         }
-        Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+        assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
     }
     
 
@@ -500,15 +500,15 @@ public class DsfSequenceTests {
             sequence.get();
         } finally {
             // Both steps should be performed
-            Assert.assertTrue(stepCounter.fInteger == 2);
+            assertTrue(stepCounter.fInteger == 2);
             // Both roll-backs should be performed since cancel does not take effect until
             // after the step is completed.
-            Assert.assertTrue(rollBackCounter.fInteger == 2);
+            assertTrue(rollBackCounter.fInteger == 2);
             
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertTrue(sequence.isCancelled());            
         }            
-        Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+        assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
     }
     
     @Test (expected = CancellationException.class)
@@ -517,7 +517,7 @@ public class DsfSequenceTests {
         final Sequence.Step[] steps = new Sequence.Step[] {
                 new Sequence.Step() { 
                     @Override public void execute(RequestMonitor requestMonitor) {
-                        Assert.assertTrue("Sequence was cancelled, it should not be called.", false); //$NON-NLS-1$
+                        assertTrue("Sequence was cancelled, it should not be called.", false); //$NON-NLS-1$
                     }
                 }
             };
@@ -543,8 +543,8 @@ public class DsfSequenceTests {
         try {
             sequence.get();
         } finally {
-            Assert.assertTrue(sequence.isDone());
-            Assert.assertTrue(sequence.isCancelled());            
+            assertTrue(sequence.isDone());
+            assertTrue(sequence.isCancelled());            
         }
     }
 

@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -157,31 +160,31 @@ public class RangeCacheTests {
     }
 
     private void assertCacheValidWithData(ICache<List<Integer>> cache, long offset, int count) {
-        Assert.assertTrue(cache.isValid());
-        Assert.assertEquals(makeList(offset, count), cache.getData());
-        Assert.assertTrue(cache.getStatus().isOK());
+        assertTrue(cache.isValid());
+        assertEquals(makeList(offset, count), cache.getData());
+        assertTrue(cache.getStatus().isOK());
     }
 
     private void assertCacheValidWithError(ICache<List<Integer>> cache) {
-        Assert.assertTrue(cache.isValid());
-        Assert.assertFalse(cache.getStatus().isOK());
+        assertTrue(cache.isValid());
+        assertFalse(cache.getStatus().isOK());
     }
     
     private void assertCacheWaiting(ICache<List<Integer>> cache) {
-        Assert.assertFalse(cache.isValid());
+        assertFalse(cache.isValid());
         try {
             cache.getData();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
         try {
             cache.getStatus();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
     }
 
     private void completeInfo(RetrieveInfo info, long offset, int count) {
-        Assert.assertEquals(offset, info.fOffset);
-        Assert.assertEquals(count, info.fCount);
+        assertEquals(offset, info.fOffset);
+        assertEquals(count, info.fCount);
         info.fRm.setData(makeList(offset, count));
         info.fRm.done();
     }
@@ -205,7 +208,7 @@ public class RangeCacheTests {
             assertCacheWaiting(fRangeCache);
             
             // Set the data without using an executor.
-            Assert.assertEquals(retrieveCount, fRetrieveInfos.size());
+            assertEquals(retrieveCount, fRetrieveInfos.size());
             int i = 0; 
             for (RetrieveInfo info : fRetrieveInfos) {
                 completeInfo(info, retrieveOffsets[i], retrieveCounts[i]);
@@ -214,7 +217,7 @@ public class RangeCacheTests {
         }
         
         // Wait for data.
-        Assert.assertEquals(makeList(queryOffset, queryCount), q.get());
+        assertEquals(makeList(queryOffset, queryCount), q.get());
         
         // Check state while waiting for data
         assertCacheValidWithData(fRangeCache, queryOffset, queryCount);
@@ -261,23 +264,23 @@ public class RangeCacheTests {
         assertCacheWaiting(fRangeCache);
 
         // Set the data without using an executor.
-        Assert.assertEquals(retrieveCount, fRetrieveInfos.size());
+        assertEquals(retrieveCount, fRetrieveInfos.size());
         int i = 0; 
         for (RetrieveInfo info : fRetrieveInfos) {
-            Assert.assertEquals(retrieveOffsets[i], info.fOffset);
-            Assert.assertEquals(retrieveCounts[i], info.fCount);
-            Assert.assertFalse(info.fRm.isCanceled());
+            assertEquals(retrieveOffsets[i], info.fOffset);
+            assertEquals(retrieveCounts[i], info.fCount);
+            assertFalse(info.fRm.isCanceled());
             i++;
         }
         
         q.cancel(true);
         try {
             q.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
         
         for (RetrieveInfo info : fRetrieveInfos) {
-            Assert.assertTrue(info.fRm.isCanceled());
+            assertTrue(info.fRm.isCanceled());
         }
     }
 
@@ -382,11 +385,11 @@ public class RangeCacheTests {
         }).get();
         
         // Set the data without using an executor.
-        Assert.assertEquals(1, fRetrieveInfos.size());
+        assertEquals(1, fRetrieveInfos.size());
         completeInfo(fRetrieveInfos.first(), 10, 100);
         
         // Wait for data.
-        Assert.assertEquals(makeList(10, 100), q.get());
+        assertEquals(makeList(10, 100), q.get());
         
         // Check state while waiting for data
         assertCacheValidWithData(fRangeCache, 10, 100);
@@ -425,7 +428,7 @@ public class RangeCacheTests {
 
         try {
             q.get();
-            Assert.fail("Expected an ExecutionException");            
+            fail("Expected an ExecutionException");            
         } catch (ExecutionException e) {}
     }
 
@@ -445,7 +448,7 @@ public class RangeCacheTests {
         assertCacheWaiting(fRangeCache);
         
         // Set the data without using an executor.
-        Assert.assertEquals(1, fRetrieveInfos.size());
+        assertEquals(1, fRetrieveInfos.size());
         RetrieveInfo info = fRetrieveInfos.iterator().next();
         completeInfo(info, 0, 100);
 

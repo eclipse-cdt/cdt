@@ -12,10 +12,11 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParserNamed;
@@ -43,7 +44,7 @@ public class XlcErrorParserTester {
 			fTempProject.create(null);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			Assert.fail("Exception creating temporary project "+fTempProject.getName()+": "+e);
+			fail("Exception creating temporary project "+fTempProject.getName()+": "+e);
 		}
 	}
 
@@ -125,7 +126,7 @@ public class XlcErrorParserTester {
 	 */
 	boolean parseLine(String line) {
 		IErrorParserNamed errorParser = ErrorParserManager.getErrorParserCopy(XLC_ERROR_PARSER_ID);
-		Assert.assertNotNull(errorParser);
+		assertNotNull(errorParser);
 
 		MockErrorParserManager epManager = new MockErrorParserManager();
 		return errorParser.processLine(line, epManager);

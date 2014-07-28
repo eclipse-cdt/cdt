@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.pda.service.command;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
@@ -62,14 +64,14 @@ public class CommandControlTestsBase {
         fSession = DsfSession.startSession(fExecutor, "PDA Test");
 
         Process proc = Launching.launchPDA(fSession, null, fProgram);
-        Assert.assertNotNull(proc);
+        assertNotNull(proc);
         
         // Remember the backend service of this session.
         // Note this must be called after the above LaunchPDA().
         fPDABackend = Launching.getBackendService();
         
         fOutputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        Assert.assertTrue(fOutputReader.readLine().contains("-debug"));
+        assertTrue(fOutputReader.readLine().contains("-debug"));
         
         fCommandControl = new PDACommandControl(fSession);
 
@@ -82,7 +84,7 @@ public class CommandControlTestsBase {
         InitializeCommandServiceQuery initQuery = new InitializeCommandServiceQuery();
         fExecutor.execute(initQuery);
         initQuery.get();        
-        Assert.assertEquals("debug connection accepted", fOutputReader.readLine());
+        assertEquals("debug connection accepted", fOutputReader.readLine());
     }
     
     @After
@@ -146,7 +148,7 @@ public class CommandControlTestsBase {
                 throw e.getCause();
             }
         }
-        Assert.assertEquals("Command returned an unexpected result", expectedResult, responseText);
+        assertEquals("Command returned an unexpected result", expectedResult, responseText);
 
     }
     
@@ -155,11 +157,11 @@ public class CommandControlTestsBase {
     }
     
     protected void expectEvent(String expectedEvent) throws InterruptedException {
-        Assert.assertEquals("Unexpected event received", expectedEvent, fEventsQueue.take());
+        assertEquals("Unexpected event received", expectedEvent, fEventsQueue.take());
     }
     
     protected void expectOutput(String expectedOutput) throws IOException {
-        Assert.assertEquals("Unexpected output received", expectedOutput, fOutputReader.readLine());
+        assertEquals("Unexpected output received", expectedOutput, fOutputReader.readLine());
     }
     
 }

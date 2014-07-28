@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -280,7 +279,7 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
         fVMProvider.postEvent(new TestEvent(fModel.getRootElement(), IModelDelta.CONTENT));
         while (!fViewerListener.isFinished(ALL_UPDATES_COMPLETE | PROPERTY_UPDATES)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-        Assert.assertTrue(fFormattedValuesListener.getFormattedValuesCompleted().isEmpty());
+        assertTrue(fFormattedValuesListener.getFormattedValuesCompleted().isEmpty());
     }
     
     public void testInvalidFormat() {
@@ -708,7 +707,7 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
         while (!fViewerListener.isFinished(ALL_UPDATES_COMPLETE | PROPERTY_UPDATES) || !fVMListener.isFinished(CONTENT_COMPLETE | PROPERTY_UPDATES)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         
-        Assert.assertTrue(fFormattedValuesListener.isFinished());
+        assertTrue(fFormattedValuesListener.isFinished());
     }
 
     private void setUpdatePolicy(String policyId) {
@@ -796,8 +795,8 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
         if (expectCacheMissError) {
             String formatProperty = FormattedValueVMUtil.getPropertyForFormatId(formatId);
             
-            Assert.assertTrue(fFormattedValuesListener.getFormattedValuesCompleted().isEmpty());
-            Assert.assertFalse(fFormattedValuesListener.getPropertiesUpdates().isEmpty());
+            assertTrue(fFormattedValuesListener.getFormattedValuesCompleted().isEmpty());
+            assertFalse(fFormattedValuesListener.getPropertiesUpdates().isEmpty());
             for (IPropertiesUpdate update : fFormattedValuesListener.getPropertiesUpdates()) {
                 PropertiesUpdateStatus status = (PropertiesUpdateStatus)update.getStatus();
                 assertEquals(IDsfStatusConstants.INVALID_STATE, status.getCode());                
@@ -825,7 +824,7 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
             }
             
         } else {
-            Assert.assertTrue(fFormattedValuesListener.isFinished());
+            assertTrue(fFormattedValuesListener.isFinished());
         }
         
     }

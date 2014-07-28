@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -191,20 +192,20 @@ public class DsfSequenceProgressTests {
 						System.out.println("RollBackCounter: " + rollBackCounter.fInteger);
 						
 						if (sequence.isCancelled())
-							Assert.assertTrue(
+							assertTrue(
 									"Wrong number of steps were rolled back after cancellation.", 
 									stepCounter.fInteger == rollBackCounter.fInteger);
 						else {
-							Assert.assertTrue(
+							assertTrue(
 									"Wrong number of steps executed.", 
 									stepCounter.fInteger == steps.length);
-							Assert.assertTrue(
+							assertTrue(
 									"Some steps are mistakenly rolled back", 
 									rollBackCounter.fInteger == 0);
 						}
 						
 			            // Check state from Future interface
-			            Assert.assertTrue(sequence.isDone());
+			            assertTrue(sequence.isDone());
 					} catch (AssertionFailedError e) {
 						fExceptions.add(e);
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -45,10 +46,10 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
-	public static final int COMPARE_ID_STRINGS = 0;
-	public static final int COMPARE_DISP_STRINGS = 1;
-	public static final int COMPARE_REP_STRINGS = 2;
-	
+	public static enum CompareType {
+		ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION
+	}
+
 	protected ICProject fCProject;
 	private IFile fCFile;
 	protected ITextEditor fEditor;
@@ -95,7 +96,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		super.tearDown();
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, boolean filterResults, int compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
 		}
@@ -159,12 +160,12 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
 	}
-	
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, int compareType) throws Exception {
+
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, length, expected, isCompletion, isTemplate, true, compareType);
 	}
 
-	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, int compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, 0, expected, isCompletion, false, compareType);
 	}
 
@@ -212,32 +213,46 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return filtered.toArray();
 	}
 	
-	private String[] toStringArray(Object[] results, int compareType) {
-		String[] strings= new String[results.length];
-		for(int i=0; i< results.length; i++){
+	private String[] toStringArray(Object[] results, CompareType type) {
+		String[] strings = new String[results.length];
+
+		for (int i = 0; i < results.length; i++) {
 			Object result = results[i];
-			if (result instanceof CCompletionProposal) {
-				if (compareType == COMPARE_ID_STRINGS) {
-					strings[i]= ((CCompletionProposal)result).getIdString();
-				} else if (compareType == COMPARE_DISP_STRINGS) {
-					strings[i]= ((CCompletionProposal)result).getDisplayString();
-				} else {
-					strings[i]= ((CCompletionProposal)result).getReplacementString();
+			switch (type) {
+			case ID:
+				if (result instanceof ICCompletionProposal) {
+					strings[i] = ((ICCompletionProposal) result).getIdString();
 				}
-			} else if (result instanceof ICCompletionProposal) {
-				if (compareType == COMPARE_ID_STRINGS) {
-					strings[i]= ((ICCompletionProposal)result).getIdString();
-				} else if (compareType == COMPARE_DISP_STRINGS) {
-					strings[i]= ((ICCompletionProposal)result).getDisplayString();
-				} else {
-					strings[i]= ((ICCompletionProposal)result).getDisplayString();
+				break;
+
+			case DISPLAY:
+				if (result instanceof ICompletionProposal) {
+					strings[i] = ((ICompletionProposal) result).getDisplayString();
 				}
-			} else if (result instanceof ICompletionProposal) {
-				strings[i]= ((ICompletionProposal)result).getDisplayString();
-			} else if (result instanceof IContextInformation) {
-				strings[i]= ((IContextInformation)result).getContextDisplayString();
-			} else {
-				strings[i]= result.toString();
+				break;
+
+			case REPLACEMENT:
+				if (result instanceof CCompletionProposal) {
+					strings[i] = ((CCompletionProposal) result).getReplacementString();
+				} else if (result instanceof ICCompletionProposal) {
+					strings[i] = ((ICCompletionProposal) result).getDisplayString();
+				}
+				break;
+
+			case CONTEXT:
+				if (result instanceof ICompletionProposal) {
+					result = ((CCompletionProposal) result).getContextInformation();
+				}
+				if (result instanceof IContextInformation) {
+					strings[i] = ((IContextInformation) result).getContextDisplayString();
+				}
+				break;
+
+			case INFORMATION:
+				if (result instanceof IContextInformation) {
+					strings[i] = ((IContextInformation) result).getInformationDisplayString();
+				}
+				break;
 			}
 		}
 		return strings;

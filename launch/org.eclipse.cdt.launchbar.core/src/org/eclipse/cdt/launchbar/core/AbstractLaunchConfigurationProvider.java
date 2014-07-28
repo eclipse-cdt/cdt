@@ -15,7 +15,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 
 /**
- * Abstract provider can work with any ITypeBaseLaunchDescriptor to provide launch configurations
+ * Abstract provider can work with any ILaunchDescriptorConfigBased to provide launch configurations
  */
 public abstract class AbstractLaunchConfigurationProvider implements ILaunchConfigurationProvider {
 	protected ILaunchBarManager manager;

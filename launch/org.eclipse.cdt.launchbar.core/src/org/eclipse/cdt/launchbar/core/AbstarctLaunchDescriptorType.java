@@ -49,4 +49,9 @@ public abstract class AbstarctLaunchDescriptorType implements ILaunchDescriptorT
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return getId();
+	}
 }

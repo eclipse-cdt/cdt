@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,16 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
@@ -42,20 +47,152 @@ import org.eclipse.cdt.internal.ui.text.Symbols;
  * @since 4.0
  */
 public class CContentAssistInvocationContext extends ContentAssistInvocationContext implements ICEditorContentAssistInvocationContext {
-	
 	private final IEditorPart fEditor;
 	private final boolean fIsCompletion;
 	private final boolean fIsAutoActivated;
-	
-	private ITranslationUnit fTU= null;
-	private boolean fTUComputed= false;
-	private int fParseOffset= -1;
-	private boolean fParseOffsetComputed= false;
-	private IASTCompletionNode fCN= null;
-	private boolean fCNComputed= false;
 	private IIndex fIndex = null;
-	private int fContextInfoPosition;
-	
+	private Lazy<Integer> fContextInfoPosition = new Lazy<Integer>() {
+		@Override
+		protected Integer calculateValue() {
+			return guessContextInformationPosition();
+		}
+	};
+
+	private final Lazy<ITranslationUnit> fTU;
+
+	private final Lazy<Integer> fParseOffset = new Lazy<Integer>() {
+		@Override
+		protected Integer calculateValue() {
+			if (fIsCompletion) {
+				return guessCompletionPosition(getInvocationOffset());
+			}
+			int contextInfoPosition = fContextInfoPosition.value();
+			if (contextInfoPosition > 0) {
+				return guessCompletionPosition(contextInfoPosition);
+			}
+			return -1;
+		}
+	};
+
+	private final Lazy<IASTCompletionNode> fCN = new Lazy<IASTCompletionNode>() {
+		@Override
+		protected IASTCompletionNode calculateValue() {
+			int offset = getParseOffset();
+			if (offset < 0) return null;
+
+			ICProject proj= getProject();
+			if (proj == null) return null;
+
+			try {
+				IIndexManager manager= CCorePlugin.getIndexManager();
+				fIndex = manager.getIndex(proj, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
+
+				try {
+					fIndex.acquireReadLock();
+				} catch (InterruptedException e) {
+					fIndex = null;
+				}
+
+				boolean parseNonIndexed= CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
+				int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS : ITranslationUnit.AST_SKIP_ALL_HEADERS;
+				flags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
+
+				return fTU.value().getCompletionNode(fIndex, flags, offset);
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
+			}
+			return null;
+		}
+	};
+
+	private final Lazy<Boolean> afterOpeningAngleBracket = new Lazy<Boolean>() {
+		@Override
+		protected Boolean calculateValue() {
+			final int parseOffset = getParseOffset();
+			final int invocationOffset = getInvocationOffset();
+			final CHeuristicScanner scanner = new CHeuristicScanner(getDocument());
+			final int parenthesisOffset = scanner.findOpeningPeer(invocationOffset, parseOffset, '<', '>');
+			return parenthesisOffset != CHeuristicScanner.NOT_FOUND;
+		}
+	};
+
+	private final Lazy<Boolean> afterOpeningParenthesis = new Lazy<Boolean>() {
+		@Override
+		protected Boolean calculateValue() {
+			final int invocationOffset = getInvocationOffset();
+			final int parseOffset = getParseOffset();
+			final int bound = Math.max(-1, parseOffset - 1);
+			final CHeuristicScanner scanner = new CHeuristicScanner(getDocument());
+			final int parenthesisOffset = scanner.findOpeningPeer(invocationOffset, bound, '(', ')');
+			return parenthesisOffset != CHeuristicScanner.NOT_FOUND;
+		}
+	};
+
+	private final Lazy<Boolean> inUsingDeclaration = new Lazy<Boolean>() {
+		/**
+		 * Checks whether the invocation offset is inside a using-declaration.
+		 *
+		 * @return {@code true} if the invocation offset is inside a using-declaration
+		 */
+		@Override
+		protected Boolean calculateValue() {
+			IDocument doc = getDocument();
+			int offset = Math.max(0, getInvocationOffset() - 1);
+
+			// Look at the tokens preceding the invocation offset.
+			CHeuristicScanner.TokenStream tokenStream = new CHeuristicScanner.TokenStream(doc, offset);
+			int token = tokenStream.previousToken();
+
+			// There may be a partially typed identifier which is being completed.
+			if (token == Symbols.TokenIDENT)
+				token = tokenStream.previousToken();
+
+			// Before that, there may be any number of "namespace::" token pairs.
+			while (token == Symbols.TokenDOUBLECOLON) {
+				token = tokenStream.previousToken();
+				if (token == Symbols.TokenUSING) {  // there could also be a leading "::" for global namespace
+					return true;
+				} else if (token != Symbols.TokenIDENT) {
+					return false;
+				} else {
+					token = tokenStream.previousToken();
+				}
+			}
+
+			// Before that, there must be a "using" token.
+			return token == Symbols.TokenUSING;
+		}
+	};
+
+	private final Lazy<Boolean> followedBySemicolon = new Lazy<Boolean>() {
+		@Override
+		protected Boolean calculateValue() {
+			final IDocument doc = getDocument();
+			final int offset = getInvocationOffset();
+			final CHeuristicScanner.TokenStream tokenStream = new CHeuristicScanner.TokenStream(doc, offset);
+			final int token = tokenStream.nextToken();
+			return token == Symbols.TokenSEMICOLON;
+		}
+	};
+
+	private final Lazy<String> functionParameterDelimiter = new Lazy<String>() {
+		@Override
+		protected String calculateValue() {
+			String propertyKey = DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS;
+			Map<String, String> options = getProject().getOptions(true);
+			return Boolean.parseBoolean(options.get(propertyKey)) ? ", " : ","; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	};
+
+	private final Lazy<String> templateParameterDelimiter = new Lazy<String>() {
+		@Override
+		protected String calculateValue() {
+			String propertyKey = DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS;
+			Map<String, String> options = getProject().getOptions(true);
+			return Boolean.parseBoolean(options.get(propertyKey)) ? ", " : ","; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	};
+
 	/**
 	 * Creates a new context.
 	 * 
@@ -70,6 +207,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		fEditor= editor;
 		fIsCompletion= isCompletion;
 		fIsAutoActivated= isAutoActivated;
+		fTU = new Lazy<ITranslationUnit>() {
+				@Override
+				protected ITranslationUnit calculateValue() {
+					return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+				}
+			};
 	}
 	
 	/**
@@ -77,10 +220,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * 
 	 * @param unit the translation unit in <code>document</code>
 	 */
-	public CContentAssistInvocationContext(ITranslationUnit unit, boolean isCompletion) {
+	public CContentAssistInvocationContext(final ITranslationUnit unit, boolean isCompletion) {
 		super();
-		fTU= unit;
-		fTUComputed= true;
+		fTU= new Lazy<ITranslationUnit>() {
+			@Override
+			protected ITranslationUnit calculateValue() {
+				return unit;
+			}
+		};
 		fEditor= null;
 		fIsCompletion= isCompletion;
 		fIsAutoActivated= false;
@@ -94,11 +241,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	@Override
 	public ITranslationUnit getTranslationUnit() {
-		if (!fTUComputed) {
-			fTUComputed= true;
-			fTU= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-		}
-		return fTU;
+		return fTU.value();
 	}
 	
 	/**
@@ -115,7 +258,6 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		
 	@Override
 	public IASTCompletionNode getCompletionNode() {
-		
 		//for scalability
 		if (fEditor != null && fEditor instanceof CEditor) {
 			CEditor editor = (CEditor)fEditor;
@@ -134,54 +276,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				}
 			}
 		}
-		
-		if (fCNComputed) return fCN;
-		
-		fCNComputed = true;
-
-		int offset = getParseOffset();
-		if (offset < 0) return null;
-		
-		ICProject proj= getProject();
-		if (proj == null) return null;
-		
-		try {
-			IIndexManager manager= CCorePlugin.getIndexManager();
-			fIndex = manager.getIndex(proj, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
-
-			try {
-				fIndex.acquireReadLock();
-			} catch (InterruptedException e) {
-				fIndex = null;
-			}
-
-			boolean parseNonIndexed= CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
-			int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS : ITranslationUnit.AST_SKIP_ALL_HEADERS;
-			flags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
-			
-			fCN = fTU.getCompletionNode(fIndex, flags, offset);
-		} catch (CoreException e) {
-			CUIPlugin.log(e);
-		}
-		
-		return fCN;
+		return fCN.value();
 	}
 	
 	@Override
 	public int getParseOffset() {
-		if (!fParseOffsetComputed) {
-			fParseOffsetComputed= true;
-			fContextInfoPosition= guessContextInformationPosition();
-			if (fIsCompletion) {
-				fParseOffset = guessCompletionPosition(getInvocationOffset());
-			} else if (fContextInfoPosition > 0) {
-				fParseOffset = guessCompletionPosition(fContextInfoPosition);
-			} else {
-				fParseOffset = -1;
-			}
-		}
-		
-		return fParseOffset;
+		return fParseOffset.value();
 	}
 
 	/**
@@ -189,13 +289,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	@Override
 	public int getContextInformationOffset() {
-		getParseOffset();
-		return fContextInfoPosition;
+		return fContextInfoPosition.value();
 	}
 	
 	/**
 	 * Try to find a sensible completion position backwards in case the given offset
-	 * is inside a function call argument list.
+	 * is inside a function call argument list or in template arguments.
 	 * 
 	 * @param contextPosition  the starting position
 	 * @return a sensible completion offset
@@ -210,13 +309,15 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		int token= scanner.previousToken(pos, bound);
 		
 		if (token == Symbols.TokenCOMMA) {
-			pos= scanner.findOpeningPeer(pos, bound, '(', ')');
+			int openingParenthesisPos = scanner.findOpeningPeer(pos, bound, '(', ')');
+			int openingAngleBracketPos = scanner.findOpeningPeer(pos, bound, '<', '>');
+			pos = Math.max(openingParenthesisPos, openingAngleBracketPos);
 			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
 			
 			token = scanner.previousToken(pos, bound);
 		}
 		
-		if (token == Symbols.TokenLPAREN) {
+		if (token == Symbols.TokenLPAREN || token == Symbols.TokenLESSTHAN) {
 			pos= scanner.findNonWhitespaceBackward(pos - 1, bound);
 			if (pos == CHeuristicScanner.NOT_FOUND) return contextPosition;
 			
@@ -256,15 +357,17 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		int pos= contextPosition - 1;
 		do {
 			int paren= scanner.findOpeningPeer(pos, bound, '(', ')');
-			if (paren == CHeuristicScanner.NOT_FOUND)
+			int angle= scanner.findOpeningPeer(pos, bound, '<', '>');
+			int nearestPeer = Math.max(paren, angle);
+			if (nearestPeer == CHeuristicScanner.NOT_FOUND)
 				break;
-			int token= scanner.previousToken(paren - 1, bound);
+			int token= scanner.previousToken(nearestPeer - 1, bound);
 			// next token must be a method name (identifier) or the closing angle of a
 			// constructor call of a template type.
 			if (token == Symbols.TokenIDENT || token == Symbols.TokenGREATERTHAN) {
-				return paren + 1;
+				return nearestPeer + 1;
 			}
-			pos= paren - 1;
+			pos= nearestPeer - 1;
 		} while (true);
 		
 		return -1;
@@ -295,5 +398,29 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			fIndex.releaseReadLock();
 		}
 		super.dispose();
+	}
+
+	public boolean isAfterOpeningParenthesis() {
+		return afterOpeningParenthesis.value();
+	}
+
+	public boolean isAfterOpeningAngleBracket() {
+		return afterOpeningAngleBracket.value();
+	}
+
+	public boolean isInUsingDirective() {
+		return inUsingDeclaration.value();
+	}
+
+	public boolean isFollowedBySemicolon() {
+		return followedBySemicolon.value();
+	}
+
+	public String getFunctionParameterDelimiter() {
+		return functionParameterDelimiter.value();
+	}
+
+	public String getTemplateParameterDelimiter() {
+		return templateParameterDelimiter.value();
 	}
 }

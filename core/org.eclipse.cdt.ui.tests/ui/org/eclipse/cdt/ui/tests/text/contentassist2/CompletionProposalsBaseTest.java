@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,13 +97,12 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 		return bodyFile;
 	}
 
-	protected void assertCompletionResults(int offset, String[] expected, int compareType) throws Exception {
+	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, expected, true, compareType);
 	}
 	
 	public void testCompletionProposals() throws Exception {
 		String[] expected = getExpectedResultsValues();
-		assertCompletionResults(getCompletionPosition(), expected,
-				AbstractContentAssistTest.COMPARE_DISP_STRINGS);
+		assertCompletionResults(getCompletionPosition(), expected, CompareType.DISPLAY);
 	}
 }

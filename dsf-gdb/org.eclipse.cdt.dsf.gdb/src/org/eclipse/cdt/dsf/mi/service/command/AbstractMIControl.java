@@ -77,6 +77,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     implements IMICommandControl
 {
 	private static final String MI_TRACE_IDENTIFIER = "[MI]"; //$NON-NLS-1$
+	private static final int NUMBER_CONCURRENT_COMMANDS = 3;
 	
     /*
 	 *  Thread control variables for the transmit and receive threads.
@@ -343,7 +344,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	fCommandQueue.add(handle);
             processCommandQueued(handle);
             
-            if (fRxCommands.size() < 3) {
+            if (fRxCommands.size() < NUMBER_CONCURRENT_COMMANDS) {
                 // In a separate dispatch cycle.  This allows command listeners 
             	// to respond to the command queued event.  
                 getExecutor().execute(new DsfRunnable() {

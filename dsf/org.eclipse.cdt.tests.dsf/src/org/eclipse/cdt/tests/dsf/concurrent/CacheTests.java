@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -119,54 +122,54 @@ public class CacheTests {
     }
 
     private void assertCacheValidWithData(Object data) {
-        Assert.assertTrue(fTestCache.isValid());
-        Assert.assertEquals(data, fTestCache.getData());
-        Assert.assertTrue(fTestCache.getStatus().isOK());
+        assertTrue(fTestCache.isValid());
+        assertEquals(data, fTestCache.getData());
+        assertTrue(fTestCache.getStatus().isOK());
     }
 
     private void assertCacheResetWithoutData() {
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         try {
             fTestCache.getData();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
         try {
             fTestCache.getStatus();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
     }
 
     private void assertCacheValidWithoutData() {
-        Assert.assertTrue(fTestCache.isValid());
-        Assert.assertEquals(null, fTestCache.getData());
-        Assert.assertFalse(fTestCache.getStatus().isOK());
-        Assert.assertEquals(fTestCache.getStatus().getCode(), ERRCODE_TARGET_RUNNING);
+        assertTrue(fTestCache.isValid());
+        assertEquals(null, fTestCache.getData());
+        assertFalse(fTestCache.getStatus().isOK());
+        assertEquals(fTestCache.getStatus().getCode(), ERRCODE_TARGET_RUNNING);
     }
 
     private void assertCacheWaiting() {
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         try {
             fTestCache.getData();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
         try {
             fTestCache.getStatus();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
-        Assert.assertFalse(fRetrieveRm.isCanceled());
+        assertFalse(fRetrieveRm.isCanceled());
     }
 
     private void assertCacheInvalidAndWithCanceledRM() {
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         try {
             fTestCache.getData();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
         try {
             fTestCache.getStatus();
-            Assert.fail("Expected an IllegalStateException");
+            fail("Expected an IllegalStateException");
         } catch (IllegalStateException e) {}
-        Assert.assertTrue(fRetrieveRm.isCanceled());
+        assertTrue(fRetrieveRm.isCanceled());
     }
 
     @Test 
@@ -175,7 +178,7 @@ public class CacheTests {
         Query<Integer> q = new TestQuery();
         
         // Check initial state
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         
         fExecutor.execute(q);
         
@@ -183,7 +186,7 @@ public class CacheTests {
         waitForRetrieveRm();
         
         // Check state while waiting for data
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
 
         // Complete the cache's retrieve data request.
         fExecutor.submit(new Callable<Object>() { public Object call() {
@@ -192,13 +195,13 @@ public class CacheTests {
 
             // Check that the data is available in the cache immediately
             // (in the same dispatch cycle).
-            Assert.assertEquals(1, (int)fTestCache.getData());
-            Assert.assertTrue(fTestCache.isValid());
+            assertEquals(1, (int)fTestCache.getData());
+            assertTrue(fTestCache.isValid());
             
             return null;
         }}).get();
         
-        Assert.assertEquals(1, (int)q.get());
+        assertEquals(1, (int)q.get());
         
         // Re-check final state
         assertCacheValidWithData(1);
@@ -207,7 +210,7 @@ public class CacheTests {
     @Test 
     public void getTest() throws InterruptedException, ExecutionException {
         // Check initial state
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         
         // Request data from cache
         Query<Integer> q = new TestQuery();
@@ -217,13 +220,13 @@ public class CacheTests {
         waitForRetrieveRm();
 
         // Check state while waiting for data
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
 
         // Set the data without using an executor.  
         fRetrieveRm.setData(1);
         fRetrieveRm.done();
         
-        Assert.assertEquals(1, (int)q.get());
+        assertEquals(1, (int)q.get());
 
         // Check final state
         assertCacheValidWithData(1);
@@ -232,7 +235,7 @@ public class CacheTests {
     @Test 
     public void getTestWithTwoClients() throws InterruptedException, ExecutionException {
         // Check initial state
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         
         // Request data from cache
         Query<Integer> q1 = new TestQuery();
@@ -246,14 +249,14 @@ public class CacheTests {
         waitForRetrieveRm();
 
         // Check state while waiting for data
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
 
         // Set the data without using an executor.  
         fRetrieveRm.setData(1);
         fRetrieveRm.done();
         
-        Assert.assertEquals(1, (int)q1.get());
-        Assert.assertEquals(1, (int)q2.get());
+        assertEquals(1, (int)q1.get());
+        assertEquals(1, (int)q2.get());
 
         // Check final state
         assertCacheValidWithData(1);
@@ -262,7 +265,7 @@ public class CacheTests {
     @Test 
     public void getTestWithManyClients() throws InterruptedException, ExecutionException {
         // Check initial state
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
         
         // Request data from cache
         List<Query<Integer>> qList = new ArrayList<Query<Integer>>(); 
@@ -275,14 +278,14 @@ public class CacheTests {
         waitForRetrieveRm();
 
         // Check state while waiting for data
-        Assert.assertFalse(fTestCache.isValid());
+        assertFalse(fTestCache.isValid());
 
         // Set the data without using an executor.  
         fRetrieveRm.setData(1);
         fRetrieveRm.done();
 
         for (Query<Integer> q : qList) {
-            Assert.assertEquals(1, (int)q.get());            
+            assertEquals(1, (int)q.get());            
         }
         
         // Check final state
@@ -329,12 +332,12 @@ public class CacheTests {
         Thread.sleep(100);
         
         // Retrieval should never have been made.
-        Assert.assertEquals(null, fRetrieveRm);
+        assertEquals(null, fRetrieveRm);
 
         // The cache has no data so the query should have failed  
         try {
             q.get();
-            Assert.fail("expected an exeption");
+            fail("expected an exeption");
         } catch (ExecutionException e) {
             // expected the exception
         }
@@ -392,7 +395,7 @@ public class CacheTests {
         fRetrieveRm.setData(1);
         fRetrieveRm.done();
 
-        Assert.assertEquals(Integer.valueOf(1), q.get());
+        assertEquals(Integer.valueOf(1), q.get());
         
         // Disable the cache
         fExecutor.submit(new DsfRunnable() {
@@ -432,7 +435,7 @@ public class CacheTests {
         q.cancel(true);
         try {
             q.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
         
         assertCacheInvalidAndWithCanceledRM();
@@ -464,7 +467,7 @@ public class CacheTests {
         q.cancel(true);
         try {
             q.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
         
         assertCacheInvalidAndWithCanceledRM();
@@ -499,7 +502,7 @@ public class CacheTests {
         q.cancel(true);
         try {
             q.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
         
         assertCacheInvalidAndWithCanceledRM();
@@ -565,11 +568,11 @@ public class CacheTests {
         // after is canceled is called.
         fRetrieveRm.isCanceled();
         fExecutor.submit(new Runnable() { public void run() {} }).get(); 
-        Assert.assertTrue(canceledCalled[0]);        
+        assertTrue(canceledCalled[0]);        
 
         try {
             q.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
 
 
@@ -657,7 +660,7 @@ public class CacheTests {
         qBadCanceled[0] = true;
         rmBad[0].cancel();
 
-        Assert.assertFalse(fRetrieveRm.isCanceled());
+        assertFalse(fRetrieveRm.isCanceled());
         
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
@@ -692,7 +695,7 @@ public class CacheTests {
         q1.cancel(true);
         try {
             q1.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
         assertCacheWaiting();
 
@@ -700,7 +703,7 @@ public class CacheTests {
         q2.cancel(true);
         try {
             q2.get();
-            Assert.fail("Expected a cancellation exception");
+            fail("Expected a cancellation exception");
         } catch (CancellationException e) {} // Expected exception;
 
         assertCacheInvalidAndWithCanceledRM();
@@ -739,7 +742,7 @@ public class CacheTests {
             q.cancel(true);
             try {
                 q.get();
-                Assert.fail("Expected a cancellation exception");
+                fail("Expected a cancellation exception");
             } catch (CancellationException e) {} // Expected exception;
             qList.set(toCancel[i], null);
             

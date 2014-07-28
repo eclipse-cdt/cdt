@@ -13,8 +13,6 @@ package org.eclipse.cdt.tests.dsf.vm;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -33,6 +31,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
+import static org.junit.Assert.*;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -279,7 +278,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
     
     public void elementChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
         TestElement element = getElement(path); 
-        Assert.assertFalse(element.getGrayed());
+        assertFalse(element.getGrayed());
         element.setChecked(checked, false);
     }
     
@@ -341,20 +340,20 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
         IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)_viewer;
         TestElement element = getElement(path);
         if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
-            Assert.assertEquals(element.getChecked(), viewer.getElementChecked(path));
-            Assert.assertEquals(element.getGrayed(), viewer.getElementGrayed(path));
+            assertEquals(element.getChecked(), viewer.getElementChecked(path));
+            assertEquals(element.getGrayed(), viewer.getElementGrayed(path));
         }
         
         if (!expandedElementsOnly || path.getSegmentCount() == 0 || viewer.getExpandedState(path) ) {
             TestElement[] children = element.getChildren();
-            Assert.assertEquals(children.length, viewer.getChildCount(path));
+            assertEquals(children.length, viewer.getChildCount(path));
 
             for (int i = 0; i < children.length; i++) {
                 Object viewerObject = viewer.getChildElement(path, i);
                 if (viewerObject instanceof TestElementVMContext) {
                     TreePath childPath = path.createChildPath(viewerObject);
                     TestElement viewerElement = ((TestElementVMContext)viewerObject).getElement();
-                    Assert.assertEquals(children[i], viewerElement);
+                    assertEquals(children[i], viewerElement);
                     if (validator != null) {
                         validator.validate(children[i], viewerElement, childPath);
                     }
@@ -364,7 +363,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
             }
         } else if (!viewer.getExpandedState(path)) {
             // If element not expanded, verify the plus sign.
-            Assert.assertEquals(viewer.getHasChildren(path), element.getChildren().length > 0);
+            assertEquals(viewer.getHasChildren(path), element.getChildren().length > 0);
         }
     }
 
@@ -415,7 +414,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
     }
     
     public ModelDelta appendElementLabel(TreePath path, String labelAppendix) {
-        Assert.assertTrue(path.startsWith(fRootPath, null));
+        assertTrue(path.startsWith(fRootPath, null));
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);
@@ -428,7 +427,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
     }
 
     public ModelDelta setElementChecked(TreePath path, boolean checked, boolean grayed) {
-        Assert.assertTrue(path.startsWith(fRootPath, null));
+        assertTrue(path.startsWith(fRootPath, null));
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);
@@ -441,7 +440,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
     }
 
     public ModelDelta setElementChildren(TreePath path, TestElement[] children) {
-        Assert.assertTrue(path.startsWith(fRootPath, null));
+        assertTrue(path.startsWith(fRootPath, null));
         ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);

@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.util;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
@@ -135,7 +135,7 @@ public class DOMSearchUtil {
 		
 		IBinding binding = searchName.resolveBinding();
 		if (binding instanceof IIndexBinding) {
-			Assert.fail("Not implemented");
+			fail("Not implemented");
 //			try { 
 //				ArrayList pdomNames = new ArrayList();
 //				IPDOMResolver pdom= ((PDOMBinding) binding).getPDOM();

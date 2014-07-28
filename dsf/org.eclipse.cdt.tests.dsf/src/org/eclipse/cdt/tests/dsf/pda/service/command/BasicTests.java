@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.pda.service.command;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -97,14 +98,14 @@ public class BasicTests extends CommandControlTestsBase {
         };
         fExecutor.execute(sendCommandQuery);
         PDACommandResult result = sendCommandQuery.get();
-        Assert.assertEquals(1, listener.fQueuedCommands.size());
-        Assert.assertEquals(testCommand, listener.fQueuedCommands.get(0).fCommand);
-        Assert.assertEquals(0, listener.fRemovedCommands.size());
-        Assert.assertEquals(1, listener.fSentCommands.size());
-        Assert.assertEquals(testCommand, listener.fSentCommands.get(0).fCommand);
-        Assert.assertEquals(1, listener.fDoneCommands.size());
-        Assert.assertEquals(testCommand, listener.fDoneCommands.get(0).fCommand);
-        Assert.assertEquals(result, listener.fDoneCommands.get(0).fResult);
+        assertEquals(1, listener.fQueuedCommands.size());
+        assertEquals(testCommand, listener.fQueuedCommands.get(0).fCommand);
+        assertEquals(0, listener.fRemovedCommands.size());
+        assertEquals(1, listener.fSentCommands.size());
+        assertEquals(testCommand, listener.fSentCommands.get(0).fCommand);
+        assertEquals(1, listener.fDoneCommands.size());
+        assertEquals(testCommand, listener.fDoneCommands.get(0).fCommand);
+        assertEquals(result, listener.fDoneCommands.get(0).fResult);
 
         // Test queuing then removing command
         listener.reset();
@@ -116,7 +117,7 @@ public class BasicTests extends CommandControlTestsBase {
                     new DataRequestMonitor<PDACommandResult>(fExecutor, null) {
                         @Override
                         protected void handleCompleted() {
-                            Assert.fail("This command should never have been executed.");
+                            fail("This command should never have been executed.");
                         }
                     });
                 fCommandControl.removeCommand(token);
@@ -127,12 +128,12 @@ public class BasicTests extends CommandControlTestsBase {
         };
         fExecutor.execute(queueRemoveCommandQuery);
         queueRemoveCommandQuery.get();
-        Assert.assertEquals(1, listener.fQueuedCommands.size());
-        Assert.assertEquals(testCommand, listener.fQueuedCommands.get(0).fCommand);
-        Assert.assertEquals(1, listener.fRemovedCommands.size());
-        Assert.assertEquals(testCommand, listener.fRemovedCommands.get(0).fCommand);
-        Assert.assertEquals(0, listener.fSentCommands.size());
-        Assert.assertEquals(0, listener.fDoneCommands.size());
+        assertEquals(1, listener.fQueuedCommands.size());
+        assertEquals(testCommand, listener.fQueuedCommands.get(0).fCommand);
+        assertEquals(1, listener.fRemovedCommands.size());
+        assertEquals(testCommand, listener.fRemovedCommands.get(0).fCommand);
+        assertEquals(0, listener.fSentCommands.size());
+        assertEquals(0, listener.fDoneCommands.size());
         
     }
 }

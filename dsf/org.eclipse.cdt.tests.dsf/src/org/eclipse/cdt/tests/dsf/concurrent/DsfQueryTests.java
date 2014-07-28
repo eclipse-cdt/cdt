@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
+import static org.junit.Assert.*;
+
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -64,15 +64,15 @@ public class DsfQueryTests {
             }
         };
         // Check initial state
-        Assert.assertTrue(!q.isDone());
-        Assert.assertTrue(!q.isCancelled());
+        assertTrue(!q.isDone());
+        assertTrue(!q.isCancelled());
         
         fExecutor.execute(q);
-        Assert.assertEquals(1, (int)q.get());
+        assertEquals(1, (int)q.get());
         
         // Check final state
-        Assert.assertTrue(q.isDone());
-        Assert.assertTrue(!q.isCancelled());
+        assertTrue(q.isDone());
+        assertTrue(!q.isCancelled());
 
     }
 
@@ -89,21 +89,21 @@ public class DsfQueryTests {
         };
 
         // Check initial state
-        Assert.assertTrue(!q.isDone());
-        Assert.assertTrue(!q.isCancelled());
+        assertTrue(!q.isDone());
+        assertTrue(!q.isCancelled());
         
         fExecutor.execute(q);
         
         try {
             q.get();
-            Assert.fail("Expected exception");
+            fail("Expected exception");
         } catch (ExecutionException e) {
-            Assert.assertEquals(e.getCause().getMessage(), error_message);
+            assertEquals(e.getCause().getMessage(), error_message);
         }
         
         // Check final state
-        Assert.assertTrue(q.isDone());
-        Assert.assertTrue(!q.isCancelled());
+        assertTrue(q.isDone());
+        assertTrue(!q.isCancelled());
 
     }
 
@@ -118,20 +118,20 @@ public class DsfQueryTests {
         };
 
         // Check initial state
-        Assert.assertTrue(!q.isDone());
-        Assert.assertTrue(!q.isCancelled());
+        assertTrue(!q.isDone());
+        assertTrue(!q.isCancelled());
         
         fExecutor.execute(q);
         
         try {
             q.get();
-            Assert.fail("Expected exception");
+            fail("Expected exception");
         } catch (ExecutionException e) {
         }
         
         // Check final state
-        Assert.assertTrue(q.isDone());
-        Assert.assertTrue(!q.isCancelled());
+        assertTrue(q.isDone());
+        assertTrue(!q.isCancelled());
 
     }
 
@@ -154,7 +154,7 @@ public class DsfQueryTests {
             public String toString() { return super.toString() + "\n       getWithMultipleDispatchesTest() first runnable (query)"; } //$NON-NLS-1$
         };
         fExecutor.execute(q);
-        Assert.assertEquals(1, (int)q.get()); 
+        assertEquals(1, (int)q.get()); 
     }
 
     @Test (expected = ExecutionException.class)
@@ -172,8 +172,8 @@ public class DsfQueryTests {
         try {
             q.get();
         } finally {
-            Assert.assertTrue(q.isDone());
-            Assert.assertTrue(!q.isCancelled());
+            assertTrue(q.isDone());
+            assertTrue(!q.isCancelled());
         }            
     }
 
@@ -181,7 +181,7 @@ public class DsfQueryTests {
     public void cancelBeforeWaitingTest() throws InterruptedException, ExecutionException {
         final Query<Integer> q = new Query<Integer>() { 
             @Override protected void execute(final DataRequestMonitor<Integer> rm) {
-                Assert.fail("Query was cancelled, it should not be called."); //$NON-NLS-1$
+                fail("Query was cancelled, it should not be called."); //$NON-NLS-1$
                 rm.done();
             }
         };
@@ -189,8 +189,8 @@ public class DsfQueryTests {
         // Cancel before invoking the query.
         q.cancel(false);
 
-        Assert.assertTrue(q.isDone());
-        Assert.assertTrue(q.isCancelled());            
+        assertTrue(q.isDone());
+        assertTrue(q.isCancelled());            
 
         // Start the query.
         fExecutor.execute(q);
@@ -203,10 +203,10 @@ public class DsfQueryTests {
         } catch (CancellationException e) {
             return; // Success
         } finally {
-            Assert.assertTrue(q.isDone());
-            Assert.assertTrue(q.isCancelled());            
+            assertTrue(q.isDone());
+            assertTrue(q.isCancelled());            
         }            
-        Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+        assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
     }
 
     @Test
@@ -244,10 +244,10 @@ public class DsfQueryTests {
         // Cancel running request.
         q.cancel(false);
         
-        Assert.assertTrue(cancelCalled[0]);
-        Assert.assertTrue(rmHolder[0].isCanceled());
-        Assert.assertTrue(q.isCancelled());
-        Assert.assertTrue(q.isDone());
+        assertTrue(cancelCalled[0]);
+        assertTrue(rmHolder[0].isCanceled());
+        assertTrue(q.isCancelled());
+        assertTrue(q.isDone());
         
         // Retrieve data
         try {
@@ -255,8 +255,8 @@ public class DsfQueryTests {
         } catch (CancellationException e) {
             return; // Success
         } finally {
-            Assert.assertTrue(q.isDone());
-            Assert.assertTrue(q.isCancelled());            
+            assertTrue(q.isDone());
+            assertTrue(q.isCancelled());            
         }            
         
         // Complete rm and query.
@@ -272,12 +272,12 @@ public class DsfQueryTests {
         } catch (CancellationException e) {
             return; // Success
         } finally {
-            Assert.assertTrue(q.isDone());
-            Assert.assertTrue(q.isCancelled());            
+            assertTrue(q.isDone());
+            assertTrue(q.isCancelled());            
         }            
 
         
-        Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+        assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
     }
 
     
@@ -305,9 +305,9 @@ public class DsfQueryTests {
         } catch (TimeoutException e) {
             return; // Success
         } finally {
-            Assert.assertFalse("Query should not be done yet, it should have timed out first.", q.isDone()); //$NON-NLS-1$
+            assertFalse("Query should not be done yet, it should have timed out first.", q.isDone()); //$NON-NLS-1$
         }            
-        Assert.assertTrue("TimeoutException should have been thrown", false); //$NON-NLS-1$
+        assertTrue("TimeoutException should have been thrown", false); //$NON-NLS-1$
     }
 
 }

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.RequestCache;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -146,7 +146,7 @@ public class TransactionTests {
         ((DataRequestMonitor<Integer>)fRetrieveRms[0]).setData(1);
         fRetrieveRms[0].done();
         
-        Assert.assertEquals(1, (int)q.get());
+        assertEquals(1, (int)q.get());
     }
     
     @Test 
@@ -172,7 +172,7 @@ public class TransactionTests {
         }
         
         fExecutor.execute(q);
-        Assert.assertEquals(NUM_CACHES, (int)q.get());
+        assertEquals(NUM_CACHES, (int)q.get());
     }
 
 }

@@ -264,7 +264,7 @@ public abstract class AbstractCLIProcess extends Process
     	
         ICommand<?> command = token.getCommand();
         // Check if the command is a CLI command and if it did not originate from this class.
-        if (command instanceof CLICommand<?> &&
+        if ((command instanceof CLICommand<?> || command instanceof MIInterpreterExecConsole<?>) &&
             !(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
         {
             fSuppressConsoleOutputCounter++;
@@ -354,7 +354,7 @@ public abstract class AbstractCLIProcess extends Process
     	fPrompt = PromptType.IN_PRIMARY_PROMPT;
     	
         ICommand<?> command = token.getCommand();
-    	if (command instanceof CLICommand<?> &&
+    	if ((command instanceof CLICommand<?> || command instanceof MIInterpreterExecConsole<?>) &&
     			!(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
         {
             fSuppressConsoleOutputCounter--;

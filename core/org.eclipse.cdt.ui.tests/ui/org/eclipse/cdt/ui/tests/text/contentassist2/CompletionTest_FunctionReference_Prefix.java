@@ -40,7 +40,7 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 			"xSecondEnum",
 			"xThirdEnum",
 			"xEnumeration",
-			"XMacro(x, y)",
+			"XMacro(x,y)",
 			"XStruct"
 	};
 	

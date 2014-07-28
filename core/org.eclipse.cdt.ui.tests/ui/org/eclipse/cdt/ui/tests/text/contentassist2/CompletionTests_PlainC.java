@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	}
 
 	protected void assertCompletionResults(String[] expected) throws Exception {
-		assertContentAssistResults(fCursorOffset, expected, true, AbstractContentAssistTest.COMPARE_ID_STRINGS);
+		assertContentAssistResults(fCursorOffset, expected, true, CompareType.ID);
 	}
 	
 	//void test() {
@@ -355,7 +355,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected = {
 				"AMacro(x)",
 				"DEBUG",
-				"XMacro(x, y)",
+				"XMacro(x,y)",
 				"__CDT_PARSER__",
 				"__COUNTER__",
 				"__DATE__",
@@ -366,9 +366,9 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 				"__STDC__",
 				"__TIME__",
 				"__builtin_constant_p(exp)",
-				"__builtin_va_arg(ap, type)",
-				"__builtin_offsetof(T, m)",
-				"__builtin_types_compatible_p(x, y)",
+				"__builtin_va_arg(ap,type)",
+				"__builtin_offsetof(T,m)",
+				"__builtin_types_compatible_p(x,y)",
 				"__complex__",
 				"__extension__",
 				"__imag__",

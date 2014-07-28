@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Jens Elmenthaler and others
+ * Copyright (c) 2011, 2014 Jens Elmenthaler and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,12 +66,12 @@ public class ShowCamelCasePreferenceTest extends AbstractContentAssistTest {
 		super.tearDown();
 	}
 
-	protected void assertCompletionResults(int offset, String[] expected, int compareType) throws Exception {
+	protected void assertCompletionResults(int offset, String[] expected, CompareType compareType) throws Exception {
 		assertContentAssistResults(offset, expected, true, compareType);
 	}
 	
 	protected void assertCompletionResults(String[] expected) throws Exception {
-		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+		assertCompletionResults(fCursorOffset, expected, CompareType.REPLACEMENT);
 	}
 
 	private void setShowCamelCaseMatches(boolean enabled) {

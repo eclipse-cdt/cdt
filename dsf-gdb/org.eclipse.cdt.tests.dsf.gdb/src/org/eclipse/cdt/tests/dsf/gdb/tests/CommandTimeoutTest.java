@@ -139,7 +139,8 @@ public class CommandTimeoutTest extends BaseTestCase {
 		// Enable timeout
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
 		node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, true );
-		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 2000 );
+		// Timeout must be shorter than the launch's timeout of 2 seconds (see BaseTestCase.doLaunch())
+		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1000 );
 
 		// Setup a remote launch so that it sends a "-target-remote" as part of the 
 		// launch steps.

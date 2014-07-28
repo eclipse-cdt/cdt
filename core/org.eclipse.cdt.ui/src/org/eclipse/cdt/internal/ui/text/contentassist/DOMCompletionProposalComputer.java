@@ -91,8 +91,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
@@ -163,40 +161,6 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 
 		return proposals;
-	}
-
-	/**
-	 * Checks whether the invocation offset is inside a using-declaration.
-	 * 
-	 * @param context  the invocation context
-	 * @return {@code true} if the invocation offset is inside a using-declaration
-	 */
-	private boolean inUsingDeclaration(CContentAssistInvocationContext context) {
-		IDocument doc = context.getDocument();
-		int offset = context.getInvocationOffset();
-
-		// Look at the tokens preceding the invocation offset.
-		CHeuristicScanner.TokenStream tokenStream = new CHeuristicScanner.TokenStream(doc, offset);
-		int token = tokenStream.previousToken();
-
-		// There may be a partially typed identifier which is being completed.
-		if (token == Symbols.TokenIDENT)
-			token = tokenStream.previousToken();
-
-		// Before that, there may be any number of "namespace::" token pairs.
-		while (token == Symbols.TokenDOUBLECOLON) {
-			token = tokenStream.previousToken();
-			if (token == Symbols.TokenUSING) {  // there could also be a leading "::" for global namespace
-				return true;
-			} else if (token != Symbols.TokenIDENT) {
-				return false;
-			} else {
-				token = tokenStream.previousToken();
-			}
-		}
-
-		// Before that, there must be a "using" token.
-		return token == Symbols.TokenUSING;
 	}
 
 	/**
@@ -299,9 +263,11 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 			IASTFunctionStyleMacroParameter[] params = functionMacro.getParameters();
 			if (params != null) {
+				final String parameterDelimiter = context.getFunctionParameterDelimiter();
 				for (int i = 0; i < params.length; ++i) {
-					if (i > 0)
-						args.append(", "); //$NON-NLS-1$
+					if (i > 0) {
+						args.append(parameterDelimiter);
+					}
 					args.append(params[i].getParameter());
 				}
 			}
@@ -391,32 +357,40 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			int baseRelevance, List<ICompletionProposal> proposals) {
 		int relevance = getClassTypeRelevance(templateType);
 		StringBuilder representation = new StringBuilder(templateType.getName());
-		representation.append("<{0}>"); //$NON-NLS-1$
-
+		boolean inUsingDeclaration = context.isInUsingDirective();
+		String templateParameterRepresentation = ""; //$NON-NLS-1$
+		if (!inUsingDeclaration) {
+			representation.append("<{0}>"); //$NON-NLS-1$
+			templateParameterRepresentation = buildTemplateParameters(templateType, context);
+		} else if (!context.isFollowedBySemicolon()) {
+			representation.append(';');
+		}
 		String representationString = MessageFormat.format(representation.toString(), ""); //$NON-NLS-1$
-
-		String templateParameterRepresentation = buildTemplateParameters(templateType);
 		String displayString = MessageFormat.format(representation.toString(), templateParameterRepresentation);
-
 		CCompletionProposal proposal = createProposal(representationString, displayString, getImage(templateType),
 				baseRelevance + relevance, context);
 
-		CProposalContextInformation info =
-				new CProposalContextInformation(getImage(templateType), displayString, templateParameterRepresentation);
-		info.setContextInformationPosition(context.getContextInformationOffset());
-		proposal.setContextInformation(info);
-		proposal.setCursorPosition(representationString.length() - 1);
+		if (!inUsingDeclaration) {
+			CProposalContextInformation info =
+					new CProposalContextInformation(getImage(templateType), displayString, templateParameterRepresentation);
+			info.setContextInformationPosition(context.getContextInformationOffset());
+			proposal.setContextInformation(info);
+			if (!context.isContextInformationStyle()) {
+				proposal.setCursorPosition(representationString.length() - 1);
+			}
+		}
 		proposals.add(proposal);
 	}
 
-	private String buildTemplateParameters(ICPPClassTemplate templateType) {
+	private String buildTemplateParameters(ICPPClassTemplate templateType, CContentAssistInvocationContext context) {
 		ICPPTemplateParameter[] parameters = templateType.getTemplateParameters();
 		StringBuilder representation = new StringBuilder();
 
+		final String parameterDelimiter = context.getTemplateParameterDelimiter();
 		for (int i = 0; i < parameters.length; i++) {
 			ICPPTemplateParameter parameter = parameters[i];
 			if (i > 0) {
-				representation.append(", "); //$NON-NLS-1$
+				representation.append(parameterDelimiter);
 			}
 			if (parameter instanceof ICPPTemplateNonTypeParameter) {
 				IType parameterType = ((ICPPTemplateNonTypeParameter) parameter).getType();
@@ -425,7 +399,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			} else if (parameter instanceof ICPPTemplateTypeParameter) {
 				representation.append(TYPENAME);
 			} else if (parameter instanceof ICPPTemplateTemplateParameter) {
-				String templateParameterParameters = buildTemplateParameters((ICPPTemplateTemplateParameter) parameter);
+				String templateParameterParameters = buildTemplateParameters((ICPPTemplateTemplateParameter) parameter, context);
 				representation.append(MessageFormat.format(TEMPLATE_PARAMETER_PATTERN, templateParameterParameters));
 				representation.append(templateParameterParameters);
 			}
@@ -440,7 +414,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext,
 			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
-		if (context.isContextInformationStyle()) {
+		if (context.isContextInformationStyle() && context.isAfterOpeningParenthesis()) {
 			addProposalsForConstructors(classType, context, baseRelevance, proposals);
 		} else if (classType instanceof ICPPClassTemplate) {
 			addProposalForClassTemplate((ICPPClassTemplate) classType, context, baseRelevance, proposals);
@@ -497,16 +471,18 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		String returnTypeStr = null;
 		IParameter[] params = function.getParameters();
 		if (params != null) {
+			final String parameterDelimiter = context.getFunctionParameterDelimiter();
 			for (int i = 0; i < params.length; ++i) {
-				IType paramType = params[i].getType();
+				IParameter param = params[i];
+				IType paramType = param.getType();
 				if (i > 0) {
-					dispargs.append(',');
-					idargs.append(',');
+					dispargs.append(parameterDelimiter);
+					idargs.append(parameterDelimiter);
 				}
 
 				dispargs.append(ASTTypeUtil.getType(paramType, false));
 				idargs.append(ASTTypeUtil.getType(paramType, false));
-				String paramName = params[i].getName();
+				String paramName = param.getName();
 				if (paramName != null && paramName.length() > 0) {
 					dispargs.append(' ');
 					dispargs.append(paramName);
@@ -515,8 +491,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 			if (function.takesVarArgs()) {
 				if (params.length > 0) {
-					dispargs.append(',');
-					idargs.append(',');
+					dispargs.append(parameterDelimiter);
+					idargs.append(parameterDelimiter);
 				}
 				dispargs.append("..."); //$NON-NLS-1$
 				idargs.append("..."); //$NON-NLS-1$
@@ -554,10 +530,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		// In a using declaration, emitting parentheses after the function
 		// name is useless, since the user will just have to delete them.
 		// Instead, emitting a semicolon is useful.
-		boolean inUsingDeclaration = inUsingDeclaration(context);
+		boolean inUsingDeclaration = context.isInUsingDirective();
 		if (inUsingDeclaration) {
 			repStringBuff.setLength(repStringBuff.length() - 1);  // Remove opening parenthesis
-			repStringBuff.append(';');
+			if (!context.isFollowedBySemicolon()) {
+				repStringBuff.append(';');
+			}
 		} else {
 			repStringBuff.append(')');
 		}
@@ -573,7 +551,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposal.setCursorPosition(cursorPosition);
 		}
 
-		if (contextDispargString != null) {
+		if (contextDispargString != null && !inUsingDeclaration) {
 			CProposalContextInformation info =
 					new CProposalContextInformation(image, dispString, contextDispargString);
 			info.setContextInformationPosition(context.getContextInformationOffset());

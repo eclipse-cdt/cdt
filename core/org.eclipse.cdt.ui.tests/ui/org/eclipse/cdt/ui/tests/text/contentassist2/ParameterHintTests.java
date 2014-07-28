@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 public class ParameterHintTests extends AbstractContentAssistTest {
@@ -61,8 +62,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	}
 	
 	protected void assertParameterHints(String[] expected) throws Exception {
-		assertContentAssistResults(getBuffer().length() - 1, expected, false,
-				AbstractContentAssistTest.COMPARE_ID_STRINGS);
+		assertContentAssistResults(getBuffer().length() - 1, expected, false, CompareType.CONTEXT);
 	}
 	
 	//void foo(){aFunc(
@@ -75,21 +75,21 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	//void foo(){tFunc(
 	public void testTemplateFunction() throws Exception {
 		assertParameterHints(new String[] {
-				"tFunc(T x,T y) : void"
+				"tFunc(T x, T y) : void"
 		});
 	}
 	
 	//void foo(){tFunc<int>(
 	public void testTemplateFunction2() throws Exception {
 		assertParameterHints(new String[] {
-				"tFunc(T x,T y) : void"
+				"tFunc(T x, T y) : void"
 		});
 	}
 	
 	//void foo(){int a=5;aFunc  ( anotherFunc   (  a ,  (in
 	public void testOffsetCalculation() throws Exception {
 		assertParameterHints(new String[] {
-				"anotherFunc(int i,int j) : int"
+				"anotherFunc(int i, int j) : int"
 		});
 	}
 	
@@ -109,7 +109,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testMethodDefinition() throws Exception {
 		assertParameterHints(new String[] {
 				"aMethod(char c) : void",
-				"aMethod(char c,int x) : void"
+				"aMethod(char c, int x) : void"
 		});
 	}
 	
@@ -117,7 +117,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	public void testMethodScope() throws Exception {
 		assertParameterHints(new String[] {
 				"aMethod(char c) : void",
-				"aMethod(char c,int x) : void"
+				"aMethod(char c, int x) : void"
 		});
 	}
 	
@@ -133,7 +133,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		// http://bugs.eclipse.org/223660
 		assertParameterHints(new String[] {
 				"bClass(int x)",
-				"bClass(int x,int y)",
+				"bClass(int x, int y)",
 				"bClass(const bClass &)"
 		});
 	}
@@ -145,7 +145,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		// http://bugs.eclipse.org/327064
 		assertParameterHints(new String[] {
 				"bClass(int x)",
-				"bClass(int x,int y)",
+				"bClass(int x, int y)",
 				"bClass(const bClass &)"
 		});
 	}
@@ -184,7 +184,14 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 	//    int i= (int) oc->getChar(
 	public void testMethodWithCast() throws Exception {
 		assertParameterHints(new String[] {
-				"getChar(int a,int b) : char"
+				"getChar(int a, int b) : char"
 		});
+	}
+
+	// void foo(int i, int j) {
+	// 	foo(
+	public void testFormatterConfiguredWithSpaceAfterComma() throws Exception {
+		setCommaAfterFunctionParameter(CCorePlugin.INSERT);
+		assertParameterHints(new String[] { "foo(int i, int j) : void" });
 	}
 }

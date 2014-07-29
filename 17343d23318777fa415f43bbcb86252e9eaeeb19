@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_d230dcee",
+        "filename": "util/org.eclipse.cdt.util/src/org/eclipse/cdt/internal/core/parser/util/DOMSearchUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-29T12:15:40Z",
+      "side": 1,
+      "message": "This does not look like a test class but uses JUnit fail?  Strange.  It was there before so let\u0027s move forward, but I wanted to point it out.",
+      "revId": "17343d23318777fa415f43bbcb86252e9eaeeb19",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

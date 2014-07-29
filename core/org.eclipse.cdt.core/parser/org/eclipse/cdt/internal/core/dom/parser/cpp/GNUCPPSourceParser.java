@@ -2008,7 +2008,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		
 		ICPPASTTypeId aliasedType = typeId(DeclarationOptions.TYPEID);
 		
-		if (LT(1) != IToken.tSEMI){
+		final int nextToken = LT(1);
+		if (nextToken != IToken.tSEMI && nextToken != IToken.tEOC){
 			throw backtrack;
 		}
 		int endOffset = consume().getEndOffset();

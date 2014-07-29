@@ -11,6 +11,7 @@
 package org.eclipse.cdt.launchbar.ui.internal.controls;
 
 import java.util.Comparator;
+import java.util.Map;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
@@ -19,12 +20,16 @@ import org.eclipse.cdt.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -36,13 +41,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ListDialog;
 
 public class TargetSelector extends CSelector {
 
 	private final LaunchBarUIManager uiManager;
-	
+
 	private static final String[] noTargets = new String[] { "---" };
-	
 
 	public TargetSelector(Composite parent, int style) {
 		super(parent, style);
@@ -52,8 +59,7 @@ public class TargetSelector extends CSelector {
 
 		setContentProvider(new IStructuredContentProvider() {
 			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
 			@Override
@@ -120,7 +126,7 @@ public class TargetSelector extends CSelector {
 				}
 				return false;
 			}
-			
+
 			@Override
 			public void dismissHover(Object element, boolean immediate) {
 				if (element instanceof ILaunchTarget) {
@@ -154,14 +160,11 @@ public class TargetSelector extends CSelector {
 
 	@Override
 	public boolean hasActionArea() {
-			// TODO need an add target command similar to the add configuration that allows the user
-			// to select the target type.
-//			return uiManager.getAddTargetCommand(getManager().getActiveLaunchDescriptor()) != null;
-			return false;
+		return !uiManager.getAddTargetCommands().isEmpty();
 	}
 
 	@Override
-	public void createActionArea(Composite parent) {
+	public void createActionArea(final Composite parent) {
 		Composite actionArea = new Composite(parent, SWT.NONE);
 		GridLayout actionLayout = new GridLayout();
 		actionLayout.marginWidth = actionLayout.marginHeight = 0;
@@ -169,8 +172,7 @@ public class TargetSelector extends CSelector {
 		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		final Composite createButton = new Composite(actionArea, SWT.NONE);
-		createButton
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		createButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = buttonLayout.marginHeight = 7;
 		createButton.setLayout(buttonLayout);
@@ -190,19 +192,14 @@ public class TargetSelector extends CSelector {
 		createLabel.setText("Add New Target...");
 		createLabel.setBackground(white);
 
-//		try {
-//			final String command = uiManager.getAddTargetCommand(getManager().getActiveLaunchDescriptor());
-//			MouseListener mouseListener = new MouseAdapter() {
-//				public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
-//					Activator.runCommand(command);
-//				}
-//			};
-//
-//			createButton.addMouseListener(mouseListener);
-//			createLabel.addMouseListener(mouseListener);
-//		} catch (CoreException e) {
-//			Activator.log(e.getStatus());
-//		}
+		MouseListener mouseListener = new MouseAdapter() {
+			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
+				handleCreateTarget();
+			}
+		};
+
+		createButton.addMouseListener(mouseListener);
+		createLabel.addMouseListener(mouseListener);
 
 		MouseTrackListener mouseTrackListener = new MouseTrackAdapter() {
 			@Override
@@ -221,6 +218,40 @@ public class TargetSelector extends CSelector {
 		createLabel.addMouseTrackListener(mouseTrackListener);
 	}
 
+	protected void handleCreateTarget() {
+		final Map<String, String> commands = uiManager.getAddTargetCommands();
+		final Map<String, Image> images = uiManager.getTargetIcons();
+		if (!commands.isEmpty()) {
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			ListDialog ld = new ListDialog(shell);
+			ld.setTitle("New Target");
+			ld.setMessage("Select target type to create");
+			ld.setContentProvider(new ArrayContentProvider());
+			ld.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return (String)element;
+				}
+				
+				@Override
+				public Image getImage(Object element) {
+					return images.get(element);
+				}
+			});
+			ld.setInput(commands.keySet().toArray());
+			switch(ld.open()) {
+			case Window.CANCEL:
+				return;
+			case Window.OK:
+				String command = commands.get((String) (ld.getResult()[0]));
+				Activator.runCommand(command);
+				return;
+			default:
+				/* fall out */
+			}
+		}
+	}
+
 	@Override
 	protected void fireSelectionChanged() {
 		Object selection = getSelection();
@@ -233,7 +264,7 @@ public class TargetSelector extends CSelector {
 			}
 		}
 	}
-	
+
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return super.computeSize(200, hHint, changed);
@@ -249,5 +280,5 @@ public class TargetSelector extends CSelector {
 			element = noTargets[0];
 		super.setSelection(element);
 	}
-	
+
 }

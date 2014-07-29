@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_981fa364",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/MultilineWhitespaceHandlingTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T19:43:21Z",
+      "side": 1,
+      "message": "Why did the expected source change more than source?",
+      "revId": "c791dd35a6e169b939ec2477b57a1bc6933f39de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_382e4f94",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/NestedReplaceTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T19:43:21Z",
+      "side": 1,
+      "message": "Code with embedded newlines is hard to read. Please split the literal after each newline.",
+      "revId": "c791dd35a6e169b939ec2477b57a1bc6933f39de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_78cba74d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/ReplaceForLoopBodyTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T19:43:21Z",
+      "side": 1,
+      "message": "This is nearly impossible to read. Ideally, change generator tests should use code snippets in comments similar to tests derived from RefactoringTestBase.",
+      "revId": "c791dd35a6e169b939ec2477b57a1bc6933f39de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_58d06bf4",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/WhitespaceHandlingTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T19:43:21Z",
+      "side": 1,
+      "message": "Why did the whitespace change.",
+      "revId": "c791dd35a6e169b939ec2477b57a1bc6933f39de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_b81a5f73",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGeneratorWriterVisitor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T19:43:21Z",
+      "side": 1,
+      "message": "There is something wrong with \"Is requires\". Please explain what \"externally\" means in this context.",
+      "revId": "c791dd35a6e169b939ec2477b57a1bc6933f39de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

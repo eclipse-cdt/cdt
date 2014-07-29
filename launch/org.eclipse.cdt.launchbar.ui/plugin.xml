@@ -67,7 +67,8 @@
       </descriptorUI>
       <targetUI
             labelProvider="org.eclipse.cdt.launchbar.ui.internal.LocalTargetLabelProvider"
-            targetTypeId="org.eclipse.cdt.launchbar.core.target.local">
+            targetTypeId="org.eclipse.cdt.launchbar.core.target.local"
+            name="Local Target">
       </targetUI>
    </extension>
 

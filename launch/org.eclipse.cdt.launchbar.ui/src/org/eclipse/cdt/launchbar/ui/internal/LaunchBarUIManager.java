@@ -10,29 +10,29 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui.internal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
-import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 public class LaunchBarUIManager {
 
 	ILaunchBarManager manager;
 	Map<String, ILabelProvider> descriptorLabelProviders = new HashMap<>();
-	Map<String, ILabelProvider> targetLabelProviders = new HashMap<>();
-	Map<String, IHoverProvider> targetHoverProviders = new HashMap<>();
-	Map<String, String> targetEditCommandIds = new HashMap<>();
-	Map<String, String> targetAddNewCommandIds = new HashMap<>();
+	Map<String, LaunchBarTargetContribution> targetContributions = new HashMap<>();
 	
 	public LaunchBarUIManager(ILaunchBarManager manager) {
 		this.manager = manager;
@@ -54,23 +54,28 @@ public class LaunchBarUIManager {
 				} else if (elementName.equals("targetUI")) {
 					try {
 						String targetTypeId = element.getAttribute("targetTypeId");
-
-						ILabelProvider labelProvider = (ILabelProvider) element.createExecutableExtension("labelProvider");
-						targetLabelProviders.put(targetTypeId, labelProvider);
+						String targetName = element.getAttribute("name");
 						
-						if (element.getAttribute("hoverProvider") != null) {
-							IHoverProvider hoverProvider = (IHoverProvider) element.createExecutableExtension("hoverProvider");
-							if (hoverProvider != null)
-								targetHoverProviders.put(targetTypeId, hoverProvider);
+						String iconStr = element.getAttribute("icon");
+						Image icon = null;
+						if (iconStr != null && !iconStr.isEmpty()) {
+							try {
+								icon = ImageDescriptor.createFromURL(new URL(iconStr)).createImage();
+							} catch (MalformedURLException e) {
+								Activator.log(e);
+							}
 						}
 						
+						ILabelProvider labelProvider = (ILabelProvider) element.createExecutableExtension("labelProvider");
+						
+						IHoverProvider hoverProvider = null;
+						if (element.getAttribute("hoverProvider") != null) {
+							hoverProvider = (IHoverProvider) element.createExecutableExtension("hoverProvider");
+						}
 						String editCommandId = element.getAttribute("editCommandId");
-						if (editCommandId != null && editCommandId.length() > 0)
-							targetEditCommandIds.put(targetTypeId, editCommandId);
-
 						String addNewCommandId = element.getAttribute("addNewTargetCommandId");
-						if (addNewCommandId != null && addNewCommandId.length() > 0)
-							targetAddNewCommandIds.put(targetTypeId, addNewCommandId);
+						
+						targetContributions.put(targetTypeId, new LaunchBarTargetContribution(targetTypeId, targetName, icon, labelProvider, hoverProvider, editCommandId, addNewCommandId));
 					} catch (CoreException e) {
 						Activator.log(e.getStatus());
 					}
@@ -87,19 +92,68 @@ public class LaunchBarUIManager {
 		return descriptorLabelProviders.get(descriptor.getType().getId());
 	}
 
+	public String getTargetTypeName(ILaunchTarget target) {
+		return getContribution(target) == null ? null : getContribution(target).name;
+	}
+	
 	public ILabelProvider getLabelProvider(ILaunchTarget target) {
-		return targetLabelProviders.get(target.getType().getId());
+		return getContribution(target) == null ? null : getContribution(target).labelProvider;
 	}
 
 	public IHoverProvider getHoverProvider(ILaunchTarget target) {
-		return targetHoverProviders.get(target.getType().getId());
+		return getContribution(target) == null ? null : getContribution(target).hoverProvider;
 	}
 
 	public String getEditCommand(ILaunchTarget target) {
-		return targetEditCommandIds.get(target.getType().getId());
+		return getContribution(target) == null ? null : getContribution(target).editCommandId;
 	}
 
-	public String getAddTargetCommand(ILaunchTargetType targetType) {
-		return targetAddNewCommandIds.get(targetType.getId());
+	public String getAddTargetCommand(ILaunchTarget target) {
+		return getContribution(target) == null ? null : getContribution(target).addNewCommandId;
+	}
+	
+	public Map<String, String> getAddTargetCommands() {
+		Map<String,String> commands = new HashMap<>();
+		for (LaunchBarTargetContribution contribution : targetContributions.values()) {
+			if (contribution.addNewCommandId != null) 
+				commands.put(contribution.name, contribution.addNewCommandId);
+		}
+		return commands;
+	}
+	
+	public Map<String, Image> getTargetIcons() {
+		Map<String,Image> icons = new HashMap<>();
+		for (LaunchBarTargetContribution contribution : targetContributions.values()) {
+			if (contribution.icon != null) {
+				icons.put(contribution.name, contribution.icon); 
+			}
+		}
+		return icons;
+    }
+	
+	private LaunchBarTargetContribution getContribution(ILaunchTarget target) {
+		return targetContributions.get(target.getType().getId());
+	}
+	
+	private class LaunchBarTargetContribution {
+		
+		String id;
+		String name;
+		Image icon;
+		ILabelProvider labelProvider;
+		IHoverProvider hoverProvider;
+		String editCommandId;
+		String addNewCommandId;
+		
+		LaunchBarTargetContribution(String id, String name, Image icon, ILabelProvider labelProvider, IHoverProvider hoverProvider, String editCommand, String addNewCommand) {
+			this.id = id;
+			this.name = name;
+			this.icon = icon;
+			this.labelProvider = labelProvider;
+			this.hoverProvider = hoverProvider;
+			this.editCommandId = editCommand;
+			this.addNewCommandId = addNewCommand;
+		}
+		
 	}
 }

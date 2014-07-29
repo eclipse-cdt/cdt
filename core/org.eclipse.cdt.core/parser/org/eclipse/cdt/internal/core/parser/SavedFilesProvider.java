@@ -20,13 +20,8 @@ import org.eclipse.core.resources.IResource;
 
 
 public class SavedFilesProvider extends InternalFileContentProvider {
-	final private static SavedFilesProvider INSTANCE= new SavedFilesProvider();
-
-	public static InternalFileContentProvider getInstance() {
-		return INSTANCE;
-	}
 	
-	private SavedFilesProvider() {
+	public SavedFilesProvider() {
 	}
 	
 	@Override

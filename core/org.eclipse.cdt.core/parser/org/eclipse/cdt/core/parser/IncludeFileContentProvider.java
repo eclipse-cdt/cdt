@@ -35,7 +35,7 @@ public abstract class IncludeFileContentProvider {
 	 * without using a cache. 
 	 */
 	public static IncludeFileContentProvider getSavedFilesProvider() {
-		return SavedFilesProvider.getInstance();
+		return new SavedFilesProvider();
 	}
 
 	/**

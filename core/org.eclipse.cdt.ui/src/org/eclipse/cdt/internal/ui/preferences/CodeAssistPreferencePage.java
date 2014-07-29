@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     IBM Corporation
  *     Kirk Beitz (Nokia)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Thomas Corbat
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.preferences;
@@ -20,12 +21,12 @@ import java.util.ArrayList;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
@@ -56,6 +57,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS));
 //		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES));
@@ -149,6 +152,22 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_autoActivationDelay; 
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		// The following items are grouped for Default Arguments
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_defaultArgumentsGroupTitle;
+		Group defaultArgumentsGroup = addGroupBox(contentAssistComposite, label, 2);
+
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_displayParametersWithDefaultArgument;
+		Button displayDefaultedParameters = addCheckBox(defaultArgumentsGroup, label,
+				ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, 0);
+
+		label = PreferencesMessages.CEditorPreferencePage_ContentAssistPage_displayDefaultArguments;
+		Button displayDefaultArguments = addCheckBox(defaultArgumentsGroup, label,
+				ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS, 0);
+
+		createDependency(displayDefaultedParameters,
+				ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, displayDefaultArguments);
+
 		initializeFields();
 
 		return contentAssistComposite;
@@ -171,6 +190,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_DELAY, 500);
+		store.setDefault(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, true);
+		store.setDefault(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS, true);
 
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		store.setDefault(ContentAssistPreference.PREFIX_COMPLETION, true);

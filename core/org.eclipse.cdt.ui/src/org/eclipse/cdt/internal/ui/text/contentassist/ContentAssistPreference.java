@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Kirk Beitz (Nokia)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -60,6 +61,10 @@ public class ContentAssistPreference {
 	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW= "content_assist_autoactivation_trigger_replace_dot_with_arrow"; //$NON-NLS-1$
+	/** Preference key for display of defaulted parameters in content assist  */
+	public final static String DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT = "content_assist_default_argument_display_parameters_with_default_argument"; //$NON-NLS-1$
+	/** Preference key for display of default arguments in content assist  */
+	public final static String DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS = "content_assist_default_argument_display_arguments"; //$NON-NLS-1$
 //	/** Preference key for visibility of proposals (unused) */
 //	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
 	/** Preference key for alphabetic ordering of proposals */

@@ -26,10 +26,14 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.*;
 
@@ -241,6 +245,20 @@ public class CompletionTests extends AbstractContentAssistTest {
 
 	protected void assertParameterHint(String[] expected) throws Exception {
 		assertContentAssistResults(fCursorOffset, expected, false, CONTEXT);
+	}
+
+	private static void setDisplayDefaultArguments(boolean value) {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS, value);
+	}
+
+	private static void setDisplayDefaultedParameters(boolean value) {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, value);
+	}
+
+	private static IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
 	//void gfunc() {C1 v; v.m/*cursor*/
@@ -1407,5 +1425,81 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testUsingCompletionWithoutTemplateArgumentsButSemicolon() throws Exception {
 		final String[] expected = { "Tpl;" };
 		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
+	}
+
+	//	void default_argument(int i = 23) {
+	//		default_arg/*cursor*/
+	//	}
+	public void testDefaultFunctionArgument() throws Exception {
+		setDisplayDefaultedParameters(true);
+		setDisplayDefaultArguments(true);
+		final String[] expectedDisplay = { "default_argument(int i = 23) : void" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		final String[] expectedReplacement = { "default_argument()" };
+		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
+	}
+
+	//	void default_argument(int i = 23) {
+	//		default_arg/*cursor*/
+	//	}
+	public void testNoDefaultFunctionArgument() throws Exception {
+		setDisplayDefaultedParameters(true);
+		setDisplayDefaultArguments(false);
+		final String[] expectedDisplay = { "default_argument(int i) : void" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+	}
+
+	//	void default_argument(int i = 23) {
+	//		default_arg/*cursor*/
+	//	}
+	public void testNoDefaultFunctionParameter() throws Exception {
+		setDisplayDefaultedParameters(false);
+		setDisplayDefaultArguments(false);
+		final String[] expectedDisplay = { "default_argument() : void" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+	}
+
+	//	template<typename T = int>
+	//	struct default_argument {};
+	//	default_arg/*cursor*/
+	public void testDefaultTemplateArgument() throws Exception {
+		setDisplayDefaultedParameters(true);
+		setDisplayDefaultArguments(true);
+		final String[] expectedDisplay = { "default_argument<typename T = int>" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+		final String[] expectedReplacement = { "default_argument<>" };
+		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
+	}
+
+	//	template<typename T = int>
+	//	struct default_argument {};
+	//	default_arg/*cursor*/
+	public void testNoDefaultTemplateArgument() throws Exception {
+		setDisplayDefaultedParameters(true);
+		setDisplayDefaultArguments(false);
+		final String[] expectedDisplay = { "default_argument<typename T>" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+	}
+
+	//	template<typename T = int>
+	//	struct default_argument {};
+	//	default_arg/*cursor*/
+	public void testNoDefaultTemplateParameter() throws Exception {
+		setDisplayDefaultedParameters(false);
+		setDisplayDefaultArguments(false);
+		final String[] expectedDisplay = { "default_argument<>" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
+	}
+
+	//	template<typename T>
+	//	struct tpl {};
+	//	template<typename T1, typename T2 = tpl<T1>>
+	//	struct other_tpl {};
+	//	other_tpl/*cursor*/
+	public void testDefaultTemplateTemplateArgument() throws Exception {
+		setDisplayDefaultedParameters(true);
+		setDisplayDefaultArguments(true);
+		final String[] expectedDisplay = { "other_tpl<typename T1,typename T2 = tpl<T1>>" };
+		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
 	}
 }

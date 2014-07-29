@@ -20,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -67,6 +68,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
@@ -99,6 +102,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
  * @author Bryan Wilkinson
  */
 public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer {
+	private static final String HASH = "#"; //$NON-NLS-1$;
+	private static final String DEFAULT_ARGUMENT_PATTERN = " = {0}"; //$NON-NLS-1$;
 	private static final String TEMPLATE_PARAMETER_PATTERN = "template<{0}> class"; //$NON-NLS-1$;
 	private static final String TYPENAME = "typename"; //$NON-NLS-1$;
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$;
@@ -387,8 +392,14 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		StringBuilder representation = new StringBuilder();
 
 		final String parameterDelimiter = context.getTemplateParameterDelimiter();
+		final boolean addDefaultedParameters = isDisplayDefaultedParameters();
+		final boolean addDefaultArguments = isDisplayDefaultArguments();
 		for (int i = 0; i < parameters.length; i++) {
 			ICPPTemplateParameter parameter = parameters[i];
+			ICPPTemplateArgument defaultValue = parameter.getDefaultValue();
+			if (!addDefaultedParameters && defaultValue != null) {
+				break;
+			}
 			if (i > 0) {
 				representation.append(parameterDelimiter);
 			}
@@ -408,6 +419,15 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			}
 			representation.append(' ');
 			representation.append(parameter.getName());
+			if (addDefaultArguments && defaultValue != null) {
+				String defaultArgumentRepresentation = MessageFormat.format(DEFAULT_ARGUMENT_PATTERN, defaultValue);
+				for (int parameterIndex = 0; parameterIndex < i; parameterIndex++) {
+					String templateArgumentID = HASH + parameterIndex;
+					String templateArgumentValue = parameters[parameterIndex].getName();
+					defaultArgumentRepresentation = defaultArgumentRepresentation.replaceAll(templateArgumentID, templateArgumentValue);
+				}
+				representation.append(defaultArgumentRepresentation);
+			}
 		}
 		return representation.toString();
 	}
@@ -474,6 +494,9 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			final String parameterDelimiter = context.getFunctionParameterDelimiter();
 			for (int i = 0; i < params.length; ++i) {
 				IParameter param = params[i];
+				if (skipDefaultedParameter(param)) {
+					break;
+				}
 				IType paramType = param.getType();
 				if (i > 0) {
 					dispargs.append(parameterDelimiter);
@@ -486,6 +509,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 				if (paramName != null && paramName.length() > 0) {
 					dispargs.append(' ');
 					dispargs.append(paramName);
+				}
+				if (param instanceof ICPPParameter) {
+					ICPPParameter cppParam = (ICPPParameter) param;
+					if (cppParam.hasDefaultValue() && isDisplayDefaultArguments()) {
+						dispargs.append(MessageFormat.format(DEFAULT_ARGUMENT_PATTERN, cppParam.getDefaultValue()));
+					}
 				}
 			}
 
@@ -559,6 +588,10 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		}
 
 		proposals.add(proposal);
+	}
+
+	private boolean skipDefaultedParameter(IParameter param) {
+		return !isDisplayDefaultedParameters() && param instanceof ICPPParameter && ((ICPPParameter)param).hasDefaultValue();
 	}
 
 	private void handleVariable(IVariable variable, CContentAssistInvocationContext context,
@@ -754,5 +787,19 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		return imageDescriptor != null ?
 				CUIPlugin.getImageDescriptorRegistry().get(imageDescriptor) : null;
+	}
+
+	private static boolean isDisplayDefaultArguments() {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		return preferenceStore.getBoolean(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS);
+	}
+
+	private static boolean isDisplayDefaultedParameters() {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		return preferenceStore.getBoolean(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT);
+	}
+
+	private static IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 }

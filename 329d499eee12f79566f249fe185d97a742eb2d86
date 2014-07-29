@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_78c1e7fa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CodeAssistPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:25:37Z",
+      "side": 1,
+      "message": "DEFAULTARGUMENT -\u003e DEFAULT_ARGUMENT",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_b8cb7f1a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:25:37Z",
+      "side": 1,
+      "message": "Not clear what it means.",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_d8d11bc6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:25:37Z",
+      "side": 1,
+      "message": "Not clear what it means.",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_f8d4d7b7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:25:37Z",
+      "side": 1,
+      "message": "DEFAULTARGUMENT -\u003e DEFAULT_ARGUMENT",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_38df6fd3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:25:37Z",
+      "side": 1,
+      "message": "Why does word \"ARGUMENT\" appear twice?",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

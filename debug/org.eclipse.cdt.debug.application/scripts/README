@@ -4,12 +4,9 @@ Editing is allowed, but you will need to rebuild outside the Stand-alone Debugge
 those changes to manifest in your debugging session.
 
 To install the Stand-alone debugger locally in your $HOME directory, run the install.sh
-script directly from the scripts sub-directory of the plugins directory in your
-Eclipse installation:
+script found in the scripts sub-directory of the plugins directory in your Eclipse installation:
 
-  sh ./install.sh
-
-The script uses relative directories so you cannot run the script from any other working directory.
+  ./install.sh
 
 The install script will create a cdtdebugger directory in your $HOME directory.  This
 directory will contain a config.ini file, a dev.properties file, and a cdtdebug.sh script.
@@ -42,13 +39,8 @@ If no -a or -e option is specified, the last executable debugged via -e will be 
 debugging.  Otherwise, if this is the first time, a dialog will be presented to enter
 an executable, build log, and program arguments.
 
-  e.g. sh ~/cdtdebugger/cdtdebug.sh -b ~/build.log ~/myproject/bin/a.out arg1 arg2
+  e.g. ~/cdtdebugger/cdtdebug.sh -b ~/build.log ~/myproject/bin/a.out arg1 arg2
 
-The cdtdebug.sh script that is found in the plug-in can also be run directly, but only
-from the scripts directory as it uses relative directories to find the Eclipse instance and
-the plugins directory.  The one installed in the cdtdebugger directory replaces these
-relative directory references with absolute ones.
+The cdtdebug.sh script that is found in the plug-in can also be run directly, but cannot
+be moved.  The one installed in the cdtdebugger directory on the other hand, can be moved.
 
-  e.g. sh ./cdtdebug.sh -b ~/build.log ~/myproject/bin/a.out arg1 arg2
-
-                     

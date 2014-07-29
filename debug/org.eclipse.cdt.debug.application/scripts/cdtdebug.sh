@@ -79,12 +79,12 @@ fi
 ECLIPSE_HOME=$(cd "$SCRIPT_DIR/../../.." && pwd)  # install.sh will modify this line.  DO NOT REMOVE THE FOLLOWING MARKER: @#@#
 PLUGIN_DIR="$ECLIPSE_HOME/plugins"
 
-OSGI_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.osgi_*.jar' -printf "%f\n"`
-SWT_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.swt.*.jar' -printf "%f\n"`
+OSGI_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.osgi_*.jar' -not -name '*source*' -printf "%f\n" | head -1`
+SWT_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.swt.*.jar' -not -name '*source*' -printf "%f\n" | head -1`
 SWT_PLUGIN=`echo $SWT_JAR | sed -e "s/_[0-9]*\..*.jar//"`
-FS_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.core.filesystem.*.jar' -printf "%f\n" | grep -v java7`
+FS_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.core.filesystem.*.jar' -not -name '*source*' -printf "%f\n" | grep -v java7 | head -1`
 FS_PLUGIN=`echo $FS_JAR | sed -e "s/_[0-9]*\..*.jar//"`
-LINUX_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.cdt.core.linux.*.jar' -printf "%f\n"`
+LINUX_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.cdt.core.linux.*.jar' -not -name '*source*' -printf "%f\n" | head -1`
 LINUX_PLUGIN=`echo $LINUX_JAR | sed -e "s/_[0-9]*\..*.jar//"`
 
 # Run eclipse with the Stand-alone Debugger product specified

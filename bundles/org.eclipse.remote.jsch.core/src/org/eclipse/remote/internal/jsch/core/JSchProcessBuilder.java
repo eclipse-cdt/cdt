@@ -194,7 +194,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	private String buildCommand(String cmd, List<String> environment, boolean clearEnv) {
 		StringBuffer sb = new StringBuffer();
 		if (directory() != null) {
-			sb.append("cd " + charEscapify(directory().toURI().getPath(), charSet) + "; "); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("cd " + charEscapify(directory().toURI().getPath(), charSet) + " && "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (clearEnv) {
 			sb.append("env -i"); //$NON-NLS-1$

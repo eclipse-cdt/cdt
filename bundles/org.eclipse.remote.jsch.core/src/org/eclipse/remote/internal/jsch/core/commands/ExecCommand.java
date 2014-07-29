@@ -29,10 +29,12 @@ public class ExecCommand extends AbstractRemoteCommand<String> {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
 		ExecCallable<String> c = new ExecCallable<String>() {
 			@Override
-			public String call() throws JSchException {
+			public String call() throws JSchException, RemoteConnectionException {
 				getChannel().setCommand(fCommand);
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				ByteArrayOutputStream err = new ByteArrayOutputStream();
 				getChannel().setOutputStream(stream);
+				getChannel().setErrStream(err);
 				getChannel().connect();
 				while (!getChannel().isClosed() && !getProgressMonitor().isCanceled()) {
 					synchronized (this) {
@@ -45,6 +47,9 @@ public class ExecCommand extends AbstractRemoteCommand<String> {
 				}
 				if (getProgressMonitor().isCanceled()) {
 					return ""; //$NON-NLS-1$
+				}
+				if (getChannel().getExitStatus()!=0) {
+					throw new RemoteConnectionException(err.toString());
 				}
 				return stream.toString();
 			}

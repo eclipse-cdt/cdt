@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_188f1304",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/CContentAssistInvocationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:07:21Z",
+      "side": 1,
+      "message": "Use of Lazy negatively affects readability of the code in my opinion.",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5874eb74",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:07:21Z",
+      "side": 1,
+      "message": "Simpler append(\", \");\n\nIdeally, presence or absence of space should be controlled by the corresponding preference.",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_b879bf6e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:07:21Z",
+      "side": 1,
+      "message": "Should there be extra spaces here too?",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_f897b718",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/Lazy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:07:21Z",
+      "side": 1,
+      "message": "Redundant initialization.",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_d8947b17",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/Lazy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-29T21:07:21Z",
+      "side": 1,
+      "message": "This can be implemented as:\n\n    private static final Object NOT_INITIALIZED \u003d new Object();\n    private Object value \u003d NOT_INITIALIZED;\n\n    public E value() {\n        if (value \u003d\u003d NOT_INITIALIZED) {\n            value \u003d calculateValue();\n        }\n        return (E) value;\n    }",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

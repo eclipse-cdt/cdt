@@ -28,10 +28,10 @@ import org.eclipse.jface.text.TextSelection;
 /**
  * @author Guido Zgraggen IFS
  */
-public abstract class RewriteBaseTest extends BaseTestFramework implements ILogListener{
+public abstract class RewriteBaseTest extends BaseTestFramework implements ILogListener {
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 	
-	protected TreeMap<String, TestSourceFile> fileMap = new TreeMap<String, TestSourceFile>();
+	protected TreeMap<String, TestSourceFile> fileMap = new TreeMap<>();
 	protected String fileWithSelection;
 	protected TextSelection selection;
 
@@ -103,7 +103,7 @@ public abstract class RewriteBaseTest extends BaseTestFramework implements ILogL
 				stackTrace.append(ste.toString());
 			}
 		}
-		fail("Log-Message: " + status.getMessage() + stackTrace.toString());		 //$NON-NLS-1$
+		fail("Log-Message: " + status.getMessage() + stackTrace.toString());
 	}
 
 	public void setFileWithSelection(String fileWithSelection) {

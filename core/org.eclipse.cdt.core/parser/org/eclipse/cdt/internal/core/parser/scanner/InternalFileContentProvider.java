@@ -41,6 +41,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	public static final class DependsOnOutdatedFileException extends Exception {
 		public final Object fTu;
 		public final IIndexFragmentFile fIndexFile;
+
 		public DependsOnOutdatedFileException(Object tu, IIndexFragmentFile file) {
 			fTu= tu;
 			fIndexFile= file;
@@ -48,8 +49,8 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	}
 
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
-    private final Map<String, IFileNomination> fPragmaOnce= new HashMap<String, IFileNomination>();
-    private final Map<String, List<ISignificantMacros>> fLoadedVersions= new HashMap<String, List<ISignificantMacros>>();
+    private final Map<String, IFileNomination> fPragmaOnce= new HashMap<>();
+    private final Map<String, List<ISignificantMacros>> fLoadedVersions= new HashMap<>();
 
 	/**
 	 * Checks whether the specified inclusion exists.
@@ -69,9 +70,10 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 
 	/**
 	 * Creates an InclusionContent object for the given location.
+	 *
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
-     * @return Returns an inclusion content, or <code>null</code> if the location does not exist.
+     * @return Returns an inclusion content, or {@code null} if the location does not exist.
 	 * @see InternalFileContent
 	 */
 	public abstract InternalFileContent getContentForInclusion(String filePath,
@@ -85,7 +87,8 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	/**
 	 * Returns a file-content object of kind {@link InclusionKind#FOUND_IN_INDEX}, representing
 	 * the content from the context of the given file up to where the file actually gets included,
-	 * or <code>null</code> if this cannot be done.
+	 * or {@code null} if this cannot be done.
+	 *
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
 	 * @throws DependsOnOutdatedFileException 
@@ -117,7 +120,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	}
 
 	/**
-	 * Returns a strategy for heuristically resolving includes, or <code>null</code> if this shall
+	 * Returns a strategy for heuristically resolving includes, or {@code null} if this shall
 	 * not be done.
 	 */
 	public final IIncludeFileResolutionHeuristics getIncludeHeuristics() {
@@ -140,7 +143,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 		} else if (!list.contains(sig)) {
 			if (list.size() == 1) {
 				ISignificantMacros first = list.get(0);
-				list= new ArrayList<ISignificantMacros>(2);
+				list= new ArrayList<>(2);
 				list.add(first);
 				fLoadedVersions.put(path, list);
 			} else if (reduceVersions > 0 && reduceVersions < list.size()) {
@@ -151,7 +154,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	}
 
 	/** 
-	 * Return the path of the context of <code>null</code>, if there is no context.
+	 * Returns the path of the context of {@code null}, if there is no context.
 	 */
 	public String getContextPath() {
 		return null;

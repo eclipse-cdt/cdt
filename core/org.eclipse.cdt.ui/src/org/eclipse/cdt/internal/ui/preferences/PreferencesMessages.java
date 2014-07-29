@@ -14,6 +14,7 @@
  *     Kirk Beitz (Nokia)
  *     James Blackburn (Broadcom Corp.)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -49,6 +50,9 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableReplaceDotWithArrow;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationDelay;
+	public static String CEditorPreferencePage_ContentAssistPage_defaultArgumentsGroupTitle;
+	public static String CEditorPreferencePage_ContentAssistPage_displayParametersWithDefaultArgument;
+	public static String CEditorPreferencePage_ContentAssistPage_displayDefaultArguments;
 	public static String CEditorPreferencePage_ContentAssistPage_proposalFilterSelect;
 	public static String CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor;

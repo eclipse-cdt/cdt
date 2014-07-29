@@ -1380,8 +1380,17 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	@Override
 	public final void gotoAddress(IAddress address) {
+		assert isGuiThread();
 		if (address != null) {
-			gotoAddress(address.getValue());
+			final BigInteger addr = address.getValue();
+			startUpdate(new Runnable() {
+				@Override
+				public void run() {
+					fGotoFramePending = false;
+					fGotoAddressPending = PC_UNKNOWN;
+					gotoAddress(addr);
+				}
+			});
 		}
 	}
 	
@@ -1933,9 +1942,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		final SafeRunnable safeUpdate = new SafeRunnable() {
 			@Override
 			public void run() {
-				if (updateCount == fUpdateCount && fViewer != null) {
-					update.run();
-				}
+				update.run();
 			}
 			@Override
 			public void handleException(Throwable e) {
@@ -1946,7 +1953,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					SafeRunner.run(safeUpdate);
+					if (updateCount == fUpdateCount && fViewer != null) {
+						if (fUpdatePending)
+							invokeLater(this);
+						else
+							SafeRunner.run(safeUpdate);
+					}
 				}
 			});
 		} else {

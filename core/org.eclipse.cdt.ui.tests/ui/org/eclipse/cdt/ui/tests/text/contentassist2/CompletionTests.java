@@ -1367,4 +1367,10 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected = { "Specialization<typename T1, typename T2>" };
 		assertContentAssistResults(fCursorOffset, expected, true, COMPARE_ID_STRINGS);
 	}
+
+	//	using Alias = C/*cursor*/
+	public void testAliasDeclarationCompletion() throws Exception {
+		final String[] expectedID = { "C1", "C2", "C3" };
+		assertContentAssistResults(fCursorOffset, expectedID, true, COMPARE_ID_STRINGS);
+	}
 }

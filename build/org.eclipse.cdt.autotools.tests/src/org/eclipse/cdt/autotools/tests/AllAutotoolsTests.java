@@ -27,6 +27,7 @@ public class AllAutotoolsTests {
 		suite.addTestSuite(AutotoolsProjectNatureTest.class);
 		suite.addTestSuite(AutotoolsProjectTest1.class);
 		suite.addTestSuite(AutotoolsProjectTest2.class);
+		suite.addTestSuite(AutotoolsVirtualFolderTest.class);
 		suite.addTestSuite(UpdateConfigureTest.class);
 		suite.addTest(AutoconfTests.suite());
 		suite.addTest(EditorTests.suite());

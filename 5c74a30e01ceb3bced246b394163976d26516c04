@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_823f2d72",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/CContentAssistInvocationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-30T19:40:06Z",
+      "side": 1,
+      "message": "Additional fields can be avoided the same way it is done in Lazy. One possible, although not perfect measure of code complexity is total line count.",
+      "parentUuid": "c7672b30_4ced4c2d",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_5874eb74",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
         "patchSetId": 2

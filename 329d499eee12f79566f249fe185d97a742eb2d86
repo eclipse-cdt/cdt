@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_4f47fe71",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CodeAssistPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-30T13:30:01Z",
+      "side": 1,
+      "message": "Done - From AUTOACTIVATION I derived that the group part of the name belongs together.",
+      "parentUuid": "c7672b30_78c1e7fa",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_b8cb7f1a",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-29T21:25:37Z",
       "side": 1,
       "message": "Not clear what it means.",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_efb1aafc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-30T13:30:01Z",
+      "side": 1,
+      "message": "Done - I had in mind that \"defaulted\" is common terminology from the c++ standard, but it seems i confused it with defaulted constructors. The idea behind this option is to allow hiding of parameters that have a default value. CDT used to hide those by default. They had been added after an enhancement request. I could fathom that this option might be desirable to hide parameters with default arguments for example when working a lot with STL, which usually has many parameters with default arguments in its templates.\n\nI\u0027ll rename it.\nDisplay Parameters with Default Arguments",
+      "parentUuid": "c7672b30_b8cb7f1a",
       "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_8f93d660",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-30T13:30:01Z",
+      "side": 1,
+      "message": "Done - see comment in PreferenceMessages",
+      "parentUuid": "c7672b30_d8d11bc6",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_f8d4d7b7",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
         "patchSetId": 1
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_ef888a30",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-30T13:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_f8d4d7b7",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_38df6fd3",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
         "patchSetId": 1
@@ -81,6 +153,24 @@
       "writtenOn": "2014-07-29T21:25:37Z",
       "side": 1,
       "message": "Why does word \"ARGUMENT\" appear twice?",
+      "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_af8e923b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-30T13:30:01Z",
+      "side": 1,
+      "message": "The group part and the actual property name.",
+      "parentUuid": "c7672b30_38df6fd3",
       "revId": "329d499eee12f79566f249fe185d97a742eb2d86",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

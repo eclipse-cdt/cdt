@@ -11,19 +11,18 @@ Export-Package: org.eclipse.cdt.managedbuilder.ui.preferences,
  org.eclipse.cdt.managedbuilder.ui.wizards,
  org.eclipse.cdt.managedbuilder.internal.ui.actions;x-internal:=true,
  org.eclipse.cdt.managedbuilder.internal.ui.workingsets;x-internal:=true
-Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ui.console;bundle-version="[3.5.100,4.0.0)",
- org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
- org.eclipse.cdt.ui;bundle-version="[5.0.0,6.0.0)",
- org.eclipse.cdt.managedbuilder.core;bundle-version="[8.1.0,9.0.0)",
+Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)",
- org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
+ org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.cdt.make.core,
  org.eclipse.cdt.make.ui,
- org.eclipse.core.filesystem
+ org.eclipse.cdt.managedbuilder.core;bundle-version="[8.1.0,9.0.0)",
+ org.eclipse.cdt.ui;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.ui.console;bundle-version="[3.5.100,4.0.0)",
+ org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.ui.navigator;bundle-version="[3.2.0,4.0.0)";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.ibm.icu.text

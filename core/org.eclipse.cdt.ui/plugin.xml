@@ -3488,7 +3488,8 @@
             <adapt type="org.eclipse.core.resources.IResource">
                <and>
                   <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
-                  <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.core:language.settings.providers.disabled=false"/>
+                  <test property="org.eclipse.cdt.ui.checkPreference"
+                       value="org.eclipse.cdt.core/language.settings.providers.disabled=false"/>
                </and>
             </adapt>
          </enabledWhen>
@@ -4079,30 +4080,37 @@
   <extension
         point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-           id="org.eclipse.cdt.ui.preferenceTester"
-           class="org.eclipse.cdt.ui.newui.PropertyTester"
-           namespace="org.eclipse.cdt.ui"
-           properties="checkPreference"
-           type="java.lang.Object"/>
+            class="org.eclipse.cdt.internal.ui.expressions.CPropertyTester"
+            id="org.eclipse.cdt.ui.preferenceTester"
+            namespace="org.eclipse.cdt.ui"
+            properties="checkPreference"
+            type="java.lang.Object"/>
       <propertyTester
-           id="org.eclipse.cdt.Tester1"
-           class="org.eclipse.cdt.ui.newui.PropertyTester"
-           namespace="org.eclipse.cdt.ui"
-           properties="isSource"
-           type="org.eclipse.cdt.core.model.ITranslationUnit"/>
+            class="org.eclipse.cdt.internal.ui.expressions.CPropertyTester"
+            id="org.eclipse.cdt.Tester1"
+            namespace="org.eclipse.cdt.ui"
+            properties="isSource"
+            type="org.eclipse.cdt.core.model.ITranslationUnit"/>
       <propertyTester
-           id="org.eclipse.cdt.Tester2"
-           class="org.eclipse.cdt.ui.newui.PropertyTester"
-           namespace="org.eclipse.cdt.ui"
-           properties="isSource"
-           type="org.eclipse.core.resources.IFile"/>
+            class="org.eclipse.cdt.internal.ui.expressions.CPropertyTester"
+            id="org.eclipse.cdt.Tester2"
+            namespace="org.eclipse.cdt.ui"
+            properties="isSource"
+            type="org.eclipse.core.resources.IFile"/>
       <propertyTester
-           id="org.eclipse.cdt.ui.workingSetPropertyTester"
-           class="org.eclipse.cdt.internal.ui.workingsets.WorkingSetPropertyTester"
-           namespace="org.eclipse.cdt.ui"
-           properties="hasCProjects"
-           type="org.eclipse.ui.IWorkingSet"/>
+            class="org.eclipse.cdt.internal.ui.expressions.ResourcePropertyTester"
+            id="org.eclipse.cdt.core.projectBuilderTester"
+            namespace="org.eclipse.cdt.ui"
+            properties="projectBuilder"
+            type="org.eclipse.core.resources.IResource"/>
+      <propertyTester
+            class="org.eclipse.cdt.internal.ui.workingsets.WorkingSetPropertyTester"
+            id="org.eclipse.cdt.ui.workingSetPropertyTester"
+            namespace="org.eclipse.cdt.ui"
+            properties="hasCProjects"
+            type="org.eclipse.ui.IWorkingSet"/>
   </extension>
+   
   <extension
         point="org.eclipse.ui.exportWizards">
      <category

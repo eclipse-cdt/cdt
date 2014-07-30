@@ -34,6 +34,24 @@
       "revId": "a3f5c358b087138861d4d60b31d5a5bebccfad35",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_22bf39a9",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 6
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-07-30T17:44:12Z",
+      "side": 1,
+      "message": "I don\u0027t see a problem,\nI wanted to make sure there was nothing wrong in my configuration that wouldn\u0027t had spot and API problem.",
+      "parentUuid": "c7672b30_627c9191",
+      "revId": "a3f5c358b087138861d4d60b31d5a5bebccfad35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

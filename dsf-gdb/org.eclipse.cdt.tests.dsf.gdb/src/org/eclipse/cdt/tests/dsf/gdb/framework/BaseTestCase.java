@@ -59,7 +59,7 @@ import org.junit.rules.Timeout;
  * This is the base class for the GDB/MI Unit tests.
  * It provides the @Before and @After methods which setup
  * and teardown the launch, for each test.
- * If these methods are overwridden by a subclass, the new method
+ * If these methods are overridden by a subclass, the new method
  * must call super.baseSetup or super.baseTeardown itself, if this
  * code is to be run.
  */
@@ -68,7 +68,7 @@ public class BaseTestCase {
 	// Timeout value for each individual test
 	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 	
-	// Make the current test naem available through testName.getMethodName()
+	// Make the current test name available through testName.getMethodName()
 	@Rule public TestName testName = new TestName();
 	
 	// Add a timeout for each test, to make sure no test hangs
@@ -85,7 +85,7 @@ public class BaseTestCase {
 	// A set of global launch attributes which are not
 	// reset when we load a new class of tests.
 	// This allows a Suite to set an attribute
-	// The suite is reponsible for clearing those attributes
+	// The suite is responsible for clearing those attributes
 	// once it is finished
 	private static Map<String, Object> globalLaunchAttributes = new HashMap<String, Object>();
 

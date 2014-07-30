@@ -331,7 +331,7 @@ public class BaseTestCase {
  				String program = (String)launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
  				String commandLine = server + " :" + port + " " + program;
  				try {
- 					if (GdbDebugOptions.DEBUG) GdbDebugOptions.trace("Staring gdbserver with command: " + commandLine + "\n");
+ 					if (GdbDebugOptions.DEBUG) GdbDebugOptions.trace("Starting gdbserver with command: " + commandLine + "\n");
 
  					gdbserverProc = ProcessFactory.getFactory().exec(commandLine);
                     Reader r = new InputStreamReader(gdbserverProc.getErrorStream());

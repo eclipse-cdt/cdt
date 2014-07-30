@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsRemovedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
@@ -54,8 +55,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -66,6 +69,20 @@ import org.junit.runner.RunWith;
 @SuppressWarnings( "restriction" )
 @RunWith(BackgroundRunner.class)
 public class GDBConsoleBreakpointsTest extends BaseTestCase {
+
+	private static boolean fPreviousTraceState;
+	
+	@BeforeClass
+	public static void EnableTraces() {
+		fPreviousTraceState = GdbDebugOptions.DEBUG;
+		GdbDebugOptions.DEBUG = true;
+	}
+	
+	@AfterClass
+	public static void DisableTraces() {
+		GdbDebugOptions.DEBUG = fPreviousTraceState;	
+	}
+	
 
 	final static private int DEFAULT_TIMEOUT = 20000;
 	final static private TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;

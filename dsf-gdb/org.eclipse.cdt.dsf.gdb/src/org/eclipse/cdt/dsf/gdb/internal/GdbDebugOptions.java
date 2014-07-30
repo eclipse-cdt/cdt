@@ -19,7 +19,7 @@ import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.BundleContext;
 
 /**
- * Hooks our debug options to the Platform trace functonality.
+ * Hooks our debug options to the Platform trace functionality.
  * In essence, we can open Window -> Preferences -> Tracing
  * and turn on debug options for this package. The debug output
  * will come out on the console and can be saved directly to 

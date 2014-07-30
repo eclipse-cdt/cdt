@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -36,13 +37,18 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 
+@SuppressWarnings("restriction")
 public class ProjectTools {
 
 	static IWorkspace workspace;
@@ -100,6 +106,14 @@ public class ProjectTools {
 	}
 
 	/**
+	 * Get the workspace.
+	 * @return The workspace
+	 */
+	public static IWorkspaceRoot getWorkspaceRoot() {
+		return root;
+	}
+
+	/**
 	 * Mark a specified file in a project as executable.
 	 * @param project The project that the file is found in
 	 * @param filePath The relative path to the file
@@ -114,9 +128,18 @@ public class ProjectTools {
 		launcher.showCommand(true);
 		IPath commandPath = new Path("chmod");
 		IPath runPath = project.getLocation().append(filePath).removeLastSegments(1);
+		// if the path points to an actual object, use its resource to get its run path location
+		// which will handle any linked directories
+		if (project.findMember(filePath) != null)
+		   runPath = project.findMember(filePath).getLocation().removeLastSegments(1);
 		String[] args = new String[2];
 		args[0] = "+x";
-		args[1] = project.getLocation().append(filePath).toOSString();
+		// if the path points to an actual object, use its resource to get its location
+		// which will handle any linked directories
+		if (project.findMember(filePath) != null)
+			args[1] = project.findMember(filePath).getLocation().toOSString();
+		else // otherwise, just append to project location
+			args[1] = project.getLocation().append(filePath).toOSString();
 		try {
 			Process proc = launcher.execute(commandPath, args, new String[0],
 					runPath, new NullProgressMonitor());
@@ -423,5 +446,96 @@ public class ProjectTools {
 		file.setContents(new ByteArrayInputStream(contents.getBytes()), false, false, null);
 		return file;
 	}
+	
+	/**
+	 * Create a virtual folder for a project
+	 * @param project The project
+	 * @param path Folder path
+	 * @return the virtual folder
+	 * @throws CoreException
+	 */
+	public static IContainer createVirtualFolder(IProject project, IPath path) throws CoreException {
+		int segmentCount = path.segmentCount();
+		IContainer currentFolder = project;
+
+		for (int i = 0; i < segmentCount; i++) {
+			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
+			if (!currentFolder.exists()) {
+				((IFolder) currentFolder).create(IResource.VIRTUAL
+						| IResource.DERIVED, true, new NullProgressMonitor());
+			}
+		}
+		return currentFolder;
+	}
+	
+	/**
+	 * Create a linked resource for a project
+	 * @param project The project
+	 * @param folderName Name of the linked folder in the project
+	 * @param path The URI of the real file/folder
+	 * 
+	 * @return
+	 * @throws CoreException
+	 */
+	public static IContainer createLinkedFolder(IProject project, IPath projectPath, IPath realPath) throws CoreException {
+		int segmentCount = projectPath.segmentCount() - 1;
+		IContainer currentFolder = project;
+
+		for (int i = 0; i < segmentCount; i++) {
+			currentFolder = currentFolder.getFolder(new Path(projectPath.segment(i)));
+			if (!currentFolder.exists()) {
+				((IFolder) currentFolder).create(IResource.DERIVED | IResource.VIRTUAL, true, new NullProgressMonitor());
+			}
+		}
+		IFolder folder = currentFolder.getFolder(new Path(projectPath.lastSegment()));
+		if (!folder.isLinked()) {
+			((IFolder)folder).createLink(realPath, 0, null);
+		}
+		return folder;
+	}
+	
+	/**
+	 * Create a linked folder for a project
+	 * @param project The project
+	 * @param folderName Name of the linked folder in the project
+	 * @param path The URI of the real file/folder
+	 * 
+	 * @return
+	 * @throws CoreException
+	 */
+	public static IFolder createLinkedFolder(IProject project, String folderName, final URI linkTarget) throws Exception {
+		final IFolder folderHandle = root.getFolder(project.getFullPath().append(folderName));
+
+		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws CoreException {
+				try {
+					monitor
+							.beginTask(
+									IDEWorkbenchMessages.NewFolderDialog_progress,
+									2000);
+					if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
+					folderHandle.createLink(linkTarget,
+							IResource.ALLOW_MISSING_LOCAL, monitor);
+					if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+					operation);
+		} catch (InterruptedException exception) {
+			return null;
+		} catch (InvocationTargetException exception) {
+			throw exception;
+		}
+		return folderHandle;
+	}
+
 	
 }

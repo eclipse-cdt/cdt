@@ -230,10 +230,12 @@ public class BaseTestCase {
  	protected void doLaunch() throws Exception {
  		boolean remote = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE).equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
  		
-    	if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace("===============================================================================================\n");
-		System.out.println(String.format("%s \"%s\" launching %s %s", 
-				                         GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));
-		if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace("===============================================================================================\n");
+    	if (GdbDebugOptions.DEBUG) {
+    		GdbDebugOptions.trace("===============================================================================================\n");
+    		GdbDebugOptions.trace(String.format("%s \"%s\" launching %s %s\n", 
+    				GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));
+    		GdbDebugOptions.trace("===============================================================================================\n");
+    	}
 		
  		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
 	                                               .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
@@ -317,7 +319,7 @@ public class BaseTestCase {
  	private void launchGdbServer() {
  		// First check if we should not launch gdbserver even for a remote session
  		if (launchAttributes.get(ITestConstants.LAUNCH_GDB_SERVER).equals(false)) {
- 			System.out.println("Forcing to not start gdbserver for this test");
+ 			if (GdbDebugOptions.DEBUG) GdbDebugOptions.trace("Forcing to not start gdbserver for this test\n");
  			return;
  		}
 
@@ -329,7 +331,7 @@ public class BaseTestCase {
  				String program = (String)launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
  				String commandLine = server + " :" + port + " " + program;
  				try {
-                    System.out.println("Staring gdbserver with command: " + commandLine);
+ 					if (GdbDebugOptions.DEBUG) GdbDebugOptions.trace("Staring gdbserver with command: " + commandLine + "\n");
 
  					gdbserverProc = ProcessFactory.getFactory().exec(commandLine);
                     Reader r = new InputStreamReader(gdbserverProc.getErrorStream());
@@ -343,7 +345,7 @@ public class BaseTestCase {
                         }
                     }
  				} catch (Exception e) {
- 					System.out.println("Error while launching command: " + commandLine);
+ 					GdbDebugOptions.trace("Error while launching command: " + commandLine + "\n");
  					e.printStackTrace();
  					assert false;
  				} 				

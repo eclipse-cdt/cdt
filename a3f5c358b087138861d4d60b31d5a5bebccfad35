@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_6fcbdab7",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 6
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-07-30T15:46:27Z",
+      "side": 1,
+      "message": "Is this update really needed, \nI don\u0027t see an API error by keeping it at 2.4.0, \nand seems ok since the package affected by the new classes are internal ...",
+      "revId": "a3f5c358b087138861d4d60b31d5a5bebccfad35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

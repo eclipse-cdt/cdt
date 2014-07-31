@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_c52f6f11",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/Lazy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T08:05:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_c239258d",
+      "revId": "6038e6e348be045990bce5b1dea5f3c4025f1059",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_e2342196",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/Lazy.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-30T19:41:41Z",
       "side": 1,
       "message": "Move to the previous line.",
+      "revId": "6038e6e348be045990bce5b1dea5f3c4025f1059",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_254463cf",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/Lazy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T08:05:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_e2342196",
       "revId": "6038e6e348be045990bce5b1dea5f3c4025f1059",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

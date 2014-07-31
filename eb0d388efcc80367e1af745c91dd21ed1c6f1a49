@@ -16,6 +16,24 @@
       "revId": "eb0d388efcc80367e1af745c91dd21ed1c6f1a49",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_653e5b43",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/EnvironmentVariableSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 7152
+      },
+      "writtenOn": "2014-07-31T07:52:13Z",
+      "side": 1,
+      "message": "This was done as a minimal change to original isTextList. This should not match for example \":\" (see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d284843).\nIt does match \"a:\" but not \":a\", which is the way it was in original code for some reason and the idea was to make a minimal change to not break something we did not foresee. Please see the discussion in bugzilla: https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d389823. Additional comments are truly welcome.",
+      "parentUuid": "c7672b30_657c9b91",
+      "revId": "eb0d388efcc80367e1af745c91dd21ed1c6f1a49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

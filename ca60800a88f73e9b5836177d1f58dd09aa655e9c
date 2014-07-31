@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_852577b5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "and if file does not exists we just ignore it silently?",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_e51a6b74",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "That parser will trip and fall on any sort of input which is slightly different that exact output produced by export\nI .e. any extra spacing between \u003d\nlines like \n\nexport A\n\nLines like\n\nA\u003dB\u003cspace\u003e\n\nAt minimum you should catch all exception while processing a single line, so you can move on to next line.\nIdeally you should parse shell syntax for var assignment",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4514ff4a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "why? Why not pass this to eclipse to subsitute? Why only $PATH?",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_a52073a4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "bad handling",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_050a072c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "if filename is null user cancels, abort action here",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_250d8345",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "I did not get it, first you create array of one element, then iterate using loop over. How about skip the loop?",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_65177b51",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "Really? You will open file for every variable? This is so bad.\nOpen file once and write everything in the loop",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_a5f99390",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "what happened to using code formatter? No formatting at all on that function",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_85fe1775",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "export var \u003d value is bash extension.\nIn generic shell it has to be\n\n\nvar \u003d value\n\nexport var",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_e5038b18",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 627,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "and why you ignore exception here? If file cannot be save it is user\nerror, throw it and show dialog",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_c5080f38",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/EnvironmentTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 636,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:09:00Z",
+      "side": 1,
+      "message": "throw it",
+      "revId": "ca60800a88f73e9b5836177d1f58dd09aa655e9c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

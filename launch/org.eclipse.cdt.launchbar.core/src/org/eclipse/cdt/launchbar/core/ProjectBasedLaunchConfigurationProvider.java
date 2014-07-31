@@ -27,7 +27,7 @@ public abstract class ProjectBasedLaunchConfigurationProvider extends ConfigBase
 	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
 		boolean res = super.launchConfigurationAdded(configuration);
 		IProject project = getProject(configuration);
-		getManager().launchObjectRemoved(project);
+		getManager().launchObjectChanged(project);
 		return res;
 	}
 
@@ -35,7 +35,7 @@ public abstract class ProjectBasedLaunchConfigurationProvider extends ConfigBase
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
 		boolean res = super.launchConfigurationRemoved(configuration);
 		IProject project = getProject(configuration);
-		getManager().launchObjectAdded(project);
+		getManager().launchObjectChanged(project);
 		return res;
 	}
 

@@ -232,33 +232,54 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		return null;
 	}
 
-	@Override
-	public ILaunchDescriptor launchObjectAdded(Object element) {
+	protected ILaunchDescriptor remapLaunchObject(Object element) {
+	    // remove old mapping. We have to do it anyway, no matter even nobody own it (and especially because of that)
+		ILaunchDescriptor old = objectDescriptorMap.get(element);
+		if (old != null) { // old mapping is removed
+			objectDescriptorMap.remove(element);
+			descriptors.remove(getId(old));
+		}
 		ILaunchDescriptor desc = null;
-		// don't use objectDescriptorMap as cache - provider may decide to remap objects
+		// re-do the mapping, change in object can change descriptor (for example project has new nature)
 		for (ILaunchDescriptorType descriptorType : descriptorTypes.keySet()) {
 			try {
 				if (descriptorType.ownsLaunchObject(element)) {
 					desc = descriptorType.getDescriptor(element);
-					ILaunchDescriptor old = objectDescriptorMap.get(element);
-					if (old != null) { // old mapping is removed
-						objectDescriptorMap.remove(element);
-						descriptors.remove(getId(old));
-					}
-					if (desc != null) { // null if we own the object but do not create descriptor to ignore it
+					objectDescriptorMap.put(element, desc); // set it even if desc is null to keep object is map
+					if (desc != null) // null if we own the object but do not create descriptor
 						descriptors.put(getId(desc), desc);
-						objectDescriptorMap.put(element, desc);
-						break;
-					}
 					break;
 				}
 			} catch (Exception e) {
 				Activator.log(e);
 			}
 		}
-		if (desc != null)
+		if (old != null && old.equals(activeLaunchDesc) && !old.equals(desc)) {
+			// change of object caused changed of descriptor, which was active, reset since old is invalid now
+			// setting it to null, will actually rollback to last used one which is still valid
 			setActiveLaunchDescriptor(desc);
+		} else if (old == null && desc != null) {
+			// new object causes re-set of active descriptor too
+			setActiveLaunchDescriptor(desc);
+		}
 		return desc;
+    }
+
+	@Override
+	public ILaunchDescriptor launchObjectAdded(Object element) {
+		if (objectDescriptorMap.containsKey(element)) {
+			// it was added already, perform change
+			return launchObjectChanged(element);
+		}
+		return remapLaunchObject(element);
+	}
+
+	@Override
+	public ILaunchDescriptor launchObjectChanged(Object element) {
+		// only applied to object that were added via launchObjectAdded
+		if (!objectDescriptorMap.containsKey(element))
+			return null;
+		return remapLaunchObject(element);
 	}
 
 	private String getId(ILaunchDescriptor desc) {
@@ -270,8 +291,8 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	@Override
 	public void launchObjectRemoved(Object element) {
 		ILaunchDescriptor desc = objectDescriptorMap.get(element);
+		objectDescriptorMap.remove(element);
 		if (desc != null) {
-			objectDescriptorMap.remove(element);
 			descriptors.remove(getId(desc)); // can multiple elements maps to the same descriptor?
 			if (desc.equals(activeLaunchDesc)) {
 				// Roll back to the last one and make sure we don't come back
@@ -366,27 +387,32 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		ILaunchMode[] supportedModes = getLaunchModes(); // this is based on active desc and target which are already set
 		if (supportedModes.length > 0) { // mna, what if no modes are supported?
 			String modeNames[] = new String[] {
-			        storedModeId, lastActiveModeId,
-			        "debug", "run",
+			        storedModeId,
+			        lastActiveModeId,
+			        "debug",
+			        "run",
 			        supportedModes[0].getIdentifier()
 			};
-			for (int i = 0; i < modeNames.length && foundMode == null; i++) {
-				foundMode = getLaunchModeByName(modeNames[i], supportedModes);
+			for (int i = 0; i < modeNames.length; i++) {
+				foundMode = getLaunchManager().getLaunchMode(modeNames[i]);
+				if (supportsMode(foundMode))
+					break;
 			}
 		}
 		setActiveLaunchMode(foundMode);
     }
 
-	private ILaunchMode getLaunchModeByName(String mode, ILaunchMode[] supportedModes) {
+	public boolean supportsMode(ILaunchMode mode) {
+		// check that active descriptor supports the given mode
 		if (mode == null)
-			return null;
+			return false;
+		ILaunchMode[] supportedModes = getLaunchModes();
 		for (int j = 0; j < supportedModes.length; j++) {
 			ILaunchMode lm = supportedModes[j];
-			if (lm.getIdentifier().equals(mode)) {
-				return lm;
-			}
+			if (lm.equals(mode))
+				return true;
 		}
-		return null;
+		return false;
 	}
 
 	protected void setPreference(Preferences store, String prefId, String value) {
@@ -447,8 +473,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	public void setActiveLaunchMode(ILaunchMode mode) {
 		if (activeLaunchMode == mode)
 			return;
-		ILaunchConfigurationType configType = getLaunchConfigurationType(activeLaunchDesc, activeLaunchTarget);
-		if (!(activeLaunchDesc == null || mode == null || (configType != null && configType.supportsMode(mode.getIdentifier()))))
+		if (activeLaunchDesc != null && mode != null && !supportsMode(mode))
 			throw new IllegalStateException("Mode is not supported by descriptor");
 		// change mode
 		activeLaunchMode = mode;

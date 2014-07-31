@@ -334,6 +334,15 @@ public class LaunchBarManagerTest extends TestCase {
 		assertEquals(2, manager.getLaunchDescriptors().length);
 	}
 
+	@Test
+	public void testLaunchObjectChanged() throws CoreException {
+		basicSetup();
+		assertNull(manager.launchObjectChanged(lc));
+		manager.launchObjectAdded(lc);
+		assertEquals(1, manager.getLaunchDescriptors().length);
+		assertNotNull(manager.launchObjectChanged(lc));
+	}
+
 	public IProject mockProject(String projectName) {
 		IProject project = mock(Project.class);
 		when(project.getAdapter(IResource.class)).thenReturn(project);

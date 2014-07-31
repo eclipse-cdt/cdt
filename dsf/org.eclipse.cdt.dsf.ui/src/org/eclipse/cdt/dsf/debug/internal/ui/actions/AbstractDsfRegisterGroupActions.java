@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.internal.core.model.IRegisterGroupDescriptor;
-import org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget;
 import org.eclipse.cdt.debug.internal.ui.actions.RegisterGroupDialog;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -45,6 +44,7 @@ import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
+public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	private static final String BLANK_STRING = ""; //$NON-NLS-1$
 	private class RegisterGroupDialogRunnable implements Runnable {
 		private String fGroupName = BLANK_STRING;
@@ -168,11 +168,8 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 		public IRegisterDescriptor[] getcheckedRegisters();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#addRegisterGroup(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	@Override
-	public void addRegisterGroup(final IWorkbenchPart part, final IStructuredSelection selection) throws DebugException {
+	protected void addRegisterGroup(final IWorkbenchPart part, final IStructuredSelection selection) {
+		try {
 		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
 		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
 
@@ -203,13 +200,11 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 							}
 						});
 			}});
+		} catch (DebugException e) {
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#canAddRegisterGroup(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	@Override
-	public boolean canAddRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
+	protected boolean canAddRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
 		try {
 			final SelectionDMContext selectionContext = new SelectionDMContext(selection);
 			Query<Boolean> query = new Query<Boolean>() {
@@ -243,11 +238,8 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#editRegisterGroup(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	@Override
-	public void editRegisterGroup(final IWorkbenchPart part, IStructuredSelection selection) throws DebugException {
+	protected void editRegisterGroup(final IWorkbenchPart part, IStructuredSelection selection) {
+		try {
 		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
 		
 		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
@@ -281,13 +273,11 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 			}
 			
 		});
+	} catch (DebugException e) {
+	}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#canEditRegisterGroup(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	@Override
-	public boolean canEditRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
+	protected boolean canEditRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
 		try {
 			final SelectionDMContext selectionContext = new SelectionDMContext(selection);
 			final IDMContext context = selectionContext.fcontext;
@@ -330,11 +320,12 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#removeRegisterGroup(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#removeRegisterGroups(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	@Override
-	public void removeRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) throws DebugException {
+	protected void removeRegisterGroups(IWorkbenchPart part, IStructuredSelection selection) {
+		try {
 		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
+		
 		final IRegisterGroupDMContext[] groups = resolveSelectedGroups(selection);
 		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
 			@Override
@@ -351,13 +342,14 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 				});
 			}			
 		});
+		} catch (DebugException e) {
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#canRemoveRegisterGroup(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#canRemoveRegisterGroups(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	@Override
-	public boolean canRemoveRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
+	protected boolean canRemoveRegisterGroups(IWorkbenchPart part, IStructuredSelection selection) {
 		final SelectionDMContext selectionContext;
 		try {
 			selectionContext = new SelectionDMContext(selection);
@@ -407,10 +399,10 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#restoreDefaultGroups(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	@Override
-	public void restoreDefaultGroups(IWorkbenchPart part, IStructuredSelection selection) throws DebugException {
+	protected void restoreDefaultGroups(IWorkbenchPart part, IStructuredSelection selection) {
+		try {
 		final SelectionDMContext selectionContext = new SelectionDMContext(selection);
-		
+				
 		selectionContext.fsession.getExecutor().execute(new DsfRunnable() {
 			@Override
 			public void run() {
@@ -426,13 +418,14 @@ public class DsfRegisterGroupActions implements IRegisterGroupActionsTarget {
 				registersService.restoreDefaultGroups(null, new RequestMonitor(registersService.getExecutor(), null));
 			}
 		});
+		} catch (DebugException e) {
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget#canRestoreDefaultGroups(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	@Override
-	public boolean canRestoreDefaultGroups(IWorkbenchPart part, IStructuredSelection selection) {
+	protected boolean canRestoreDefaultGroups(IWorkbenchPart part, IStructuredSelection selection) {
 		final SelectionDMContext selectionContext;
 		try {
 			selectionContext = new SelectionDMContext(selection);

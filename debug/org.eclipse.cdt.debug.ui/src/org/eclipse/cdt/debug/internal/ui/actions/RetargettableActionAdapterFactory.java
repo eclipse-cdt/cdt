@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Alvaro Sanchez-Leon (Ericsson AB) - Add Register groups retargettable actions (Bug 235747, Bug 346301)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -41,9 +40,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 		if ( adapterType == IResumeWithoutSignalHandler.class ) {
 			return new ResumeWithoutSignalCommand();
 		} 
-		if ( adapterType == IRegisterGroupActionsTarget.class ) {
-			return new RegisterGroupActions();
-		} 
 		return null;
 	}
 
@@ -56,7 +52,6 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 		return new Class[]{ IRunToLineTarget.class, 
 				            IResumeAtLineTarget.class, 
 				            IMoveToLineTarget.class,
-				            IResumeWithoutSignalHandler.class, 
-				            IRegisterGroupActionsTarget.class};
+				            IResumeWithoutSignalHandler.class };
 	}
 }

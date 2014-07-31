@@ -340,7 +340,71 @@
 			        </count>
 			    </with>
 			</activeWhen>
-      </handler>  
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfAddRegisterGroupCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.addRegisterGroup">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			        <or>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode$RegisterVMC">
+			            </instanceof>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </or>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfEditRegisterGroupCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.editRegisterGroup">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </iterate>
+			        <count value="1">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfRemoveRegisterGroupsCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.removeRegisterGroups">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfRestoreRegisterGroupsCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.restoreRegisterGroups">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			        <or>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode$RegisterVMC">
+			            </instanceof>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </or>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
    </extension>
    <extension point="org.eclipse.core.expressions.definitions">
       <definition id="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive">
@@ -747,19 +811,15 @@
 	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
          <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
 	  </factory>
-      <factory
+       <factory
             class="org.eclipse.cdt.dsf.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart">
          <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
-      </factory>
-      <factory
-            class="org.eclipse.cdt.dsf.debug.internal.ui.actions.RetargettableActionAdapterFactory"
-            adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">  
-         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IRegisterGroupActionsTarget"/>
-      </factory>	
+      </factory>	  
    </extension>	
+
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution

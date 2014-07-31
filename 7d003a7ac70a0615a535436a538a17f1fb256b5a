@@ -334,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_0faea66c",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/RetargettableActionAdapterFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-31T18:22:34Z",
+      "side": 1,
+      "message": "I now realize that this factory is shared between CDI and DSF for the operations that deal with the editor, since both use the same editor (runToLine, moveToLine, resumeAtLine).  However, ResumeWithoutSignal, and the new RegisterGroupActions can be specific to CDI because they have their own element for which this factory is activated, while not activated for the corresponding DSF element.  This is the \"adapter type\" field in the plugin.xml file that hooks up this factory.\n\nSo your changes are correct.",
+      "parentUuid": "67591f73_55f79b81",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8748d3a1_15c37b9d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisterManager.java",
         "patchSetId": 4
@@ -2726,6 +2744,24 @@
       "side": 1,
       "message": "I am not sure about this one, \none implementation may be ok with null for some parameters but  another one may not, i.e. I think they should not be documented as the behavior may vary.\n  This is best to leave it to the implementation as they can return IStatus with a corresponding error as needed.\n  For the gdb implementation of \"editRegisterGroup\" I don\u0027t expect null arguments although I am protecting the implementation against null pointer exceptions.",
       "parentUuid": "8748d3a1_363dd3ea",
+      "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1b3428e1",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-07-31T18:22:34Z",
+      "side": 1,
+      "message": "In the case of \u0027edit\u0027 we can change the list of registers and/or the name.  Allowing for \u0027null\u0027 for either one makes it easier for the caller to say \"don\u0027t change the name or the list\".  Without that, they need to provide the existing list or name when they want to keep it the same.",
+      "parentUuid": "67591f73_a8ce6728",
       "revId": "7d003a7ac70a0615a535436a538a17f1fb256b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

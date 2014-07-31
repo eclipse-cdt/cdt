@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_fb196c06",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTest_FunctionReference_Prefix.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-07-31T17:20:09Z",
+      "side": 1,
+      "message": "Isn\u0027t the default preference to have space after comma in a parameter list?",
+      "revId": "de219d0ac15f3db71e6390391f95f38b0eee559a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

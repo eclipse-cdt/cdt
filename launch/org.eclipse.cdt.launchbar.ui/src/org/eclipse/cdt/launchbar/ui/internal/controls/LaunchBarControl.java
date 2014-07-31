@@ -39,11 +39,11 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 
 	@Inject
 	private ILaunchBarManager manager;
-	
+
 	private ConfigSelector configSelector;
 	private ModeSelector modeSelector;
 	private TargetSelector targetSelector;
-	
+
 	@PostConstruct
 	public void createControl(Composite parent) {
 		manager.addListener(this);
@@ -64,7 +64,7 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		createButton(container, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
 		createButton(container, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
 		createButton(container, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop, Activator.CMD_STOP);
-		
+
 		modeSelector = new ModeSelector(container, SWT.NONE);
 		modeSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		modeSelector.setInput(manager);
@@ -76,7 +76,7 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		Label label = new Label(container, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		label.setText("on" + ":");
-		
+
 		targetSelector = new TargetSelector(container, SWT.NONE);
 		targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		targetSelector.setInput(manager);
@@ -84,10 +84,10 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		try {
 			ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
 			configSelector.setSelection(configDesc == null ? null : configDesc);
-	
+
 			ILaunchMode mode = manager.getActiveLaunchMode();
 			modeSelector.setSelection(mode == null ? null : mode);
-	
+
 			ILaunchTarget target = manager.getActiveLaunchTarget();
 			targetSelector.setSelection(target == null ? null : target);
 		} catch (CoreException e) {
@@ -172,7 +172,13 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 	@Override
 	public void launchDescriptorRemoved(ILaunchDescriptor descriptor) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void launchTargetsChanged() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

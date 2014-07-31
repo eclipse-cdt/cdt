@@ -70,5 +70,28 @@
             targetTypeId="org.eclipse.cdt.launchbar.core.target.local">
       </targetUI>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.launchbar.ui.internal.targetsView.LaunchTargetsViewPart"
+            id="org.eclipse.cdt.launchbar.ui.targetsView"
+            name="%targetsView.name"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <view
+               id="org.eclipse.cdt.launchbar.ui.targetsView"
+               minimized="false"
+               ratio="0.75"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

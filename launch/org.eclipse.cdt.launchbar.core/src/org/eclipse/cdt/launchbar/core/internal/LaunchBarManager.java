@@ -435,7 +435,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			return;
 		}
 		// default target for descriptor
-		setActiveLaunchTarget(getDeafultLaunchTarget(activeLaunchDesc));
+		setActiveLaunchTarget(getDefaultLaunchTarget(activeLaunchDesc));
     }
 
 	protected void syncActiveMode() {
@@ -584,10 +584,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public void setActiveLaunchTarget(ILaunchTarget target) {
-		if (target == null) {
-			// try and select another target XXX this should not be an API
-			target = getDeafultLaunchTarget(activeLaunchDesc);
-		}
 		if (activeLaunchTarget == target)
 			return;
 		activeLaunchTarget = target;
@@ -615,7 +611,35 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 	}
 
-	protected ILaunchTarget getDeafultLaunchTarget(ILaunchDescriptor descriptor) {
+	@Override
+	public void launchTargetAdded(ILaunchTarget target) throws CoreException {
+		for (Listener listener : listeners) {
+			try {
+				listener.launchTargetsChanged();
+			} catch (Exception e) {
+				Activator.log(e);
+			}
+		}
+		if (activeLaunchTarget == null && supportsTargetType(activeLaunchDesc, target.getType())) {
+			setActiveLaunchTarget(target);
+		}
+	}
+	
+	@Override
+	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
+		for (Listener listener : listeners) {
+			try {
+				listener.launchTargetsChanged();
+			} catch (Exception e) {
+				Activator.log(e);
+			}
+		}
+		if (activeLaunchTarget == target) {
+			setActiveLaunchTarget(getDefaultLaunchTarget(activeLaunchDesc));
+		}
+	}
+
+	protected ILaunchTarget getDefaultLaunchTarget(ILaunchDescriptor descriptor) {
 		ILaunchTarget[] targets = getLaunchTargets(descriptor);
 		if (targets.length > 0) {
 			return targets[0];
@@ -633,6 +657,10 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 				return target;
 		}
 		return null;
+	}
+
+	public ILaunchTargetType[] getAllLaunchTargetTypes() {
+		return targetTypes.values().toArray(new ILaunchTargetType[targetTypes.values().size()]);
 	}
 
 	@Override

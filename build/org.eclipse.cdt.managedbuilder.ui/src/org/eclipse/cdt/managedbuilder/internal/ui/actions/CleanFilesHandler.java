@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.ui.util.AbstractResourceActionHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
@@ -115,7 +114,7 @@ public class CleanFilesHandler extends AbstractResourceActionHandler {
 		private final List<IFile> files;
 
 		private CleanFilesJob(List<IFile> filesToBuild) {
-			super(ManagedMakeMessages.getResourceString("CleanFilesHandler.cleaningFiles")); //$NON-NLS-1$
+			super(Messages.CleanFilesHandler_cleaningFiles);
 			files = filesToBuild;
 		}
 

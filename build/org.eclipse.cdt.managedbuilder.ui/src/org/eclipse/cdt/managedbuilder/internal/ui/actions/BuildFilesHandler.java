@@ -23,7 +23,6 @@ import org.eclipse.cdt.internal.ui.util.AbstractResourceActionHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -168,7 +167,7 @@ public class BuildFilesHandler extends AbstractResourceActionHandler {
 		private final List<IFile> files;
 
 		BuildFilesJob(List<IFile> filesToBuild) {
-			super(ManagedMakeMessages.getResourceString("BuildFilesHandler.buildingSelectedFiles")); //$NON-NLS-1$
+			super(Messages.BuildFilesHandler_buildingSelectedFiles);
 			files = filesToBuild;
 		}
 

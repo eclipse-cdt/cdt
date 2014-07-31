@@ -7,13 +7,15 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
- *     Anna Dushistova (MontaVista) - [366771]Converter fails to convert a CDT makefile project
+ *     Anna Dushistova (MontaVista) - [366771] Converter fails to convert a CDT makefile project
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -23,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -39,35 +41,33 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class ConvertTargetDialog extends Dialog {
-
 	final private String title;
-	protected List convertersList;
+	protected org.eclipse.swt.widgets.List convertersList;
 	private IProject project;
 	private Map<String, IConfigurationElement> conversionElements;
 	private IConfigurationElement selectedConversionElement;
 	private static boolean isConversionSuccessful = false;
 
 	public static final String PREFIX = "ProjectConvert";	//$NON-NLS-1$
-	public static final String CONVERTERS_LIST = PREFIX +".convertersList";	//$NON-NLS-1$
-
+	public static final String CONVERTERS_LIST = PREFIX + ".convertersList";	//$NON-NLS-1$
 
 	/**
-	 * @param parentShell
-	 * @param project
-	 * @param title The title of the dialog
+	 * @param parentShell the parent shell
+	 * @param project the project to convert
+	 * @param title the title of the dialog
 	 */
 	protected ConvertTargetDialog(Shell parentShell, IProject project, String title) {
 		super(parentShell);
 		this.title = title;
 		setProject(project);
 
-		if (getProjectType() != null) {
-			conversionElements = ManagedBuildManager.getConversionElements(getProjectType());
+		IProjectType projectType = getProjectType();
+		if (projectType != null) {
+			conversionElements = ManagedBuildManager.getConversionElements(projectType);
 		}
 		for (IBuildObject tc : getProjectToolchains()) {
 			Map<String, IConfigurationElement> converters = ManagedBuildManager.getConversionElements(tc);
@@ -80,34 +80,29 @@ public class ConvertTargetDialog extends Dialog {
 			}
 		}
 
-		setShellStyle(getShellStyle()|SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
-
 			handleConverterSelection();
 			IConvertManagedBuildObject convertBuildObject = null;
 			try {
-				convertBuildObject = (IConvertManagedBuildObject) getSelectedConversionElement()
-						.createExecutableExtension("class");	//$NON-NLS-1$
+				convertBuildObject =
+						(IConvertManagedBuildObject) getSelectedConversionElement().createExecutableExtension("class");	//$NON-NLS-1$
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ManagedBuilderUIPlugin.log(e);
 			}
 			if (convertBuildObject != null) {
-				String fromId = getSelectedConversionElement().getAttribute(
-						"fromId");	//$NON-NLS-1$
-				String toId = getSelectedConversionElement().getAttribute(
-						"toId");	//$NON-NLS-1$
+				String fromId = getSelectedConversionElement().getAttribute("fromId");	//$NON-NLS-1$
+				String toId = getSelectedConversionElement().getAttribute("toId");	//$NON-NLS-1$
 
 				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 				if (info != null) {
 					IManagedProject managedProject = info.getManagedProject();
 					if (managedProject != null) {
-						if (convertBuildObject.convert(managedProject, fromId,
-								toId, true) == null) {
+						if (convertBuildObject.convert(managedProject, fromId, toId, true) == null) {
 							setConversionSuccessful(false);
 						} else {
 							setConversionSuccessful(true);
@@ -135,7 +130,6 @@ public class ConvertTargetDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-
 		Composite comp = new Composite(parent, SWT.NULL);
 		comp.setFont(parent.getFont());
 		comp.setLayout(new GridLayout(1, true));
@@ -149,7 +143,7 @@ public class ConvertTargetDialog extends Dialog {
 		convertersListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create the current config List
-		convertersList = new List(convertersListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
+		convertersList = new org.eclipse.swt.widgets.List(convertersListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
 		convertersList.setFont(convertersListGroup.getFont());
 		GridData data = new GridData(GridData.FILL_BOTH);
 		convertersList.setLayoutData(data);
@@ -240,22 +234,21 @@ public class ConvertTargetDialog extends Dialog {
 		ConvertTargetDialog.isConversionSuccessful = isConversionSuccessful;
 	}
 	
-	private Vector<IBuildObject> getProjectToolchains() {
-		Vector<IBuildObject> projectToolchains = new Vector<IBuildObject>();
+	private List<IBuildObject> getProjectToolchains() {
+		List<IBuildObject> projectToolchains = new ArrayList<>();
 
 		// Get the projectType from project.
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info != null) {
 			IConfiguration[] configs = info.getManagedProject().getConfigurations();
 			for (IConfiguration config : configs) {
-				IToolChain tc = config.getToolChain();
-				if (tc != null) {
-					projectToolchains.add(tc);
+				IToolChain toolchain = config.getToolChain();
+				if (toolchain != null) {
+					projectToolchains.add(toolchain);
 				}
 			}
 		}
 		return projectToolchains;
 	}
-
 }
 

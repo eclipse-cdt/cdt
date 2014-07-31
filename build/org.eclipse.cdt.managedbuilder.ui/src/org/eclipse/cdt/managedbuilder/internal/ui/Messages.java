@@ -1,20 +1,19 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2011 Andrew Gvozdev and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *  Andrew Gvozdev - Initial API and implementation
- *  IBM Corporation
+ * Contributors:
+ *     Andrew Gvozdev - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-
 	public static String AbstractCWizard_0;
 	public static String AbstractPrefPage_0;
 	public static String ArtifactTab_0;
@@ -85,7 +84,6 @@ public class Messages extends NLS {
 	public static String CMainWizardPage_0;
 	public static String CMainWizardPage_1;
 	public static String CNewWizard_0;
-	public static String ConvertTargetAction_No_Converter;
 	public static String CPropertyVarsTab_0;
 	public static String CWizardHandler_0;
 	public static String CWizardHandler_1;
@@ -195,11 +193,6 @@ public class Messages extends NLS {
 	public static String PreferredToolchainsTab_3;
 	public static String PrefPage_NewCDTWizard_0;
 	public static String PrefPage_PropertyPage_0;
-	public static String ProjectConvert_conversionErrordialog_message;
-	public static String ProjectConvert_conversionErrordialog_title;
-	public static String ProjectConvert_convertersList;
-	public static String ProjectConvert_noConverterErrordialog_message;
-	public static String ProjectConvert_title;
 	public static String PropertyMultiCfgTab_10;
 	public static String PropertyMultiCfgTab_11;
 	public static String PropertyMultiCfgTab_3;

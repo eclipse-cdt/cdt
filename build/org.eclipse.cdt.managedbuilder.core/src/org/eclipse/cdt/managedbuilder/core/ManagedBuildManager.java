@@ -4732,7 +4732,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 				}
 			}
 		}
-
 	}
 
 	/**

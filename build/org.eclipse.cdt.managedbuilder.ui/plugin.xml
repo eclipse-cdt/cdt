@@ -50,6 +50,10 @@
             description="%command.buildFiles.description"
             categoryId="org.eclipse.cdt.managedbuilder.ui.category.build"
             id="org.eclipse.cdt.managedbuilder.ui.buildFiles"/>
+      <command
+            name="%command.convertTarget.name"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.eclipse.cdt.managedbuilder.ui.convertTarget"/>
    </extension>
 
    <extension
@@ -60,6 +64,9 @@
       <handler
 		    class="org.eclipse.cdt.managedbuilder.internal.ui.actions.BuildFilesHandler"
 		    commandId="org.eclipse.cdt.managedbuilder.ui.buildFiles"/>
+      <handler
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.actions.ConvertTargetHandler"
+		    commandId="org.eclipse.cdt.managedbuilder.ui.convertTarget"/>
    </extension>
 
    <extension
@@ -68,7 +75,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?before=additions">
          <command
                commandId="org.eclipse.cdt.managedbuilder.ui.cleanFiles"
-               label="%CleanSelectedFiles.label"
+               label="%command.cleanFiles.label"
                style="push">
             <visibleWhen checkEnabled="false">
                <and>
@@ -89,7 +96,7 @@
          </command>
          <command
                commandId="org.eclipse.cdt.managedbuilder.ui.buildFiles"
-               label="%BuildSelectedFiles.label"
+               label="%command.buildFiles.label"
                style="push">
             <visibleWhen checkEnabled="false">
                <and>
@@ -109,24 +116,46 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <!-- This menu command doesn't belong here. It should be contributed
+           by the plug-ins that contribute target converters. --> 
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.eclipse.cdt.managedbuilder.ui.convertTarget"
+               label="%command.convertTarget.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <with variable="selection" >
+                  <count value="1"/>
+                  <iterate ifEmpty="false">
+                     <adapt type="org.eclipse.core.resources.IProject">
+                        <and>
+                           <test property="org.eclipse.core.resources.projectNature"
+                                 value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+                           <test property="org.eclipse.cdt.ui.projectBuilder"
+                                 value="org.eclipse.cdt.managedbuilder.core.genmakebuilder"/>
+                           <test property="org.eclipse.cdt.managedbuilder.ui.hasTargetConverters"/>
+                        </and>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.managedbuilder.internal.ui.actions.ProjectPropertyTester"
+            id="org.eclipse.cdt.managedbuilder.ui.projectPropertyTester"
+            namespace="org.eclipse.cdt.managedbuilder.ui"
+            properties="hasTargetConverters"
+            type="org.eclipse.core.resources.IProject"/>
    </extension>
 
   <extension
          point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.cdt.managedbuilder.ui.popupMenu.ConvertTargetContribution">
-         <action
-               label="%ConvertTargetAction.label"
-               class="org.eclipse.cdt.managedbuilder.internal.ui.actions.ConvertTargetAction"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.cdt.managedbuilder.ui.ConvertTargetAction"/>
-         <filter
-               name="projectNature"
-               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
-      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"

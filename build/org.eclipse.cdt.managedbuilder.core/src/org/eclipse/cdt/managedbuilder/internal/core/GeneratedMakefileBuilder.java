@@ -1447,7 +1447,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			OutputStream stdout = buildRunnerHelper.getOutputStream();
 			OutputStream stderr = buildRunnerHelper.getErrorStream();
 
-			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("BuildFilesHandler.buildingSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
+			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildingSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
 			buildRunnerHelper.printLine(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.internal.builder.header.note")); //$NON-NLS-1$
 
 			// Build artifacts for each file in the project
@@ -1574,7 +1574,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 			buildRunnerHelper.prepareStreams(epm, null , console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
-			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("CleanFilesHandler.cleanSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
+			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.cleanSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
 			buildRunnerHelper.printLine(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.internal.builder.header.note")); //$NON-NLS-1$
 
 			for (IFile file : files) {

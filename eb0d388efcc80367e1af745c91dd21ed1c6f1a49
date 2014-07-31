@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_657c9b91",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/EnvironmentVariableSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T00:42:35Z",
+      "side": 1,
+      "message": "Why do need to use regex for this? Is this not the\nsame as str.contains(delimeter)?\nAnd you using capturing group, that just wastes cpu cycles for no reason. \nIn you regex \"a:\" is good, but \":a\" is not, is this correct?",
+      "revId": "eb0d388efcc80367e1af745c91dd21ed1c6f1a49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

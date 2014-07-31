@@ -50,6 +50,8 @@ public interface ILaunchBarManager extends IAdaptable {
 
 	void launchObjectRemoved(Object element) throws CoreException;
 
+	ILaunchDescriptor launchObjectChanged(Object element) throws CoreException;
+
 	interface Listener {
 
 		void activeConfigurationDescriptorChanged();

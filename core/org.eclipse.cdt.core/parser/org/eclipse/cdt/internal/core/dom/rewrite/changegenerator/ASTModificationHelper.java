@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -54,39 +55,38 @@ public class ASTModificationHelper {
 					}
 				}
 				break;
-			
 			case INSERT_BEFORE:
-				newNode = parentModification.getNewNode();
-				if (newNode instanceof ContainerNode) {
-					ContainerNode contNode = (ContainerNode) newNode;
-					for (IASTNode node : contNode.getNodes()) {
-						insertNode(clazz, modifiedChildren, parentModification, node);
-					}
-				} else {
-					insertNode(clazz, modifiedChildren, parentModification, newNode);
-				}
-				break;	
-				
 			case REPLACE:
 				break;
 			}
 		}
-		
+
 		for (T currentChild : unmodifiedChildren) {
 			for (ASTModification childModification : modificationsForNode(currentChild)) {
 				try {
-					final T newNode = cast(childModification.getNewNode(), clazz);
+					IASTNode newNode = childModification.getNewNode();
+					final T castedNewNode = cast(newNode, clazz);
 					switch (childModification.getKind()) {
 					case REPLACE:
-						if (newNode != null) {
-							copyComments(newNode, currentChild, commentMap);
-							modifiedChildren.add(
-									modifiedChildren.indexOf(childModification.getTargetNode()),
-									newNode);
+						if (castedNewNode != null) {
+							copyComments(castedNewNode, currentChild, commentMap);
+							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), castedNewNode);
 						}
 						modifiedChildren.remove(childModification.getTargetNode());
 						break;
 					case INSERT_BEFORE:
+						if (castedNewNode != null) {
+							modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), castedNewNode);
+						} else if (newNode instanceof ContainerNode) {
+							ContainerNode nodeContainer = (ContainerNode) newNode;
+							for (IASTNode currentNode : nodeContainer.getNodes()) {
+								T tnode = cast(currentNode, clazz);
+								if (tnode != null) {
+									modifiedChildren.add(modifiedChildren.indexOf(childModification.getTargetNode()), tnode);
+								}
+							}
+						}
+						break;
 					case APPEND_CHILD:
 						throw new UnhandledASTModificationException(childModification);
 					}
@@ -124,16 +124,6 @@ public class ASTModificationHelper {
 		
 		Map<IASTNode, List<IASTComment>> freestandingMap = commentMap.getFreestandingMap();
 		freestandingMap.remove(oldNode);
-	}
-
-	private <T> void insertNode(Class<T> clazz, ArrayList<T> modifiedChildren,
-			ASTModification parentModification, IASTNode newNode) {
-		T insertedTNode = cast(newNode, clazz);
-
-		int targetNodeIndex = modifiedChildren.indexOf(parentModification.getTargetNode());
-		if (targetNodeIndex >= 0) {
-			modifiedChildren.add(targetNodeIndex, insertedTNode);
-		}
 	}
 
 	@SuppressWarnings("unchecked")

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_a5b7d371",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/ChangeGeneratorTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T07:26:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_62f65152",
+      "revId": "912379ef79961c34211f2b06d5b60f2bd83d5220",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_e21d4126",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/CtorChainInitializerTest.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-30T19:33:02Z",
       "side": 1,
       "message": "It would be easier to read if all lines including the first were aligned. One way to achieve that is:\nsource \u003d\n        \"First line\\n\" +\n        \"Second line\\n\" +\n        ...\n\nThis comment applies to other files too.",
+      "revId": "912379ef79961c34211f2b06d5b60f2bd83d5220",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_65b5bb63",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/CtorChainInitializerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T07:26:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_e21d4126",
       "revId": "912379ef79961c34211f2b06d5b60f2bd83d5220",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_45b23f7c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/CtorChainInitializerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T07:26:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_420eb5ef",
+      "revId": "912379ef79961c34211f2b06d5b60f2bd83d5220",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_220739d6",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/NestedReplaceTest.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2014-07-30T19:33:02Z",
       "side": 1,
       "message": "Missing space before {",
+      "revId": "912379ef79961c34211f2b06d5b60f2bd83d5220",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_a59eb3e9",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/replace/NestedReplaceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T07:26:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_220739d6",
       "revId": "912379ef79961c34211f2b06d5b60f2bd83d5220",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_e52a6b02",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/CContentAssistInvocationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-07-31T08:05:52Z",
+      "side": 1,
+      "message": "Well, that has other disadvantages as well:\n- Either we would need to declare every field to have type Object.\n- Or we would need to create an uninitialized value for every field type we have. Which would not work for the primitives.\n\nRegarding line count: We get an additional 3 lines per field (@Override; calculateValue method declaration and two closing }). We get rid of 3 lines (condiftion for initialization; assignment and a closing }). So the difference is just one more line with a closing }. But we have a smaller McCabe complexity in the initialization code (calculateValue). I\u0027m not aware of a metric measuring duplication.\n\nI think its an issue of getting used to the initialization pattern.",
+      "parentUuid": "c7672b30_823f2d72",
+      "revId": "5c74a30e01ceb3bced246b394163976d26516c04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_5874eb74",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
         "patchSetId": 2

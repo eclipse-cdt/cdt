@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_85f73781",
+        "filename": "build/org.eclipse.cdt.autotools.tests/src/org/eclipse/cdt/autotools/tests/AutotoolsVirtualFolderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:42:07Z",
+      "side": 1,
+      "message": "Why you using full package to Path and don\u0027t inline x?\nThis would be much cleaner to read:\n\t\nassertTrue(testProject.exists(new Path(\"src/configure\")));\n\nor even better\n\nassertTrue(exists(\"src/configure\"));\n\nand define exists function",
+      "revId": "f9ac1da3fba7bba20a1394fc4656605688046c68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

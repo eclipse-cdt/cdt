@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_e5d54be5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/FolderInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1342,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-07-31T01:31:28Z",
+      "side": 1,
+      "message": "something like\n} else if (val \u003d\u003d null) {\n   holder.removeOption(opt);\n} else {\n   Activator.log(\"Unknown type of value \"+val.class+\" for \"+opt);\n}",
+      "revId": "2db507a3be24d76ea7e367fd3d80fd8df497a079",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

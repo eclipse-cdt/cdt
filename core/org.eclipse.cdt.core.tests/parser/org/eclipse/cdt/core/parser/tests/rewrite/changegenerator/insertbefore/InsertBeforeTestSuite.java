@@ -32,6 +32,8 @@ public class InsertBeforeTestSuite {
 		suite.addTest(AddDeclarationBugTest.suite());
 		suite.addTest(MultilineWhitespaceHandlingTest.suite());
 		suite.addTest(SelfInsertionTest.suite());
+		suite.addTest(InsertStatementTest.suite());
+		suite.addTest(InsertMultipleStatementsTest.suite());
 				
 		return suite;
 	}

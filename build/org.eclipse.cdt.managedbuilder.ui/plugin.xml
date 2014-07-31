@@ -134,7 +134,8 @@
                                  value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
                            <test property="org.eclipse.cdt.ui.projectBuilder"
                                  value="org.eclipse.cdt.managedbuilder.core.genmakebuilder"/>
-                           <test property="org.eclipse.cdt.managedbuilder.ui.hasTargetConverters"/>
+                           <test property="org.eclipse.cdt.managedbuilder.ui.hasTargetConverters"
+                           		 forcePluginActivation="true"/>
                         </and>
                      </adapt>
                   </iterate>

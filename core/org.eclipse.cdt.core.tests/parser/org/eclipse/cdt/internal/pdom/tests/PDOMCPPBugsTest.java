@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -46,7 +47,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
- * Tests bugs found in the PDOM
+ * Tests bugs found in the PDOM.
  */
 public class PDOMCPPBugsTest extends BaseTestCase {
 	ICProject cproject;
@@ -58,7 +59,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		cproject= CProjectHelper.createCCProject("PDOMBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
+		cproject= CProjectHelper.createCCProject("PDOMBugsTest" + System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 	}
 
@@ -108,7 +109,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		// this test is currently failing on the cdt test build machine, but
 		// not on my local linux or windows boxes.
 
-		File tmp= new File(System.getProperty("java.io.tmpdir")+"/temp"+System.currentTimeMillis()+".pdom");
+		File tmp = nonExistentTempFile("temp", "pdom");
 		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		final PDOMManager pdomManager = CCoreInternals.getPDOMManager();
 		pdomManager.exportProjectPDOM(cproject, tmp, cvr, null);

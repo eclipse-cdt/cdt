@@ -14,10 +14,9 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -64,7 +63,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	private static final String LOC_CYCINC1= "resources/pdomtests/generatePDOMTests/cyclicIncludes1";
 	private static final String LOC_CYCINC2= "resources/pdomtests/generatePDOMTests/cyclicIncludes2";
 	
-	private static List toDeleteOnTearDown= new ArrayList();
+	private static Deque<ICProject> projectsToDeleteOnTearDown= new ArrayDeque<>();
 	
 	public static Test suite() {
 		return suite(GeneratePDOMApplicationTest.class);
@@ -74,17 +73,17 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	@Override
 	protected void setUp() throws Exception {
-		toDeleteOnTearDown.clear();
-		target= File.createTempFile("test", "pdom");
-		target.delete();
+		super.setUp();
+		projectsToDeleteOnTearDown.clear();
+		target = nonExistentTempFile("temp", "pdom");
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		for(Iterator i= toDeleteOnTearDown.iterator(); i.hasNext(); ) {
-			ICProject cproject= (ICProject) i.next();
+		for (ICProject cproject; (cproject = projectsToDeleteOnTearDown.pollLast()) != null;) {
 			cproject.getProject().delete(true, new NullProgressMonitor());
 		}
+		super.tearDown();
 	}	
 
 	public void testBrokenExportProjectProvider1() throws Exception {
@@ -149,7 +148,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -source must be specified
 		
 		doGenerate(new String[] {
-			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+			GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 			GeneratePDOMApplication.OPT_PROJECTPROVIDER, ExternalExportProjectProvider.class.getName()
 		});
 		assertFalse(target.exists());
@@ -190,12 +189,12 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		try {
 			String fid = wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull(fid);
-			assertEquals("generate.pdom.tests.id."+getName(), fid); // check for id passed on command-line
+			assertEquals("generate.pdom.tests.id." + getName(), fid); // check for id passed on command-line
 		} finally {
 			wpdom.releaseReadLock();
 		}
 		// depending on the timing the index of the temporary project is changed once or twice. 
-		assertTrue("state is "+ stateCount[0], stateCount[0] == 2 || stateCount[0] == 4);
+		assertTrue("state is " + stateCount[0], stateCount[0] == 2 || stateCount[0] == 4);
 	}
 
 	public void testExternalExportProjectProvider_SysIncludes() throws Exception {
@@ -232,10 +231,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		
 		wpdom.acquireReadLock();
 		try {
-			assertEquals(1, wpdom.findBindings(new char[][] { "foo"
-					.toCharArray() }, CLinkage, npm()).length);
-			assertEquals(0, wpdom.findBindings(new char[][] { "foo"
-					.toCharArray() }, CPPLinkage, npm()).length);
+			assertEquals(1, wpdom.findBindings(new char[][] { "foo".toCharArray() }, CLinkage, npm()).length);
+			assertEquals(0, wpdom.findBindings(new char[][] { "foo".toCharArray() }, CPPLinkage, npm()).length);
 		} finally {
 			wpdom.releaseReadLock();
 		}
@@ -263,8 +260,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			int b= bindings[0].getName().equals("A") ? 1 : 0;
 			assertTrue(bindings[0] instanceof ICPPClassType);
 			assertTrue(bindings[1] instanceof ICPPClassType);
-			assertTrue(((ICPPClassType)bindings[1-b]).getBases().length==0);
-			assertTrue(((ICPPClassType)bindings[b]).getBases().length==1);
+			assertTrue(((ICPPClassType)bindings[1 - b]).getBases().length == 0);
+			assertTrue(((ICPPClassType)bindings[b]).getBases().length == 1);
 		} finally {
 			wpdom.releaseReadLock();
 		}
@@ -272,7 +269,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	private WritablePDOM generatePDOM(String testProject, Class<?> provider, final int[] stateCount) throws Exception {
 		IIndexerStateListener listener= null;
-		if(stateCount != null) {
+		if (stateCount != null) {
 			listener= new IIndexerStateListener() {
 				@Override
 				public void indexChanged(IIndexerStateEvent event) {
@@ -290,13 +287,14 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, provider.getName(),
 				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
-				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "generate.pdom.tests.id."+getName()
+				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "generate.pdom.tests.id." + getName()
 		});
 		assertTrue(target.exists());
-		if(listener!=null) {
+		if (listener!=null) {
 			CCorePlugin.getIndexManager().removeIndexerStateListener(listener);
 		}
-		return new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		return new WritablePDOM(target, new URIRelativeLocationConverter(BASEURI),
+				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 	}
 	
 	private void doGenerate(String[] args) throws CoreException {
@@ -329,8 +327,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public static class TestProjectProvider2 implements IExportProjectProvider {
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
-			toDeleteOnTearDown.add(cproject);
+			ICProject cproject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
@@ -345,8 +343,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public static class TestProjectProvider3 implements IExportProjectProvider {
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
-			toDeleteOnTearDown.add(cproject);
+			ICProject cproject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
@@ -363,8 +361,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public static class TestProjectProvider4 implements IExportProjectProvider {		
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
-			toDeleteOnTearDown.add(cproject);
+			ICProject cproject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
@@ -386,8 +384,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public static class TestProjectProvider5 implements IExportProjectProvider {		
 		@Override
 		public ICProject createProject() throws CoreException {
-			ICProject cproject= CProjectHelper.createCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
-			toDeleteOnTearDown.add(cproject);
+			ICProject cproject= CProjectHelper.createCProject("test" + System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			projectsToDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ3);
 			return cproject;
 		}

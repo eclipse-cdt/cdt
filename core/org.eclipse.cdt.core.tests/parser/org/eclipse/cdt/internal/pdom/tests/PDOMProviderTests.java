@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -52,7 +53,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 	}
 
 	public void testLifeCycle() throws Exception {
-		final File tempPDOM= File.createTempFile("foo", "bar");
+		final File tempPDOM= createTempFile("foo", "bar");
 
 		{
 			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
@@ -124,7 +125,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 	}
 
 	public void testCommonSDK() throws Exception {
-		final File tempPDOM= File.createTempFile("foo", "bar");
+		final File tempPDOM= createTempFile("foo", "bar");
 
 		{
 			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
@@ -242,7 +243,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 	}
 	
 	public void testVersionMismatchOfExternalPDOM_178998() throws Exception {
-		final File tempPDOM= File.createTempFile("foo", "bar");
+		final File tempPDOM= createTempFile("foo", "bar");
 
 		{
 			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);

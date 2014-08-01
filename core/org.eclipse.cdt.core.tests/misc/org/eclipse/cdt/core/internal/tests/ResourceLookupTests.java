@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.internal.tests;
 
@@ -16,9 +17,9 @@ import java.io.InputStream;
 import java.net.URI;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -30,7 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-public class ResourceLookupTests extends TestCase {
+public class ResourceLookupTests extends BaseTestCase {
     public static Test suite() {
         return new TestSuite(ResourceLookupTests.class);
     }
@@ -38,7 +39,8 @@ public class ResourceLookupTests extends TestCase {
 	private IProject fProject;
 
     @Override
-	protected void setUp() {
+	protected void setUp() throws Exception {
+    	super.setUp();
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		fProject= root.getProject("reslookup_" + getName());
     }
@@ -46,6 +48,7 @@ public class ResourceLookupTests extends TestCase {
     @Override
 	protected void tearDown() throws Exception {
 		fProject.delete(true, new NullProgressMonitor());
+		super.tearDown();
     }
     
 	protected IFolder createFolder(IProject project, String filename) throws CoreException {
@@ -214,7 +217,7 @@ public class ResourceLookupTests extends TestCase {
 		fProject.create(new NullProgressMonitor());
 		fProject.open(new NullProgressMonitor());
 		createFolder(fProject, "folder1");
-		File f= File.createTempFile("extern", "h");
+		File f= createTempFile("extern", "h");
 		IPath location= Path.fromOSString(f.getAbsolutePath());
 		IFile file1= fProject.getFile("linked1");
 		IFile file2= fProject.getFile("linked2.h");

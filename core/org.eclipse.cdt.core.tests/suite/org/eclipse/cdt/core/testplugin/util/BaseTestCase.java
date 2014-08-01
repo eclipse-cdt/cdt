@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +66,7 @@ public class BaseTestCase extends TestCase {
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;
+	private Deque<File> filesToDeleteOnTearDown= new ArrayDeque<>();
 
 	public BaseTestCase() {
 		super();
@@ -77,6 +82,7 @@ public class BaseTestCase extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		CPPASTNameBase.sAllowRecursionBindings= false;
 		CPPASTNameBase.sAllowNameComputation= false;
 		CModelListener.sSuppressUpdateOfLastRecentlyUsed= true;
@@ -84,8 +90,29 @@ public class BaseTestCase extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
+		for (File file; (file = filesToDeleteOnTearDown.pollLast()) != null;) {
+			file.delete();
+		}
 		ResourceHelper.cleanUp();
 		TestScannerProvider.clear();
+		super.tearDown();
+	}
+
+	protected void deleteOnTearDown(File file) {
+		filesToDeleteOnTearDown.add(file);
+	}
+
+	protected File createTempFile(String prefix, String suffix) throws IOException {
+		File file = File.createTempFile(prefix, suffix);
+		filesToDeleteOnTearDown.add(file);
+		return file;
+	}
+
+	protected File nonExistentTempFile(String prefix, String suffix) {
+		File file= new File(System.getProperty("java.io.tmpdir"),
+				prefix + System.currentTimeMillis() + '.' + suffix);
+		filesToDeleteOnTearDown.add(file);
+		return file;
 	}
 
 	protected static TestSuite suite(Class clazz) {
@@ -212,7 +239,7 @@ public class BaseTestCase extends TestCase {
 
     @Override
 	public void run(TestResult result) {
-    	if (!fExpectFailure || "true".equals(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
+    	if (!fExpectFailure || Boolean.parseBoolean(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
     		super.run(result);
     		return;
     	}

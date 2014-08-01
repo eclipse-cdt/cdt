@@ -43,6 +43,7 @@ import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
@@ -102,32 +103,38 @@ public class LaunchBarManagerTest extends TestCase {
 	private ILaunchManager lman;
 	private IProject aaa;
 	private ArrayList<ILaunchMode> globalmodes = new ArrayList<>();
+	IExtensionPoint point;
+	IEclipsePreferences store = new EclipsePreferences();
 
+	public class FixedLaunchBarManager extends LaunchBarManager {
+		public FixedLaunchBarManager() throws CoreException {
+			super();
+		}
+
+		@Override
+		public IExtensionPoint getExtensionPoint() {
+			return point;
+		}
+
+		@Override
+		protected ILaunchManager getLaunchManager() {
+			return lman;
+		}
+
+		@Override
+		protected IEclipsePreferences getPreferenceStore() {
+			return store;
+		}
+	};
+	
 	@Override
 	protected void setUp() throws Exception {
-		final IExtensionPoint point = mock(IExtensionPoint.class);
+		point = mock(IExtensionPoint.class);
 		doReturn(new IExtension[] {}).when(point).getExtensions();
 		lman = mock(ILaunchManager.class);
 		doReturn(new ILaunchConfiguration[] {}).when(lman).getLaunchConfigurations();
 		doReturn(globalmodes.toArray(new ILaunchMode[globalmodes.size()])).when(lman).getLaunchModes();
-
-		final IEclipsePreferences store = new EclipsePreferences();
-		manager = new LaunchBarManager() {
-			@Override
-			public IExtensionPoint getExtensionPoint() {
-				return point;
-			}
-
-			@Override
-			protected ILaunchManager getLaunchManager() {
-				return lman;
-			}
-
-			@Override
-			protected IEclipsePreferences getPreferenceStore() {
-				return store;
-			}
-		};
+		manager = new FixedLaunchBarManager();
 		// mock
 		// lc
 		lctype = mockLCType("lctype1");
@@ -397,7 +404,7 @@ public class LaunchBarManagerTest extends TestCase {
 		// user created a project
 		manager.launchObjectAdded(aaa);
 		assertEquals(1, manager.getLaunchDescriptors().length);
-		assertEquals(aaa.getName(), manager.getLaunchDescriptors()[0].getName());
+		assertTrue(manager.getLaunchDescriptors()[0].getName().startsWith(aaa.getName()));
 		// user clicked on descriptor geer to edit lc, new lc is created
 		manager.launchConfigurationAdded(lc);
 		assertEquals(1, manager.getLaunchDescriptors().length);
@@ -408,12 +415,19 @@ public class LaunchBarManagerTest extends TestCase {
 		manager.launchConfigurationAdded(lc2);
 		assertEquals(2, manager.getLaunchDescriptors().length);
 		// user deleted lc
-		manager.launchConfigurationRemoved(lc2);
+		userDeletesLC(lc2);
 		assertEquals(1, manager.getLaunchDescriptors().length);
 		// user deleted last lc, now we back to project default
-		manager.launchConfigurationRemoved(lc);
+		userDeletesLC(lc);
 		assertEquals(1, manager.getLaunchDescriptors().length);
 	}
+
+	protected void userDeletesLC(ILaunchConfiguration lc2) {
+		String string = lc2.getName();
+	    reset(lc2);
+		doReturn(string).when(lc2).getName();
+		manager.launchConfigurationRemoved(lc2);
+    }
 
 	protected void projectMappingSetup() {
 	    descType = new ProjectBasedLaunchDescriptorType("desc2", lctype.getIdentifier()) {
@@ -749,5 +763,31 @@ public class LaunchBarManagerTest extends TestCase {
 		basicSetup();
 		manager.launchConfigurationRemoved(lc);
 		verify(provider).launchConfigurationRemoved(lc);
+	}
+
+	public void testExtensionConfigDefaultProvider() throws CoreException {
+		IExtension extension = mock(IExtension.class);
+		doReturn(new IExtension[] { extension }).when(point).getExtensions();
+		IConfigurationElement element = mock(IConfigurationElement.class);
+		IConfigurationElement targetElement = mock(IConfigurationElement.class);
+		mockTargetElement(targetElement, targetType);
+		doReturn("defaultConfigProvider").when(element).getName();
+		doReturn(new IConfigurationElement[] { element, targetElement }).when(extension).getConfigurationElements();
+		doReturn(targetType.getId()).when(element).getAttribute("targetType");
+		doReturn(lctype.getIdentifier()).when(element).getAttribute("launchConfigurationType");
+		manager = new FixedLaunchBarManager();
+		targetType.targets.add(mytarget);
+		manager.launchObjectAdded(lc);
+		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		assertEquals(1, launchDescriptors.length);
+		assertNotNull(launchDescriptors[0]);
+		assertEquals(lc.getName(), launchDescriptors[0].getName());
+		assertEquals(mytarget, manager.getActiveLaunchTarget());
+	}
+
+	private void mockTargetElement(IConfigurationElement element, TargetType targetType2) throws CoreException {
+		doReturn("targetType").when(element).getName();
+		doReturn(targetType.getId()).when(element).getAttribute("id");
+		doReturn(targetType).when(element).createExecutableExtension("class");
 	}
 }

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -160,6 +161,13 @@ public class ConfigSelector extends CSelector {
 			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
 			if (groupExt != null) {
 				ILaunchConfiguration config = getManager().getLaunchConfiguration(desc, target);
+				if (config == null) {
+					MessageDialog.openError(shell, "No launch configuration", "Cannot edit this configuration");
+					return;
+				}
+				if (config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).isDirty()) {
+					config = ((ILaunchConfigurationWorkingCopy) config).doSave();
+				}
 				final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config, groupExt);
 				dialog.setInitialStatus(Status.OK_STATUS);
 				dialog.open();

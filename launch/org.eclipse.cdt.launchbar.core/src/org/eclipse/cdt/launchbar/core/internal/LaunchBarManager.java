@@ -11,7 +11,6 @@
 package org.eclipse.cdt.launchbar.core.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -65,11 +64,13 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private static final String PREF_ACTIVE_CONFIG_DESC = "activeConfigDesc";
 	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode";
 	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget";
+	private static final String PREF_CONFIG_DESC_ORDER = "configDescList";
 
 	public LaunchBarManager() throws CoreException {
 		// Load up the active from the preferences before loading the descriptors
 		IEclipsePreferences store = getPreferenceStore();
 		String activeConfigDescId = store.get(PREF_ACTIVE_CONFIG_DESC, null);
+		String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, Collections.EMPTY_LIST.toString());
 		IExtensionPoint point = getExtensionPoint();
 		IExtension[] extensions = point.getExtensions();
 		// first pass - target, descriptors and object providers
@@ -145,12 +146,27 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			launchConfigurationAdded(configuration);
 		}
 		launchManager.addLaunchConfigurationListener(this);
+		reorderDescriptors(configDescIds);
 		// Now that all the descriptors are loaded, set the one
 		ILaunchDescriptor configDesc = descriptors.get(activeConfigDescId);
 		if (configDesc == null) {
 			configDesc = getLastUsedDescriptor();
 		}
 		setActiveLaunchDescriptor(configDesc);
+	}
+
+	private void reorderDescriptors(String configDescIds) {
+		configDescIds = configDescIds.replaceAll("[\\]\\[]", "");
+		String[] split = configDescIds.split(",");
+		for (int i = 0; i < split.length; i++) {
+			String string = split[i];
+			String id = string.trim();
+			ILaunchDescriptor desc = descriptors.get(id);
+			if (desc != null) {
+				descriptors.remove(id);
+				descriptors.put(id, desc);
+			}
+		}
 	}
 
 	protected static void sortMapByValue(LinkedHashMap<ILaunchDescriptorType, Integer> map) {
@@ -324,13 +340,15 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public ILaunchDescriptor[] getLaunchDescriptors() {
+		// return descriptor in usage order (most used first). UI can sort them later as it wishes
 		ILaunchDescriptor[] descs = descriptors.values().toArray(new ILaunchDescriptor[descriptors.size()]);
-		Arrays.sort(descs, new Comparator<ILaunchDescriptor>() {
-			@Override
-			public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+		// reverse
+		for (int i = 0; i < descs.length / 2; i++) {
+			ILaunchDescriptor ld = descs[i];
+			int j = descs.length - 1 - i;
+			descs[i] = descs[j];
+			descs[j] = ld;
+		}
 		return descs;
 	}
 
@@ -362,6 +380,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		// store in persistent storage
 		setPreference(getPreferenceStore(), PREF_ACTIVE_CONFIG_DESC, getId(activeLaunchDesc));
 		Activator.trace("new active config is stored " + configDesc);
+		setPreference(getPreferenceStore(), PREF_CONFIG_DESC_ORDER, descriptors.keySet().toString());
 
 		// Send notifications
 		updateLaunchDescriptor(activeLaunchDesc);

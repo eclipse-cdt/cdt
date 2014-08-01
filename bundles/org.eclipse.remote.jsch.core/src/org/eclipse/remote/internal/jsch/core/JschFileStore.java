@@ -44,8 +44,6 @@ import org.eclipse.remote.internal.jsch.core.commands.PutInfoCommand;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 public class JschFileStore extends FileStore {
-	private static Map<String, JschFileStore> instanceMap = new HashMap<String, JschFileStore>();
-
 	/**
 	 * Public factory method for obtaining JschFileStore instances.
 	 * 
@@ -64,11 +62,12 @@ public class JschFileStore extends FileStore {
 		}
 	}
 
-	// private final JSchConnection fConnection;
+	private static Map<String, JschFileStore> instanceMap = new HashMap<String, JschFileStore>();
+
 	private final IPath fRemotePath;
 	private final URI fURI;
 
-	public JschFileStore(URI uri) {
+	private JschFileStore(URI uri) {
 		fURI = uri;
 		fRemotePath = new Path(uri.getPath());
 	}

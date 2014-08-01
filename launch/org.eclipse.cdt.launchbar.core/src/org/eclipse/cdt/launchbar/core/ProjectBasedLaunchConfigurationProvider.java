@@ -25,18 +25,25 @@ public abstract class ProjectBasedLaunchConfigurationProvider extends ConfigBase
 
 	@Override
 	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
-		boolean res = super.launchConfigurationAdded(configuration);
+		if (!super.launchConfigurationAdded(configuration)) return false;
 		IProject project = getProject(configuration);
 		getManager().launchObjectChanged(project);
-		return res;
+		return true;
 	}
 
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
-		boolean res = super.launchConfigurationRemoved(configuration);
-		IProject project = getProject(configuration);
-		getManager().launchObjectChanged(project);
-		return res;
+		if (!ownsConfiguration(configuration))
+			return false;
+		IProject project = (IProject) configMap.get(configuration); // cannot use getters from configuration, it is deleted
+		if (!super.launchConfigurationRemoved(configuration)) return false;
+		if (project != null)
+			getManager().launchObjectChanged(project);
+		return true;
+	}
+
+	protected void rememberConfiguration(ILaunchConfiguration configuration) {
+		configMap.put(configuration, getProject(configuration));
 	}
 
 	protected abstract IProject getProject(ILaunchConfiguration llc);

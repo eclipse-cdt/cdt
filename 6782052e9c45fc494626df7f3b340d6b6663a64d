@@ -34,6 +34,24 @@
       "revId": "6782052e9c45fc494626df7f3b340d6b6663a64d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9c7dcdd7",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/internal/tests/ResourceLookupTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-01T18:23:00Z",
+      "side": 1,
+      "message": "You can use a field containing a list of files to delete. The number of files can vary from test to test.",
+      "parentUuid": "c7672b30_5c73350a",
+      "revId": "6782052e9c45fc494626df7f3b340d6b6663a64d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

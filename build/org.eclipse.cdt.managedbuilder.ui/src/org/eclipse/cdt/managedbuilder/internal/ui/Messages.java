@@ -20,9 +20,6 @@ public class Messages extends NLS {
 	public static String ArtifactTab_1;
 	public static String ArtifactTab_2;
 	public static String ArtifactTab_3;
-	public static String BuildConfigurationsJob_BuildError;
-	public static String BuildConfigurationsJob_Building;
-	public static String BuildConfigurationsJob_Cleaning;
 	public static String BuilderSettingsTab_0;
 	public static String BuilderSettingsTab_1;
 	public static String BuilderSettingsTab_10;
@@ -76,11 +73,6 @@ public class Messages extends NLS {
 	public static String CConfigWizardPage_7;
 	public static String CConfigWizardPage_8;
 	public static String CDTConfigWizardPage_0;
-	public static String CleanAndBuildDialog_Active;
-	public static String CleanAndBuildDialog_BuildConfigurations;
-	public static String CleanAndBuildDialog_CleanConfigurations;
-	public static String CleanAndBuildDialog_RebuildConfigurations;
-	public static String CleanAndBuildDialog_SelectConfigurations;
 	public static String CMainWizardPage_0;
 	public static String CMainWizardPage_1;
 	public static String CNewWizard_0;

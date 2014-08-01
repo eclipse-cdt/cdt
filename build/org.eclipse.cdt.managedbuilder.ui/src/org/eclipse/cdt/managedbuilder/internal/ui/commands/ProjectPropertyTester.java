@@ -8,7 +8,7 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.commands;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IProject;

@@ -64,7 +64,7 @@ public abstract class AbstractResourceActionHandler extends AbstractHandler {
     return selection;
   }
 
-  protected IStructuredSelection getSelection(ExecutionEvent event) throws ExecutionException {
+  protected static IStructuredSelection getSelection(ExecutionEvent event) throws ExecutionException {
     Object selection = HandlerUtil.getActiveMenuSelection(event);
     if (selection == null) {
       selection = HandlerUtil.getCurrentSelectionChecked(event);
@@ -133,7 +133,7 @@ public abstract class AbstractResourceActionHandler extends AbstractHandler {
   /**
    * Returns the selected resources.
    */
-  protected Collection<IResource> getSelectedResources(ExecutionEvent event) throws ExecutionException {
+  protected static Collection<IResource> getSelectedResources(ExecutionEvent event) throws ExecutionException {
     IStructuredSelection selection = getSelection(event);
     return getSelectedResources(selection);
   }

@@ -41,15 +41,27 @@
             description="%category.build.description"
             id="org.eclipse.cdt.managedbuilder.ui.category.build"/>
       <command
+            name="%command.buildFiles.name"
+            description="%command.buildFiles.description"
+            categoryId="org.eclipse.cdt.managedbuilder.ui.category.build"
+            id="org.eclipse.cdt.managedbuilder.ui.buildFiles"/>
+      <command
             name="%command.cleanFiles.name"
             description="%command.cleanFiles.description"
             categoryId="org.eclipse.cdt.managedbuilder.ui.category.build"
             id="org.eclipse.cdt.managedbuilder.ui.cleanFiles"/>
       <command
-            name="%command.buildFiles.name"
-            description="%command.buildFiles.description"
+            name="%command.buildAllConfigurations.name"
             categoryId="org.eclipse.cdt.managedbuilder.ui.category.build"
-            id="org.eclipse.cdt.managedbuilder.ui.buildFiles"/>
+            id="org.eclipse.cdt.managedbuilder.ui.buildAllConfigurations"/>
+      <command
+            name="%command.cleanAllConfigurations.name"
+            categoryId="org.eclipse.cdt.managedbuilder.ui.category.build"
+            id="org.eclipse.cdt.managedbuilder.ui.cleanAllConfigurations"/>
+      <command
+            name="%command.rebuildConfigurations.name"
+            categoryId="org.eclipse.cdt.managedbuilder.ui.category.build"
+            id="org.eclipse.cdt.managedbuilder.ui.rebuildConfigurations"/>
       <command
             name="%command.convertTarget.name"
             categoryId="org.eclipse.ui.category.project"
@@ -59,13 +71,22 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-		    class="org.eclipse.cdt.managedbuilder.internal.ui.actions.CleanFilesHandler"
-		    commandId="org.eclipse.cdt.managedbuilder.ui.cleanFiles"/>
-      <handler
-		    class="org.eclipse.cdt.managedbuilder.internal.ui.actions.BuildFilesHandler"
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.commands.BuildFilesHandler"
 		    commandId="org.eclipse.cdt.managedbuilder.ui.buildFiles"/>
       <handler
-		    class="org.eclipse.cdt.managedbuilder.internal.ui.actions.ConvertTargetHandler"
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.commands.CleanFilesHandler"
+		    commandId="org.eclipse.cdt.managedbuilder.ui.cleanFiles"/>
+      <handler
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.commands.BuildAllConfigurationsHandler"
+		    commandId="org.eclipse.cdt.managedbuilder.ui.buildAllConfigurations"/>
+      <handler
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.commands.CleanAllConfigurationsHandler"
+		    commandId="org.eclipse.cdt.managedbuilder.ui.cleanAllConfigurations"/>
+      <handler
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.commands.RebuildConfigurationsHandler"
+		    commandId="org.eclipse.cdt.managedbuilder.ui.rebuildConfigurations"/>
+      <handler
+		    class="org.eclipse.cdt.managedbuilder.internal.ui.commands.ConvertTargetHandler"
 		    commandId="org.eclipse.cdt.managedbuilder.ui.convertTarget"/>
    </extension>
 
@@ -73,27 +94,6 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?before=additions">
-         <command
-               commandId="org.eclipse.cdt.managedbuilder.ui.cleanFiles"
-               label="%command.cleanFiles.label"
-               style="push">
-            <visibleWhen checkEnabled="false">
-               <and>
-                  <test property="org.eclipse.cdt.ui.checkPreference"
-                        value="org.eclipse.core.resources/description.autobuilding=false"/>
-                  <or>
-                     <reference
-                           definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFileOpenInEditor"/>
-                     <with variable="selection">
-                        <iterate ifEmpty="false">
-                           <reference
-                                 definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFile"/>
-                        </iterate>
-                     </with>
-                  </or>
-               </and>
-            </visibleWhen>
-         </command>
          <command
                commandId="org.eclipse.cdt.managedbuilder.ui.buildFiles"
                label="%command.buildFiles.label"
@@ -115,6 +115,93 @@
                </and>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.cdt.managedbuilder.ui.cleanFiles"
+               label="%command.cleanFiles.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <test property="org.eclipse.cdt.ui.checkPreference"
+                        value="org.eclipse.core.resources/description.autobuilding=false"/>
+                  <or>
+                     <reference
+                           definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFileOpenInEditor"/>
+                     <with variable="selection">
+                        <iterate ifEmpty="false">
+                           <reference
+                                 definitionId="org.eclipse.cdt.managedbuilder.ui.isBuildableFile"/>
+                        </iterate>
+                     </with>
+                  </or>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=buildGroup">
+         <menu
+	           id="org.eclipse.cdt.ui.cfgmenu"
+	           label="%Configurations.menu">
+            <separator name="manage"/>
+            <separator name="build" visible="true"/>
+            <command
+                  commandId="org.eclipse.cdt.managedbuilder.ui.buildAllConfigurations"
+                  label="%command.buildAllConfigurations.label"
+                  style="push">
+               <visibleWhen checkEnabled="false">
+                  <with variable="selection">
+                     <iterate ifEmpty="false">
+                        <adapt type="org.eclipse.core.resources.IProject">
+                           <and>
+                              <test property="org.eclipse.core.resources.projectNature"
+                                    value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+                              <test property="org.eclipse.cdt.ui.projectBuilder"
+                                    value="org.eclipse.cdt.managedbuilder.core.genmakebuilder"/>
+                           </and>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.managedbuilder.ui.cleanAllConfigurations"
+                  label="%command.cleanAllConfigurations.label"
+                  style="push">
+               <visibleWhen checkEnabled="false">
+                  <with variable="selection">
+                     <iterate ifEmpty="false">
+                        <adapt type="org.eclipse.core.resources.IProject">
+                           <and>
+                              <test property="org.eclipse.core.resources.projectNature"
+                                    value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+                              <test property="org.eclipse.cdt.ui.projectBuilder"
+                                    value="org.eclipse.cdt.managedbuilder.core.genmakebuilder"/>
+                           </and>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.managedbuilder.ui.rebuildConfigurations"
+                  label="%command.rebuildConfigurations.label"
+                  style="push">
+               <visibleWhen checkEnabled="false">
+                  <with variable="selection">
+                     <iterate ifEmpty="false">
+                        <adapt type="org.eclipse.core.resources.IProject">
+                           <and>
+                              <test property="org.eclipse.core.resources.projectNature"
+                                    value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+                              <test property="org.eclipse.cdt.ui.projectBuilder"
+                                    value="org.eclipse.cdt.managedbuilder.core.genmakebuilder"/>
+                           </and>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <!-- This menu command doesn't belong here. It should be contributed
            by the plug-ins that contribute target converters. --> 
@@ -125,7 +212,7 @@
                label="%command.convertTarget.label"
                style="push">
             <visibleWhen checkEnabled="false">
-               <with variable="selection" >
+               <with variable="selection">
                   <count value="1"/>
                   <iterate ifEmpty="false">
                      <adapt type="org.eclipse.core.resources.IProject">
@@ -148,48 +235,16 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.eclipse.cdt.managedbuilder.internal.ui.actions.ProjectPropertyTester"
+            class="org.eclipse.cdt.managedbuilder.internal.ui.commands.ProjectPropertyTester"
             id="org.eclipse.cdt.managedbuilder.ui.projectPropertyTester"
             namespace="org.eclipse.cdt.managedbuilder.ui"
             properties="hasTargetConverters"
             type="org.eclipse.core.resources.IProject"/>
    </extension>
 
-  <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.cdt.managedbuilder.ui.popupMenu.BuildAll">
-        <action
-              class="org.eclipse.cdt.managedbuilder.internal.ui.actions.CleanAndBuildAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.managedbuilder.ui.rebuildConfigurationsAction"
-              label="%RebuildConfigurationsMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/build"/>
-        <action
-              class="org.eclipse.cdt.managedbuilder.internal.ui.actions.CleanAllConfigurationsAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.managedbuilder.ui.cleanAllConfigurationsAction"
-              label="%CleanAllConfigurationsMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/build"/>
-        <action
-              class="org.eclipse.cdt.managedbuilder.internal.ui.actions.BuildAllConfigurationsAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.managedbuilder.ui.buildAllConfigurationsAction"
-              label="%BuildAllConfigurationsMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/build"/>
-        <visibility>
-           <objectState
-              name="projectNature"
-              value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
-        </visibility>
-      </objectContribution>
-   </extension>
-
    <extension
          point="org.eclipse.ui.newWizards">
-<!-- Managed Make Builder Projects -->
+      <!-- Managed Make Builder Projects -->
       <wizard
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard"
@@ -317,7 +372,7 @@
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab"
            icon="icons/elcl16/discovery.gif"
-           name="(Single) Discovery.options"
+           name="%DiscoveryTab.name"
            weight="050"
            helpId="cdt_u_prop_build_discovery"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_Discovery"/>
@@ -365,12 +420,12 @@
            weight="050"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
-           name="(Single) CDT Vars (macros)"
+           name="%CPropertyVarsTab.name"
            helpId="cdt_u_prop_build_variables"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_Variables"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.ToolChainEditTab"
-           name="(Single) Tool chain edit"
+           name="%ToolChainEditTab.name"
            helpId="cdt_u_prop_build_toolchain"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ToolChain"/>
 
@@ -445,7 +500,7 @@
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
-           name="(Single) Environment"
+           name="%EnvironmentTab.name"
            weight="050"
            helpId="cdt_u_prop_build_environment"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_Environment"/>
@@ -509,12 +564,12 @@
      <tab
            class="org.eclipse.cdt.ui.newui.EnvironmentTab"
            icon="icons/obj16/environment.gif"
-           name="(Single) Environment"
+           name="%EnvironmentTab.name"
            helpId="cdt_u_prop_build_environment"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Env"/>
      <tab
            class="org.eclipse.cdt.managedbuilder.ui.properties.CPropertyVarsTab"
-           name="(Single) CDT Vars (macros)"
+           name="%CPropertyVarsTab.name"
            helpId="cdt_u_prop_build_variables"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_Vars"/>
      <tab
@@ -849,16 +904,16 @@
             class="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.ScannerDiscoveryGlobalConsole">
       </CBuildConsole>
    </extension>
-     <extension
-           point="org.eclipse.ui.keywords">
-        <keyword
-              id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1"
-              label="%CDTToolchainProperty.keyword.toolchain1">
-        </keyword>
-        <keyword
-              id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2"
-              label="%CDTToolchainProperty.keyword.toolchain2">
-        </keyword>
-     </extension>
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain1"
+            label="%CDTToolchainProperty.keyword.toolchain1">
+      </keyword>
+      <keyword
+            id="org.eclipse.cdt.managedbuilder.ui.keyword.toolchain2"
+            label="%CDTToolchainProperty.keyword.toolchain2">
+      </keyword>
+   </extension>
 
 </plugin>

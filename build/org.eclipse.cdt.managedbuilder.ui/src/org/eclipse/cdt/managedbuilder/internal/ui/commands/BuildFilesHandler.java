@@ -9,7 +9,7 @@
  *     Texas Instruments - initial API and implementation
  * 	   Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -8,12 +8,11 @@
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.commands;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,10 +37,10 @@ public class BuildConfigurationsJob extends Job {
 		String firstConfigurationName = cfgDescriptions[0].getName();
 		if (isCleaning) {
 			return MessageFormat.format(Messages.BuildConfigurationsJob_Cleaning,
-					new Object[] {""+cfgDescriptions.length, firstProjectName, firstConfigurationName}); //$NON-NLS-1$
+					new Object[] { cfgDescriptions.length, firstProjectName, firstConfigurationName });
 		} else {
 			return MessageFormat.format(Messages.BuildConfigurationsJob_Building,
-					new Object[] {""+cfgDescriptions.length, firstProjectName, firstConfigurationName}); //$NON-NLS-1$
+					new Object[] { cfgDescriptions.length, firstProjectName, firstConfigurationName });
 		}
 	}
 	
@@ -56,30 +55,27 @@ public class BuildConfigurationsJob extends Job {
 	 *    {@link IncrementalProjectBuilder#AUTO_BUILD}
 	 */
 	public BuildConfigurationsJob(ICConfigurationDescription[] cfgDescriptions, int cleanKind, int buildKind) {
-		super(composeJobName(cfgDescriptions, buildKind==0));
+		super(composeJobName(cfgDescriptions, buildKind == 0));
 
 		this.cfgDescriptions = cfgDescriptions;
 		this.cleanKind = cleanKind;
 		this.buildKind = buildKind;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		// Setup the global build console
 		CUIPlugin.getDefault().startGlobalConsole();
 
 		IConfiguration[] cfgs = new IConfiguration[cfgDescriptions.length];
-		for (int i=0; i<cfgDescriptions.length; i++) {
+		for (int i= 0; i < cfgDescriptions.length; i++) {
 			cfgs[i] = ManagedBuildManager.getConfigurationForDescription(cfgDescriptions[i]);
 		}
 		try {
-			if (cleanKind==IncrementalProjectBuilder.CLEAN_BUILD) {
+			if (cleanKind == IncrementalProjectBuilder.CLEAN_BUILD) {
 				ManagedBuildManager.buildConfigurations(cfgs, null, monitor, true, cleanKind);
 			}
-			if (buildKind!=0) {
+			if (buildKind != 0) {
 				ManagedBuildManager.buildConfigurations(cfgs, null, monitor, true, buildKind);
 			}
 		} catch (CoreException e) {
@@ -92,9 +88,6 @@ public class BuildConfigurationsJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-	 */
 	@Override
 	public boolean belongsTo(Object family) {
 		return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;

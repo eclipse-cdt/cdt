@@ -10,7 +10,7 @@
  *     Anna Dushistova (MontaVista) - [366771] Converter fails to convert a CDT makefile project
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.commands;
 
 import java.util.ArrayList;
 import java.util.List;

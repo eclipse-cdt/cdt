@@ -10,13 +10,21 @@
  *     IBM Corporation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.commands;
 
 import org.eclipse.osgi.util.NLS;
 
 class Messages extends NLS {
+	public static String BuildConfigurationsJob_BuildError;
+	public static String BuildConfigurationsJob_Building;
+	public static String BuildConfigurationsJob_Cleaning;
 	public static String BuildFilesHandler_buildingSelectedFiles;
 	public static String CleanFilesHandler_cleaningFiles;
+	public static String RebuildConfigurationsDialog_Active;
+	public static String RebuildConfigurationsDialog_BuildConfigurations;
+	public static String RebuildConfigurationsDialog_CleanConfigurations;
+	public static String RebuildConfigurationsDialog_RebuildConfigurations;
+	public static String RebuildConfigurationsDialog_SelectConfigurations;
 	public static String ConvertTargetHandler_No_Converter;
 	public static String ProjectConvert_noConverterErrorDialog_message;
 	public static String ProjectConvert_title;

@@ -397,7 +397,7 @@ public class LaunchBarManagerTest extends TestCase {
 		// user created a project
 		manager.launchObjectAdded(aaa);
 		assertEquals(1, manager.getLaunchDescriptors().length);
-		assertEquals(aaa.getName(), manager.getLaunchDescriptors()[0].getName());
+		assertTrue(manager.getLaunchDescriptors()[0].getName().startsWith(aaa.getName()));
 		// user clicked on descriptor geer to edit lc, new lc is created
 		manager.launchConfigurationAdded(lc);
 		assertEquals(1, manager.getLaunchDescriptors().length);
@@ -408,12 +408,19 @@ public class LaunchBarManagerTest extends TestCase {
 		manager.launchConfigurationAdded(lc2);
 		assertEquals(2, manager.getLaunchDescriptors().length);
 		// user deleted lc
-		manager.launchConfigurationRemoved(lc2);
+		userDeletesLC(lc2);
 		assertEquals(1, manager.getLaunchDescriptors().length);
 		// user deleted last lc, now we back to project default
-		manager.launchConfigurationRemoved(lc);
+		userDeletesLC(lc);
 		assertEquals(1, manager.getLaunchDescriptors().length);
 	}
+
+	protected void userDeletesLC(ILaunchConfiguration lc2) {
+		String string = lc2.getName();
+	    reset(lc2);
+		doReturn(string).when(lc2).getName();
+		manager.launchConfigurationRemoved(lc2);
+    }
 
 	protected void projectMappingSetup() {
 	    descType = new ProjectBasedLaunchDescriptorType("desc2", lctype.getIdentifier()) {

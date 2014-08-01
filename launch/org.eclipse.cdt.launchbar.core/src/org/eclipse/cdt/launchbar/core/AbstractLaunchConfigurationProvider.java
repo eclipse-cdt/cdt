@@ -32,17 +32,17 @@ public abstract class AbstractLaunchConfigurationProvider implements ILaunchConf
 	@Override
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor) throws CoreException {
 		if (descriptor instanceof ILaunchDescriptorConfigBased) {
-			return ((ILaunchDescriptorConfigBased) descriptor).getConfig();
+			return ((ILaunchDescriptorConfigBased) descriptor).getLaunchConfiguration();
 		}
 		return null;
 	}
 
 	@Override
 	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor) throws CoreException {
-		ILaunchConfiguration config = getLaunchConfiguration(descriptor);
-		if (config != null) {
-			return config.getType();
+		if (descriptor instanceof ILaunchDescriptorConfigBased) {
+			return ((ILaunchDescriptorConfigBased) descriptor).getLaunchConfigurationType();
 		}
 		return null;
 	}
+
 }

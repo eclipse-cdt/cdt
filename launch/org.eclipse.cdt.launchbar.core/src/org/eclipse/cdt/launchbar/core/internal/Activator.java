@@ -13,6 +13,7 @@ package org.eclipse.cdt.launchbar.core.internal;
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
@@ -73,4 +74,11 @@ public class Activator extends Plugin {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, exception.getLocalizedMessage(), exception));
 	}
 
+	private static final String DEBUG_ONE =
+	        PLUGIN_ID + "/debug/launchbar";
+
+	public static void trace(String str) {
+		if (plugin == null || (plugin.isDebugging() && "true".equalsIgnoreCase(Platform.getDebugOption(DEBUG_ONE))))
+			System.out.println("launchbar: " + str);
+	}
 }

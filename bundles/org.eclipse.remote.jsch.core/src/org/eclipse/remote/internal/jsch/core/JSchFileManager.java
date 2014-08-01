@@ -33,6 +33,7 @@ public class JSchFileManager implements IRemoteFileManager {
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public String getDirectorySeparator() {
 		return "/"; //$NON-NLS-1$
 	}
@@ -44,12 +45,13 @@ public class JSchFileManager implements IRemoteFileManager {
 	 * org.eclipse.remote.core.IRemoteFileManager#getResource(java.lang.
 	 * String)
 	 */
+	@Override
 	public IFileStore getResource(String pathStr) {
 		IPath path = new Path(pathStr);
 		if (!path.isAbsolute()) {
 			path = new Path(fConnection.getWorkingDirectory()).append(path);
 		}
-		return new JschFileStore(JSchFileSystem.getURIFor(fConnection.getName(), path.toString()));
+		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnection.getName(), path.toString()));
 	}
 
 	/*
@@ -57,6 +59,7 @@ public class JSchFileManager implements IRemoteFileManager {
 	 * 
 	 * @see org.eclipse.remote.core.IRemoteFileManager#toPath(java.net.URI)
 	 */
+	@Override
 	public String toPath(URI uri) {
 		return uri.getPath();
 	}
@@ -68,6 +71,7 @@ public class JSchFileManager implements IRemoteFileManager {
 	 * org.eclipse.remote.core.IRemoteFileManager#toURI(org.eclipse.core
 	 * .runtime.IPath)
 	 */
+	@Override
 	public URI toURI(IPath path) {
 		try {
 			return JSchFileSystem.getURIFor(fConnection.getName(), path.toString());
@@ -82,6 +86,7 @@ public class JSchFileManager implements IRemoteFileManager {
 	 * @see
 	 * org.eclipse.remote.core.IRemoteFileManager#toURI(java.lang.String)
 	 */
+	@Override
 	public URI toURI(String path) {
 		return toURI(new Path(path));
 	}

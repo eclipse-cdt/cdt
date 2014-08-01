@@ -102,6 +102,16 @@ public class JSchFileSystem extends FileSystem {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.core.filesystem.provider.FileSystem#getStore(org.eclipse.core.runtime.IPath)
+	 */
+	@Override
+	public IFileStore getStore(IPath path) {
+		return EFS.getNullFileSystem().getStore(path);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.eclipse.core.filesystem.provider.FileSystem#getStore(java.net.URI)
 	 */
@@ -114,15 +124,5 @@ public class JSchFileSystem extends FileSystem {
 			Activator.log(e);
 			return EFS.getNullFileSystem().getStore(uri);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#getStore(org.eclipse.core.runtime.IPath)
-	 */
-	@Override
-	public IFileStore getStore(IPath path) {
-		return null;
 	}
 }

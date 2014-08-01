@@ -11,7 +11,6 @@
 package org.eclipse.cdt.launchbar.core.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -311,13 +310,15 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 
 	@Override
 	public ILaunchDescriptor[] getLaunchDescriptors() {
+		// return descriptor in usage order (most used first). UI can sort them later as it wishes
 		ILaunchDescriptor[] descs = descriptors.values().toArray(new ILaunchDescriptor[descriptors.size()]);
-		Arrays.sort(descs, new Comparator<ILaunchDescriptor>() {
-			@Override
-			public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+		// reverse
+		for (int i = 0; i < descs.length / 2; i++) {
+			ILaunchDescriptor ld = descs[i];
+			int j = descs.length - 1 - i;
+			descs[i] = descs[j];
+			descs[j] = ld;
+		}
 		return descs;
 	}
 

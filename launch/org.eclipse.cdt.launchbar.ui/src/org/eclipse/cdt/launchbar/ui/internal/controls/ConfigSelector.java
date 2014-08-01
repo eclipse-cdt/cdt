@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui.internal.controls;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
@@ -61,6 +62,7 @@ public class ConfigSelector extends CSelector {
 	private LaunchBarUIManager uiManager;
 	
 	private static final String[] noConfigs = new String[] { "No Launch Configurations" };
+	private static final int SEPARATOR_INDEX = 3;
 	
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
@@ -78,8 +80,16 @@ public class ConfigSelector extends CSelector {
 			public Object[] getElements(Object inputElement) {
 				try {
 					ILaunchDescriptor[] descs = getManager().getLaunchDescriptors();
-					if (descs.length > 0)
+					if (descs.length > 0) {
+						if (descs.length > SEPARATOR_INDEX + 1)
+							Arrays.sort(descs, SEPARATOR_INDEX, descs.length, new Comparator<ILaunchDescriptor>() {
+								@Override
+								public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
+									return o1.getName().compareTo(o2.getName());
+								}
+							});
 						return descs;
+					}
 				} catch (CoreException e) {
 					Activator.log(e.getStatus());
 				}
@@ -115,15 +125,9 @@ public class ConfigSelector extends CSelector {
 				return super.getText(element);
 			}
 		});
-
-		setSorter(new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				String text1 = getLabelProvider().getText(o1);
-				String text2 = getLabelProvider().getText(o2);
-				return text1.compareTo(text2);
-			}
-		});
+		// no sorter on view, data is sorted by provider
+		setSorter(null);
+		setSeparatorIndex(SEPARATOR_INDEX);
 	}
 
 	@Override

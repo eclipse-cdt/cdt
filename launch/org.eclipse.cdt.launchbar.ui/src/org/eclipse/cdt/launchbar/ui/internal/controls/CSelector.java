@@ -85,6 +85,8 @@ public abstract class CSelector extends Composite {
 	private final int itemH = 30;
 	private int scrollBucket;
 	private final int maxScrollBucket = 7;
+	private int separatorIndex = -1;
+
 
 	private MouseTrackListener mouseTrackListener = new MouseTrackListener() {
 		@Override
@@ -170,6 +172,7 @@ public abstract class CSelector extends Composite {
 		}
 		
 	};
+
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
@@ -366,12 +369,17 @@ public abstract class CSelector extends Composite {
 		for (Control child : listComp.getChildren())
 			child.dispose();
 
-		Arrays.sort(elements, sorter);
+		if (sorter != null)
+			Arrays.sort(elements, sorter);
 
 		listItems = new ListItem[elements.length];
 
 		int heightHint = 0;
 		for (int i = 0; i < elements.length; ++i) {
+			if (i == separatorIndex) {
+				Label label = new Label(listComp, SWT.SEPARATOR | SWT.HORIZONTAL);
+				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			}
 			listItems[i] = new ListItem(listComp, SWT.NONE, elements[i], i);
 			if (i < maxScrollBucket) { // this is how many visible by default
 				listItems[i].lazyInit();
@@ -816,4 +824,11 @@ public abstract class CSelector extends Composite {
 		// nothing to do here
 	}
 
+	public int getSeparatorIndex() {
+		return separatorIndex;
+	}
+
+	public void setSeparatorIndex(int separatorIndex) {
+		this.separatorIndex = separatorIndex;
+	}
 }

@@ -13,7 +13,7 @@
 
 	<version>1.0.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.launchbar.core.tests</artifactId>
-	<packaging>eclipse-plugin</packaging>
+	<packaging>eclipse-test-plugin</packaging>
 	
 		<build>
 		<plugins>
@@ -22,6 +22,8 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<!-- It does not need ui, but it does not work headless for some reason -->
+					<useUIHarness>true</useUIHarness>
 					<argLine>${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>
@@ -30,11 +32,6 @@
 					<dependencies>
 						<dependency>
 							<artifactId>org.eclipse.platform.feature.group</artifactId>
-							<type>p2-installable-unit</type>
-						</dependency>
-						<dependency>
-							<artifactId>org.eclipse.cdt.feature.group</artifactId>
-							<version>8.2.0.${buildQualifier}</version>
 							<type>p2-installable-unit</type>
 						</dependency>
 					</dependencies>

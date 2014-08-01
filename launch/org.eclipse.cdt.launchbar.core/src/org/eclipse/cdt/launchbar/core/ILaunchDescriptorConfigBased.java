@@ -11,13 +11,19 @@
 package org.eclipse.cdt.launchbar.core;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 
 /**
  * Interface for descriptors which are based on launch configurations
  */
 public interface ILaunchDescriptorConfigBased extends ILaunchDescriptor {
 	/**
-	 * Return launch configuration on which it is based
+	 * Return launch configuration on which it is based (can be null)
 	 */
-	public ILaunchConfiguration getConfig();
+	public ILaunchConfiguration getLaunchConfiguration();
+
+	/**
+	 * Return launch configuration type on which it is based (cannot be null)
+	 */
+	public ILaunchConfigurationType getLaunchConfigurationType();
 }

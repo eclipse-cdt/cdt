@@ -11,7 +11,9 @@
 package org.eclipse.cdt.launchbar.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 
 public class ConfigBasedLaunchDescriptorType extends AbstarctLaunchDescriptorType implements ILaunchDescriptorType {
 	private String id;
@@ -50,5 +52,14 @@ public class ConfigBasedLaunchDescriptorType extends AbstarctLaunchDescriptorTyp
 	@Override
 	public String getId() {
 		return id;
+	}
+
+	public ILaunchConfigurationType getLaunchConfigurationType() {
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(typeId);
+	}
+
+	@Override
+	public String toString() {
+		return "type for " + typeId;
 	}
 }

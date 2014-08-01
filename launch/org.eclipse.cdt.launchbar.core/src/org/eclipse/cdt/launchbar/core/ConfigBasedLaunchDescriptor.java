@@ -10,19 +10,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
+import org.eclipse.cdt.launchbar.core.internal.Activator;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 
 public class ConfigBasedLaunchDescriptor extends AbstractLaunchDescriptor implements ILaunchDescriptorConfigBased {
 	private final ILaunchDescriptorType type;
-	private final ILaunchConfiguration config;
+	private ILaunchConfiguration config;
 
 	public ConfigBasedLaunchDescriptor(ILaunchDescriptorType type, ILaunchConfiguration config) {
+		if (type == null)
+			throw new NullPointerException();
 		this.type = type;
 		this.config = config;
 	}
 
 	@Override
 	public String getName() {
+		if (config == null)
+			return "?";
 		return config.getName();
 	}
 
@@ -31,12 +38,29 @@ public class ConfigBasedLaunchDescriptor extends AbstractLaunchDescriptor implem
 		return type;
 	}
 
-	public ILaunchConfiguration getConfig() {
+	public ILaunchConfiguration getLaunchConfiguration() {
 		return config;
+	}
+
+	public ILaunchConfigurationType getLaunchConfigurationType() {
+		if (config != null)
+			try {
+				return config.getType();
+			} catch (CoreException e) {
+				Activator.log(e); // can happened when config is deleted XXX hide in this case
+			}
+		if (type instanceof ConfigBasedLaunchDescriptorType) {
+			return ((ConfigBasedLaunchDescriptorType) type).getLaunchConfigurationType();
+		}
+		return null;
 	}
 
 	@Override
 	public String toString() {
-		return getId();
+		return "LC/" + getName();
+	}
+
+	public void setLaunchConfiguration(ILaunchConfiguration config) {
+		this.config = config;
 	}
 }

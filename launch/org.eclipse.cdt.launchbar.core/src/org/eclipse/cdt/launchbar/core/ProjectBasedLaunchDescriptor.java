@@ -26,13 +26,20 @@ public class ProjectBasedLaunchDescriptor extends ConfigBasedLaunchDescriptor {
 	}
 
 	public String getName() {
-		if (getConfig() == null)
+		if (getLaunchConfiguration() == null)
 			return project.getName();
 		else
-			return getConfig().getName();
+			return getLaunchConfiguration().getName();
 	}
 
 	public IProject getProject() {
 		return project;
+	}
+
+	@Override
+	public String toString() {
+		if (getLaunchConfiguration() == null)
+			return getName();
+		return "LC/" + getName();
 	}
 }

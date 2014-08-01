@@ -33,10 +33,14 @@ public abstract class ProjectBasedLaunchConfigurationProvider extends ConfigBase
 
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
+		IProject project = (IProject) configMap.get(configuration); // cannot use getters from configuration, it is deleted
 		boolean res = super.launchConfigurationRemoved(configuration);
-		IProject project = getProject(configuration);
 		getManager().launchObjectChanged(project);
 		return res;
+	}
+
+	protected void rememberConfiguration(ILaunchConfiguration configuration) {
+		configMap.put(configuration, getProject(configuration));
 	}
 
 	protected abstract IProject getProject(ILaunchConfiguration llc);

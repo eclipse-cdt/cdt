@@ -11,7 +11,9 @@
 package org.eclipse.cdt.launchbar.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 
 public class ConfigBasedLaunchConfigurationProvider extends AbstractLaunchConfigurationProvider implements
         ILaunchConfigurationProvider {
@@ -47,6 +49,13 @@ public class ConfigBasedLaunchConfigurationProvider extends AbstractLaunchConfig
 		return false;
 	}
 
+	@Override
+	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor) throws CoreException {
+		ILaunchConfigurationType type = super.getLaunchConfigurationType(descriptor);
+		if (type!=null) return type;
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(typeId);
+	}
+	
 	@Override
 	public String toString() {
 		return "Provider for " + typeId;

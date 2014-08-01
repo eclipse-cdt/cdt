@@ -582,7 +582,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		try {
 			if (descriptor instanceof ILaunchDescriptorConfigBased) {
 				// if descriptor is launch config based we don't need provider to determine the type
-				return ((ILaunchDescriptorConfigBased) descriptor).getConfig().getType();
+				ILaunchConfiguration config = ((ILaunchDescriptorConfigBased) descriptor).getConfig();
+				if (config != null)
+					return config.getType();
 			}
 			String descriptorTypeId = descriptor.getType().getId();
 			Map<String, ILaunchConfigurationProvider> targetMap = configProviders.get(descriptorTypeId);

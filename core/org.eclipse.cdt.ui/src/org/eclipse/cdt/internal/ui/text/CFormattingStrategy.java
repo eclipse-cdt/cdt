@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -34,32 +35,29 @@ import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
  */
 public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	/** Documents to be formatted by this strategy */
-	private final LinkedList<IDocument> fDocuments= new LinkedList<IDocument>();
+	private final Deque<IDocument> fDocuments= new ArrayDeque<>();
 	/** Partitions to be formatted by this strategy */
-	private final LinkedList<TypedPosition> fPartitions= new LinkedList<TypedPosition>();
+	private final Deque<TypedPosition> fPartitions= new ArrayDeque<>();
 
 	/**
-	 * Creates a new java formatting strategy.
+	 * Creates a new formatting strategy.
  	 */
 	public CFormattingStrategy() {
 		super();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#format()
-	 */
 	@Override
 	public void format() {
 		super.format();
 		
-		final IDocument document= fDocuments.removeFirst();
-		final TypedPosition partition= fPartitions.removeFirst();
+		IDocument document= fDocuments.removeFirst();
+		TypedPosition partition= fPartitions.removeFirst();
 		
 		if (document != null && partition != null) {
 			try {
 				@SuppressWarnings("unchecked")
-				final Map<String, String> preferences = getPreferences();
-				final TextEdit edit = CodeFormatterUtil.format(
+				Map<String, String> preferences = getPreferences();
+				TextEdit edit = CodeFormatterUtil.format(
 						CodeFormatter.K_TRANSLATION_UNIT, document.get(),
 						partition.getOffset(), partition.getLength(), 0,
 						TextUtilities.getDefaultLineDelimiter(document),
@@ -70,16 +68,12 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 			} catch (MalformedTreeException e) {
 				CUIPlugin.log(e);
 			} catch (BadLocationException e) {
-				// Can only happen on concurrent document modification - log and
-				// bail out
+				// Can only happen on concurrent document modification - log and bail out.
 				CUIPlugin.log(e);
 			}
 		}
  	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
-	 */
 	@Override
 	public void formatterStarts(final IFormattingContext context) {
 		super.formatterStarts(context);
@@ -94,9 +88,6 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
-	 */
 	@Override
 	public void formatterStops() {
 		super.formatterStops();

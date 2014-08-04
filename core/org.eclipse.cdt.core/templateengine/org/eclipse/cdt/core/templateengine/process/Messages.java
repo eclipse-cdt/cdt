@@ -6,25 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.templateengine;
+package org.eclipse.cdt.core.templateengine.process;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class TemplateEngineMessages {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.core.templateengine.messages"; //$NON-NLS-1$
+class Messages {
+	private static final ResourceBundle RESOURCE_BUNDLE =
+			ResourceBundle.getBundle(Messages.class.getName());
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
-
-	/**
-	 * @since 5.6
-	 */
 	public static String ProcessRunner_missingArg;
 
-	private TemplateEngineMessages() {
+	private Messages() {
 	}
 
 	public static String getString(String key) {

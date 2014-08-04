@@ -6,15 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.messages"; //$NON-NLS-1$
 	public static String Checksums_taskComputeChecksums;
+	public static String PDOMImportTask_errorInvalidArchive;
+	public static String PDOMImportTask_errorInvalidPDOMVersion;
 	public static String PDOMManager_ClosePDOMJob;
 	public static String PDOMManager_creationOfIndexInterrupted;
 	public static String PDOMManager_ExistingFileCollides;
@@ -31,9 +32,10 @@ public class Messages extends NLS {
 	public static String AbstractIndexerTask_parsingFileTask;
 	public static String AbstractIndexerTask_errorWhileParsing;
 	public static String AbstractIndexerTask_tooManyIndexProblems;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

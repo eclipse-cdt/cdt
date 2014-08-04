@@ -6,17 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.indexer.messages"; //$NON-NLS-1$
-	public static String PDOMImportTask_errorInvalidArchive;
-	public static String PDOMImportTask_errorInvalidPDOMVersion;
+class Messages extends NLS {
 	public static String PDOMIndexerTask_collectingFilesTask;
 	public static String PDOMIndexerTask_indexerInfo;
 	public static String TodoTaskUpdater_DeleteJob;
@@ -31,8 +27,8 @@ public class Messages extends NLS {
 	public static String PDOMRebuildTask_0;
 
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

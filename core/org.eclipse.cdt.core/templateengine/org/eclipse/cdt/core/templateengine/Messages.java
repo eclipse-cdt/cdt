@@ -8,23 +8,18 @@
  * Contributors:
  *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.templateengine;
+package org.eclipse.cdt.core.templateengine;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class Messages {
-	private static final ResourceBundle RESOURCE_BUNDLE =
-			ResourceBundle.getBundle(Messages.class.getName());
+class Messages extends NLS {
+	public static String TemplateCore_init_failed;
 
-	private Messages() {
+	static {
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	private Messages() {
 	}
 }

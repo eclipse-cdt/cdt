@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine;
 
@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -61,17 +60,17 @@ public class TemplateEngineUIUtil {
 					message = null;
 				}
 			} else {
-				status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1, TemplateEngineMessages.getString("TemplateEngine.internalError") + message, t);	 //$NON-NLS-1$
+				status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1, Messages.getString("TemplateEngine.internalError") + message, t);	 //$NON-NLS-1$
 			}
 		} else {
-			status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1, TemplateEngineMessages.getString("TemplateEngine.internalError") + message, null);	 //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, CUIPlugin.getPluginId(), -1, Messages.getString("TemplateEngine.internalError") + message, null);	 //$NON-NLS-1$
 		}
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if(window == null){
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			window = windows[0];
 		}
-		ErrorDialog.openError(window.getShell(), TemplateEngineMessages.getString("TemplateEngine.templateEngine"), message, status); //$NON-NLS-1$
+		ErrorDialog.openError(window.getShell(), Messages.getString("TemplateEngine.templateEngine"), message, status); //$NON-NLS-1$
 	}
 	
 	/**
@@ -87,7 +86,7 @@ public class TemplateEngineUIUtil {
 			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			window = windows[0];
 		}
-		ErrorDialog.openError(window.getShell(), TemplateEngineMessages.getString("TemplateEngine.templateEngine"), message, status); //$NON-NLS-1$
+		ErrorDialog.openError(window.getShell(), Messages.getString("TemplateEngine.templateEngine"), message, status); //$NON-NLS-1$
 	}
 
 }

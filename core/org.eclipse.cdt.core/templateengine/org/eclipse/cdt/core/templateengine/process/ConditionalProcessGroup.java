@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
-import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -211,7 +210,7 @@ public class ConditionalProcessGroup {
 		}
 		if (!isConditionValueTrue()) {
 			List<IStatus> statuses = new ArrayList<IStatus>(1);
-			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO, TemplateEngineMessages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
+			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO, Messages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
 			return statuses;
 		}
 		List<IStatus> statuses = new ArrayList<IStatus>(processes.size());
@@ -234,7 +233,7 @@ public class ConditionalProcessGroup {
 			Map<String, String> valueStore = template.getValueStore();
 			for(String value : macros) {			
 				if (valueStore.get(value) == null) {
-					return TemplateEngineMessages.getString("ConditionalProcessGroup.unexpandableMacro") + value; //$NON-NLS-1$
+					return Messages.getString("ConditionalProcessGroup.unexpandableMacro") + value; //$NON-NLS-1$
 				}
 			}
 		}

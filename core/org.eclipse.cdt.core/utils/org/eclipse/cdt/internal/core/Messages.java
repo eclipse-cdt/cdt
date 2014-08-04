@@ -6,14 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.messages"; //$NON-NLS-1$
 	public static String Util_unexpectedError;
 	public static String Addr_valueOutOfRange;
 	public static String CommandLauncher_CommandCancelled;
@@ -57,8 +56,8 @@ public class Messages extends NLS {
 	public static String XmlUtil_InternalErrorSerializing;
 
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

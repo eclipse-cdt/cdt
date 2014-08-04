@@ -13,14 +13,14 @@ package org.eclipse.cdt.internal.core.natives;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.natives.messages"; //$NON-NLS-1$
 	public static String Util_exception_cannotCreatePty;
 	public static String Util_exception_cannotSetTerminalSize;
 	public static String Util_error_cannotRun;
 	public static String Util_exception_closeError;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

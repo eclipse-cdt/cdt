@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -81,7 +80,7 @@ public class ProjectCreatedActions {
 	 */
 	public IManagedBuildInfo createProject(IProgressMonitor monitor, String indexerId, boolean isCProject) throws CoreException, BuildException {
 		if(!areFieldsValid()) {
-			throw new IllegalArgumentException(TemplateEngineMessages.getString("ProjectCreatedActions.InsufficientInformation")); //$NON-NLS-1$
+			throw new IllegalArgumentException(Messages.ProjectCreatedActions_insufficient_information);
 		}
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

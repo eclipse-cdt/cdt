@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
-import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -119,8 +118,8 @@ public class Process {
 			for (int i= 0; i < args.length; i++) {
 				ProcessArgument arg = args[i];
 				if ((macro = arg.getFirstNonExpandableMacro()) != null) {
-					return TemplateEngineMessages.getString("Process.argument") + arg.getName() + //$NON-NLS-1$
-							TemplateEngineMessages.getString("Process.expandableMacro") + macro; //$NON-NLS-1$
+					return Messages.getString("Process.argument") + arg.getName() + //$NON-NLS-1$
+							Messages.getString("Process.expandableMacro") + macro; //$NON-NLS-1$
 				}
 			}
 		}
@@ -136,11 +135,11 @@ public class Process {
 	private String getProcessMessage(int code, String msg) {
 		switch (code) {
 		case IStatus.ERROR:
-			return id + TemplateEngineMessages.getString("Process.error") + msg; //$NON-NLS-1$
+			return id + Messages.getString("Process.error") + msg; //$NON-NLS-1$
 		case IStatus.OK:
-			return id + TemplateEngineMessages.getString("Process.success") + msg; //$NON-NLS-1$
+			return id + Messages.getString("Process.success") + msg; //$NON-NLS-1$
 		default:
-			return id + TemplateEngineMessages.getString("Process.info") + msg; //$NON-NLS-1$
+			return id + Messages.getString("Process.info") + msg; //$NON-NLS-1$
 		}
 	}
 
@@ -152,7 +151,7 @@ public class Process {
 	 */
 	public IStatus process(IProgressMonitor monitor) throws ProcessFailureException {
 		if (processRunner == null) {
-			throw new ProcessFailureException(TemplateEngineMessages.getString("Process.unknownProcess") + processType); //$NON-NLS-1$
+			throw new ProcessFailureException(Messages.getString("Process.unknownProcess") + processType); //$NON-NLS-1$
 		}
 		if (!processRunner.areArgumentsMatchingRequiredParameters(args)) {
 			throw new ProcessFailureException(processRunner.getArgumentsMismatchMessage(args));
@@ -162,7 +161,7 @@ public class Process {
 		}
 		resolve();
 		processRunner.process(template, args, id, monitor);
-		return new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.OK, getProcessMessage(IStatus.OK, TemplateEngineMessages.getString("Process.executedSuccessfully") + Arrays.asList(args)), null); //$NON-NLS-1$
+		return new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.OK, getProcessMessage(IStatus.OK, Messages.getString("Process.executedSuccessfully") + Arrays.asList(args)), null); //$NON-NLS-1$
 	}
 
 	private void resolve() {

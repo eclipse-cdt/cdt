@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.core.templateengine.TemplateEngineMessages;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +53,7 @@ public class ProcessHelper {
 		RandomAccessFile raf = null;
 		if (!toFile.exists()) {
 			throw new FileNotFoundException(MessageFormat.format(
-					TemplateEngineMessages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
+					Messages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
 					toFile.getPath()));
 		} else {
 			try {
@@ -121,7 +120,7 @@ public class ProcessHelper {
 		StringBuilder buffer = new StringBuilder();
 		if (!new java.io.File(source.getFile()).exists()) {
 			throw new FileNotFoundException(MessageFormat.format(
-					TemplateEngineMessages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
+					Messages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
 					source.getFile()));
 		} else {
 			contentsReader = new InputStreamReader(source.openStream());

@@ -6,18 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.util;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS {
-	private static final String BUNDLE_NAME= Messages.class.getName();
+import com.ibm.icu.text.MessageFormat;
 
+public class Messages extends NLS {
 	public static String EditorUtility_calculatingChangedRegions_message;
 	public static String EditorUtility_error_calculatingChangedRegions;
 
@@ -34,6 +32,6 @@ public class Messages extends NLS {
 	}
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 }

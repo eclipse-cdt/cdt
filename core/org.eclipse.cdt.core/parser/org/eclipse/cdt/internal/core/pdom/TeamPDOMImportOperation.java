@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,7 +34,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-import org.eclipse.cdt.internal.core.pdom.indexer.Messages;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -95,17 +93,9 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 				doImportIndex(importFile, pm);
 				fSuccess= true;
 			}
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
-		} 
-		catch (ZipException e) {
-			ex= e;
-		} 
-		catch (IOException e) {
-			ex= e;
-		} 
-		catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			ex= e;
 		} 
 		
@@ -149,8 +139,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		try {
 			importIndex(zip, monitor);
 			checksums= getChecksums(zip);
-		}
-		finally {
+		} finally {
 			try {
 				zip.close();
 			} catch (IOException e) {
@@ -181,12 +170,10 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					if (obj instanceof Map<?, ?>) {
 						return (Map<?,?>) obj;
 					}
-				}
-				finally {
+				} finally {
 					input.close();
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				CCorePlugin.log(e);
 			}
 		}
@@ -202,10 +189,10 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		WritablePDOM pdom= (WritablePDOM) obj;
 		pdom.acquireReadLock();
 		try {
-			List<FileAndChecksum> filesToCheck= new ArrayList<FileAndChecksum>();		
+			List<FileAndChecksum> filesToCheck= new ArrayList<>();		
 			if (!pdom.isSupportedVersion()) {
 				throw new CoreException(CCorePlugin.createStatus(					
-						NLS.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, fProject.getElementName())));
+						NLS.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, INDEX_NAME, fProject.getElementName())));
 			}
 
 			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -246,8 +233,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			
 			List<FileAndChecksum> updateTimestamps= getUnchangedWithDifferentTimestamp(checksums, filesToCheck, monitor);
 			updateIndex(pdom, 1, filesToDelete, updateTimestamps, monitor);
-		}
-		finally {
+		} finally {
 			pdom.releaseReadLock();
 		}
 	}
@@ -279,8 +265,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					}
 				}
 			}
-		}
-		finally {
+		} finally {
 			pdom.releaseWriteLock(giveupReadlocks, true);
 		}
 	}
@@ -294,7 +279,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			return Collections.emptyList();
 		} 
 
-		List<FileAndChecksum> result= new ArrayList<TeamPDOMImportOperation.FileAndChecksum>();
+		List<FileAndChecksum> result= new ArrayList<>();
 		for (FileAndChecksum cs : filesToCheck) {
 			checkMonitor(monitor);
 			
@@ -313,10 +298,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 								}
 							}
 						}
-					} catch (IOException e) {
-						CCorePlugin.log(e);
-						result.add(cs);
-					} catch (CoreException e) {
+					} catch (IOException | CoreException e) {
 						CCorePlugin.log(e);
 						result.add(cs);
 					}

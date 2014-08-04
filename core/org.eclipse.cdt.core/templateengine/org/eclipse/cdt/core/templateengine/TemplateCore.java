@@ -26,9 +26,7 @@ import org.eclipse.cdt.core.templateengine.process.TemplateProcessHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import com.ibm.icu.text.MessageFormat;
-
+import org.eclipse.osgi.util.NLS;
 
 /**
  * TemplateCore class is responsible providing the non-UI part of template and
@@ -44,7 +42,7 @@ public class TemplateCore {
 	private static final String ID = "id"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
 
-	private static Map<TemplateInfo, TemplateCore> templateCache = new HashMap<TemplateInfo, TemplateCore>();
+	private static Map<TemplateInfo, TemplateCore> templateCache = new HashMap<>();
 
 	public static final Comparator<TemplateCore> TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR = new Comparator<TemplateCore>() {
 		@Override
@@ -74,7 +72,7 @@ public class TemplateCore {
 		try {
 			descriptorURL= TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(), templateInfo.getTemplatePath());
 		} catch(IOException ioe) {
-			String msg= MessageFormat.format(TemplateEngineMessages.getString("TemplateCore.InitFailed"), new Object[]{templateInfo.getTemplatePath()}); //$NON-NLS-1$
+			String msg= NLS.bind(Messages.TemplateCore_init_failed, templateInfo.getTemplatePath());
 			throw new TemplateInitializationException(msg);
 		}
 		if(descriptorURL==null)

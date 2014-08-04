@@ -6,13 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine;
 
 import java.io.IOException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +20,10 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-
 
 /**
  * This class contains methods to get first process block element, next process block 
@@ -50,7 +49,7 @@ public class TemplateDescriptor {
 	 * @throws TemplateInitializationException
 	 */
 	public TemplateDescriptor(URL descriptorURL, String pluginId) throws TemplateInitializationException {
-		String msg= MessageFormat.format(TemplateEngineMessages.getString("TemplateCore.InitFailed"), new Object[]{descriptorURL}); //$NON-NLS-1$
+		String msg= NLS.bind(Messages.TemplateCore_init_failed, descriptorURL.toString());
 		try {
 			this.document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(descriptorURL.openStream());
 		} catch(ParserConfigurationException pce) {

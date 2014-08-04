@@ -6,14 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.pdom.export.messages"; //$NON-NLS-1$
 	public static String GeneratePDOM_GenericGenerationFailed;
 	public static String GeneratePDOM_Incomplete;
 	public static String GeneratePDOM_NullLocationConverter;
@@ -25,9 +24,10 @@ public class Messages extends NLS {
 	public static String GeneratePDOMApplication_Initializing;
 	public static String GeneratePDOMApplication_InvalidIndexerID;
 	public static String GeneratePDOMApplication_UsingDefaultProjectProvider;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

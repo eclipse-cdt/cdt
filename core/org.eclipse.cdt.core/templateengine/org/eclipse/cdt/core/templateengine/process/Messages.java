@@ -13,11 +13,18 @@ package org.eclipse.cdt.core.templateengine.process;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-class Messages {
+import org.eclipse.osgi.util.NLS;
+
+class Messages extends NLS {
 	private static final ResourceBundle RESOURCE_BUNDLE =
 			ResourceBundle.getBundle(Messages.class.getName());
 
 	public static String ProcessRunner_missingArg;
+
+	static {
+		// Initialize resource bundle.
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
+	}
 
 	private Messages() {
 	}

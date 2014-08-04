@@ -9,10 +9,10 @@
         </filter>
     </resource>
     <resource path="templateengine/org/eclipse/cdt/core/templateengine/TemplateEngineMessages.java" type="org.eclipse.cdt.core.templateengine.TemplateEngineMessages">
-        <filter id="305365105">
+        <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.templateengine.TemplateEngineMessages"/>
-                <message_argument value="org.eclipse.cdt.core_5.8.0"/>
+                <message_argument value="getString(String)"/>
             </message_arguments>
         </filter>
     </resource>

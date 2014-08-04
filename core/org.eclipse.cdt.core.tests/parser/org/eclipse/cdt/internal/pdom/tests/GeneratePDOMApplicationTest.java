@@ -75,7 +75,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		projectsToDeleteOnTearDown.clear();
-		target = nonExistentTempFile("temp", "pdom");
+		target = nonExistentTempFile("temp", ".pdom");
 	}
 
 	@Override

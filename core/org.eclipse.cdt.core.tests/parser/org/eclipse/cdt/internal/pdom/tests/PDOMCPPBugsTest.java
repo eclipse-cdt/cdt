@@ -109,7 +109,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		// this test is currently failing on the cdt test build machine, but
 		// not on my local linux or windows boxes.
 
-		File tmp = nonExistentTempFile("temp", "pdom");
+		File tmp = nonExistentTempFile("temp", ".pdom");
 		IIndexLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		final PDOMManager pdomManager = CCoreInternals.getPDOMManager();
 		pdomManager.exportProjectPDOM(cproject, tmp, cvr, null);

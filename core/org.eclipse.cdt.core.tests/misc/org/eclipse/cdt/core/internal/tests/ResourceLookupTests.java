@@ -217,7 +217,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		fProject.create(new NullProgressMonitor());
 		fProject.open(new NullProgressMonitor());
 		createFolder(fProject, "folder1");
-		File f= createTempFile("extern", "h");
+		File f= createTempFile("extern", ".h");
 		IPath location= Path.fromOSString(f.getAbsolutePath());
 		IFile file1= fProject.getFile("linked1");
 		IFile file2= fProject.getFile("linked2.h");

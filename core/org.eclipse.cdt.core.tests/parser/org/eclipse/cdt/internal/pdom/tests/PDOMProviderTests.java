@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.eclipse.cdt.core.testplugin.CProjectHelper.createCCProject;
+
 import java.io.File;
 import java.net.URI;
 
@@ -53,10 +55,10 @@ public class PDOMProviderTests extends PDOMTestBase {
 	}
 
 	public void testLifeCycle() throws Exception {
-		final File tempPDOM= createTempFile("foo", "bar");
+		final File tempPDOM= createTempFile("temp", ".pdom");
 
 		{
-			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			ICProject cproject= createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			waitForIndexer(cproject);
 
@@ -77,7 +79,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
-		final ICProject cproject2= CProjectHelper.createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject2= createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
 		waitForIndexer(cproject2);
 
@@ -125,10 +127,10 @@ public class PDOMProviderTests extends PDOMTestBase {
 	}
 
 	public void testCommonSDK() throws Exception {
-		final File tempPDOM= createTempFile("foo", "bar");
+		final File tempPDOM= createTempFile("temp", ".pdom");
 
 		{
-			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			ICProject cproject= createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			waitForIndexer(cproject);
 
@@ -148,12 +150,12 @@ public class PDOMProviderTests extends PDOMTestBase {
 			CProjectHelper.delete(cproject);
 		}
 
-		final ICProject cproject3= CProjectHelper.createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject3= createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject3.getProject(), new Path("/source.cpp"), "namespace Y { class A {}; }\n\n");
 		waitForIndexer(cproject3);
 
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
-		final ICProject cproject2= CProjectHelper.createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject2= createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
 		waitForIndexer(cproject2);
 
@@ -182,7 +184,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 						return cproject2.equals(project) || cproject3.equals(project);
 					}
 				}
-		));
+				));
 
 		{
 			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2, A_FRAGMENT_OPTIONS);
@@ -243,10 +245,10 @@ public class PDOMProviderTests extends PDOMTestBase {
 	}
 	
 	public void testVersionMismatchOfExternalPDOM_178998() throws Exception {
-		final File tempPDOM= createTempFile("foo", "bar");
+		final File tempPDOM= createTempFile("temp", ".pdom");
 
 		{
-			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			ICProject cproject= createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			waitForIndexer(cproject);
 			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
@@ -265,7 +267,8 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
-		final ICProject cproject2= CProjectHelper.createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject2=
+				createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
 		waitForIndexer(cproject2);
 

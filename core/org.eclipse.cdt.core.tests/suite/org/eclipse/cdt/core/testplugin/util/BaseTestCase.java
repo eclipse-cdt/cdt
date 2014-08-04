@@ -110,7 +110,7 @@ public class BaseTestCase extends TestCase {
 
 	protected File nonExistentTempFile(String prefix, String suffix) {
 		File file= new File(System.getProperty("java.io.tmpdir"),
-				prefix + System.currentTimeMillis() + '.' + suffix);
+				prefix + System.currentTimeMillis() + suffix);
 		filesToDeleteOnTearDown.add(file);
 		return file;
 	}

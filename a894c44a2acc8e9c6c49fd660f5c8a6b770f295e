@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_fb97ac4f",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-04T15:08:52Z",
+      "side": 1,
+      "message": "This is tricky because the resulting IRegisterDMData array must keep the order of the requesting regDmcArray array.  I don\u0027t think this is a very good API.\n\nInstead, we should use IRegisters.getRegisterData multiple times.  It does seem less efficient, but that above API is not solid.\n\nYou will notice that this is how the view model in DSF handles things for other services.",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5ba500b5",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-04T15:08:52Z",
+      "side": 1,
+      "message": "We don\u0027t usually have such methods in DSF, where we return the data for all existing groups.  The problem is that each element of resulting array are not mapped to its corresponding RegisterGroupDMC.\n\nInstead, we should use IRegisters.getRegisterGroupData multiple times.  It does seem less efficient, but that above API is not solid.",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5b2ea094",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-04T15:08:52Z",
+      "side": 1,
+      "message": "Do we need?\nJavadoc is not descriptive enough, I don\u0027t know what it should do.",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

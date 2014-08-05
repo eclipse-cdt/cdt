@@ -16,6 +16,7 @@ import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
+import org.eclipse.cdt.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.cdt.launchbar.ui.internal.dialogs.LaunchConfigurationEditDialog;
 import org.eclipse.cdt.launchbar.ui.internal.dialogs.NewLaunchConfigWizard;
@@ -60,6 +61,7 @@ import org.eclipse.ui.PlatformUI;
 public class ConfigSelector extends CSelector {
 
 	private LaunchBarUIManager uiManager;
+	private DefaultDescriptorLabelProvider defaultProvider;
 	
 	private static final String[] noConfigs = new String[] { "No Launch Configurations" };
 	
@@ -67,6 +69,7 @@ public class ConfigSelector extends CSelector {
 		super(parent, style);
 
 		setToolTipText("Launch configuration");
+		defaultProvider = new DefaultDescriptorLabelProvider();
 
 		setContentProvider(new IStructuredContentProvider() {
 			@Override
@@ -98,7 +101,7 @@ public class ConfigSelector extends CSelector {
 						return labelProvider.getImage(element);
 					}
 				}
-				return super.getImage(element);
+				return defaultProvider.getImage(element);
 			}
 			@Override
 			public String getText(Object element) {
@@ -110,10 +113,8 @@ public class ConfigSelector extends CSelector {
 					if (labelProvider != null) {
 						return labelProvider.getText(element);
 					}
-					// Default
-					return configDesc.getName();
 				}
-				return super.getText(element);
+				return defaultProvider.getText(element);
 			}
 		});
 

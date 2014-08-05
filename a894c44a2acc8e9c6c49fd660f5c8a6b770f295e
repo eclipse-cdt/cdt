@@ -50,6 +50,24 @@
       "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_38447ccf",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T14:37:46Z",
+      "side": 1,
+      "message": "I\u0027ve been thinking more about this one and I think it should be removed.  Having a group that contains all the registers is an implementation detail and may not be true for all DSF integrations.\n\nWe should be able to do what we need using IRegisters.getRegisterGroups() and IRegisters.getRegisterGroupData()",
+      "parentUuid": "c7672b30_5b2ea094",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

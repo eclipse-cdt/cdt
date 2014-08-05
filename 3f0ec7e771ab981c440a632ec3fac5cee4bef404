@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_5b41720b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T18:14:26Z",
+      "side": 1,
+      "message": "Here we should trigger an IGroupChangedDMEvent to update the label (name) of the group",
+      "revId": "3f0ec7e771ab981c440a632ec3fac5cee4bef404",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bbc1a6fd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 659,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T18:14:26Z",
+      "side": 1,
+      "message": "Here we should trigger an IRegistersChangedDMEvent to update the children (registers) of the group, instead of doing it below.",
+      "revId": "3f0ec7e771ab981c440a632ec3fac5cee4bef404",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9bc66a12",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T18:14:26Z",
+      "side": 1,
+      "message": "So, this one seems to update the name as well, but I think we shouldn\u0027t send this, unless the list of registers has changed.",
+      "revId": "3f0ec7e771ab981c440a632ec3fac5cee4bef404",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7bdf0ed2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T18:14:26Z",
+      "side": 1,
+      "message": "Don\u0027t cast without checking.  Please do an instanceof here and an assert if it fails.",
+      "revId": "3f0ec7e771ab981c440a632ec3fac5cee4bef404",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3bd596b2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T18:14:26Z",
+      "side": 1,
+      "message": "I think we should only send the event once per relevant container.  This event causes the view(s) to redraw and should be used only when necessary.",
+      "revId": "3f0ec7e771ab981c440a632ec3fac5cee4bef404",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dbd0e2c4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 1002,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-08-05T18:14:26Z",
+      "side": 1,
+      "message": "I wonder if registers are unique per container? We know some registers only exist for a particular container and not another, but could there be a register that is shared between two containers?\n\nSay we debug two 64bit processes. Could changing the value of a register in one process affect the value of a register in the other process?\n\nIf not, your solution is better.\n\nIf so, we need to refresh all registers, not just the once for the current container. In that case, might as well send a GroupsChangedDMEvent, to refresh all groups.",
+      "revId": "3f0ec7e771ab981c440a632ec3fac5cee4bef404",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,50 +57,31 @@ public class ProblemLocation implements IProblemLocation {
 				((IPersistableProblem) problem).getMarkerType() : ICModelMarker.C_MODEL_PROBLEM_MARKER;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.text.correction.IProblemLocation#getProblemId()
-	 */
 	@Override
 	public int getProblemId() {
 		return fId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.text.correction.IProblemLocation#getProblemArguments()
-	 */
 	@Override
 	public String[] getProblemArguments() {
 		return fArguments;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.text.correction.IProblemLocation#getLength()
-	 */
 	@Override
 	public int getLength() {
 		return fLength;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.text.correction.IProblemLocation#getOffset()
-	 */
 	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IProblemLocation#isError()
-	 */
 	@Override
 	public boolean isError() {
 		return fIsError;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IProblemLocation#getMarkerType()
-	 */
 	@Override
 	public String getMarkerType() {
 		return fMarkerType;
@@ -122,15 +103,12 @@ public class ProblemLocation implements IProblemLocation {
 	}
 
 	private String getErrorCode(int code) {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		if ((code & IProblem.SCANNER_RELATED) != 0) {
 			buf.append("ScannerRelated + "); //$NON-NLS-1$
 		}
 		if ((code & IProblem.PREPROCESSOR_RELATED) != 0) {
 			buf.append("PreprocessorRelated + "); //$NON-NLS-1$
-		}
-		if ((code & IProblem.SEMANTICS_RELATED) != 0) {
-			buf.append("SemanticsRelated + "); //$NON-NLS-1$
 		}
 		if ((code & IProblem.INTERNAL_RELATED) != 0) {
 			buf.append("Internal + "); //$NON-NLS-1$

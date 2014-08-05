@@ -37,9 +37,11 @@ public class ParseError extends Error {
 		TIMEOUT_OR_CANCELLED,
 
 		/**
-		 * The user preference for {@link CCorePreferenceConstants#SCALABILITY_LIMIT_TOKENS_PER_TU} is enabled
-		 * and more than {@link CCorePreferenceConstants#SCALABILITY_MAXIMUM_TOKENS} tokens were created while
-		 * parsing a single translation unit.
+		 * The user preference for
+		 * {@link org.eclipse.cdt.core.CCorePreferenceConstants#SCALABILITY_LIMIT_TOKENS_PER_TU} is
+		 * enabled and more than
+		 * {@link org.eclipse.cdt.core.CCorePreferenceConstants#SCALABILITY_MAXIMUM_TOKENS} tokens
+		 * were created while parsing a single translation unit.
 		 * @since 5.7
 		 */
 		TOO_MANY_TOKENS

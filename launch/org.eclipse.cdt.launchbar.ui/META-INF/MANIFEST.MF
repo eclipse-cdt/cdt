@@ -19,4 +19,8 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.launchbar.ui
+Export-Package: org.eclipse.cdt.launchbar.ui,
+ org.eclipse.cdt.launchbar.ui.internal;x-internal:=true,
+ org.eclipse.cdt.launchbar.ui.internal.commands;x-internal:=true,
+ org.eclipse.cdt.launchbar.ui.internal.controls;x-internal:=true,
+ org.eclipse.cdt.launchbar.ui.internal.dialogs;x-internal:=true

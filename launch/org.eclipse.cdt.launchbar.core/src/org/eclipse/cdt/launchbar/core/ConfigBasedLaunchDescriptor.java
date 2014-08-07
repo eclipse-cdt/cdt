@@ -52,7 +52,7 @@ public class ConfigBasedLaunchDescriptor extends AbstractLaunchDescriptor implem
 		if (type instanceof ConfigBasedLaunchDescriptorType) {
 			return ((ConfigBasedLaunchDescriptorType) type).getLaunchConfigurationType();
 		}
-		return null;
+		throw new IllegalStateException("Cannot determine configuration type for " + this);
 	}
 
 	@Override

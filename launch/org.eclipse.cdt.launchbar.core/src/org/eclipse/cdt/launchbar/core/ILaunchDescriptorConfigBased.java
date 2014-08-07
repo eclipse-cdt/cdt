@@ -24,6 +24,8 @@ public interface ILaunchDescriptorConfigBased extends ILaunchDescriptor {
 
 	/**
 	 * Return launch configuration type on which it is based (cannot be null)
+	 * 
+	 * @NonNull
 	 */
 	public ILaunchConfigurationType getLaunchConfigurationType();
 }

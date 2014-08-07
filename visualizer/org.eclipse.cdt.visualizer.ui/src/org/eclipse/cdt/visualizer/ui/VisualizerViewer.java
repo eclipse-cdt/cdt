@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
  *     Marc Dumais (Ericsson) - Bug 399281
+ *     Marc Dumais (Ericsson) - Bug 441376
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui;
@@ -360,7 +361,7 @@ public class VisualizerViewer extends PageBook
 			// we already do that whenever the workbench selection changes
 
 			// let the visualizer know it's been shown
-			m_currentVisualizer.visualizerDeselected();
+			m_currentVisualizer.visualizerSelected();
 		}
 	}
 	

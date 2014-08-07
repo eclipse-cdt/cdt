@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * An update tester for element format event (ElementFormatEvent). This tester
- * flush partial properties for elements that are affected by a change of
+ * flushes partial properties for elements that are affected by a change of
  * element format.
  * 
  * @since 2.2
@@ -29,9 +29,9 @@ public class ElementFormatUpdateTester implements IElementUpdateTesterExtension 
 	protected Set<String> propertiesWithPrefixes;
 	protected ElementFormatEvent formatEvent;
 
-	public ElementFormatUpdateTester(ElementFormatEvent event, Set<String> propertiesWithPrefixes) {
+	public ElementFormatUpdateTester(ElementFormatEvent event, Set<String> properties) {
 		formatEvent = event;
-		this.propertiesWithPrefixes = propertiesWithPrefixes;
+		propertiesWithPrefixes = properties;
 	}
 
 	@Override

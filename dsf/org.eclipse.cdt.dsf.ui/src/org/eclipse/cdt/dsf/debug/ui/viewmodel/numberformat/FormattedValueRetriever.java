@@ -158,7 +158,7 @@ public class FormattedValueRetriever {
     @ConfinedToDsfExecutor("node.getExecutor()")
     public void update(final IPropertiesUpdate updates[], final RequestMonitor rm) 
     {
-    	retreiveElementActiveFormat(updates, new DataRequestMonitor<Map<IPropertiesUpdate, String>>(ImmediateExecutor.getInstance(), rm) {
+    	retrieveElementActiveFormat(updates, new DataRequestMonitor<Map<IPropertiesUpdate, String>>(ImmediateExecutor.getInstance(), rm) {
     		@Override
     		protected void handleCompleted() {
     			final Map<IPropertiesUpdate, String> elementFormatMap = getData();
@@ -205,7 +205,7 @@ public class FormattedValueRetriever {
     	});
     }
     
-    private void retreiveElementActiveFormat(final IPropertiesUpdate updates[], final DataRequestMonitor<Map<IPropertiesUpdate, String>> rm) {
+    private void retrieveElementActiveFormat(final IPropertiesUpdate updates[], final DataRequestMonitor<Map<IPropertiesUpdate, String>> rm) {
     	if (fElementFormatProvider == null) {
     		rm.setData(new HashMap<IPropertiesUpdate, String>(0));
     		rm.done();

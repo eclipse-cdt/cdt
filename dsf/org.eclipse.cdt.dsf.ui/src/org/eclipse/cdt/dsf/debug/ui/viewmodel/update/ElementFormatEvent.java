@@ -13,9 +13,9 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.update;
 import java.util.Set;
 
 /**
- * An event that indicates element format is changed. Even when a viewer is
- * configured to be in a manual update mode, there is a need to update of the
- * labels/states of the element.
+ * An event that indicates the format of certain elements has changed.
+ * Even when a viewer is configured to be in a manual update mode, there is a need to 
+ * update the labels/states of elements.
  * 
  * @since 2.2
  */
@@ -25,21 +25,22 @@ public class ElementFormatEvent {
 
 	/**
 	 * Constructor
-	 * @param elements the elements that have their formats changed
-	 * @param applyDepth how deep each of the elements apply to itself and their child elements.
-	 *        -1 - recursively apply child elements to an infinite depth;
-	 *         0 - does not apply to the element itself and its child elements;
-	 *         1 - apply to the element itself only;
+	 * @param elems The set of elements that have their formats changed
+	 * @param depth The depth to which the change of format applies, with respect to the
+	 *              affected elements and their children:
+	 *        -1 - recursively applies to the element and its children to an infinite depth;
+	 *         0 - does not apply to the element itself or its children elements;
+	 *         1 - applies to the element itself only;
 	 *         2 - apply to the element, its direct children and grand-children;
 	 *         and so on for other positive numbers.
 	 */
-	public ElementFormatEvent(Set<Object> elements, int applyDepth) {
-		this.elements = elements;
-		this.applyDepth = applyDepth;
+	public ElementFormatEvent(Set<Object> elems, int depth) {
+		elements = elems;
+		applyDepth = depth;
 	}
 
 	/**
-	 * Get the elements that has formats changed.
+	 * Get the elements for which the format has changed.
 	 * 
 	 * @return the elements
 	 */
@@ -48,8 +49,8 @@ public class ElementFormatEvent {
 	}
 
 	/**
-	 * Get the depth that how each of the elements apply to itself and their
-	 * child elements.
+	 * Get the depth to which the change of format applies, with respect to the
+	 * affected elements and their children.
 	 * 
 	 * @return the apply depth.
 	 */

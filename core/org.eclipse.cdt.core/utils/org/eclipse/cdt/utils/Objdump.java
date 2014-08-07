@@ -12,6 +12,7 @@ package org.eclipse.cdt.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class Objdump {
 	public Objdump(String command, String[] params, String file) throws IOException {
 		init(command, params, file);
 	}
-	
+
 	public Objdump(String file) throws IOException {
 		this("objdump", new String[0], file); //$NON-NLS-1$
 	}
@@ -60,18 +61,54 @@ public class Objdump {
 		}
 	}
 
-	public byte[] getOutput() throws IOException {
-		Process objdump = ProcessFactory.getFactory().exec(args);
-		StringBuffer buffer = new StringBuffer();
-		BufferedReader stdout = new BufferedReader(new InputStreamReader(objdump.getInputStream()));
-		char[] buf = new char[512];
-		int len;
-		while ((len = stdout.read(buf, 0, buf.length)) != -1) {
-			buffer.append(buf, 0, len);
+	@Override
+	public String toString() {
+		StringBuilder b = new StringBuilder();
+		b.append(args[0]);
+		for (int i = 1; i < args.length; i++) {
+			b.append(" "); //$NON-NLS-1$
+			b.append(args[i]);
 		}
-		stdout.close();
-		objdump.destroy();
-		return buffer.toString().getBytes();
+		return b.toString();
+	}
+	/**
+	 * Limit output to number of bytes
+	 */
+	public byte[] getOutput(int limitBytes) throws IOException {
+		Process objdump = ProcessFactory.getFactory().exec(args);
+		try {
+			StringBuffer buffer = new StringBuffer();
+			BufferedReader stdout = new BufferedReader(new InputStreamReader(
+					objdump.getInputStream()));
+			char[] buf = new char[4096];
+			int len;
+			while ((len = stdout.read(buf, 0, buf.length)) != -1) {
+				if (limitBytes > 0 && buffer.length() + len >= limitBytes) {
+					buffer.append(buf, 0, Math.min(len, limitBytes - buffer.length()));
+					break;
+				}
+				buffer.append(buf, 0, len);
+			}
+			try {
+				stdout.close();
+			} catch (IOException e) {
+				// ignore that
+			}
+			return buffer.toString().getBytes();
+		} finally {
+			objdump.destroy();
+		}
+	}
+
+	public byte[] getOutput() throws IOException {
+		return getOutput(0);
+	}
+
+	public InputStream getInputStream() throws IOException {
+		Process objdump = ProcessFactory.getFactory().exec(args);
+		objdump.getOutputStream().close();
+		objdump.getErrorStream().close();
+		return objdump.getInputStream();
 	}
 
 	public void dispose() {

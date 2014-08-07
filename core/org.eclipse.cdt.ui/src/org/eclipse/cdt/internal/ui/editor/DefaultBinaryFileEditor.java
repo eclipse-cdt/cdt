@@ -119,10 +119,22 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 				if (object != null) {
 					IGnuToolFactory factory= (IGnuToolFactory) object.getBinaryParser().getAdapter(IGnuToolFactory.class);
 					if (factory != null) {
-						Objdump objdump= factory.getObjdump(object.getPath());
+						Objdump objdump = factory.getObjdump(object.getPath());
 						if (objdump != null) {
 							try {
-								fStorage= new FileStorage(new ByteArrayInputStream(objdump.getOutput()), object.getPath());
+								// limit editor to X MB, if more - users should use objdump in command
+								// this is UI blocking call, on 56M binary it takes more than 15 min
+								// and generates at least 2.5G of assembly
+								int limitBytes = 6 * 1024 * 1024; // this can run reasonably within seconds
+								byte[] output = objdump.getOutput(limitBytes);
+								if (output.length >= limitBytes) {
+									// add a message for user
+									String text = CEditorMessages.DefaultBinaryFileEditor_TruncateMessage;
+									String message = "\n\n--- " + text + " ---\n" + objdump.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+									System.arraycopy(message.getBytes(), 0, output,
+											limitBytes - message.length(), message.length());
+								}
+								fStorage = new FileStorage(new ByteArrayInputStream(output), object.getPath());
 							} catch (IOException exc) {
 								CUIPlugin.log(exc);
 							}

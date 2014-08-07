@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2011 Texas Instruments and others
+ * Copyright (c) 2011, 2014 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,8 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 
 		SelectFormatAction(IElementFormatProvider provider, IPresentationContext context, IVMNode[] nodes,
 				Object viewerInput, TreePath[] elementPaths, String formatId) {
-			super(formatId == null ? "Restore To Preference" : FormattedValueVMUtil.getFormatLabel(formatId), //$NON-NLS-1$
+			super(formatId == null ? MessagesForNumberFormat.ElementNumberFormatContribution_RestoreToPreference_label : 
+				                     FormattedValueVMUtil.getFormatLabel(formatId),
 					formatId == null ? AS_PUSH_BUTTON : AS_RADIO_BUTTON);
 			fProvider = provider;
 			fContext = context;

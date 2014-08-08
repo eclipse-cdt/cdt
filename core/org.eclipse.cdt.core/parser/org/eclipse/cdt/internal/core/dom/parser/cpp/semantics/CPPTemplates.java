@@ -1148,8 +1148,8 @@ public class CPPTemplates {
 			IType origType = types[i];
 			IType newType;
 			if (origType instanceof ICPPParameterPackType) {
-				origType= ((ICPPParameterPackType) origType).getType();
-				int packSize= determinePackSize(origType, tpMap);
+				IType innerType= ((ICPPParameterPackType) origType).getType();
+				int packSize= determinePackSize(innerType, tpMap);
 				if (packSize == PACK_SIZE_FAIL || packSize == PACK_SIZE_NOT_FOUND) {
 					newType= new ProblemBinding(point, IProblemBinding.SEMANTIC_INVALID_TYPE,
 							types[i] instanceof IBinding ? ((IBinding) types[i]).getNameCharArray() : null);
@@ -1160,7 +1160,7 @@ public class CPPTemplates {
 					System.arraycopy(result, 0, newResult, 0, j);
 					result= newResult;
 					for (int k= 0; k < packSize; k++) {
-						result[j++]= instantiateType(origType, tpMap, k, within, point);
+						result[j++]= instantiateType(innerType, tpMap, k, within, point);
 					}
 					continue;
 				}

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_661ac5fb",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-08-08T20:41:18Z",
+      "side": 1,
+      "message": "get shell from control of current element,\ni.e. getControl().getShell()",
+      "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_c627593d",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-08-08T20:41:18Z",
+      "side": 1,
+      "message": "we call it Launch Target here",
+      "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_06dcb191",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-08-08T20:41:18Z",
+      "side": 1,
+      "message": "keys and values are the same? Label provider will use key here",
+      "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

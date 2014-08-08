@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -34,10 +35,17 @@ import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
  * @author AChapiro
  */
 public class CFormattingStrategy extends ContextBasedFormattingStrategy {
-	/** Documents to be formatted by this strategy */
-	private final Deque<IDocument> fDocuments= new ArrayDeque<>();
-	/** Partitions to be formatted by this strategy */
-	private final Deque<TypedPosition> fPartitions= new ArrayDeque<>();
+	private static class WorkItem {
+		final IDocument document;
+		final TypedPosition partition;
+
+		WorkItem(IDocument document, TypedPosition partition) {
+			this.document = document;
+			this.partition = partition;
+		}
+	}
+
+	private final Deque<WorkItem> fWorkItems= new ArrayDeque<>();
 
 	/**
 	 * Creates a new formatting strategy.
@@ -49,28 +57,31 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	@Override
 	public void format() {
 		super.format();
-		
-		IDocument document= fDocuments.removeFirst();
-		TypedPosition partition= fPartitions.removeFirst();
-		
-		if (document != null && partition != null) {
-			try {
-				@SuppressWarnings("unchecked")
-				Map<String, String> preferences = getPreferences();
-				TextEdit edit = CodeFormatterUtil.format(
-						CodeFormatter.K_TRANSLATION_UNIT, document.get(),
-						partition.getOffset(), partition.getLength(), 0,
-						TextUtilities.getDefaultLineDelimiter(document),
-						preferences);
 
-				if (edit != null)
-					edit.apply(document);
-			} catch (MalformedTreeException e) {
-				CUIPlugin.log(e);
-			} catch (BadLocationException e) {
-				// Can only happen on concurrent document modification - log and bail out.
-				CUIPlugin.log(e);
-			}
+		WorkItem workItem = fWorkItems.getFirst();
+		IDocument document= workItem.document;
+		TypedPosition partition= workItem.partition;
+		
+		if (document == null || partition == null)
+			return;
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> preferences = getPreferences();
+
+		try {
+			TextEdit edit = CodeFormatterUtil.format(
+					CodeFormatter.K_TRANSLATION_UNIT, document.get(),
+					partition.getOffset(), partition.getLength(), 0,
+					TextUtilities.getDefaultLineDelimiter(document),
+					preferences);
+
+			if (edit != null)
+				edit.apply(document);
+		} catch (MalformedTreeException e) {
+			CUIPlugin.log(e);
+		} catch (BadLocationException e) {
+			// Can only happen on concurrent document modification - log and bail out.
+			CUIPlugin.log(e);
 		}
  	}
 
@@ -78,21 +89,15 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 	public void formatterStarts(final IFormattingContext context) {
 		super.formatterStarts(context);
 		
-		Object property = context.getProperty(FormattingContextProperties.CONTEXT_PARTITION);
-		if (property instanceof TypedPosition) {
-			fPartitions.addLast((TypedPosition) property);
-		}
-		property= context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM);
-		if (property instanceof IDocument) {			
-			fDocuments.addLast((IDocument) property);
-		}
+		TypedPosition partition = (TypedPosition) context.getProperty(FormattingContextProperties.CONTEXT_PARTITION);
+		IDocument document= (IDocument) context.getProperty(FormattingContextProperties.CONTEXT_MEDIUM);
+		fWorkItems.addLast(new WorkItem(document, partition));
 	}
 
 	@Override
 	public void formatterStops() {
 		super.formatterStops();
 
-		fPartitions.clear();
-		fDocuments.clear();
+		fWorkItems.clear();
 	}
 }

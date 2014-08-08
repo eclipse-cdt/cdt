@@ -8,8 +8,10 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.cdt.launchbar.core;
+package org.eclipse.cdt.launchbar.core.internal;
 
+import org.eclipse.cdt.launchbar.core.ConfigBasedLaunchDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 

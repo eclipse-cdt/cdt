@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 QNX Software Systems and others.
+ * Copyright (c) 2002, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 418817
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -55,16 +55,15 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
  * AbstractPreferencePage
  */
 public abstract class AbstractPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-
 	protected OverlayPreferenceStore fOverlayStore;
 
 	/**
 	 * Unique list of masters for control dependencies.
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private Set<Button> fMasters = new LinkedHashSet<Button>();
+	private Set<Button> fMasters = new LinkedHashSet<>();
 
-	protected Map<Object, String> fTextFields = new HashMap<Object, String>();
+	protected Map<Object, String> fTextFields = new HashMap<>();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -73,7 +72,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 	};
 	
-	protected Map<Object, String> fComboBoxes = new HashMap<Object, String>();
+	protected Map<Object, String> fComboBoxes = new HashMap<>();
 	private ModifyListener fComboBoxListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -83,8 +82,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 	};
 	
-
-	protected Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
+	protected Map<Object, String> fCheckBoxes = new HashMap<>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -92,11 +90,16 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
-			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
+			String value = (String) button.getData();
+			if (value == null) {
+				fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
+			} else if (button.getSelection()) {
+				fOverlayStore.setValue(fCheckBoxes.get(button), value);
+			}
 		}
 	};
 
-	protected ArrayList<Text> fNumberFields = new ArrayList<Text>();
+	protected ArrayList<Text> fNumberFields = new ArrayList<>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -104,7 +107,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 	};
 
-	protected Map<Object, String> fColorButtons = new HashMap<Object, String>();
+	protected Map<Object, String> fColorButtons = new HashMap<>();
 	private SelectionListener fColorButtonListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -119,17 +122,25 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	protected static final int NO_TEXT_LIMIT = -1;
 
 	protected Button addRadioButton(Composite parent, String label, String key, int indentation) {
+		return addRadioButton(parent, label, key, null, indentation);
+	}
+	
+	protected Button addRadioButton(Composite parent, String label, String key, String value,
+			int indentation) {
 		Button radioButton = new Button(parent, SWT.RADIO);
 		radioButton.setText(label);
+		if (value != null)
+			radioButton.setData(value);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = indentation;
 		gd.horizontalSpan = 2;
 		radioButton.setLayoutData(gd);
-		radioButton.addSelectionListener(fCheckBoxListener);
 
-		if (key != null)
+		if (key != null) {
+			radioButton.addSelectionListener(fCheckBoxListener);
 			fCheckBoxes.put(radioButton, key);
+		}
 
 		return radioButton;
 	}
@@ -274,7 +285,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	}
 
 	protected Control addColorButton(Composite parent, String label, String key, int indentation) {
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -328,7 +338,12 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		while (e.hasNext()) {
 			Button b = (Button) e.next();
 			String key = fCheckBoxes.get(b);
-			b.setSelection(fOverlayStore.getBoolean(key));
+			String value = (String) b.getData();
+			if (value == null) {
+				b.setSelection(fOverlayStore.getBoolean(key));
+			} else if (value.equals(fOverlayStore.getString(key))) {
+				b.setSelection(true);
+			}
 		}
 
 		e = fTextFields.keySet().iterator();
@@ -355,27 +370,16 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		fOverlayStore.propagate();
 		return true;
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		fOverlayStore.loadDefaults();
@@ -383,9 +387,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		super.performDefaults();
 	}
 
-	/*
-	 * @see DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fOverlayStore != null) {

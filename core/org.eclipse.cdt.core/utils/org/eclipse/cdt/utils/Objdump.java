@@ -73,6 +73,7 @@ public class Objdump {
 	}
 	/**
 	 * Limit output to number of bytes
+     *  @since 5.8
 	 */
 	public byte[] getOutput(int limitBytes) throws IOException {
 		Process objdump = ProcessFactory.getFactory().exec(args);
@@ -104,6 +105,7 @@ public class Objdump {
 		return getOutput(0);
 	}
 
+	/** @since 5.8 */
 	public InputStream getInputStream() throws IOException {
 		Process objdump = ProcessFactory.getFactory().exec(args);
 		objdump.getOutputStream().close();

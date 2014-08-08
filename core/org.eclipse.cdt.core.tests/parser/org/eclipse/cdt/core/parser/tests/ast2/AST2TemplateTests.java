@@ -8031,6 +8031,22 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename = int>
+	//	struct S {
+	//	    typedef int A;
+	//
+	//	    template <typename... Args>
+	//	    void waldo(A, Args...);
+	//	};
+	//
+	//	int main() {
+	//	    S<> s;
+	//	    s.waldo(0, 0);  // ERROR HERE
+	//	}
+	public void testParameterPackInNestedTemplate_441028() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename T>
 	//	struct A {};
 	//

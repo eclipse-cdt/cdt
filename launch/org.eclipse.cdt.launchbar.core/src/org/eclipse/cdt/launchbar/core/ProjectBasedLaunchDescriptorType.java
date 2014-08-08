@@ -1,22 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems. All Rights Reserved.
+ * Copyright (c) 2014 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * You must obtain a written license from and pay applicable license fees to QNX
- * Software Systems before you may reproduce, modify or distribute this software,
- * or any work that includes all or part of this software.   Free development
- * licenses are available for evaluation and non-commercial purposes.  For more
- * information visit [http://licensing.qnx.com] or email licensing@qnx.com.
- *
- * This file may contain contributions from others.  Please review this entire
- * file for other proprietary rights or license notices, as well as the QNX
- * Development Suite License Guide at [http://licensing.qnx.com/license-guide/]
- * for other information.
+ * Contributors:
+ *    Alena Laskavaia - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
-import org.eclipse.cdt.launchbar.core.internal.Activator;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public abstract class ProjectBasedLaunchDescriptorType extends ConfigBasedLaunchDescriptorType {
@@ -28,9 +22,16 @@ public abstract class ProjectBasedLaunchDescriptorType extends ConfigBasedLaunch
 	public boolean ownsLaunchObject(Object element) {
 		if (super.ownsLaunchObject(element))
 			return true;
-		if (element instanceof IProject && ownsProject((IProject) element))
+		if (element instanceof IProject && ((IProject) element).isOpen() && ownsProject((IProject) element))
 			return true;
 		return false;
+	}
+
+	protected boolean ownsLaunchDescriptor(ILaunchDescriptor ld) {
+		if (!(ld instanceof ProjectBasedLaunchDescriptorType))
+			return false;
+		ProjectBasedLaunchDescriptorType other = (ProjectBasedLaunchDescriptorType) ld;
+		return other.getLaunchConfigurationType().equals(getLaunchConfigurationType());
 	}
 
 	protected abstract boolean ownsProject(IProject element);
@@ -40,23 +41,43 @@ public abstract class ProjectBasedLaunchDescriptorType extends ConfigBasedLaunch
 		if (element instanceof ILaunchConfiguration) {
 			ILaunchConfiguration llc = (ILaunchConfiguration) element;
 			IProject project = getProject(llc);
+			// TODO we need disable project based descriptor here
 			return new ProjectBasedLaunchDescriptor(this, project, llc);
 		} else if (element instanceof IProject) {
-			try {
-				ILaunchDescriptor[] lds = getManager().getLaunchDescriptors();
-				for (int i = 0; i < lds.length; i++) {
-					ILaunchDescriptor ld = lds[i];
-					if (ld instanceof ProjectBasedLaunchDescriptor
-					        && element.equals(((ProjectBasedLaunchDescriptor) ld).getProject())) {
-						return null; // somebody else has it
-					}
+			// this type creates two versions of the descriptor - launch config based
+			// and project based. Project based do not have a config. If at least one
+			// launch config created, associated with same project, we don't need descriptor with null config
+			// anymore so we return null in this case
+			IProject project = (IProject) element;
+			ProjectBasedLaunchDescriptor desc = new ProjectBasedLaunchDescriptor(this, project, null);
+			ILaunchDescriptor[] lds = getManager().getLaunchDescriptors();
+			for (int i = 0; i < lds.length; i++) {
+				ILaunchDescriptor ld = lds[i];
+				if (isBetter(ld, desc)) {
+					return null;// there is a better descriptor already
 				}
-			} catch (CoreException e) {
-				Activator.log(e);
 			}
-			return new ProjectBasedLaunchDescriptor(this, (IProject) element, null);
+			return desc;
 		}
 		return null;
+	}
+
+	/**
+	 * Return true is a is better then b (which would eliminate b)
+	 */
+	protected boolean isBetter(ILaunchDescriptor a, ILaunchDescriptor b) {
+		if (a instanceof ProjectBasedLaunchDescriptor && b instanceof ProjectBasedLaunchDescriptor) {
+			ProjectBasedLaunchDescriptor pa = (ProjectBasedLaunchDescriptor) a;
+			ProjectBasedLaunchDescriptor pb = (ProjectBasedLaunchDescriptor) b;
+			if (pb.getProject().equals(pa.getProject())
+			        && pa.getLaunchConfigurationType().equals(pb.getLaunchConfigurationType())
+			        && pa.getLaunchConfiguration() != null
+			        && pb.getLaunchConfiguration() == null) {
+				// a is for same project and same type, but actually have non-null configuraton
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected abstract IProject getProject(ILaunchConfiguration llc);

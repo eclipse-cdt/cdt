@@ -37,4 +37,9 @@ public interface ILaunchDescriptor {
 	 */
 	ILaunchDescriptorType getType();
 
+	/**
+	 * Descriptor considered open when it is visible to user, and closed otherwise
+	 */
+	boolean isOpen();
+
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +61,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	private ILaunchDescriptor activeLaunchDesc;
 	private ILaunchMode activeLaunchMode;
 	private ILaunchTarget activeLaunchTarget;
-
 	private static final String PREF_ACTIVE_CONFIG_DESC = "activeConfigDesc";
 	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode";
 	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget";
@@ -71,10 +71,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		IEclipsePreferences store = getPreferenceStore();
 		String activeConfigDescId = store.get(PREF_ACTIVE_CONFIG_DESC, null);
 		String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, Collections.EMPTY_LIST.toString());
-
-
 		loadExtensions();
-
 		// Hook up the existing launch configurations and listen
 		ILaunchManager launchManager = getLaunchManager();
 		for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
@@ -83,16 +80,19 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		launchManager.addLaunchConfigurationListener(this);
 		reorderDescriptors(configDescIds);
 		// Now that all the descriptors are loaded, set the one
-		ILaunchDescriptor configDesc = descriptors.get(activeConfigDescId);
+		ILaunchDescriptor configDesc = getDescriptorById(activeConfigDescId);
 		if (configDesc == null) {
 			configDesc = getLastUsedDescriptor();
 		}
 		setActiveLaunchDescriptor(configDesc);
 	}
-	
+
+	private ILaunchDescriptor getDescriptorById(String activeConfigDescId) {
+		return descriptors.get(activeConfigDescId);
+	}
 
 	protected void loadExtensions() {
-	    IExtensionPoint point = getExtensionPoint();
+		IExtensionPoint point = getExtensionPoint();
 		IExtension[] extensions = point.getExtensions();
 		// first pass - targets and descriptors
 		for (IExtension extension : extensions) {
@@ -156,7 +156,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 					Activator.log(e); // exceptions during extension loading, log and move on
 				}
 			}
-
 		}
 		// third pass - object providers
 		for (IExtension extension : extensions) {
@@ -172,9 +171,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 				}
 			}
 		}
-    }
-
-
+	}
 
 	private void reorderDescriptors(String configDescIds) {
 		configDescIds = configDescIds.replaceAll("[\\]\\[]", "");
@@ -182,7 +179,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		for (int i = 0; i < split.length; i++) {
 			String string = split[i];
 			String id = string.trim();
-			ILaunchDescriptor desc = descriptors.get(id);
+			ILaunchDescriptor desc = getDescriptorById(id);
 			if (desc != null) {
 				descriptors.remove(id);
 				descriptors.put(id, desc);
@@ -314,9 +311,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			// new object causes re-set of active descriptor too
 			setActiveLaunchDescriptor(desc);
 		}
-
 		return desc;
-    }
+
+	}
 
 	@Override
 	public ILaunchDescriptor launchObjectAdded(Object element) {
@@ -326,6 +323,11 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			return launchObjectChanged(element);
 		}
 		return remapLaunchObject(element);
+	}
+
+	@Override
+	public ILaunchDescriptor getLaunchDescriptor(Object element) {
+		return objectDescriptorMap.get(element);
 	}
 
 	@Override
@@ -367,18 +369,25 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	@Override
+	public ILaunchDescriptor[] getOpenLaunchDescriptors() {
+		ArrayList<ILaunchDescriptor> values = new ArrayList<>(descriptors.values());
+		for (Iterator<ILaunchDescriptor> iterator = values.iterator(); iterator.hasNext();) {
+			ILaunchDescriptor d = iterator.next();
+			if (!d.isOpen())
+				iterator.remove();
+		}
+		Collections.reverse(values);
+		return values.toArray(new ILaunchDescriptor[values.size()]);
+	}
+
+	@Override
 	public ILaunchDescriptor[] getLaunchDescriptors() {
 		// return descriptor in usage order (most used first). UI can sort them later as it wishes
-		ILaunchDescriptor[] descs = descriptors.values().toArray(new ILaunchDescriptor[descriptors.size()]);
-		// reverse
-		for (int i = 0; i < descs.length / 2; i++) {
-			ILaunchDescriptor ld = descs[i];
-			int j = descs.length - 1 - i;
-			descs[i] = descs[j];
-			descs[j] = ld;
-		}
-		return descs;
+		ArrayList<ILaunchDescriptor> values = new ArrayList<>(descriptors.values());
+		Collections.reverse(values);
+		return values.toArray(new ILaunchDescriptor[values.size()]);
 	}
+
 
 	@Override
 	public ILaunchDescriptor getActiveLaunchDescriptor() {
@@ -400,7 +409,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		if (configDesc == null)
 			configDesc = getLastUsedDescriptor(); // do not set to null unless no descriptors
 		activeLaunchDesc = configDesc;
-
 		if (configDesc != null) { // keeps most used descriptor last
 			descriptors.remove(configDesc.getId());
 			descriptors.put(configDesc.getId(), configDesc);
@@ -409,7 +417,6 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		setPreference(getPreferenceStore(), PREF_ACTIVE_CONFIG_DESC, getId(activeLaunchDesc));
 		Activator.trace("new active config is stored " + configDesc);
 		setPreference(getPreferenceStore(), PREF_CONFIG_DESC_ORDER, descriptors.keySet().toString());
-
 		// Send notifications
 		updateLaunchDescriptor(activeLaunchDesc);
 		// Set active target
@@ -426,9 +433,8 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		// checking active target
 		if (activeLaunchTarget != null && supportsTargetType(activeLaunchDesc, activeLaunchTarget.getType()))
 			return; // not changing target
-
 		// last stored target from persistent storage
-	    String activeTargetId = getPerDescriptorStore().get(PREF_ACTIVE_LAUNCH_TARGET, null);
+		String activeTargetId = getPerDescriptorStore().get(PREF_ACTIVE_LAUNCH_TARGET, null);
 		ILaunchTarget storedTarget = getLaunchTarget(activeTargetId);
 		if (storedTarget != null && supportsTargetType(activeLaunchDesc, storedTarget.getType())) {
 			setActiveLaunchTarget(storedTarget);
@@ -436,14 +442,14 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		}
 		// default target for descriptor
 		setActiveLaunchTarget(getDeafultLaunchTarget(activeLaunchDesc));
-    }
+	}
 
 	protected void syncActiveMode() {
 		if (activeLaunchDesc == null) {
 			setActiveLaunchMode(null);
 			return;
 		}
-	    ILaunchMode foundMode = null;
+		ILaunchMode foundMode = null;
 		String storedModeId = getPerDescriptorStore().get(PREF_ACTIVE_LAUNCH_MODE, null); // last desc mode id
 		String lastActiveModeId = activeLaunchMode == null ? null : activeLaunchMode.getIdentifier();
 		ILaunchMode[] supportedModes = getLaunchModes(); // this is based on active desc and target which are already set
@@ -462,7 +468,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			}
 		}
 		setActiveLaunchMode(foundMode);
-    }
+	}
 
 	public boolean supportsMode(ILaunchMode mode) {
 		// check that active descriptor supports the given mode
@@ -497,9 +503,9 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	}
 
 	protected IEclipsePreferences getPreferenceStore() {
-	    return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
-    }
-	
+		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+	}
+
 	@Override
 	public void updateLaunchDescriptor(ILaunchDescriptor configDesc) {
 		for (Listener listener : listeners) {
@@ -603,7 +609,7 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 			setPreference(getPerDescriptorStore(),
 			        PREF_ACTIVE_LAUNCH_TARGET, target.getId());
 	}
-	
+
 	@Override
 	public void updateLaunchTarget(ILaunchTarget target) {
 		for (Listener listener : listeners) {
@@ -743,5 +749,17 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		// Nothing to do on changes
+	}
+
+	public void dispose() {
+		ILaunchManager launchManager = getLaunchManager();
+		launchManager.removeLaunchConfigurationListener(this);
+		for (ILaunchObjectProvider o : objectProviders) {
+			try {
+				o.dispose();
+			} catch (Exception e) {
+				Activator.log(e);
+			}
+		}
 	}
 }

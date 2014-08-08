@@ -82,28 +82,24 @@ public class ConfigSelector extends CSelector {
 			}
 			@Override
 			public Object[] getElements(Object inputElement) {
-				try {
-					ILaunchDescriptor[] descs = getManager().getLaunchDescriptors();
-					if (descs.length > 0) {
-						if (descs.length > SEPARATOR_INDEX + 1) {
-							ILaunchDescriptor[] descsCopy = new ILaunchDescriptor[SEPARATOR_INDEX + descs.length];
-							System.arraycopy(descs, 0, descsCopy, 0, SEPARATOR_INDEX); // copy first 3 elements
-							System.arraycopy(descs, 0, descsCopy, SEPARATOR_INDEX, descs.length); // copy all into rest
-							// sort rest
-							Arrays.sort(descsCopy, SEPARATOR_INDEX, descsCopy.length, new Comparator<ILaunchDescriptor>() {
-								@Override
-								public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
-									return o1.getName().compareTo(o2.getName());
-								}
-							});
-							return descsCopy;
-						} else
-							return descs;
-					}
-				} catch (CoreException e) {
-					Activator.log(e.getStatus());
+				ILaunchDescriptor[] descs = getManager().getOpenLaunchDescriptors();
+				if (descs.length > 0) {
+					if (descs.length > SEPARATOR_INDEX + 1) {
+						ILaunchDescriptor[] descsCopy = new ILaunchDescriptor[SEPARATOR_INDEX + descs.length];
+						System.arraycopy(descs, 0, descsCopy, 0, SEPARATOR_INDEX); // copy first 3 elements
+						System.arraycopy(descs, 0, descsCopy, SEPARATOR_INDEX, descs.length); // copy all into rest
+						// sort rest
+						Arrays.sort(descsCopy, SEPARATOR_INDEX, descsCopy.length, new Comparator<ILaunchDescriptor>() {
+							@Override
+							public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
+								return o1.getName().compareTo(o2.getName());
+							}
+						});
+						return descsCopy;
+					} else
+						return descs;
 				}
-				return noConfigs; 
+				return noConfigs;
 			}
 		});
 

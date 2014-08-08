@@ -51,9 +51,6 @@ public class ASTNodeSelector implements IASTNodeSelector {
 		return findNode(offsetInFile, lengthInFile, relation, requiredClass, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNodeSelector#getNode(int, int)
-	 */
 	private <T extends IASTNode> T findNode(int offsetInFile, int lengthInFile, Relation relation,
 			Class<T> requiredClass, boolean searchInExpansion) {
 		if (!fIsValid) {

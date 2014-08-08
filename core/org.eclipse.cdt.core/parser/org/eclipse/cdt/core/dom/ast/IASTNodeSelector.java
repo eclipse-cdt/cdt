@@ -21,25 +21,25 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTNodeSelector {
 	/**
-	 * Returns the name for the exact given range, or <code>null</code> if there is no such node.
+	 * Returns the name for the exact given range, or {@code null} if there is no such node.
      * Will not return an implicit name.
 	 */
 	IASTName findName(int offset, int length);
 
 	/**
-	 * Returns the smallest name enclosing the given range, or <code>null</code> if there is
+	 * Returns the smallest name enclosing the given range, or {@code null} if there is
 	 * no such node. Will not return an implicit name.
 	 */
 	IASTName findEnclosingName(int offset, int length);
 
 	/**
-	 * Returns the first name contained in the given range, or <code>null</code> if there is
+	 * Returns the first name contained in the given range, or {@code null} if there is
 	 * no such node. Will not return an implicit name.
 	 */
 	IASTName findFirstContainedName(int offset, int length);
 
 	/**
-	 * Returns the implicit name for the exact given range, or <code>null</code> if there is
+	 * Returns the implicit name for the exact given range, or {@code null} if there is
 	 * no such node.
 	 * 
 	 * Note that there can be more than one implicit name in the same location.
@@ -60,7 +60,7 @@ public interface IASTNodeSelector {
 	IASTImplicitName findEnclosingImplicitName(int offset, int length);
 	
 	/**
-	 * Returns the node for the exact given range, or <code>null</code> if there is no such node.
+	 * Returns the node for the exact given range, or {@code null} if there is no such node.
 	 * <p>
 	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion})
 	 * are preferred over c/c++-nodes and children are preferred over their parents.
@@ -68,7 +68,7 @@ public interface IASTNodeSelector {
 	IASTNode findNode(int offset, int length);
 
 	/**
-	 * Returns the smallest node enclosing the given range, or <code>null</code> if there is
+	 * Returns the smallest node enclosing the given range, or {@code null} if there is
 	 * no such node.
 	 * <p>
 	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion})
@@ -77,7 +77,7 @@ public interface IASTNodeSelector {
 	IASTNode findEnclosingNode(int offset, int length);
 	
 	/**
-	 * Returns the smallest node strictly enclosing the given range, or <code>null</code> if there
+	 * Returns the smallest node strictly enclosing the given range, or {@code null} if there
 	 * is no such node.
 	 * <p>
 	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion})
@@ -87,7 +87,7 @@ public interface IASTNodeSelector {
 	IASTNode findStrictlyEnclosingNode(int offset, int length);
 
 	/**
-	 * Returns the first node contained in the given range, or <code>null</code> if there is
+	 * Returns the first node contained in the given range, or {@code null} if there is
 	 * no such node.
 	 * <p>
 	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion})
@@ -96,7 +96,7 @@ public interface IASTNodeSelector {
 	IASTNode findFirstContainedNode(int offset, int length);
 	
 	/**
-	 * Returns the node for the exact given range, or <code>null</code> if there is no such node.
+	 * Returns the node for the exact given range, or {@code null} if there is no such node.
 	 * <p>
 	 * The method never returns a macro expansion ({@link IASTPreprocessorMacroExpansion}) or
 	 * the name for an expansion. Rather than that the expansion itself is searched for a matching
@@ -106,7 +106,7 @@ public interface IASTNodeSelector {
 	IASTNode findNodeInExpansion(int offset, int length);
 
 	/**
-	 * Returns the smallest node enclosing the range, or <code>null</code> if there is no such node.
+	 * Returns the smallest node enclosing the range, or {@code null} if there is no such node.
 	 * <p>
 	 * The method never returns a macro expansion ({@link IASTPreprocessorMacroExpansion}) or
 	 * the name for an expansion. Rather than that the expansion itself is searched for a matching
@@ -116,7 +116,7 @@ public interface IASTNodeSelector {
 	IASTNode findEnclosingNodeInExpansion(int offset, int length);
 
 	/**
-	 * Returns the first node contained in the given expansion, or <code>null</code> if there is
+	 * Returns the first node contained in the given expansion, or {@code null} if there is
 	 * no such node.
 	 * <p>
 	 * The method never returns a macro expansion ({@link IASTPreprocessorMacroExpansion}) or
@@ -127,7 +127,7 @@ public interface IASTNodeSelector {
 	IASTNode findFirstContainedNodeInExpansion(int offset, int length);
 
 	/**
-	 * Returns a macro expansion enclosing the given range, or <code>null</code>.
+	 * Returns a macro expansion enclosing the given range, or {@code null}.
 	 */
 	IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length);
 }

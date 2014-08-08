@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_c6f0f905",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-08T20:54:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_661ac5fb",
+      "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_c627593d",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_66f3e511",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-08T20:54:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_c627593d",
+      "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_06dcb191",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2014-08-08T20:41:18Z",
       "side": 1,
       "message": "keys and values are the same? Label provider will use key here",
+      "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_c6d9199e",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-08T20:54:20Z",
+      "side": 1,
+      "message": "Keys are the \u0027name\u0027 provided by the extension point.\nValues are the commandIds or icons provided by the extension point.\n\nI\u0027m using the keys as the dialog input for simplicity.",
+      "parentUuid": "c7672b30_06dcb191",
       "revId": "461f0efb18e2b32d08fef603de19ab93f70cf146",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

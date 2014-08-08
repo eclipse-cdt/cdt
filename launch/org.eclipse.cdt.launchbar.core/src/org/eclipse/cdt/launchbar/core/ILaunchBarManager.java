@@ -18,7 +18,9 @@ import org.eclipse.debug.core.ILaunchMode;
 
 public interface ILaunchBarManager extends IAdaptable {
 
-	ILaunchDescriptor[] getLaunchDescriptors() throws CoreException;
+	ILaunchDescriptor[] getLaunchDescriptors();
+
+	ILaunchDescriptor[] getOpenLaunchDescriptors();
 
 	ILaunchDescriptor getActiveLaunchDescriptor() throws CoreException;
 
@@ -51,6 +53,8 @@ public interface ILaunchBarManager extends IAdaptable {
 	void launchObjectRemoved(Object element) throws CoreException;
 
 	ILaunchDescriptor launchObjectChanged(Object element) throws CoreException;
+
+	ILaunchDescriptor getLaunchDescriptor(Object element);
 
 	interface Listener {
 

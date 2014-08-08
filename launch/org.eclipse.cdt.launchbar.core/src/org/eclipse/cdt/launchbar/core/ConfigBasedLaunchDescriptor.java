@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Doug Schaefer
+ *     Alena Laskavaia - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 

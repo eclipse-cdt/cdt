@@ -289,19 +289,19 @@ public class LaunchBarManagerTest extends TestCase {
 	}
 
 	@Test
-	public void testGetLaunchDescriptorsNull() {
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+	public void testGetOpenLaunchDescriptorsNull() {
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(0, launchDescriptors.length);
 	}
 
-	public void testGetLaunchDescriptors() {
+	public void testGetOpenLaunchDescriptors() {
 		basicSetup();
 		manager.launchObjectAdded(lc);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 	}
 
-	public void testGetLaunchDescriptorsSort() {
+	public void testGetOpenLaunchDescriptorsSort() {
 		final ILaunchDescriptor res[] = new ILaunchDescriptor[1];
 		manager.addTargetType(targetType);
 		ConfigBasedLaunchDescriptorType descType1 = new ConfigBasedLaunchDescriptorType("id1", lctype.getIdentifier());
@@ -320,7 +320,7 @@ public class LaunchBarManagerTest extends TestCase {
 		manager.addConfigProvider(descType3.getId(), targetType.getId(), true, provider);
 		targetType.targets.add(mytarget);
 		manager.launchObjectAdded(lc);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertNotNull(launchDescriptors[0]);
 		assertSame(res[0], launchDescriptors[0]);
@@ -330,7 +330,7 @@ public class LaunchBarManagerTest extends TestCase {
 	public void testLaunchObjectAdded() throws CoreException {
 		basicSetup();
 		manager.launchObjectAdded(lc);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertNotNull(launchDescriptors[0]);
 		assertEquals(lc.getName(), launchDescriptors[0].getName());
@@ -342,7 +342,7 @@ public class LaunchBarManagerTest extends TestCase {
 		manager.launchObjectAdded(lc);
 		ILaunchConfiguration lc2 = mockLC("lc2", lctype);
 		manager.launchObjectAdded(lc2);
-		assertEquals(2, manager.getLaunchDescriptors().length);
+		assertEquals(2, manager.getOpenLaunchDescriptors().length);
 	}
 
 	@Test
@@ -350,7 +350,7 @@ public class LaunchBarManagerTest extends TestCase {
 		basicSetup();
 		assertNull(manager.launchObjectChanged(lc));
 		manager.launchObjectAdded(lc);
-		assertEquals(1, manager.getLaunchDescriptors().length);
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
 		assertNotNull(manager.launchObjectChanged(lc));
 	}
 
@@ -362,6 +362,7 @@ public class LaunchBarManagerTest extends TestCase {
 		IPath path = new Path(projectName);
 		when(project.getFullPath()).thenReturn(path);
 		when(project.getType()).thenReturn(IResource.PROJECT);
+		when(project.isOpen()).thenReturn(true);
 		return project;
 	}
 
@@ -407,23 +408,23 @@ public class LaunchBarManagerTest extends TestCase {
 		projectMappingSetup();
 		// user created a project
 		manager.launchObjectAdded(aaa);
-		assertEquals(1, manager.getLaunchDescriptors().length);
-		assertTrue(manager.getLaunchDescriptors()[0].getName().startsWith(aaa.getName()));
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
+		assertTrue(manager.getOpenLaunchDescriptors()[0].getName().startsWith(aaa.getName()));
 		// user clicked on descriptor geer to edit lc, new lc is created
 		manager.launchConfigurationAdded(lc);
-		assertEquals(1, manager.getLaunchDescriptors().length);
-		assertEquals(lc.getName(), manager.getLaunchDescriptors()[0].getName());
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
+		assertEquals(lc.getName(), manager.getOpenLaunchDescriptors()[0].getName());
 		// user cloned lc and changed some settings
 		ILaunchConfiguration lc2 = mockLC("lc2", lctype);
 		mockLCProject(lc2, aaa.getName());
 		manager.launchConfigurationAdded(lc2);
-		assertEquals(2, manager.getLaunchDescriptors().length);
+		assertEquals(2, manager.getOpenLaunchDescriptors().length);
 		// user deleted lc
 		userDeletesLC(lc2);
-		assertEquals(1, manager.getLaunchDescriptors().length);
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
 		// user deleted last lc, now we back to project default
 		userDeletesLC(lc);
-		assertEquals(1, manager.getLaunchDescriptors().length);
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
 	}
 
 	protected void userDeletesLC(ILaunchConfiguration lc2) {
@@ -443,6 +444,11 @@ public class LaunchBarManagerTest extends TestCase {
 			protected boolean ownsProject(IProject element) {
 				return true;
 			}
+
+			@Override
+			public ILaunchConfigurationType getLaunchConfigurationType() {
+				return lctype;
+			}
 		};
 		provider = new ProjectBasedLaunchConfigurationProvider(lctype.getIdentifier()) {
 			protected IProject getProject(ILaunchConfiguration llc) {
@@ -453,18 +459,21 @@ public class LaunchBarManagerTest extends TestCase {
 		basicSetup();
 		aaa = mockProject("aaa");
 		mockLCProject(lc, aaa.getName());
-		assertEquals(0, manager.getLaunchDescriptors().length);
+		assertEquals(0, manager.getOpenLaunchDescriptors().length);
 	}
 
 	public void testLaunchObjectAddedRemapping2() throws CoreException {
 		projectMappingSetup();
 		// test unmapping
 		manager.launchObjectAdded(aaa);
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
 		manager.launchObjectAdded(lc);
-		assertEquals(2, manager.getLaunchDescriptors().length);
-		manager.launchObjectAdded(aaa); // that would remove aaa mapping since lc is already there
-		assertEquals(1, manager.getLaunchDescriptors().length);
-		assertEquals(lc.getName(), manager.getLaunchDescriptors()[0].getName());
+		assertEquals(2, manager.getOpenLaunchDescriptors().length); // XXX should be 1
+		manager.launchObjectChanged(aaa);
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
+		assertEquals(lc.getName(), manager.getOpenLaunchDescriptors()[0].getName());
+		manager.launchObjectRemoved(lc);
+		assertEquals(0, manager.getOpenLaunchDescriptors().length); // XXX should be 1
 	}
 
 	@Test
@@ -490,9 +499,9 @@ public class LaunchBarManagerTest extends TestCase {
 	public void testLaunchObjectRemoved() throws CoreException {
 		basicSetup();
 		manager.launchObjectAdded(lc);
-		assertEquals(1, manager.getLaunchDescriptors().length);
+		assertEquals(1, manager.getOpenLaunchDescriptors().length);
 		manager.launchObjectRemoved(lc);
-		assertEquals(0, manager.getLaunchDescriptors().length);
+		assertEquals(0, manager.getOpenLaunchDescriptors().length);
 	}
 
 	@Test
@@ -825,7 +834,7 @@ public class LaunchBarManagerTest extends TestCase {
 		ILaunchMode mode = mockLaunchModes(lctype, "foo")[0];
 		manager.launchConfigurationAdded(lc);
 		verify(provider).launchConfigurationAdded(lc);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertNotNull(launchDescriptors[0]);
 		assertEquals(lc.getName(), launchDescriptors[0].getName());
@@ -844,7 +853,7 @@ public class LaunchBarManagerTest extends TestCase {
 		ILaunchConfiguration lc2 = mockLC("lc2", lctype2);
 		manager.launchConfigurationAdded(lc2);
 		verify(provider).launchConfigurationAdded(lc2);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertNotNull(launchDescriptors[0]);
 		assertEquals(lc2.getName(), launchDescriptors[0].getName());
@@ -909,7 +918,7 @@ public class LaunchBarManagerTest extends TestCase {
 		manager = new FixedLaunchBarManager();
 		targetType.targets.add(mytarget);
 		manager.launchObjectAdded(lc);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertNotNull(launchDescriptors[0]);
 		assertEquals(lc.getName(), launchDescriptors[0].getName());
@@ -933,7 +942,7 @@ public class LaunchBarManagerTest extends TestCase {
 		store.put("activeConfigDesc", desc.getId());
 		manager = new FixedLaunchBarManager();
 		verify(descType).getDescriptor(lc);
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertEquals(desc, launchDescriptors[0]);
 		// assertEquals(desc, descriptor);
@@ -956,7 +965,7 @@ public class LaunchBarManagerTest extends TestCase {
 		doThrow(new CoreException(new Status(1, "a", "n"))).when(element).createExecutableExtension("class");
 		doReturn(new ILaunchConfiguration[] { lc }).when(lman).getLaunchConfigurations();
 		manager = new FixedLaunchBarManager();
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(0, launchDescriptors.length);
 	}
 
@@ -970,7 +979,7 @@ public class LaunchBarManagerTest extends TestCase {
 		doReturn(descType.getId() + "somestuff").when(element).getAttribute("id");
 		doReturn(new ILaunchConfiguration[] { lc }).when(lman).getLaunchConfigurations();
 		manager = new FixedLaunchBarManager();
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(0, launchDescriptors.length);
 	}
 
@@ -986,7 +995,7 @@ public class LaunchBarManagerTest extends TestCase {
 		doReturn(new ILaunchConfiguration[] { lc }).when(lman).getLaunchConfigurations();
 		manager = new FixedLaunchBarManager();
 		verify(descType).getDescriptor(lc);
-		assertEquals(desc, manager.getLaunchDescriptors()[0]);
+		assertEquals(desc, manager.getOpenLaunchDescriptors()[0]);
 	}
 
 	public void testExtensionDescriptorTypeNoPrio() throws CoreException {
@@ -1000,7 +1009,7 @@ public class LaunchBarManagerTest extends TestCase {
 		doReturn(new ILaunchConfiguration[] { lc }).when(lman).getLaunchConfigurations();
 		manager = new FixedLaunchBarManager();
 		verify(descType).getDescriptor(lc);
-		assertEquals(desc, manager.getLaunchDescriptors()[0]);
+		assertEquals(desc, manager.getOpenLaunchDescriptors()[0]);
 	}
 
 	public void testExtensionTargetType() throws CoreException {
@@ -1044,7 +1053,7 @@ public class LaunchBarManagerTest extends TestCase {
 		doReturn(new ILaunchConfiguration[] { lc }).when(lman).getLaunchConfigurations();
 		targetType.targets.add(mytarget);
 		manager = new FixedLaunchBarManager();
-		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
+		ILaunchDescriptor[] launchDescriptors = manager.getOpenLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertEquals(desc, launchDescriptors[0]);
 		assertEquals(mytarget, manager.getActiveLaunchTarget());

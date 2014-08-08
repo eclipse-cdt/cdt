@@ -12,11 +12,9 @@ package org.eclipse.cdt.launchbar.core;
 
 /**
  * Convenience implementation of ILaunchDescriptor
- * 
- * @author elaskavaia
- *
  */
 public abstract class AbstractLaunchDescriptor implements ILaunchDescriptor {
+	private boolean open = true;
 
 	@Override
 	public abstract String getName();
@@ -45,5 +43,14 @@ public abstract class AbstractLaunchDescriptor implements ILaunchDescriptor {
 		if (!getId().equals(other.getId()))
 			return false;
 		return true;
+	}
+
+	@Override
+	public boolean isOpen() {
+		return open;
+	}
+
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 }

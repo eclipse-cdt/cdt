@@ -18,16 +18,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 /**
  * The label provider for the c model elements.
  */
 public class CElementLabelProvider extends LabelProvider {
-
 	/**
 	 * Flag (bit mask) indicating that methods labels include the method return type. (appended)
 	 */

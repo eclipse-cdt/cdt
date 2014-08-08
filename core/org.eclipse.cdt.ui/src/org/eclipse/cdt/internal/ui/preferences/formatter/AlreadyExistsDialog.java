@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -27,19 +28,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.StatusDialog;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * The dialog to rename an imported profile. 
  */
 public class AlreadyExistsDialog extends StatusDialog {
-	
 	private Composite fComposite;
 	protected Text fNameText;
 	private Button fRenameRadio, fOverwriteRadio;
@@ -61,8 +57,7 @@ public class AlreadyExistsDialog extends StatusDialog {
 		fDuplicate= new StatusInfo(IStatus.ERROR, FormatterMessages.AlreadyExistsDialog_message_profile_already_exists); 
 		fEmpty= new StatusInfo(IStatus.ERROR, FormatterMessages.AlreadyExistsDialog_message_profile_name_empty); 
 	}
-	
-	
+
 	@Override
 	public void create() {
 		super.create();
@@ -71,7 +66,6 @@ public class AlreadyExistsDialog extends StatusDialog {
 	
 	@Override
 	public Control createDialogArea(Composite parent) {
-				
 		initializeComposite(parent);
 		
 		createLabel(Messages.format(FormatterMessages.AlreadyExistsDialog_dialog_label, fProfile.getName())); 
@@ -87,7 +81,7 @@ public class AlreadyExistsDialog extends StatusDialog {
 		fNameText.setSelection(0, fProfile.getName().length());
 		fNameText.setFocus();
 		
-		fNameText.addModifyListener( new ModifyListener() {
+		fNameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				doValidation();
@@ -170,13 +164,12 @@ public class AlreadyExistsDialog extends StatusDialog {
 	 * Validate the current settings
 	 */
 	protected void doValidation() {
-
 		if (fOverwriteRadio.getSelection()) {
 			updateStatus(fOk);
 			return;
 		}
 
-		final String name= fNameText.getText().trim();
+		String name= fNameText.getText().trim();
 		
 		if (name.length() == 0) {
 			updateStatus(fEmpty);

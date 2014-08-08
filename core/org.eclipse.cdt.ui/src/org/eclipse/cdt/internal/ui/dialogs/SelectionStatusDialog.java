@@ -26,36 +26,34 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
- * An abstract base class for dialogs with a status bar and ok/cancel buttons.
+ * An abstract base class for dialogs with a status bar and OK/Cancel buttons.
  * The status message must be passed over as StatusInfo object and can be
  * an error, warning or ok. The OK button is enabled / disabled depending
  * on the status.
  */ 
 public abstract class SelectionStatusDialog extends SelectionDialog {
-	
 	private MessageLine fStatusLine;
 	private IStatus fLastStatus;
 	private Image fImage;
 	private boolean fInitialSelectionSet;
-	private boolean fStatusLineAboveButtons= false;
+	private boolean fStatusLineAboveButtons;
 	
-	
+	public SelectionStatusDialog(Shell parent) {
+		super(parent);
+	}
+
 	/**
-	 * Compute the result and return it.
+	 * Computes the result and returns it.
 	 */
 	protected abstract void computeResult();
-	/* (non-Javadoc)
-	 * Method declared in Window.
-	 */
+
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fImage != null)
 			shell.setImage(fImage);
 	}
-	/* (non-Javadoc)
-	 * Method declared in Dialog.
-	 */
+
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NULL);
@@ -77,9 +75,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		super.createButtonBar(composite);
 		return composite;
 	}
-	/* (non-Javadoc)
-	 * Method declared in Dialog.
-	 */
+
 	@Override
 	public void create() {
 		super.create();
@@ -87,9 +83,11 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 			updateStatus(fLastStatus);
 		}
 	}
+
 	/**
-	 * Returns the first element of the initial selection or <code>null<code>
+	 * Returns the first element of the initial selection or {@code null} 
 	 * if there isn't any initial selection.
+	 *
 	 * @return the first element of the initial selection.
 	 */
 	protected Object getPrimaryInitialSelection() {
@@ -98,12 +96,13 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 			return null;
 		return result.get(0);	
 	}
+
 	/**
-	 * Returns the first element from the list of results. Returns <code>null</code>
+	 * Returns the first element from the list of results. Returns {@code null}
 	 * if no element has been selected.
 	 *
-	 * @return the first result element if one exists. Otherwise <code>null</code> is
-	 *  returned.
+	 * @return the first result element if one exists. Otherwise {@code null} is
+	 *     returned.
 	 */
 	public Object getPrimaryResult() {
 		Object[] result= getResult();
@@ -111,18 +110,13 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 			return null;
 		return result[0];	
 	}
-	public SelectionStatusDialog(Shell parent) {
-		super(parent);
-		fInitialSelectionSet= false;
-	}
-	/* (non-Javadoc)
-	 * Method declared in Dialog.
-	 */
+
 	@Override
 	protected void okPressed() {
 		computeResult();
 		super.okPressed();
 	}
+
 	/**
 	 * Sets the image for this dialog.
 	 *
@@ -131,12 +125,14 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	public void setImage(Image image) {
 		fImage= image;
 	}
+
 	protected void setInitialSelection(int position, Object element) {
 		@SuppressWarnings("unchecked")
 		List<Object> l= getInitialElementSelections();
 		l.set(position, element);
 		fInitialSelectionSet= true;
 	}
+
 	/**
 	 * Sets the initial selection to the given element.
 	 */
@@ -151,11 +147,13 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 			setInitialSelections(new Object[0]);
 		}
 	}
+
 	@Override
 	public void setInitialSelections(Object[] selectedElements) {
 		super.setInitialSelections(selectedElements);
 		fInitialSelectionSet= true;
 	}
+
 	/**
 	 * Sets a result element at the given position.
 	 */
@@ -164,18 +162,20 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		result[position]= element;
 		setResult(Arrays.asList(result));
 	}
+
 	/**
 	 * Controls whether status line appears to the left of the buttons (default)
 	 * or above them.
 	 *
-	 * @param aboveButtons if <code>true</code> status line is placed above buttons; if
-	 * 	<code>false</code> to the right
+	 * @param aboveButtons if {@code true} status line is placed above buttons; if
+	 * 	   {@code false} to the right
 	 */
 	public void setStatusLineAboveButtons(boolean aboveButtons) {
 		fStatusLineAboveButtons= aboveButtons;
 	}
+
 	/**
-	 * Update the status of the ok button to reflect the given status. Subclasses
+	 * Update the status of the OK button to reflect the given status. Subclasses
 	 * may override this method to update additional buttons.
 	 */
 	protected void updateButtonsEnableState(IStatus status) {
@@ -183,6 +183,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		if (okButton != null && !okButton.isDisposed())
 			okButton.setEnabled(!status.matches(IStatus.ERROR));
 	}
+
 	/**
 	 * Update the dialog's status line to reflect the given status. It is safe to call
 	 * this method before the dialog has been opened.

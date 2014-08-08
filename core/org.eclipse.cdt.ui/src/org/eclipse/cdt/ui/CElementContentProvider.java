@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-
-
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
@@ -69,7 +67,6 @@ C model (<code>ICModel</code>)<br>
  * </pre>
  */
 public class CElementContentProvider extends BaseCElementContentProvider implements IElementChangedListener, IInformationProvider, IInformationProviderExtension{
-
 	/** Editor. */
     protected ITextEditor fEditor;
     protected StructuredViewer fViewer;
@@ -81,8 +78,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
     /**
      * Creates a new content provider for C elements.
      */
-    public CElementContentProvider()
-    {
+    public CElementContentProvider() {
         // Empty.
     }
     
@@ -90,8 +86,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	 * Creates a new content provider for C elements.
      * @param editor Editor.
 	 */
-	public CElementContentProvider(ITextEditor editor)
-    {
+	public CElementContentProvider(ITextEditor editor) {
         fEditor = editor;
 	}
     
@@ -102,21 +97,14 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		super(provideMembers, provideWorkingCopy);
 	}
 
-    /**
-     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-     */
     @Override
 	public void dispose() {
         super.dispose();
         CoreModel.getDefault().removeElementChangedListener(this);
     }
 
-    /**
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-     */
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
         super.inputChanged(viewer, oldInput, newInput);
 
         fViewer = (StructuredViewer) viewer;
@@ -129,9 +117,6 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
         fInput= newInput;
     }
 
-	/**
-     * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
-	 */
     @Override
 	public void elementChanged(final ElementChangedEvent event) {
 		try {
@@ -235,7 +220,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	}
 
 	/**
-	 * Process resource deltas.
+	 * Processes resource deltas.
 	 *
 	 * @return true if the parent got refreshed
 	 */
@@ -260,7 +245,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	}
 
 	/**
-	 * Process a resource delta.
+	 * Processes a resource delta.
 	 * 
 	 * @return true if the parent got refreshed
 	 */
@@ -318,14 +303,17 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	protected interface IRefreshable {
 	    public void refresh();
 	}
+
 	protected final class RefreshContainer implements IRefreshable {
 		private IParent container;
 		private Object project;
+
 		public RefreshContainer(IParent container, Object project) {
 			this.container = container;
 			this.project = project;
 		}
-	    @Override
+
+		@Override
 		public void refresh() {
 			if (container.hasChildren()) {
 				if (fViewer.testFindItem(container) != null) {
@@ -337,7 +325,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				fViewer.refresh(project);
 			}
 	    }
-	    @Override
+
+		@Override
 		public boolean equals(Object o) {
 	    	if (o instanceof RefreshContainer) {
 	    		RefreshContainer c = (RefreshContainer)o;
@@ -345,16 +334,20 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	    	}
 	        return false;
 	    }
-	    @Override
+
+		@Override
 		public int hashCode() {
-	    	return container.hashCode()*10903143 + 31181;
+	    	return container.hashCode() * 10903143 + 31181;
 	    }
 	}
+
 	protected final class RefreshElement implements IRefreshable {
 		private Object element;
+
 		public RefreshElement(Object element) {
 			this.element = element;
 		}
+
 		@Override
 		public void refresh() {
 			if (element instanceof IWorkingCopy){
@@ -369,7 +362,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				fViewer.refresh(element);
 			}
 		}
-	    @Override
+
+		@Override
 		public boolean equals(Object o) {
 	    	if (o instanceof RefreshElement) {
 	    		RefreshElement c = (RefreshElement)o;
@@ -377,17 +371,20 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	    	}
 	        return false;
 	    }
-	    @Override
+
+		@Override
 		public int hashCode() {
-	    	return element.hashCode()*7 + 490487;
+	    	return element.hashCode() * 7 + 490487;
 	    }
 	}
 
 	protected final class RefreshProjectState implements IRefreshable {
 		private Object element;
+
 		public RefreshProjectState(Object element) {
 			this.element = element;
 		}
+
 		@Override
 		public void refresh() {
 			fViewer.refresh(element, true);
@@ -395,7 +392,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			// enable state.
 			fViewer.setSelection(fViewer.getSelection());
 		}
-	    @Override
+
+		@Override
 		public boolean equals(Object o) {
 	    	if (o instanceof RefreshElement) {
 	    		RefreshElement c = (RefreshElement)o;
@@ -403,9 +401,10 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	    	}
 	        return false;
 	    }
-	    @Override
+
+		@Override
 		public int hashCode() {
-	    	return element.hashCode()*11 + 490487;
+	    	return element.hashCode() * 11 + 490487;
 	    }
 	}
 
@@ -452,9 +451,6 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 	}
 
-    /*
-     * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
-     */
     @Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		if (textViewer != null && fEditor != null) {
@@ -468,10 +464,6 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		return null;
 	}
 
-    /*
-	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer,
-	 *      org.eclipse.jface.text.IRegion)
-	 */
     @Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
     	// deprecated API - not used anymore
@@ -482,9 +474,6 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
         return null;
     }
 
-    /*
-     * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-     */
     @Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		if (fEditor == null)

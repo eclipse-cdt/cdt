@@ -39,10 +39,6 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();

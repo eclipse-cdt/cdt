@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 
-
 /**
  * Constants used to set up the options of the code formatter.
  * 
@@ -26,12 +25,11 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DefaultCodeFormatterConstants {
-
 	/**
 	 * <pre>
 	 * FORMATTER / Option for the language
 	 *     - option id:         "org.eclipse.cdt.core.formatter.language"
-	 *     - possible values:   object of class <code>ILanguage</code> or <code>null</code> 
+	 *     - possible values:   object of class {@code ILanguage} or {@code null} 
 	 *     - default:           null
 	 * </pre>
 	 */
@@ -41,7 +39,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for the current file
 	 *     - option id:         "org.eclipse.cdt.core.formatter.current_file"
-	 *     - possible values:   object of class <code>IFile</code> or <code>null</code> 
+	 *     - possible values:   object of class {@code IFile} or {@code null} 
 	 *     - default:           null
 	 * </pre>
 	 */
@@ -51,7 +49,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for the translation unit
 	 *     - option id:         "org.eclipse.cdt.core.formatter.current_translation_unit"
-	 *     - possible values:   object of class <code>ITranslationUnit</code> or <code>null</code> 
+	 *     - possible values:   object of class {@code ITranslationUnit} or {@code null} 
 	 *     - default:           null
 	 * </pre>
 	 */
@@ -92,7 +90,7 @@ public class DefaultCodeFormatterConstants {
 //	 * <pre>
 //	 * FORMATTER / Option for alignment of arguments in allocation expression
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_arguments_in_allocation_expression"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+//	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 //	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 //	 * </pre>
 //	 * @see #createAlignmentValue(boolean, int, int)
@@ -102,7 +100,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of arguments in method invocation
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_arguments_in_method_invocation"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -112,7 +110,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of assignment
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_assignment"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -123,7 +121,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of binary expression
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_binary_expression"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -134,7 +132,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of compact if
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_compact_if"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_ONE_PER_LINE, INDENT_BY_ONE)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -144,7 +142,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of conditional expression
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_conditional_expression"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT_FIRST_BREAK, INDENT_ON_COLUMN)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -154,7 +152,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of a chain of conditional expressions.
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_conditional_expression_chain"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_ON_COLUMN)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -165,7 +163,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of a declarator list
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_declarator_list"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -175,7 +173,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of a enumerator list
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_enumerator_list"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_ONE_PER_LINE, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -185,7 +183,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of a expression list (except arguments in a method invocation)
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_expression_list"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -195,7 +193,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of expressions in initializer list
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_expressions_in_array_initializer"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -205,7 +203,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of member access
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_member_access"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, M_NO_ALIGNMENT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -217,7 +215,7 @@ public class DefaultCodeFormatterConstants {
 	 * FORMATTER / Option for alignment of stream output expression consisting of a chain of
 	 * overloaded &lt;&lt; operators.
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_overloaded_left_shift_chainn"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -228,7 +226,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of parameters in method declaration
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_parameters_in_method_declaration"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -238,7 +236,7 @@ public class DefaultCodeFormatterConstants {
 //	 * <pre>
 //	 * FORMATTER / Option for alignment of selector in method invocation
 //	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_selector_in_method_invocation"
-//	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+//	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 //	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 //	 * </pre>
 //	 * @see #createAlignmentValue(boolean, int, int)
@@ -248,7 +246,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of base-clause in type declaration
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_base_clause_in_type_declaration"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_NEXT_SHIFTED, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -258,7 +256,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of constructor initializer list
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_constructor_initializer_list"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -269,7 +267,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for alignment of throws clause in method declaration
 	 *     - option id:         "org.eclipse.cdt.core.formatter.alignment_for_throws_clause_in_method_declaration"
-	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
+	 *     - possible values:   values returned by {@code createAlignmentValue(boolean, int, int)} call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
 	 * @see #createAlignmentValue(boolean, int, int)
@@ -2393,7 +2391,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * <p>Return the force value of the given alignment value.
-	 * The given alignment value should be created using the <code>createAlignmentValue(boolean, int, int)</code>
+	 * The given alignment value should be created using the {@code createAlignmentValue(boolean, int, int)}
 	 * API.
 	 * </p>
 	 *
@@ -2417,7 +2415,7 @@ public class DefaultCodeFormatterConstants {
 	
 	/**
 	 * <p>Return the indentation style of the given alignment value.
-	 * The given alignment value should be created using the <code>createAlignmentValue(boolean, int, int)</code>
+	 * The given alignment value should be created using the {@code createAlignmentValue(boolean, int, int)}
 	 * API.
 	 * </p>
 	 *
@@ -2447,7 +2445,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * <p>Return the wrapping style of the given alignment value.
-	 * The given alignment value should be created using the <code>createAlignmentValue(boolean, int, int)</code>
+	 * The given alignment value should be created using the {@code createAlignmentValue(boolean, int, int)}
 	 * API.
 	 * </p>
 	 *
@@ -2483,7 +2481,7 @@ public class DefaultCodeFormatterConstants {
 	}
 	/**
 	 * <p>Set the force value of the given alignment value and return the new value.
-	 * The given alignment value should be created using the <code>createAlignmentValue(boolean, int, int)</code>
+	 * The given alignment value should be created using the {@code createAlignmentValue(boolean, int, int)}
 	 * API.
 	 * </p>
 	 *
@@ -2513,7 +2511,7 @@ public class DefaultCodeFormatterConstants {
 	
 	/**
 	 * <p>Set the indentation style of the given alignment value and return the new value.
-	 * The given value should be created using the <code>createAlignmentValue(boolean, int, int)</code>
+	 * The given value should be created using the {@code createAlignmentValue(boolean, int, int)}
 	 * API.
 	 * </p>
 	 *
@@ -2558,7 +2556,7 @@ public class DefaultCodeFormatterConstants {
 	}
 	/**
 	 * <p>Set the wrapping style of the given alignment value and return the new value.
-	 * The given value should be created using the <code>createAlignmentValue(boolean, int, int)</code>
+	 * The given value should be created using the {@link #createAlignmentValue(boolean, int, int)}
 	 * API.
 	 * </p>
 	 *

@@ -365,17 +365,18 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			Map<String, Object> preferences;
 			ICElement inputCElement= getInputCElement();
 			ICProject cProject= inputCElement != null ? inputCElement.getCProject() : null;
-			if (cProject == null)
+			if (cProject == null) {
 				preferences= new HashMap<String, Object>(CCorePlugin.getOptions());
-			else
+			} else {
 				preferences= new HashMap<String, Object>(cProject.getOptions(true));
+			}
 
 			if (inputCElement instanceof ITranslationUnit) {
 				ITranslationUnit tu= (ITranslationUnit) inputCElement;
-				ILanguage language= null;
+				ILanguage language;
 				try {
 					language= tu.getLanguage();
-				} catch (CoreException exc) {
+				} catch (CoreException e) {
 					// Use fallback CPP
 					language= GPPLanguage.getDefault();
 				}

@@ -134,6 +134,8 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 	
 	@Override
 	public boolean isConstantExpression(IASTNode point) {
+		if (fFunctionSet == null)
+			return false;
 		for (ICPPFunction f : fFunctionSet.getBindings()) {
 			if (!f.isConstexpr()) {
 				return false;

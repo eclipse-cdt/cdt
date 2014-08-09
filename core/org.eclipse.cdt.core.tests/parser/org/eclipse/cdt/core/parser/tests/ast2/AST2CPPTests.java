@@ -112,6 +112,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -649,7 +650,7 @@ public class AST2CPPTests extends AST2TestBase {
 		IASTName name_B1 = comp.getName();
 
 		ICPPASTBaseSpecifier base = comp.getBaseSpecifiers()[0];
-		IASTName name_A2 = base.getName();
+		IASTName name_A2 = (IASTName) base.getNameSpecifier();
 
 		decl = (IASTSimpleDeclaration) comp.getMembers()[0];
 		IASTName name_f1 = decl.getDeclarators()[0].getName();
@@ -8299,6 +8300,17 @@ public class AST2CPPTests extends AST2TestBase {
 	//	}
 	public void testDecltypeInNameQualifier_380751() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	struct Base {};
+	//	struct Derived : decltype(Base()) {};
+	public void testDecltypeInBaseSpecifier_438348() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPClassType base = helper.assertNonProblem("struct Base", "Base");
+		ICPPClassType derived = helper.assertNonProblem("Derived");
+		ICPPBase[] bases = derived.getBases();
+		assertEquals(1, bases.length);
+		assertEquals(base, bases[0].getBaseClass());
 	}
 
 	//	template <typename T>

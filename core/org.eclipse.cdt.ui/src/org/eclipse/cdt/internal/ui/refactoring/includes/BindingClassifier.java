@@ -300,7 +300,7 @@ public class BindingClassifier {
 			 * Example:
 			 * 	class Y : X {};			// definition of X is required here
 			 */
-			defineBindingForName(baseSpecifier.getName());
+			defineBinding(baseSpecifier.getNameSpecifier().resolveBinding());
 			return PROCESS_CONTINUE;
 		}
 

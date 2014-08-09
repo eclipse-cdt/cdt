@@ -1722,7 +1722,7 @@ public class CPPVisitor extends ASTQueries {
 				if (prop == IASTNamedTypeSpecifier.NAME ||
 						prop == ICPPASTPointerToMember.NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
-						prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME ||
+						prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME_SPECIFIER ||
 						prop == ICPPASTTemplateId.TEMPLATE_NAME ||
 						p2 == ICPPASTQualifiedName.SEGMENT_NAME) {
 					break;

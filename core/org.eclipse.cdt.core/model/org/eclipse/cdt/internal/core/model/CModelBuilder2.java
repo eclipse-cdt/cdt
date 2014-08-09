@@ -681,7 +681,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			final ICPPASTCompositeTypeSpecifier cppCompositeTypeSpecifier= (ICPPASTCompositeTypeSpecifier) compositeTypeSpecifier;
 			ICPPASTBaseSpecifier[] baseSpecifiers= cppCompositeTypeSpecifier.getBaseSpecifiers();
 			for (final ICPPASTBaseSpecifier baseSpecifier : baseSpecifiers) {
-				final IASTName baseName= baseSpecifier.getName();
+				final ICPPASTNameSpecifier nameSpec= baseSpecifier.getNameSpecifier();
 				final ASTAccessVisibility visibility;
 				switch (baseSpecifier.getVisibility()) {
 				case ICPPASTBaseSpecifier.v_public:
@@ -696,7 +696,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				default:
 					visibility= ASTAccessVisibility.PUBLIC;
 				}
-				element.addSuperClass(ASTStringUtil.getSimpleName(baseName), visibility);
+				if (nameSpec instanceof IASTName) {
+					element.addSuperClass(ASTStringUtil.getSimpleName((IASTName) nameSpec), visibility);
+				} else {
+					element.addSuperClass(new String(nameSpec.toCharArray()), visibility);
+				}
 			}
 		}
 

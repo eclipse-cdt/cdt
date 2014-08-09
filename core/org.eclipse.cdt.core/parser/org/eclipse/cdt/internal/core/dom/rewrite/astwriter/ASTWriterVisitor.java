@@ -33,9 +33,11 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -70,6 +72,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		shouldVisitDeclarations = true;
 		shouldVisitDeclarators = true;
 		shouldVisitDeclSpecifiers = true;
+		shouldVisitDecltypeSpecifiers = true;
 		shouldVisitExpressions = true;
 		shouldVisitInitializers = true;
 		shouldVisitNames = true;
@@ -168,6 +171,15 @@ public class ASTWriterVisitor extends ASTVisitor {
 	public int visit(IASTDeclSpecifier declSpec) {
 		writeLeadingComments(declSpec);
 		declSpecWriter.writeDelcSpec(declSpec);
+		return ASTVisitor.PROCESS_SKIP;
+	}
+	
+	@Override
+	public int visit(ICPPASTDecltypeSpecifier decltypeSpec) {
+		scribe.print(Keywords.DECLTYPE);
+		scribe.print('(');
+		decltypeSpec.getDecltypeExpression().accept(this);
+		scribe.print(')');
 		return ASTVisitor.PROCESS_SKIP;
 	}
 

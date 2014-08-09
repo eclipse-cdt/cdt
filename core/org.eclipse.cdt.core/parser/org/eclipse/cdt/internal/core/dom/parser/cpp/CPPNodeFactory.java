@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -184,8 +185,14 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
+	@Deprecated
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual) {
-		return new CPPASTBaseSpecifier(name, visibility, isVirtual);
+		return new CPPASTBaseSpecifier((ICPPASTName) name, visibility, isVirtual);
+	}
+	
+	@Override
+	public ICPPASTBaseSpecifier newBaseSpecifier(ICPPASTNameSpecifier nameSpecifier, int visibility, boolean isVirtual) {
+		return new CPPASTBaseSpecifier(nameSpecifier, visibility, isVirtual);
 	}
 
 	@Override

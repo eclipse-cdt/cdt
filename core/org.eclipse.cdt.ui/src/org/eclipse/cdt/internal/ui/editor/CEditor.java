@@ -37,9 +37,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.GroupMarker;
@@ -48,6 +50,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -112,6 +115,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.search.ui.actions.TextSearchGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -213,6 +217,7 @@ import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
 import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
+import org.eclipse.cdt.internal.ui.dialogs.FormattingScopeDialog;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
@@ -358,8 +363,23 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return super.requestWidgetToken(requester, priority);
 		}
 
+		// This method is called only when the Platform version is below 4.5.
+		// TODO(sprigogin): Remove this override once compatibility with Platform 4.4 is no longer
+		// required.
 		@Override
-		public IFormattingContext createFormattingContext() {
+		protected IFormattingContext createFormattingContext() {
+			Point selectedRange = getSelectedRange();
+			return createFormattingContext(selectedRange.x, selectedRange.y, false);
+		}
+
+		// This method is called when the Platform version is 4.5 or higher.
+		// @Override
+		protected IFormattingContext createFormattingContext(int selectionOffset, int selectionLength) {
+			return createFormattingContext(selectionOffset, selectionLength, true);
+		}
+
+		private IFormattingContext createFormattingContext(int selectionOffset, int selectionLength,
+				boolean formattingScopeForEmptySelectionSupported) {
 			IFormattingContext context= new FormattingContext();
 
 			Map<String, Object> preferences;
@@ -383,6 +403,30 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				preferences.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 		        preferences.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
 				preferences.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
+				boolean formatWholeDocument = false;
+				if (formattingScopeForEmptySelectionSupported && selectionLength == 0) {
+					// The selection is empty. Determine how it should be interpreted.
+					IPreferencesService preferenceService = Platform.getPreferencesService();
+					boolean showDialog = preferenceService.getBoolean(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION, true, null);
+					if (showDialog) {
+						if (!confirmFormattingScope()) {
+							// The user clicked Cancel. Abort the formatting operation.
+							context.dispose();
+							return null;
+						}
+					}
+					String scope = preferenceService.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.FORMATTING_SCOPE_FOR_EMPTY_SELECTION,
+							PreferenceConstants.FORMATTING_SCOPE_DOCUMENT, null);
+					if (PreferenceConstants.FORMATTING_SCOPE_DOCUMENT.equals(scope)) {
+						formatWholeDocument = true;
+					}
+				}
+				if (!formatWholeDocument) {
+					context.setProperty(FormattingContextProperties.CONTEXT_REGION,
+							new Region(selectionOffset, selectionLength));
+				}
 			}
 
 			if (cProject == null) {
@@ -395,6 +439,22 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);
 
 			return context;
+		}
+
+		private boolean confirmFormattingScope() {
+			int redrawCount = 0;
+			while (!redraws()) {
+				redrawCount++;
+				setRedraw(true);
+			}
+			try {
+				Dialog dialog = new FormattingScopeDialog(getSite().getShell());
+				return dialog.open() == Window.OK;
+			} finally {
+				while (--redrawCount >= 0) {
+					setRedraw(false);
+				}
+			}
 		}
 	}
 

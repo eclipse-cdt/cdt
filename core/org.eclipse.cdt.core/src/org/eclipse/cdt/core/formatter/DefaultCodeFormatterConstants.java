@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.formatter;
 
@@ -54,6 +55,18 @@ public class DefaultCodeFormatterConstants {
 	 * </pre>
 	 */
 	public static final String FORMATTER_TRANSLATION_UNIT = CCorePlugin.PLUGIN_ID + ".formatter.current_translation_unit";	 //$NON-NLS-1$
+
+	/**
+	 * <pre>
+	 * FORMATTER / Option that tells the formatter that the formatting region should be
+	 * extended to the enclosing statement boundaries.
+	 *     - option id:         "org.eclipse.cdt.core.formatter.statement_scope"
+	 *     - possible values:   object of class {@link Boolean} or {@code null} 
+	 *     - default:           null
+	 * </pre>
+	 * @since 5.9
+	 */
+	public static final String FORMATTER_STATEMENT_SCOPE = CCorePlugin.PLUGIN_ID + ".formatter.statement_scope";	 //$NON-NLS-1$
 
 	/**
 	 * <pre>

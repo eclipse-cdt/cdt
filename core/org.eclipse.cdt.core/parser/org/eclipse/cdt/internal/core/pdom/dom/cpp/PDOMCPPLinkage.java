@@ -1104,7 +1104,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		    	name = (IASTName) parentNode;
 		    	parentNode = parentNode.getParent();
 			}
-			if (name.getPropertyInParent() == ICPPASTBaseSpecifier.NAME)
+			if (name.getPropertyInParent() == ICPPASTBaseSpecifier.NAME_SPECIFIER)
 				pdomName.setIsBaseSpecifier();
 		}
 	}

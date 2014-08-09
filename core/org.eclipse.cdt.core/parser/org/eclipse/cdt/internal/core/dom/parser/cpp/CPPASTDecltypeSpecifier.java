@@ -68,7 +68,26 @@ public class CPPASTDecltypeSpecifier extends ASTNode
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {
-		return fDecltypeExpression.accept(visitor);
+		if (visitor.shouldVisitDecltypeSpecifiers) {
+			switch (visitor.visit(this)) {
+			case ASTVisitor.PROCESS_ABORT: return false;
+			case ASTVisitor.PROCESS_SKIP:  return true;
+			default: break;
+			}
+		}
+		
+		if (!fDecltypeExpression.accept(visitor))
+			return false;
+
+		if (visitor.shouldVisitDecltypeSpecifiers) {
+			switch (visitor.leave(this)) {
+			case ASTVisitor.PROCESS_ABORT: return false;
+			case ASTVisitor.PROCESS_SKIP:  return true;
+			default: break;
+			}
+		}
+		
+		return true;
 	}
 
 	@Override

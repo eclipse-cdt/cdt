@@ -218,6 +218,7 @@ class THGraph {
 			try {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
 				if (binding != null) {
+					// TODO(nathanridge): Also find subclasses referenced via decltype-specifiers rather than names.
 					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
 					for (IIndexName indexName : names) {
 						if (monitor.isCanceled()) {

@@ -108,6 +108,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -369,6 +370,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		shouldVisitParameterDeclarations = true;
 		shouldVisitDeclarators = true;
 		shouldVisitDeclSpecifiers = true;
+		shouldVisitDecltypeSpecifiers = true;
 		shouldVisitExpressions = true;
 		shouldVisitStatements = true;
 		shouldVisitTypeIds = true;
@@ -868,6 +870,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		exitNode(node);
 		return PROCESS_SKIP;
 	}
+	
+	/*
+	 * @see ASTVisitor#visit(ICPPASTDecltypeSpecifier)
+	 */
+	@Override
+	public int visit(ICPPASTDecltypeSpecifier node) {
+		formatRaw(node);
+		return PROCESS_SKIP;
+	}
 
 	/*
 	 * @see ASTVisitor#visit(IASTExpression)
@@ -1054,7 +1065,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (needSpace) {
 			scribe.space();
 		}
-		specifier.getName().accept(this);
+		specifier.getNameSpecifier().accept(this);
 		exitNode(specifier);
 		return PROCESS_SKIP;
 	}

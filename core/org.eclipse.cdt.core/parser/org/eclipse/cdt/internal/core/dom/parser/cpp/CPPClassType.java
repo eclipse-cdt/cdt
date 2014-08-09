@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -53,6 +54,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType {
 		public CPPClassTypeProblem(IASTName name, int id) {
 			super(name, id);
+		}
+		public CPPClassTypeProblem(ICPPASTNameSpecifier nameSpec, int id) {
+			super(nameSpec, id, nameSpec instanceof IASTName ? null : nameSpec.toCharArray());
 		}
 		public CPPClassTypeProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);

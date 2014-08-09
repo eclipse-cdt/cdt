@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
@@ -147,6 +148,12 @@ public abstract class ASTVisitor {
 	public boolean shouldVisitVirtSpecifiers = false;
 	
 	/**
+	 * Set this flag to visit decltype-specifiers.
+	 * @since 5.8
+	 */
+	public boolean shouldVisitDecltypeSpecifiers = false;
+	
+	/**
 	 * Per default inactive nodes are not visited. You can change that by setting
 	 * this flag to <code>true</code>.
 	 * @since 5.1
@@ -213,6 +220,7 @@ public abstract class ASTVisitor {
 		shouldVisitTranslationUnit= visitNodes;
 		shouldVisitTypeIds= visitNodes;
 		shouldVisitVirtSpecifiers= visitNodes;
+		shouldVisitDecltypeSpecifiers= visitNodes;
 	}
 
 	// visit methods
@@ -337,6 +345,13 @@ public abstract class ASTVisitor {
 	public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
 		return PROCESS_CONTINUE;
 	}
+	
+	/**
+	 * @since 5.8
+	 */
+	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
+		return PROCESS_CONTINUE;
+	}
 
 	// leave methods
 	public int leave(IASTTranslationUnit tu) {
@@ -458,6 +473,13 @@ public abstract class ASTVisitor {
 	 * @since 5.7
 	 */
 	public int leave(ICPPASTClassVirtSpecifier virtSpecifier) {
+		return PROCESS_CONTINUE;
+	}
+	
+	/**
+	 * @since 5.8
+	 */
+	public int leave(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		return PROCESS_CONTINUE;
 	}
 	

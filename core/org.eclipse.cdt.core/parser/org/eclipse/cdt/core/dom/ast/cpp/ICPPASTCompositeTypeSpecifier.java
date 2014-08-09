@@ -60,9 +60,20 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 		/**
 		 * Relation between base specifier and its name.
+		 * 
+		 * @deprecated Use ICPPASTBaseSpecifier.NAME_SPECIFIER instead.
 		 */
+		@Deprecated
 		public static final ASTNodeProperty NAME = new ASTNodeProperty(
 				"ICPPASTBaseSpecifier.NAME - Name of base class"); //$NON-NLS-1$
+		
+		/**
+		 * Relation between base specifier and its name specifier.
+		 * 
+		 * @since 5.8
+		 */
+		public static final ASTNodeProperty NAME_SPECIFIER = new ASTNodeProperty(
+				"ICPPASTBaseSpecifier.NAME_SPECIFIER - Name specifier of base class"); //$NON-NLS-1$
 		
 		public static final int v_public = ICPPASTVisibilityLabel.v_public;
 		public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
@@ -80,9 +91,19 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 
 		/**
 		 * Returns the name of this specifier.
+		 * 
+		 * @deprecated Use getNameSpecifier() instead.
 		 */
+		@Deprecated
 		public IASTName getName();
 
+		/**
+		 * Returns the name specifier inside this base specifier. 
+		 * 
+		 * @since 5.8
+		 */
+		public ICPPASTNameSpecifier getNameSpecifier();
+		
 		/**
 		 * @since 5.1
 		 */
@@ -97,8 +118,18 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		
 		/**
 		 * Sets the name for this specifier, not allowed on frozen AST.
+		 * 
+		 * @deprecated Use setNameSpecifier() instead.
 		 */
+		@Deprecated
 		public void setName(IASTName name);
+		
+		/**
+		 * Sets the name specifier for this base specifier. Not allowed on frozen AST.
+		 * 
+		 * @since 5.8
+		 */
+		public void setNameSpecifier(ICPPASTNameSpecifier nameSpecifier);
 		
 		/**
 		 * Sets whether this specifier is for a virtual base. Not allowed on frozen AST.

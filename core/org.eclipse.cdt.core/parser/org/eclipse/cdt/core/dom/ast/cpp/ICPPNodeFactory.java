@@ -65,7 +65,13 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTAttributeSpecifier newAttributeSpecifier();
 
+	@Deprecated
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
+	
+	/**
+	 * @since 5.8
+	 */
+	public ICPPASTBaseSpecifier newBaseSpecifier(ICPPASTNameSpecifier nameSpecifier, int visibility, boolean isVirtual);
 	
 	@Override
 	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);

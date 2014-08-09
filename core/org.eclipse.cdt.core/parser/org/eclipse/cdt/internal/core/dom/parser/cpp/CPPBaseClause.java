@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
@@ -49,16 +50,17 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     @Override
     public IType getBaseClassType() {
 		if (baseClass == null) {
-	    	IBinding b = base.getName().resolveBinding();
+			ICPPASTNameSpecifier nameSpec = base.getNameSpecifier();
+	    	IBinding b = nameSpec.resolveBinding();
 	    	if (b instanceof IProblemBinding) {
-	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ((IProblemBinding) b).getID());
+	    		baseClass =  new CPPClassType.CPPClassTypeProblem(nameSpec, ((IProblemBinding) b).getID());
 	    	} else if (!(b instanceof IType)) {
-	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ISemanticProblem.BINDING_NO_CLASS);
+	    		baseClass =  new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
 	    	} else {
 	    		baseClass= (IType) b;
 	    		IType check= getNestedType(baseClass, TDEF);
 	    		if (!(check instanceof ICPPClassType || check instanceof ICPPUnknownType)) {
-	    			baseClass = new CPPClassType.CPPClassTypeProblem(base.getName(), ISemanticProblem.BINDING_NO_CLASS);
+	    			baseClass = new CPPClassType.CPPClassTypeProblem(nameSpec, ISemanticProblem.BINDING_NO_CLASS);
 	    		}
 	    	}
 		}

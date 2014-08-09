@@ -96,6 +96,10 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_behaviorPage_matchingBrackets;
 	public static String CEditorPreferencePage_behaviorPage_subWordNavigation;
 	public static String CEditorPreferencePage_behaviorPage_inactiveCode;
+	public static String CEditorPreferencePage_behaviorPage_formattingWithEmptySelection;
+	public static String CEditorPreferencePage_behaviorPage_formatFile; 
+	public static String CEditorPreferencePage_behaviorPage_formatStatement;
+	public static String CEditorPreferencePage_behaviorPage_confirmFormattingScope;
 	public static String CEditorPreferencePage_behaviorPage_appearanceColorOptions;
 	public static String CEditorPreferencePage_behaviorPage_matchingBracketColor;
 	public static String CEditorPreferencePage_behaviorPage_inactiveCodeColor;

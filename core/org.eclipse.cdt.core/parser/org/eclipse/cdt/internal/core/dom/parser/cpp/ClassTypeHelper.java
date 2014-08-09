@@ -713,6 +713,7 @@ public class ClassTypeHelper {
 			result.add(classOrTypedef);
 		}
 
+		// TODO(nathanridge): Also find subclasses referenced via decltype-specifiers rather than names.
 		IIndexName[] names= index.findNames(classOrTypedef, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
 		for (IIndexName indexName : names) {
 			if (indexName.isBaseSpecifier()) {

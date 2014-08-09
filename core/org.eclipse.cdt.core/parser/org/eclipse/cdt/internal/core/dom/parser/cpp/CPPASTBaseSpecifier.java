@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -31,21 +33,21 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 
     private boolean isVirtual;
     private int visibility;
-    private IASTName name;
+    private ICPPASTNameSpecifier nameSpecifier;
 	private boolean fIsPackExpansion;
 
     
     public CPPASTBaseSpecifier() {
 	}
     
-    public CPPASTBaseSpecifier(IASTName name) {
-		setName(name);
+    public CPPASTBaseSpecifier(ICPPASTNameSpecifier nameSpecifier) {
+		setNameSpecifier(nameSpecifier);
 	}
 
-	public CPPASTBaseSpecifier(IASTName name, int visibility, boolean isVirtual) {
+	public CPPASTBaseSpecifier(ICPPASTNameSpecifier nameSpecifier, int visibility, boolean isVirtual) {
 		this.isVirtual = isVirtual;
 		this.visibility = visibility;
-		setName(name);
+		setNameSpecifier(nameSpecifier);
 	}
 
 	@Override
@@ -55,7 +57,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 
 	@Override
 	public CPPASTBaseSpecifier copy(CopyStyle style) {
-		CPPASTBaseSpecifier copy = new CPPASTBaseSpecifier(name == null ? null : name.copy(style));
+		CPPASTBaseSpecifier copy = new CPPASTBaseSpecifier(nameSpecifier == null ? null : nameSpecifier.copy(style));
 		copy.isVirtual = isVirtual;
 		copy.visibility = visibility;
 		copy.fIsPackExpansion= fIsPackExpansion;
@@ -85,19 +87,35 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
     }
 
     @Override
+    @Deprecated
 	public IASTName getName() {
-        return name;
+    	if (nameSpecifier instanceof IASTName) {
+    		return (IASTName) nameSpecifier;
+    	}
+    	throw new UnsupportedOperationException("Cannot call getName() on base-specifier whose name-specifier "  //$NON-NLS-1$
+    			+ "is not a name. Use getNameSpecifier() instead.");                                             //$NON-NLS-1$
     }
 
     @Override
+    @Deprecated
 	public void setName(IASTName name) {
-        assertNotFrozen();
-        this.name = name;
-        if (name != null) {
-			name.setParent(this);
-			name.setPropertyInParent(NAME);
-		}
+    	setNameSpecifier((ICPPASTName) name);
     }
+    
+	@Override
+	public ICPPASTNameSpecifier getNameSpecifier() {
+		return nameSpecifier;
+	}
+
+	@Override
+	public void setNameSpecifier(ICPPASTNameSpecifier nameSpecifier) {
+		assertNotFrozen();
+        this.nameSpecifier = nameSpecifier;
+        if (nameSpecifier != null) {
+			nameSpecifier.setParent(this);
+			nameSpecifier.setPropertyInParent(NAME_SPECIFIER);
+		}
+	}
 
     @Override
 	public boolean accept(ASTVisitor action) {
@@ -109,7 +127,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	        }
 		}
 
-		if (name != null && !name.accept(action))
+		if (nameSpecifier != null && !nameSpecifier.accept(action))
 			return false;
 
 		if (action.shouldVisitBaseSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
@@ -120,7 +138,7 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (name == n) return r_reference;
+		if (nameSpecifier == n) return r_reference;
 		return r_unclear;
 	}
 

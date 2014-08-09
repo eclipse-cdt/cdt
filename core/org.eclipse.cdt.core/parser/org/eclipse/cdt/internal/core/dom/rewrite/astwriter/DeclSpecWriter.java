@@ -261,7 +261,7 @@ public class DeclSpecWriter extends NodeWriter {
 						scribe.print(COMMA_SPACE);
 					}
 				}
-				hasTrailingComments = hasTrailingComments(baseSpecifiers[baseSpecifiers.length-1].getName());
+				hasTrailingComments = hasTrailingComments(baseSpecifiers[baseSpecifiers.length-1].getNameSpecifier());
 			}
 		}
 		if (!hasTrailingComments) {
@@ -310,7 +310,7 @@ public class DeclSpecWriter extends NodeWriter {
 		if (specifier.isVirtual()) {
 			scribe.printStringSpace(Keywords.VIRTUAL);
 		}
-		specifier.getName().accept(visitor);
+		specifier.getNameSpecifier().accept(visitor);
 	}
 
 	private String getCPPCompositeTypeString(int key) {

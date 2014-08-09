@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite.util;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.util.TextUtil;
 
 /**
  * Collection of helper methods for common operations on AST nodes.

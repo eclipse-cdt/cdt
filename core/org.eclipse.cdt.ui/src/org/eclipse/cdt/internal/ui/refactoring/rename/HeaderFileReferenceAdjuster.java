@@ -73,7 +73,7 @@ import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.TextUtil;
+import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;

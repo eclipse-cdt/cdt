@@ -8,7 +8,7 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.rewrite.util;
+package org.eclipse.cdt.internal.core.util;
 
 /**
  * Collection of methods for working with text.

@@ -42,10 +42,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.TextUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeGuardDetection;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;

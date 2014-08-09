@@ -17,6 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
@@ -33,6 +40,8 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -185,6 +194,11 @@ public class CCodeFormatter extends CodeFormatter {
 			IASTTranslationUnit ast) {
 		for (int i = 0; i < regions.length; i++) {
 			IRegion region = regions[i];
+			if (region.getLength() == 0) {
+				// An empty region is replaced by the region containing the line corresponding to
+				// the offset and all statements overlapping with that line.
+				region = getLineOrStatementRegion(source, region.getOffset(), ast);
+			}
 			CodeFormatterVisitor codeFormatter =
 					new CodeFormatterVisitor(preferences, region.getOffset(), region.getLength());
 			edits[i] = codeFormatter.format(source, ast);
@@ -193,6 +207,74 @@ public class CCodeFormatter extends CodeFormatter {
 				CCorePlugin.log(status);
 			}
 		}
+	}
+
+	/**
+	 * Returns the smallest region containing the line corresponding to the given offset and all
+	 * statements overlapping with that line.
+	 */
+	private IRegion getLineOrStatementRegion(String source, int offset, IASTTranslationUnit ast) {
+		int start = TextUtil.getLineStart(source, offset);
+		int end = TextUtil.skipToNextLine(source, offset);
+		IASTNode node = findOverlappingPreprocessorStatement(start, end, ast);
+		if (node != null) {
+			IASTFileLocation location = node.getFileLocation();
+			int nodeOffset = location.getNodeOffset();
+			if (nodeOffset < start)
+				start = nodeOffset;
+			int nodeEnd = nodeOffset + location.getNodeLength();
+			if (nodeEnd > end)
+				end = nodeEnd;
+			return new Region(start, end - start);
+		}
+		IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+		for (int pos = start; pos < end;) {
+			node = nodeSelector.findFirstContainedNode(pos, end - pos);
+			if (node != null) {
+				IASTNode containedNode = node;
+				node = CPPVisitor.findAncestorWithType(containedNode, IASTStatement.class);
+				if (node == null)
+					node = CPPVisitor.findAncestorWithType(containedNode, IASTDeclaration.class);
+				if (node == null)
+					node = CPPVisitor.findAncestorWithType(containedNode, IASTPreprocessorMacroExpansion.class);
+			}
+			if (node == null)
+				break;
+			IASTFileLocation location = node.getFileLocation();
+			int nodeOffset = location.getNodeOffset();
+			if (nodeOffset < start)
+				start = nodeOffset;
+			int nodeEnd = nodeOffset + location.getNodeLength();
+			if (nodeEnd > end)
+				end = nodeEnd;
+			pos = nodeEnd;
+		}
+		
+		return new Region(start, end - start);
+	}
+
+	private IASTNode findOverlappingPreprocessorStatement(int start, int end, IASTTranslationUnit ast) {
+		IASTPreprocessorStatement[] statements = ast.getAllPreprocessorStatements();
+		int low = 0;
+		int high = statements.length;
+		while (low < high) {
+			int mid = (low + high) >>> 1;
+			IASTPreprocessorStatement statement = statements[mid];
+			IASTFileLocation location = statement.getFileLocation();
+			if (location == null) {
+				low = mid + 1;
+			} else {
+				int statementOffset = location.getNodeOffset();
+				if (statementOffset >= end) {
+					high = mid;
+				} else if (statementOffset + location.getNodeLength() <= start) {
+					low = mid + 1;
+				} else {
+					return statement;
+				}
+			}
+		}
+		return null;
 	}
 
 	private ITranslationUnit getTranslationUnit(String source) {

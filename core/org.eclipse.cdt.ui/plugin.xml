@@ -4878,6 +4878,8 @@
             <key name="content_assist_disabled_computers"/>
             <key name="content_assist_category_order"/>
             <key name="ensureNewlineAtEOF"/>
+            <key name="formattingScopeForEmptySelection"/>
+            <key name="formattingConfirmScopeForEmptySelection"/>
             <key name="removeTrailingWhitespace"/>
             <key name="removeTrailingWhitespaceEditedLines"/>
             <key name="Refactoring.savealleditors"/>

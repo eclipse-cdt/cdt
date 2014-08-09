@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,14 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
+
+import static org.eclipse.cdt.ui.PreferenceConstants.FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION;
+import static org.eclipse.cdt.ui.PreferenceConstants.FORMATTING_SCOPE_DOCUMENT;
+import static org.eclipse.cdt.ui.PreferenceConstants.FORMATTING_SCOPE_FOR_EMPTY_SELECTION;
+import static org.eclipse.cdt.ui.PreferenceConstants.FORMATTING_SCOPE_STATEMENT;
 
 import java.util.ArrayList;
 
@@ -50,11 +56,10 @@ import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
-/*
- * The page for setting the editor options.
+/**
+ * The preference page for setting the editor options.
  */
 public class CEditorPreferencePage extends AbstractPreferencePage {
-
 	protected final String[][] fAppearanceColorListModel = new String[][] {
 			{PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBracketColor, CEditor.MATCHING_BRACKETS_COLOR, null },
 			{PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCodeColor, CEditor.INACTIVE_CODE_COLOR, null },
@@ -76,7 +81,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 
 	@Override
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SUB_WORD_NAVIGATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
@@ -90,6 +95,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, FORMATTING_SCOPE_FOR_EMPTY_SELECTION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION));
 
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -100,22 +107,21 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		store.setDefault(CEditor.SUB_WORD_NAVIGATION, true);
 
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
-		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170,170,170));
+		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170, 170, 170));
 
 		store.setDefault(CEditor.INACTIVE_CODE_ENABLE, true);
 		PreferenceConverter.setDefault(store, CEditor.INACTIVE_CODE_COLOR, new RGB(224, 224, 224));
 	}
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_PREF_PAGE);
 	}
 
-	// sets enabled flag for a control and all its sub-tree
+	/**
+	 * Sets enabled flag for a control and all its sub-tree.
+	 */
 	protected static void setEnabled(Control control, boolean enable) {
 		control.setEnabled(enable);
 		if (control instanceof Composite) {
@@ -133,6 +139,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
 
+		int indent = convertHorizontalDLUsToPixels(8);
+
 		String label= PreferencesMessages.CEditorPreferencePage_behaviorPage_subWordNavigation;
 		addCheckBox(behaviorComposite, label, CEditor.SUB_WORD_NAVIGATION, 0);
 
@@ -146,7 +154,22 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		addCheckBox(behaviorComposite, label, CEditor.INACTIVE_CODE_ENABLE, 0);
 
 		Label l = new Label(behaviorComposite, SWT.LEFT);
+		l.setText(PreferencesMessages.CEditorPreferencePage_behaviorPage_formattingWithEmptySelection);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		l.setLayoutData(gd);
+
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_formatFile;
+		addRadioButton(behaviorComposite, label, FORMATTING_SCOPE_FOR_EMPTY_SELECTION, FORMATTING_SCOPE_DOCUMENT, indent);
+
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_formatStatement;
+		addRadioButton(behaviorComposite, label, FORMATTING_SCOPE_FOR_EMPTY_SELECTION, FORMATTING_SCOPE_STATEMENT, indent);
+
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_confirmFormattingScope;
+		addCheckBox(behaviorComposite, label, FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION, indent);
+
+		l = new Label(behaviorComposite, SWT.LEFT);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		gd.heightHint = convertHeightInCharsToPixels(1) / 2;
 		l.setLayoutData(gd);
@@ -257,7 +280,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		String text = PreferencesMessages.CEditorPreferencePage_link;
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(text);
-		link.addListener (SWT.Selection, new Listener () {
+		link.addListener (SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
 				String u = event.text;
@@ -274,9 +297,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		return link;
 	}
 
-	/*
-	 * @see PreferencePage#createContents(Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();
@@ -319,9 +339,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		});
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		DocCommentOwnerManager.getInstance().setWorkspaceCommentOwner(fDocCommentOwnerComposite.getSelectedDocCommentOwner());
@@ -341,9 +358,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();

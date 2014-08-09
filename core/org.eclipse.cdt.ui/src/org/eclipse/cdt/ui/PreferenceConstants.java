@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -929,6 +929,41 @@ public class PreferenceConstants {
 	 * @since 4.0
 	 */
 	public static final String FORMATTER_PROFILE = "formatter_profile"; //$NON-NLS-1$
+
+	/**
+	 * Preference key determining the scope of formatting when the selection is empty.
+	 * <p>
+	 * Value is of type {@code String}.
+	 *
+	 * @since 5.9
+	 */
+	public final static String FORMATTING_SCOPE_FOR_EMPTY_SELECTION = "formattingScopeForEmptySelection"; //$NON-NLS-1$
+	
+	/**
+	 * The value of {@link #FORMATTING_SCOPE_FOR_EMPTY_SELECTION} specifying that the formatting
+	 * applies to the whole document.
+	 *
+	 * @since 5.9
+	 */
+	public static final String FORMATTING_SCOPE_DOCUMENT = "document"; //$NON-NLS-1$
+
+	/**
+	 * The value of {@link #FORMATTING_SCOPE_FOR_EMPTY_SELECTION} specifying that the formatting
+	 * applies to the containing statement.
+	 *
+	 * @since 5.9
+	 */
+	public static final String FORMATTING_SCOPE_STATEMENT = "statement"; //$NON-NLS-1$
+
+	/**
+	 * Preference key for whether to ask user for how formatting of an empty selection
+	 * should be interpreted.
+	 * <p>
+	 * Value is of type {@code Boolean}. The default is {@code true}.
+	 *
+	 * @since 5.9
+	 */
+	public final static String FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION = "formattingConfirmScopeForEmptySelection"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for whether to ensure a newline at the end of files when saving.
@@ -2158,6 +2193,10 @@ public class PreferenceConstants {
 
 		// Formatter profile
 		store.setDefault(FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);
+
+		// Formatting behavior.
+		store.setDefault(FORMATTING_SCOPE_FOR_EMPTY_SELECTION, FORMATTING_SCOPE_DOCUMENT);
+		store.setDefault(FORMATTING_CONFIRM_SCOPE_FOR_EMPTY_SELECTION, true);
 
 		// Content assist
 		store.setDefault(CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$

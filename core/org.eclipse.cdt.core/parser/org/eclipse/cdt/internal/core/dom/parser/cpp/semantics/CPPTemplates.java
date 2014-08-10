@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -1507,12 +1508,12 @@ public class CPPTemplates {
 					return ((ICPPClassSpecialization) owner).specializeMember(binding, point);
 				}
 			}
-		} else if (binding instanceof CPPFunctionInstance) {
+		} else if (binding instanceof ICPPFunctionInstance) {
 			// TODO(nathanridge):
-			//   Maybe we should introduce a CPPDeferredFunctionInstance and have things that can return
-			//   a dependent CPPFunctionInstance (like instantiateForAddressOfFunction) return that when
+			//   Maybe we should introduce an ICPPDeferredFunctionInstance and have things that can return
+			//   a dependent ICPPFunctionInstance (like instantiateForAddressOfFunction) return that when
 			//   appropriate?
-			CPPFunctionInstance origInstance = (CPPFunctionInstance) binding;
+			ICPPFunctionInstance origInstance = (ICPPFunctionInstance) binding;
 			ICPPTemplateArgument[] origArgs = origInstance.getTemplateArguments();
 			ICPPTemplateArgument[] newArgs = instantiateArguments(origArgs, tpMap, packOffset, within, point, false);
 			if (origArgs != newArgs) {

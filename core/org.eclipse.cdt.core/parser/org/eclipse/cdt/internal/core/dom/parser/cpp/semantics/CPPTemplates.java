@@ -2041,8 +2041,17 @@ public class CPPTemplates {
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
 					final ICPPFunction f = (ICPPFunction) instance;
-					if (SemanticUtil.isValidType(f.getType()))
-						return f;
+					if (SemanticUtil.isValidType(f.getType())) {
+						// The number of arguments have been checked against the function
+						// template's required argument count at an earlier stage. However,
+						// the process of instantiation can increase the required argument
+						// count by expanding parameter packs. If arguments are provided
+						// for a parameter pack explicitly, it's possible for deduction to
+						// succeed without having enough function arguments to match a 
+						// corresponding function parameter pack - so we check again.
+						if (fnArgs.size() >= f.getRequiredArgumentCount())
+							return f;
+					}
 				}
 			}
 		} catch (DOMException e) {

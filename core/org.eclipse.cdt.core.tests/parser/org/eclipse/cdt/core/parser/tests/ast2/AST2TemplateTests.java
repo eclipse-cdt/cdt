@@ -8047,6 +8047,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template <typename... Args>
+	//	void waldo(Args...);
+	//
+	//	int main() {
+	//	    waldo<int>();
+	//	}
+	public void testExplicitArgumentsForParameterPack_404245() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertProblem("waldo<int>()", "waldo<int>");
+	}
+
 	//	template <typename T>
 	//	struct A {};
 	//

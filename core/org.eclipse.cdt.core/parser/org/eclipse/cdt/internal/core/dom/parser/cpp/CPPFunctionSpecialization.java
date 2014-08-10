@@ -69,12 +69,12 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 
 	@Override
 	public int getRequiredArgumentCount() {
-		return ((ICPPFunction) getSpecializedBinding()).getRequiredArgumentCount();
+		return CPPFunction.getRequiredArgumentCount(getParameters());
 	}
 
 	@Override
 	public boolean hasParameterPack() {
-		return ((ICPPFunction) getSpecializedBinding()).hasParameterPack();
+		return CPPFunction.hasParameterPack(getParameters());
 	}
 
 	@Override

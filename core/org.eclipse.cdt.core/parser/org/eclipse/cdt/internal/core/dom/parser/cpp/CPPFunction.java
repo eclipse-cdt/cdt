@@ -654,7 +654,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	@Override
 	public boolean hasParameterPack() {
-		ICPPParameter[] pars= getParameters();
+		return hasParameterPack(getParameters());
+	}
+	
+	public static boolean hasParameterPack(ICPPParameter[] pars) {
 		return pars.length > 0 && pars[pars.length - 1].isParameterPack();
 	}
 

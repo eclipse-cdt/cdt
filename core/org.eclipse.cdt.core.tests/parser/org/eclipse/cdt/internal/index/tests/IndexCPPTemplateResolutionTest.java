@@ -2551,4 +2551,33 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testEnumerationWithMultipleEnumerators_434467() throws Exception {
 		checkBindings();
 	}
+	
+	//	template <typename ResultT, ResultT (*Func)()>
+	//	struct Base {
+	//	  ResultT operator()() const;
+	//	};
+	//	
+	//	struct S {};
+	//	
+	//	template <typename T>
+	//	class B {};
+	//	
+	//	template<typename T>
+	//	B<T> f();
+	//	
+	//	template <typename T>
+	//	class Derived : public Base<B<S>, f<T> > {};
+
+	//	#include "header.h"
+	//	const Derived<S> decl;
+	//	
+	//	void bar(const B<S>&);
+	//	
+	//	void foo()
+	//	{
+	//	    bar(decl());  // ERROR HERE: Invalid arguments
+	//	}
+	public void testInstantiationOfFunctionInstance_437675() throws Exception {
+		checkBindings();
+	}
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.launchbar.core.internal.Activator;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -33,6 +34,8 @@ public class ConfigBasedLaunchConfigurationProvider extends AbstractLaunchConfig
 			if (configMap.containsKey(element))
 				return true;
 			return element.getType().getIdentifier().equals(typeId);
+		} catch (DebugException e) {
+			return false; // config does not exists, not point logging
 		} catch (CoreException e) {
 			Activator.log(e);
 			return false;

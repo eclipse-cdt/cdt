@@ -16,6 +16,24 @@
       "revId": "bbf80c95b5d9da7f652069534e5d9bbe6896e92a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1feb5427",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/preferences/CodeAssistPreferencePage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2014-08-11T11:18:40Z",
+      "side": 1,
+      "message": "I don\u0027t think so. Current behavior is to display all parameters. Setting the default value to false here would hide them. We could argue whether we want display of the default arguments (next line), since this changes the current behavior. But I expect the new feature gets lost for most people if it has to be enabled explicitly.",
+      "parentUuid": "c7672b30_3b3be451",
+      "revId": "bbf80c95b5d9da7f652069534e5d9bbe6896e92a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

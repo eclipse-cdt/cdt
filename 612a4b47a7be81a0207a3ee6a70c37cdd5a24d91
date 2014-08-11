@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_d55a5d55",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/schema/launchBarUIContributions.exsd",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-11T18:10:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_7ad536b1",
+      "revId": "612a4b47a7be81a0207a3ee6a70c37cdd5a24d91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_9adc92dd",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/LaunchBarUIManager.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-11T15:27:13Z",
       "side": 1,
       "message": "That is not good idea to create an image in constructor, lots of images possibly,\nWhy you don\u0027t just store a descriptor?",
+      "revId": "612a4b47a7be81a0207a3ee6a70c37cdd5a24d91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_35891133",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/LaunchBarUIManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-11T18:10:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_9adc92dd",
       "revId": "612a4b47a7be81a0207a3ee6a70c37cdd5a24d91",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_158e953a",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/LaunchBarUIManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-11T18:10:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_5af95a40",
+      "revId": "612a4b47a7be81a0207a3ee6a70c37cdd5a24d91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_1a236266",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-08-11T15:27:13Z",
       "side": 1,
       "message": "Not to be picky but why do you have switch here?",
+      "revId": "612a4b47a7be81a0207a3ee6a70c37cdd5a24d91",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_d541bd63",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/controls/TargetSelector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 708
+      },
+      "writtenOn": "2014-08-11T18:10:14Z",
+      "side": 1,
+      "message": "Copy/paste laziness. I\u0027ll phrase it as an if statement for more concise code.",
+      "parentUuid": "c7672b30_1a236266",
       "revId": "612a4b47a7be81a0207a3ee6a70c37cdd5a24d91",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

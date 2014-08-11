@@ -75,8 +75,8 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			// Try to find matching markers and don't put in duplicates
 			IMarker[] markers = markerResource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
 			for (IMarker m : markers) {
-				int line = ((Integer) m.getAttribute(IMarker.LINE_NUMBER)).intValue();
-				int sev = ((Integer) m.getAttribute(IMarker.SEVERITY)).intValue();
+				int line = m.getAttribute(IMarker.LINE_NUMBER, -1);
+				int sev = m.getAttribute(IMarker.SEVERITY, -1);
 				String msg = (String) m.getAttribute(IMarker.MESSAGE);
 				if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && msg.equals(problemMarkerInfo.description)) {
 					String extloc = (String) m.getAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION);

@@ -27,6 +27,10 @@ public abstract class ProjectBasedLaunchDescriptorType extends ConfigBasedLaunch
 		return false;
 	}
 
+	public boolean ownsConfiguration(ILaunchConfiguration element) {
+		return super.ownsLaunchObject(element) && getProject(element) != null;
+	}
+
 	protected boolean ownsLaunchDescriptor(ILaunchDescriptor ld) {
 		if (!(ld instanceof ProjectBasedLaunchDescriptorType))
 			return false;
@@ -41,6 +45,8 @@ public abstract class ProjectBasedLaunchDescriptorType extends ConfigBasedLaunch
 		if (element instanceof ILaunchConfiguration) {
 			ILaunchConfiguration llc = (ILaunchConfiguration) element;
 			IProject project = getProject(llc);
+			if (project == null)
+				return null;
 			// TODO we need disable project based descriptor here
 			return new ProjectBasedLaunchDescriptor(this, project, llc);
 		} else if (element instanceof IProject) {

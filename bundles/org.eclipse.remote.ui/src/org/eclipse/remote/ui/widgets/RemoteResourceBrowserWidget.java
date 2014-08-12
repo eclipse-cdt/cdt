@@ -50,6 +50,8 @@ import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.IRemoteUIConnectionManager;
 import org.eclipse.remote.ui.RemoteUIServices;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -93,6 +95,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	public static final int SHOW_CONNECTIONS = 0x40;
 
+	@SuppressWarnings("unused")
 	private static final int minimumWidth = 200;
 	private static final int heightHint = 300;
 
@@ -108,6 +111,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	private boolean fShowHidden;
 	private final List<IFileStore> fResources = new ArrayList<IFileStore>();
+	private String fResource;
 	private String fInitialPath;
 	private IPath fRootPath;
 	private IRemoteFileManager fFileMgr;
@@ -174,6 +178,12 @@ public class RemoteResourceBrowserWidget extends Composite {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				fRemotePathText.setSelection(fRemotePathText.getText().length());
 				setRoot(fRemotePathText.getText());
+			}
+		});
+		fRemotePathText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				fResource = fRemotePathText.getText().trim();
 			}
 		});
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -465,6 +475,21 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	public IRemoteConnection getConnection() {
 		return fConnection;
+	}
+
+	/**
+	 * Get a resource that corresponds to the text field
+	 * 
+	 * @return resource corresponding to the text field
+	 * @since 1.1
+	 */
+	public IFileStore getResource() {
+		if (fResource != null) {
+			if (!fResource.equals("") && getConnection() != null) { //$NON-NLS-1$
+				return getConnection().getFileManager().getResource(fResource);
+			}
+		}
+		return null;
 	}
 
 	/**

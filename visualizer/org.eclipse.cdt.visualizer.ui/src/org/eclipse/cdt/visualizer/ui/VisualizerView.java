@@ -279,6 +279,14 @@ public class VisualizerView
 		else if (source == this) {
 			// Do nothing.
 		}
+		// if the source is another instance of VisualizerView
+		// it's a selection in another (cloned) view. The 
+		// workbench selection has or will be updated by the
+		// instance of the view where the selection originated,
+		// so no need to do anything
+		else if (source.getClass() == VisualizerView.class) {
+			// Do nothing.
+		}
 		// else this is a selection change from some other view
 		// in the workbench, which we should pass down to the viewer
 		else {

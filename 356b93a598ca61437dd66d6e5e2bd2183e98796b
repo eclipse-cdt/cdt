@@ -1,0 +1,1364 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_7dd9af69",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPVariableReadWriteFlags.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "This method can be be pushed to VariableReadWriteFlags to be available for both, C and C++.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5ddcb359",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "It looks like this code was copied from ChangeFormatter class. Why was this necessary?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d079357",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Why not use NodeCommentMap.getOffsetIncludingComments(IASTNode)?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bd0ea771",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1054,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Why not use NodeCommentMap.getEndOffsetIncludingComments(IASTNode)?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d112b91",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1077,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "How is this different from getEndOffsetIncludingComments?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7da88f94",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Unnecessary blank line.\n\nSimilar in other files.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d46bb75",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Collapse double and triple blank lines.\n\nSimilar in other files.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7d56cf33",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "The test code is unnecessarily long. Everything except the test() function is not needed for the test.\n\nSimilar in other tests.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bdb227fe",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "JDT doesn\u0027t enable inline refactoring in such context. CDT should not allow it either when selection points to anything but a variable.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d595360",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 690,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "The warning looks silly since the variable is local to the method and there is no write access anywhere.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9db5abe9",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PullUpRefactoringTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Simpler to write HashMap\u003c\u003e\n\nSame below.\n\nAlso fix in other files.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7d8fef39",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PullUpRefactoringTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "The error message says: \"Declaration/Definition for member \u0027foo() : void\u0027 could not be resolved uniquely\". It\u0027s not clear what the message means.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d8c8b43",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PullUpRefactoringTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "If this line is removed, refactoring throws an exception:\nThread [ModalContext] (Suspended (exception NullPointerException))\t\n\tMoveFieldAction.run(ModificationCollector, TextEditGroup, IProgressMonitor) line: 102\t\n\tMoveActionGroup.run(ModificationCollector, TextEditGroup, IProgressMonitor) line: 187\t\n\tPullUpRefactoring.collectModifications(IProgressMonitor, ModificationCollector) line: 316\t\n\tPullUpRefactoring(CRefactoring).checkFinalConditions(IProgressMonitor) line: 129\t\n\tCheckConditionsOperation.run(IProgressMonitor) line: 85\t\n\tCreateChangeOperation.run(IProgressMonitor) line: 121\t\n\tWorkspace.run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor) line: 2313\t\n\tWorkbenchRunnableAdapter.run(IProgressMonitor) line: 87\t\n\tModalContext$ModalContextThread.run() line: 122",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd82df0a",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PullUpRefactoringTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1854,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Need test cases with method definition in a separate .cpp file.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d1e4b67",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PushDownRefactoringTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Need test cases with method definition in a separate .cpp file.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d2f3791",
+        "filename": "core/org.eclipse.cdt.ui/.settings/org.eclipse.jdt.core.prefs",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "These changes seem unrelated to the rest of the patch.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d2a3b7e",
+        "filename": "core/org.eclipse.cdt.ui/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "In Java such refactoring is called \"Inline\". What is the reason for the CDT name to be different?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bdd6a7ee",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitionIds.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "I\u0027m getting:\nThe command (\"org.eclipse.cdt.ui.refactor.inline.constant\") is undefined\njava.lang.Exception\n\tat org.eclipse.jface.action.ExternalActionManager$CommandCallback.isActive(ExternalActionManager.java:381)\n\tat org.eclipse.jface.action.ActionContributionItem.isCommandActive(ActionContributionItem.java:656)\n\tat org.eclipse.jface.action.ActionContributionItem.isVisible(ActionContributionItem.java:712)\n\tat org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer.reconcileManagerToModel(MenuManagerRenderer.java:1000)\n\tat org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer.reconcileManagerToModel(MenuManagerRenderer.java:943)\n\tat org.eclipse.ui.internal.PopupMenuExtender.addMenuContributions(PopupMenuExtender.java:420)\n\tat org.eclipse.ui.internal.PopupMenuExtender.menuAboutToShow(PopupMenuExtender.java:393)\n\tat org.eclipse.jface.action.MenuManager.fireAboutToShow(MenuManager.java:352)\n\tat org.eclipse.jface.action.MenuManager.handleAboutToShow(MenuManager.java:492)\n\tat org.eclipse.jface.action.MenuManager.access$1(MenuManager.java:487)\n\tat org.eclipse.jface.action.MenuManager$2.menuShown(MenuManager.java:519)\n\tat org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:255)\n\tat org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:84)\n\tat org.eclipse.swt.widgets.Display.sendEvent(Display.java:4486)\n\tat org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1388)\n\tat org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1412)\n\tat org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1393)\n\tat org.eclipse.swt.widgets.Menu._setVisible(Menu.java:198)\n\tat org.eclipse.swt.widgets.Display.runPopups(Display.java:3873)\n\tat org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3431)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$9.run(PartRenderingEngine.java:1151)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)\n\tat org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1032)\n\tat org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:148)\n\tat org.eclipse.ui.internal.Workbench$5.run(Workbench.java:636)\n\tat org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)\n\tat org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:579)\n\tat org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:150)\n\tat org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:135)\n\tat org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:134)\n\tat org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:382)\n\tat org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:236)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:606)\n\tat org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:648)\n\tat org.eclipse.equinox.launcher.Main.basicRun(Main.java:603)\n\tat org.eclipse.equinox.launcher.Main.run(Main.java:1465)\n\tat org.eclipse.equinox.launcher.Main.main(Main.java:1438)",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fdbf7fa5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/gettersandsetters/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "This message doesn\u0027t belong to this file.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3dca9743",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/ExpressionOperatorCounter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add JavaDoc.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ddba83b5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/ExpressionOperatorCounter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add JavaDoc.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7df36f96",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempInputPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add JavaDoc.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5df67386",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempInputPage.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Move down together with non-static methods.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bded07b5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fdb13fca",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Remove \"this.\" where it is redundant.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ddac4376",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Prefer line breaks at higher level, here after the equal sign.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9df00b88",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "This would be really nice to do.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fde65fd3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dde1e3bb",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3dbc57a0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Either remove or add description.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3de1f7b9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Split into separate statement and remove \"else\".",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bda86763",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Use import static instead.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1db7dbbc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoringContribution.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7d852fe7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoringDescriptor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d8833ff",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempWizard.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd981f4c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Dependency between the two options should probably be handled in the dialog itself by disabling declaration removal if not all occurrences are inlined. I\u0027m not sure if inlining only some of the occurrences adds value. JDT doesn\u0027t do it, does it?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d82cbdb",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Should it be InlineTemp_variableNotUsed?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dd93a32b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "These -\u003e This",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d93b72d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "are -\u003e is",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d29f73a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "The name of the class is too general.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d8ebb06",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "This line should be indented the same as the previous one.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7d708f81",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Gets -\u003e Returns\n\nSame in other similar places.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d73138d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bd7a275f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Finality of the variable doesn\u0027t add value.\n\nSame below.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dd5e03f6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/InsertionPoint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "This line is redundant.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d699b99",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "no -\u003e not a",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d6e17a4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Unmatched quotes.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d548bd0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Probably makes sense to move this method to ASTHelper.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd4adf2b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "See http://stackoverflow.com/questions/14537311/tt-vs-code-elements-when-writing-java-docs.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9de64ba4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add a plank line between method description and the first @param\n\nSame below and in other files.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7d140f02",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Use proper capitalization and punctuation in comments.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d179305",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dd45631c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Simpler: return method.isDestructor();",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d45771a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Infinite recursion is possible if the inheritance hierarchy is malformed.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d407b07",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Probably better to pass the name of the method instead of the method itself.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1ddb5be5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Why is local copy needed?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bd1ea71f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "It makes sense to put general purpose refactoring helper methods like this one in a place where they can be used by other refactorings.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5decb387",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "OperationCanceledException should not be logged.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bde34795",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "iname -\u003e indexName",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d212b5f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Iterating -\u003e Iteration",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd077fd2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Log instead of printing.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dd0283c2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "toString methods are for debugging only. Use ASTTypeUtil.getType instead.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d129710",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d0d1bf2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpInformation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Avoid cryptic abbreviations.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d380b89",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpInformation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Remove this line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd2e5f44",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpPushDownBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Can be pulled up to CRefactoring.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bd47c7f5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpPushDownBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add JavaDoc.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9d4acbfc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpPushDownBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add JavaDoc.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d5033ac",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpPushDownBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Unnecessary blank line.\n\nPlease also fix other similar places.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd601f79",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "May cause infinite recursion if the inheritance hierarchy is malformed.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3d5bb7ce",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PushDownInformation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Avoid cryptic abbreviations.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dd5ba3cc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PushDownInformation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fdabff0a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PushDownRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9dc5abd7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PushDownRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Redundant statement.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1d56bba3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/utils/VisibilityEnum.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Add JavaDoc.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5dbb135e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/InlineTempAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Missing copyright header.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_7db88f62",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/InlineTempAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Describe.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd793f3b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/PullUpMemberAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Copyright header is missing.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5d69536e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/PullUpMemberAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "All new commands should be based on command infrastructure (see org.eclipse.core.commands.IHandler and friends). New actions, if implemented, should delegate to the corresponding handlers.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_dd744343",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/refactoring/actions/PushDownMemberAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-12T03:24:03Z",
+      "side": 1,
+      "message": "Copyright header is missing.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

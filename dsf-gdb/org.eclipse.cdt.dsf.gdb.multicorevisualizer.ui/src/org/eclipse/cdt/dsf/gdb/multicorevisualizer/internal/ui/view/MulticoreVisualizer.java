@@ -17,6 +17,7 @@
  *     Marc-Andre Laperle (Ericsson) - Bug 411634
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Xavier Raynaud (kalray) - Bug 431935
+ *     Marc Dumais (Ericsson) - Bug 441713
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualizerUIPlugin;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.EnableLoadMetersAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.FilterCanvasAction;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.PinToDebugSessionAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SelectAllAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SetLoadMeterPeriodAction;
@@ -95,7 +97,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 @SuppressWarnings("restriction")
 public class MulticoreVisualizer extends GraphicCanvasVisualizer
-    implements DSFDebugModelListener
+    implements DSFDebugModelListener, IPinnable
 {	
 	// --- constants ---
 	
@@ -158,6 +160,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	private static final int LOAD_METER_TIMER_MEDIUM = 1000; 
 	private static final int  LOAD_METER_TIMER_SLOW = 5000;
 	
+	/** Currently pinned session id, if any  */
+	private String m_currentPinedSessionId = null;
+	
 
 	// --- UI members ---
 
@@ -210,6 +215,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 
 	/** Menu action */
 	FilterCanvasAction m_clearFilterAction = null;	
+	
+	/** Menu action */
+	PinToDebugSessionAction m_pinToDbgSessionAction = null;
 
 	// --- constructors/destructors ---
 	
@@ -456,6 +464,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		m_clearFilterAction.init(this);
 		m_clearFilterAction.setEnabled(false);
 		
+		m_pinToDbgSessionAction = new PinToDebugSessionAction();
+		m_pinToDbgSessionAction.init(this);
+		m_pinToDbgSessionAction.setEnabled(false);
+		
 		// Note: debug view may not be initialized at startup,
 		// so we'll pretend the actions are not yet updated,
 		// and reinitialize them later.
@@ -481,6 +493,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
     	// show the load meter refresh speed sub-menu only 
     	// if the load meters are enabled
     	m_loadMetersRefreshSubSubmenu.setVisible(m_loadMetersEnabled);
+    	
+    	// Enable pinning menu item when there is a current debug session
+    	m_pinToDbgSessionAction.setEnabled(m_sessionState != null);
 		
 		// We should not change the enablement of the debug view
 		// actions, as they are automatically enabled/disabled
@@ -572,6 +587,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			m_clearFilterAction.dispose();
 			m_clearFilterAction = null;
 		}
+		
+		if (m_pinToDbgSessionAction != null) {
+			m_pinToDbgSessionAction.dispose();
+			m_pinToDbgSessionAction = null;
+		}
 
 		m_actionsInitialized = false;
 	}
@@ -586,16 +606,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// initialize menu/toolbar actions, if needed
 		createActions();
 
-		toolBarManager.add(m_resumeAction);
-		toolBarManager.add(m_suspendAction);
-		toolBarManager.add(m_terminateAction);
-		
-		toolBarManager.add(m_separatorAction);
-		
-		toolBarManager.add(m_stepReturnAction);
-		toolBarManager.add(m_stepOverAction);
-		toolBarManager.add(m_stepIntoAction);
-		toolBarManager.add(m_dropToFrameAction);
+		toolBarManager.add(m_pinToDbgSessionAction);
 		
 		updateActions();
 	}
@@ -862,7 +873,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 						}
 						else { // thread
 							VisualizerThread thread = model.getThread(tid);
-							if (thread != null) {
+							// here "tid" is the "GDB thread id", which is not
+							// unique across sessions, so make sure the thread
+							// belongs to the correct process, before selecting it
+							if (thread != null && thread.getPID() == pid) {
 								selected.add(thread);
 							}
 						}
@@ -875,6 +889,39 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		return visualizerSelection;
 	}
 	
+	
+	// --- IPinnable implementation ---
+	
+	/**
+	 * Pins the multicore visualizer to the current debug session, preventing
+	 * it from switching to a different session.
+	 */
+	@Override
+	public void pin() {
+		// No current session - do nothing
+		if (m_sessionState == null)
+			return;
+		
+		m_currentPinedSessionId = m_sessionState.getSessionID();
+	}
+	
+	/**
+	 * Unpins the visualizer.
+	 */
+	@Override
+	public void unpin() {
+		m_currentPinedSessionId = null;
+		// force visualizer to re-evaluate its current session and
+		// display the correct one, if needed
+		workbenchSelectionChanged(null);
+	}
+	
+	/** Returns whether the MV is currently pinned to a session */
+	@Override
+	public boolean isPinned() {
+		return m_currentPinedSessionId != null;
+	}
+
 
 	// --- DSF Context Management ---
 	
@@ -883,6 +930,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 */
 	public boolean updateDebugContext()
 	{
+		// is the visualizer pinned? Then inhibit context change
+		if (isPinned())
+			return false;
+		
 		String sessionId = null;
 		IAdaptable debugContext = DebugUITools.getDebugContext();
 		if (debugContext instanceof IDMVMContext) {

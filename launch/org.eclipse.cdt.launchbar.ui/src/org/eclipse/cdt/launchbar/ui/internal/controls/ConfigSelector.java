@@ -110,7 +110,9 @@ public class ConfigSelector extends CSelector {
 					ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
 					ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
 					if (labelProvider != null) {
-						return labelProvider.getImage(element);
+						Image img = labelProvider.getImage(element);
+						if (img != null)
+							return img;
 					}
 				}
 				return defaultProvider.getImage(element);
@@ -123,7 +125,9 @@ public class ConfigSelector extends CSelector {
 					ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
 					ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
 					if (labelProvider != null) {
-						return labelProvider.getText(element);
+						String text = labelProvider.getText(element);
+						if (text != null)
+							return text;
 					}
 				}
 				return defaultProvider.getText(element);

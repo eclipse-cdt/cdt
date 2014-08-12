@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
- * Contributors: 
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
@@ -59,7 +59,7 @@ public class IndexToASTNameHelper {
 	}
 
 	private static boolean isUnnamedName(IASTName name) {
-		return name.getFileLocation() == null && "".equals(name.toString()); //$NON-NLS-1$
+		return name.getFileLocation() == null && name.toCharArray().length == 0;
 	}
 
 	private static boolean isQualifiedName(IASTName name) {
@@ -114,7 +114,7 @@ class IndexNameToAstNameMatcher extends ASTVisitor {
 }
 
 class BindingToAstNameMatcher extends ASTVisitor {
-	private List<IASTName> results = new ArrayList<IASTName>();
+	private List<IASTName> results = new ArrayList<>();
 	private IBinding bindingToFind;
 	private char[] toFindName;
 	private IIndex index;

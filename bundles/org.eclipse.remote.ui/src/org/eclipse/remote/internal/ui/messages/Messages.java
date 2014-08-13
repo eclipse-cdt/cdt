@@ -96,6 +96,16 @@ public class Messages extends NLS {
 	public static String RemoteResourceBrowser_Show_hidden_files;
 	public static String RemoteResourceBrowser_UpOneLevel;
 
+	public static String RemoteResourceBrowserWidget_0;
+
+	public static String RemoteResourceBrowserWidget_1;
+
+	public static String RemoteResourceBrowserWidget_2;
+
+	public static String RemoteResourceBrowserWidget_3;
+
+	public static String RemoteResourceBrowserWidget_4;
+
 	public static String RemoteResourceBrowserWidget_New_Folder;
 
 	public static String RemoteResourceBrowserWidget_Unable_to_create_new_folder;

@@ -19,10 +19,15 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -56,10 +61,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Generic file/directory browser for remote resources.
@@ -68,6 +75,72 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * 
  */
 public class RemoteResourceBrowserWidget extends Composite {
+	/**
+	 * Delayed input dialog uses {@link ValidateJob} to create an InputDialog that only validates it's text field after an
+	 * appropriate timeout has occurred. This is to prevent excessive network traffic when checking the existence of a remote
+	 * directory on a target system.
+	 * 
+	 * Due to the timing of the validation, it is possible to close the dialog prior to the validation completing. However since the
+	 * validation is only used to check for the existence of a remote file/directory, the worst that can happen is that the user
+	 * will not be notified that the directory already exists.
+	 * 
+	 */
+	private class DelayedInputDialog extends InputDialog {
+		public DelayedInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue,
+				IInputValidator validator) {
+			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
+		}
+
+		@Override
+		protected void buttonPressed(int buttonId) {
+			/*
+			 * Cancel the job as soon as the dialog is closed to avoid SWTException
+			 */
+			fValidateJob.cancel();
+			super.buttonPressed(buttonId);
+		}
+
+		protected void doValidate() {
+			super.validateInput();
+		}
+
+		@Override
+		protected void validateInput() {
+			fValidateJob.cancel();
+			if (!getText().getText().equals("")) { //$NON-NLS-1$
+				fValidateJob.schedule(VALIDATE_DELAY);
+			} else {
+				super.validateInput();
+			}
+		}
+	}
+
+	/**
+	 * Validation job that will call the {@link DelayedInputDialog#doValidate()} method when run. The job should be scheduled with a
+	 * delay to limit the frequency of validation.
+	 */
+	private class ValidateJob extends UIJob {
+		private DelayedInputDialog fDialog;
+
+		public ValidateJob() {
+			super(Messages.RemoteResourceBrowserWidget_0);
+			setSystem(true);
+		}
+
+		@Override
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			fDialog.doValidate();
+			return Status.OK_STATUS;
+		}
+
+		public void setDialog(DelayedInputDialog dialog) {
+			fDialog = dialog;
+		}
+	}
+
+	private static final int VALIDATE_DELAY = 100;
+	private final ValidateJob fValidateJob = new ValidateJob();
+
 	/**
 	 * Browse for files
 	 */
@@ -409,7 +482,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 				public void run(IProgressMonitor monitor) {
 					SubMonitor progress = SubMonitor.convert(monitor, 10);
 					String baseName = "newfolder"; //$NON-NLS-1$
-					IFileStore path = fConnection.getFileManager().getResource(parent);
+					final IFileStore path = fConnection.getFileManager().getResource(parent);
 					IFileStore child = path.getChild(baseName);
 					int count = 1;
 					try {
@@ -417,13 +490,57 @@ public class RemoteResourceBrowserWidget extends Composite {
 							progress.setWorkRemaining(10);
 							child = path.getChild(baseName + " (" + count++ + ")"); //$NON-NLS-1$//$NON-NLS-2$
 						}
-						if (!progress.isCanceled()) {
-							child.mkdir(EFS.SHALLOW, progress.newChild(10));
-							name[0] = child.getName();
+					} catch (final CoreException e) {
+						Display.getDefault().syncExec(new Runnable() {
+							@Override
+							public void run() {
+								ErrorDialog.openError(getShell(), Messages.RemoteResourceBrowserWidget_New_Folder,
+										Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder, e.getStatus());
+							}
+						});
+					}
+					final IFileStore basePath = child;
+					final String[] userPath = new String[1];
+					Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+							DelayedInputDialog dialog = new DelayedInputDialog(getShell(), Messages.RemoteResourceBrowserWidget_1,
+									Messages.RemoteResourceBrowserWidget_2, basePath.getName(), new IInputValidator() {
+										@Override
+										public String isValid(String newText) {
+											if (!newText.equals("")) { //$NON-NLS-1$
+												IFileStore newPath = path.getChild(newText);
+												if (newPath.fetchInfo().exists()) {
+													return Messages.RemoteResourceBrowserWidget_3;
+												}
+											} else {
+												return Messages.RemoteResourceBrowserWidget_4;
+											}
+											return null;
+										}
+									});
+							fValidateJob.setDialog(dialog);
+							if (dialog.open() == Dialog.OK) {
+								userPath[0] = dialog.getValue();
+							}
 						}
-					} catch (CoreException e) {
-						ErrorDialog.openError(getShell(), Messages.RemoteResourceBrowserWidget_New_Folder,
-								Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder, e.getStatus());
+					});
+					if (userPath[0] != null) {
+						try {
+							IFileStore newPath = path.getChild(userPath[0]);
+							if (!progress.isCanceled()) {
+								newPath.mkdir(EFS.SHALLOW, progress.newChild(10));
+								name[0] = newPath.getName();
+							}
+						} catch (final CoreException e) {
+							Display.getDefault().syncExec(new Runnable() {
+								@Override
+								public void run() {
+									ErrorDialog.openError(getShell(), Messages.RemoteResourceBrowserWidget_New_Folder,
+											Messages.RemoteResourceBrowserWidget_Unable_to_create_new_folder, e.getStatus());
+								}
+							});
+						}
 					}
 				}
 			};

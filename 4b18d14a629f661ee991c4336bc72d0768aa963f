@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_7788a8ff",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/VisualizerView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-13T15:54:33Z",
+      "side": 1,
+      "message": "This behavior feels generally useful, and should be standardized in case it\u0027s used elsewhere, so I would add it to a utility class somewhere, e.g. add an org.eclipse.cdt.visualizer.ui.util.EclipseUtils class that defines two methods so one can write this as:\n\n  EclipseUtils.addViewSecondaryID(view,\n      EclipseUtils.getPinCloneSecondaryID(view))",
+      "revId": "4b18d14a629f661ee991c4336bc72d0768aa963f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

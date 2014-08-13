@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_3d28d70d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "I feel like my changes to this file slipped into the commit by accident when I tried to apply the outdated patch from https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d332347\nI guess I\u0027m not even using these changes at all",
+      "parentUuid": "c7672b30_5ddcb359",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_5d079357",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/changegenerator/ChangeGenerator.java",
         "patchSetId": 3
@@ -172,6 +190,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_7d31af74",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 690,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "I know. This is due to the result of CPPVariableReadWriteFlags.isReadOnly which seems to make a very defensive assumption of whether there is a write access.",
+      "parentUuid": "c7672b30_5d595360",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_9db5abe9",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PullUpRefactoringTest.java",
         "patchSetId": 3
@@ -285,6 +321,24 @@
       "writtenOn": "2014-08-12T03:24:03Z",
       "side": 1,
       "message": "In Java such refactoring is called \"Inline\". What is the reason for the CDT name to be different?",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fd449fd1",
+        "filename": "core/org.eclipse.cdt.ui/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "I wrote this whole thing as my bachelor thesis, in which I refered to Fowler\u0027s Refactoring book. There the refactoring is called \u0027Inline Temp\u0027, so I chose to keep the name for consistency. No problem to changing it to \u0027Inline\u0027",
+      "parentUuid": "c7672b30_1d2a3b7e",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -614,6 +668,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_bde6a75c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "I\u0027m not sure either whether this adds any value. I felt like it might be a useful additional option in some cases, as long as the refactoring\u0027s configuration defaults to what a developer expects.\nJDT doesn\u0027t have this option.",
+      "parentUuid": "c7672b30_fd981f4c",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_9d82cbdb",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.properties",
         "patchSetId": 3
@@ -744,6 +816,24 @@
       "writtenOn": "2014-08-12T03:24:03Z",
       "side": 1,
       "message": "Finality of the variable doesn\u0027t add value.\n\nSame below.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_1dd51b5f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "I don\u0027t want to start a disucssion about coding styles, but I consider it good style to decalre any variable final which is not modified and which is not intended to be modified.\nIf CDT doesn\u0027t like it, I\u0027ll remove the extra modifiers",
+      "parentUuid": "c7672b30_bd7a275f",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -971,6 +1061,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_9d000b76",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "Good point, thats what I thought when writing these and when using helper methods implemented by other refactorings.\n\nI wasn\u0027t sure though where else to put them, so I stuck with the current style to put my helpers into my own packages.",
+      "parentUuid": "c7672b30_bd1ea71f",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_5decb387",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
         "patchSetId": 3
@@ -982,6 +1090,24 @@
       "writtenOn": "2014-08-12T03:24:03Z",
       "side": 1,
       "message": "OperationCanceledException should not be logged.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fdf65f01",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PullUpHelper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 1350
+      },
+      "writtenOn": "2014-08-13T06:09:42Z",
+      "side": 1,
+      "message": "Whats the proper way for dealing with those? Simply swallow them? \n\nThat was a general problem for me when dealing with the Index or other core functions which throw checked exceptions. Wasn\u0027t sure where would be the best place to handle them.",
+      "parentUuid": "c7672b30_5decb387",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -168,6 +168,10 @@ public class ConfigSelector extends CSelector {
 				return;
 			}
 			ILaunchConfigurationType configType = getManager().getLaunchConfigurationType(desc, target);
+			if (configType == null) {
+				MessageDialog.openError(shell, "No launch configuration type", "Cannot edit this configuration");
+				return;
+			}
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType, mode.getIdentifier());
 			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
 			if (groupExt != null) {

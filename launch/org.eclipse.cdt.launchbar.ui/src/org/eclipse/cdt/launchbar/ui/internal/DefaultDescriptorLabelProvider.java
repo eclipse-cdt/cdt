@@ -33,14 +33,16 @@ public class DefaultDescriptorLabelProvider extends LabelProvider {
 				ILaunchBarManager manager = desc.getType().getManager();
 				ILaunchTarget target = manager.getActiveLaunchTarget();
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(desc, target);
-				ImageDescriptor imageDescriptor = DebugUITools.getDefaultImageDescriptor(type);
-				if (imageDescriptor != null) {
-					Image image = images.get(imageDescriptor);
-					if (image == null) {
-						image = imageDescriptor.createImage();
-						images.put(imageDescriptor, image);
+				if (type != null) {
+					ImageDescriptor imageDescriptor = DebugUITools.getDefaultImageDescriptor(type);
+					if (imageDescriptor != null) {
+						Image image = images.get(imageDescriptor);
+						if (image == null) {
+							image = imageDescriptor.createImage();
+							images.put(imageDescriptor, image);
+						}
+						return image;
 					}
-					return image;
 				}
 			} catch (CoreException e) {
 				Activator.log(e);

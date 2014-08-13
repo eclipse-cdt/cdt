@@ -131,6 +131,8 @@ public class ModeSelector extends CSelector {
 	protected ILaunchGroup getLaunchGroup(String mode) {
 		try {
 			ILaunchConfigurationType type = getManager().getLaunchConfigurationType(getManager().getActiveLaunchDescriptor(), getManager().getActiveLaunchTarget());
+			if (type == null)
+				return null;
 			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, mode);
 		} catch (CoreException e) {
 			Activator.log(e.getStatus());

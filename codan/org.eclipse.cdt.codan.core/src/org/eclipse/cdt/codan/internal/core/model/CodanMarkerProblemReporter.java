@@ -39,7 +39,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		implements IProblemReporterPersistent, IProblemReporterSessionPersistent {
 	private IResource resource;
 	private IChecker checker;
-	private ArrayList<ICodanProblemMarker> toAdd = new ArrayList<ICodanProblemMarker>();
+	private ArrayList<ICodanProblemMarker> toAdd = new ArrayList<>();
 
 	/**
 	 * Create instance, which can be use as factory for
@@ -126,7 +126,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 	}
 
 	protected Collection<IMarker> findResourceMarkers(IResource resource, IChecker checker) throws CoreException {
-		Collection<IMarker> res = new ArrayList<IMarker>();
+		Collection<IMarker> res = new ArrayList<>();
 		IMarker[] markers;
 		if (resource.exists()) {
 			markers = resource.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
@@ -237,7 +237,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 	 */
 	protected ICodanProblemMarker similarMarker(IMarker m) {
 		ICodanProblemMarker mcm = CodanProblemMarker.createCodanProblemMarkerFromResourceMarker(m);
-		ArrayList<ICodanProblemMarker> cand = new ArrayList<ICodanProblemMarker>();
+		ArrayList<ICodanProblemMarker> cand = new ArrayList<>();
 		for (ICodanProblemMarker cm : toAdd) {
 			if (mcm.equals(cm))
 				return cm;

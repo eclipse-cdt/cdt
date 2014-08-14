@@ -70,9 +70,6 @@ public class CReconciler extends MonoReconciler {
 			setSystem(true);
 		}
 
-		/*
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (!monitor.isCanceled()) {
@@ -81,17 +78,11 @@ public class CReconciler extends MonoReconciler {
 			return Status.OK_STATUS;
 		}
 
-		/*
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
 
-		/*
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -251,13 +242,13 @@ public class CReconciler extends MonoReconciler {
 	/** The indexer listener */
 	private IndexerListener fIndexerListener; 
 	/** Tells whether the C model might have changed. */
-	private volatile boolean fHasCModelChanged= false;
+	private volatile boolean fHasCModelChanged;
 	/** Tells whether this reconciler's editor is active. */
 	private volatile boolean fIsEditorActive= true;
 	/** Tells whether a reconcile is in progress. */
-	private volatile boolean fIsReconciling= false;
+	private volatile boolean fIsReconciling;
 	
-	private boolean fInitialProcessDone= false;
+	private boolean fInitialProcessDone;
 	private Job fTriggerReconcilerJob;
 
 	/**
@@ -442,7 +433,7 @@ public class CReconciler extends MonoReconciler {
 					return true;
 				}
 			}
-		} catch (CoreException exc) {
+		} catch (CoreException e) {
 		}
 		return false;
 	}

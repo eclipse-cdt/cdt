@@ -219,8 +219,8 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	 * @return selected resource or null if no resource is selected
 	 */
 	public IFileStore getResource() {
-		if (fResourceBrowserWidget != null) {
-			return fResourceBrowserWidget.getResource();
+		if (fResourceBrowserWidget != null && fResourceBrowserWidget.getResources().size() > 0) {
+			return fResourceBrowserWidget.getResources().get(0);
 		}
 		return null;
 	}

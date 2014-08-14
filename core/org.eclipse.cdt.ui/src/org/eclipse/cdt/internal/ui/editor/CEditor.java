@@ -462,7 +462,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		private final String fCategory;
 
 		/**
-		 * Creates a new updater for the given <code>category</code>.
+		 * Creates a new updater for the given {@code category}.
 		 *
 		 * @param category the new category.
 		 */
@@ -612,23 +612,26 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						if (!fCloseBrackets
 								|| nextToken == Symbols.TokenLPAREN
 								|| nextToken == Symbols.TokenIDENT
-								|| next != null && next.length() > 1)
+								|| next != null && next.length() > 1) {
 							return;
+						}
 						break;
 
 					case '<':
 						if (!(fCloseAngularBrackets && fCloseBrackets)
 								|| nextToken == Symbols.TokenLESSTHAN
 								|| prevToken != Symbols.TokenIDENT
-								|| !isAngularIntroducer(previous))
+								|| !isAngularIntroducer(previous)) {
 							return;
+						}
 						break;
 
 					case '[':
 						if (!fCloseBrackets
 								|| nextToken == Symbols.TokenIDENT
-								|| next != null && next.length() > 1)
+								|| next != null && next.length() > 1) {
 							return;
+						}
 						break;
 
 					case '{':
@@ -637,8 +640,9 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						if (!fCloseBraces
 								|| nextToken == Symbols.TokenIDENT
 								|| next != null && next.length() > 1
-								|| !isInsideParentheses(scanner, offset - 1))
+								|| !isInsideParentheses(scanner, offset - 1)) {
 							return;
+						}
 						break;
 
 					case '\'':
@@ -646,8 +650,9 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 						if (!fCloseStrings
 								|| nextToken == Symbols.TokenIDENT
 								|| next != null && (next.length() > 1 || next.charAt(0) == event.character)
-								|| isInsideStringInPreprocessorDirective(partition, document, offset))
+								|| isInsideStringInPreprocessorDirective(partition, document, offset)) {
 							return;
+						}
 						break;
 
 					default:
@@ -697,9 +702,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				sourceViewer.setSelectedRange(newSelection.getOffset(), newSelection.getLength());
 
 				event.doit = false;
-			} catch (BadLocationException e) {
-				CUIPlugin.log(e);
-			} catch (BadPositionCategoryException e) {
+			} catch (BadLocationException | BadPositionCategoryException e) {
 				CUIPlugin.log(e);
 			}
 		}
@@ -866,7 +869,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 
 		/**
-		 * Sets the caret position to the sub-word boundary given with <code>position</code>.
+		 * Sets the caret position to the sub-word boundary given with {@code position}.
 		 *
 		 * @param position Position where the action should move the caret
 		 */
@@ -935,7 +938,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 				try {
 					viewer.getDocument().replace(caret, length, ""); //$NON-NLS-1$
-				} catch (BadLocationException exception) {
+				} catch (BadLocationException e) {
 					// Should not happen
 				}
 			}
@@ -1026,7 +1029,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					getTextWidget().showSelection();
 					fireSelectionChanged();
 				}
-			} catch (BadLocationException x) {
+			} catch (BadLocationException e) {
 				// ignore - getLineOfOffset failed
 			}
 		}
@@ -1049,7 +1052,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 
 		/**
-		 * Sets the caret position to the sub-word boundary given with <code>position</code>.
+		 * Sets the caret position to the sub-word boundary given with {@code position}.
 		 *
 		 * @param position Position where the action should move the caret
 		 */
@@ -1118,7 +1121,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 				try {
 					viewer.getDocument().replace(position, length, ""); //$NON-NLS-1$
-				} catch (BadLocationException exception) {
+				} catch (BadLocationException e) {
 					// Should not happen
 				}
 			}
@@ -1778,13 +1781,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Returns the most narrow element including the given offset.  If <code>reconcile</code>
-	 * is <code>true</code> the editor's input element is reconciled in advance. If it is
-	 * <code>false</code> this method only returns a result if the editor's input element
+	 * Returns the most narrow element including the given offset.  If {@code reconcile}
+	 * is {@code true} the editor's input element is reconciled in advance. If it is
+	 * {@code false} this method only returns a result if the editor's input element
 	 * does not need to be reconciled.
 	 *
 	 * @param offset the offset included by the retrieved element
-	 * @param reconcile <code>true</code> if working copy should be reconciled
+	 * @param reconcile {@code true} if working copy should be reconciled
 	 * @return the most narrow element which includes the given offset
 	 */
 	protected ICElement getElementAt(int offset, boolean reconcile) {
@@ -1800,8 +1803,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				} else if (unit.isStructureKnown() && unit.isConsistent() && !fIsReconciling) {
 					return unit.getElementAtOffset(offset);
 				}
-			} catch (CModelException x) {
-				CUIPlugin.log(x.getStatus());
+			} catch (CModelException e) {
+				CUIPlugin.log(e.getStatus());
 				// Nothing found, be tolerant and go on.
 			}
 		}
@@ -1810,8 +1813,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Synchronizes the outline view selection with the given element
-	 * position in the editor.
+	 * Synchronizes the outline view selection with the given element position in the editor.
 	 *
 	 * @since 4.0
 	 */
@@ -1825,7 +1827,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	/**
 	 * React to changed selection in the outline view.
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -1848,6 +1849,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	/**
      * Sets selection for C element.
+     *
      * @param element Element to select.
 	 */
     public void setSelection(ICElement element) {
@@ -1860,6 +1862,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
     /**
      * Sets selection for source reference.
+     *
      * @param element Source reference to set.
      * @param moveCursor Should cursor be moved.
      */
@@ -1904,7 +1907,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 
 		if (element != null) {
-			
 			StyledText textWidget= null;
 			
 			ISourceViewer sourceViewer= getSourceViewer();
@@ -1967,9 +1969,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					}
 					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
 				}
-			} catch (IllegalArgumentException x) {
-	            // No information to the user
-			} catch (BadLocationException e) {
+			} catch (IllegalArgumentException | BadLocationException e) {
 	            // No information to the user
 			}
 		} else if (moveCursor) {
@@ -1980,7 +1980,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	/**
      * Checks is the editor active part.
-     * @return <code>true</code> if editor is the active part of the workbench.
+     * @return {@code true} if editor is the active part of the workbench.
 	 */
     private boolean isActivePart() {
 		IWorkbenchWindow window = getSite().getWorkbenchWindow();
@@ -2403,7 +2403,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	/**
      * Determines if folding is enabled.
-	 * @return <code>true</code> if folding is enabled, <code>false</code> otherwise.
+	 * @return {@code true} if folding is enabled, {@code false} otherwise.
 	 */
 	protected boolean isFoldingEnabled() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
@@ -2576,12 +2576,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Returns the annotation overlapping with the given range or <code>null</code>.
+	 * Returns the annotation overlapping with the given range or {@code null}.
 	 *
 	 * @param offset the region offset
 	 * @param length the region length
-	 * @param marker associated marker or <code>null</code> of not available
-	 * @return the found annotation or <code>null</code>
+	 * @param marker associated marker or {@code null} of not available
+	 * @return the found annotation or {@code null}
 	 */
 	private Annotation getAnnotation(int offset, int length, IMarker marker) {
 		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
@@ -2755,13 +2755,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * Tells whether the occurrence annotations are sticky
 	 * i.e. whether they stay even if there's no valid Java
 	 * element at the current caret position.
-	 * Only valid if {@link #fMarkOccurrenceAnnotations} is <code>true</code>.
+	 * Only valid if {@link #fMarkOccurrenceAnnotations} is {@code true}.
 	 * @since 5.0
 	 */
 	private boolean fStickyOccurrenceAnnotations;
 	/**
 	 * Tells whether to mark overloaded operator occurrences in this editor.
-	 * Only valid if {@link #fMarkOccurrenceAnnotations} is <code>true</code>.
+	 * Only valid if {@link #fMarkOccurrenceAnnotations} is {@code true}.
 	 * @since 5.3
 	 */
 	private boolean fMarkOverloadedOperatorOccurrences;
@@ -2812,9 +2812,9 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Returns the folding action group, or <code>null</code> if there is none.
+	 * Returns the folding action group, or {@code null} if there is none.
 	 *
-	 * @return the folding action group, or <code>null</code> if there is none
+	 * @return the folding action group, or {@code null} if there is none
 	 */
 	protected FoldingActionGroup getFoldingActionGroup() {
 		return fFoldingGroup;
@@ -3041,7 +3041,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * @return <code>true</code> if Semantic Highlighting is enabled.
+	 * @return {@code true} if Semantic Highlighting is enabled.
 	 *
 	 * @since 4.0
 	 */
@@ -3440,7 +3440,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * @return <code>true</code> if parser based Content Assist proposals are disabled.
+	 * @return {@code true} if parser based Content Assist proposals are disabled.
 	 *
 	 * @since 5.0
 	 */
@@ -3449,7 +3449,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 	
 	/**
-	 * @return <code>true</code> if Content Assist auto activation is disabled.
+	 * @return {@code true} if Content Assist auto activation is disabled.
 	 *
 	 * @since 5.0
 	 */
@@ -3458,7 +3458,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 	
 	/**
-	 * @return <code>true</code> if the number of lines in the file exceed
+	 * @return {@code true} if the number of lines in the file exceed
 	 * the line number for scalability mode in the preference.
 	 *
 	 * @since 5.0
@@ -3491,7 +3491,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * changes the override indication.
 	 *
 	 * @param event the event to be investigated
-	 * @return <code>true</code> if event causes a change
+	 * @return {@code true} if event causes a change
 	 * @since 5.3
 	 */
 	protected boolean affectsOverrideIndicatorAnnotations(PropertyChangeEvent event) {
@@ -3511,7 +3511,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 *
 	 * @param store the preference store
 	 * @param key the preference key
-	 * @return <code>true</code> if the key exists in the store and its value is <code>true</code>
+	 * @return {@code true} if the key exists in the store and its value is {@code true}
 	 * @since 5.3
 	 */
 	private boolean getBoolean(IPreferenceStore store, String key) {
@@ -3521,7 +3521,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	/**
 	 * Tells whether override indicators are shown.
 	 *
-	 * @return <code>true</code> if the override indicators are shown
+	 * @return {@code true} if the override indicators are shown
 	 * @since 5.3
 	 */
 	protected boolean isShowingOverrideIndicators() {

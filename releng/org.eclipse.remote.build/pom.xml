@@ -15,6 +15,7 @@
 	<name>Remote Parent</name>
 
 	<properties>
+		<remote-release>1.0.1</remote-release>
 		<eclipse-release>luna</eclipse-release>
 		<tycho-version>0.20.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
@@ -23,7 +24,7 @@
 		<cdt-version>8.4</cdt-version>
 		<cdt-site>http://download.eclipse.org/tools/cdt/builds/${cdt-version}/nightly</cdt-site>	
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/remote/${eclipse-release}/nightly</remote-install-dir>
+		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/remote/${remote-release}</remote-install-dir>
 	</properties>
 
 	<licenses>

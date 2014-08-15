@@ -38,6 +38,7 @@ public class ReplaceTestSuite {
 		suite.addTest(PointerInParameterTest.suite());
 		suite.addTest(ReplaceForLoopBodyTest.suite());
 		suite.addTest(ReplaceInsertStatementTest.suite());
+		suite.addTest(ReplaceReplacedNodeTest.suite());
 		suite.addTest(SameNameTest.suite());
 		suite.addTest(StatementTest.suite());
 		suite.addTest(WhitespaceHandlingTest.suite());

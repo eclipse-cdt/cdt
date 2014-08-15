@@ -169,9 +169,7 @@ public final class ASTRewrite {
 	 */
 	public final ASTRewrite insertBefore(IASTNode parent, IASTNode insertionPoint, IASTNode newNode,
 			TextEditGroup editGroup) {
-		if (parent != fRoot) {
-			checkBelongsToAST(parent);
-		}
+		checkBelongsToAST(parent);
 		if (newNode == null) {
 			throw new IllegalArgumentException();
 		}
@@ -217,10 +215,10 @@ public final class ASTRewrite {
 
 	private void checkBelongsToAST(IASTNode node) {
 		while (node != null) {
-			node= node.getParent();
 			if (node == fRoot) {
 				return;
 			}
+			node = node.getParent();
 		}
 		throw new IllegalArgumentException();
 	}

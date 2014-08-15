@@ -1,0 +1,1653 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_ab93ef2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Missing copyright/contributor header?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8b7a735f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "// --- static members ---\n(If you\u0027d like to use the section header style I use.)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2b735f8e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Should be Javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0b6e63a3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "s_plugin?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eb684797",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "s_bundleContext? (variable scope prefixes should be consistent.)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ab5e4ff4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "// --- constructors/destructors ---",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8bcc3334",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "I generally replace these boilerplate comments with something more\ndescriptive, e.g.:\n\n/** Invoked when plugin starts up. */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6bcf1727",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "/** Invoked when plugin shuts down. */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6b21d75b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/EpiphanyVisualizerUIPlugin.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Good point, I actually hadn\u0027t considered multi-threading in this context. However, I wonder if it would really be an issue, since you\u0027ll\ngenerally be looking up string resources for code that updates the UI,\nwhich should always be running on the event thread anyway.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eb7847e5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Need a class comment, e.g. \"Represents state of an Epiphany chip/board.\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0b29433a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "I generally collect any single-field getter/setters under this header that\ndon\u0027t naturally belong to groups of related accessors (like get/add/remove, etc.) If there aren\u0027t any, this header could be omitted.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6b73975b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Missing javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6b9c37f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Just a thought: instead of trying to subtype the superclass add/get methods like this (which although correct feel as if they\u0027re changing the interface), maybe it would make more sense to have separate \"typed\" methods that invoke the superclass methods, for use in cases where you do want the subtyped result, e.g.\n\npublic EpiphanyModelCPU addEpiphanyCPU(EpiphanyModelCPU cpu)\npublic List\u003cEpiphanyModelCPU\u003e getEpiphanyCPUs()",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ab8dafbd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Are we sure the threads will always be EpiphanyModelThreads?\n(If we own the code that creates/populates them, for example.)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4b0a1bb2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Maybe use a HashSet here, and convert back to a list at the end? (Unless you need to preserve order?)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0b8dc3ba",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "See above.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ab180f02",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModel.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "If you don\u0027t need ordering, using equals() is more readable.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2b6a3f0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "/** Represents an Epiphany CPU (that is, an eCore). */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_cba8ebda",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "How about:\n\n/** User-friendly label associated with this eCore. */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8b8a736d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "\"associated with\" is the more proper/readable way to say this",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6b8d5785",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Consistency: capitalize \"get\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0b55c347",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelIO.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment, e.g. /** Represents an Epiphany IO block. */\nAlso, I\u0027d list IVisualizerModelObject first, since it\u0027s the more \"important\" interface here.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eeca1591",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelIO.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "/** Chip edge along which IO block may be located. */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eb4fa7b8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelIO.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "This depends somewhat on how \"physically accurate\" the visualization wants to be. According to Andreas, when debugging multiple chips connected to form a single grid, supposedly it all looks like one big mongo chip from the debugger/user\u0027s POV, so we might display it that way, with perhaps dotted lines at the chip borders to indicate slower links, and elide \"internal\" IO blocks to keep the display simpler.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8ed3a147",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelIO.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "A minor point: I\u0027d put pos first, since it\u0027s a more defining property,\nwhereas connected is a state flag. Also, can you even have an IO block where you\u0027re not setting the position?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e04e953",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelIO.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Yeah, I see the issue you were raising above -- this isn\u0027t really a unique ID, unless we somehow include the ID of the core this edge is associated with, for example.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8e2561e4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e28c5b9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Javadoc comment, i.e. \"position/direction for link\".\n\nJust a thought, would it be better to have separate attributes\nfor position and direction? Or are the two directions for a link\nbest viewed as two distinct links?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae193daf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "I\u0027d Javadoc these members, even if they\u0027re only internal.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e1951ac",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "/** Constructor */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e56a933",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "eMesh?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8e60c102",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "\"ID of this core\" -\u003e \"ID of this router node\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ee6e95f1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Empty comments.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e4b1180",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "It\u0027s recommended to use HashMap, unless you really need Hashtable\u0027s implicit thread-safeness.\n\nAlso, if you don\u0027t need to preserve link order, you might be able to get away with just the hashmap, and iterate over m_linkMap.values().",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae965d53",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "getLinks()?\n\ngetLink(LinkDirection direction)?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4ea86994",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "setLinkLoads ?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8eb281fe",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "getLinkLoads ?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ce9bd97d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Empty comments.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0ea671c2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelThread.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment, e.g. \"Represents a single thread of execution\non an Epiphany core\" (?)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e8fc939",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/model/EpiphanyModelThread.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "getPID(), getTID(), getGDBTID()?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e8c4542",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/DSFDebugModelEpiphany.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.\n\nAlso, I\u0027d suggest EpiphanyDSFDebugModel as the class name.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ee12155e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/DSFDebugModelEpiphany.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "/** Request traffic load for all links on an Epiphany chip. */ (?)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae7dbd8f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/DSFDebugModelListenerEpiphany.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.\n\nAlso, I\u0027d suggest EpiphanyDSFDebugModelListener as the interface name.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e7dd18c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/DSFSessionStateEpiphany.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.\n\nAlso, I\u0027d suggest EpiphanyDSFSessionState as the class name.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e2189a6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/EpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "// --- constants ---",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ee29758a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/EpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "What does the prefix \"EV_\" represent? If it\u0027s not really needed,\nI\u0027d leave it off, because the EpiphanyConstants class already provides\na scope to distinguish these constants from others.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ce3479e4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/EpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Empty comments.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4ecce964",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/EpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "// --- methods ---",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e8509e7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/EpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Hmm -- this is the only method on this class. How about moving this method on a separate utilities class, and then you could move the constants to IEphiphanyConstants and you wouldn\u0027t need this class?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_cebf59a6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/EpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Again, if you don\u0027t need ordering, equals() would be more readable.\nAlso, it optimizes the case where the two strings happen to be\nthe same string reference.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_aeac9d74",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/IEpiphanyConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Interface comment.\n\nAlso, I\u0027m thinking that either you don\u0027t need this interface, or there\u0027s a way to move constants here -- see the comments for the othe Constants classes.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8e7f2159",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/Parallella16Constants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Suggestion: I\u0027d split this into a \"constants\" class for things like margins, colors, e.g. presentation stuff, and a separate hardware configuration model class that represents the hardware-specific info for an Epiphany/Parallela target (number of cores, id-to-label mapping, etc.) We might also want to figure out some way of determining/drawing the bounds/position information dynamically, rather than hard-coding link connections, etc. as arrays.\n\nThis would facilitate, for example, reading in model information from an XML file at startup -- this is something I did in tile-eclipse, and it makes it _much_ easier to add a new chip to the mix, since you just update the XML file(s) with the appropriate new chip config info.\n\nIt would also let you have the constants be an interface, though that\u0027s a lesser consideration.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e93112d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/Parallella16Constants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "I don\u0027t (yet) understand what \"connected\" means in this context -- in the hardware both ends of the link are always connected, right? Or do we use this in the drawing code to draw \"edge\" links differently?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ee8df50a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/Parallella16Constants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Dead code? Or a previous version?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eef17557",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/Parallella16Constants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Ideally this is the kind of stuff we\u0027d read from an XML description file.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e8285de",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/utils/Parallella64Constants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Suggestion: As with Parallela16Constants, I\u0027d split this into a presentation \"constants\" class and a hardware configuration model class.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae749d41",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e57c9d6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "// --- constants ---",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2e5a4dfe",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "// FIXME: At the moment, we ...",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8e51e1e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "typos: choose, comment out",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ce4ab92c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Yeah, this is one reason why we\u0027d want to separate presentation\nconstants from the chip model, so the latter can be set dynamically\nlike this once we can get the appropriate chip info from GDB, etc.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e5445cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Move these up to the --- constants --- section above?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae45bd1c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "equals(), not compareTo()",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e45d119",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "minor nit: extra space before \"dispose()\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ee3fb58a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "lower-case \"v\" in visualizer?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4ec22901",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Capital \"E\" on Epiphany",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2ec52d07",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "typo, delete \"if\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_cefc7935",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Will it always be the case that cpu and tids match up like this?\nMaybe we should have a getCPUforTID() method somewhere,\njust to make things more portable.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_aef77d4c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "See above.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2e17ed06",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Use // FIXME: comment here, to preseve using /* */ to comment out code.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8e1e0120",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Hmmm --- \"CPU\" and \"eCore\" should be (as I understand it) synonymous, so using CPU as the term for the group containing\nthe core, the router, and mesh links is confusing.\n\nMaybe this class wants to be called something like EpiphanyVisualizerECoreGroup (or, dare I suggest it,\nEpiphanyVisualizerECoreTile? :-)\n\nFor the comment, I\u0027d suggest something like:\n\n/*\nRepresents an Epiphany CPU (that is, an eCore) together with its\nassociated mesh hardware, that is, a mesh router and mesh links\nfor input and output in each of the four compass directions.\n*/",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e21e55b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "associated with\n\nactually, I\u0027d just say \"The CPU (eCore).\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ce0759d3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Likewise, \"The associated mesh router for this CPU\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae02ddc0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "The associated mesh links for this CPU.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e12f10f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "\"node\" is confusing in this context -- I\u0027d just say \"in the container\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ee0cd5f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "mesh links for this eCore (or attached to the router)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4e3b4987",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "In general I\u0027d recommend doing super.dispose() last,\njust in case cleanup of anything in this class depends on stuff\ndefined in the parent class.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2e3ecd76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "/** Whether this object is selected. */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ce2e3945",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCPU.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Comment here that painting is handled by parent container class.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ae293d3d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCanvas.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ce1d99f4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerCanvas.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "As discussed in other comments, this should be a chip model class, rather than a general constants class. (In other words, you shouldn\u0027t have to pass in the constants class, you should just be able to reference it for colors, margins, etc.)",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8e2ba106",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerChip.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e2e0518",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerChip.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "As elsewhere, if we separate chip model from presentation constants we should only need a reference to the model here.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0e3f913e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerContainer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_cecf59d4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerEcore.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.\nAlso, perhaps the class name should be EpiphanyVisualizerECore?",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_aecaddc1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerIO.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0edaf190",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerLoadIndicator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eed4d564",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerMeshLink.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment -- also, extraneous Tab after \"extends\"",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2e06cd93",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8efd61e3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerMeshRouter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_aed01dc1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerSelectionFinder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment, e.g.\n  /** \n  * Debug view tree walker that finds elements to select\n  * based on selection obtained from the Epiphany visualizer.\n  */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_4ee98977",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerSelectionFinder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Comment, e.g.\n        /** Processes an element of the tree view.\n\t *  Returns true if children of this element should be processed,\n\t *  and false if they can be skipped.\n\t */",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6e00c574",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerStatusBar.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Class comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_cef63902",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerStatusBar.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_aef13d0a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerStatusBar.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_0ef15107",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerStatusBar.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_eeeb3518",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.epiphany.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/epiphany/ui/view/EpiphanyVisualizerStatusBar.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-15T18:11:37Z",
+      "side": 1,
+      "message": "Javadoc comment.",
+      "revId": "a46a90b0acbae68a8d7b90983b8997c787f2d903",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

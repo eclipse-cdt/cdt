@@ -139,6 +139,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_b1740242",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:28:27Z",
+      "side": 1,
+      "message": "This can be done by multi-file search/replace.",
+      "parentUuid": "c7672b30_1d46bb75",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_7d56cf33",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
         "patchSetId": 3
@@ -345,6 +363,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_1184d6ac",
+        "filename": "core/org.eclipse.cdt.ui/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:28:27Z",
+      "side": 1,
+      "message": "We should try to stay as close to JDT as possible. There are users who use Eclipse for both languages.",
+      "parentUuid": "c7672b30_fd449fd1",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_bdd6a7ee",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitionIds.java",
         "patchSetId": 3
@@ -475,6 +511,24 @@
       "writtenOn": "2014-08-12T03:24:03Z",
       "side": 1,
       "message": "Remove \"this.\" where it is redundant.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_3150f2ab",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/InlineTempRefactoring.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:28:27Z",
+      "side": 1,
+      "message": "Also in other files.",
+      "parentUuid": "c7672b30_fdb13fca",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -686,6 +740,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_914746f6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:28:27Z",
+      "side": 1,
+      "message": "Since JDT doesn\u0027t have partial inlining, C/C++ probably doesn\u0027t need it either.",
+      "parentUuid": "c7672b30_bde6a75c",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_9d82cbdb",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.properties",
         "patchSetId": 3
@@ -834,6 +906,24 @@
       "side": 1,
       "message": "I don\u0027t want to start a disucssion about coding styles, but I consider it good style to decalre any variable final which is not modified and which is not intended to be modified.\nIf CDT doesn\u0027t like it, I\u0027ll remove the extra modifiers",
       "parentUuid": "c7672b30_bd7a275f",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_714a6aff",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/Information.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:28:27Z",
+      "side": 1,
+      "message": "Code consistency tramps individual preferences.",
+      "parentUuid": "c7672b30_1dd51b5f",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

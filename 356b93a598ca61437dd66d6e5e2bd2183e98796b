@@ -226,6 +226,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_31bbd25f",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/inlinetemp/InlineTempTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 690,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:37:38Z",
+      "side": 1,
+      "message": "Which occurrence of \u0027a\u0027 is problematic?",
+      "parentUuid": "c7672b30_7d31af74",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_9db5abe9",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/pullup/PullUpRefactoringTest.java",
         "patchSetId": 3
@@ -699,6 +717,40 @@
       "writtenOn": "2014-08-12T03:24:03Z",
       "side": 1,
       "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_b15b62cd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:37:38Z",
+      "side": 1,
+      "message": "Messages classes should have package visibility.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_115b36ce",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/inlinetemp/Messages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:37:38Z",
+      "side": 1,
+      "message": "Add a blank line above.",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1470,6 +1522,40 @@
       "writtenOn": "2014-08-12T03:24:03Z",
       "side": 1,
       "message": "Redundant statement.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_f155da97",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/PushDownRefactoringContribution.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:37:38Z",
+      "side": 1,
+      "message": "Fits into previous line.",
+      "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_51b80e62",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/pullup/actions/DeclareStubAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-16T00:37:38Z",
+      "side": 1,
+      "message": "This line is redundant since your name is already in line 10.",
       "revId": "356b93a598ca61437dd66d6e5e2bd2183e98796b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -281,7 +281,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPFunction parameterOwner = e.getParameterOwner();
 			if (parameterOwner != null) {
 				IType b = e.getFixedType();
-				IBinding a2 = getCompositeBinding((IIndexFragmentBinding) parameterOwner);
+				IBinding a2 = parameterOwner;
+				if (parameterOwner instanceof IIndexFragmentBinding) {
+					a2 = getCompositeBinding((IIndexFragmentBinding) parameterOwner);
+				}
 				IType b2 = getCompositeType(b);
 				if (parameterOwner != a2 || b != b2 || templateDefinition != compositeTemplateDefinition) {
 					int parameterPosition = e.getFunctionParameterPosition();
@@ -291,7 +294,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				IBinding a = e.getBinding();
 				IType b = e.getFixedType();
 				
-				IBinding a2 = getCompositeBinding((IIndexFragmentBinding) a);
+				IBinding a2 = a;
+				if (a instanceof IIndexFragmentBinding) {
+					a2 = getCompositeBinding((IIndexFragmentBinding) a);
+				}
 				IType b2 = getCompositeType(b);
 				if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
 					e= new EvalBinding(a2, b2, compositeTemplateDefinition);
@@ -395,7 +401,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType a = e.getOwnerType();
 			IBinding b = e.getMember();
 			IType a2= getCompositeType(a);
-			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
+			IBinding b2= b;
+			if (b instanceof IIndexFragmentBinding) {
+				b2= getCompositeBinding((IIndexFragmentBinding) b);
+			}
 			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
 				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, e.isPointerDeref(), compositeTemplateDefinition);
 			return e;
@@ -423,7 +432,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPEvaluation a = e.getArgument();
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
 			IBinding b= e.getAddressOfQualifiedNameBinding();
-			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
+			IBinding b2= b;
+			if (b instanceof IIndexFragmentBinding) {
+				b2= getCompositeBinding((IIndexFragmentBinding) b);
+			}
 			if (a != a2 || b != b2 || templateDefinition != compositeTemplateDefinition)
 				e= new EvalUnary(e.getOperator(), a2, b2, compositeTemplateDefinition);
 			return e;

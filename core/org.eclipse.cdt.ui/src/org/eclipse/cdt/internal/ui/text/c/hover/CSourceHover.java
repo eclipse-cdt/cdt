@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
@@ -209,6 +210,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 									}
 								} else if (binding instanceof IMacroBinding) {
 									fSource= computeSourceForMacro(ast, name, binding);
+								} else if (binding instanceof IEnumerator) {
+									// fix Bug 285126 - add capability to show int value for enums
+									fSource= computeSourceForEnumerator(ast, name, (IEnumerator)binding);
 								} else {
 									fSource= computeSourceForBinding(ast, binding);
 								}
@@ -244,6 +248,33 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				String source= computeSourceForName(def, binding);
 				if (source != null) {
 					return source;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Compute the source for a enumerator. If the value of the enumerator can be retrieved, it will
+		 * display it, otherwise it will fallback to show only the enumerator constant
+		 *
+		 * @param ast  the AST of the translation unit
+		 * @param name  the enumerator occurrence in the AST
+		 * @param binding   the binding of the macro name
+		 * @return the enumerator value, source or <code>null</code>
+		 * @throws CoreException
+		 */
+		private String computeSourceForEnumerator(IASTTranslationUnit ast, IASTName name, IEnumerator binding) throws CoreException {
+			IValue val = binding.getValue();
+			if (val.numericalValue() != null) {
+				return val.toString();
+			} else {
+				// Search for the enumerator definition
+				IName[] defs = ast.getDefinitions(binding);
+				for (IName def : defs) {
+					String source= computeSourceForName(def, binding);
+					if (source != null) {
+						return source;
+					}
 				}
 			}
 			return null;

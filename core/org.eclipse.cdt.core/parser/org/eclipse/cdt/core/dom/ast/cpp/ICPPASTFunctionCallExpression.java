@@ -29,4 +29,11 @@ public interface ICPPASTFunctionCallExpression
 	 */
 	@Override
 	ICPPASTFunctionCallExpression copy(CopyStyle style);
+	
+	/**
+	 * Returns the function binding for the overloaded operator() invoked by
+	 * the function call, or <code>null</code> if the operator() is not overloaded.
+	 * @since 5.8
+	 */
+	public ICPPFunction getOverload();
 }

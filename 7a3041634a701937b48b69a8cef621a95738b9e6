@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_bfecc905",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-08-17T21:11:34Z",
+      "side": 1,
+      "message": "You can make the type of \u0027binding\u0027 be IEnumerator and cast it once when passing it in.",
+      "revId": "7a3041634a701937b48b69a8cef621a95738b9e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_ffe64121",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-08-17T21:11:34Z",
+      "side": 1,
+      "message": "s/macro/enumerator",
+      "revId": "7a3041634a701937b48b69a8cef621a95738b9e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9fe74d1f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-08-17T21:11:34Z",
+      "side": 1,
+      "message": "By having this check be inside the loop, we may be calling ast.getDefinitions() unnecessarily. It would make more sense to do this check before the loop, and only call ast.getDefinitions() and loop over them if the value is null.\n\nAlso, I don\u0027t think that what IValue.toString() returns in the case where numericalValue() \u003d\u003d null is something you want to display to the user. (It\u0027s a \"signature\" used to uniquely identify expressions that depend on template parameters.) So, instead of checking \u0027val !\u003d null\u0027, I think it\u0027s better to check \u0027val.numericalValue() !\u003d null\u0027.",
+      "revId": "7a3041634a701937b48b69a8cef621a95738b9e6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

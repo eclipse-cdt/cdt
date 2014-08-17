@@ -97,6 +97,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -10688,5 +10689,24 @@ public class AST2CPPTests extends AST2TestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable waldo = helper.assertNonProblem("waldo");
 		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
+	}
+	
+	//	struct S1 { S1(int); };
+	//	struct S2 { void operator()(int); };
+	//	S2 s2;
+	//	int main() {
+	//		S1(42);
+	//		s2(43);
+	//	}
+	public void testICPPASTFunctionCallExpression_getOverload_441701() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		ICPPASTFunctionCallExpression call1 = helper.assertNode("S1(42)");
+		ICPPFunction constructor = helper.assertNonProblem("S1(int)", "S1");
+		assertEquals(constructor, call1.getOverload());
+
+		ICPPASTFunctionCallExpression call2 = helper.assertNode("s2(43)");
+		ICPPFunction operator = helper.assertNonProblem("operator()");
+		assertEquals(operator, call2.getOverload());
 	}
 }

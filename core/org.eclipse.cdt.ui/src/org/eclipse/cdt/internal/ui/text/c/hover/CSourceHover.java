@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 QNX Software Systems and others.
+ * Copyright (c) 2002, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Paulo Garcia (BlackBerry)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -209,6 +210,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 									}
 								} else if (binding instanceof IMacroBinding) {
 									fSource= computeSourceForMacro(ast, name, binding);
+								} else if (binding instanceof IEnumerator) {
+									// Show integer value for enumerators (bug 285126).
+									fSource= computeSourceForEnumerator(ast, (IEnumerator) binding);
 								} else {
 									fSource= computeSourceForBinding(ast, binding);
 								}
@@ -244,6 +248,34 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				String source= computeSourceForName(def, binding);
 				if (source != null) {
 					return source;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Computes the source for a enumerator. If the value of the enumerator can be retrieved,
+		 * the method will return a string with the value, otherwise it will fall back showing
+		 * the enumerator constant.
+		 *
+		 * @param ast  the AST of the translation unit
+		 * @param binding   the binding of the enumerator name
+		 * @return the enumerator value, source or <code>null</code>
+		 * @throws CoreException
+		 */
+		private String computeSourceForEnumerator(IASTTranslationUnit ast, IEnumerator binding)
+				throws CoreException {
+			Long numValue = binding.getValue().numericalValue();
+			if (numValue != null) {
+				return numValue.toString();
+			} else {
+				// Search for the enumerator definition
+				IName[] defs = ast.getDefinitions(binding);
+				for (IName def : defs) {
+					String source= computeSourceForName(def, binding);
+					if (source != null) {
+						return source;
+					}
 				}
 			}
 			return null;

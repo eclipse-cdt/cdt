@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_9f4bcd7f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-08-18T03:46:35Z",
+      "side": 1,
+      "message": "s/macro/enumerator",
+      "revId": "24eb2099bd6ecde53e193026c08e758a6ec20ae8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_bf50492a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-08-18T03:46:35Z",
+      "side": 1,
+      "message": "This comment belongs together with the getDefinitions() call and subsequent loop (i.e. it belongs in the \u0027else\u0027 branch of this function).",
+      "revId": "24eb2099bd6ecde53e193026c08e758a6ec20ae8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

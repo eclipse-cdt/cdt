@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_65d62039",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-08-18T14:32:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_fb97ac4f",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_5ba500b5",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
         "patchSetId": 11
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-04T15:08:52Z",
       "side": 1,
       "message": "We don\u0027t usually have such methods in DSF, where we return the data for all existing groups.  The problem is that each element of resulting array are not mapped to its corresponding RegisterGroupDMC.\n\nInstead, we should use IRegisters.getRegisterGroupData multiple times.  It does seem less efficient, but that above API is not solid.",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_c5ec5407",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-08-18T14:32:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7672b30_5ba500b5",
       "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -65,6 +101,24 @@
       "side": 1,
       "message": "I\u0027ve been thinking more about this one and I think it should be removed.  Having a group that contains all the registers is an implementation detail and may not be true for all DSF integrations.\n\nWe should be able to do what we need using IRegisters.getRegisterGroups() and IRegisters.getRegisterGroupData()",
       "parentUuid": "c7672b30_5b2ea094",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_45d96469",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-08-18T14:32:06Z",
+      "side": 1,
+      "message": "This one is tricky, \nTrying to resolve the root group from any register is not possible with the current data structure as you could resolve a parent user defined group instead.\n\n  So we have a couple of alternatives to remove this interface, which are not ideal either:\n\n1) use the current interface i.e.\nIRegisters#findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor\u003cIRegisterGroupDMContext\u003e rm);\n\nThe above interface requires the name of the group, we could pass the string \"General Register\" and it will work, however we are binding the solution to a String which is DSF-GDB specific needed at the DSF UI level (i.e. AbstractDsfRegisterGroupActions.java).\n\nIt\u0027s also needed by the \"GDBPatternMatchingExpressions\".\n\nSo we would need to hard code this string in two different places and one of them at the DSF UI level.  \n\n2) It\u0027s also possible to resolve the Root group by querying the existing interfaces for all the groups and then assume that the one with the longest number of registers is the root.\n Not ideal either as there could be more than one group with all registers, or if register name repetitions are allowed there could be a user defined group with a larger number of registers.\n  it would work for the most part with some potential risks. so not ideal either.\n\nAny thoughts ?",
+      "parentUuid": "c7672b30_38447ccf",
       "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

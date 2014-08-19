@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAlias, ICPPInternalBinding {
-
     private ICPPNamespace namespace;
     private IASTName alias;
 
@@ -58,24 +57,24 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
 
     @Override
 	public String[] getQualifiedName() {
-        return CPPVisitor.getQualifiedName( this );
+        return CPPVisitor.getQualifiedName(this);
     }
 
     @Override
 	public char[][] getQualifiedNameCharArray() {
-        return CPPVisitor.getQualifiedNameCharArray( this );
+        return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
     @Override
 	public IScope getScope() {
-        return CPPVisitor.getContainingScope( alias );
+        return CPPVisitor.getContainingScope(alias);
     }
 
     @Override
 	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope )
+        while (scope != null) {
+            if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();
         }

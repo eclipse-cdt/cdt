@@ -32,7 +32,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + Database.PTR_SIZE;
 	
 	public PDOMCPPNamespaceAlias(PDOMLinkage linkage, PDOMNode parent, ICPPNamespaceAlias alias)
-	throws CoreException {
+			throws CoreException {
 		super(linkage, parent, alias.getNameCharArray());
 		setTargetBinding(parent.getLinkage(), alias.getBinding());
 	}
@@ -52,8 +52,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	
 	private void setTargetBinding(PDOMLinkage linkage, IBinding target) throws CoreException {
 		PDOMBinding namespace = getLinkage().adaptBinding(target);
-		getDB().putRecPtr(record + NAMESPACE_BINDING, 
-				namespace != null ? namespace.getRecord() : 0);
+		getDB().putRecPtr(record + NAMESPACE_BINDING, namespace != null ? namespace.getRecord() : 0);
 	}
 
 	@Override

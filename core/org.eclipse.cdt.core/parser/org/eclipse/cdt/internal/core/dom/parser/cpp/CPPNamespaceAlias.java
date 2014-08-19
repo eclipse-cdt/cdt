@@ -118,4 +118,12 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
 	public boolean isInline() {
 		return false;
 	}
+
+	/**
+	 * For debugging use only.
+	 */
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2061,9 +2061,11 @@ public class CPPSemantics {
 	        } else {
 	        	if (obj == null) {
 	        		obj = temp;
-	        	} else if (obj.equals(temp)) {
-	        	    // Ok, delegates are synonyms.
-	        	} else {
+	        	} else if (!obj.equals(temp)) {
+	        		if (obj instanceof ICPPNamespace && temp instanceof ICPPNamespace &&
+	        				SemanticUtil.isSameNamespace((ICPPNamespace) obj, (ICPPNamespace) temp)) {
+	        			continue;
+	        		}
 	        		int c = compareByRelevance(tu, obj, temp);
 	        		if (c < 0) {
 	        			obj= temp;

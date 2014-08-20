@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -70,8 +70,8 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		final Database db= getDB();
 		final long minValue = enumeration.getMinValue();
 		final long maxValue = enumeration.getMaxValue();
-		db.putLong(record+ OFFSET_MIN_VALUE, minValue);
-		db.putLong(record+ OFFSET_MAX_VALUE, maxValue);
+		db.putLong(record + OFFSET_MIN_VALUE, minValue);
+		db.putLong(record + OFFSET_MAX_VALUE, maxValue);
 		fMinValue= minValue;
 		fMaxValue= maxValue;
 	}
@@ -204,7 +204,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
 				return false;
 			
-			return SemanticUtil.isSameOwner(getOwner(), etype.getOwner());
+			return SemanticUtil.haveSameOwner(this, etype);
 		}
 		return false;
 	}

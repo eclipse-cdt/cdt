@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -67,38 +68,29 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	
 	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
-		return getNamespaceScope(this, 20);	// avoid an infinite loop.
-	}
-	
-	private ICPPNamespaceScope getNamespaceScope(PDOMCPPNamespaceAlias alias, final int maxDepth) {
-		IBinding binding= alias.getBinding();
-		if (binding instanceof ICPPNamespaceScope) {
-			return (ICPPNamespaceScope) binding;
-		}
-
-		if (maxDepth <= 0) {
-			return null;
-		}
-		if (binding instanceof PDOMCPPNamespaceAlias) {
-			return getNamespaceScope((PDOMCPPNamespaceAlias) binding, maxDepth-1);
+		// Avoid an infinite loop.
+		ICPPNamespaceAlias ns= this;
+		for (int i = 0; i < 20; i++) {
+			IBinding binding= ns.getBinding();
+			if (binding instanceof ICPPNamespaceScope)
+				return (ICPPNamespaceScope) binding;
+			if (!(binding instanceof ICPPNamespaceAlias))
+				break;
+			ns= (ICPPNamespaceAlias) binding;
 		}
 		return null;
 	}
-
+	
 	@Override
 	public IBinding[] getMemberBindings() {
 		ICPPNamespace ns= this;
 		for (int i = 0; i < 20; i++) {
-			if (ns instanceof ICPPNamespaceAlias) {
-				IBinding b= ((ICPPNamespaceAlias) ns).getBinding();
-				if (b instanceof ICPPNamespace) {
-					ns= (ICPPNamespace) b;
-				} else {
-					return IBinding.EMPTY_BINDING_ARRAY;
-				}
-			} else {
+			IBinding b= ((ICPPNamespaceAlias) ns).getBinding();
+			if (!(b instanceof ICPPNamespace))
+				return IBinding.EMPTY_BINDING_ARRAY;
+			ns= (ICPPNamespace) b;
+			if (!(ns instanceof ICPPNamespaceAlias))
 				break;
-			}
 		}
 		return ns.getMemberBindings();
 	}
@@ -106,7 +98,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 	@Override
 	public IBinding getBinding() {
 		try {
-			return (IBinding) PDOMNode.load(getPDOM(), getPDOM().getDB().getRecPtr(record + NAMESPACE_BINDING));
+			return (IBinding) PDOMNode.load(getPDOM(), getDB().getRecPtr(record + NAMESPACE_BINDING));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

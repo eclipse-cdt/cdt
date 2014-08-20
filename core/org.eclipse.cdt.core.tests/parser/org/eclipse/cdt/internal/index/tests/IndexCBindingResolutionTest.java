@@ -405,4 +405,11 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 		assertNotNull(numericalValue);
 		assertEquals(i, numericalValue.intValue());
 	}
+	
+	//	extern char TableValue[10];
+	
+	//	char TableValue[sizeof TableValue];
+	public void testNameLookupFromArrayModifier_435075() throws Exception {
+		checkBindings();
+	}
 }

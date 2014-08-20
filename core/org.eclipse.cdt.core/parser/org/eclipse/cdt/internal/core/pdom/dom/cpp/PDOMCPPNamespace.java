@@ -193,7 +193,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return null;
 	}
 	
-	@Deprecated	@Override
+	@Deprecated
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
@@ -243,7 +244,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	@Override
 	public IBinding[] getMemberBindings() {
 		IBinding[] result = null;
-		final List<PDOMNode> preresult = new ArrayList<PDOMNode>();
+		final List<PDOMNode> preresult = new ArrayList<>();
 		try {
 			getIndex().accept(new IBTreeVisitor() {
 				@Override
@@ -257,8 +258,8 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				}
 			});
 			result = preresult.toArray(new IBinding[preresult.size()]);
-		} catch (CoreException ce) {
-			CCorePlugin.log(ce);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		return result;
 	}
@@ -288,7 +289,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			List<PDOMCPPNamespace> nslist = collectInlineNamespaces(getDB(), getLinkage(),
 					record + FIRST_NAMESPACE_CHILD_OFFSET);
 			if (nslist == null) {
-				fInlineNamespaces= new PDOMCPPNamespace[0];
+				fInlineNamespaces= ICPPNamespaceScope.EMPTY_NAMESPACE_SCOPE_ARRAY;
 			} else {
 				fInlineNamespaces= nslist.toArray(new PDOMCPPNamespace[nslist.size()]);
 			}
@@ -305,7 +306,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 				PDOMCPPNamespace ns= new PDOMCPPNamespace(linkage, rec);
 				if (ns.isInline()) {
 					if (nslist == null) {
-						nslist= new ArrayList<PDOMCPPNamespace>();
+						nslist= new ArrayList<>();
 					}
 					nslist.add(ns);
 				}

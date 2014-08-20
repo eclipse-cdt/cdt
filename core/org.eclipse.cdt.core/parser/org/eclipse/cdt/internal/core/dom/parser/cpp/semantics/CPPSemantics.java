@@ -1871,13 +1871,6 @@ public class CPPSemantics {
 	    int pointOfDecl= -1;
 	    if (obj instanceof ICPPInternalBinding) {
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
-	        // For bindings in global or namespace scope we don't know whether there is a
-	        // previous declaration in one of the skipped header files. For bindings that
-	        // are likely to be redeclared we need to assume that there is a declaration
-	        // in one of the headers.
-	    	if (indexBased && acceptDeclaredAfter(cpp)) {
-	    		return true;
-	    	}
 	        IASTNode[] n = cpp.getDeclarations();
 	        if (n != null && n.length > 0) {
 	        	nd = (ASTNode) n[0];

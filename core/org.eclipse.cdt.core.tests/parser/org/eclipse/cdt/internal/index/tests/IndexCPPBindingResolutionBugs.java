@@ -829,7 +829,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IType type= fn.getType().getParameterTypes()[0];
 		assertInstance(type, IPointerType.class);
 		type= ((IPointerType) type).getType();
-		assertSame(type, cl);
+		assertInstance(cl, IType.class);
+		assertSameType(type, (IType) cl);
 	}
 
     // class A {

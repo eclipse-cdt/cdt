@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -163,12 +164,12 @@ public class SemanticUtil {
 	 * @throws DOMException
 	 */
 	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root, IASTNode point) throws DOMException {
-		ObjectSet<ICPPClassType> done= new ObjectSet<ICPPClassType>(2);
-		ObjectSet<ICPPClassType> current= new ObjectSet<ICPPClassType>(2);
+		ObjectSet<ICPPClassType> done= new ObjectSet<>(2);
+		ObjectSet<ICPPClassType> current= new ObjectSet<>(2);
 		current.put(root);
 
 		for (int count = 0; count < CPPSemantics.MAX_INHERITANCE_DEPTH && !current.isEmpty(); count++) {
-			ObjectSet<ICPPClassType> next= new ObjectSet<ICPPClassType>(2);
+			ObjectSet<ICPPClassType> next= new ObjectSet<>(2);
 
 			for (int i = 0; i < current.size(); i++) {
 				ICPPClassType clazz= current.keyAt(i);
@@ -622,31 +623,55 @@ public class SemanticUtil {
 	/**
 	 * Returns {@code true} if two bindings have the same owner.
 	 */
-	public static boolean isSameOwner(IBinding owner1, IBinding owner2) {
-		// Ignore anonymous namespaces
-		while (owner1 instanceof ICPPNamespace && owner1.getNameCharArray().length == 0)
-			owner1= owner1.getOwner();
-		// Ignore anonymous namespaces
-		while (owner2 instanceof ICPPNamespace && owner2.getNameCharArray().length == 0)
-			owner2= owner2.getOwner();
-
-		if (owner1 == null)
-			return owner2 == null;
-		if (owner2 == null)
+	public static boolean haveSameOwner(IBinding b1, IBinding b2) {
+		if (b1 == b2)
+			return true;
+		b1 = b1.getOwner();
+		b2 = b2.getOwner();
+		if (b1 == b2)
+			return true;
+		if (b1 instanceof IType) {
+			if (b2 instanceof IType)
+				return ((IType) b1).isSameType((IType) b2);
 			return false;
-
-		if (owner1 instanceof IType) {
-			if (owner2 instanceof IType) {
-				return ((IType) owner1).isSameType((IType) owner2);
-			}
-		} else if (owner1 instanceof ICPPNamespace) {
-			if (owner2 instanceof ICPPNamespace) {
-				if (!CharArrayUtils.equals(owner1.getNameCharArray(), owner2.getNameCharArray()))
-					return false;
-				return isSameOwner(owner1.getOwner(), owner2.getOwner());
-			}
 		}
+		if (b1 instanceof ICPPNamespace && b2 instanceof ICPPNamespace)
+			return isSameNamespace((ICPPNamespace) b1, (ICPPNamespace) b2);
 		return false;
+	}
+
+	/**
+	 * Returns {@code true} if the two given bindings represent the same type or namespace.
+	 */
+	public static boolean isSameNamespace(ICPPNamespace ns1, ICPPNamespace ns2) {
+		IBinding b1 = ns1;
+		IBinding b2 = ns2;
+
+		while (true) {
+			for (int i = 0; b1 instanceof ICPPNamespaceAlias && i < 20; i++)
+				b1= ((ICPPNamespaceAlias) b1).getBinding();
+			// TODO(sprigogin): Anonymous namespaces should not be ignored here.
+			// Ignore anonymous namespaces.
+			while (b1 instanceof ICPPNamespace && b1.getNameCharArray().length == 0)
+				b1= b1.getOwner();
+			for (int i = 0; b2 instanceof ICPPNamespaceAlias && i < 20; i++)
+				b2= ((ICPPNamespaceAlias) b2).getBinding();
+			// Ignore anonymous namespaces.
+			while (b2 instanceof ICPPNamespace && b2.getNameCharArray().length == 0)
+				b2= b2.getOwner();
+	
+			if (b1 == null)
+				return b2 == null;
+			if (b2 == null)
+				return false;
+	
+			if (!(b1 instanceof ICPPNamespace) || !(b2 instanceof ICPPNamespace))
+				return false;
+			if (!CharArrayUtils.equals(b1.getNameCharArray(), b2.getNameCharArray()))
+				return false;
+			b1 = b1.getOwner();
+			b2 = b2.getOwner();
+		}
 	}
 
 	public static boolean isVoidType(IType ptype) {
@@ -679,7 +704,7 @@ public class SemanticUtil {
 	 * 	   no inheritance relation
 	 */
 	public static final int calculateInheritanceDepth(IType type, IType baseClass, IASTNode point) {
-		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), type, baseClass, point);
+		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<>(), type, baseClass, point);
 	}
 
 	private static final int calculateInheritanceDepth(int maxdepth, Set<Object> hashSet, IType type, IType baseClass, IASTNode point) {

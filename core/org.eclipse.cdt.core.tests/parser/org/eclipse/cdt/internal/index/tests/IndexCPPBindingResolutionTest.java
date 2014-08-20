@@ -1850,4 +1850,11 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testLambdaOwnedByClass() throws Exception {
 		checkBindings();
 	}
+	
+	//	extern char TableValue[10];
+	
+	//	char TableValue[sizeof TableValue];
+	public void testNameLookupFromArrayModifier_435075() throws Exception {
+		checkBindings();
+	}
 }

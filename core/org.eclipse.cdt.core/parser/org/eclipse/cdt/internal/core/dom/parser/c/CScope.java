@@ -291,7 +291,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	}
 
 	private IBinding extractBinding(final IASTName candidate, boolean resolve, IASTName forName) {
-		if (!resolve || acceptDeclaredAfter(forName) || CVisitor.declaredBefore(candidate, forName)) {
+		if (!resolve || acceptDeclaredAfter(forName, candidate) || CVisitor.declaredBefore(candidate, forName)) {
 			if (resolve && candidate != forName) {
 				return candidate.resolveBinding();
 			}
@@ -300,7 +300,10 @@ public class CScope implements ICScope, IASTInternalScope {
 		return null;
 	}
 
-    private boolean acceptDeclaredAfter(IASTName name) {
+    private boolean acceptDeclaredAfter(IASTName name, IASTName candidate) {
+    	// Functions may be declared after the point of use.
+    	if (!(candidate.getParent() instanceof IASTFunctionDeclarator))
+    		return false;
     	if (getKind() != EScopeKind.eGlobal)
     		return false;
     	final ASTNodeProperty propertyInParent = name.getPropertyInParent();

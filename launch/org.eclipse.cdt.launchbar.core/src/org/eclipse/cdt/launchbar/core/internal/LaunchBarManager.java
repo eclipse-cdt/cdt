@@ -559,6 +559,16 @@ public class LaunchBarManager extends PlatformObject implements ILaunchBarManage
 		setPreference(getPerDescriptorStore(), PREF_ACTIVE_LAUNCH_MODE, mode.getIdentifier()); // per desc store
 	}
 
+	public ILaunchTarget[] getAllLaunchTargets() {
+		List<ILaunchTarget> targetList = new ArrayList<>();
+		for (ILaunchTargetType targetType : getAllLaunchTargetTypes()) {
+			for (ILaunchTarget target : targetType.getTargets()) {
+				targetList.add(target);
+			}
+		}
+		return targetList.toArray(new ILaunchTarget[targetList.size()]);
+	}
+
 	@Override
 	public ILaunchTarget[] getLaunchTargets() {
 		return getLaunchTargets(activeLaunchDesc);

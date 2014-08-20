@@ -94,5 +94,18 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.cdt.launchbar.ui.internal.targetsView.TargetPropertyPage"
+            id="org.eclipse.cdt.launchbar.ui.infoPropertyPage"
+            name="About">
+         <enabledWhen>
+            <instanceof
+                  value="org.eclipse.cdt.launchbar.core.ILaunchTarget">
+            </instanceof>
+         </enabledWhen>
+      </page>
+   </extension>
 
 </plugin>

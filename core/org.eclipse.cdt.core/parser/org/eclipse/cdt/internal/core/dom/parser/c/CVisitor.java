@@ -1665,6 +1665,7 @@ public class CVisitor extends ASTQueries {
 	static public boolean declaredBefore(IASTNode nodeA, IASTNode nodeB) {
 	    if (nodeB == null) return true;
 	    if (nodeB.getPropertyInParent() == STRING_LOOKUP_PROPERTY) return true;
+	    if (nodeB.getPropertyInParent() == STRING_LOOKUP_TAGS_PROPERTY) return true;
 	    
 	    if (nodeA instanceof ASTNode) {
 	    	ASTNode nd= (ASTNode) nodeA;

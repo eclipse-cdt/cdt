@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_0a6beb10",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-21T17:51:46Z",
+      "side": 1,
+      "message": "I\u0027d suggest that keeping/removing the debug actions is entirely separate from pin/clone support, so it would be better to do that\n(or whatever outcome we settle on) as a separate change.",
+      "revId": "16184a0e290e08794f6729ab179733fca3c712a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial implementation
  *     Anton Leherbauer - adding tokens for preprocessing directives
  *     Markus Schorn - classification of preprocessing directives.
+ *     John Dallaway - handle CRLF after single line comment (bug 442186)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.scanner;
 
@@ -830,7 +831,7 @@ public class SimpleScanner {
 
 	private void matchSinglelineComment(boolean includeNewline) {
 	    int c = getChar();
-	    while (c != '\n' && c != EOFCHAR) {
+	    while (c != '\n' && c != EOFCHAR && (includeNewline || (c != '\r'))) {
 	        c = getChar();
 	    }
 	    if (c == EOFCHAR || !includeNewline) {

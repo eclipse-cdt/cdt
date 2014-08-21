@@ -16,6 +16,24 @@
       "revId": "45b99ed6cb7cdfd856d6b2020f9adc3a1de949dc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_2a96a7a2",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/formatter/scanner/SimpleScanner.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 834,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2014-08-21T17:37:10Z",
+      "side": 1,
+      "message": "In practice, we are unlikely to find stray \u0027\\r\u0027 chars in a comment string but, nevertheless, I will implement a lookahead for \u0027\\n\u0027 after finding \u0027\\r\u0027.",
+      "parentUuid": "c7672b30_2a32277a",
+      "revId": "45b99ed6cb7cdfd856d6b2020f9adc3a1de949dc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

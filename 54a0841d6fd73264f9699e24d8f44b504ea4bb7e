@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_76cd2a2e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/PinToDebugSessionAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-22T18:14:00Z",
+      "side": 1,
+      "message": "Instead of a hack like this, maybe we need (or have) an \"update()\" or \"refresh()\" method somewhere that could be called to do this kind of thing, since it might be useful elsewhere, and it would be good to have it centralized and standardized.",
+      "revId": "54a0841d6fd73264f9699e24d8f44b504ea4bb7e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_56390e8a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 539
+      },
+      "writtenOn": "2014-08-22T18:14:00Z",
+      "side": 1,
+      "message": "I was going to suggest merely disabling, rather than hiding the debug buttons, to keep the visualizer UI consistent, but it would be good to see screenshots of both cases to make a visual comparison, since I\u0027m actually on the fence looking at the \"removed\" screenshot -- it does keep the UI clean.",
+      "revId": "54a0841d6fd73264f9699e24d8f44b504ea4bb7e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

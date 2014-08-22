@@ -18,6 +18,7 @@
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Xavier Raynaud (kalray) - Bug 431935
  *     Marc Dumais (Ericsson) - Bug 441713
+ *     Marc Dumais (Ericsson) - Bug 442312
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -606,16 +607,19 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// initialize menu/toolbar actions, if needed
 		createActions();
 
-		toolBarManager.add(m_resumeAction);
-		toolBarManager.add(m_suspendAction);
-		toolBarManager.add(m_terminateAction);
-		
-		toolBarManager.add(m_separatorAction);
-		
-		toolBarManager.add(m_stepReturnAction);
-		toolBarManager.add(m_stepOverAction);
-		toolBarManager.add(m_stepIntoAction);
-		toolBarManager.add(m_dropToFrameAction);
+		// display debug buttons only if MV is not pinned
+		if (!m_pinToDbgSessionAction.isChecked()) {
+			toolBarManager.add(m_resumeAction);
+			toolBarManager.add(m_suspendAction);
+			toolBarManager.add(m_terminateAction);
+
+			toolBarManager.add(m_separatorAction);
+
+			toolBarManager.add(m_stepReturnAction);
+			toolBarManager.add(m_stepOverAction);
+			toolBarManager.add(m_stepIntoAction);
+			toolBarManager.add(m_dropToFrameAction);
+		}
 		toolBarManager.add(m_pinToDbgSessionAction);
 		
 		updateActions();
@@ -807,6 +811,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	{
 		m_canvas.requestRecache();
 		m_canvas.requestUpdate();
+	}
+	
+	/** Updates the UI elements such as the toolbar and context menu */
+	public void updateUI() {
+		// Set the selection to what it already is.
+		// This triggers a call to VisualizerView#updateUI()
+		setSelection(getSelection());
 	}
 	
 

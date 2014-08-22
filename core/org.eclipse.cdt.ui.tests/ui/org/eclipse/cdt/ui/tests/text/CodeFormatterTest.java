@@ -2999,4 +2999,10 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testFunctionMacroInInitializerExpression() throws Exception {
 		assertFormatterResult();
 	}
+
+	public void testCrLfAfterSingleLineComment_Bug442186() throws Exception {
+		String before = "#define TESTING1 //\r\n#define TESTING2 // CR \r in comment\r\n";
+		String expected = before;
+		assertFormatterResult(before, expected);
+	}
 }

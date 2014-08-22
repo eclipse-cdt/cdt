@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial implementation
  *     Anton Leherbauer - adding tokens for preprocessing directives
  *     Markus Schorn - classification of preprocessing directives.
+ *     John Dallaway - handle CRLF after single line comment (bug 442186)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter.scanner;
 
@@ -831,7 +832,13 @@ public class SimpleScanner {
 	private void matchSinglelineComment(boolean includeNewline) {
 	    int c = getChar();
 	    while (c != '\n' && c != EOFCHAR) {
-	        c = getChar();
+	        int next = getChar();
+	        if (c == '\r' && next == '\n' && !includeNewline) {
+	            // exclude CRLF line ending
+	            ungetChar(next);
+	            break;
+	        }
+	        c = next;
 	    }
 	    if (c == EOFCHAR || !includeNewline) {
 	    	ungetChar(c);

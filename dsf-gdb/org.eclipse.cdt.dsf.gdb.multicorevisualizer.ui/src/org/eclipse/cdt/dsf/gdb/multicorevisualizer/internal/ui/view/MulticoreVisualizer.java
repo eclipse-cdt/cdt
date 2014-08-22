@@ -18,6 +18,7 @@
  *     Marc Dumais (Ericsson) - Bug 409965
  *     Xavier Raynaud (kalray) - Bug 431935
  *     Marc Dumais (Ericsson) - Bug 441713
+ *     Marc Dumais (Ericsson) - Bug 442312
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -606,16 +607,21 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// initialize menu/toolbar actions, if needed
 		createActions();
 
-		toolBarManager.add(m_resumeAction);
-		toolBarManager.add(m_suspendAction);
-		toolBarManager.add(m_terminateAction);
-		
-		toolBarManager.add(m_separatorAction);
-		
-		toolBarManager.add(m_stepReturnAction);
-		toolBarManager.add(m_stepOverAction);
-		toolBarManager.add(m_stepIntoAction);
-		toolBarManager.add(m_dropToFrameAction);
+		// display debug buttons only if MV is not pinned
+		// note: if in the future we want to display the debug buttons even 
+		// when pinned, all that needs to be done it to remove this check.
+		if (!m_pinToDbgSessionAction.isChecked()) {
+			toolBarManager.add(m_resumeAction);
+			toolBarManager.add(m_suspendAction);
+			toolBarManager.add(m_terminateAction);
+
+			toolBarManager.add(m_separatorAction);
+
+			toolBarManager.add(m_stepReturnAction);
+			toolBarManager.add(m_stepOverAction);
+			toolBarManager.add(m_stepIntoAction);
+			toolBarManager.add(m_dropToFrameAction);
+		}
 		toolBarManager.add(m_pinToDbgSessionAction);
 		
 		updateActions();
@@ -807,6 +813,18 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	{
 		m_canvas.requestRecache();
 		m_canvas.requestUpdate();
+	}
+	
+	
+	/** Updates the UI elements such as the toolbar and context menu */
+	public void raiseVisualizerChangedEvent() {
+		// FIXME: replace hack below by raising a new VisualizerChanged
+		// event, listened-to by VisualizerViewer, that causes it to raise
+		// its own VISUALIZER_CHANGED event. See bug 442584 for details
+		
+		// for now do a non-change to the selection to trigger a call to 
+		// VisualizerView#updateUI()
+		setSelection(getSelection());
 	}
 	
 

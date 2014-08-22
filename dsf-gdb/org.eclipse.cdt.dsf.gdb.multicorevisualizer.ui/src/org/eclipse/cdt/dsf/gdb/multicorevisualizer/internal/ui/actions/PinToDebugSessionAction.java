@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation (Bug 441713)
+ *     Marc Dumais (Ericsson) - Bug 442312
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions;
@@ -72,5 +73,7 @@ public class PinToDebugSessionAction extends VisualizerAction {
 		else {
 			m_visualizer.unpin();
 		}
+		// fake a selection to refresh toolbar buttons after pin action
+		m_visualizer.setSelection(m_visualizer.getSelection());
 	}
 }

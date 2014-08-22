@@ -650,15 +650,8 @@ public class SemanticUtil {
 		while (true) {
 			for (int i = 0; b1 instanceof ICPPNamespaceAlias && i < 20; i++)
 				b1= ((ICPPNamespaceAlias) b1).getBinding();
-			// TODO(sprigogin): Anonymous namespaces should not be ignored here.
-			// Ignore anonymous namespaces.
-			while (b1 instanceof ICPPNamespace && b1.getNameCharArray().length == 0)
-				b1= b1.getOwner();
 			for (int i = 0; b2 instanceof ICPPNamespaceAlias && i < 20; i++)
 				b2= ((ICPPNamespaceAlias) b2).getBinding();
-			// Ignore anonymous namespaces.
-			while (b2 instanceof ICPPNamespace && b2.getNameCharArray().length == 0)
-				b2= b2.getOwner();
 	
 			if (b1 == null)
 				return b2 == null;

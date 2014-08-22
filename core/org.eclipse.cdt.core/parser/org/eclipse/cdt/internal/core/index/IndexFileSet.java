@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
@@ -18,13 +19,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 public class IndexFileSet implements IIndexFileSet {
 	private IIndexFileSet fInverse;
-	private HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<IIndexFragment, IIndexFragmentFileSet>();
+	private HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<>();
 
 	public IndexFileSet() {
 	}
@@ -89,6 +91,30 @@ public class IndexFileSet implements IIndexFileSet {
 						} catch (CoreException e) {
 							CCorePlugin.log(e);
 						}
+					}
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return false;
+	}
+
+	public boolean containsNonLocalDeclaration(IBinding binding, IIndexFileLocation ignore) {
+		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
+			try {
+				final IIndexFragment fragment = entry.getKey();
+				final IIndexFragmentFileSet subset = entry.getValue();
+				IIndexFragmentName[] names =
+						fragment.findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS | IIndexFragment.FIND_NON_LOCAL_ONLY);
+				for (IIndexFragmentName name : names) {
+					try {
+						IIndexFile file = name.getFile();
+						if (!file.getLocation().equals(ignore) && subset.contains((IIndexFragmentFile) file)) {
+							return true;
+						}
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
 					}
 				}
 			} catch (CoreException e) {

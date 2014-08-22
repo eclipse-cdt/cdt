@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
@@ -50,7 +52,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstan
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to
@@ -582,7 +587,7 @@ public class ASTTypeUtil {
 							needSpace= true;
 						} else {
 							if (postfix == null) {
-								postfix= new ArrayList<IType>();
+								postfix= new ArrayList<>();
 							}
 							postfix.add(tj);
 							needParenthesis= true;
@@ -739,16 +744,27 @@ public class ASTTypeUtil {
 				if (owner instanceof ICPPNamespace || owner instanceof IType) {
 					int pos= result.length();
 					appendCppName(owner, normalize, qualify, result);
-					if (binding instanceof IIndexBinding && owner instanceof ICPPNamespace && owner.getNameCharArray().length == 0) {
-						try {
-							IIndexFile file = ((IIndexBinding) binding).getLocalToFile();
-							if (file != null) {
+					if (owner instanceof ICPPNamespace && owner.getNameCharArray().length == 0) {
+						if (binding instanceof IIndexBinding) {
+							try {
+								IIndexFile file = ((IIndexBinding) binding).getLocalToFile();
+								if (file != null) {
+									result.append('{');
+									result.append(file.getLocation().getURI().toString());
+									result.append('}');
+								}
+							} catch (CoreException e) {
+								CCorePlugin.log(e);
+							}
+						} else {
+							IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(binding);
+							if (node != null) {
+								IPath filePath = new Path(node.getTranslationUnit().getFilePath());
+								URI uri = UNCPathConverter.getInstance().toURI(filePath);
 								result.append('{');
-								result.append(file.getLocation().getURI().toString());
+								result.append(uri.toString());
 								result.append('}');
 							}
-						} catch (CoreException e) {
-							CCorePlugin.log(e);
 						}
 					}
 					if (result.length() > pos)

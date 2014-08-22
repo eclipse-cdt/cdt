@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -18,12 +19,17 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IndexFileSet;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -76,6 +82,47 @@ public class ASTInternal {
 
 	public static IASTNode getDeclaredInSourceFileOnly(IIndexFragment forFragment, IBinding binding,
 			boolean requireDefinition, PDOMBinding glob) {
+		IASTNode result = getDeclaredInSourceFileOnly(binding, requireDefinition);
+		if (result == null)
+			return null;
+		
+		if (requireDefinition && glob != null) {
+			try {
+				if (glob.hasDeclaration())
+					return null;
+			} catch (CoreException e) {
+			}
+		}
+		
+		IASTTranslationUnit tu= result.getTranslationUnit();
+		if (tu != null) {
+			if (tu.getIndexFileSet().containsNonLocalDeclaration(binding, forFragment))
+				return null;
+		}
+		return result;
+	}
+
+	public static IASTNode getDeclaredInSourceFileOnly(IBinding binding) {
+		IASTNode result = getDeclaredInSourceFileOnly(binding, false);
+		if (result == null)
+			return null;
+
+		IASTTranslationUnit ast= result.getTranslationUnit();
+		if (ast != null) {
+			ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+			if (tu == null)
+				return null;
+			IIndexFileLocation location = IndexLocationFactory.getIFL(tu);
+			IIndexFileSet fileSet = ast.getIndexFileSet();
+			if (!(fileSet instanceof IndexFileSet))
+				return null;
+			if (((IndexFileSet) fileSet).containsNonLocalDeclaration(binding, location))
+				return null;
+		}
+		return result;
+	}
+
+	private static IASTNode getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition) {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
@@ -107,22 +154,6 @@ public class ASTInternal {
 						return null;
 				}
 			}
-		}
-		if (result == null)
-			return null;
-		
-		if (requireDefinition && glob != null) {
-			try {
-				if (glob.hasDeclaration())
-					return null;
-			} catch (CoreException e) {
-			}
-		}
-		
-		IASTTranslationUnit tu= result.getTranslationUnit();
-		if (tu != null) {
-			if (tu.getIndexFileSet().containsNonLocalDeclaration(binding, forFragment))
-				return null;
 		}
 		return result;
 	}

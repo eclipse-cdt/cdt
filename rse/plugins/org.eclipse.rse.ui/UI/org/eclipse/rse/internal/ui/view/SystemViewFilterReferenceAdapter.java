@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@
  * David McKnight   (IBM)        - [254614] Promptable filter's shouldn't require supportsCommands on the subsystem to be false
  * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
  * David McKnight   (IBM)        - [416550] filter rename does case-insensitive check against original filter name
+ * David McKnight   (IBM)        - [442396] read-only filters don't allow pasting onto them
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -903,7 +904,7 @@ public class SystemViewFilterReferenceAdapter
 	    if (fRef != null)
 	    {
 	        ISubSystemConfiguration factory = getSubSystemConfiguration(fRef.getReferencedFilter());
-	        if (factory.supportsDropInFilters() && !fRef.getReferencedFilter().isNonChangable())
+	        if (factory.supportsDropInFilters())
 	        {
 	        	// if the drop is handled by the subsystem rather than this adapter, this will be true.
 		        if (factory.providesCustomDropInFilters())

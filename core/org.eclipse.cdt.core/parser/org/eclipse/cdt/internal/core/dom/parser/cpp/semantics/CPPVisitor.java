@@ -157,6 +157,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -1301,6 +1302,9 @@ public class CPPVisitor extends ASTQueries {
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) parent;
 				IType type = fieldReference.getFieldOwnerType();
 				type= getUltimateTypeUptoPointers(type);
+				if (type instanceof ICPPParameterPackType) {
+					type = ((ICPPParameterPackType) type).getType();
+				}
 				if (type instanceof ICPPClassType) {
 					type= SemanticUtil.mapToAST(type, fieldReference);
 					return ((ICPPClassType) type).getCompositeScope();

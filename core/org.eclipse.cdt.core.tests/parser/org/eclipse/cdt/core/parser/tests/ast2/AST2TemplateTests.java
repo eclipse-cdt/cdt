@@ -8057,6 +8057,22 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertProblem("waldo<int>()", "waldo<int>");
 	}
+	
+	//	// Example 1
+	//	template <typename... T>
+	//	void foo1(T... t) {
+	//		bar(t.waldo...);
+	//	}
+	//
+	//	// Example 2
+	//	template <typename> struct A {}; 
+	//	template <typename... T>
+	//	void foo2(A<T>... t) {
+	//		bar(t.waldo...);
+	//	}
+	public void testMemberAccessInPackExpansion_442213() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	struct A {};

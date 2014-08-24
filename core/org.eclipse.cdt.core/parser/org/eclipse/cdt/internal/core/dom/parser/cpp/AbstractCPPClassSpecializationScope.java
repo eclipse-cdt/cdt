@@ -129,7 +129,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 			} else {
 				binding= specialClass.specializeMember(binding, lookup.getLookupPoint());
 			}
-			result = ArrayUtil.appendAt(result, n++, binding);
+			if (binding != null)
+				result = ArrayUtil.appendAt(result, n++, binding);
 		}
 		return ArrayUtil.trim(result, n);
 	}

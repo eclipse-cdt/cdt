@@ -216,6 +216,9 @@ public class Value implements IValue {
 		return CharArrayUtils.equals(getSignature(), rhs.getSignature());
 	}
 
+	/**
+	 * For debugging only.
+	 */
 	@Override
 	public String toString() {
 		return new String(getSignature());

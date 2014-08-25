@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_a05653a1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/PinToDebugSessionAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-08-25T15:34:22Z",
+      "side": 1,
+      "message": "Please see the bug for an update on this comment.",
+      "parentUuid": "c7672b30_76cd2a2e",
+      "revId": "54a0841d6fd73264f9699e24d8f44b504ea4bb7e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_56390e8a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-22T18:14:00Z",
       "side": 1,
       "message": "I was going to suggest merely disabling, rather than hiding the debug buttons, to keep the visualizer UI consistent, but it would be good to see screenshots of both cases to make a visual comparison, since I\u0027m actually on the fence looking at the \"removed\" screenshot -- it does keep the UI clean.",
+      "revId": "54a0841d6fd73264f9699e24d8f44b504ea4bb7e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_203b63f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-08-25T15:34:22Z",
+      "side": 1,
+      "message": "After discussing this (see bug in bugzilla) we have come to the conclusion that hiding the buttons is the best approach.",
+      "parentUuid": "c7672b30_56390e8a",
       "revId": "54a0841d6fd73264f9699e24d8f44b504ea4bb7e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_830881e5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-08-25T19:05:49Z",
+      "side": 1,
+      "message": "Is name parameter actually used in the function?",
+      "revId": "0dcc423e3ffe63ded7eacc3fc5b49f10786aa71f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6303a5c7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-08-25T19:05:49Z",
+      "side": 1,
+      "message": "something like String.valueOf(val.numericalValue()) would be better",
+      "revId": "0dcc423e3ffe63ded7eacc3fc5b49f10786aa71f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

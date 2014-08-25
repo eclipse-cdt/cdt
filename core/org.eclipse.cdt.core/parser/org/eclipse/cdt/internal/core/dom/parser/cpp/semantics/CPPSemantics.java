@@ -1906,7 +1906,13 @@ public class CPPSemantics {
                 while (dtor.getParent() instanceof IASTDeclarator)
                     dtor = (IASTDeclarator) dtor.getParent();
                 IASTInitializer init = dtor.getInitializer();
-                if (init != null)
+            	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
+            	// is immediately after its complete template-parameter.
+                // Note: can't just check "dtor.getParent() instanceof ICPPASTTemplateParameter"
+                // because function parameter declarations implement ICPPASTTemplateParameter too.
+                boolean isTemplateParameter = dtor.getParent() instanceof ICPPASTTemplateParameter
+                	&& dtor.getParent().getPropertyInParent() == ICPPASTTemplateDeclaration.PARAMETER;
+                if (init != null && !isTemplateParameter)
                     pointOfDecl = ((ASTNode) init).getOffset() - 1;
                 else
                     pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
@@ -1924,6 +1930,15 @@ public class CPPSemantics {
                 nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset();
             } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
+            	nd = (ASTNode) nd.getParent();
+            	pointOfDecl = nd.getOffset() + nd.getLength();
+            } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
+            		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
+            	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
+            	// is immediately after its complete template-parameter.
+            	// Type and template template parameters are handled here;
+            	// non-type template parameters are handled in the DECLARATOR_NAME
+            	// case above.
             	nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset() + nd.getLength();
             } else {

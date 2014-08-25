@@ -8515,4 +8515,26 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testConstexprFunctionCallWithNonConstexprArguments_429891() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename> class A {};
+	//	template <int>      class B {};
+	//	const int D = 4;
+	//
+	//	// Type template parameter
+	//	template <typename A = A<int>>
+	//	struct C1 {};
+	//	C1<> c1;
+	//
+	//	// Template template parameter
+	//	template <template <typename> class A = A>
+	//	struct C2 { typedef A<int> type; };
+	//	C2<>::type c2;
+	//
+	//	// Non-type template parameter
+	//	template <int D = D>
+	//	struct C3 { typedef B<D> type; };
+	//	C3<>::type c3;
+	public void testNameLookupInDefaultTemplateArgument_399145() throws Exception {
+		parseAndCheckBindings();
+	}
 }

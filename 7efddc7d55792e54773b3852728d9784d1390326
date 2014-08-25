@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_0357512f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-25T17:56:57Z",
+      "side": 1,
+      "message": "Remove the word \"fix\"",
+      "revId": "7efddc7d55792e54773b3852728d9784d1390326",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_e32e95c7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-25T17:56:57Z",
+      "side": 1,
+      "message": "Compute -\u003e Computes\"it\" is ambiguous, use \"the method\"",
+      "revId": "7efddc7d55792e54773b3852728d9784d1390326",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_631a85a3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-25T17:56:57Z",
+      "side": 1,
+      "message": "The method doesn\u0027t display anything, it just returns a string.\nTerminate the sentence with a period.",
+      "revId": "7efddc7d55792e54773b3852728d9784d1390326",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_a3fdbda5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-25T17:56:57Z",
+      "side": 1,
+      "message": "Value.toString method should not be used for anything except debugging. You can use val.numericalValue().toString() but please avoid calling val.numericalValue() twice.",
+      "revId": "7efddc7d55792e54773b3852728d9784d1390326",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

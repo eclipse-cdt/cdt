@@ -44,25 +44,16 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 		return false;
 	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isConst()
-     */
     @Override
 	public boolean isConst() {
         return isConst;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isVolatile()
-     */
     @Override
 	public boolean isVolatile() {
         return isVolatile;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
-     */
     @Override
 	public IType getType() {
         return type;

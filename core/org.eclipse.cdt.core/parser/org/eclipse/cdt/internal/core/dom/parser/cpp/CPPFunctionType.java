@@ -58,7 +58,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 
             IType[] fps;
             fps = ft.getParameterTypes();
-			//constructors & destructors have null return type
+			// Constructors & destructors have null return type.
 			if ((returnType == null) ^ (ft.getReturnType() == null))
 			    return false;
 			
@@ -81,17 +81,11 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getReturnType()
-     */
     @Override
 	public IType getReturnType() {
         return returnType;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getParameterTypes()
-     */
     @Override
 	public IType[] getParameterTypes() {
         return parameters;

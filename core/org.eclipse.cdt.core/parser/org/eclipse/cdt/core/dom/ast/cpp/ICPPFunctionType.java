@@ -21,12 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
  */
 public interface ICPPFunctionType extends IFunctionType {
 	/**
-	 * Returns <code>true</code> for a constant method
+	 * Returns {@code true} for a constant method.
 	 */
 	public boolean isConst();
 	
 	/**
-	 * Returns <code>true</code> for a volatile method
+	 * Returns {@code true} for a volatile method.
 	 */
 	public boolean isVolatile();
 	

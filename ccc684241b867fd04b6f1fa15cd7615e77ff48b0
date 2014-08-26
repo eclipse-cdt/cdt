@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_3e7ee454",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-26T05:02:31Z",
+      "side": 1,
+      "message": "Compute -\u003e Computes",
+      "revId": "ccc684241b867fd04b6f1fa15cd7615e77ff48b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9e6458c5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-26T05:02:31Z",
+      "side": 1,
+      "message": "Why macro?",
+      "revId": "ccc684241b867fd04b6f1fa15cd7615e77ff48b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fe73cc8a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-26T05:02:31Z",
+      "side": 1,
+      "message": "Extra space after (",
+      "revId": "ccc684241b867fd04b6f1fa15cd7615e77ff48b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_5e7be064",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/c/hover/CSourceHover.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-26T05:02:31Z",
+      "side": 1,
+      "message": "Slightly simpler: numValue.toString()",
+      "revId": "ccc684241b867fd04b6f1fa15cd7615e77ff48b0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

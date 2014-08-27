@@ -103,6 +103,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -1020,6 +1021,8 @@ public class BindingClassifier {
 	 *     or an empty list if no such binding is available.
 	 */
 	private Set<IBinding> getRequiredBindings(IBinding binding) {
+		if (binding instanceof ICPPNamespaceAlias)
+			return Collections.singleton(binding);
 		if (binding instanceof ICPPNamespace)
 			return Collections.emptySet();
 

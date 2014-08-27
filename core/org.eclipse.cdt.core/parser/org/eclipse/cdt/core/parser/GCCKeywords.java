@@ -29,6 +29,8 @@ public class GCCKeywords {
 	public static final String __INT128 = "__int128";
 	/** @since 5.5 */
 	public static final String __FLOAT128 = "__float128";
+	/** @since 5.9 */
+	public static final String __FINAL = "__final";
 
 	public static final char[]
 		cpTYPEOF = 			TYPEOF.toCharArray(),
@@ -84,4 +86,8 @@ public class GCCKeywords {
 	public static final char[]
 		cp__is_final= 					"__is_final".toCharArray(),
 		cp__underlying_type=			"__underlying_type".toCharArray();
+	
+	/** @since 5.9 */
+	public static final char[]
+		cp__FINAL=						__FINAL.toCharArray();
 }

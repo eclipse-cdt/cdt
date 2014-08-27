@@ -216,6 +216,15 @@ public interface IToken {
 
 	int FIRST_RESERVED_IExtensionToken	= 243;
 	int LAST_RESERVED_IExtensionToken	= 299;
+	
+	/**
+	 * Token types for context-sensitive tokens.
+	 * @since 5.9
+	 */
+	enum ContextSensitiveTokenType {
+		OVERRIDE,
+		FINAL
+	}
 
 
 	/**

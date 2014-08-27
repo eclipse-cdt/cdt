@@ -10094,7 +10094,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertInstance(sDefinition, ICPPASTCompositeTypeSpecifier.class);
 		assertTrue(((ICPPASTCompositeTypeSpecifier)sDefinition).isFinal());
 	}
-
+	
 	// struct S {
 	//     template<typename T>
 	// 	   void foo(T t) final {
@@ -10133,6 +10133,16 @@ public class AST2CPPTests extends AST2TestBase {
 	// }
 	public void testFinalParameter() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	struct S __final {};
+	//	struct T { void foo() __final; };
+	public void testFinalGccExtension_442457() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPClassType s = bh.assertNonProblem("S");
+		assertTrue(s.isFinal());
+		ICPPMethod foo = bh.assertNonProblem("foo");
+		assertTrue(foo.isFinal());
 	}
 
 	//	struct S1 {};

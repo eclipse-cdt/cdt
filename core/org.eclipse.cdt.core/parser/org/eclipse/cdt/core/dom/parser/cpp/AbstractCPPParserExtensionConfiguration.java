@@ -11,8 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.IToken.ContextSensitiveTokenType;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 
 
@@ -160,5 +165,13 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.CPP, supportGCCOtherBuiltinSymbols());
+	}
+	
+	/**
+	 * @since 5.9
+	 */
+	@Override
+	public Map<String, ContextSensitiveTokenType> getAdditionalContextSensitiveKeywords() {
+		return Collections.emptyMap();
 	}
 }

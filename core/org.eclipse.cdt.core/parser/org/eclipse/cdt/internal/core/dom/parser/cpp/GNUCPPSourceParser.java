@@ -19,9 +19,10 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -145,6 +146,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.IToken.ContextSensitiveTokenType;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -189,6 +191,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private final ICPPNodeFactory nodeFactory;
 	private TemplateIdStrategy fTemplateParameterListStrategy;
+	
+	private Map<String, ContextSensitiveTokenType> fContextSensitiveTokens;
 
     public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
             IParserLogService log, ICPPParserExtensionConfiguration config) {
@@ -215,8 +219,25 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         this.index= index;
         this.nodeFactory = CPPNodeFactory.getDefault();
         scanner.setSplitShiftROperator(true);
+        fContextSensitiveTokens = createContextSensitiveTokenMap(config);
     }
-
+    
+    private Map<String, ContextSensitiveTokenType> createContextSensitiveTokenMap(
+    		ICPPParserExtensionConfiguration config) {
+    	Map<String, ContextSensitiveTokenType> result = new HashMap<String, ContextSensitiveTokenType>();
+    	result.put(Keywords.OVERRIDE, ContextSensitiveTokenType.OVERRIDE);
+    	result.put(Keywords.FINAL, ContextSensitiveTokenType.FINAL);
+    	result.putAll(config.getAdditionalContextSensitiveKeywords());
+    	return result;
+    }
+    
+    private ContextSensitiveTokenType getContextSensitiveType(IToken token) {
+    	if (!(token.getType() == IToken.tIDENTIFIER)) {
+    		return null;
+    	}
+		return fContextSensitiveTokens.get(new String(token.getCharImage()));
+    }
+    
     @Override
 	protected IASTName identifier() throws EndOfFileException, BacktrackException {
     	switch (LT(1)) {
@@ -3640,16 +3661,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		throws EndOfFileException, BacktrackException {
     	while (true) {
     		IToken token = LAcatchEOF(1);
-    		if (token.getType() != IToken.tIDENTIFIER)
-    			break;
-    		char[] tokenImage = token.getCharImage();
-    		if (Arrays.equals(Keywords.cOVERRIDE, tokenImage)) {
+    		ContextSensitiveTokenType contextSensitiveType = getContextSensitiveType(token);
+    		if (contextSensitiveType == ContextSensitiveTokenType.OVERRIDE) {
     			consume();
     			ICPPASTVirtSpecifier spec = nodeFactory.newVirtSpecifier(
     					ICPPASTVirtSpecifier.SpecifierKind.Override);
     			setRange(spec, token.getOffset(), token.getOffset() + token.getLength());
     			typeRelevantDtor.addVirtSpecifier(spec);
-    		} else if (Arrays.equals(Keywords.cFINAL, tokenImage)) {
+    		} else if (contextSensitiveType == ContextSensitiveTokenType.FINAL) {
     			consume();
     			ICPPASTVirtSpecifier spec = nodeFactory.newVirtSpecifier(
     					ICPPASTVirtSpecifier.SpecifierKind.Final);
@@ -4489,8 +4508,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
 	private void classVirtSpecifier(ICPPASTCompositeTypeSpecifier astClassSpecifier) throws EndOfFileException, BacktrackException {
 		IToken token = LA();
-		char[] tokenImage = token.getCharImage();
-		if (token.getType() == IToken.tIDENTIFIER && Arrays.equals(Keywords.cFINAL, tokenImage)){
+		ContextSensitiveTokenType contextSensitiveType = getContextSensitiveType(token);
+		if (contextSensitiveType == ContextSensitiveTokenType.FINAL) {
 			consume();
 			ICPPASTClassVirtSpecifier spec = nodeFactory.newClassVirtSpecifier(
 					ICPPASTClassVirtSpecifier.SpecifierKind.Final);

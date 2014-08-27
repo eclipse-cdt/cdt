@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.IToken.ContextSensitiveTokenType;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 
 /**
@@ -130,5 +134,12 @@ public class GPPParserExtensionConfiguration extends AbstractCPPParserExtensionC
 	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.CPP, true);
+	}
+	
+	@Override
+	public Map<String, ContextSensitiveTokenType> getAdditionalContextSensitiveKeywords() {
+		Map<String, ContextSensitiveTokenType> result = super.getAdditionalContextSensitiveKeywords();
+		result.put(new String(GCCKeywords.cp__FINAL), ContextSensitiveTokenType.FINAL);
+		return result;
 	}
 }

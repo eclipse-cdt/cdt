@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,18 +24,30 @@ public interface ICPPFunctionType extends IFunctionType {
 	 * Returns {@code true} for a constant method.
 	 */
 	public boolean isConst();
-	
+
 	/**
 	 * Returns {@code true} for a volatile method.
 	 */
 	public boolean isVolatile();
-	
+
+	/**
+	 * Returns {@code true} for a method declared with a ref-qualifier.
+	 * @since 5.9
+	 */
+	public boolean hasRefQualifier();
+
+	/**
+	 * Returns {@code true} if the type of the implicit object parameter is an rvalue reference.
+	 * @since 5.9
+	 */
+	public boolean isRValueReference();
+
 	/**
 	 * Whether the function type takes variable number of arguments.
 	 * @since 5.2
 	 */
 	public boolean takesVarArgs();
-	
+
 	/**
 	 * @deprecated function types don't relate to this pointers at all.
 	 * @noreference This method is not intended to be referenced by clients and should be removed.

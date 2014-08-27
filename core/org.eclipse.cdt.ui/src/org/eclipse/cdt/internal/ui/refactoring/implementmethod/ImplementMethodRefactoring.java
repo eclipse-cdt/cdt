@@ -38,11 +38,11 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -264,6 +264,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		
 		createdMethodDeclarator = nodeFactory.newFunctionDeclarator(qName);
 		createdMethodDeclarator.setConst(functionDeclarator.isConst());
+		createdMethodDeclarator.setRefQualifier(functionDeclarator.getRefQualifier());
 		for (IASTPointerOperator pop : functionDeclarator.getPointerOperators()) {
 			createdMethodDeclarator.addPointerOperator(pop.copy(CopyStyle.withLocations));
 		}

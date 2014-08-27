@@ -398,6 +398,9 @@ public class ASTTypeUtil {
 			if (type instanceof ICPPFunctionType) {
 				ICPPFunctionType ft= (ICPPFunctionType) type;
 				needSpace= appendCVQ(result, needSpace, ft.isConst(), ft.isVolatile(), false);
+				if (ft.hasRefQualifier()) {
+					appendRefQualifier(result, needSpace, ft.isRValueReference()); needSpace = true;
+				}
 			}
 		} else if (type instanceof IPointerType) {
 			if (type instanceof ICPPPointerToMemberType) {
@@ -464,6 +467,14 @@ public class ASTTypeUtil {
 			needSpace = true;
 		}
 		return needSpace;
+	}
+
+	private static void appendRefQualifier(StringBuilder target, boolean needSpace,
+			boolean isRValueReference) {
+		if (needSpace) {
+			target.append(SPACE); 
+		}
+		target.append(isRValueReference ? Keywords.cpAND : Keywords.cpAMPER);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator, ICPPASTDeclarator {
+	/**
+	 * @since 5.9
+	 */
+	public enum RefQualifier { LVALUE, RVALUE }
+	
 	/**
 	 * Used as return value for {@link #getExceptionSpecification()}.
 	 * @since 5.1
@@ -98,6 +103,18 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * Sets this method to be pure virtual.
 	 */
 	public void setPureVirtual(boolean isPureVirtual);
+
+	/**
+	 * Returns the ref-qualifier.
+	 * @since 5.9
+	 */
+	public RefQualifier getRefQualifier();
+
+	/**
+	 * Sets the ref-qualifier.
+	 * @since 5.9
+	 */
+	public void setRefQualifier(RefQualifier value);
 
 	/**
 	 * @since 5.2

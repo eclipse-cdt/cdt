@@ -864,6 +864,7 @@ public class CPPTemplates {
 			if (i < parameters.length) {
 				par = parameters[i];
 			} // else reuse last parameter (which should be a pack)
+			@SuppressWarnings("null")
 			IValue defaultValue = par.getDefaultValue();
 			IValue specializedValue = CPPTemplates.instantiateValue(defaultValue, tpMap, 
 					packOffset, within, maxdepth, point);
@@ -1325,7 +1326,8 @@ public class CPPTemplates {
 						params[i]= CPPVisitor.adjustParameterType(p, true);
 					}
 				}
-				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
+				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(),
+						ft.hasRefQualifier(), ft.isRValueReference(), ft.takesVarArgs());
 			}
 
 			if (type instanceof ICPPTemplateParameter) {
@@ -2227,10 +2229,11 @@ public class CPPTemplates {
 			}
 		}
 		ICPPFunctionType originalType = function.getType();
-		if (i == parameters.length)  // no parameters with default arguments
+		if (i == parameters.length)  // No parameters with default arguments.
 			return originalType;
 		return new CPPFunctionType(originalType.getReturnType(), ArrayUtil.trim(parameterTypes),
-				originalType.isConst(), originalType.isVolatile(), originalType.takesVarArgs());
+				originalType.isConst(), originalType.isVolatile(), originalType.hasRefQualifier(),
+				originalType.isRValueReference(), originalType.takesVarArgs());
 	}
 
 	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode, IASTNode point) throws DOMException {

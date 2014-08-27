@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Function call operator
 		final IType returnType= getReturnType();
 		final IType[] parameterTypes= getParameterTypes();
-		ft= new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false);
+		ft= new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false, false, false);
 
 		ICPPParameter[] params = new ICPPParameter[parameterTypes.length];
 		for (int i = 0; i < params.length; i++) {
@@ -117,7 +117,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Conversion operator
 		if (needConversionOperator) {
 			final CPPFunctionType conversionTarget = new CPPFunctionType(returnType, parameterTypes);
-			ft= new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false);
+			ft= new CPPFunctionType(conversionTarget, IType.EMPTY_TYPE_ARRAY, true, false, false, false, false);
 			m= new CPPImplicitMethod(scope, CPPASTConversionName.createName(conversionTarget, null), ft, params);
 			result[5]= m;
 		}

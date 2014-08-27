@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttribute;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -91,13 +92,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
@@ -4224,7 +4225,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				endOffset= consume().getEndOffset();
 			}
 		} else {
-			cvloop: while(true) {
+			cvloop: while (true) {
 				switch (LT(1)) {
 				case IToken.t_const:
 					fc.setConst(true);
@@ -4238,6 +4239,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					break cvloop;
 				}
 			}
+		}
+
+		// ref-qualifiers
+		switch (LT(1)) {
+		case IToken.tAMPER:
+			fc.setRefQualifier(RefQualifier.LVALUE);
+			endOffset= consume().getEndOffset();
+			break;
+		case IToken.tAND:
+			fc.setRefQualifier(RefQualifier.RVALUE);
+			endOffset= consume().getEndOffset();
+			break;
+		default:
+			break;
 		}
 
 		// throws clause

@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -141,6 +142,17 @@ public class DeclaratorWriter extends NodeWriter {
 		if (funcDec.isVolatile()) {
 			scribe.printSpace();
 			scribe.print(Keywords.VOLATILE);
+		}
+		RefQualifier refQualifier = funcDec.getRefQualifier();
+		if (refQualifier != null) {
+			switch (refQualifier) {
+			case LVALUE:
+				scribe.print(Keywords.cpAMPER);
+				break;
+			case RVALUE:
+				scribe.print(Keywords.cpAND);
+				break;
+			}
 		}
 		if (funcDec.isMutable()) {
 			scribe.printSpace();

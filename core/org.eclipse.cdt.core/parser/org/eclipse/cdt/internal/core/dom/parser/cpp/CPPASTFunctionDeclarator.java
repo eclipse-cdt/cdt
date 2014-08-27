@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     private boolean isVolatile;
     private boolean isConst;
     private boolean isMutable;
+    private RefQualifier refQualifier;
     
     private ICPPFunctionScope scope;
     
@@ -67,6 +68,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		copy.isVolatile = isVolatile;
 		copy.isConst = isConst;
 		copy.isMutable = isMutable;
+		copy.refQualifier = refQualifier;
 
 		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
@@ -213,6 +215,17 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     }
 
     @Override
+	public RefQualifier getRefQualifier() {
+		return refQualifier;
+	}
+
+    @Override
+	public void setRefQualifier(RefQualifier value) {
+        assertNotFrozen();
+		refQualifier = value;
+	}
+
+	@Override
 	@Deprecated
     public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer[] getConstructorChain() {
     	if (ASTQueries.findTypeRelevantDeclarator(this) == this) {

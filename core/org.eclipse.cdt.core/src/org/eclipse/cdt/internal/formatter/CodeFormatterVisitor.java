@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -289,6 +289,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		public void run() {
 			boolean needSpace = skipConstVolatileRestrict();
 			int token = peekNextToken();
+			// Ref-qualifier.
+			if (token == Token.tAMPER || token == Token.tAND) {
+				scribe.printNextToken(token, true);
+				token = peekNextToken();
+				needSpace = true;
+			}
 			if (token == Token.t_throw || token == Token.tIDENTIFIER) {
 				if (node instanceof ICPPASTFunctionDeclarator) {
 					final IASTTypeId[] exceptionSpecification=
@@ -1417,48 +1423,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		formatList(parameters, options, true, node.takesVarArgs(),
 				new FunctionDeclaratorTailFormatter(node, tailFormatter));
 
-//		IASTFileLocation fileLocation= node.getFileLocation();
-//		if (fileLocation != null &&
-//				scribe.scanner.getCurrentPosition() < fileLocation.getNodeOffset() + fileLocation.getNodeLength()) {
-//			skipConstVolatileRestrict();
-//
-//			int token = peekNextToken();
-//			if (token == Token.t_throw || token == Token.tIDENTIFIER) {
-//				final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
-//				if (exceptionSpecification != null && token == Token.t_throw)
-//					formatExceptionSpecification(exceptionSpecification);
-//				if (peekNextToken() == Token.tIDENTIFIER) {
-//					Alignment alignment = scribe.createAlignment(
-//							Alignment.TRAILING_TEXT,
-//							Alignment.M_COMPACT_SPLIT,
-//							1,
-//							scribe.scanner.getCurrentPosition());
-//
-//					scribe.enterAlignment(alignment);
-//					boolean ok = false;
-//					do {
-//						try {
-//							scribe.alignFragment(alignment, 0);
-//							// Skip the rest of the declarator.
-//							scribe.printTrailingComment();
-//							scribe.space();
-//							if (tailFormatter != null)
-//								tailFormatter.run();
-//							skipNode(node);
-//							ok = true;
-//						} catch (AlignmentException e) {
-//							scribe.redoAlignment(e);
-//						}
-//					} while (!ok);
-//					scribe.exitAlignment(alignment, true);
-//				}
-//			} else {
-//				// Skip the rest (=0)
-//				scribe.printTrailingComment();
-//				scribe.space();
-//				skipNode(node);
-//			}
-//		}
 		return PROCESS_SKIP;
 	}
 

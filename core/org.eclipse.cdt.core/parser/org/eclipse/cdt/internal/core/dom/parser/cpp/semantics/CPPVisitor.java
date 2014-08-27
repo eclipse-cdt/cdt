@@ -112,6 +112,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
@@ -1830,7 +1831,7 @@ public class CPPVisitor extends ASTQueries {
 	        pTypes[i] = pt;
 	    }
 
-	    return new CPPFunctionType(returnType, pTypes, isConst, isVolatile, false);
+	    return new CPPFunctionType(returnType, pTypes, isConst, isVolatile, false, false, false);
 	}
 
 	/**
@@ -1869,7 +1870,9 @@ public class CPPVisitor extends ASTQueries {
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 
-	    CPPFunctionType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile(),
+	    RefQualifier refQualifier = fnDtor.getRefQualifier();
+		CPPFunctionType type = new CPPFunctionType(returnType, pTypes, fnDtor.isConst(),
+	    		fnDtor.isVolatile(), refQualifier != null, refQualifier == RefQualifier.RVALUE,
 	    		fnDtor.takesVarArgs());
 	    final IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if (nested != null) {

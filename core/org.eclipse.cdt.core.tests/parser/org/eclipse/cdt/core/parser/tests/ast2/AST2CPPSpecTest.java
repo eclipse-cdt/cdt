@@ -2242,6 +2242,31 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
+	//class A {
+	//  void a() & {}
+	//  void b() && {}
+	//
+	//  void c() const& {}
+	//  void d() const&& {}
+	//   
+	//  void e() volatile & {}
+	//  void f() volatile && {}
+	//
+	//  void g() volatile const& {}
+	//  void h() volatile const&& {}
+	//};
+	public void test8s4() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+		
+	// void print(int a, int)
+	// {
+	// //printf("a = %d",a);
+	// }
+	public void test8_4s5() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// int a;
 	// struct X {
 	// static int a;
@@ -5717,7 +5742,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	// template <class T> int f(T[5]);
 	// int I = f<int>(0);
-	// int j = f<void>(0); // invalid array // also no error with gcc
+	// int j = f<void>(0); // invalid array
 	public void _test14_8_2s8b() throws Exception {
 		final String content= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
@@ -6591,14 +6616,6 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	public void test7_3_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
-	}
-
-	// void print(int a, int)
-	// {
-	// //printf("a = %d",a);
-	// }
-	public void test8_4s5() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// int a;

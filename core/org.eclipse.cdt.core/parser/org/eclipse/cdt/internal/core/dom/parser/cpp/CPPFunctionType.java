@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,18 +31,22 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
     private final IType returnType;
     private final boolean isConst;
     private final boolean isVolatile;
+	private final boolean hasRefQualifier;
+	private final boolean isRValueReference;
     private final boolean takesVarargs;
     
     public CPPFunctionType(IType returnType, IType[] types) {
-    	this(returnType, types, false, false, false);
+    	this(returnType, types, false, false, false, false, false);
     }
 
 	public CPPFunctionType(IType returnType, IType[] types, boolean isConst, boolean isVolatile,
-			boolean takesVarargs) {
+			boolean hasRefQualifier, boolean isRValueReference, boolean takesVarargs) {
         this.returnType = returnType;
         this.parameters = types;
         this.isConst = isConst;
         this.isVolatile= isVolatile;
+        this.hasRefQualifier = hasRefQualifier;
+        this.isRValueReference = isRValueReference;
         this.takesVarargs= takesVarargs;
     }
 
@@ -52,7 +56,10 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
             return o.isSameType(this);
         if (o instanceof ICPPFunctionType) {
             ICPPFunctionType ft = (ICPPFunctionType) o;
-            if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile() || takesVarArgs() != ft.takesVarArgs()) {
+            if (isConst() != ft.isConst() || isVolatile() != ft.isVolatile()
+            		|| hasRefQualifier() != ft.hasRefQualifier()
+            		|| isRValueReference() != ft.isRValueReference()
+            		|| takesVarArgs() != ft.takesVarArgs()) {
                 return false;
             }
 
@@ -62,7 +69,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			if ((returnType == null) ^ (ft.getReturnType() == null))
 			    return false;
 			
-			if (returnType != null && ! returnType.isSameType(ft.getReturnType()))
+			if (returnType != null && !returnType.isSameType(ft.getReturnType()))
 			    return false;
 			
 			if (parameters.length == fps.length) {
@@ -72,7 +79,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			    }
 			} else {
 				if (!SemanticUtil.isEmptyParameterList(parameters) 
-					|| !SemanticUtil.isEmptyParameterList(fps)) {
+						|| !SemanticUtil.isEmptyParameterList(fps)) {
 					return false;
 				}
 			} 
@@ -119,6 +126,16 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 	}
 
 	@Override
+	public boolean hasRefQualifier() {
+		return hasRefQualifier;
+	}
+
+	@Override
+	public boolean isRValueReference() {
+		return isRValueReference;
+	}
+
+	@Override
 	public boolean takesVarArgs() {
 		return takesVarargs;
 	}
@@ -131,9 +148,11 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes= ITypeMarshalBuffer.FUNCTION_TYPE;
-		if (isConst()) firstBytes |= ITypeMarshalBuffer.FLAG1;
-		if (takesVarArgs()) firstBytes |= ITypeMarshalBuffer.FLAG2;
-		if (isVolatile()) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		if (isConst) firstBytes |= ITypeMarshalBuffer.FLAG1;
+		if (takesVarargs) firstBytes |= ITypeMarshalBuffer.FLAG2;
+		if (isVolatile) firstBytes |= ITypeMarshalBuffer.FLAG3;
+		if (hasRefQualifier) firstBytes |= ITypeMarshalBuffer.FLAG4;
+		if (isRValueReference) firstBytes |= ITypeMarshalBuffer.FLAG5;
 		
 		buffer.putShort(firstBytes);
 		buffer.putInt(parameters.length);
@@ -154,6 +173,8 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		return new CPPFunctionType(rt, pars, 
 				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0,   // const
 				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0,   // volatile
+				(firstBytes & ITypeMarshalBuffer.FLAG5) != 0,   // has ref-qualifier
+				(firstBytes & ITypeMarshalBuffer.FLAG4) != 0,   // rvalue reference
 				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0);  // takes varargs
 	}
 }

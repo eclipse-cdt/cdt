@@ -232,16 +232,18 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		}
 
 		/**
-		 * Compute the source for a macro. If the source location of the macro definition can be determined,
-		 * the source is taken from there, otherwise the source is constructed as a <code>#define</code> directive.
+		 * Compute the source for a macro. If the source location of the macro definition can be
+		 * determined, the source is taken from there, otherwise the source is constructed as
+		 * a {@code #define} directive.
 		 * 
 		 * @param ast  the AST of the translation unit
 		 * @param name  the macro occurrence in the AST
 		 * @param binding   the binding of the macro name
-		 * @return the source or <code>null</code>
+		 * @return the source or {@code null}
 		 * @throws CoreException 
 		 */
-		private String computeSourceForMacro(IASTTranslationUnit ast, IASTName name, IBinding binding) throws CoreException {
+		private String computeSourceForMacro(IASTTranslationUnit ast, IASTName name, IBinding binding)
+				throws CoreException {
 			// Search for the macro definition
 			IName[] defs = ast.getDefinitions(binding);
 			for (IName def : defs) {
@@ -260,7 +262,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 *
 		 * @param ast  the AST of the translation unit
 		 * @param binding   the binding of the enumerator name
-		 * @return the enumerator value, source or <code>null</code>
+		 * @return the enumerator value, source or {@code null}
 		 * @throws CoreException
 		 */
 		private String computeSourceForEnumerator(IASTTranslationUnit ast, IEnumerator binding)
@@ -283,17 +285,18 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 		/**
 		 * Find a definition or declaration for the given binding and returns the source for it.
-		 * Definitions are preferred over declarations. In case of multiple definitions or declarations,
-		 * and the first name which yields source is taken.
+		 * Definitions are preferred over declarations. In case of multiple definitions or
+		 * declarations, and the first name which yields source is taken.
 		 * 
 		 * @param ast  the AST of the translation unit
 		 * @param binding  the binding
-		 * @return a source string or <code>null</code>, if no source could be computed
-		 * @throws CoreException  if the source file could not be loaded or if there was a
-		 *                        problem with the index
+		 * @return a source string or {@code null}, if no source could be computed
+		 * @throws CoreException  if the source file could not be loaded or if there was
+		 *                        a problem with the index
 		 * @throws DOMException  if there was an internal problem with the DOM
 		 */
-		private String computeSourceForBinding(IASTTranslationUnit ast, IBinding binding) throws CoreException, DOMException {
+		private String computeSourceForBinding(IASTTranslationUnit ast, IBinding binding)
+				throws CoreException, DOMException {
 			IName[] names = findDefsOrDecls(ast, binding);
 			
 			// In case the binding is a non-explicit specialization we need
@@ -327,11 +330,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		}
 
 		/**
-		 * Get the source for the given name from the underlying file.
+		 * Returns the source for the given name from the underlying file.
 		 * 
 		 * @param name  the name to get the source for
 		 * @param binding  the binding of the name
-		 * @return the source string or <code>null</code>, if the source could not be computed
+		 * @return the source string or {@code null}, if the source could not be computed
 		 * @throws CoreException  if the file could not be loaded
 		 */
 		private String computeSourceForName(IName name, IBinding binding) throws CoreException {
@@ -456,9 +459,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		}
 
 		/**
-		 * Determine if the name is part of a KnR function definition.
+		 * Determines if the name is part of a KnR function definition.
+		 *
 		 * @param name
-		 * @return <code>true</code> if the name is part of a KnR function
+		 * @return {@code true} if the name is part of a KnR function
 		 */
 		private boolean isKnRSource(IName name) {
 			if (name instanceof IASTName) {
@@ -653,7 +657,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * 
 		 * @param ast  the AST of the translation unit
 		 * @param binding  the binding
-		 * @return an array of definitions, never <code>null</code>
+		 * @return an array of definitions, never {@code null}
 		 * @throws CoreException
 		 */
 		private IName[] findDefinitions(IASTTranslationUnit ast, IBinding binding) throws CoreException {
@@ -670,7 +674,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * 
 		 * @param ast  the AST of the translation unit
 		 * @param binding  the binding
-		 * @return an array of declarations, never <code>null</code>
+		 * @return an array of declarations, never {@code null}
 		 * @throws CoreException
 		 */
 		private IName[] findDeclarations(IASTTranslationUnit ast, IBinding binding) throws CoreException {
@@ -683,7 +687,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		}
 
 		/**
-		 * @return the computed source or <code>null</code>, if no source could be computed
+		 * @return the computed source or {@code null}, if no source could be computed
 		 */
 		public String getSource() {
 			return fSource;
@@ -756,7 +760,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * @param doc  the document
 	 * @param start  the start of the backward search
 	 * @param bound  search boundary (exclusive)
-	 * @return the comment start offset or <code>-1</code>, if no suitable comment was found
+	 * @return the comment start offset or {@code -1}, if no suitable comment was found
 	 * @throws BadLocationException 
 	 */
 	private static int searchCommentBackward(IDocument doc, int start, int bound) throws BadLocationException {
@@ -876,7 +880,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * Checks whether the given name is a known keyword.
 	 * 
 	 * @param name
-	 * @return <code>true</code> if the name is a known keyword or <code>false</code> if the
+	 * @return {@code true} if the name is a known keyword or {@code false} if the
 	 *         name is not considered a keyword
 	 */
 	private boolean selectionIsKeyword(String name) {

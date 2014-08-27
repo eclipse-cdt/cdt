@@ -65,6 +65,8 @@ public class Keywords {
 	public static final String EXPORT = "export";
 	public static final String EXTERN = "extern";
 	public static final String FALSE = "false";
+	/** @since 5.9 */
+	public static final String FINAL = "final";
 	public static final String FLOAT = "float";
 	public static final String FOR = "for";
 	public static final String FRIEND = "friend";
@@ -86,6 +88,8 @@ public class Keywords {
 	public static final String OPERATOR = "operator";
 	public static final String OR = "or";
 	public static final String OR_EQ = "or_eq";
+	/** @since 5.9 */
+	public static final String OVERRIDE = "override";
 	public static final String PRIVATE = "private";
 	public static final String PROTECTED = "protected";
 	public static final String PUBLIC = "public";
@@ -169,7 +173,7 @@ public class Keywords {
 	public static final char[] cFLOAT = "float".toCharArray();
 	public static final char[] cFOR = "for".toCharArray();
 	/** @since 5.5 */
-	public static final char[] cFINAL = "final".toCharArray();
+	public static final char[] cFINAL = FINAL.toCharArray();
 	public static final char[] cFRIEND = "friend".toCharArray();
 	public static final char[] cGOTO = "goto".toCharArray();
 	public static final char[] cIF = "if".toCharArray();
@@ -189,7 +193,7 @@ public class Keywords {
 	public static final char[] cOR = "or".toCharArray();
 	public static final char[] cOR_EQ = "or_eq".toCharArray();
 	/** @since 5.5 */
-	public static final char[] cOVERRIDE = "override".toCharArray();
+	public static final char[] cOVERRIDE = OVERRIDE.toCharArray();
 	public static final char[] cPRIVATE = "private".toCharArray();
 	public static final char[] cPROTECTED = "protected".toCharArray();
 	public static final char[] cPUBLIC = "public".toCharArray();

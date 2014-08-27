@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.cpp;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.parser.IToken.ContextSensitiveTokenType;
 
 /**
  * C++ parser extension configuration interface.
@@ -146,6 +149,12 @@ public interface ICPPParserExtensionConfiguration {
 	 */
 	public boolean supportFunctionStyleAssembler();
 
+	/**
+	 * Additional variants of context-sensitive keywords.
+	 * @since 5.9
+	 */
+	public Map<String, ContextSensitiveTokenType> getAdditionalContextSensitiveKeywords();
+	
 	/**
 	 * @deprecated use {@link #getBuiltinBindingsProvider()} instead.
 	 */

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_b855e349",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/AbstractCPPParserExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-27T16:54:38Z",
+      "side": 1,
+      "message": "Better: Collections.emptyMap();",
+      "revId": "831bf61108ea1bf34c66834b72790267c3d9f4f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_785b4b7f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPParserExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-27T16:54:38Z",
+      "side": 1,
+      "message": "Safer: new HashMap\u003c\u003e(super.getAdditionalContextSensitiveKeywords());",
+      "revId": "831bf61108ea1bf34c66834b72790267c3d9f4f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_c3b5501a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/cpp/GPPParserExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-27T16:54:38Z",
+      "side": 1,
+      "message": "Better GCCKeywords.__FINAL.",
+      "revId": "831bf61108ea1bf34c66834b72790267c3d9f4f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_63c6fc91",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-27T16:54:38Z",
+      "side": 1,
+      "message": "The word \"Addition\" is not needed here.",
+      "revId": "831bf61108ea1bf34c66834b72790267c3d9f4f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_03d74834",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/GNUCPPSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-08-27T16:54:38Z",
+      "side": 1,
+      "message": "Makes sense to add a string constant to Keywords. Same for FINAL.",
+      "revId": "831bf61108ea1bf34c66834b72790267c3d9f4f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

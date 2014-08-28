@@ -10731,4 +10731,11 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPFunction operator = helper.assertNonProblem("operator()");
 		assertEquals(operator, call2.getOverload());
 	}
+
+	//  void f(int &&a);
+	public void testRValueReferenceSignature_427856() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings();
+		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		isParameterSignatureEqual(sd.getDeclarators()[0], "(int&&)");
+	}
 }

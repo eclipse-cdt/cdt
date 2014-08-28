@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -454,7 +455,11 @@ public class ASTStringUtil {
 					buffer.append(' ').append(Keywords.RESTRICT);
 				}
 			} else if (pointerOperator instanceof ICPPASTReferenceOperator) {
-				buffer.append(Keywords.cpAMPER);
+				if (((ICPPASTReferenceOperator) pointerOperator).isRValueReference()) {
+					buffer.append(Keywords.cpAND);
+				} else {
+					buffer.append(Keywords.cpAMPER);
+				}
 			}
 		} 
 		return buffer;

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -58,17 +59,18 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * This is a utility class to help convert AST elements to Strings corresponding to
+ * Collection of static methods for converting AST elements to {@link String}s corresponding to
  * the AST element's type.
  *
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ASTTypeUtil {
 	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
 	private static final int DEAULT_ITYPE_SIZE = 2;
+
+	private ASTTypeUtil() {}
 
 	/**
 	 * Returns a string representation for the parameters of the given function type.
@@ -577,44 +579,42 @@ public class ASTTypeUtil {
 		boolean needSpace= false;
 		for (int j = numTypes; --j >= 0;) {
 			IType tj = types[j];
-			if (tj != null) {
-				if (j > 0 && types[j - 1] instanceof IQualifierType) {
-					if (needSpace)
-						result.append(SPACE);
-					appendTypeString(types[j - 1], normalize, result);
+			if (j > 0 && types[j - 1] instanceof IQualifierType) {
+				if (needSpace)
 					result.append(SPACE);
-					appendTypeString(tj, normalize, result);
-					needSpace= true;
-					--j;
-				} else {
-					// Handle post-fix.
-					if (tj instanceof IFunctionType || tj instanceof IArrayType) {
-						if (j == 0) {
-							if (needSpace)
-								result.append(SPACE);
-							appendTypeString(tj, normalize, result);
-							needSpace= true;
-						} else {
-							if (postfix == null) {
-								postfix= new ArrayList<>();
-							}
-							postfix.add(tj);
-							needParenthesis= true;
-						}
-					} else {
+				appendTypeString(types[j - 1], normalize, result);
+				result.append(SPACE);
+				appendTypeString(tj, normalize, result);
+				needSpace= true;
+				--j;
+			} else {
+				// Handle post-fix.
+				if (tj instanceof IFunctionType || tj instanceof IArrayType) {
+					if (j == 0) {
 						if (needSpace)
 							result.append(SPACE);
-						if (needParenthesis && postfix != null) {
-							result.append('(');
-							if (parenthesis == null) {
-								parenthesis= new BitSet();
-							}
-							parenthesis.set(postfix.size() - 1);
-						}
 						appendTypeString(tj, normalize, result);
-						needParenthesis= false;
 						needSpace= true;
+					} else {
+						if (postfix == null) {
+							postfix= new ArrayList<>();
+						}
+						postfix.add(tj);
+						needParenthesis= true;
 					}
+				} else {
+					if (needSpace)
+						result.append(SPACE);
+					if (needParenthesis && postfix != null) {
+						result.append('(');
+						if (parenthesis == null) {
+							parenthesis= new BitSet();
+						}
+						parenthesis.set(postfix.size() - 1);
+					}
+					appendTypeString(tj, normalize, result);
+					needParenthesis= false;
+					needSpace= true;
 				}
 			}
 		}
@@ -749,9 +749,9 @@ public class ASTTypeUtil {
 			appendTemplateParameter(tpar, normalize, result);
 		} else {
 			if (qualify) {
+				int pos= result.length();
 				IBinding owner= binding.getOwner();
 				if (owner instanceof ICPPNamespace || owner instanceof IType) {
-					int pos= result.length();
 					appendCppName(owner, normalize, qualify, result);
 					if (owner instanceof ICPPNamespace && owner.getNameCharArray().length == 0) {
 						if (binding instanceof IIndexBinding) {
@@ -776,9 +776,20 @@ public class ASTTypeUtil {
 							}
 						}
 					}
-					if (result.length() > pos)
-						result.append("::"); //$NON-NLS-1$
+				} else if (binding instanceof IType && owner instanceof ICPPFunction) {
+					try {
+						IScope scope = binding.getScope();
+						if (scope != null) {
+							IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
+							if (node != null)
+								appendNodeLocation(node, true, result);
+						}
+					} catch (DOMException e) {
+						// Ignore.
+					}
 				}
+				if (result.length() > pos)
+					result.append("::"); //$NON-NLS-1$
 			}
 			appendNameCheckAnonymous(binding, result);
 		}
@@ -833,24 +844,28 @@ public class ASTTypeUtil {
 			node= ((ICPPInternalBinding) binding).getDefinition();
 		}
 		if (node != null) {
-			IASTFileLocation loc= node.getFileLocation();
-			if (loc == null) {
-				node= node.getParent();
-				if (node != null) {
-					loc= node.getFileLocation();
-				}
+			appendNodeLocation(node, !(binding instanceof ICPPNamespace), buf);
+		}
+	}
+
+	private static void appendNodeLocation(IASTNode node, boolean includeOffset, StringBuilder buf) {
+		IASTFileLocation loc= node.getFileLocation();
+		if (loc == null) {
+			node= node.getParent();
+			if (node != null) {
+				loc= node.getFileLocation();
 			}
-			if (loc != null) {
-				char[] fname= loc.getFileName().toCharArray();
-				int fnamestart= findFileNameStart(fname);
-				buf.append('{');
-				buf.append(fname, fnamestart, fname.length - fnamestart);
-				if (!(binding instanceof ICPPNamespace)) {
-					buf.append(':');
-					buf.append(loc.getNodeOffset());
-				}
-				buf.append('}');
+		}
+		if (loc != null) {
+			char[] fname= loc.getFileName().toCharArray();
+			int fnamestart= findFileNameStart(fname);
+			buf.append('{');
+			buf.append(fname, fnamestart, fname.length - fnamestart);
+			if (includeOffset) {
+				buf.append(':');
+				buf.append(loc.getNodeOffset());
 			}
+			buf.append('}');
 		}
 	}
 

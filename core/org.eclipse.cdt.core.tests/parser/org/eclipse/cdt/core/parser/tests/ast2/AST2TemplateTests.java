@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8551,6 +8551,34 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	struct C3 { typedef B<D> type; };
 	//	C3<>::type c3;
 	public void testNameLookupInDefaultTemplateArgument_399145() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct A {
+	//	  typedef T t;
+	//	};
+	//
+	//	void f(char*);
+	//	void g(int);
+	//
+	//	void test() {
+	//	  {
+	//	    struct B {
+	//	      typedef char* b;
+	//	    };
+	//	    A<B>::t::b a;
+	//	    f(a);
+	//	  }
+	//	  {
+	//	    struct B {
+	//	      typedef int b;
+	//	    };
+	//	    A<B>::t::b a;
+	//	    g(a);
+	//	  }
+	//	}
+	public void testLocalTypeAsTemplateArgument_442832() throws Exception {
 		parseAndCheckBindings();
 	}
 }

@@ -60,7 +60,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to
  * the AST element's type.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -71,16 +71,16 @@ public class ASTTypeUtil {
 	private static final int DEAULT_ITYPE_SIZE = 2;
 
 	/**
-	 * Returns a string representation for the parameters of the given function type. 
+	 * Returns a string representation for the parameters of the given function type.
 	 * The representation contains the comma-separated list of the normalized parameter
-	 * type representations wrapped in parentheses. 
+	 * type representations wrapped in parentheses.
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
 		StringBuilder result = new StringBuilder();
 		appendParameterTypeString(type, result);
 		return result.toString();
 	}
-	
+
 	private static void appendParameterTypeString(IFunctionType ft, StringBuilder result) {
 		IType[] types = ft.getParameterTypes();
 		result.append(Keywords.cpLPAREN);
@@ -102,9 +102,8 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * @return Whether the function matching the given function binding takes
-	 *         parameters or not.
-	 * 
+	 * Returns whether the function matching the given function binding takes parameters or not.
+	 *
 	 * @since 5.1
 	 */
 	public static boolean functionTakesParameters(IFunction function) {
@@ -112,17 +111,16 @@ public class ASTTypeUtil {
 
 		if (parameters.length == 0) {
 			return false;
-		} 
+		}
 		if (parameters.length == 1 && SemanticUtil.isVoidType(parameters[0].getType())) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Returns a string representation for the type array. The representation is
-	 * a comma-separated list of the normalized string representations of the 
-	 * provided types.
+	 * Returns a string representation for the type array. The representation is a comma-separated
+	 * list of the normalized string representations of the provided types.
 	 * @see #getTypeListString(IType[], boolean)
 	 */
 	public static String getTypeListString(IType[] types) {
@@ -133,7 +131,8 @@ public class ASTTypeUtil {
 	 * Returns a String representation of the type array as a
 	 * comma-separated list.
 	 * @param types
-	 * @return representation of the type array as a comma-separated list 
+	 * @param normalize indicates whether normalization shall be performed
+	 * @return representation of the type array as a comma-separated list
 	 * @since 5.1
 	 */
 	public static String getTypeListString(IType[] types, boolean normalize) {
@@ -147,10 +146,10 @@ public class ASTTypeUtil {
 		}
 		return result.toString();
 	}
-	
+
 	/**
 	 * Returns a comma-separated list of the string representations of the arguments, enclosed
-	 * in angle brackets. 
+	 * in angle brackets.
 	 * Optionally normalization is performed:
 	 * <br> template parameter names are represented by their parameter position,
 	 * <br> further normalization may be performed in future versions.
@@ -164,20 +163,18 @@ public class ASTTypeUtil {
 	}
 
 	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
-		boolean first= true;
 		result.append('<');
-		for (ICPPTemplateArgument arg : args) {
-			if (!first) {
+		for (int i = 0; i < args.length; i++) {
+			if (i != 0) {
 				result.append(',');
 			}
-			first= false;
-			appendArgument(arg, normalize, result);
+			appendArgument(args[i], normalize, result);
 		}
 		result.append('>');
 	}
 
 	/**
-	 * Returns a string representation for an template argument. Optionally 
+	 * Returns a string representation for an template argument. Optionally
 	 * normalization is performed:
 	 * <br> template parameter names are represented by their parameter position,
 	 * <br> further normalization may be performed in future versions.
@@ -189,7 +186,7 @@ public class ASTTypeUtil {
 		appendArgument(arg, normalize, buf);
 		return buf.toString();
 	}
-	
+
 	private static void appendArgument(ICPPTemplateArgument arg, boolean normalize, StringBuilder buf) {
 		IValue val= arg.getNonTypeValue();
 		if (val != null) {
@@ -209,19 +206,19 @@ public class ASTTypeUtil {
 	public static String[] getParameterTypeStringArray(IFunctionType type) {
 		IType[] parms = type.getParameterTypes();
 		String[] result = new String[parms.length];
-		
+
 		for (int i = 0; i < parms.length; i++) {
 			if (parms[i] != null) {
 				result[i] = getType(parms[i]);
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	private static void appendTypeString(IType type, boolean normalize, StringBuilder result) {
 		boolean needSpace = false;
-		
+
 		if (type instanceof IArrayType) {
 			result.append(Keywords.cpLBRACKET);
 			if (type instanceof ICArrayType) {
@@ -247,7 +244,7 @@ public class ASTTypeUtil {
 					}
 					result.append(Keywords.VOLATILE);
 				}
-			} 
+			}
 			IValue val= ((IArrayType) type).getSize();
 			if (val != null && val != Value.UNKNOWN) {
 				if (normalize) {
@@ -295,7 +292,7 @@ public class ASTTypeUtil {
 					result.append(SPACE); needSpace = false;
 				}
 				result.append(Keywords.LONG_LONG); needSpace = true;
-			} 
+			}
 
 			if (basicType.isComplex()) {
 				if (needSpace) {
@@ -309,7 +306,7 @@ public class ASTTypeUtil {
 				}
 				result.append(Keywords.c_IMAGINARY); needSpace = true;
 			}
-			
+
 			switch (kind) {
 			case eChar:
 				if (needSpace) result.append(SPACE);
@@ -420,7 +417,7 @@ public class ASTTypeUtil {
 					result.append(Keywords.RESTRICT); needSpace = true;
 				}
 			}
-			
+
 			IQualifierType qt= (IQualifierType) type;
 			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile(), false);
 		} else if (type instanceof TypeOfDependentExpression) {
@@ -428,7 +425,7 @@ public class ASTTypeUtil {
 		} else if (type instanceof ISemanticProblem) {
 			result.append('?');
 		} else if (type != null) {
-			result.append('@').append(type.hashCode()); 
+			result.append('@').append(type.hashCode());
 		}
 	}
 
@@ -447,23 +444,23 @@ public class ASTTypeUtil {
 			final boolean isVolatile, final boolean isRestrict) {
 		if (isConst) {
 			if (needSpace) {
-				target.append(SPACE); 
+				target.append(SPACE);
 			}
-			target.append(Keywords.CONST); 
+			target.append(Keywords.CONST);
 			needSpace = true;
 		}
 		if (isVolatile) {
 			if (needSpace) {
-				target.append(SPACE); 
+				target.append(SPACE);
 			}
-			target.append(Keywords.VOLATILE); 
+			target.append(Keywords.VOLATILE);
 			needSpace = true;
 		}
 		if (isRestrict) {
 			if (needSpace) {
-				target.append(SPACE); 
+				target.append(SPACE);
 			}
-			target.append(Keywords.RESTRICT); 
+			target.append(Keywords.RESTRICT);
 			needSpace = true;
 		}
 		return needSpace;
@@ -472,21 +469,21 @@ public class ASTTypeUtil {
 	private static void appendRefQualifier(StringBuilder target, boolean needSpace,
 			boolean isRValueReference) {
 		if (needSpace) {
-			target.append(SPACE); 
+			target.append(SPACE);
 		}
 		target.append(isRValueReference ? Keywords.cpAND : Keywords.cpAMPER);
 	}
 
 	/**
-	 * Returns the normalized string representation of the type. 
+	 * Returns the normalized string representation of the type.
 	 * @see #getType(IType, boolean)
 	 */
 	public static String getType(IType type) {
 		return getType(type, true);
 	}
-		
+
 	/**
-	 * Returns a string representation of a type.  
+	 * Returns a string representation of a type.
 	 * Optionally the representation is normalized:
 	 * <br> typedefs are resolved
 	 * <br> template parameter names are represented by their parameter position
@@ -500,67 +497,68 @@ public class ASTTypeUtil {
 		appendType(type, normalize, result);
 		return result.toString();
 	}
-	
+
 	/**
 	 * Appends the the result of {@link #getType(IType, boolean)} to the given buffer.
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
-		
-		// Push all of the types onto the stack
+		int numTypes = 0;
+
+		// Push all of the types onto the stack.
 		int i = 0;
 		IQualifierType cvq= null;
 		ICPPReferenceType ref= null;
 		while (type != null && ++i < 100) {
 			if (type instanceof ITypedef) {
-				if (normalize) {
-					// Skip the typedef and proceed with its target type.
-				} else {
+				// If normalization was not requested, skip the typedef and proceed with its target
+				// type.
+				if (!normalize) {
 					// Output reference, qualifier and typedef, then stop.
 					if (ref != null) {
-						types = ArrayUtil.append(IType.class, types, ref);
+						types = ArrayUtil.appendAt(types, numTypes++, ref);
 						ref= null;
 					}
 					if (cvq != null) {
-						types = ArrayUtil.append(IType.class, types, cvq);
+						types = ArrayUtil.appendAt(types, numTypes++, cvq);
 						cvq= null;
 					}
-					types = ArrayUtil.append(IType.class, types, type);
-					type= null; 
+					types = ArrayUtil.appendAt(types, numTypes++, type);
+					type= null;
 				}
 			} else {
 				if (type instanceof ICPPReferenceType) {
-					// Reference types ignore cv-qualifiers
+					// Reference types ignore cv-qualifiers.
 					cvq= null;
-					// Lvalue references win over rvalue references
+					// Lvalue references win over rvalue references.
 					if (ref == null || ref.isRValueReference()) {
-						// Delay reference to see if there are more
+						// Delay reference to see if there are more.
 						ref= (ICPPReferenceType) type;
 					}
 				} else {
 					if (cvq != null) {
-						// Merge cv qualifiers
+						// Merge cv qualifiers.
 						if (type instanceof IQualifierType || type instanceof IPointerType) {
 							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile(), false);
 							cvq= null;
-						} 
-					} 
+						}
+					}
 					if (type instanceof IQualifierType) {
 						// Delay cv qualifier to merge it with others
 						cvq= (IQualifierType) type;
 					} else {
-						// No reference, no cv qualifier: output reference and cv-qualifier
+						// No reference, no cv qualifier: output reference and cv-qualifier.
 						if (ref != null) {
-							types = ArrayUtil.append(IType.class, types, ref);
+							types = ArrayUtil.appendAt(types, numTypes++, ref);
 							ref= null;
 						}
 						if (cvq != null) {
-							types = ArrayUtil.append(IType.class, types, cvq);
+							types = ArrayUtil.appendAt(types, numTypes++, cvq);
 							cvq= null;
 						}
-						types = ArrayUtil.append(IType.class, types, type);
-					} 
+						types = ArrayUtil.appendAt(types, numTypes++, type);
+					}
 				}
 			}
 			if (type instanceof ITypeContainer) {
@@ -570,30 +568,30 @@ public class ASTTypeUtil {
 			} else {
 				type= null;
 			}
-		}	 
-		
-		// Pop all of the types off of the stack, and build the string representation while doing so.
+		}
+
+		// Pop all of the types from the stack, and build the string representation while doing so.
 		List<IType> postfix= null;
 		BitSet parenthesis= null;
 		boolean needParenthesis= false;
 		boolean needSpace= false;
-		for (int j = types.length; --j >= 0;) {
+		for (int j = numTypes; --j >= 0;) {
 			IType tj = types[j];
 			if (tj != null) {
 				if (j > 0 && types[j - 1] instanceof IQualifierType) {
 					if (needSpace)
-						result.append(SPACE); 
+						result.append(SPACE);
 					appendTypeString(types[j - 1], normalize, result);
 					result.append(SPACE);
 					appendTypeString(tj, normalize, result);
 					needSpace= true;
 					--j;
 				} else {
-					// Handle post-fix 
+					// Handle post-fix.
 					if (tj instanceof IFunctionType || tj instanceof IArrayType) {
 						if (j == 0) {
 							if (needSpace)
-								result.append(SPACE); 
+								result.append(SPACE);
 							appendTypeString(tj, normalize, result);
 							needSpace= true;
 						} else {
@@ -635,18 +633,18 @@ public class ASTTypeUtil {
 	/**
 	 * For testing purposes, only.
 	 * Returns the normalized string representation of the type defined by the given declarator.
-	 *  
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static String getType(IASTDeclarator declarator) {
-		// get the most nested declarator
+		// Get the most nested declarator.
 		while (declarator.getNestedDeclarator() != null) {
 			declarator = declarator.getNestedDeclarator();
 		}
-		
+
 		IBinding binding = declarator.getName().resolveBinding();
 		IType type = null;
-		
+
 		if (binding instanceof IEnumerator) {
 			type = ((IEnumerator)binding).getType();
 		} else if (binding instanceof IFunction) {
@@ -656,18 +654,18 @@ public class ASTTypeUtil {
 		} else if (binding instanceof IVariable) {
 			type = ((IVariable)binding).getType();
 		}
-		
+
 		if (type != null) {
 			return getType(type);
 		}
-		
+
 		return EMPTY_STRING;
 	}
 
 	/**
 	 * For testing purposes, only.
-	 * Return's the String representation of a node's type (if available).  
-	 * 
+	 * Return's the String representation of a node's type (if available).
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static String getNodeType(IASTNode node) {
@@ -681,13 +679,13 @@ public class ASTTypeUtil {
 			return getType((IType)((IASTName) node).resolveBinding());
 		if (node instanceof IASTTypeId)
 			return getType((IASTTypeId) node);
-		
+
 		return EMPTY_STRING;
 	}
-	
+
 	/**
 	 * Returns the type representation of the IASTTypeId as a String.
-	 * 
+	 *
 	 * @param typeId
 	 * @return the type representation of the IASTTypeId as a String
 	 */
@@ -696,20 +694,20 @@ public class ASTTypeUtil {
 			return createCType(typeId.getAbstractDeclarator());
 		else if (typeId instanceof CPPASTTypeId)
 			return createCPPType(typeId.getAbstractDeclarator());
-		
+
 		return EMPTY_STRING;
 	}
-	
+
 	private static String createCType(IASTDeclarator declarator) {
 		IType type = CVisitor.createType(declarator);
 		return getType(type);
 	}
-	
+
 	private static String createCPPType(IASTDeclarator declarator) {
 		IType type = CPPVisitor.createType(declarator);
 		return getType(type);
 	}
-	
+
 	/**
 	 * @deprecated don't use it does something strange
 	 */
@@ -744,7 +742,7 @@ public class ASTTypeUtil {
 		appendCppName(binding, false, true, buf);
 		return buf.toString();
 	}
-	
+
 	private static void appendCppName(IBinding binding, boolean normalize, boolean qualify, StringBuilder result) {
 		ICPPTemplateParameter tpar= getTemplateParameter(binding);
 		if (tpar != null) {
@@ -784,18 +782,18 @@ public class ASTTypeUtil {
 			}
 			appendNameCheckAnonymous(binding, result);
 		}
-		
+
 		if (binding instanceof ICPPTemplateInstance) {
 			appendArgumentList(((ICPPTemplateInstance) binding).getTemplateArguments(), normalize, result);
 		} else if (binding instanceof ICPPUnknownMemberClassInstance) {
 			appendArgumentList(((ICPPUnknownMemberClassInstance) binding).getArguments(), normalize, result);
 		}
 	}
-	
+
 	private static ICPPTemplateParameter getTemplateParameter(IBinding binding) {
-		if (binding instanceof ICPPTemplateParameter) 
+		if (binding instanceof ICPPTemplateParameter)
 			return (ICPPTemplateParameter) binding;
-		
+
 		if (binding instanceof ICPPDeferredClassInstance)
 			return getTemplateParameter(((ICPPDeferredClassInstance) binding).getTemplateDefinition());
 
@@ -816,10 +814,10 @@ public class ASTTypeUtil {
 		appendNameForAnonymous(binding, result);
 		if (result.length() == 0)
 			return null;
-		
+
 		return extractChars(result);
 	}
-	
+
 	private static char[] extractChars(StringBuilder buf) {
 		final int length = buf.length();
 		char[] result= new char[length];

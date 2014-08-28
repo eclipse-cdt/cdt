@@ -143,79 +143,51 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return msg;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     @Override
 	public String getName() {
         return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     @Override
 	public IScope getScope() throws DOMException {
         throw new DOMException(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-     */
     @Override
 	public IASTNode getPhysicalNode() {
         return getASTNode();
     }
 
-
     @Override
 	public Object clone() {
-    	// Don't clone problems
+    	// Don't clone problems.
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-     */
     @Override
 	public IScope getParent() throws DOMException {
         throw new DOMException(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
     @Override
 	public IBinding[] find(String name) {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
-	 */
 	@Override
 	public IName getScopeName() {
 		return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     @Override
 	public void addName(IASTName name) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-     */
     @Override
 	public IBinding getBinding(IASTName name, boolean resolve) {
         return null;
@@ -226,37 +198,22 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-     */
     @Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
         return null;
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-	 */
-	/**
-	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
-	 */
 	@Deprecated
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-     */
     @Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
     @Override
 	public boolean isSameType(IType type) {
         return type == this;
@@ -320,76 +277,99 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public void removeNestedFromCache(IASTNode container) {
 	}
 
-	// Dummy methods for derived classes
+	// Dummy methods for derived classes.
     public IType getType() {
     	return new ProblemType(getID());
     }
+
     public boolean isStatic() {
     	return false;
     }
+
     public String[] getQualifiedName() throws DOMException {
         throw new DOMException(this);
     }
+
     public char[][] getQualifiedNameCharArray() throws DOMException {
         throw new DOMException(this);
     }
+
     public boolean isGloballyQualified() throws DOMException {
         throw new DOMException(this);
     }
+
     public boolean isMutable() {
     	return false;
     }
+
     public boolean isExtern() {
     	return false;
     }
+
     public boolean isExternC() {
     	return false;
     }
+
     public boolean isAuto() {
     	return false;
     }
+
     public boolean isRegister() {
     	return false;
     }
-	public IValue getInitialValue() {
+
+    public IValue getInitialValue() {
 		return null;
 	}
-	public boolean isAnonymous() {
+
+    public boolean isAnonymous() {
 		return false;
 	}
-	public boolean isDeleted() {
+
+    public boolean isDeleted() {
 		return false;
 	}
+
     public boolean isInline() {
     	return false;
     }
+
     public boolean takesVarArgs() {
     	return false;
     }
-	public IType[] getExceptionSpecification() {
+
+    public IType[] getExceptionSpecification() {
         return null;
 	}
+
 	public boolean hasParameterPack() {
 		return false;
 	}
+
 	public boolean isVirtual() {
 		return false;
 	}
+
 	public boolean isPureVirtual() {
 		return false;
 	}
+
 	public boolean isImplicit() {
 		return false;
 	}
-    public boolean isExplicit() {
+
+	public boolean isExplicit() {
         return false;
     }
+
 	public boolean hasDefaultValue() {
         return false;
 	}
+
 	public IValue getDefaultValue() {
 		return null;
 	}
+
 	public boolean isParameterPack() {
 		return false;
 	}

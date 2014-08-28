@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -84,7 +83,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	}
 	
 	@Override
-	public IScope getParent() throws DOMException {
+	public IScope getParent() {
 	    //we can't just resolve the function and get its parent scope, since there are cases where that 
 	    //could loop since resolving functions requires resolving their parameter types
 	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();

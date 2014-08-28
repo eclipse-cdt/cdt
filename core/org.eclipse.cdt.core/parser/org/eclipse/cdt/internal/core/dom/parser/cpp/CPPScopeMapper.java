@@ -118,6 +118,7 @@ public class CPPScopeMapper {
 		public IBinding[] getBindings(ScopeLookupData lookup) {
 			return fScope.getBindings(lookup);
 		}
+
 		@Override
 		public IScope getParent() throws DOMException {
 			IScope parent= fScope.getParent();

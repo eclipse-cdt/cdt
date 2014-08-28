@@ -17,7 +17,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -78,7 +77,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	}
 
 	@Override
-	public IScope getParent() throws DOMException {
+	public IScope getParent() {
 		return CPPVisitor.getContainingNonTemplateScope(physicalNode);
 	}
 

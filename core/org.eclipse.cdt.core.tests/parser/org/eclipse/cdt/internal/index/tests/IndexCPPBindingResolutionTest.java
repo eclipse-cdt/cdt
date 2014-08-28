@@ -446,11 +446,11 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 			IBinding b1 = getBindingFromASTName("c; ", 1);
 			assertVariable(b1, "c", ICPPClassType.class, "C");
-			ICPPClassType b1type = (ICPPClassType)((ICPPVariable)b1).getType();
+			ICPPClassType b1type = (ICPPClassType) ((ICPPVariable) b1).getType();
 			assertClassTypeBinding(b1type, "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 			assertTrue(b1type.getScope() == null);
 			assertTrue(b1type.getCompositeScope() instanceof ICPPClassScope);
-			assertClassTypeBinding(((ICPPClassScope)b1type.getCompositeScope()).getClassType(), "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
+			assertClassTypeBinding(((ICPPClassScope) b1type.getCompositeScope()).getClassType(), "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 		}
 		{
 			IBinding b2 = getBindingFromASTName("S s;", 1);
@@ -458,7 +458,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 			IBinding b3 = getBindingFromASTName("s;", 1);
 			assertVariable(b3, "s", ICPPClassType.class, "S");
-			ICPPClassType b3type = (ICPPClassType)((ICPPVariable)b3).getType();
+			ICPPClassType b3type = (ICPPClassType) ((ICPPVariable) b3).getType();
 			assertClassTypeBinding(b3type, "S", ICompositeType.k_struct, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 		}
 		{
@@ -467,7 +467,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 			IBinding b5 = getBindingFromASTName("u; ", 1);
 			assertVariable(b5, "u", ICPPClassType.class, "U");
-			ICPPClassType b5type = (ICPPClassType)((ICPPVariable)b5).getType();
+			ICPPClassType b5type = (ICPPClassType) ((ICPPVariable) b5).getType();
 			assertClassTypeBinding(b5type, "U", ICompositeType.k_union, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 		}
 		{
@@ -476,7 +476,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 			IBinding b7 = getBindingFromASTName("e; ", 1);
 			assertVariable(b7, "e", IEnumeration.class, "E");
-			IEnumeration b5type = (IEnumeration)((ICPPVariable)b7).getType();
+			IEnumeration b5type = (IEnumeration) ((ICPPVariable) b7).getType();
 			assertEnumeration(b5type, "E", new String[] {"ER1","ER2","ER3"});
 			assertTrue(b5type.getScope() == null);
 		}
@@ -487,13 +487,13 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		{
 			IBinding b9 = getBindingFromASTName("var2 = c;", 4);
 			assertVariable(b9, "var2", ICPPClassType.class, "C");
-			ICPPClassType b9type = (ICPPClassType)((ICPPVariable)b9).getType();
+			ICPPClassType b9type = (ICPPClassType) ((ICPPVariable) b9).getType();
 			assertClassTypeBinding(b9type, "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 		}
 		{
 			IBinding b10 = getBindingFromASTName("var3 = &s;", 4);
 			assertVariable(b10, "var3", IPointerType.class, null);
-			IPointerType b10type = (IPointerType) ((ICPPVariable)b10).getType();
+			IPointerType b10type = (IPointerType) ((ICPPVariable) b10).getType();
 			assertClassTypeBinding((ICPPClassType) b10type.getType(), "S", ICompositeType.k_struct, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 		}
 		{

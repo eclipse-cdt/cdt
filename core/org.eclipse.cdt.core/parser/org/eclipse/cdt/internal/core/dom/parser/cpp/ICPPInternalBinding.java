@@ -14,15 +14,19 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 
 /**
- * Non API methods for cpp bindings.
+ * Non API methods for C++ bindings.
  */
 public interface ICPPInternalBinding extends ICPPBinding {
-
+	/**
+	 * Returns the definition of the binding, or {@code null} if the binding doesn't have
+	 * a definition.
+	 */
 	IASTNode getDefinition();
 
 	/** Implementors must keep the node with the lowest offset in declarations[0] */
 	IASTNode[] getDeclarations();
 
 	void addDefinition(IASTNode node);
+
 	void addDeclaration(IASTNode node);
 }

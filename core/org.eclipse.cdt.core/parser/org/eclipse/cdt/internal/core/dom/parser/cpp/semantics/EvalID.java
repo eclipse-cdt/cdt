@@ -323,10 +323,7 @@ public class EvalID extends CPPDependentEvaluation {
 					tpMap, packOffset, within, point);
 		} else if (nameOwner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
-			if (type instanceof IBinding) {
-				type = getNestedType(type, TDEF);
-			}
-
+			type = getNestedType(type, TDEF | REF | CVTYPE);
 			if (!(type instanceof IBinding))
 				return EvalFixed.INCOMPLETE;
 			nameOwner = (IBinding) type;

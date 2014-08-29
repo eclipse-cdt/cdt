@@ -67,6 +67,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -430,7 +431,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;
-	private Map<String, BuildConsoleManager> fBuildConsoleManagers;
+	private final Map<String, BuildConsoleManager> fBuildConsoleManagers;
 	private ResourceAdapterFactory fResourceAdapterFactory;
 	private CElementAdapterFactory fCElementAdapterFactory;
 
@@ -647,8 +648,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		if (fBuildConsoleManagers != null ) {
 			Object[] bcm = fBuildConsoleManagers.values().toArray();
-			for (int i = 0; i < bcm.length; ++i) {
-				BuildConsoleManager m = (BuildConsoleManager)bcm[i];
+			for (Object element : bcm) {
+				BuildConsoleManager m = (BuildConsoleManager)element;
 				if (m != null)
 					m.shutdown();
 			}
@@ -791,7 +792,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an array of all editors that have an unsaved content. If the identical content is
+	 * Returns an array of all text editors that have an unsaved content. If the identical content is
 	 * presented in more than one editor, only one of those editor parts is part of the result.
 	 *
 	 * @return an array of all dirty editor parts.
@@ -800,22 +801,23 @@ public class CUIPlugin extends AbstractUIPlugin {
 		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
 		IWorkbench workbench= getDefault().getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages= window.getPages();
-			for (IWorkbenchPage page : pages) {
-				IEditorPart[] editors= page.getDirtyEditors();
-				for (IEditorPart ep : editors) {
-					IEditorInput input= ep.getEditorInput();
-					if (!inputs.contains(input)) {
-						inputs.add(input);
-						result.add(ep);
+		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
+			for (IWorkbenchPage page : window.getPages()) {
+				for (IEditorReference editorRef : page.getEditorReferences()) {
+					IEditorPart ep= editorRef.getEditor(false);
+					if (ep instanceof ITextEditor && ep.isDirty()) { 
+						IEditorInput input= ep.getEditorInput();
+						if (!inputs.contains(input)) {
+							inputs.add(input);
+							result.add(ep);
+						}
 					}
 				}
 			}
 		}
 		return result.toArray(new IEditorPart[result.size()]);
 	}
+	
 	/**
 	 * Returns an array of all instantiated editors.
 	 */

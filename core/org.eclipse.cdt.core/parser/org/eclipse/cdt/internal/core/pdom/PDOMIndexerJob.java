@@ -30,7 +30,7 @@ public class PDOMIndexerJob extends Job {
 	 * Job updating the progress monitor of the indexer job.
 	 */
 	final class ProgressUpdateJob extends Job {
-		private boolean fStopped;
+		private boolean fCancelled;
 
 		private ProgressUpdateJob() {
 			super(CCorePlugin.getResourceString("PDOMIndexerJob.updateMonitorJob")); //$NON-NLS-1$
@@ -40,15 +40,27 @@ public class PDOMIndexerJob extends Job {
 		@Override
 		protected IStatus run(IProgressMonitor m) {
 			int currentTick= 0;
-			while (!fStopped && !m.isCanceled()) {
+			while (!fCancelled && !m.isCanceled()) {
 				currentTick= pdomManager.getMonitorMessage(PDOMIndexerJob.this, currentTick, TOTAL_MONITOR_WORK);
 				try {
-					Thread.sleep(PROGRESS_UPDATE_INTERVAL);
+					synchronized(this) {
+						if (fCancelled)
+							break;
+						wait(PROGRESS_UPDATE_INTERVAL);
+					}
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}
 			}
 			return Status.OK_STATUS;
+		}
+		@Override
+		protected void canceling() {
+			// Speed up cancellation by notifying the waiting thread.
+			synchronized(this) {
+				fCancelled= true;
+				notify();
+			}
 		}
 	}
 
@@ -59,7 +71,7 @@ public class PDOMIndexerJob extends Job {
 	private final PDOMManager pdomManager;
 	private IPDOMIndexerTask currentTask;
 	private boolean cancelledByManager= false;
-	private Object taskMutex = new Object();
+	private final Object taskMutex = new Object();
 	private IProgressMonitor fMonitor;
 	private final boolean fShowActivity;
 	

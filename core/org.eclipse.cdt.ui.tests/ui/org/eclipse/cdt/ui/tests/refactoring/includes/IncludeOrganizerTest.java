@@ -554,6 +554,34 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	}
 
 	//h1.h
+	//struct A {
+	//  void operator()();
+	//};
+	//struct B : public A {
+	//};
+
+	//h2.h
+	//#include "h1.h"
+	//
+	//struct C {
+	//  B b;
+	//};
+
+	//source.cpp
+	//void test(C* c) {
+	//  c->b();
+	//}
+	//====================
+	//#include "h2.h"
+	//
+	//void test(C* c) {
+	//  c->b();
+	//}
+	public void testFieldAccess_442841() throws Exception {
+		assertExpectedResults();
+	}
+
+	//h1.h
 	//namespace ns3 {
 	//class C {};
 	//namespace ns2 {

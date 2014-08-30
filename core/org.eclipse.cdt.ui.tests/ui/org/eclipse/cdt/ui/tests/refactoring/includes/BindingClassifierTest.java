@@ -600,6 +600,23 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	struct A {
+	//	  void operator()();
+	//	};
+	//	struct B : public A {
+	//	};
+	//	struct C {
+	//	  B b;
+	//	};
+
+	//	void test(C* c) {
+	//	  c->b();
+	//	}
+	public void testFieldAccess_442841() throws Exception {
+		assertDefined("C", "operator ()");
+		assertDeclared();
+	}
+
 	//	struct A {};
 	//	struct B {};
 	//	struct C {};

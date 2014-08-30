@@ -142,7 +142,6 @@ public class BindingClassifier {
 		"unique_ptr", // 20.7.1 //$NON-NLS-1$
 		"weak_ptr" // 20.7.2.3 //$NON-NLS-1$
 	};
-	public enum InclusionType { DECLARATION, DEFINITION }
 
 	private class BindingCollector extends ASTVisitor {
 		BindingCollector() {
@@ -399,7 +398,7 @@ public class BindingClassifier {
 					}
 				}
 			} else if (memberBinding instanceof ICPPConstructor) {
-				// Class construction
+				// Class construction.
 				ICPPConstructor constructor = (ICPPConstructor) memberBinding;
 
 				// We need to define the owning type of the constructor.
@@ -808,9 +807,24 @@ public class BindingClassifier {
 				} else {
 					IBinding owner = binding.getOwner();
 					if (owner instanceof IType) {
-						defineBinding(owner);	 // Member access requires definition of the containing type.
+						defineBinding(owner); // Member access requires definition of the containing type.
 						if (binding instanceof IProblemBinding)
 							declareBinding(binding);
+						if (!isDefinedLocally(owner) &&
+								(!(binding instanceof ICPPMember) || !((ICPPMember) binding).isStatic())) {
+							// Record the fact that the header file defining the owner must also
+							// provide a definition of the type of this member (bug 442841).
+							IType type = null;
+							if (binding instanceof IVariable) {
+								type = ((IVariable) binding).getType();
+							} else if (binding instanceof IFunction) {
+								type = ((IFunction) binding).getType().getReturnType();
+							}
+							type = getNestedType(type, ALLCVQ);
+							if (type instanceof IBinding) {
+								markAsDefined((IBinding) type);
+							}
+						}
 					} else {
 						declareBinding(binding); // Declare the binding of this name.
 					}
@@ -1051,8 +1065,8 @@ public class BindingClassifier {
 						}
 					}
 				}
-				// Get the specialized binding - e.g. get the binding for X if the current binding is
-				// for the template specialization X<Y>.
+				// Get the specialized binding - e.g. get the binding for X if the current binding
+				// is for the template specialization X<Y>.
 				addRequiredBindings(((ICPPSpecialization) binding).getSpecializedBinding(), queue);
 			} else {
 				bindings.add(binding);
@@ -1217,7 +1231,7 @@ public class BindingClassifier {
 	private void defineBinding(IBinding binding) {
 		if (!markAsDefined(binding))
 			return;
-		if (binding instanceof CPPClosureType || fAst.getDefinitionsInAST(binding).length != 0)
+		if (isDefinedLocally(binding))
 			return;  // Defined locally.
 
 		Collection<IBinding> requiredBindings = getRequiredBindings(binding);
@@ -1226,11 +1240,15 @@ public class BindingClassifier {
 			if (requiredBinding != binding) {
 				if (!markAsDefined(requiredBinding))
 					continue;
-				if (fAst.getDefinitionsInAST(requiredBinding).length != 0)
+				if (isDefinedLocally(requiredBinding))
 					continue;  // Defined locally.
 			}
 			fBindingsToDefine.add(requiredBinding);
 		}
+	}
+
+	private boolean isDefinedLocally(IBinding binding) {
+		return binding instanceof CPPClosureType || fAst.getDefinitionsInAST(binding).length != 0;
 	}
 
 	private void defineBindingForName(IASTName name) {

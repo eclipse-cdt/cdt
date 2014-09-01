@@ -6,18 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia - Initial API and implementation
+ *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.cdt.launchbar.core;
+package org.eclipse.cdt.launchbar.core.internal;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * Project Based launch descriptor knows about project it is associated with
- */
-public interface ILaunchDescriptorProjectBased extends ILaunchDescriptor {
-	/**
-	 * Get associate project
-	 */
-	public abstract IProject getProject();
+public class Messages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.launchbar.core.internal.messages"; //$NON-NLS-1$
+	public static String LocalTarget_name;
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
+
+	private Messages() {
+	}
 }

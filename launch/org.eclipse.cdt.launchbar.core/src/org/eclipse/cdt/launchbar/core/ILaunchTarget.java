@@ -10,33 +10,30 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
-public interface ILaunchTarget {
+import org.eclipse.core.runtime.IAdaptable;
+
+public interface ILaunchTarget extends IAdaptable {
 
 	/**
-	 * Get the id for the target. The id of the active target is
-	 * stored in the preference store.
+	 * Returns the name of this target.
+	 * Names must be unique across all targets of a given type.
 	 * 
-	 * @return id
-	 */
-	String getId();
-
-	/**
-	 * Returns a name to show in the UI for this target.
-	 * 
-	 * @return name
+	 * @return name of the target
 	 */
 	String getName();
 
 	/**
 	 * Returns the type for this target.
 	 * 
-	 * @return target type
+	 * @return type of the target 
 	 */
 	ILaunchTargetType getType();
 
 	/**
-	 * This target has been made active.
+	 * The active state of this target has changed.
+	 * 
+	 * @param active active state of the target
 	 */
-	void setActive();
+	void setActive(boolean active);
 
 }

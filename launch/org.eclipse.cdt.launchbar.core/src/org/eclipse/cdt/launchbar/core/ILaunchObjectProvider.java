@@ -1,5 +1,7 @@
 package org.eclipse.cdt.launchbar.core;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * An extension that serves up objects to feed launch descriptors.
  * 
@@ -7,11 +9,12 @@ package org.eclipse.cdt.launchbar.core;
 public interface ILaunchObjectProvider {
 
 	/**
-	 * Add initial launch descriptors and set up listeners.
+	 * Add initial launch descriptors and set up for new ones.
 	 * 
 	 * @param launchbar manager
+	 * @throws CoreException 
 	 */
-	void init(ILaunchBarManager manager);
+	void init(ILaunchBarManager manager) throws CoreException;
 
 	/**
 	 * Shutting down, remove any listeners.

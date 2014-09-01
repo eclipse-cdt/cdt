@@ -10,14 +10,41 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core.internal;
 
-import org.eclipse.cdt.launchbar.core.ConfigBasedLaunchDescriptor;
+import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
+/**
+ * A special launch descriptor that managed configurations that aren't owned by other
+ * descriptors. 
+ */
+public class DefaultLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {
 
-public class DefaultLaunchDescriptor extends ConfigBasedLaunchDescriptor {
+	private final DefaultLaunchDescriptorType type;
+	private final ILaunchConfiguration configuration;
 
-	public DefaultLaunchDescriptor(ILaunchDescriptorType type, ILaunchConfiguration config) {
-		super(type, config);
+	public DefaultLaunchDescriptor(DefaultLaunchDescriptorType type, ILaunchConfiguration configuration) {
+		this.type = type;
+		this.configuration = configuration;
 	}
+
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (ILaunchConfiguration.class.equals(adapter)) {
+			return configuration;
+		}
+		return super.getAdapter(adapter);
+	}
+
+	@Override
+	public String getName() {
+		return configuration.getName();
+	}
+
+	@Override
+	public ILaunchDescriptorType getType() {
+		return type;
+	}
+
 }

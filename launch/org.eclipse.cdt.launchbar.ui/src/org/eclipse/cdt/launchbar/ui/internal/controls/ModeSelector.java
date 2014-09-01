@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -33,7 +33,9 @@ import org.eclipse.swt.widgets.Composite;
 public class ModeSelector extends CSelector {
 
 	private static final String[] noModes = new String[] { "---" };
-	
+
+	private final LaunchBarManager manager = Activator.getDefault().getLaunchBarUIManager().getManager();
+
 	public ModeSelector(Composite parent, int style) {
 		super(parent, style);
 
@@ -49,11 +51,11 @@ public class ModeSelector extends CSelector {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				try {
-					ILaunchMode[] modes = getManager().getLaunchModes();
+					ILaunchMode[] modes = manager.getLaunchModes();
 					if (modes.length > 0)
 						return modes;
 				} catch (CoreException e) {
-					Activator.log(e);
+					Activator.log(e.getStatus());
 				}
 				return noModes;
 			}
@@ -72,15 +74,19 @@ public class ModeSelector extends CSelector {
 			public Image getImage(Object element) {
 				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
-					if (group != null) {
-						ImageDescriptor imageDesc = group.getImageDescriptor();
-						Image image = images.get(imageDesc);
-						if (image == null) {
-							image = imageDesc.createImage();
-							images.put(imageDesc, image);
+					try {
+						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
+						if (group != null) {
+							ImageDescriptor imageDesc = group.getImageDescriptor();
+							Image image = images.get(imageDesc);
+							if (image == null) {
+								image = imageDesc.createImage();
+								images.put(imageDesc, image);
+							}
+							return image;
 						}
-						return image;
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 				return super.getImage(element);
@@ -89,9 +95,13 @@ public class ModeSelector extends CSelector {
 			public String getText(Object element) {
 				if (element instanceof ILaunchMode) {
 					ILaunchMode mode = (ILaunchMode) element;
-					ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
-					if (group != null) {
-						return group.getLabel().replace("&", "");
+					try {
+						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
+						if (group != null) {
+							return group.getLabel().replace("&", "");
+						}
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 				return super.getText(element);
@@ -128,16 +138,11 @@ public class ModeSelector extends CSelector {
 	}
 
 
-	protected ILaunchGroup getLaunchGroup(String mode) {
-		try {
-			ILaunchConfigurationType type = getManager().getLaunchConfigurationType(getManager().getActiveLaunchDescriptor(), getManager().getActiveLaunchTarget());
-			if (type == null)
-				return null;
-			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, mode);
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
-		}
-		return null;
+	protected ILaunchGroup getLaunchGroup(String mode) throws CoreException {
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(manager.getActiveLaunchDescriptor(), manager.getActiveLaunchTarget());
+		if (type == null)
+			return null;
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, mode);
 	}
 
 	@Override
@@ -146,20 +151,16 @@ public class ModeSelector extends CSelector {
 		if (selected instanceof ILaunchMode) {
 			ILaunchMode mode = (ILaunchMode) selected;
 			try {
-				getManager().setActiveLaunchMode(mode);
+				manager.setActiveLaunchMode(mode);
 			} catch (CoreException e) {
-				Activator.log(e);
+				Activator.log(e.getStatus());
 			}
 		}
 	}
-	
+
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return super.computeSize(150, hHint, changed);
-	}
-
-	private ILaunchBarManager getManager() {
-		return (ILaunchBarManager) getInput();
 	}
 
 	@Override
@@ -168,5 +169,5 @@ public class ModeSelector extends CSelector {
 			element = noModes[0];
 		super.setSelection(element);
 	}
-	
+
 }

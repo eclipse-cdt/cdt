@@ -24,18 +24,18 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Injects IProject objects from platform resources into the launch bar model for potential
+ * project descriptors.
+ */
 public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IResourceChangeListener {
 	private ILaunchBarManager manager;
 
 	@Override
-	public void init(ILaunchBarManager manager) {
+	public void init(ILaunchBarManager manager) throws CoreException {
 		this.manager = manager;
-		try {
-			for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-				manager.launchObjectAdded(project);
-			}
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			manager.launchObjectAdded(project);
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}

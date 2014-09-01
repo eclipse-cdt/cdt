@@ -16,47 +16,34 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceFactory;
-import org.osgi.framework.ServiceRegistration;
 
 public class Activator extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.launchbar.core";
-	private static Plugin plugin;
+	private static Activator plugin;
 	private LaunchBarManager launchBarManager;
 
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		plugin = this;
-		
-		bundleContext.registerService(ILaunchBarManager.class, new ServiceFactory<ILaunchBarManager>() {
-			@Override
-			public synchronized ILaunchBarManager getService(Bundle bundle, ServiceRegistration<ILaunchBarManager> registration) {
-				if (launchBarManager == null) {
-					try {
-						launchBarManager = new LaunchBarManager();
-					} catch (CoreException e) {
-						// TODO log
-						e.printStackTrace();
-					}
-				}
-				return launchBarManager;
-			}
-
-			@Override
-			public synchronized void ungetService(Bundle bundle,
-					ServiceRegistration<ILaunchBarManager> registration,
-					ILaunchBarManager service) {
-			}
-		}, null);
+		launchBarManager = new LaunchBarManager();
+		bundleContext.registerService(ILaunchBarManager.class, launchBarManager, null);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		plugin = null;
+		launchBarManager.dispose();
 		launchBarManager = null;
+	}
+
+	public static Activator getDefault() {
+		return plugin;
+	}
+
+	public LaunchBarManager getLaunchBarManager() {
+		return launchBarManager;
 	}
 
 	public static void throwCoreException(Exception e) throws CoreException {
@@ -75,7 +62,7 @@ public class Activator extends Plugin {
 	}
 
 	private static final String DEBUG_ONE =
-	        PLUGIN_ID + "/debug/launchbar";
+			PLUGIN_ID + "/debug/launchbar";
 
 	public static void trace(String str) {
 		if (plugin == null || (plugin.isDebugging() && "true".equalsIgnoreCase(Platform.getDebugOption(DEBUG_ONE))))

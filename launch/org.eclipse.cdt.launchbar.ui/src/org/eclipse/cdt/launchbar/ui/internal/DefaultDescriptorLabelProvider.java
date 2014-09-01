@@ -3,10 +3,11 @@ package org.eclipse.cdt.launchbar.ui.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
-import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.internal.Activator;
+import org.eclipse.cdt.launchbar.core.internal.DefaultLaunchDescriptor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -28,12 +29,10 @@ public class DefaultDescriptorLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ILaunchDescriptor) {
-			try {
-				ILaunchDescriptor desc = (ILaunchDescriptor) element;
-				ILaunchBarManager manager = desc.getType().getManager();
-				ILaunchTarget target = manager.getActiveLaunchTarget();
-				ILaunchConfigurationType type = manager.getLaunchConfigurationType(desc, target);
-				if (type != null) {
+			ILaunchConfiguration config = (ILaunchConfiguration) ((ILaunchDescriptor) element).getAdapter(ILaunchConfiguration.class);
+			if (config != null) {
+				try {
+					ILaunchConfigurationType type = config.getType();
 					ImageDescriptor imageDescriptor = DebugUITools.getDefaultImageDescriptor(type);
 					if (imageDescriptor != null) {
 						Image image = images.get(imageDescriptor);
@@ -43,9 +42,9 @@ public class DefaultDescriptorLabelProvider extends LabelProvider {
 						}
 						return image;
 					}
+				} catch (CoreException e) {
+					Activator.log(e.getStatus());
 				}
-			} catch (CoreException e) {
-				Activator.log(e);
 			}
 		}
 		return super.getImage(element);

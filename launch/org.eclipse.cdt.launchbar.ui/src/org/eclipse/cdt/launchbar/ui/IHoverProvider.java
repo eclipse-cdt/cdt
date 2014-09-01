@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui;
 
+/**
+ * An extension to allow different object types to provide fancy hovers.
+ * 
+ * TODO this does lead to inconsistency when different types provide different hover UI
+ * which can confuse users. We should provide good UI out of the box.
+ */
 public interface IHoverProvider {
 
 	/**

@@ -20,46 +20,26 @@ import org.eclipse.core.runtime.CoreException;
 public interface ILaunchDescriptorType {
 
 	/**
-	 * The id for the provider.
+	 * Does this type own this launch object?
 	 * 
-	 * @return provider id
-	 */
-	String getId();
-
-	/**
-	 * Called after existing launch configs have been added. The provider
-	 * can now add any more that they'd like to have.
-	 */
-	void init(ILaunchBarManager manager);
-
-	/**
-	 * Does this type own this launch element.
+	 * @deprecated this needs to be replaced by enablement to avoid plug-in loading.
 	 * 
 	 * @param element
 	 * @return owns element
 	 * @throws CoreException 
 	 */
-	boolean ownsLaunchObject(Object element) throws CoreException;
+	boolean ownsLaunchObject(Object launchObject) throws CoreException;
 	
 	/**
-	 * Return a descriptor for the given element. The element can be a launch
-	 * configuration, a project, or anything else that gets fed to the
-	 * launch bar manager.
+	 * Return a descriptor for the given launch object.
 	 * 
 	 * May return null to essentially eat the element so no other types
 	 * create a descriptor for it.
 	 * 
-	 * @param descriptor candidate descriptor
+	 * @param descriptor launch object for descriptor
 	 * @return the best descriptor
 	 * @throws CoreException 
 	 */
-	ILaunchDescriptor getDescriptor(Object element) throws CoreException;
-
-	/**
-	 * Return a handle to the launch bar manager.
-	 * 
-	 * @return launchbar manager
-	 */
-	ILaunchBarManager getManager();
+	ILaunchDescriptor getDescriptor(Object launchObject) throws CoreException;
 
 }

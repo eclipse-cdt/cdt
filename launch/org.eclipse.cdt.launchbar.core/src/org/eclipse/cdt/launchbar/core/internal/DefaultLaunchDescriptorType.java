@@ -1,24 +1,37 @@
 package org.eclipse.cdt.launchbar.core.internal;
 
-import org.eclipse.cdt.launchbar.core.AbstarctLaunchDescriptorType;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
-public class DefaultLaunchDescriptorType extends AbstarctLaunchDescriptorType implements ILaunchDescriptorType {
-	public static final String ID = "org.eclipse.cdt.launchbar.core.descriptor.default";
+public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
+
+	public static final String ID = Activator.PLUGIN_ID + ".descriptorType.default";
+
+	private Map<ILaunchConfiguration, DefaultLaunchDescriptor> descriptors = new HashMap<>();
 
 	@Override
-	public String getId() {
-		return ID;
-	}
-	@Override
 	public boolean ownsLaunchObject(Object element) {
-		return element instanceof ILaunchConfiguration;
+		// This descriptor type doesn't own any launch objects
+		return false;
 	}
 
 	@Override
 	public ILaunchDescriptor getDescriptor(Object element) {
-		return new DefaultLaunchDescriptor(this, (ILaunchConfiguration) element);
+		if (element instanceof ILaunchConfiguration) {
+			ILaunchConfiguration config = (ILaunchConfiguration) element;
+			DefaultLaunchDescriptor descriptor = descriptors.get(config);
+			if (descriptor == null) {
+				descriptor = new DefaultLaunchDescriptor(this, config);
+				descriptors.put(config, descriptor);
+			}
+			return descriptor;
+		}
+
+		return null;
 	}
+
 }

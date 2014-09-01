@@ -28,14 +28,10 @@ public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IReso
 	private ILaunchBarManager manager;
 
 	@Override
-	public void init(ILaunchBarManager manager) {
+	public void init(ILaunchBarManager manager) throws CoreException {
 		this.manager = manager;
-		try {
-			for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-				manager.launchObjectAdded(project);
-			}
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			manager.launchObjectAdded(project);
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
@@ -59,8 +55,8 @@ public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IReso
 							manager.launchObjectAdded(project);
 						} else if ((kind & IResourceDelta.REMOVED) != 0) {
 							manager.launchObjectRemoved(project);
-						} else if ((kind & IResourceDelta.CHANGED) != 0) {
-							manager.launchObjectChanged(project);
+//						} else if ((kind & IResourceDelta.CHANGED) != 0) {
+//							manager.launchObjectChanged(project);
 						}
 						return false;
 					} else if (res instanceof IFile || res instanceof IFolder) {

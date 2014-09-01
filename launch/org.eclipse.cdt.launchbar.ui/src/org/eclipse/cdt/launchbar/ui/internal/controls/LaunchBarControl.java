@@ -12,14 +12,13 @@ package org.eclipse.cdt.launchbar.ui.internal.controls;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager.Listener;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.Messages;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -32,14 +31,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-public class LaunchBarControl implements ILaunchBarManager.Listener {
+public class LaunchBarControl implements Listener {
 
 	public static final String ID = "org.eclipse.cdt.launchbar"; //$NON-NLS-1$
 	public static final String CLASS_URI = "bundleclass://" + Activator.PLUGIN_ID + "/" + LaunchBarControl.class.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 
-	@Inject
-	private ILaunchBarManager manager;
-
+	private LaunchBarManager manager = Activator.getDefault().getLaunchBarUIManager().getManager();
+	
 	private ConfigSelector configSelector;
 	private ModeSelector modeSelector;
 	private TargetSelector targetSelector;
@@ -81,19 +79,15 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 		targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		targetSelector.setInput(manager);
 
-		try {
-			ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
-			configSelector.setSelection(configDesc == null ? null : configDesc);
+		ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
+		configSelector.setSelection(configDesc == null ? null : configDesc);
 
-			ILaunchMode mode = manager.getActiveLaunchMode();
-			modeSelector.setSelection(mode == null ? null : mode);
+		ILaunchMode mode = manager.getActiveLaunchMode();
+		modeSelector.setSelection(mode == null ? null : mode);
 
-			ILaunchTarget target = manager.getActiveLaunchTarget();
-			targetSelector.setSelection(target == null ? null : target);
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
-		}
-	}
+		ILaunchTarget target = manager.getActiveLaunchTarget();
+		targetSelector.setSelection(target == null ? null : target);
+ 	}
 
 	@PreDestroy
 	public void dispose() {
@@ -118,54 +112,42 @@ public class LaunchBarControl implements ILaunchBarManager.Listener {
 	@Override
 	public void activeConfigurationDescriptorChanged() {
 		if (configSelector != null && !configSelector.isDisposed()) {
-			try {
-				final ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
-				configSelector.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!configSelector.isDisposed())
-							configSelector.setSelection(configDesc == null ? null : configDesc);
-					}
-				});
-			} catch (CoreException e) {
-				Activator.log(e.getStatus());
-			}
+			final ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
+			configSelector.getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!configSelector.isDisposed())
+						configSelector.setSelection(configDesc == null ? null : configDesc);
+				}
+			});
 		}
 	}
 
 	@Override
 	public void activeLaunchModeChanged() {
 		if (modeSelector != null && !modeSelector.isDisposed()) {
-			try {
-				final ILaunchMode mode = manager.getActiveLaunchMode();
-				modeSelector.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!modeSelector.isDisposed())
-							modeSelector.setSelection(mode == null ? null : mode);
-					}
-				});
-			} catch (CoreException e) {
-				Activator.log(e.getStatus());
-			}
+			final ILaunchMode mode = manager.getActiveLaunchMode();
+			modeSelector.getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!modeSelector.isDisposed())
+						modeSelector.setSelection(mode == null ? null : mode);
+				}
+			});
 		}
 	}
 
 	@Override
 	public void activeLaunchTargetChanged() {
 		if (targetSelector != null && !targetSelector.isDisposed()) {
-			try {
-				final ILaunchTarget target = manager.getActiveLaunchTarget();
-				targetSelector.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!targetSelector.isDisposed())
-							targetSelector.setSelection(target == null ? null : target);
-					}
-				});
-			} catch (CoreException e) {
-				Activator.log(e.getStatus());
-			}
+			final ILaunchTarget target = manager.getActiveLaunchTarget();
+			targetSelector.getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!targetSelector.isDisposed())
+						targetSelector.setSelection(target == null ? null : target);
+				}
+			});
 		}
 	}
 

@@ -15,9 +15,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -51,12 +51,6 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class BuildActiveCommandHandler extends AbstractHandler {
 
-	private final ILaunchBarManager launchBarManager;
-	
-	public BuildActiveCommandHandler() {
-		launchBarManager = Activator.getService(ILaunchBarManager.class);
-	}
-	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		new UIJob(Display.getDefault(), "Building Active Configuration") {
@@ -67,9 +61,15 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
+					LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
 					ILaunchDescriptor desc = launchBarManager.getActiveLaunchDescriptor();
 					ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
 					ILaunchConfiguration config = launchBarManager.getLaunchConfiguration(desc, target);
+
+					Collection<IProject> projects = getProjects(config);
+					if (BuildAction.isSaveAllSet()) {
+						saveEditors(projects);
+					}
 
 					if (config == null) {
 						// Default, build the workspace
@@ -78,12 +78,6 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 					}
 
 					ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
-
-					Collection<IProject> projects = getProjects(config);
-					if (BuildAction.isSaveAllSet()) {
-						saveEditors(projects);
-					}
-
 					String mode = launchMode.getIdentifier();
 					Set<String> modes = new HashSet<>();
 					modes.add(mode);
@@ -124,26 +118,28 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 	protected Collection<IProject> getProjects(ILaunchConfiguration config) {
 		Set<IProject> projects = new HashSet<>();
 
-		IResource[] mappedResources;
-		try {
-			mappedResources = config.getMappedResources();
-		} catch (CoreException e) {
-			return projects;
-		}
-		if (mappedResources != null) {
-			for (IResource resource : mappedResources) {
-				IProject project = resource.getProject();
-				if (projects.contains(project))
-					continue;
-				projects.add(project);
-				try {
-					projects.addAll(Arrays.asList(project.getReferencedProjects()));
-				} catch (CoreException e) {
-					// skip
+		if (config != null) {
+			IResource[] mappedResources;
+			try {
+				mappedResources = config.getMappedResources();
+			} catch (CoreException e) {
+				return projects;
+			}
+			if (mappedResources != null) {
+				for (IResource resource : mappedResources) {
+					IProject project = resource.getProject();
+					if (projects.contains(project))
+						continue;
+					projects.add(project);
+					try {
+						projects.addAll(Arrays.asList(project.getReferencedProjects()));
+					} catch (CoreException e) {
+						// skip
+					}
 				}
 			}
 		}
-
+		
 		return projects;
 	}
 

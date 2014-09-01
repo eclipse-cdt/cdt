@@ -8,33 +8,25 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.cdt.launchbar.core.internal;
+package org.eclipse.cdt.launchbar.ui.internal.targetsView;
 
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
-import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
-public class LocalTarget extends PlatformObject implements ILaunchTarget {
+public class LaunchTargetsLabelProvider extends LabelProvider {
 
-	private final LocalTargetType type;
-
-	public LocalTarget(LocalTargetType type) {
-		this.type = type;
+	@Override
+	public Image getImage(Object element) {
+		return super.getImage(element);
 	}
 
 	@Override
-	public String getName() {
-		return Messages.LocalTarget_name;
-	}
-
-	@Override
-	public ILaunchTargetType getType() {
-		return type;
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		// nothing to do
+	public String getText(Object element) {
+		if (element instanceof ILaunchTarget) {
+			return ((ILaunchTarget) element).getName();
+		}
+		return super.getText(element);
 	}
 
 }

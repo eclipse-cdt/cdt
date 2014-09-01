@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui.internal;
 
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IParameter;
@@ -55,6 +56,9 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
+	// The cache of the Launch Bar UI Manager Object
+	private LaunchBarUIManager launchBarUIManager; 
+	
 	/**
 	 * The constructor
 	 */
@@ -83,6 +87,14 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+
+	public LaunchBarUIManager getLaunchBarUIManager() {
+		if (launchBarUIManager == null) {
+			LaunchBarManager manager = org.eclipse.cdt.launchbar.core.internal.Activator.getDefault().getLaunchBarManager();
+			launchBarUIManager = new LaunchBarUIManager(manager);
+		}
+		return launchBarUIManager;
 	}
 
 	public Image getImage(String id) {

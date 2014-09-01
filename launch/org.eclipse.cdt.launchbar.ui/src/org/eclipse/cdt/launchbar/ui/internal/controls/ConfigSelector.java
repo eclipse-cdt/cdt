@@ -13,9 +13,9 @@ package org.eclipse.cdt.launchbar.ui.internal.controls;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
@@ -61,7 +61,7 @@ import org.eclipse.ui.PlatformUI;
 @SuppressWarnings("restriction")
 public class ConfigSelector extends CSelector {
 
-	private LaunchBarUIManager uiManager;
+	private LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
 	private DefaultDescriptorLabelProvider defaultProvider;
 	
 	private static final String[] noConfigs = new String[] { "No Launch Configurations" };
@@ -82,7 +82,7 @@ public class ConfigSelector extends CSelector {
 			}
 			@Override
 			public Object[] getElements(Object inputElement) {
-				ILaunchDescriptor[] descs = getManager().getOpenLaunchDescriptors();
+				ILaunchDescriptor[] descs = uiManager.getManager().getLaunchDescriptors();
 				if (descs.length > 0) {
 					if (descs.length > SEPARATOR_INDEX + 1) {
 						ILaunchDescriptor[] descsCopy = new ILaunchDescriptor[SEPARATOR_INDEX + descs.length];
@@ -107,12 +107,16 @@ public class ConfigSelector extends CSelector {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof ILaunchDescriptor) {
-					ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
-					ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
-					if (labelProvider != null) {
-						Image img = labelProvider.getImage(element);
-						if (img != null)
-							return img;
+					try {
+						ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
+						ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
+						if (labelProvider != null) {
+							Image img = labelProvider.getImage(element);
+							if (img != null)
+								return img;
+						}
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 				return defaultProvider.getImage(element);
@@ -122,12 +126,16 @@ public class ConfigSelector extends CSelector {
 				if (element instanceof String) {
 					return (String)element;
 				} else if (element instanceof ILaunchDescriptor) {
-					ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
-					ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
-					if (labelProvider != null) {
-						String text = labelProvider.getText(element);
-						if (text != null)
-							return text;
+					try {
+						ILaunchDescriptor configDesc = (ILaunchDescriptor)element;
+						ILabelProvider labelProvider = uiManager.getLabelProvider(configDesc);
+						if (labelProvider != null) {
+							String text = labelProvider.getText(element);
+							if (text != null)
+								return text;
+						}
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 				return defaultProvider.getText(element);
@@ -144,9 +152,9 @@ public class ConfigSelector extends CSelector {
 		if (selected instanceof ILaunchDescriptor) {
 			ILaunchDescriptor configDesc = (ILaunchDescriptor) selected;
 			try {
-				getManager().setActiveLaunchDescriptor(configDesc);
+				uiManager.getManager().setActiveLaunchDescriptor(configDesc);
 			} catch (CoreException e) {
-				Activator.log(e);
+				Activator.log(e.getStatus());
 			}
 		}
 	}
@@ -160,14 +168,15 @@ public class ConfigSelector extends CSelector {
 	public void handleEdit(Object element) {
 		try {
 			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			LaunchBarManager manager = uiManager.getManager();
 			ILaunchDescriptor desc = (ILaunchDescriptor) element;
-			ILaunchMode mode = getManager().getActiveLaunchMode();
-			ILaunchTarget target = getManager().getActiveLaunchTarget();
+			ILaunchMode mode = manager.getActiveLaunchMode();
+			ILaunchTarget target = manager.getActiveLaunchTarget();
 			if (target == null) {
 				MessageDialog.openError(shell, "No Active Target", "You must create a target to edit this launch configuration.");
 				return;
 			}
-			ILaunchConfigurationType configType = getManager().getLaunchConfigurationType(desc, target);
+			ILaunchConfigurationType configType = manager.getLaunchConfigurationType(desc, target);
 			if (configType == null) {
 				MessageDialog.openError(shell, "No launch configuration type", "Cannot edit this configuration");
 				return;
@@ -175,7 +184,7 @@ public class ConfigSelector extends CSelector {
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType, mode.getIdentifier());
 			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
 			if (groupExt != null) {
-				ILaunchConfiguration config = getManager().getLaunchConfiguration(desc, target);
+				ILaunchConfiguration config = manager.getLaunchConfiguration(desc, target);
 				if (config == null) {
 					MessageDialog.openError(shell, "No launch configuration", "Cannot edit this configuration");
 					return;
@@ -236,7 +245,7 @@ public class ConfigSelector extends CSelector {
 							try {
 								wizard.getWorkingCopy().doSave();
 								ILaunchMode lm = wizard.getLaunchMode();
-								getManager().setActiveLaunchMode(lm);
+								uiManager.getManager().setActiveLaunchMode(lm);
 								return Status.OK_STATUS;
 							} catch (CoreException e) {
 								return e.getStatus();
@@ -269,16 +278,6 @@ public class ConfigSelector extends CSelector {
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return super.computeSize(250, hHint, changed);
-	}
-
-	private ILaunchBarManager getManager() {
-		return (ILaunchBarManager) getInput();
-	}
-	
-	@Override
-	public void setInput(Object input) {
-		super.setInput(input);
-		uiManager = (LaunchBarUIManager) ((ILaunchBarManager) input).getAdapter(LaunchBarUIManager.class);
 	}
 
 	@Override

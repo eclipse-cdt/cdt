@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
+import org.eclipse.core.runtime.PlatformObject;
+
 /**
  * Convenience implementation of ILaunchTarget, provides hooks for id, and equals and hashcode methods based on id.
  */
-public abstract class AbstractLaunchTarget implements ILaunchTarget {
+public abstract class AbstractLaunchTarget extends PlatformObject implements ILaunchTarget {
 	private final String id;
 
 	public AbstractLaunchTarget(String id) {

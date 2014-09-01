@@ -20,8 +20,10 @@
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="descriptorType"/>
             <element ref="targetType"/>
+            <element ref="configType"/>
             <element ref="configProvider"/>
             <element ref="objectProvider"/>
+            <element ref="defaultConfigTarget"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -51,6 +53,11 @@
    </element>
 
    <element name="descriptorType">
+      <annotation>
+         <documentation>
+            A descriptor represents an object that can be converted into a launch configuration. The typical example is IProject. Launch configurations can be created that launch the build output of the project.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -80,6 +87,11 @@
    </element>
 
    <element name="targetType">
+      <annotation>
+         <documentation>
+            A target is the machine you launch on. Typical examples include the local machine we are running on, or remote embedded or server targets.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -101,7 +113,12 @@
       </complexType>
    </element>
 
-   <element name="configProvider">
+   <element name="configType">
+      <annotation>
+         <documentation>
+            Descriptor types and target types map to a launch configuration type. Configurations of that type knows how to launch for the desciptor on targets of that type.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="descriptorType" type="string" use="required">
             <annotation>
@@ -123,13 +140,13 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="launchConfigurationType" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.launchbar.core.ILaunchConfigurationProvider"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -143,11 +160,10 @@
       </complexType>
    </element>
 
-   <element name="defaultConfigProvider">
+   <element name="configProvider">
       <annotation>
          <documentation>
-            default provider provides direct mapping between launch configuration types
-and launch objects/types without any extra classes involved. The object for this provider is launch configuration, and descriptor is DefaultLaunchDescriptor
+            The config provider knows how to create launch configurations from descriptors. It tracks which configs it has created so that they don&apos;t show up as descriptors on their own.
          </documentation>
       </annotation>
       <complexType>
@@ -161,13 +177,33 @@ and launch objects/types without any extra classes involved. The object for this
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="descriptorType" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.launchbar.core.launchBarContributions/descriptorType/@id"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.launchbar.core.ILaunchConfigurationProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="defaultConfigTarget">
+      <annotation>
+         <documentation>
+            The default config provider is brought in when no other config providers claim a given launch configuration. This entry associates a target type with the launch configuration so that it can be launched on targets of that type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="launchConfigurationType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -192,6 +228,11 @@ and launch objects/types without any extra classes involved. The object for this
    </element>
 
    <element name="objectProvider">
+      <annotation>
+         <documentation>
+            Object providers pump launch objects into the model as they are created and removed. These are used to create descriptors for these objects.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>

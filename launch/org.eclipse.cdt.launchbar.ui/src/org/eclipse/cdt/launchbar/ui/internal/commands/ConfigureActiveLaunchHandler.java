@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui.internal.commands;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -30,15 +30,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ConfigureActiveLaunchHandler extends AbstractHandler {
 
-	private final ILaunchBarManager launchBarManager;
-	
-	public ConfigureActiveLaunchHandler() {
-		launchBarManager = Activator.getService(ILaunchBarManager.class);
-	}
-
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
+			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
 			ILaunchDescriptor desc = launchBarManager.getActiveLaunchDescriptor();
 			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
 			ILaunchConfiguration launchConfiguration = launchBarManager.getLaunchConfiguration(desc, target);

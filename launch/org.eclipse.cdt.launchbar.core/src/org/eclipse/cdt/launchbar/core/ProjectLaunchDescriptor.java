@@ -8,38 +8,36 @@
  * Contributors:
  *     Doug Schaefer
  *******************************************************************************/
-package org.eclipse.cdt.launchbar.core.internal;
+package org.eclipse.cdt.launchbar.core;
 
-import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
-import org.eclipse.cdt.launchbar.core.ILaunchDescriptorType;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * A special launch descriptor that managed configurations that aren't owned by other
- * descriptors. 
+ * A reusable descriptor for wrapping projects that can be used by descriptor types
+ * that map to projects.
  */
-public class DefaultLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {
+public class ProjectLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {
 
-	private final DefaultLaunchDescriptorType type;
-	private final ILaunchConfiguration configuration;
+	private final ILaunchDescriptorType type;
+	private final IProject project;
 
-	public DefaultLaunchDescriptor(DefaultLaunchDescriptorType type, ILaunchConfiguration configuration) {
+	public ProjectLaunchDescriptor(ILaunchDescriptorType type, IProject project) {
 		this.type = type;
-		this.configuration = configuration;
+		this.project = project;
 	}
 
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (ILaunchConfiguration.class.equals(adapter)) {
-			return configuration;
+		if (IProject.class.equals(adapter)) {
+			return project;
 		}
 		return super.getAdapter(adapter);
 	}
 
 	@Override
 	public String getName() {
-		return configuration.getName();
+		return project.getName();
 	}
 
 	@Override

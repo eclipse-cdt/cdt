@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 
 /**
  * Represents a thing that can be launched.
+ * It is good practice that the descriptor is adaptable to the launch object
+ * it is representing.
  */
-public interface ILaunchDescriptor {
+public interface ILaunchDescriptor extends IAdaptable {
 
 	/**
 	 * Name to show in the launch descriptor selector.
+	 * Names must be unique for all descriptors of a given type.
 	 * 
 	 * @return name of the launch descriptor
 	 */
 	String getName();
-
-	/**
-	 * Unique id of the descriptor (globally)
-	 * 
-	 * @return the non null string representing id of the launch descriptor
-	 */
-	String getId();
 
 	/**
 	 * The type of launch descriptor.
@@ -36,10 +34,5 @@ public interface ILaunchDescriptor {
 	 * @return provider
 	 */
 	ILaunchDescriptorType getType();
-
-	/**
-	 * Descriptor considered open when it is visible to user, and closed otherwise
-	 */
-	boolean isOpen();
 
 }

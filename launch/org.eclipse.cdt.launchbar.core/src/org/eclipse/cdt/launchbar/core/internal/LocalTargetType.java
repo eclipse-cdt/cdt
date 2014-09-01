@@ -1,34 +1,25 @@
 package org.eclipse.cdt.launchbar.core.internal;
 
 import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
-import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
+import org.eclipse.core.runtime.CoreException;
 
+/**
+ * The target type that creates the local target.
+ */
 public class LocalTargetType implements ILaunchTargetType {
 
-	public static final String ID = "org.eclipse.cdt.launchbar.core.target.local";
-	private LocalTarget localTarget;
+	public static final String ID = Activator.PLUGIN_ID + ".targetType.local";
 
 	@Override
-	public void init(ILaunchBarManager manager) {
-		localTarget = new LocalTarget(this);
-	}
-	
-	@Override
-	public String getId() {
-		return ID;
+	public void init(ILaunchBarManager manager) throws CoreException {
+		// create the local target
+		manager.launchTargetAdded(new LocalTarget(this));
 	}
 
 	@Override
-	public ILaunchTarget[] getTargets() {
-		return new ILaunchTarget[] { localTarget };
+	public void dispose() {
+		// nothing to do
 	}
 
-	@Override
-	public ILaunchTarget getTarget(String id) {
-		if (ID.equals(id))
-			return localTarget;
-		return null;
-	}
-	
 }

@@ -10,35 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
+import org.eclipse.core.runtime.CoreException;
+
 public interface ILaunchTargetType {
 
 	/**
-	 * Called by the launchbar manager to initialize and pass a hendle to itself.
+	 * Add initial targets and set up any listeners.
 	 * 
 	 * @param manager
+	 * @throws CoreException 
 	 */
-	void init(ILaunchBarManager manager);
+	void init(ILaunchBarManager manager) throws CoreException;
 
 	/**
-	 * The id of the target type.
-	 * 
-	 * @return target type id
+	 * Shutting down, remove any listeners
 	 */
-	String getId();
-
-	/**
-	 * Return the list of targets for this type.
-	 * 
-	 * @return targets
-	 */
-	ILaunchTarget[] getTargets();
-
-	/**
-	 * Return the target with the specified id.
-	 * 
-	 * @param id
-	 * @return target
-	 */
-	ILaunchTarget getTarget(String id);
+	void dispose();
 
 }

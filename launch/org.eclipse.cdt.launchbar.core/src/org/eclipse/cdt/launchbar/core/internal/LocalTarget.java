@@ -12,24 +12,22 @@ package org.eclipse.cdt.launchbar.core.internal;
 
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
+import org.eclipse.core.runtime.PlatformObject;
 
-public class LocalTarget implements ILaunchTarget {
+/**
+ * The launch target representing the machine we're running on.
+ */
+public class LocalTarget extends PlatformObject implements ILaunchTarget {
 
 	private final LocalTargetType type;
-	
+
 	public LocalTarget(LocalTargetType type) {
 		this.type = type;
-	}
-	
-	@Override
-	public String getId() {
-		// Use the same ID as the type since we're really a singleton
-		return type.getId();
 	}
 
 	@Override
 	public String getName() {
-		return "Local Machine"; // TODO externalize
+		return Messages.LocalTarget_name;
 	}
 
 	@Override
@@ -38,8 +36,8 @@ public class LocalTarget implements ILaunchTarget {
 	}
 
 	@Override
-	public void setActive() {
-		// nothing to do
+	public void setActive(boolean active) {
+		// nothing to do, we have no active state
 	}
-	
+
 }

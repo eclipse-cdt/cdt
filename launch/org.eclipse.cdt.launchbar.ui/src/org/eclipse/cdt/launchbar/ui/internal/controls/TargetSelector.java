@@ -13,7 +13,6 @@ package org.eclipse.cdt.launchbar.ui.internal.controls;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.eclipse.cdt.launchbar.core.ILaunchBarManager;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
 import org.eclipse.cdt.launchbar.ui.ILaunchBarUIConstants;
@@ -45,15 +44,12 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 public class TargetSelector extends CSelector {
 
-	private final LaunchBarUIManager uiManager;
+	private final LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
 
 	private static final String[] noTargets = new String[] { "---" };
 
 	public TargetSelector(Composite parent, int style) {
 		super(parent, style);
-
-		ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
-		uiManager = (LaunchBarUIManager) manager.getAdapter(LaunchBarUIManager.class);
 
 		setContentProvider(new IStructuredContentProvider() {
 			@Override
@@ -67,7 +63,7 @@ public class TargetSelector extends CSelector {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				try {
-					ILaunchTarget[] targets = getManager().getLaunchTargets();
+					ILaunchTarget[] targets = uiManager.getManager().getLaunchTargets();
 					if (targets.length > 0)
 						return targets;
 				} catch (CoreException e) {
@@ -81,10 +77,14 @@ public class TargetSelector extends CSelector {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof ILaunchTarget) {
-					ILaunchTarget target = (ILaunchTarget) element;
-					ILabelProvider labelProvider = uiManager.getLabelProvider(target);
-					if (labelProvider != null) {
-						return labelProvider.getImage(element);
+					try {
+						ILaunchTarget target = (ILaunchTarget) element;
+						ILabelProvider labelProvider = uiManager.getLabelProvider(target);
+						if (labelProvider != null) {
+							return labelProvider.getImage(element);
+						}
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 				return super.getImage(element);
@@ -93,12 +93,16 @@ public class TargetSelector extends CSelector {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ILaunchTarget) {
-					ILaunchTarget target = (ILaunchTarget) element;
-					ILabelProvider labelProvider = uiManager.getLabelProvider(target);
-					if (labelProvider != null) {
-						return labelProvider.getText(element);
-					}
-					return target.getName();
+						ILaunchTarget target = (ILaunchTarget) element;
+						try {
+							ILabelProvider labelProvider = uiManager.getLabelProvider(target);
+							if (labelProvider != null) {
+								return labelProvider.getText(element);
+							}
+						} catch (CoreException e) {
+							Activator.log(e.getStatus());
+						}
+						return target.getName();
 				}
 				return super.getText(element);
 			}
@@ -116,10 +120,14 @@ public class TargetSelector extends CSelector {
 			@Override
 			public boolean displayHover(Object element) {
 				if (element instanceof ILaunchTarget) {
-					ILaunchTarget target = (ILaunchTarget) element;
-					IHoverProvider hoverProvider = uiManager.getHoverProvider(target);
-					if (hoverProvider != null) {
-						return hoverProvider.displayHover(element);
+					try {
+						ILaunchTarget target = (ILaunchTarget) element;
+						IHoverProvider hoverProvider = uiManager.getHoverProvider(target);
+						if (hoverProvider != null) {
+							return hoverProvider.displayHover(element);
+						}
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 				return false;
@@ -128,10 +136,14 @@ public class TargetSelector extends CSelector {
 			@Override
 			public void dismissHover(Object element, boolean immediate) {
 				if (element instanceof ILaunchTarget) {
-					ILaunchTarget target = (ILaunchTarget) element;
-					IHoverProvider hoverProvider = uiManager.getHoverProvider(target);
-					if (hoverProvider != null) {
-						hoverProvider.dismissHover(element, immediate);
+					try {
+						ILaunchTarget target = (ILaunchTarget) element;
+						IHoverProvider hoverProvider = uiManager.getHoverProvider(target);
+						if (hoverProvider != null) {
+							hoverProvider.dismissHover(element, immediate);
+						}
+					} catch (CoreException e) {
+						Activator.log(e.getStatus());
 					}
 				}
 			}
@@ -259,10 +271,6 @@ public class TargetSelector extends CSelector {
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return super.computeSize(200, hHint, changed);
-	}
-
-	private ILaunchBarManager getManager() {
-		return (ILaunchBarManager) getInput();
 	}
 
 	@Override

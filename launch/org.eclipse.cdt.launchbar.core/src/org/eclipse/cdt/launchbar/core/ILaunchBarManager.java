@@ -11,71 +11,56 @@
 package org.eclipse.cdt.launchbar.core;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchMode;
 
-public interface ILaunchBarManager extends IAdaptable {
+public interface ILaunchBarManager {
 
-	ILaunchDescriptor[] getLaunchDescriptors();
+	/**
+	 * A launch object has been added. Create a matching launch descriptor if available.
+	 * 
+	 * @param element launch object
+	 * @return the launch descriptor that got created, null of none was
+	 * @throws CoreException
+	 */
+	ILaunchDescriptor launchObjectAdded(Object launchObject) throws CoreException;
 
-	ILaunchDescriptor[] getOpenLaunchDescriptors();
+	/**
+	 * A launch object has been removed. Remove the associated launch descriptor if there is one.
+	 * 
+	 * @param element launch object
+	 * @throws CoreException
+	 */
+	void launchObjectRemoved(Object launchObject) throws CoreException;
 
-	ILaunchDescriptor getActiveLaunchDescriptor() throws CoreException;
+	/**
+	 * A launch object has changed in some way that affects the launch bar.
+	 * 
+	 * @param launchObject
+	 * @throws CoreException
+	 */
+	void launchObjectChanged(Object launchObject) throws CoreException;
 
-	void setActiveLaunchDescriptor(ILaunchDescriptor configDesc) throws CoreException;
-
-	void updateLaunchDescriptor(ILaunchDescriptor configDesc) throws CoreException;
-
-	ILaunchMode[] getLaunchModes() throws CoreException;
-
-	ILaunchMode getActiveLaunchMode() throws CoreException;
-
-	void setActiveLaunchMode(ILaunchMode mode) throws CoreException;
-
-	ILaunchTarget[] getLaunchTargets() throws CoreException;
-
-	ILaunchTarget getLaunchTarget(String id) throws CoreException;
-
-	ILaunchTarget getActiveLaunchTarget() throws CoreException;
-
-	void setActiveLaunchTarget(ILaunchTarget target) throws CoreException;
-
-	void updateLaunchTarget(ILaunchTarget target) throws CoreException;
-
+	/**
+	 * A new launch target has been added.
+	 * 
+	 * @param target launch target
+	 * @throws CoreException 
+	 */
 	void launchTargetAdded(ILaunchTarget target) throws CoreException;
 
+	/**
+	 * A launch target has been removed.
+	 * 
+	 * @param target launch target
+	 * @throws CoreException 
+	 */
 	void launchTargetRemoved(ILaunchTarget target) throws CoreException;
 
-	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException;
-
-	ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException;
-
-	ILaunchDescriptor launchObjectAdded(Object element) throws CoreException;
-
-	void launchObjectRemoved(Object element) throws CoreException;
-
-	ILaunchDescriptor launchObjectChanged(Object element) throws CoreException;
-
-	ILaunchDescriptor getLaunchDescriptor(Object element);
-
-	interface Listener {
-
-		void activeConfigurationDescriptorChanged();
-
-		void activeLaunchModeChanged();
-
-		void activeLaunchTargetChanged();
-
-		void launchDescriptorRemoved(ILaunchDescriptor descriptor);
-
-		void launchTargetsChanged();
-
-	}
-
-	void addListener(Listener listener);
-
-	void removeListener(Listener listener);
+	/**
+	 * The launch target has changed in some way that affects the
+	 * launch bar.
+	 * 
+	 * @param target launch target
+	 */
+	void launchTargetChanged(ILaunchTarget target);
 
 }

@@ -4,21 +4,10 @@
    <extension-point id="launchBarContributions" name="Launch Bar Contributions" schema="schema/launchBarContributions.exsd"/>
    <extension
          point="org.eclipse.cdt.launchbar.core.launchBarContributions">
-      <descriptorType
-            class="org.eclipse.cdt.launchbar.core.internal.DefaultLaunchDescriptorType"
-            id="org.eclipse.cdt.launchbar.core.descriptor.default"
-            priority="0">
-      </descriptorType>
       <targetType
             class="org.eclipse.cdt.launchbar.core.internal.LocalTargetType"
-            id="org.eclipse.cdt.launchbar.core.target.local">
+            id="org.eclipse.cdt.launchbar.core.targetType.local">
       </targetType>
-      <configProvider
-            class="org.eclipse.cdt.launchbar.core.internal.DefaultLaunchConfigurationProvider"
-            descriptorType="org.eclipse.cdt.launchbar.core.descriptor.default"
-            isDefault="true"
-            targetType="org.eclipse.cdt.launchbar.core.target.local">
-      </configProvider>
       <objectProvider
             class="org.eclipse.cdt.launchbar.core.internal.ProjectLaunchObjectProvider"
             id="org.eclipse.cdt.launchbar.core.objectProvider.project">

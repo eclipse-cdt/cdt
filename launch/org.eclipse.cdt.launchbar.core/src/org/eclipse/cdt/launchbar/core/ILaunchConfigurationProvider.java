@@ -14,16 +14,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 
+/**
+ * The provider of launch configurations of a given type for a given descriptor type
+ * and a given target type.
+ */
 public interface ILaunchConfigurationProvider {
 
-	/**
-	 * Do any initialization.
-	 * 
-	 * @param manager
-	 * @throws CoreException
-	 */
-	void init(ILaunchBarManager manager) throws CoreException;
-	
 	/**
 	 * Does this provider own this launch configuration. If so, make sure the launch descriptor
 	 * is properly constructed by sending in a launch object to the launch manager.
@@ -35,14 +31,21 @@ public interface ILaunchConfigurationProvider {
 	boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException;
 	
 	/**
-	 * Returns the launch configuration type used to launch the descriptor on this target type.
+	 * A launch configuration has been removed.
 	 * 
-	 * @param descriptor
-	 * @param target
+	 * @param configuration
+	 * @return was the launch configuration removed by this provider?
+	 * @throws CoreException
+	 */
+	boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException;
+
+	/**
+	 * Returns the launch configuration type for configurations created by this provider.
+	 * 
 	 * @return launch configuration type
 	 * @throws CoreException 
 	 */
-	ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor) throws CoreException;
+	ILaunchConfigurationType getLaunchConfigurationType() throws CoreException;
 
 	/**
 	 * Create a launch configuration for the descriptor to launch on the target.
@@ -52,15 +55,6 @@ public interface ILaunchConfigurationProvider {
 	 * @return launch configuration
 	 * @throws CoreException 
 	 */
-	ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor) throws CoreException;
-
-	/**
-	 * A launch configuration has been removed.
-	 * 
-	 * @param configuration
-	 * @return boolean - was the launch configuration removed by this provider?
-	 * @throws CoreException
-	 */
-	boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException;
+	ILaunchConfiguration createLaunchConfiguration(ILaunchDescriptor descriptor) throws CoreException;
 
 }

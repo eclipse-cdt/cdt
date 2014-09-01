@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.ui;
 
+
 public interface IHoverProvider {
 
 	/**

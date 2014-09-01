@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core;
 
-public interface ILaunchTarget {
+import org.eclipse.core.runtime.IAdaptable;
+
+public interface ILaunchTarget extends IAdaptable {
 
 	/**
 	 * Get the id for the target. The id of the active target is

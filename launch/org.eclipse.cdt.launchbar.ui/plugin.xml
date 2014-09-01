@@ -72,16 +72,6 @@
       </targetUI>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.launchbar.ui.internal.targetsView.LaunchTargetsViewPart"
-            id="org.eclipse.cdt.launchbar.ui.targetsView"
-            name="%targetsView.name"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.cdt.ui.CPerspective">
@@ -106,6 +96,63 @@
             </instanceof>
          </enabledWhen>
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.launchbar.ui.internal.targetsView.LaunchTargetsNavigator"
+            id="org.eclipse.cdt.launchbar.ui.targetsView"
+            name="%targetsView.name"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="org.eclipse.cdt.launchbar.ui.internal.targetsView.LaunchTargetsContentProvider"
+            id="org.eclipse.cdt.launchbar.ui.targetsViewContent"
+            labelProvider="org.eclipse.cdt.launchbar.ui.internal.targetsView.LaunchTargetsLabelProvider"
+            name="Launch Targetsx">
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.eclipse.cdt.launchbar.core.ILaunchBarManager">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="org.eclipse.cdt.launchbar.core.ILaunchTarget">
+               </instanceof>
+            </or>
+         </possibleChildren>
+         <actionProvider
+               class="org.eclipse.cdt.launchbar.ui.internal.targetsView.LaunchTargetsActionProvider">
+            <enablement>
+               <instanceof
+                     value="org.eclipse.cdt.launchbar.core.ILaunchTarget">
+               </instanceof>
+            </enablement>
+         </actionProvider>
+      </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewer
+            viewerId="org.eclipse.cdt.launchbar.ui.targetsView">
+      </viewer>
+      <viewerContentBinding
+            viewerId="org.eclipse.cdt.launchbar.ui.targetsView">
+         <includes>
+            <contentExtension
+                  isRoot="true"
+                  pattern="org.eclipse.cdt.launchbar.ui.targetsViewContent">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
    </extension>
 
 </plugin>

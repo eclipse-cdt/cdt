@@ -12,15 +12,16 @@ package org.eclipse.cdt.launchbar.core.internal;
 
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
+import org.eclipse.core.runtime.PlatformObject;
 
-public class LocalTarget implements ILaunchTarget {
+public class LocalTarget extends PlatformObject implements ILaunchTarget {
 
 	private final LocalTargetType type;
-	
+
 	public LocalTarget(LocalTargetType type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public String getId() {
 		// Use the same ID as the type since we're really a singleton
@@ -41,5 +42,5 @@ public class LocalTarget implements ILaunchTarget {
 	public void setActive() {
 		// nothing to do
 	}
-	
+
 }

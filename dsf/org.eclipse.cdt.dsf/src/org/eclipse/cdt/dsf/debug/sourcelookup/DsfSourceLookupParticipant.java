@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -95,7 +96,10 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
             } else {
                 results = new ArrayList<Object>();
             }
-            ISourceContainer[] containers = getSourceContainers();
+			ISourceContainer[] containers = getSourceContainers();
+			// if there is no containers, we can default to absolute path, since we should be able resolve file by absolute path
+			if (containers.length == 0)
+				containers = new ISourceContainer[] { new AbsolutePathSourceContainer() };
             for (int i = 0; i < containers.length; i++) {
                 try {
                     ISourceContainer container = containers[i];

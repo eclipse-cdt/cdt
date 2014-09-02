@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_6881ab9c",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/targetsView/LaunchTargetsContentProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2014-09-02T14:27:22Z",
+      "side": 1,
+      "message": "Apparently not, it seems the LaunchBarManager is the input element and getChildren for it never gets called.",
+      "parentUuid": "c7672b30_08b0f7c2",
+      "revId": "949f71d57473466365c91a36559d83b146085ee6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_284cd347",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/targetsView/LaunchTargetsLabelProvider.java",
         "patchSetId": 1

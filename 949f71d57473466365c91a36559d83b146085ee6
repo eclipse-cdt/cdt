@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_e8777b76",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/targetsView/LaunchTargetsActionProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-02T13:54:58Z",
+      "side": 1,
+      "message": "copyright missing",
+      "revId": "949f71d57473466365c91a36559d83b146085ee6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_08b0f7c2",
         "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/targetsView/LaunchTargetsContentProvider.java",
         "patchSetId": 1
@@ -30,6 +47,23 @@
       "writtenOn": "2014-09-02T13:50:24Z",
       "side": 1,
       "message": "You don\u0027t need to provide children here for LaunchBarManager?",
+      "revId": "949f71d57473466365c91a36559d83b146085ee6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_284cd347",
+        "filename": "launch/org.eclipse.cdt.launchbar.ui/src/org/eclipse/cdt/launchbar/ui/internal/targetsView/LaunchTargetsLabelProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-02T13:54:58Z",
+      "side": 1,
+      "message": "There is icon or image element that declares target icon somewhere",
       "revId": "949f71d57473466365c91a36559d83b146085ee6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

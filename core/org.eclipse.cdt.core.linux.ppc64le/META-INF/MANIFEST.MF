@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.eclipse.cdt.core.linux.ppc64le;singleton:=true
+Bundle-ManifestVersion: 2
+Bundle-Localization: plugin
+Bundle-Name: %fragmentName.linux.ppc64le
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.eclipse.cdt.core.native;bundle-version="[5.7.0,6.0.0)"
+Bundle-Vendor: %providerName
+Eclipse-PlatformFilter: (&(osgi.os=linux)(osgi.arch=ppc64le))

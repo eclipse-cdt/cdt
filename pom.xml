@@ -45,6 +45,7 @@
 		<module>core/org.eclipse.cdt.core.linux.x86</module>
 		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
 		<module>core/org.eclipse.cdt.core.linux.ppc64</module>
+		<module>core/org.eclipse.cdt.core.linux.ppc64le</module>
 		<module>core/org.eclipse.cdt.core.win32</module>
 		<module>core/org.eclipse.cdt.core.win32.x86</module>
 		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
@@ -375,6 +376,11 @@
 							<ws>gtk</ws>
 							<arch>ppc64</arch>
 						</environment>
+                                                <environment>
+                                                        <os>linux</os>
+                                                        <ws>gtk</ws>
+                                                        <arch>ppc64le</arch>
+                                                </environment>
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>

@@ -631,4 +631,14 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDefined("MACRO");
 		assertDeclared();
 	}
+
+	//	void f(int);
+	//	#define MACRO(name, arg) void name() { f(arg); }
+
+	//  int bar;
+	//	MACRO(foo, bar);
+	public void testMacro_4() throws Exception {
+		assertDefined("MACRO");
+		assertDeclared();
+	}
 }

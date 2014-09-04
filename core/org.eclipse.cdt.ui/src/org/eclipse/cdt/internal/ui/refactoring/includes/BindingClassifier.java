@@ -693,6 +693,8 @@ public class BindingClassifier {
 				 */
 				IASTFunctionCallExpression functionCallExpression = (IASTFunctionCallExpression) expression;
 				IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
+				if (isPartOfExternalMacroDefinition(functionNameExpression))
+					return PROCESS_CONTINUE;
 
 				IBinding binding = getBindingOfExpression(functionNameExpression);
 				if (binding != null) {

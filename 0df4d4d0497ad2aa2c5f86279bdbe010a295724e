@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_9af9e977",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/launch/GdbExtendedFinalLaunchSequence_7_7.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-04T12:17:32Z",
+      "side": 1,
+      "message": "rm.done()? Or this service disposes monitor?",
+      "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_baf4a57e",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/launch/GdbExtendedFinalLaunchSequence_7_7.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-04T12:17:32Z",
+      "side": 1,
+      "message": "Do we need to dispose the fControl too or not?",
+      "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9ad289fb",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/service/command/GdbExtendedCommandFactory_6_8.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-04T12:17:32Z",
+      "side": 1,
+      "message": "Whats is up with \\r in this file? I have never seem it before\nAnd other files in the patch does not seem to have this issue",
+      "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

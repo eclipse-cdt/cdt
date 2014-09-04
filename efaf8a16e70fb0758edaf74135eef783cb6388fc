@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_ba8665f2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 922,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-04T12:28:13Z",
+      "side": 1,
+      "message": "If you using sub progress monitor before on that monitor, \nthis one should be sub monitor as well",
+      "revId": "efaf8a16e70fb0758edaf74135eef783cb6388fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_9a8ba9fb",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-04T12:28:13Z",
+      "side": 1,
+      "message": "Do we really need to throw it? Or just log it?\nIf user has dialog in his face and he cannot do anything about\nit I would just log it\nAnd if you throw it, it seems code before\nruns    fireElementStateChangeFailed(element); before ex throwing",
+      "revId": "efaf8a16e70fb0758edaf74135eef783cb6388fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_fa773d76",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-09-04T12:28:13Z",
+      "side": 1,
+      "message": "Code before does not contribute to \"edit\" which is returned\nby this function,so it probably should not be \nin this function at all (or actually create \"edit\" operation\nlike code below does for removing white spaces)",
+      "revId": "efaf8a16e70fb0758edaf74135eef783cb6388fc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -79,6 +79,7 @@ public final class CIndenter {
 		final int prefContinuationIndent;
 		final boolean prefHasTemplates;
 		final String prefTabChar;
+		final boolean prefTabsOnlyForLeadingIndents;
 		
 		private final IPreferencesService preferenceService;
 		private final IScopeContext[] preferenceContexts;
@@ -143,6 +144,7 @@ public final class CIndenter {
 			prefIndentBracesForTypes= prefIndentBracesForTypes();
 			prefHasTemplates= hasTemplates();
 			prefTabChar= getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
+			prefTabsOnlyForLeadingIndents = DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_USE_TABS_ONLY_FOR_LEADING_INDENTATIONS));
 		}
 		
 		private boolean prefUseTabs() {
@@ -500,7 +502,7 @@ public final class CIndenter {
 				// a special case has been detected.
 				IRegion line= fDocument.getLineInformationOfOffset(fAlign);
 				int lineOffset= line.getOffset();
-				return createIndent(lineOffset, fAlign, false);
+				return createIndent(lineOffset, fAlign, !fPrefs.prefTabsOnlyForLeadingIndents);
 			} catch (BadLocationException e) {
 				return null;
 			}

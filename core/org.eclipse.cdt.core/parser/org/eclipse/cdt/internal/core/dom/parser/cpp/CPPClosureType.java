@@ -128,6 +128,11 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		return getMethods()[4];
 	}
 
+	public ICPPMethod getConversionOperator() {
+		ICPPMethod[] methods = getMethods();
+		return methods.length >= 6 ? methods[5] : null;
+	}
+
 	private boolean isMutable() {
 		ICPPASTFunctionDeclarator lambdaDtor = fLambdaExpression.getDeclarator();
 		return lambdaDtor != null && lambdaDtor.isMutable();

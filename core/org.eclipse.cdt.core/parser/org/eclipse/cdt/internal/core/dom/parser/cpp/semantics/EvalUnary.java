@@ -40,6 +40,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -57,6 +59,7 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignmen
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -239,15 +242,33 @@ public class EvalUnary extends CPPDependentEvaluation {
 		case op_postFixDecr:
 		case op_postFixIncr:
 			return prvalueType(fArgument.getTypeOrFunctionSet(point));
-		case op_minus:
 		case op_plus:
+			return promoteType(fArgument.getTypeOrFunctionSet(point), true);
+		case op_minus:
 		case op_tilde:
-	    	final IType t1 = prvalueType(fArgument.getTypeOrFunctionSet(point));
-			final IType t2 = SemanticUtil.getNestedType(t1, TDEF);
-			final IType t3= CPPArithmeticConversion.promoteCppType(t2);
-			return (t3 == null || t3 == t2) ? t1 : t3;
+			return promoteType(fArgument.getTypeOrFunctionSet(point), false);
 		}
 		return fArgument.getTypeOrFunctionSet(point);
+	}
+
+	private IType promoteType(IType type, boolean allowPointer) {
+    	final IType t1 = prvalueType(type);
+		final IType t2 = SemanticUtil.getNestedType(t1, TDEF);
+		if (allowPointer) {
+			if (t2 instanceof CPPClosureType) {
+				ICPPMethod conversionOperator = ((CPPClosureType) t2).getConversionOperator();
+				if (conversionOperator == null)
+					return ProblemType.UNKNOWN_FOR_EXPRESSION;
+				return new CPPPointerType(conversionOperator.getType().getReturnType());
+			}
+			if (t2 instanceof IPointerType) {
+				return t1;
+			}
+		}
+		final IType t3= CPPArithmeticConversion.promoteCppType(t2);
+		if (t3 == null && !(t2 instanceof IBasicType))
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		return (t3 == null || t3 == t2) ? t1 : t3;
 	}
 
 	@Override

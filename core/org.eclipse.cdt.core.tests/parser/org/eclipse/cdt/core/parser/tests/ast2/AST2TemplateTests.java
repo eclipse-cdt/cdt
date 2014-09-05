@@ -395,22 +395,6 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSame(f2, f1);
 	}
 
-	// template < class T > void f (T);
-	// void main() {
-	//    f(1);
-	// }
-	public void testTemplateFunctionImplicitInstantiation() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
-		NameCollector col = new NameCollector();
-		tu.accept(col);
-
-		ICPPFunctionTemplate f1 = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
-		IFunction f2 = (IFunction) col.getName(5).resolveBinding();
-
-		assertTrue(f2 instanceof ICPPTemplateInstance);
-		assertSame(((ICPPTemplateInstance) f2).getTemplateDefinition(), f1);
-	}
-
 	// template < class T > void f(T);         // #1
 	// template < class T > void f(T*);        // #2
 	// template < class T > void f(const T*);  // #3
@@ -2268,6 +2252,35 @@ public class AST2TemplateTests extends AST2TestBase {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
 		bh.assertNonProblem("make_pair(1", 9, ICPPFunction.class);
     }
+
+	// template < class T > void f (T);
+	// void main() {
+	//    f(1);
+	// }
+	public void testFunctionTemplateImplicitInstantiation() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		ICPPFunctionTemplate f1 = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
+		IFunction f2 = (IFunction) col.getName(5).resolveBinding();
+
+		assertTrue(f2 instanceof ICPPTemplateInstance);
+		assertSame(((ICPPTemplateInstance) f2).getTemplateDefinition(), f1);
+	}
+
+	//	template <class T>
+	//	int waldo(T (*function)());
+	//
+	//	template <class T, class U>
+	//	int waldo(T (*function)(U));
+	//
+	//	void test() {
+	//	  waldo(+[]() {});
+	//	}
+	public void testFunctionTemplateWithLambdaArgument_443361() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template<class T>
 	//	struct A {};

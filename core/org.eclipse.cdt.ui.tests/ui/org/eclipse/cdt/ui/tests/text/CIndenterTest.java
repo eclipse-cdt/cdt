@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,12 +45,12 @@ public class CIndenterTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions= new HashMap<String, String>();
+		fOptions= new HashMap<>();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		CCorePlugin.setOptions(new HashMap<String, String>(fDefaultOptions));
+		CCorePlugin.setOptions(new HashMap<>(fDefaultOptions));
 		super.tearDown();
 	}
 
@@ -254,15 +254,19 @@ public class CIndenterTest extends BaseUITestCase {
 		assertIndenterResult();
 	}
 
+	//void test() {
 	//new pair<int, int>(a,
 	//b);
+	//}
 
-	//new pair<int, int>(a,
-	//                   b);
+	//void test() {
+	//	new pair<int, int>(a,
+	//					   b);
+	//}
 	public void testCallOfTemplateFunction() throws Exception {
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
-		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "4");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "4");
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, 
 				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
 						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));

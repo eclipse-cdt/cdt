@@ -37,6 +37,7 @@
           <includes>
              <include>**/AllTests.*</include>
           </includes>
+          <testFailureIgnore>true</testFailureIgnore>
           <dependencies>
             <dependency>
               <artifactId>org.eclipse.platform.feature.group</artifactId>

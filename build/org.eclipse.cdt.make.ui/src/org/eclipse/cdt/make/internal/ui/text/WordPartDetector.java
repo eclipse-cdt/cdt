@@ -119,7 +119,11 @@ public class WordPartDetector {
 					// the cursor is on the first word which is "include" keyword
 					// so find the second word which is the first include file
 					String sub = line.substring(line.indexOf(' ', position)).trim();
-					wordPart = sub.substring(0, sub.indexOf(' ')).trim();
+					if (sub.contains(" ")) { //$NON-NLS-1$
+						wordPart = sub.substring(0, sub.indexOf(' ')).trim();
+					} else {
+						wordPart = sub;
+					}
 				} else {
 					wordPart = findWord(line, position);
 				}

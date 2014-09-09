@@ -15,10 +15,10 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  SetConfigurationParameter.class,
   TestToolActions.class,
   TestEnvironmentVars.class,
-  TestMakeTargets.class
+  TestMakeTargets.class,
+  SetConfigurationParameter.class,
 })
 public class AllTests {
     // needed for this class to compile

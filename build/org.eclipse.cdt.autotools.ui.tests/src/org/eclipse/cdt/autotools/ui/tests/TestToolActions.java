@@ -75,7 +75,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName
 				+ ".*aclocal --help.*Usage: aclocal.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		// Verify we still don't have an aclocal.m4 file yet
 		f = new File(path.toOSString());
 		assertTrue(!f.exists());
@@ -92,7 +92,7 @@ public class TestToolActions extends AbstractTest {
 		p = Pattern.compile(".*Invoking aclocal in.*" + projectName
 				+ ".*aclocal.*", Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		// We need to wait until the aclocal.m4 file is created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -125,7 +125,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking autoconf in.*" + projectName
 				+ ".*autoconf.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		// We need to wait until the configure file is created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -152,7 +152,7 @@ public class TestToolActions extends AbstractTest {
 		p = Pattern.compile(".*Invoking autoconf in.*" + projectName
 				+ ".*autoconf.*", Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		// We need to wait until the configure file is created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -197,7 +197,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking automake in.*" + projectName
 				+ ".*automake --help.*Usage:.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		// Verify we still don't have Makefile.in files yet
 		f = new File(path.toOSString());
 		assertTrue(!f.exists());
@@ -221,7 +221,7 @@ public class TestToolActions extends AbstractTest {
 				+ ".*automake --add-missing Makefile src/Makefile.*",
 				Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		// We need to wait until the Makefile.in files are created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -256,7 +256,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
 				+ ".*libtoolize --help.*Usage: libtoolize.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 	}
 
 	// Verify we can access the libtoolize tool
@@ -275,7 +275,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking autoheader in.*" + projectName
 				+ ".*autoheader --help.*Usage:.*autoheader.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 	}
 
 	// Verify we can access the autoreconf tool
@@ -316,7 +316,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking autoreconf in.*" + projectName
 				+ ".*autoreconf --help.*Usage: .*autoreconf.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoreconf");
 		shell = bot.shell("Autoreconf Options");
 		shell.activate();
@@ -325,19 +325,17 @@ public class TestToolActions extends AbstractTest {
 		// We need to wait until the Makefile.in file is created so
 		// sleep a bit and look for it
 		bot.sleep(3000);
+		
 		// Verify a number of generated files now exist
-		f = new File(path.append("Makefile.in").toOSString());
-		assertTrue(f.exists());
-		f = new File(path.append("src/Makefile.in").toOSString());
-		assertTrue(f.exists());
-		f = new File(path.append("Makefile.in").toOSString());
-		assertTrue(f.exists());
-		f = new File(path.append("configure").toOSString());
-		assertTrue(f.exists());
-		f = new File(path.append("config.status").toOSString());
-		assertTrue(!f.exists()); // shouldn't have run configure
-		f = new File(path.append("config.sub").toOSString());
-		assertTrue(f.exists());
+		String[] fileList = { "Makefile.in", "src/Makefile.in", "configure", "config.sub" };
+		for (String name : fileList) {
+			f = new File(path.append(name).toOSString());
+			assertTrue("Missing: " + name, f.exists());
+		}
+		
+		String name = "config.status";
+		f = new File(path.append(name).toOSString());
+		assertTrue("Mistakenly found: " + name, !f.exists()); // shouldn't have run configure
 	}
 
 	@Test
@@ -467,7 +465,7 @@ public class TestToolActions extends AbstractTest {
 		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName
 				+ ".*automake --help.*Usage:.*automake.*", Pattern.DOTALL);
 		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Automake");
 		shell = bot.shell("Automake Options");
@@ -482,7 +480,7 @@ public class TestToolActions extends AbstractTest {
 		p = Pattern.compile(".*Invoking automake in.*" + projectName
 				+ ".*autoconf --help.*Usage:.*autoconf.*", Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoheader");
 		shell = bot.shell("Autoheader Options");
@@ -497,7 +495,7 @@ public class TestToolActions extends AbstractTest {
 		p = Pattern.compile(".*Invoking autoheader in.*" + projectName
 				+ ".*autoreconf --help.*Usage:.*autoreconf.*", Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoreconf");
 		shell = bot.shell("Autoreconf Options");
@@ -512,7 +510,7 @@ public class TestToolActions extends AbstractTest {
 		p = Pattern.compile(".*Invoking autoreconf in.*" + projectName
 				+ ".*libtoolize --help.*Usage:.*libtoolize.*", Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Libtoolize");
 		shell = bot.shell("Libtoolize Options");
@@ -527,7 +525,7 @@ public class TestToolActions extends AbstractTest {
 		p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
 				+ ".*aclocal --help.*Usage:.*aclocal.*", Pattern.DOTALL);
 		m = p.matcher(output);
-		assertTrue(m.matches());
+		assertTrue("Got: " + output, m.matches());
 	}
 
 }

@@ -183,9 +183,8 @@ public class ControlFlowGraphBuilder {
 				conn = (IConnectorNode) labNode.getOutgoing();
 				addOutgoing(prev, labNode);
 			} else {
-				// labeled statement contains of connector for jumps, branch for
-				// label
-				// and nested statement
+				// labeled statement consists of connectors for jumps, branch for
+				// label and nested statement
 				conn = createLabelNodes(prev, labelName);
 			}
 			return createSubGraph(conn, ast.getNestedStatement());
@@ -383,8 +382,42 @@ public class ControlFlowGraphBuilder {
 	}
 
 	private IBasicBlock createRangeBasedFor(IBasicBlock prev, ICPPASTRangeBasedForStatement forNode) {
-		// TODO(Alena Laskavaia): Implement proper graph.
-		return createSubGraph(prev, forNode.getBody());
+		// Add initializer
+		IPlainNode init = factory.createPlainNode(forNode.getDeclaration());
+		addOutgoing(prev, init);
+		prev = init;
+		// Add continue connector
+		IConnectorNode beforeCheck = factory.createConnectorNode();
+		addOutgoing(prev, beforeCheck);
+		// Decision node
+		CxxDecisionNode decision = factory.createDecisionNode(forNode.getInitializerClause()); // XXX test expression
+		addOutgoing(beforeCheck, decision);
+		// Add break connector
+		IConnectorNode nBreak = factory.createConnectorNode();
+		decision.setMergeNode(nBreak);
+		// Create body and jump to continue node
+		IBranchNode loopStart = factory.createBranchNode(IBranchNode.THEN);
+		addOutgoing(decision, loopStart);
+		// Set break/continue
+		IConnectorNode nContinue = factory.createConnectorNode();
+		IConnectorNode savedContinue = outerContinue;
+		IConnectorNode savedBreak = outerBreak;
+		outerContinue = nContinue;
+		outerBreak = nBreak;
+		IBasicBlock endBody = createSubGraph(loopStart, forNode.getBody());
+		outerContinue = savedContinue;
+		outerBreak = savedBreak;
+		// inc
+		IPlainNode inc = factory.createPlainNode(); // XXX increment
+		addOutgoing(endBody, nContinue);
+		addOutgoing(nContinue, inc);
+		// Connect with backward link
+		addJump(inc, beforeCheck, true);
+		// Add "else" branch
+		IBranchNode loopEnd = factory.createBranchNode(IBranchNode.ELSE);
+		addOutgoing(decision, loopEnd);
+		addJump(loopEnd, nBreak);
+		return nBreak;
 	}
 
 	protected IBasicBlock createWhile(IBasicBlock prev, IASTWhileStatement body) {

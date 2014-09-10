@@ -65,7 +65,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void checkCfg(boolean decision) {
 		assertNotNull(graph);
@@ -153,6 +153,14 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		processAst(tu);
 	}
 
+	private void buildCfg_C(String code) {
+		parse(code, ParserLanguage.C, true);
+		processAst(tu);
+	}
+	private void buildCfg_CPP(String code) {
+		parse(code, ParserLanguage.CPP, true);
+		processAst(tu);
+	}
 	/**
 	 * @param des
 	 * @return
@@ -163,7 +171,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 
 	/**
 	 * Return first node after the branch
-	 * 
+	 *
 	 * @param des
 	 * @return
 	 */
@@ -180,7 +188,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 
 	/**
 	 * Return node where control jumps, following the chain until jump is hit
-	 * 
+	 *
 	 * @param a
 	 * @return
 	 */
@@ -199,7 +207,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 
 	//	 main() {
 	//	   int a;
-	//	   a=1; 
+	//	   a=1;
 	//	 }
 	public void test_basic() {
 		buildAndCheck(getAboveComment());
@@ -342,7 +350,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.test.CodanFastCxxAstTestCase#getChecker()
 	 */
 	@Override
@@ -436,7 +444,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 //	    }
 //	}
 	public void test_infiniloop() {
-		buildCfg(getAboveComment(), false);
+		buildCfg_C(getAboveComment());
 		checkCfg(false);
 		IStartNode startNode = graph.getStartNode();
 		IConnectorNode conn = (IConnectorNode) startNode.getOutgoing();
@@ -449,5 +457,54 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 
 		assertNotNull(m2);
 		assertNull(m1);
+	}
+
+	//	void foo() {
+	//    for (int i=0;i<N;i++) {
+	//        bar();
+	//    }
+	//}
+	public void test_for() {
+		buildCfg_CPP(getAboveComment());
+		checkCfg(false);
+
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IConnectorNode conn = (IConnectorNode) decl.getOutgoing();
+		IDecisionNode des = (IDecisionNode) conn.getOutgoing();
+		assertEquals("i<N", data(des));
+		IPlainNode bThen = (IPlainNode) branchEnd(des, IBranchNode.THEN);
+		assertEquals("bar();", data(bThen));
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+
+		IBasicBlock m1 = jumpEnd(bElse);
+		IBasicBlock m2 = bThen.getOutgoing();
+		assertNotNull(m1);
+		assertSame(conn, jumpEnd(bThen));
+		assertEquals("i++", data(((IConnectorNode) m2).getOutgoing()));
+	}
+
+	//	void foo() {
+	//	    for (int i : arr) {
+	//	        bar();
+	//	    }
+	//	}
+	public void test_range_loop() {
+		buildCfg_CPP(getAboveComment());
+		checkCfg(false);
+
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IConnectorNode conn = (IConnectorNode) decl.getOutgoing();
+		IDecisionNode des = (IDecisionNode) conn.getOutgoing();
+		assertEquals("arr", data(des)); // condition
+		IPlainNode bThen = (IPlainNode) branchEnd(des, IBranchNode.THEN);
+		assertEquals("bar();", data(bThen));
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+		assertNotNull(bElse);
+		IBasicBlock m2 = bThen.getOutgoing();
+
+		assertSame(conn, jumpEnd(bThen));
+		assertEquals("", data(((IConnectorNode) m2).getOutgoing())); // increment
 	}
 }

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7672b30_22b05ef6",
+        "filename": "core/org.eclipse.cdt.core.linux.ppc64le/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-10T13:26:53Z",
+      "side": 1,
+      "message": "Please remove the \\r end of lines from this file. You got them from copying the ppc64 file which seems to have them (by mistake)",
+      "revId": "8d4d63961efaae68ac457462b069350e98e75246",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_e2fb0685",
+        "filename": "core/org.eclipse.cdt.core.linux/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-10T13:26:53Z",
+      "side": 1,
+      "message": "Should we up the version because of this change?  If so, we should update the MANIFEST.MF file as well.",
+      "revId": "8d4d63961efaae68ac457462b069350e98e75246",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_e222e6aa",
+        "filename": "releng/org.eclipse.cdt.releng/maps/cdt.map",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-10T13:26:53Z",
+      "side": 1,
+      "message": "I\u0027m thinking we don\u0027t use this file anymore, but this won\u0027t hurt.",
+      "revId": "8d4d63961efaae68ac457462b069350e98e75246",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

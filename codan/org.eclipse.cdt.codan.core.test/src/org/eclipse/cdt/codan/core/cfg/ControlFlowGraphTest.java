@@ -503,7 +503,8 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
 		assertNotNull(bElse);
 		IBasicBlock m2 = bThen.getOutgoing();
-
+		IBasicBlock m1 = jumpEnd(bElse);
+		assertNotNull(m1);
 		assertSame(conn, jumpEnd(bThen));
 		assertEquals("", data(((IConnectorNode) m2).getOutgoing())); // increment
 	}

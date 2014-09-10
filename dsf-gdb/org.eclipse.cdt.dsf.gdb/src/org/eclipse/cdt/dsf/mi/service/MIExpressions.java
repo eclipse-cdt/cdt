@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Axel Mueller       - Bug 306555 - Add support for cast to type / view as array (IExpressions2)	
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Marc Khouzam (Ericsson) - Added support for expression aliases for return values of functions (bug 341731)
+ *     Abeer Bagul (Tensilica) - Extra partition created for arrays of length 20000 or greater (Bug 443687)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -1934,10 +1935,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	private int computeNumberOfChildren(int realNumberOfChildren) {
 		int childNum = realNumberOfChildren;
 		int partLength = getArrayPartitionLength();
+		int maxPartitionLength = 1;
 		while (childNum > partLength) {
 			childNum /= partLength;
+			maxPartitionLength *= partLength;
 		}
-		if (childNum*partLength < realNumberOfChildren)
+		if (childNum*maxPartitionLength < realNumberOfChildren)
 			++childNum;
 		return childNum;
 	}

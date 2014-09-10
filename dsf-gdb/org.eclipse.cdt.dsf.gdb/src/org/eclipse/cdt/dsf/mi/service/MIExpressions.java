@@ -1934,10 +1934,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	private int computeNumberOfChildren(int realNumberOfChildren) {
 		int childNum = realNumberOfChildren;
 		int partLength = getArrayPartitionLength();
+		int maxPartitionLength = 1;
 		while (childNum > partLength) {
 			childNum /= partLength;
+			maxPartitionLength *= partLength;
 		}
-		if (childNum*partLength < realNumberOfChildren)
+		if (childNum*maxPartitionLength < realNumberOfChildren)
 			++childNum;
 		return childNum;
 	}

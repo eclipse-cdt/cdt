@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 QNX Software Systems and others.
+ * Copyright (c) 2007, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *     Nathan Ridge
  *     Thomas Corbat (IFS)
+ *     Mohamed Azab (Mentor Graphics) - Bug 438549. Add mechanism for parameter guessing.
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -107,17 +108,20 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private static final String TEMPLATE_PARAMETER_PATTERN = "template<{0}> class"; //$NON-NLS-1$;
 	private static final String TYPENAME = "typename"; //$NON-NLS-1$;
 	private static final String ELLIPSIS = "..."; //$NON-NLS-1$;
+	private String fPrefix;
 
 	/**
 	 * Default constructor is required (executable extension).
 	 */
 	public DOMCompletionProposalComputer() {
+		fPrefix = ""; //$NON-NLS-1$
 	}
 
 	@Override
 	protected List<ICompletionProposal> computeCompletionProposals(
 			CContentAssistInvocationContext context,
 			IASTCompletionNode completionNode, String prefix) {
+		fPrefix = prefix;
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 
 		if (inPreprocessorDirective(context)) {
@@ -587,7 +591,40 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			proposal.setContextInformation(info);
 		}
 
-		proposals.add(proposal);
+		/*
+		 * The ParameterGuessingProposal will be active if the content assist is invoked before typing
+		 * any parameters. Otherwise, the normal Parameter Hint Proposal will be added.
+		 */
+		if (isBeforeParameters(context)) {
+			proposals.add(ParameterGuessingProposal.createProposal(context, proposal, function, fPrefix));
+		}
+		else {
+			proposals.add(proposal);
+		}
+	}
+
+	/**
+	 * @return true if the invocation is at the function name or before typing any parameters
+	 */
+	private boolean isBeforeParameters(CContentAssistInvocationContext context) {
+		/*
+		 * Invocation offset and parse offset are the same if content assist is invoked while in the function
+		 * name (i.e. before the '('). After that, the parse offset will indicate the end of the name part. If
+		 * the diff. between them is zero, then we're still inside the function name part.
+		 */
+		int relativeOffset = context.getInvocationOffset() - context.getParseOffset();
+		if (relativeOffset == 0)
+			return true;
+		int startOffset = context.getParseOffset();
+		try {
+			String completePrefix = context.getDocument().get(startOffset,
+					context.getInvocationOffset() - startOffset);
+			if (completePrefix.trim().endsWith("(")) //$NON-NLS-1$
+				return true;
+		} catch (BadLocationException e) {
+			return false;
+		}
+		return false;
 	}
 
 	private boolean skipDefaultedParameter(IParameter param) {

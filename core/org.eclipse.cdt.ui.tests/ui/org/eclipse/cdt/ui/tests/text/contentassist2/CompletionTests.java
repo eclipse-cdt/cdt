@@ -15,6 +15,7 @@
  *     Nathan Ridge
  *     Thomas Corbat (IFS)
  *	   Michael Woski
+ *     Mentor Graphics (Mohamed Azab) - Update tests for parameter guessing
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -832,7 +833,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	Printer::/*cursor*/
 	public void testPrivateStaticMember_109480() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=109480
-		final String[] expected= { "InitPrinter()", "port" };
+		final String[] expected= { "InitPrinter(port)", "port" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
@@ -1238,7 +1239,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	}
 	//};
 	public void testContentAssistInDeferredClassInstance_194592() throws Exception {
-		final String[] expected= { "add()" };
+		final String[] expected= { "add(tOther)" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
@@ -1398,7 +1399,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	}
 	//	using N::f/*cursor*/
 	public void testUsingDeclaration_379631() throws Exception {
-		final String[] expected= { "foo;" };
+		final String[] expected= { "foo()" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
@@ -1511,7 +1512,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	}
 	//	using N::fo/*cursor*/;
 	public void testUsingCompletionWithFollowingSemicolon() throws Exception {
-		final String[] expected = { "foo" };
+		final String[] expected = { "foo()" };
 		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
 		final String[] expectedInformation = { "null" };
 		assertContentAssistResults(fCursorOffset, expectedInformation, true, CONTEXT);
@@ -1549,7 +1550,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 		setDisplayDefaultArguments(true);
 		final String[] expectedDisplay = { "default_argument(int i = 23) : void" };
 		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
-		final String[] expectedReplacement = { "default_argument()" };
+		final String[] expectedReplacement = { "default_argument(i)" };
 		assertContentAssistResults(fCursorOffset, expectedReplacement, true, REPLACEMENT);
 	}
 

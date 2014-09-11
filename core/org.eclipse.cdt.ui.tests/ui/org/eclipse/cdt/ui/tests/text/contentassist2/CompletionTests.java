@@ -1404,7 +1404,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	}
 	//	using N::fo/*cursor*/;
 	public void testUsingCompletionWithFollowingSemicolon() throws Exception {
-		final String[] expected = { "foo" };
+		final String[] expected = { "foo()" };
 		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
 		final String[] expectedInformation = { "null" };
 		assertContentAssistResults(fCursorOffset, expectedInformation, true, CONTEXT);

@@ -9,6 +9,7 @@
  *     Norbert Ploett - Initial implementation
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
+ *     Mentor Graphics (Mohamed Azab) - Add parameter guessing tests
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -71,6 +72,8 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTests.suite());
 		addTest(CompletionTests_PlainC.suite());
 		addTest(ParameterHintTests.suite());
+		addTest(ParameterGuessingTests.suite());
+		addTest(ParameterGuessingTests_PlainC.suite());
 		
 		addTest(ShowCamelCasePreferenceTest.suite());
 		

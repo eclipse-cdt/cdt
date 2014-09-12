@@ -30,6 +30,7 @@ import org.eclipse.cdt.launchbar.core.ILaunchObjectProvider;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
 import org.eclipse.cdt.launchbar.core.LaunchConfigurationProvider;
+import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager.Listener;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -507,8 +508,10 @@ public class LaunchBarManagerTest extends TestCase {
 
 	@Test
 	public void testSetActiveDescriptor() throws Exception {
-		TestLaunchBarManager manager = new TestLaunchBarManager();
-
+		final TestLaunchBarManager manager = new TestLaunchBarManager();
+		ILaunchMode runMode = launchManager.getLaunchMode("run");
+		ILaunchMode debugMode = launchManager.getLaunchMode("debug");
+		
 		// descriptor for the test descriptor
 		String name = "test1";
 		ILaunchConfigurationType configType = manager.getLaunchManager().getLaunchConfigurationType(DEFAULT_CONFIG_TYPE_ID);
@@ -520,6 +523,33 @@ public class LaunchBarManagerTest extends TestCase {
 		ILaunchDescriptor test1 = manager.getLaunchDescriptor(testObject1);
 		assertNotNull(test1);
 
+		final ILaunchMode[] testActiveMode = new ILaunchMode[1];
+		final ILaunchDescriptor[] testActiveDesc = new ILaunchDescriptor[1];
+		Listener listener = new Listener() {
+			@Override
+			public void launchTargetsChanged() {
+			}
+			
+			@Override
+			public void launchDescriptorRemoved(ILaunchDescriptor descriptor) {
+			}
+			
+			@Override
+			public void activeLaunchTargetChanged() {
+			}
+			
+			@Override
+			public void activeLaunchModeChanged() {
+				testActiveMode[0] = manager.getActiveLaunchMode();
+			}
+			
+			@Override
+			public void activeLaunchDescriptorChanged() {
+				testActiveDesc[0] = manager.getActiveLaunchDescriptor();
+			}
+		};
+		manager.addListener(listener);
+
 		// descriptor for the default descriptor
 		ILaunchConfigurationType defaultConfigType = mockLaunchConfigurationType("configType.default");
 		ILaunchConfiguration config = mockLaunchConfiguration("test2", defaultConfigType);
@@ -527,20 +557,35 @@ public class LaunchBarManagerTest extends TestCase {
 		ILaunchDescriptor test2 = manager.getLaunchDescriptor(config);
 		assertNotNull(test2);
 		assertNotSame(test1, test2);
+		manager.setActiveLaunchMode(runMode);
 
 		// test2 should be active by default since it was created last
 		assertEquals(test2, manager.getActiveLaunchDescriptor());
+		assertEquals(test2, testActiveDesc[0]);
 		assertEquals(config, manager.getActiveLaunchConfiguration());
+		assertEquals(runMode, manager.getActiveLaunchMode());
+		assertEquals(runMode, testActiveMode[0]);
 
 		// flip to test1
+		testActiveMode[0] = null;
+		testActiveDesc[0] = null;
 		manager.setActiveLaunchDescriptor(test1);
+		manager.setActiveLaunchMode(debugMode);
 		assertEquals(test1, manager.getActiveLaunchDescriptor());
+		assertEquals(test1, testActiveDesc[0]);
 		assertEquals(wc, manager.getActiveLaunchConfiguration());
+		assertEquals(debugMode, manager.getActiveLaunchMode());
+		assertEquals(debugMode, testActiveMode[0]);
 
 		// and back to test2
+		testActiveMode[0] = null;
+		testActiveDesc[0] = null;
 		manager.setActiveLaunchDescriptor(test2);
 		assertEquals(test2, manager.getActiveLaunchDescriptor());
+		assertEquals(test2, testActiveDesc[0]);
 		assertEquals(config, manager.getActiveLaunchConfiguration());
+		assertEquals(runMode, manager.getActiveLaunchMode());
+		assertEquals(runMode, testActiveMode[0]);
 	}
 
 	@Test

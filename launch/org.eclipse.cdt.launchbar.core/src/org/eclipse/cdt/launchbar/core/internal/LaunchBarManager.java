@@ -54,7 +54,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	// TODO make these more fine grained or break them into more focused listeners
 	public interface Listener {
-		void activeConfigurationDescriptorChanged();
+		void activeLaunchDescriptorChanged();
 		void activeLaunchModeChanged();
 		void activeLaunchTargetChanged();
 		void launchDescriptorRemoved(ILaunchDescriptor descriptor);
@@ -711,7 +711,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	public void updateLaunchDescriptor(ILaunchDescriptor configDesc) {
 		for (Listener listener : listeners) {
 			try {
-				listener.activeConfigurationDescriptorChanged();
+				listener.activeLaunchDescriptorChanged();
 			} catch (Exception e) {
 				Activator.log(e);
 			}

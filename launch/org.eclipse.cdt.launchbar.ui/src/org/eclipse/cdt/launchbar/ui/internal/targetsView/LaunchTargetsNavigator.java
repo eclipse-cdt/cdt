@@ -41,7 +41,7 @@ public class LaunchTargetsNavigator extends CommonNavigator {
 			public void activeLaunchModeChanged() {
 			}
 			@Override
-			public void activeConfigurationDescriptorChanged() {
+			public void activeLaunchDescriptorChanged() {
 			}
 		});
 

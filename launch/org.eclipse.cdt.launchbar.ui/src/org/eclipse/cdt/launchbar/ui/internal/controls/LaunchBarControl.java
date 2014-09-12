@@ -110,7 +110,7 @@ public class LaunchBarControl implements Listener {
 	}
 
 	@Override
-	public void activeConfigurationDescriptorChanged() {
+	public void activeLaunchDescriptorChanged() {
 		if (configSelector != null && !configSelector.isDisposed()) {
 			final ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
 			configSelector.getDisplay().asyncExec(new Runnable() {

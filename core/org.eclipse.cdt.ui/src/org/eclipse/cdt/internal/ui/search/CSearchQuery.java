@@ -112,8 +112,8 @@ public abstract class CSearchQuery implements ISearchQuery {
 				}
 				projects = ArrayUtil.removeNulls(ICProject.class, allProjects);
 			} else {
-				Map<String, ICProject> projectMap = new HashMap<String, ICProject>();
-				Set<String> pathFilter = new HashSet<String>();
+				Map<String, ICProject> projectMap = new HashMap<>();
+				Set<String> pathFilter = new HashSet<>();
 				boolean needFilter= false;
 				for (int i = 0; i < scope.length; ++i) {
 					ICProject project = scope[i].getCProject();
@@ -195,8 +195,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 					label, scope);
 		}
 
-		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches,
-				new Integer(matchCount));
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, matchCount);
 		return label + " " + countLabel; //$NON-NLS-1$
 	}
 
@@ -238,7 +237,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 					IIndexFile file = name.getFile();
 					Set<Match> matches = fileMatches.get(file);
 					if (matches == null) {
-						matches = new HashSet<Match>();
+						matches = new HashSet<>();
 						fileMatches.put(file, matches);
 					}
 					int nodeOffset = loc.getNodeOffset();
@@ -269,7 +268,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 		long timestamp = file.getTimestamp();
 		IPositionConverter converter = CCorePlugin.getPositionTrackerManager().findPositionConverter(path, timestamp);
 		if (converter != null) {
-			Set<Match> convertedMatches = new HashSet<Match>();
+			Set<Match> convertedMatches = new HashSet<>();
 			for (Match match : matches) {
 				IRegion region = new Region(match.getOffset(), match.getLength());
 				region = converter.historicToActual(region);
@@ -288,12 +287,12 @@ public abstract class CSearchQuery implements ISearchQuery {
 	private void collectNames(IIndex index, Collection<IIndexName> names,
 			Collection<IIndexName> polymorphicNames) throws CoreException {
 		// group all matched names by files
-		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<IIndexFile, Set<Match>>();
+		Map<IIndexFile, Set<Match>> fileMatches = new HashMap<>();
 		createMatchesFromNames(index, fileMatches, names, false);
 		createMatchesFromNames(index, fileMatches, polymorphicNames, true);
 		// compute mapping from paths to dirty text editors
 		IEditorPart[] dirtyEditors = CUIPlugin.getDirtyEditors();
-		Map<IPath, ITextEditor> pathsDirtyEditors = new HashMap<IPath, ITextEditor>();
+		Map<IPath, ITextEditor> pathsDirtyEditors = new HashMap<>();
 		for (IEditorPart editorPart : dirtyEditors) {
 			if (editorPart instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor)editorPart;
@@ -348,9 +347,9 @@ public abstract class CSearchQuery implements ISearchQuery {
 	protected void createMatches(IIndex index, IBinding[] bindings) throws CoreException {
 		if (bindings == null)
 			return;
-		List<IIndexName> names= new ArrayList<IIndexName>();
+		List<IIndexName> names= new ArrayList<>();
 		List<IIndexName> polymorphicNames= null;
-		HashSet<IBinding> handled= new HashSet<IBinding>();
+		HashSet<IBinding> handled= new HashSet<>();
 
 		for (IBinding binding : bindings) {
 			if (binding != null && handled.add(binding)) {
@@ -374,7 +373,7 @@ public abstract class CSearchQuery implements ISearchQuery {
 						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m, point);
 						if (msInBases.length > 0) {
 							if (polymorphicNames == null) {
-								polymorphicNames= new ArrayList<IIndexName>();
+								polymorphicNames= new ArrayList<>();
 							}
 							for (ICPPMethod mInBase : msInBases) {
 								if (mInBase != null && handled.add(mInBase)) {
@@ -425,13 +424,13 @@ public abstract class CSearchQuery implements ISearchQuery {
 
 	protected void createLocalMatches(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 		if (binding != null) {
-			Set<IASTName> names= new HashSet<IASTName>();
+			Set<IASTName> names= new HashSet<>();
 			names.addAll(Arrays.asList(ast.getDeclarationsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 			names.addAll(Arrays.asList(ast.getReferences(binding)));
 			// Collect local matches from AST
 			IIndexFileLocation fileLocation = null;
-			Set<Match> localMatches = new HashSet<Match>();
+			Set<Match> localMatches = new HashSet<>();
 			for (IASTName name : names) {
 				if (((flags & FIND_DECLARATIONS) != 0 && name.isDeclaration()) ||
 						((flags & FIND_DEFINITIONS) != 0 && name.isDefinition()) ||

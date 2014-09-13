@@ -112,7 +112,7 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 
 	private Match[] computeContainedMatches(AbstractTextSearchResult result, String filename) throws CoreException {
 		IPath pfilename= new Path(filename);
-		List<Match> list = new ArrayList<Match>();
+		List<Match> list = new ArrayList<>();
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
 			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((CSearchElement) elements[i]).getLocation()))) {

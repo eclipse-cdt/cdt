@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -26,7 +26,7 @@ class PositionTrackerChain implements IDocumentListener {
     private static final int MAX_DEPTH = 100; // 100 saves
     private static final long MAX_AGE = 24 * 60 * 60 * 1000; // one day
 
-    private LinkedList<PositionTracker> fTrackers= new LinkedList<PositionTracker>();
+    private Deque<PositionTracker> fTrackers= new ArrayDeque<>();
     private PositionTracker fActiveTracker;
     private IDocument fDocument;
 
@@ -35,13 +35,12 @@ class PositionTrackerChain implements IDocumentListener {
     }
 
     public int createCheckpoint(long timestamp) {
-        // travel in time
+        // Travel in time.
         while (fActiveTracker != null && fActiveTracker.getTimeStamp() >= timestamp) {
             fTrackers.removeLast();
             if (fTrackers.isEmpty()) {
                 fActiveTracker= null;
-            }
-            else {
+            } else {
                 fActiveTracker= fTrackers.getLast();
                 fActiveTracker.revive();
             }
@@ -76,7 +75,7 @@ class PositionTrackerChain implements IDocumentListener {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
+     * @see org.eclipse.jface.text.IPositionUpdater#update(DocumentEvent)
      */
     private void update(DocumentEvent event) {
         String text = event.getText();
@@ -93,19 +92,19 @@ class PositionTrackerChain implements IDocumentListener {
     }
 
     /**
-     * Find the nearest tracker created at or after the given time.
+     * Finds the nearest tracker created at or after the given time.
+     *
      * @param timestamp in milliseconds.
      * @return the tracker nearest to the timestamp, <code>null</code> if all were created before.
      */
     public PositionTracker findTrackerAtOrAfter(long timestamp) {
         PositionTracker candidate= null;
-        for (ListIterator<PositionTracker> iter = fTrackers.listIterator(fTrackers.size()); iter.hasPrevious();) {
-            PositionTracker tracker = iter.previous();
+        for (Iterator<PositionTracker> iter = fTrackers.descendingIterator(); iter.hasNext();) {
+            PositionTracker tracker = iter.next();
             long trackerTimestamp= tracker.getTimeStamp();
             if (trackerTimestamp >= timestamp) {
                 candidate= tracker;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -113,13 +112,14 @@ class PositionTrackerChain implements IDocumentListener {
     }
 
     /**
-     * Find the tracker created at the given time.
+     * Finds the tracker created at the given time.
+     *
      * @param timestamp in milliseconds.
      * @return the tracker at the timestamp, <code>null</code> if none created at the given time.
      */
     public PositionTracker findTrackerAt(long timestamp) {
-        for (ListIterator<PositionTracker> iter = fTrackers.listIterator(fTrackers.size()); iter.hasPrevious();) {
-            PositionTracker tracker = iter.previous();
+        for (Iterator<PositionTracker> iter = fTrackers.descendingIterator(); iter.hasNext();) {
+            PositionTracker tracker = iter.next();
             long trackerTimestamp= tracker.getTimeStamp();
             if (trackerTimestamp == timestamp) {
                 return tracker;
@@ -132,7 +132,7 @@ class PositionTrackerChain implements IDocumentListener {
     }
 
     /**
-     * Destroy the tracker.
+     * Destroys the tracker.
      */
     public void dispose() {
         stopTracking();
@@ -162,7 +162,7 @@ class PositionTrackerChain implements IDocumentListener {
 
     @Override
 	public void documentChanged(DocumentEvent event) {
-        // react before updateing the document
+        // React before updating the document.
     }
 
     public IDocument getCurrentDocument() {
@@ -180,8 +180,8 @@ class PositionTrackerChain implements IDocumentListener {
     public int getMemorySize() {
         int size= MEMORY_SIZE;
         for (PositionTracker tracker : fTrackers) {
-            size+= LINKED_LIST_ENTRY_SIZE;
-            size+= tracker.getMemorySize();
+            size += LINKED_LIST_ENTRY_SIZE;
+            size += tracker.getMemorySize();
         }
         return size;
     }

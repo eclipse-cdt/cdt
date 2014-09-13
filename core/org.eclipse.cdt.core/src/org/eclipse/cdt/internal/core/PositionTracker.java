@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core;
 
 import java.io.PrintStream;
@@ -38,7 +37,7 @@ public class PositionTracker implements IPositionConverter {
     }
 
     /**
-     * Undo the retirement to make this the head of a tracker chain again.
+     * Undoes the retirement to make this the head of a tracker chain again.
      */
     synchronized void revive() {
         fFollowedBy = null;
@@ -47,6 +46,7 @@ public class PositionTracker implements IPositionConverter {
     /**
      * Notifies the tracker of the insertion of characters.
      * It is assumed that character get inserted before the offset.
+     *
      * @param offset offset of the character in front of which insertion occurs.
      * @param count amount of characters inserted.
      */
@@ -63,6 +63,7 @@ public class PositionTracker implements IPositionConverter {
      * Notifies the tracker of the removal of characters.
      * delete(0,1) removes the first character,
      * for convenience delete(1,-1) does the same.
+     *
      * @param offset offset of the first character deleted.
      * @param count amount of characters deleted.
      */
@@ -71,8 +72,7 @@ public class PositionTracker implements IPositionConverter {
         assert offset >= 0;
         if (count < 0) {
             delete(offset + count, -count);
-        }
-        else {
+        } else {
             if (count == 0 || offset < 0) {
                 return;
             }
@@ -82,6 +82,7 @@ public class PositionTracker implements IPositionConverter {
 
     /**
      * Calculates the position in the original unmodified text.
+     *
      * @param currentOffset position in the modified text.
      * @return position in the unmodified text.
      */
@@ -100,6 +101,7 @@ public class PositionTracker implements IPositionConverter {
 
     /**
      * Calculates the position in the modified text.
+     *
      * @param historicOffset position in the unmodified text.
      * @return position in the modified text.
      */
@@ -117,7 +119,8 @@ public class PositionTracker implements IPositionConverter {
 
     /**
      * Makes this tracker final. Future changes are tracked by the tracker
-     * supplied and will be taken into acoount when converting positions.
+     * supplied and will be taken into account when converting positions.
+     *
      * @param inFavourOf tracker that tracks changes from now on.
      */
     public synchronized void retire(PositionTracker inFavourOf) {
@@ -173,7 +176,7 @@ public class PositionTracker implements IPositionConverter {
 
         int historic= historicOffset(actual, true);
         if (len > 0) {
-            len= historicOffset(actual+len-1, false) - historic + 1;
+            len= historicOffset(actual + len - 1, false) - historic + 1;
         }
         assert len >= 0;
         return new Region(historic, len);
@@ -186,7 +189,7 @@ public class PositionTracker implements IPositionConverter {
 
         int actual= currentOffset(historic, true);
         if (len > 0) {
-            len= currentOffset(historic+len-1, false) - actual + 1;
+            len= currentOffset(historic + len - 1, false) - actual + 1;
         }
         assert len >= 0;
         return new Region(actual, len);
@@ -194,15 +197,16 @@ public class PositionTracker implements IPositionConverter {
 
     /**
      * Nodes implementing a red black binary tree.
+     *
      * @author markus.schorn@windriver.com
      */
     private static class Node {
         private static final boolean RED = true;
         private static final boolean BLACK = false;
 
-        private int fDeltaPos2; // sum of this and pos2 of parent yields pos2.
+        private int fDeltaPos2; // Sum of this and pos2 of parent yields pos2.
         private int fPos1;
-        private int fChange; // lenght of text change (+ add, - remove)
+        private int fChange; // Length of text change (+ add, - remove)
 
         private boolean fColor;
         private Node fLeft;
@@ -230,61 +234,61 @@ public class PositionTracker implements IPositionConverter {
             return StrictMath.max(fLeft.depth(), fRight.depth()) + 1;
         }
 
-        // forward calculation
+        // Forward calculation.
         int calculateCurrentOffset(int value1, int parentPos2, boolean nextOnDelete) {
             int fPos2 = parentPos2 + fDeltaPos2;
             int rel1 = value1 - fPos1;
 
-            // is value ahead of this change?
+            // Is value ahead of this change?
             if (rel1 < 0) {
                 if (fLeft != null) {
                     return fLeft.calculateCurrentOffset(value1, fPos2, nextOnDelete);
                 }
 
-                // value is directly ahead of this change.
+                // Value is directly ahead of this change.
                 return rel1 + fPos2;
             }
 
-            // is value deleted by this?
+            // Is value deleted by this?
             if (rel1 < -fChange) {
-                return nextOnDelete ? fPos2 : fPos2-1;
+                return nextOnDelete ? fPos2 : fPos2 - 1;
             }
 
-            // value is after this change.
+            // Value is after this change.
             if (fRight != null) {
                 return fRight.calculateCurrentOffset(value1, fPos2, nextOnDelete);
             }
 
-            // value is directly after this change.
+            // Value is directly after this change.
             return rel1 + fPos2 + fChange;
         }
 
-        // backward calculation
+        // Backward calculation.
         int calculateOriginalOffset(int value2, int parentPos2, boolean nextOnDelete) {
             int fPos2 = parentPos2 + fDeltaPos2;
             int rel2 = value2 - fPos2;
 
-            // is value ahead of this change?
+            // Is value ahead of this change?
             if (rel2 < 0) {
                 if (fLeft != null) {
                     return fLeft.calculateOriginalOffset(value2, fPos2, nextOnDelete);
                 }
 
-                // value is directly ahead of this change.
+                // Value is directly ahead of this change.
                 return rel2 + fPos1;
             }
 
-            // is value added by this?
+            // Is value added by this?
             if (rel2 < fChange) {
-                return nextOnDelete ? fPos1 : fPos1-1;
+                return nextOnDelete ? fPos1 : fPos1 - 1;
             }
 
-            // offset is behind this change.
+            // Offset is behind this change.
             if (fRight != null) {
                 return fRight.calculateOriginalOffset(value2, fPos2, nextOnDelete);
             }
 
-            // offset is directly behind this change.
+            // Offset is directly behind this change.
             return rel2 + fPos1 - fChange;
         }
 
@@ -292,48 +296,47 @@ public class PositionTracker implements IPositionConverter {
             int rel2 = value2 - fPos2;
 
             if (fParent != null) {
-                fParent.balance(); // this may change both the parent and fDeltaPos2;
+                fParent.balance(); // This may change both the parent and fDeltaPos2;
             }
 
-            // added ahead of this change?
+            // Added ahead of this change?
             if (rel2 < 0) {
-                fDeltaPos2 += add; // advance
+                fDeltaPos2 += add; // Advance
                 if (fLeft != null) {
                     int childPos2 = fPos2 + fLeft.fDeltaPos2;
-                    fLeft.fDeltaPos2 -= add; // unadvance
-                    fLeft.addChars(value2, add, childPos2); // use modified parent pos
+                    fLeft.fDeltaPos2 -= add; // Unadvance
+                    fLeft.addChars(value2, add, childPos2); // Use modified parent pos
                     return;
                 }
 
-                addLeft(rel2 + fPos1, rel2 - add, add); // modify delta pos
+                addLeft(rel2 + fPos1, rel2 - add, add); // Modify delta pos
                 return;
             }
 
-            // added inside range of another change?
-            int range2 = (fChange > 0) ? fChange : 0;
+            // Added inside range of another change?
+            int range2 = fChange > 0 ? fChange : 0;
             if (rel2 <= range2 && !isHolder()) {
                 fChange += add;
-                // insert in a deletion at the end
-                if (fChange<=0) {
-                    fPos1+= add;
-                    fDeltaPos2+= add;
+                // Insert in a deletion at the end
+                if (fChange <= 0) {
+                    fPos1 += add;
+                    fDeltaPos2 += add;
                     if (fLeft != null) {
                         fLeft.fDeltaPos2 -= add;
                     }
-                }
-                else if (fRight != null) {
+                } else if (fRight != null) {
                     fRight.fDeltaPos2 += add; // advance right branch
                 }
                 return;
             }
 
-            // added behind this change.
+            // Added behind this change.
             if (fRight != null) {
                 fRight.addChars(value2, add, fPos2 + fRight.fDeltaPos2);
                 return;
             }
 
-            // added directly behind this change
+            // Added directly behind this change.
             addRight(rel2 + fPos1 - fChange, rel2, add);
         }
 
@@ -341,16 +344,16 @@ public class PositionTracker implements IPositionConverter {
             int relFirstChar2 = firstChar2 - fPos2;
             int relAfterLastChar2 = relFirstChar2 + remove;
 
-            // no insertion - no balancing
+            // No insertion - no balancing
             if (mustRemove && fParent != null) {
                 fParent.balance();
             }
 
-            // ahead and no merge possible
+            // Ahead and no merge possible.
             if (relAfterLastChar2 < 0) {
-                fDeltaPos2 -= remove; // advance
+                fDeltaPos2 -= remove; // Advance
                 if (fLeft != null) {
-                    fLeft.fDeltaPos2 += remove; // unadvance
+                    fLeft.fDeltaPos2 += remove; // Unadvance
                     return fLeft.removeChars(firstChar2, remove, fPos2 - remove + fLeft.fDeltaPos2, mustRemove);
                 }
 
@@ -361,7 +364,7 @@ public class PositionTracker implements IPositionConverter {
                 return false;
             }
 
-            // behind and no merge possible
+            // Behind and no merge possible.
             int range2 = (fChange > 0) ? fChange : 0;
             if (relFirstChar2 > range2 || isHolder()) {
                 if (fRight != null) {
@@ -386,7 +389,7 @@ public class PositionTracker implements IPositionConverter {
             }
             int delInside = remove - delAbove - delBelow;
 
-            // delegate above to left children
+            // Delegate above to left children.
             if (delAbove > 0 && fLeft != null) {
                 if (fLeft.removeChars(firstChar2, delAbove, fPos2 + fLeft.fDeltaPos2, false)) {
                     fDeltaPos2 -= delAbove;
@@ -395,14 +398,14 @@ public class PositionTracker implements IPositionConverter {
                     delAbove = 0;
                 }
             }
-            // delegate below to right children
+            // Delegate below to right children.
             if (delBelow > 0 && fRight != null) {
                 if (fRight.removeChars(fPos2 + range2, delBelow, fPos2 + fRight.fDeltaPos2, false)) {
                     delBelow = 0;
                 }
             }
 
-            // do the adjustments in this node
+            // Do the adjustments in this node.
             fChange -= delAbove + delInside + delBelow;
             fDeltaPos2 -= delAbove;
             fPos1 -= delAbove;
@@ -485,7 +488,7 @@ public class PositionTracker implements IPositionConverter {
             int aboveLeft = -root.fDeltaPos2 - left.fDeltaPos2;
             int leftRoot = left.fDeltaPos2;
 
-            // put under old parent
+            // Put under old parent.
             if (fParent.fLeft == this) {
                 fParent.putLeft(left);
             } else {
@@ -493,7 +496,7 @@ public class PositionTracker implements IPositionConverter {
             }
             left.fDeltaPos2 += rootAbove;
 
-            // change the right node
+            // Change the right node.
             left.putRight(root);
             root.fDeltaPos2 += aboveLeft;
 
@@ -515,7 +518,7 @@ public class PositionTracker implements IPositionConverter {
             int parentRight = -root.fDeltaPos2 - right.fDeltaPos2;
             int rightRoot = right.fDeltaPos2;
 
-            // put under old parent
+            // Put under old parent.
             if (fParent.fRight == this) {
                 fParent.putRight(right);
             } else {
@@ -523,11 +526,11 @@ public class PositionTracker implements IPositionConverter {
             }
             right.fDeltaPos2 += rootAbove;
 
-            // change the left node
+            // Change the left node.
             right.putLeft(root);
             root.fDeltaPos2 += parentRight;
 
-            // change right of left node.
+            // Change right of left node.
             root.putRight(rightLeft);
             if (rightLeft != null) {
                 rightLeft.fDeltaPos2 += rightRoot;

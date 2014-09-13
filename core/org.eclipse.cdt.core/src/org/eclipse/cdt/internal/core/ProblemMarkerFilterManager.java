@@ -1,10 +1,10 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2014 BlackBerry Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- */
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IProblemMarkerFilter;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;

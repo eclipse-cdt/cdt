@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -99,14 +99,19 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
 
     @Override
 	public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {}
+
     @Override
 	public void bufferContentReplaced(IFileBuffer buffer) {}
+
     @Override
 	public void underlyingFileMoved(IFileBuffer buffer, IPath path) {}
+
     @Override
 	public void underlyingFileDeleted(IFileBuffer buffer) {}
+
     @Override
 	public void stateChangeFailed(IFileBuffer buffer) {}
+
     @Override
 	public void stateChanging(IFileBuffer buffer) {}
 
@@ -194,9 +199,6 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
 	public synchronized IPositionConverter findPositionConverter(IFile file, long timestamp) {
         PositionTrackerChain chain= fPositionTrackerMap.get(file.getFullPath());
@@ -206,9 +208,6 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
 	public synchronized IPositionConverter findPositionConverter(IPath externalLocation, long timestamp) {
         PositionTrackerChain chain= fPositionTrackerMap.get(externalLocation);
@@ -218,9 +217,6 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
 	public synchronized IPositionConverter findPositionConverter(ITranslationUnit tu, long timestamp) {
     	IFile file= (IFile) tu.getResource();
@@ -240,9 +236,6 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
     	return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
 	public synchronized IPositionConverter findPositionConverter(URI locationURI, long timestamp) {
     	PositionTrackerChain chain= fPositionTrackerMap.get(locationURI);

@@ -7,7 +7,7 @@
 
     <!-- targets -->
     <target name="makeTestApps" description="Create the binaries for the test applications">    
-            <exec executable="make" dir="${src_dir}" />
+            <exec executable="make" dir="${src_dir}" failifexecutionfails="false"/>
      </target>
 
     <condition property="binDirExists">

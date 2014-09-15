@@ -39,7 +39,7 @@
 					</execution>
 					<execution>
 						<id>prepare</id>
-						<phase>validate</phase>
+						<phase>pre-integration-test</phase>
 						<configuration>
 							<tasks>
 								<ant antfile="TestAppBuilder.xml" target="makeTestApps"/>

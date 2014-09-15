@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -435,11 +436,17 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 * we should first connect to the target.
 	 */
 	@Execute
-	public void stepStartTrackingBreakpoints(RequestMonitor rm) {
+	public void stepStartTrackingBreakpoints(final RequestMonitor rm) {
 		if (fBackend.getSessionType() != SessionType.CORE) {
-			MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
+			final MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
 			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
-			bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+			bpmService.startTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor(rm) {
+				@Override
+				protected void handleSuccess() {
+					bpmService.initTargetFilterForBreakpoints(getContainerContext());
+					rm.done();
+				}
+			});
 		} else {
 			rm.done();
 		}

@@ -1480,17 +1480,25 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
-    	if (e.getDMContext() instanceof IContainerDMContext) {
-        	// Process started, add it to the thread filtering of all breakpoints
-    		IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
-            for (IBreakpoint bp : allBreakpoints) {
-                if (supportsBreakpoint(bp)) {
-           			setTargetFilter((ICBreakpoint)bp, (IContainerDMContext)e.getDMContext());
-            	}
-            }
-    	}
     }  
     
+    /**
+     * This method should be called once when a new process is about to be started.
+     * It will update the filter of all breakpoints to include this new process.
+	 * @since 4.5
+	 */
+    public void initTargetFilterForBreakpoints(IContainerDMContext containerDmc) {
+    	IBreakpointsTargetDMContext targetDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+        final Map<ICBreakpoint,Map<String, Object>> platformBPs = fPlatformBPs.get(targetDmc);
+        if (platformBPs == null) {
+        	assert false;
+            return;
+        }
+
+        for (final ICBreakpoint breakpoint : platformBPs.keySet()) {
+        	setTargetFilter(breakpoint, containerDmc);
+        }
+	}
     
     private void setTargetFilter(ICBreakpoint breakpoint, IContainerDMContext containerDmc) {
     	try {
@@ -1499,7 +1507,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     			// Do this only if there wasn't already an entry, or else we would
     			// erase the content of that previous entry.
     			// This could theoretically happen if the targetFilter is set by
-    			// someone else, before the IStartedDMEvent arrives indicating a new process.
+    			// someone else, before this method is called.
     			// Bug 433339
     			filterExt.setTargetFilter(containerDmc);
     		}

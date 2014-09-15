@@ -269,10 +269,17 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 											// Start tracking breakpoints.
 											new Step() {
 												@Override
-												public void execute(RequestMonitor trackBpRm) {
-													MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+												public void execute(final RequestMonitor trackBpRm) {
+													final MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
 													IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(ctx, IBreakpointsTargetDMContext.class);
-													bpmService.startTrackingBreakpoints(bpTargetDmc, trackBpRm);
+													bpmService.startTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor(trackBpRm) {
+														@Override
+														protected void handleSuccess() {
+															IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
+															bpmService.initTargetFilterForBreakpoints(containerDmc);
+															trackBpRm.done();
+														}
+													});
 												};
 											}
 										};

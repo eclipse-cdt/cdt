@@ -329,10 +329,16 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
                     	// Start tracking this process' breakpoints.
 		                new Step() { 
 		                    @Override
-		                    public void execute(RequestMonitor rm) {
-		                    	MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+		                    public void execute(final RequestMonitor rm) {
+		                    	final MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
 		                    	IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-		                    	bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+		                    	bpmService.startTrackingBreakpoints(bpTargetDmc,  new ImmediateRequestMonitor(rm) {
+									@Override
+									protected void handleSuccess() {
+										bpmService.initTargetFilterForBreakpoints(fContainerDmc);
+										rm.done();
+									}
+								});
 		                    }
 		                },
 		                // Turn on reverse debugging if it was enabled as a launch option

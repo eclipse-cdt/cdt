@@ -16,6 +16,24 @@
       "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b4f2750b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-16T16:20:40Z",
+      "side": 1,
+      "message": "The sleep in the else is enough, but the case I need to fix is the if case.  I thought that it was more robust to put the new sleep on its own and document it.\n\nNot sure how long waitForInstallCountChange delays, but the issue was happening where we wouldn\u0027t wait long enough, so it seems the current delay is not enough.\n\nI also chose 500 as enough, but we\u0027re going to have to wait and see if we still see test failures once in a while.",
+      "parentUuid": "a766b734_142ec993",
+      "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

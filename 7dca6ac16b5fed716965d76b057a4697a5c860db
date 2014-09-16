@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_74b61df5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-09-16T14:57:11Z",
+      "side": 1,
+      "message": "You should add yourself as a contributor",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_545681db",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-09-16T14:57:11Z",
+      "side": 1,
+      "message": "I am not sure the name of the method really reflects what it does. Perhaps something that mentions cpu? ex: supportsCPUInfo() ? isCPUGeometryAvailable()?",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d44f318c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-09-16T14:57:11Z",
+      "side": 1,
+      "message": "Looking at this method, I thought it might have been defined as private. Did you want to keep the option of extending it later?",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f4134d61",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-09-16T14:57:11Z",
+      "side": 1,
+      "message": "The case where the remote session is towards a non-linux target is not distinguished. There is no easy way to know the OS for a remote session, I think? \n\nOTOH there was already a similar case in the existing code where one could use a linux host towards a windows target. So this is probably acceptable.",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

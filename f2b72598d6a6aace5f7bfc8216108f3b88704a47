@@ -52,6 +52,24 @@
       "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3484a562",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-16T16:43:23Z",
+      "side": 1,
+      "message": "I don\u0027t think this will guarantee we will wait long enough.  2500 will be the timeout, not the wait time.  So, if the install count changes very fast, we won\u0027t be delayed long enough.\n\nUnless I misunderstood what you meant?",
+      "parentUuid": "a766b734_b4a43504",
+      "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

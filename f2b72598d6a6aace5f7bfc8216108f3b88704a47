@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_142ec993",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-16T14:13:40Z",
+      "side": 1,
+      "message": "Without looking too deep on this, \nsomething is not quite clear, the if/else statement below seems to already include some delay. In addition, for non pending break points the test is already waiting for waitForInstallCountChange which comes from MIBreakpointsManager..   Shouldn\u0027t this count update be sufficient ?",
+      "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

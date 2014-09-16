@@ -46,7 +46,6 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -533,8 +532,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	@Execute
 	public void stepStartTrackingBreakpoints(final RequestMonitor rm) {
 		MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-		IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
-		bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+		bpmService.startTrackingBpForProcess(getContainerContext(), rm);
 	}
 	
 	/*

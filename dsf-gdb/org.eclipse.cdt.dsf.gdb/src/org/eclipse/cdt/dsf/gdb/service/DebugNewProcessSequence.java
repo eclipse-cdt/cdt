@@ -27,7 +27,6 @@ import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -438,8 +437,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	public void stepStartTrackingBreakpoints(RequestMonitor rm) {
 		if (fBackend.getSessionType() != SessionType.CORE) {
 			MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
-			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
-			bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+			bpmService.startTrackingBpForProcess(getContainerContext(), rm);
 		} else {
 			rm.done();
 		}

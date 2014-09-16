@@ -16,6 +16,24 @@
       "revId": "afe9b10efec48b39c51af40825dc140a7c84db2c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_34a30531",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1490,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-16T15:52:15Z",
+      "side": 1,
+      "message": "Yes, that is another way to go.  I think both are fine.  Your suggestion avoids code duplication though.  I will try it out.\n\nThanks!",
+      "parentUuid": "a766b734_f47fcd1a",
+      "revId": "afe9b10efec48b39c51af40825dc140a7c84db2c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

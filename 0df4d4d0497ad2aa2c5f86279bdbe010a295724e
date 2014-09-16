@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_afa7c291",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/launch/GdbExtendedFinalLaunchSequence_7_7.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-16T19:52:52Z",
+      "side": 1,
+      "message": "So, whenever you pass an RM to another method, that method is responsible for completing it.  This is more of a coding rule, and should be verified not just assumed, but you can see that the implementation of \u0027print\u0027 completes the RM.",
+      "parentUuid": "c7672b30_9af9e977",
+      "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_baf4a57e",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/launch/GdbExtendedFinalLaunchSequence_7_7.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_4fa26e84",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/launch/GdbExtendedFinalLaunchSequence_7_7.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-16T19:52:52Z",
+      "side": 1,
+      "message": "No, the services references don\u0027t need to be disposed, only the services tracker needs to.",
+      "parentUuid": "c7672b30_baf4a57e",
+      "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c7672b30_9ad289fb",
         "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/service/command/GdbExtendedCommandFactory_6_8.java",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2014-09-04T12:17:32Z",
       "side": 1,
       "message": "Whats is up with \\r in this file? I have never seem it before\nAnd other files in the patch does not seem to have this issue",
+      "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_8fac8677",
+        "filename": "dsf-gdb/org.eclipse.cdt.examples.dsf.gdb/src/org/eclipse/cdt/examples/dsf/gdb/service/command/GdbExtendedCommandFactory_6_8.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-16T19:52:52Z",
+      "side": 1,
+      "message": "Weird.  Thanks for noticing.  I\u0027ll fix that.",
+      "parentUuid": "c7672b30_9ad289fb",
       "revId": "0df4d4d0497ad2aa2c5f86279bdbe010a295724e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

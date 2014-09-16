@@ -322,6 +322,14 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
 		Assert.assertTrue(miBpts.length == 1);
 		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
 		Assert.assertTrue(getPlatformBreakpointCount() == 1);
+		
+		// Give a little delay to allow queued Executor operations
+		// to complete before deleting the breakpoint again.
+		// If we don't we may delete it so fast that the MIBreakpointsManager
+		// has not yet updated its data structures
+		// Bug 438934 comment 10
+		Thread.sleep(500);
+
 		plBpt = findPlatformBreakpoint(type, attributes);
 		Assert.assertTrue(plBpt instanceof CBreakpoint);
 		if (!miBpts[0].isPending()) {

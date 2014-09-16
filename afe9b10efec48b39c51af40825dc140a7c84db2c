@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_f47fcd1a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1490,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-09-16T15:34:47Z",
+      "side": 1,
+      "message": "Can we just add a utility method as wrapper around \"startTrackingBreakpoints()\" that accepts IContainerDMContext as parameter instead of this method? Unless you think that \"initTargetFilterForBreakpoints()\" can be used somewhere else.",
+      "revId": "afe9b10efec48b39c51af40825dc140a7c84db2c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -928,8 +928,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    					public void execute(RequestMonitor rm) {
 								// Start tracking breakpoints.
 								MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-								IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(fContainerDmc, IBreakpointsTargetDMContext.class);
-								bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
+								bpmService.startTrackingBpForProcess(fContainerDmc, rm);
 	    					}
 	    				},
 	    				// Turn on reverse debugging if it was enabled as a launch option

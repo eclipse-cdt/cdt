@@ -346,6 +346,38 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // IBreakpointsManager
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Wrapper around startTrackingBreakpoints() which accepts a containerDmc and sets
+     * each breakpoints filter to include that container.  This method should be called
+     * instead of startTrackingBreakpoints()
+     * 
+     * @param containerDmc The container to be added in the bp filter.  This container
+     *                     must have the proper IBreakpointsTargetDMContext in its hierarchy.
+     * 
+	 * @since 4.6
+	 */
+    public void startTrackingBpForProcess(final IContainerDMContext containerDmc, final RequestMonitor rm) {
+    	final IBreakpointsTargetDMContext targetBpDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+    	
+    	startTrackingBreakpoints(targetBpDmc, new ImmediateRequestMonitor(rm) {
+    		@Override
+    		protected void handleSuccess() {
+    	        final Map<ICBreakpoint,Map<String, Object>> platformBPs = fPlatformBPs.get(targetBpDmc);
+    	        if (platformBPs == null) {
+    	        	assert false;
+    	            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Missing bp target context", null)); //$NON-NLS-1$
+    	            return;
+    	        }
+
+    	        for (final ICBreakpoint breakpoint : platformBPs.keySet()) {
+    	        	setTargetFilter(breakpoint, containerDmc);
+    	        }
+    	        
+    	        rm.done();
+    		}
+    	});
+    }
+    
     //-------------------------------------------------------------------------
     // startTrackingBreakpoints
     //-------------------------------------------------------------------------
@@ -1480,15 +1512,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     @DsfServiceEventHandler
     public void eventDispatched(IStartedDMEvent e) {
-    	if (e.getDMContext() instanceof IContainerDMContext) {
-        	// Process started, add it to the thread filtering of all breakpoints
-    		IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
-            for (IBreakpoint bp : allBreakpoints) {
-                if (supportsBreakpoint(bp)) {
-           			setTargetFilter((ICBreakpoint)bp, (IContainerDMContext)e.getDMContext());
-            	}
-            }
-    	}
     }  
     
     
@@ -1499,7 +1522,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     			// Do this only if there wasn't already an entry, or else we would
     			// erase the content of that previous entry.
     			// This could theoretically happen if the targetFilter is set by
-    			// someone else, before the IStartedDMEvent arrives indicating a new process.
+    			// someone else, before this method is called.
     			// Bug 433339
     			filterExt.setTargetFilter(containerDmc);
     		}

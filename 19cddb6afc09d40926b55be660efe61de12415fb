@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_1e442a1d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/TestAppBuilder.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-16T01:13:57Z",
+      "side": 1,
+      "message": "Good to know this, \nI found the reference for it at:\n\nhttps://ant.apache.org/manual/Tasks/exec.html",
+      "revId": "19cddb6afc09d40926b55be660efe61de12415fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_5ec182fa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-16T01:13:57Z",
+      "side": 1,
+      "message": "Make sense !!",
+      "revId": "19cddb6afc09d40926b55be660efe61de12415fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -10,10 +10,14 @@
  *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 434889
+ *     Teodor Madan (Freescale) - Activate multicore visualizer on non-linux hosts for remote case
+ *     
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,6 +79,15 @@ import org.osgi.framework.BundleContext;
  * @since 4.1
  */
 public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardwareAndOS2, ICachingService {
+
+	static String sTempFolder;
+	static {
+		try {
+			sTempFolder = Files.createTempDirectory(GdbPlugin.PLUGIN_ID).toString() + '/';
+		} catch (IOException | IllegalArgumentException | UnsupportedOperationException  e ) {
+			sTempFolder = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
+		}
+	}
 
 	@Immutable
 	protected static class GDBCPUDMC extends AbstractDMContext 
@@ -311,7 +324,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 			return;
 		}
 
-		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+		if (supportsProcPseudoFS()) {
 			fFetchCPUInfoCache.execute(
 				new MIMetaGetCPUInfo(fCommandControl.getContext()),
 				new ImmediateDataRequestMonitor<MIMetaGetCPUInfoInfo>() {
@@ -326,6 +339,21 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		}
 	}
 
+	/**
+	 * @return true if supports fetching OS info from /proc pseudo-filesystem
+	 */
+	private boolean supportsProcPseudoFS() {
+		if (Platform.getOS().equals(Platform.OS_LINUX))
+			return true;
+
+		// for non-linux platform, support only remote (linux? ) targets 
+		if (SessionType.REMOTE == fBackend.getSessionType()) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void getCores(IDMContext dmc, final DataRequestMonitor<ICoreDMContext[]> rm) {
 		if (!fSessionInitializationComplete) {
@@ -338,7 +366,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 			// Get the cores under this particular CPU
 			final ICPUDMContext cpuDmc = (ICPUDMContext)dmc;
 			
-			if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			if (supportsProcPseudoFS()) {
 				fFetchCPUInfoCache.execute(
 						new MIMetaGetCPUInfo(fCommandControl.getContext()),
 						new ImmediateDataRequestMonitor<MIMetaGetCPUInfoInfo>() {
@@ -461,7 +489,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	    		if (fBackend.getSessionType() == SessionType.REMOTE) {
 	    			// Ask GDB to fetch /proc/cpuinfo from the remote target, and then we parse it.
 	    			String remoteFile = "/proc/cpuinfo"; //$NON-NLS-1$
-	    			final String localFile = "/tmp/" + GdbPlugin.PLUGIN_ID + ".cpuinfo." + getSession().getId(); //$NON-NLS-1$ //$NON-NLS-2$
+	    			final String localFile = sTempFolder + "proc.cpuinfo." + getSession().getId(); //$NON-NLS-1$
 	    			fCommandControl.queueCommand(
 	    					fCommandFactory.createCLIRemoteGet(dmc, remoteFile, localFile),
 	    					new ImmediateDataRequestMonitor<MIInfo>(rm) {
@@ -614,7 +642,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		assert (LOAD_CACHE_LIFETIME >= LOAD_SAMPLE_DELAY);
 		
 		// This way of computing the CPU load is only applicable to Linux
-		if (!Platform.getOS().equals(Platform.OS_LINUX)) {
+		if (!supportsProcPseudoFS()) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
 			return;
 		}
@@ -646,7 +674,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		final ProcStatParser procStatParser = new ProcStatParser();
         final ICommandControlDMContext dmc = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
         final String statFile = "/proc/stat"; //$NON-NLS-1$
-        final String localFile = "/tmp/" + GdbPlugin.PLUGIN_ID + ".proc.stat." + getSession().getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        final String localFile = sTempFolder + "proc.stat." + getSession().getId(); //$NON-NLS-1$
         
         // Remote debugging? We will ask GDB to get us the /proc/stat file from target, twice, with a delay between.
         if (fBackend.getSessionType() == SessionType.REMOTE) {

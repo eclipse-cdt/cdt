@@ -1890,6 +1890,11 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         		results.add("0"); //$NON-NLS-1$    
         		return results;
         	}
+        	
+        	if (threads.isEmpty()) {
+    			results.add("0"); //$NON-NLS-1$    
+    			return results;
+    		}
 
         	for (IExecutionDMContext[] targetThreads : threads) {
         		if (targetThreads != null) {

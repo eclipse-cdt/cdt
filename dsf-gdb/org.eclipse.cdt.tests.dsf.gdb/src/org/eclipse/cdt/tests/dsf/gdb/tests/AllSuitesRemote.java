@@ -21,6 +21,7 @@ import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4.Suite_Remote_7_4;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.Suite_Remote_7_5;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6.Suite_Remote_7_6;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_7.Suite_Remote_7_7;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_8.Suite_Remote_7_8;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -35,6 +36,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	Suite_Remote_7_8.class,
 	Suite_Remote_7_7.class,
 	Suite_Remote_7_6.class,
 	Suite_Remote_7_5.class,

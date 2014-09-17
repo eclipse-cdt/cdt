@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_ca094c39",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-09-17T10:37:24Z",
+      "side": 1,
+      "message": "I have renamed to \"supportsProcPseudoFS\" as not just CPU info is read, but proc stats as well.",
+      "parentUuid": "a766b734_545681db",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_d44f318c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 2
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_2fd9f29c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-09-17T10:37:24Z",
+      "side": 1,
+      "message": "You are right. No need to create a public API without an immediate consumer.",
+      "parentUuid": "a766b734_d44f318c",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_f4134d61",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 2
@@ -64,6 +100,24 @@
       "writtenOn": "2014-09-16T14:57:11Z",
       "side": 1,
       "message": "The case where the remote session is towards a non-linux target is not distinguished. There is no easy way to know the OS for a remote session, I think? \n\nOTOH there was already a similar case in the existing code where one could use a linux host towards a windows target. So this is probably acceptable.",
+      "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0afea4a0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-09-17T10:37:24Z",
+      "side": 1,
+      "message": "AFAIK, there is no other precedence for such check.",
+      "parentUuid": "a766b734_f4134d61",
       "revId": "7dca6ac16b5fed716965d76b057a4697a5c860db",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

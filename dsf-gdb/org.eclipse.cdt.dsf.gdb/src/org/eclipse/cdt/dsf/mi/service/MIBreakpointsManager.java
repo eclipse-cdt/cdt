@@ -1853,18 +1853,15 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         	List<IExecutionDMContext[]> threads = new ArrayList<IExecutionDMContext[]>(1);
 
         	try {
-        		// Retrieve the targets
+        		// Retrieve all existing targets.
+        		// Note that these targets can be from different debugging sessions since
+        		// they are associated with the platform breakpoint.
         		IDsfBreakpointExtension filterExtension = getFilterExtension(breakpoint);
         		IContainerDMContext[] procTargets = filterExtension.getTargetFilters();
 
-        		// If no target is present, breakpoint applies to all.
-        		if (procTargets.length == 0) {
-        			results.add("0"); //$NON-NLS-1$    
-        			return results;
-        		}
-
-        		// Extract the thread IDs (if there is none, we are covered)
+        		// Extract the thread IDs
         		for (IContainerDMContext procDmc : procTargets) {
+        			// Look for a target/process that belongs to our session
         			if (procDmc.equals(bpTargetDmc) || DMContexts.isAncestorOf(procDmc, bpTargetDmc)) {
         				IExecutionDMContext[] threadFilters = filterExtension.getThreadFilters(procDmc);
         				if (threadFilters == null) {
@@ -1890,6 +1887,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         		results.add("0"); //$NON-NLS-1$    
         		return results;
         	}
+        	
+        	// If there are no threads to filter on, it means the bp applies to the entire process.
+        	if (threads.isEmpty()) {
+    			results.add("0"); //$NON-NLS-1$    
+    			return results;
+    		}
 
         	for (IExecutionDMContext[] targetThreads : threads) {
         		if (targetThreads != null) {

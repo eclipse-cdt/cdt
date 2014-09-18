@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
-import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.commands.AbstractHandler;
@@ -32,6 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchMode;
@@ -61,49 +60,57 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
-					LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
-					ILaunchDescriptor desc = launchBarManager.getActiveLaunchDescriptor();
-					ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
-					ILaunchConfiguration config = launchBarManager.getLaunchConfiguration(desc, target);
+					final LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
+					final ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
 
-					Collection<IProject> projects = getProjects(config);
+					final Collection<IProject> projects = getProjects(config);
 					if (BuildAction.isSaveAllSet()) {
 						saveEditors(projects);
 					}
 
-					if (config == null) {
-						// Default, build the workspace
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
-						return Status.OK_STATUS;
-					}
-
-					ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
-					String mode = launchMode.getIdentifier();
-					Set<String> modes = new HashSet<>();
-					modes.add(mode);
-					ILaunchDelegate delegate = config.getType().getPreferredDelegate(modes);
-					if (delegate == null)
-						delegate = config.getType().getDelegates(modes)[0];
-					ILaunchConfigurationDelegate configDel = delegate.getDelegate();
-					if (configDel instanceof ILaunchConfigurationDelegate2) {
-						ILaunchConfigurationDelegate2 configDel2 = (ILaunchConfigurationDelegate2)configDel;
-						boolean ret;
-						ret = configDel2.preLaunchCheck(config, mode, monitor);
-						if (!ret)
-							return Status.CANCEL_STATUS;
-						if (!configDel2.buildForLaunch(config, mode, monitor))
-							return Status.OK_STATUS;
-					}
-
-					// Fall through, do a normal build
-					if (projects.isEmpty()) {
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
-					} else {
-						Collection<IBuildConfiguration> buildConfigs = getBuildConfigs(projects);
-						ResourcesPlugin.getWorkspace().build(buildConfigs.toArray(new IBuildConfiguration[buildConfigs.size()]),
-								IncrementalProjectBuilder.INCREMENTAL_BUILD, true, monitor);
-						// TODO, may need to get the buildReferences argument from the descriptor
-					}
+					new Job("Building Active Configuration") {
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								if (config == null) {
+									// Default, build the workspace
+									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+									return Status.OK_STATUS;
+								}
+	
+								ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
+								String mode = launchMode.getIdentifier();
+								Set<String> modes = new HashSet<>();
+								modes.add(mode);
+								ILaunchDelegate delegate = config.getType().getPreferredDelegate(modes);
+								if (delegate == null)
+									delegate = config.getType().getDelegates(modes)[0];
+								ILaunchConfigurationDelegate configDel = delegate.getDelegate();
+								if (configDel instanceof ILaunchConfigurationDelegate2) {
+									ILaunchConfigurationDelegate2 configDel2 = (ILaunchConfigurationDelegate2)configDel;
+									boolean ret;
+									ret = configDel2.preLaunchCheck(config, mode, monitor);
+									if (!ret)
+										return Status.CANCEL_STATUS;
+									if (!configDel2.buildForLaunch(config, mode, monitor))
+										return Status.OK_STATUS;
+								}
+	
+								// Fall through, do a normal build
+								if (projects.isEmpty()) {
+									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+								} else {
+									Collection<IBuildConfiguration> buildConfigs = getBuildConfigs(projects);
+									ResourcesPlugin.getWorkspace().build(buildConfigs.toArray(new IBuildConfiguration[buildConfigs.size()]),
+											IncrementalProjectBuilder.INCREMENTAL_BUILD, true, monitor);
+									// TODO, may need to get the buildReferences argument from the descriptor
+								}
+								return Status.OK_STATUS;
+							} catch (CoreException e) {
+								return e.getStatus();
+							}
+						}
+					}.schedule();
 				} catch (CoreException e) {
 					return e.getStatus();
 				}

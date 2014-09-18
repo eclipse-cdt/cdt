@@ -1031,15 +1031,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return rc;
 	}
 
-	// Method to translate paths to various commands to their remote counter-parts
-	private IPath getRemotePath(IPath path) {
-		IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
-		if (remRes != null) {
-			return RemoteCommandLauncher.makeRemote(path, remRes);
-		}
-		return path;
-	}
-	
 	// Method to get the Win OS Type to distinguish between Cygwin and MingW
 	private String getWinOSType() {
 		if (winOSType.equals("")) {
@@ -1137,11 +1128,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		boolean removePWD = false;
 		
 		removeAllMarkers(project);
-		
-		// Convert the command path if we have an absolute path and we are executing this remotely
-		if (commandPath.isAbsolute())
-			commandPath = getRemotePath(commandPath);
-		
+
 		// We want to run the script via the shell command.  So, we add the command
 		// script as the first argument and expect "sh" to be on the runtime path.
 		// Any other arguments are placed after the script name.

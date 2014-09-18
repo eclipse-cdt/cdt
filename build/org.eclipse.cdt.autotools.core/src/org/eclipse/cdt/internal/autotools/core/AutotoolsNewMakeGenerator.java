@@ -1137,11 +1137,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		boolean removePWD = false;
 		
 		removeAllMarkers(project);
-		
-		// Convert the command path if we have an absolute path and we are executing this remotely
-		if (commandPath.isAbsolute())
-			commandPath = getRemotePath(commandPath);
-		
+
 		// We want to run the script via the shell command.  So, we add the command
 		// script as the first argument and expect "sh" to be on the runtime path.
 		// Any other arguments are placed after the script name.

@@ -118,7 +118,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 		String[] args = new String[1 + commandArgs.length];
 		args[0] = makeRemote(command, remote);
 		for (int i = 0; i < commandArgs.length; i++) {
-			args[i + 1] = makeRemote(commandArgs[i], remote);
+			args[i + 1] = commandArgs[i];
 		}
 		return args;
 	}

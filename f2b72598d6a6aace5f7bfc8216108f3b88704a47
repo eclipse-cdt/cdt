@@ -70,6 +70,23 @@
       "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a0606f2a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-18T13:52:47Z",
+      "side": 1,
+      "message": "This makes sense to me now !",
+      "revId": "f2b72598d6a6aace5f7bfc8216108f3b88704a47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

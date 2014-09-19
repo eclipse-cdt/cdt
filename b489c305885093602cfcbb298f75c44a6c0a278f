@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_6c6bf110",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-09-19T18:17:07Z",
+      "side": 1,
+      "message": "Perhaps it would be better to synchronize only on fExtensions? I generally prefer to lock with more granularity because it\u0027s more explicit and it doesn\u0027t lock unrelated methods. What do you think?",
+      "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

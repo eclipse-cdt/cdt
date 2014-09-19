@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Must synchronized creation of breakpoint creation (Bug 442394) 
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
@@ -280,7 +281,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint2, I
 	 * @throws CoreException Throws exception in case the breakpoint marker 
 	 * cannot be accessed.
 	 */
-	private ICBreakpointExtension[] getExtensionsForModelId(String debugModelId) throws CoreException {
+	private synchronized ICBreakpointExtension[] getExtensionsForModelId(String debugModelId) throws CoreException {
         if (!fExtensions.containsKey(debugModelId)) {
     	    // Check to make sure that a marker is present.  Extensions can only be created
     	    // once the marker type is known.

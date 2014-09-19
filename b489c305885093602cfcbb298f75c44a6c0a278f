@@ -69,6 +69,24 @@
       "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4fa547b5",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-09-19T20:30:35Z",
+      "side": 1,
+      "message": "I should have asked the question differently: do we really need lazy loading in this case? :)\nThis synchronized method will be called every time when clients request access to a breakpoint extension. Not sure that it is better from the performance point of view than loading extensions on startup.",
+      "parentUuid": "a766b734_4f7387d8",
+      "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

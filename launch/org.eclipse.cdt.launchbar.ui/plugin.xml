@@ -13,17 +13,24 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.cdt.launchbar.ui.category.launchBar"
+            name="Launch Bar">
+      </category>
       <command
+            categoryId="org.eclipse.cdt.launchbar.ui.category.launchBar"
             defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.BuildActiveCommandHandler"
             id="org.eclipse.cdt.launchbar.ui.command.buildActive"
-            name="Build Active Configuration">
+            name="Build for Active Launch Configuration">
       </command>
       <command
+            categoryId="org.eclipse.cdt.launchbar.ui.category.launchBar"
             defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.LaunchActiveCommandHandler"
             id="org.eclipse.cdt.launchbar.ui.command.launchActive"
             name="Launch Active Configuration">
       </command>
       <command
+            categoryId="org.eclipse.cdt.launchbar.ui.category.launchBar"
             defaultHandler="org.eclipse.cdt.launchbar.ui.internal.commands.StopActiveCommandHandler"
             id="org.eclipse.cdt.launchbar.ui.command.stop"
             name="Stop">

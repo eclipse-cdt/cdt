@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_cf1af774",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-09-19T21:00:22Z",
+      "side": 1,
+      "message": "Adding another check if (!fExtensions.containsKey(debugModelId)) before the synchronized block would make the code more efficient. In most cases, extensions are already created, there is no need to go through the synchronized code.",
+      "revId": "0c61af00952e38f33d61f536ecc2a2f7fe68b93f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

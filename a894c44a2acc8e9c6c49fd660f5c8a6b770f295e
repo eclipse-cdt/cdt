@@ -122,6 +122,24 @@
       "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_cccb251a",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IRegisters2.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-19T14:46:50Z",
+      "side": 1,
+      "message": "Looking at the code, the most important aspect of findTargetRegisterGroup() is to be able to get the list of all registers.\n\nWe can do that by using IRegisters.getRegisters() and passing in the ICommandControlDMC.  The service can then figure out that if someone is asking for the registers of GDB itself, it should return all of them.\n\nThere will be a couple of other things needed to be adapted, but I believe we should be able to do that.\n\nIf we feel this behaviour of IRegisters.getRegisters() makes sense in general, we should document it in the javadoc.  If not, may want to code that in a DSF-GDB UI class instead of in DSF.  But we can look at that after we know this proposal works.",
+      "parentUuid": "c7672b30_45d96469",
+      "revId": "a894c44a2acc8e9c6c49fd660f5c8a6b770f295e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

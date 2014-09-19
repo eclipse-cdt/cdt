@@ -16,6 +16,23 @@
       "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ef1a53a1",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-09-19T19:45:39Z",
+      "side": 1,
+      "message": "Why do we need to initialize the extensions map here? Wouldn\u0027t it better to do it when the org.eclipse.cdt.debug.core plugin starts?",
+      "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

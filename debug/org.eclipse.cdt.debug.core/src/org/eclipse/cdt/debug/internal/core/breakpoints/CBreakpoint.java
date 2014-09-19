@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Must synchronized creation of breakpoint creation (Bug 444395) 
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
@@ -281,43 +282,49 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint2, I
 	 * cannot be accessed.
 	 */
 	private ICBreakpointExtension[] getExtensionsForModelId(String debugModelId) throws CoreException {
-        if (!fExtensions.containsKey(debugModelId)) {
-    	    // Check to make sure that a marker is present.  Extensions can only be created
-    	    // once the marker type is known.
-    	    IMarker marker = ensureMarker();
-    
-    	    // Read the extension registry and create applicable extensions.
-    	    List<ICBreakpointExtension> extensions = new ArrayList<ICBreakpointExtension>(4);
-            IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.BREAKPOINT_EXTENSION_EXTENSION_POINT_ID);
-            IConfigurationElement[] elements = ep.getConfigurationElements();
-            for (int i= 0; i < elements.length; i++) {
-                if ( elements[i].getName().equals(CDebugCorePlugin.BREAKPOINT_EXTENSION_ELEMENT) ) {
-                    String elementDebugModelId = elements[i].getAttribute("debugModelId"); //$NON-NLS-1$
-                    String elementMarkerType = elements[i].getAttribute("markerType"); //$NON-NLS-1$
-                    if (elementDebugModelId == null) {
-                        CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$ 
-                    } else if (elementMarkerType == null){
-                        CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: debugModelId", null)); //$NON-NLS-1$ //$NON-NLS-2$
-                    } else if ( debugModelId.equals(elementDebugModelId) && marker.isSubtypeOf(elementMarkerType)) { 
-                        String className = elements[i].getAttribute("class"); //$NON-NLS-1$
-                        if (className == null){
-                            CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: className", null)); //$NON-NLS-1$ //$NON-NLS-2$
-                        } else {
-                            ICBreakpointExtension extension;
-                            try {
-                                extension = (ICBreakpointExtension)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
-                                extension.initialize(this);
-                                extensions.add(extension);
-                            } catch (CoreException e) {
-                                CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " contains an invalid value for attribute: className", e)); //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                        }
-                    }
-                }
-            }	
-            fExtensions.put(debugModelId, extensions.toArray(new ICBreakpointExtension[extensions.size()]));
-	    }        
-        return fExtensions.get(debugModelId);
+		// Check outside the synchronized lock for efficiency
+		if (!fExtensions.containsKey(debugModelId)) {
+			synchronized (fExtensions) {
+				// Must check again within the synchronized block, in case things were changed by another thread.
+				if (!fExtensions.containsKey(debugModelId)) {
+					// Check to make sure that a marker is present.  Extensions can only be created
+					// once the marker type is known.
+					IMarker marker = ensureMarker();
+
+					// Read the extension registry and create applicable extensions.
+					List<ICBreakpointExtension> extensions = new ArrayList<ICBreakpointExtension>(4);
+					IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.BREAKPOINT_EXTENSION_EXTENSION_POINT_ID);
+					IConfigurationElement[] elements = ep.getConfigurationElements();
+					for (int i= 0; i < elements.length; i++) {
+						if ( elements[i].getName().equals(CDebugCorePlugin.BREAKPOINT_EXTENSION_ELEMENT) ) {
+							String elementDebugModelId = elements[i].getAttribute("debugModelId"); //$NON-NLS-1$
+							String elementMarkerType = elements[i].getAttribute("markerType"); //$NON-NLS-1$
+							if (elementDebugModelId == null) {
+								CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$ 
+							} else if (elementMarkerType == null){
+								CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: debugModelId", null)); //$NON-NLS-1$ //$NON-NLS-2$
+							} else if ( debugModelId.equals(elementDebugModelId) && marker.isSubtypeOf(elementMarkerType)) { 
+								String className = elements[i].getAttribute("class"); //$NON-NLS-1$
+								if (className == null){
+									CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: className", null)); //$NON-NLS-1$ //$NON-NLS-2$
+								} else {
+									ICBreakpointExtension extension;
+									try {
+										extension = (ICBreakpointExtension)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+										extension.initialize(this);
+										extensions.add(extension);
+									} catch (CoreException e) {
+										CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " contains an invalid value for attribute: className", e)); //$NON-NLS-1$ //$NON-NLS-2$
+									}
+								}
+							}
+						}
+					}	
+					fExtensions.put(debugModelId, extensions.toArray(new ICBreakpointExtension[extensions.size()]));
+				}        
+			}
+		}
+		return fExtensions.get(debugModelId);
 	}
 
     @Override

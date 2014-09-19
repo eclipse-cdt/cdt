@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_ef653310",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-19T19:56:22Z",
+      "side": 1,
+      "message": "Better.  I will post a new patch.",
+      "parentUuid": "a766b734_6c6bf110",
+      "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_ef1a53a1",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-09-19T19:45:39Z",
       "side": 1,
       "message": "Why do we need to initialize the extensions map here? Wouldn\u0027t it better to do it when the org.eclipse.cdt.debug.core plugin starts?",
+      "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4f7387d8",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-19T19:56:22Z",
+      "side": 1,
+      "message": "Looking at the javadoc of ICBreakpointExtension it is to support lazy loading:\n\n\"The \u003ccode\u003eICBreakpoint\u003c/code\u003e implementation instantiates breakpoint extensions registered for its specific marker type when a client requests extensions for a given debug model type.  Thus the extension classes and plugins that declare them are not loaded unless requested by a client.\"",
+      "parentUuid": "a766b734_ef1a53a1",
       "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

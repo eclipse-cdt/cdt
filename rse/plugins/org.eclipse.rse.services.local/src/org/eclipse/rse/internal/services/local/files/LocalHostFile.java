@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [294521] Local "hidden" files and folders are always shown
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  * David McKnight   (IBM)        - [431060][local] RSE performance over local network drives are suboptimal
+ * David McKnight   (IBM)        - [444621][local]need ability to disable local natives
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -67,7 +68,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	}
 	
 	private void fetchInfo() {
-		if (LocalFileNativesManager.isUsingNatives()) {
+		if (LocalFileService.isUsingNatives()) {
 			_info = LocalFileNativesManager.fetchFileInfo(_file.getAbsolutePath());
 			//natives don't set the file name on all platforms
 			if (_info.getName().length() == 0) {
@@ -241,7 +242,7 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	}
 
 	private boolean needsQuery(){
-		if (LocalFileNativesManager.isUsingNatives() && _needsQuery){
+		if (LocalFileService.isUsingNatives() && _needsQuery){
 			return true;
 		}
 		long t = System.currentTimeMillis();

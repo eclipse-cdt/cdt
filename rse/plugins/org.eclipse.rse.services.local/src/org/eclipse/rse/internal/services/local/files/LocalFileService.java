@@ -56,6 +56,7 @@
  * David McKnight   (IBM)        - [422508] Unable to map A:\ and B:\ as selectable drives in RSE View
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  * David McKnight   (IBM)        - [431060][local] RSE performance over local network drives are suboptimal
+ * David McKnight   (IBM)        - [444621][local]need ability to disable local natives
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -163,6 +164,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	private boolean _isWin95 = false;
 	private boolean _isWinNT = false;
 	private String  _osCmdShell = null;
+	private static boolean _disableLocalNatives = false;
 	
 	private boolean _getParentCanonicalPath = false;
 
@@ -175,6 +177,15 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		if (getParentCanonicalPathStr != null){
 			try {
 				_getParentCanonicalPath = Boolean.parseBoolean(getParentCanonicalPathStr);
+			}
+			catch (Exception e){				
+			}
+		}
+		
+		String disableLocalNatives = System.getProperty("disable.local.natives");  //$NON-NLS-1$
+		if (disableLocalNatives != null){
+			try {
+				_disableLocalNatives = Boolean.parseBoolean(disableLocalNatives);
 			}
 			catch (Exception e){				
 			}
@@ -240,9 +251,20 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			File entry = new File(dir, name);
 			FileInfo info = fetchInfo(entry);
 			
-			if (info.exists()) {
-				boolean isDirectory = info.isDirectory();
-				boolean isFile = !isDirectory;
+			boolean isDirectory = false;
+			boolean isFile = true;
+			boolean exists = false;
+			if (info != null && info.exists()) {
+				exists = true;
+				isDirectory = info.isDirectory();
+				isFile = !isDirectory;
+			}
+			else if (entry.exists()){
+				exists = true;
+				isDirectory = entry.isDirectory();
+				isFile = !isDirectory;
+			}
+			if (exists){
 				if (isFile) {
 					result = _matcher.matches(name);
 				} else if (isDirectory) {
@@ -251,6 +273,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 					}
 				}
 			}
+	
 			return result;
 		}
 
@@ -742,12 +765,21 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter, type);
 		File localParent = new File(remoteParent);
 		FileInfo parentInfo = fetchInfo(localParent);
-		
+	
 		boolean isArchive = false;
 		boolean isVirtual = false;
-		boolean parentExists = parentInfo.exists();
+		boolean parentExists = true;
+		boolean parentIsDirectory = true;
+		if (parentInfo != null){
+			parentExists = parentInfo.exists();
+			parentIsDirectory = parentInfo.isDirectory();
+		}
+		else {
+			parentExists = localParent.exists();
+			parentIsDirectory = localParent.isDirectory();
+		}
 		if (parentExists) {
-			if (!parentInfo.isDirectory()) {
+			if (!parentIsDirectory) {
 				isArchive = ArchiveHandlerManager.getInstance().isArchive(localParent);
 			}
 			// if the system type is Windows, we get the canonical path so that we have the correct case in the path
@@ -819,7 +851,14 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				File file = files[i];
 				FileInfo info = fetchInfo(file);
 				
-				boolean isDirectory = info.isDirectory();
+				boolean isDirectory = false;
+				
+				if (info != null){
+					isDirectory = info.isDirectory();
+				}
+				else {
+					isDirectory = file.isDirectory(); 
+				}
 				boolean isFile = !isDirectory;
 				if (isDirectory)
 				{
@@ -842,7 +881,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 						results.add(new LocalHostFile(file, false, info));
 					}
 				}
-				else if (info.exists())
+				else if (info != null && info.exists())
 				{
 					results.add(new LocalHostFile(file, false, info));
 				}
@@ -852,7 +891,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	}
 	
 	private FileInfo fetchInfo(File file) {
-		if (LocalFileNativesManager.isUsingNatives()) {
+		if (isUsingNatives()) {
 			FileInfo info = LocalFileNativesManager.fetchFileInfo(file.getAbsolutePath());
 			//natives don't set the file name on all platforms
 			if (info.getName().length() == 0) {
@@ -863,6 +902,15 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			return info;
 		}
 		return null;
+	}
+	
+	public static boolean isUsingNatives(){
+		if (_disableLocalNatives){
+			return false;
+		}
+		else {
+			return LocalFileNativesManager.isUsingNatives();
+		}
 	}
 
 	public IHostFile getUserHome()

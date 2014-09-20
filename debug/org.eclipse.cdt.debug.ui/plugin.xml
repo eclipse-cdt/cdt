@@ -1888,7 +1888,9 @@
             <enablement>
             <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
             <or>
-               <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
+               <test
+                     forcePluginActivation="true"
+                     property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
                <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
                <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />
                <with variable="selection">

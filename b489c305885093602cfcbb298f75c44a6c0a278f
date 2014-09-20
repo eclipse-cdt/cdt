@@ -87,6 +87,24 @@
       "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_cffcb7e7",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-20T23:58:00Z",
+      "side": 1,
+      "message": "I guess that with the change suggested by Marc-Andre and implemented in patchset 3, plus your suggestion that I will add in a new patchset, we will get the best of both worlds.",
+      "parentUuid": "a766b734_4fa547b5",
+      "revId": "b489c305885093602cfcbb298f75c44a6c0a278f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

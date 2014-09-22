@@ -60,6 +60,7 @@ public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IReso
 						} else if ((kind & IResourceDelta.REMOVED) != 0) {
 							manager.launchObjectRemoved(project);
 						} else if ((kind & IResourceDelta.CHANGED) != 0) {
+							// TODO may need to be more concise as to what changes we're looking for
 							manager.launchObjectChanged(project);
 						}
 						return false;

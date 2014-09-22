@@ -423,14 +423,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		}
 	}
 
-	private void addDescriptor(Object element, ILaunchDescriptor descriptor) throws CoreException {
+	private void addDescriptor(Object launchObject, ILaunchDescriptor descriptor) throws CoreException {
 		descriptors.put(getDescriptorId(descriptor), descriptor);
-		objectDescriptorMap.put(element, descriptor);
+		objectDescriptorMap.put(launchObject, descriptor);
 		setActiveLaunchDescriptor(descriptor);
 	}
 
-	private void removeDescriptor(Object element, ILaunchDescriptor descriptor) throws CoreException {
-		objectDescriptorMap.remove(element); // remove launch object unconditionally
+	private void removeDescriptor(Object launchObject, ILaunchDescriptor descriptor) throws CoreException {
+		objectDescriptorMap.remove(launchObject); // remove launch object unconditionally
 		if (descriptor != null) {
 			descriptors.remove(getDescriptorId(descriptor));
 			if (descriptor.equals(activeLaunchDesc)) {
@@ -527,38 +527,68 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		return null;
 	}
 
-	@Override
-	public ILaunchDescriptor launchObjectAdded(Object element) {
-		Activator.trace("launch object added " + element);
-		ILaunchDescriptor desc = objectDescriptorMap.get(element);
-		if (desc != null)
-			return desc;
-
+	private ILaunchDescriptorType ownsLaunchObject(Object launchObject) throws CoreException {
 		// TODO use enablement to find out what descriptor types to ask
 		// to prevent unnecessary plug-in loading
 		for (LaunchDescriptorTypeInfo descriptorInfo : orderedDescriptorTypes) {
-			try {
-				ILaunchDescriptorType descriptorType = descriptorInfo.getType();
-				if (descriptorType.ownsLaunchObject(element)) {
-					desc = descriptorType.getDescriptor(element);
-					if (desc != null) {
-						addDescriptor(element, desc);
-						return desc;
-					}
-					break;
-				}
-			} catch (CoreException e) {
-				Activator.log(e.getStatus());
+			ILaunchDescriptorType descriptorType = descriptorInfo.getType();
+			if (descriptorType.ownsLaunchObject(launchObject)) {
+				return descriptorType;
 			}
 		}
 		return null;
 	}
+	
+	@Override
+	public ILaunchDescriptor launchObjectAdded(Object launchObject) {
+		Activator.trace("launch object added " + launchObject);
+		ILaunchDescriptor desc = objectDescriptorMap.get(launchObject);
+		if (desc != null)
+			return desc;
+
+		try {
+			ILaunchDescriptorType type = ownsLaunchObject(launchObject);
+			if (type != null) {
+				desc = type.getDescriptor(launchObject);
+				if (desc != null) {
+					addDescriptor(launchObject, desc);
+				}
+			}
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
+
+		return desc;
+	}
 
 	@Override
-	public void launchObjectRemoved(Object element) throws CoreException {
-		Activator.trace("launch object removed " + element);
-		ILaunchDescriptor desc = objectDescriptorMap.get(element);
-		removeDescriptor(element, desc);
+	public void launchObjectRemoved(Object launchObject) throws CoreException {
+		Activator.trace("launch object removed " + launchObject);
+		ILaunchDescriptor desc = objectDescriptorMap.get(launchObject);
+		removeDescriptor(launchObject, desc);
+	}
+
+	@Override
+	public void launchObjectChanged(Object launchObject) throws CoreException {
+		// TODO deal with object renames here, somehow
+
+		// check if a new descriptor wants to take over
+		ILaunchDescriptor origDesc = objectDescriptorMap.get(launchObject);
+		ILaunchDescriptorType newDescType = ownsLaunchObject(launchObject);
+		
+		if (newDescType != null) {
+			if (origDesc == null || !origDesc.getType().equals(newDescType)) {
+				// we have a take over
+				if (origDesc != null) {
+					removeDescriptor(launchObject, origDesc);
+				}
+
+				ILaunchDescriptor newDesc = newDescType.getDescriptor(launchObject);
+				if (newDesc != null) {
+					addDescriptor(launchObject, newDesc);
+				}
+			}
+		}
 	}
 
 	protected ILaunchDescriptor getLastUsedDescriptor() {
@@ -1048,9 +1078,4 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		}
 	}
 
-	@Override
-	public void launchObjectChanged(Object launchObject) throws CoreException {
-		// TODO deal with object renames here, somehow
-		// TODO handle descriptor type changes
-	}
 }

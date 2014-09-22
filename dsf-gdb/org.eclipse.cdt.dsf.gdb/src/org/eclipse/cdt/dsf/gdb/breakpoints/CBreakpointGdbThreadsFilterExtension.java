@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems and others.
+ * Copyright (c) 2007, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson - Make the class thread-safe as it can be accessed by multiple
+ *                DSF debug sessions at the same time (bug 444636)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.breakpoints;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,8 +31,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExtension {
 
-    private Map<IContainerDMContext,Set<IExecutionDMContext>> fFilteredThreadsByTarget = 
-        new HashMap<IContainerDMContext,Set<IExecutionDMContext>>(1);
+    private final Map<IContainerDMContext,Set<IExecutionDMContext>> fFilteredThreadsByTarget =
+            Collections.synchronizedMap(new HashMap<IContainerDMContext,Set<IExecutionDMContext>>(1));
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpointExtension#initialize(org.eclipse.cdt.debug.core.model.ICBreakpoint)
@@ -43,8 +46,10 @@ public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExten
      */
 	@Override
     public IContainerDMContext[] getTargetFilters() throws CoreException {
-        Set<IContainerDMContext> set = fFilteredThreadsByTarget.keySet();
-        return set.toArray( new IContainerDMContext[set.size()] );
+		Set<IContainerDMContext> set = fFilteredThreadsByTarget.keySet();
+		synchronized (fFilteredThreadsByTarget) {
+			return set.toArray(new IContainerDMContext[set.size()]);
+		}
     }
 
     /* (non-Javadoc)
@@ -61,9 +66,7 @@ public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExten
      */
 	@Override
     public void removeTargetFilter( IContainerDMContext target ) throws CoreException {
-        if ( fFilteredThreadsByTarget.containsKey( target ) ) {
-            fFilteredThreadsByTarget.remove( target );
-        }
+		fFilteredThreadsByTarget.remove(target);
     }
 
     /* (non-Javadoc)
@@ -73,14 +76,12 @@ public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExten
     public void removeThreadFilters( IExecutionDMContext[] threads ) throws CoreException {
         if ( threads != null && threads.length > 0 ) {
             IContainerDMContext target = DMContexts.getAncestorOfType(threads[0], IContainerDMContext.class);
-            if ( fFilteredThreadsByTarget.containsKey( target ) ) {
-                Set<IExecutionDMContext> set = fFilteredThreadsByTarget.get( target );
-                if ( set != null ) {
-                    set.removeAll( Arrays.asList( threads ) );
-                    if ( set.isEmpty() ) {
-                        fFilteredThreadsByTarget.remove( target );
-                    }
-                }
+            Set<IExecutionDMContext> set = fFilteredThreadsByTarget.get( target );
+            if ( set != null ) {
+            	set.removeAll( Arrays.asList( threads ) );
+            	if ( set.isEmpty() ) {
+            		fFilteredThreadsByTarget.remove( target );
+            	}
             }
         }
     }

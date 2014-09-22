@@ -796,5 +796,6 @@ public class LaunchBarManagerTest extends TestCase {
 	// TODO - test that two target types that map to the same desc type and config type share configs
 	// TODO - test duplicating a config. make sure it's default desc and same targets
 	// TODO - test project descriptors and stuff
+	// TODO - test descriptor takeovers (new descriptors on launchObjectChange
 
 }

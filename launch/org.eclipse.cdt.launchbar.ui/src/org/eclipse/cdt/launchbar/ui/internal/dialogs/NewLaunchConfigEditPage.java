@@ -41,6 +41,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewLaunchConfigEditPage extends WizardPage {
 
+	private static final String INTERNAL_ERROR = "An internal error has occurred. Check log for details";
+	private static final String NAME_ALREADY_EXISTS = "A configuration with this name already exists";
+	private static final String NAME_CAN_NOT_BE_EMPTY = "Name can not be empty";
 	ILaunchConfigurationWorkingCopy workingCopy;
 	ILaunchConfigurationTabGroup tabGroup;
 	private Text nameText;
@@ -94,19 +97,23 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		if (workingCopy == null)
 			return;
 
+		String oldMessage = getErrorMessage();
 		try {
 			if (workingCopy.getName().isEmpty()) {
-				setErrorMessage("Name can not be empty");
+				setErrorMessage(NAME_CAN_NOT_BE_EMPTY);
 				setPageComplete(false);
 			} else if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(workingCopy.getName())) {
-				setErrorMessage("A configuration with this name already exists");
+				setErrorMessage(NAME_ALREADY_EXISTS);
 				setPageComplete(false);
 			} else {
-				setErrorMessage(null);
-				setPageComplete(true);
+				if (NAME_CAN_NOT_BE_EMPTY.equals(oldMessage) || NAME_ALREADY_EXISTS.equals(oldMessage) || INTERNAL_ERROR.equals(oldMessage)) {
+					setErrorMessage(null);
+					setPageComplete(true);
+				}
 			}
 		} catch (CoreException exc) {
-			setErrorMessage(exc.getLocalizedMessage());
+			setErrorMessage(INTERNAL_ERROR);
+			DebugPlugin.log(exc);
 		}
 	}
 
@@ -178,6 +185,13 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		public void updateMessage() {
 			String message = null;
 			String old_msg = getErrorMessage();
+			
+			// Make sure not to trample errors with the LC name
+			checkName();
+			if (getErrorMessage() != null) {
+				return;
+			}
+			
 			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
 			ILaunchConfigurationTab tab;
 			CTabItem item;
@@ -191,7 +205,8 @@ public class NewLaunchConfigEditPage extends WizardPage {
 				} catch(Exception e) {
 					// if createControl hasn't been called yet can throw exception..
 					// like the NPE issue in CTestingTab
-					message = e.getMessage();
+					message = INTERNAL_ERROR;
+					DebugPlugin.log(e);
 				}
 				// this is similar to what LaunchConfigurationTabGroupViewer.refresh() does, which is not available in this case
 				if (tLen == tfLen &&
@@ -207,6 +222,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 					break;
 				}
 			}
+			
 			setErrorMessage(message);
 		}
 

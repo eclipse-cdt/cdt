@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_70cbbbb7",
+        "filename": "build/org.eclipse.cdt.autotools-feature/p2.inf",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-09-23T16:58:54Z",
+      "side": 0,
+      "message": "I think this needs to stay so that updates from Linux Tools\u0027 autotools to CDT\u0027s autotools still work. Unless we decide not to support this anymore?",
+      "revId": "b92677b1496dec2950cc8c3371cff7e522001089",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

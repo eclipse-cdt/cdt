@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_3b73e9d9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/breakpoints/CBreakpointGdbThreadsFilterExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-23T02:13:28Z",
+      "side": 1,
+      "message": "reminder to update copyright to 2014, and Ericsson in the contribution section",
+      "revId": "a83f2f2ed6875188c254c2629945406a61304bf8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_db659510",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/breakpoints/CBreakpointGdbThreadsFilterExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-23T02:13:28Z",
+      "side": 1,
+      "message": "This collection is not assigned any where else so for clarity/simplicity is better to have it as \"final\"",
+      "revId": "a83f2f2ed6875188c254c2629945406a61304bf8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

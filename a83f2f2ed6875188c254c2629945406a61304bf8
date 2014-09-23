@@ -33,6 +33,40 @@
       "revId": "a83f2f2ed6875188c254c2629945406a61304bf8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_6d7da8d4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/breakpoints/CBreakpointGdbThreadsFilterExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-23T14:16:46Z",
+      "side": 1,
+      "message": "I think it is safe to only synchronize the iteration of the next line.  It is ok if the set changes but not while we are iterating over it.",
+      "revId": "a83f2f2ed6875188c254c2629945406a61304bf8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_cd65dc3a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/breakpoints/CBreakpointGdbThreadsFilterExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-23T14:16:46Z",
+      "side": 1,
+      "message": "I\u0027m not clear on why this one is needed.",
+      "revId": "a83f2f2ed6875188c254c2629945406a61304bf8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

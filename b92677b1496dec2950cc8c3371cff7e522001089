@@ -16,6 +16,24 @@
       "revId": "b92677b1496dec2950cc8c3371cff7e522001089",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f0606b2b",
+        "filename": "build/org.eclipse.cdt.autotools-feature/p2.inf",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-23T17:23:19Z",
+      "side": 0,
+      "message": "Looking deeper I agree we want to keep this but for the autotools-feature only.  I believe I only should move the \u0027instructions.configure\u0027 lines to cdt-feature.\n\nWill post a new patch.",
+      "parentUuid": "a766b734_70cbbbb7",
+      "revId": "b92677b1496dec2950cc8c3371cff7e522001089",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

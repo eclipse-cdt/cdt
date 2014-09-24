@@ -164,15 +164,18 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		}
 		if ( element instanceof ICBreakpoint ) {
 			ICBreakpoint b = (ICBreakpoint)element;
+			IMarker marker = b.getMarker();
+			if (marker == null || !marker.exists())
+				return null;
 			// If the BP's marker is on an IFile, job done
-			IFile file = (IFile)b.getMarker().getResource().getAdapter(IFile.class);
+			IFile file = (IFile)marker.getResource().getAdapter(IFile.class);
 			if (file == null) {
 				try {
 					// Not backed by an IFile, try its source handle (may be workspace / project based)
 					String handle = b.getSourceHandle();
 					if (handle != null && Path.ROOT.isValidPath(handle)) {
 						Path path = new Path(handle);
-						IProject project = b.getMarker().getResource().getProject();
+						IProject project = marker.getResource().getProject();
 						// Select the most 'relevant' IFile for an external location
 						file = ResourceLookup.selectFileForLocation(path, project);
 						if (file == null || !file.isAccessible()) {

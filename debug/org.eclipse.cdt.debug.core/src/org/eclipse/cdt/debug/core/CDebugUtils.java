@@ -321,22 +321,32 @@ public class CDebugUtils {
 	}
 
 	public static String getBreakpointText(IBreakpoint breakpoint, boolean qualified) throws CoreException {
-		if (breakpoint instanceof ICAddressBreakpoint) {
-			return getAddressBreakpointText((ICAddressBreakpoint)breakpoint, qualified);
+		try {
+			if (breakpoint instanceof ICAddressBreakpoint) {
+				return getAddressBreakpointText((ICAddressBreakpoint)breakpoint, qualified);
+			}
+			if (breakpoint instanceof ICFunctionBreakpoint) {
+				return getFunctionBreakpointText((ICFunctionBreakpoint)breakpoint, qualified);
+			}
+			if (breakpoint instanceof ICLineBreakpoint) {
+				return getLineBreakpointText((ICLineBreakpoint)breakpoint, qualified);
+			}
+			if (breakpoint instanceof ICWatchpoint) {
+				return getWatchpointText((ICWatchpoint)breakpoint, qualified);
+			}
+			// This allows to create a new breakpoint without implementing one of the interfaces above and still see a label
+			Object message = breakpoint.getMarker().getAttribute(IMarker.MESSAGE);
+			if (message != null)
+				return message.toString();
+		} catch (CoreException e) {
+			// don't log if breakpoint has been deleted
+			IMarker marker = breakpoint.getMarker();
+			if (marker == null || !marker.exists()) {
+				return DebugCoreMessages.getString("CDebugUtils.breakpoint_deleted"); //$NON-NLS-1$
+			}
+			CDebugCorePlugin.log(e);
+			return DebugCoreMessages.getString("CDebugUtils.exception_occurred"); //$NON-NLS-1$
 		}
-		if (breakpoint instanceof ICFunctionBreakpoint) {
-			return getFunctionBreakpointText((ICFunctionBreakpoint)breakpoint, qualified);
-		}
-		if (breakpoint instanceof ICLineBreakpoint) {
-			return getLineBreakpointText((ICLineBreakpoint)breakpoint, qualified);
-		}
-		if (breakpoint instanceof ICWatchpoint) {
-			return getWatchpointText((ICWatchpoint)breakpoint, qualified);
-		}
-		// This allows to create a new breakpoint without implementing one of the interfaces above and still see a label
-		Object message = breakpoint.getMarker().getAttribute(IMarker.MESSAGE);
-		if (message != null)
-			return message.toString();
 		return ""; //$NON-NLS-1$
 	}
 

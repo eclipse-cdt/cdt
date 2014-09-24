@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_4615296e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/breakpoints/CBreakpointGdbThreadsFilterExtension.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-24T01:55:04Z",
+      "side": 1,
+      "message": "It seems that \"set\" could potentially be manipulated from different threads via this method, \nIt may not happen today but the possibility is opened, \n   it is safer to have a synchronize block before getting \"set\" and to the end of the block for the \"if (set !\u003d null)\"",
+      "revId": "f4e5eebf8be67e81178dafadadfc614601ea9a09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

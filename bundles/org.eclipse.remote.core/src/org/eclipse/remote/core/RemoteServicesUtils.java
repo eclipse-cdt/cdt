@@ -123,9 +123,15 @@ public class RemoteServicesUtils {
 				conn = services.getConnectionManager().getConnection(connName);
 			} else if (connName != null) {
 				for (RemoteServicesDescriptor proxy : RemoteServicesImpl.getRemoteServiceDescriptors()) {
-					conn = proxy.getServices().getConnectionManager().getConnection(connName);
-					if (conn != null) {
-						break;
+					services = proxy.getServices();
+					if (services != null) {
+						IRemoteConnectionManager connMgr = services.getConnectionManager();
+						if (connMgr != null) {
+							conn = connMgr.getConnection(connName);
+							if (conn != null) {
+								break;
+							}
+						}
 					}
 				}
 			}

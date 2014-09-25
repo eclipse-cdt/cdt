@@ -19,18 +19,19 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Base class for the UNC path conversion extension point. UNC paths are used to represent remote
- * include locations, and this class is used to translate between UNC, IPath and URI
- * representations. By default, paths are translated into the equivalent local file version to
- * preserve existing behavior, but by providing an appropriate extension, these paths can be mapped
- * into locations on a remote system.
+ * Base class for the UNC path conversion extension point. UNC paths are used to represent remote include
+ * locations, and this class is used to translate between UNC, IPath and URI representations. By default,
+ * paths are translated into the equivalent local file version to preserve existing behavior, but by providing
+ * an appropriate extension, these paths can be mapped into locations on a remote system.
  * 
  * May be subclassed by clients.
+ * 
  * @since 5.3
  */
 public abstract class UNCPathConverter {
 	/**
 	 * Get the instance of the class that combines the registered converters.
+	 * 
 	 * @return instance of UNCPathConverter
 	 */
 	public static UNCPathConverter getInstance() {
@@ -46,9 +47,9 @@ public abstract class UNCPathConverter {
 	 */
 	public static boolean isUNC(String path) {
 		if (path.length() >= 2) {
-			char c= path.charAt(0);
-			if (c == IPath.SEPARATOR  || c == File.separatorChar) {
-				c= path.charAt(1);
+			char c = path.charAt(0);
+			if (c == IPath.SEPARATOR || c == File.separatorChar) {
+				c = path.charAt(1);
 				return c == IPath.SEPARATOR || c == File.separatorChar;
 			}
 		}
@@ -56,8 +57,7 @@ public abstract class UNCPathConverter {
 	}
 
 	/**
-	 * Convert a URI to an IPath. 
-	 * Resolves to local path if possible, including using EFS where required.
+	 * Convert a URI to an IPath. Resolves to local path if possible, including using EFS where required.
 	 * 
 	 * @param uri
 	 *            URI to convert to an IPath
@@ -65,14 +65,20 @@ public abstract class UNCPathConverter {
 	 */
 	public static IPath toPath(URI uri) {
 		IPath localPath = URIUtil.toPath(uri);
+		// see if the uri has an authority part
+		String auth = uri.getAuthority();
+		if (auth != null && localPath == null) {
+			return new Path(auth + uri.getPath()).makeUNC(true);
+		}
+
+		// see if the uri has a host part
 		String host = uri.getHost();
-		// try local path first
-		// that'll give EFS a chance to resolve a custom protocol path.
-		if (host != null && localPath == null) { 
+		if (host != null && localPath == null) {
 			return new Path(host + uri.getPath()).makeUNC(true);
-		} else {
-			return localPath;
-		}	
+		}
+
+		// otherwise use the localPath
+		return localPath;
 	}
 
 	/**

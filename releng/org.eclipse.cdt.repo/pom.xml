@@ -23,28 +23,38 @@
 		<profile>
 			<id>production</id>
 			<properties>
-			    <cdt-download-dir>/home/data/httpd/download.eclipse.org/tools/cdt/builds/master/nightly</cdt-download-dir>
+				<cdt-download-dir>/home/data/httpd/download.eclipse.org/${repo-path}</cdt-download-dir>
 			</properties>
 			<build>
 				<plugins>
 					<plugin>
-					    <artifactId>maven-antrun-plugin</artifactId>
-					    <version>1.7</version>
-					    <executions>
-					        <execution>
-					            <phase>verify</phase>
-					            <configuration>
-					                <target>
-					                    <delete dir="${cdt-download-dir}"/>
-					                    <unzip src="target/org.eclipse.cdt.repo.zip"
-					                        dest="${cdt-download-dir}"/>
-					                </target>
-					            </configuration>
-					            <goals>
-					                <goal>run</goal>
-					            </goals>
-					        </execution>
-					    </executions>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<configuration>
+									<target>
+										<!-- first modify the artifacts.jar file -->
+										<!-- note that our zip file is already generated and won't have nor needs this change -->
+										<copy file="p2.xsl" todir="${project.build.directory}"/>
+										<copy file="antArtifactsUpdater.xml" todir="${project.build.directory}"/>
+										<ant antfile="${project.build.directory}/antArtifactsUpdater.xml"/>
+
+										<!-- now promote the update build to our download area -->
+									 	<delete dir="${cdt-download-dir}"/>
+										<copy includeemptydirs="false" todir="${cdt-download-dir}">
+											<fileset dir="target/repository">
+												<include name="**" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

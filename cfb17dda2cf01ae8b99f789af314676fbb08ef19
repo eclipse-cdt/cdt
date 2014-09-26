@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_1e70914e",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-09-26T00:08:18Z",
+      "side": 1,
+      "message": "Better to remove lines 69-72 and add\n\nif (host \u003d\u003d 0) {\n  host \u003d uri.getAuthority();\n}\n\nafter line 75.",
+      "revId": "cfb17dda2cf01ae8b99f789af314676fbb08ef19",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_be6a3d62",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-09-26T00:08:18Z",
+      "side": 1,
+      "message": "Better: new Path(host).makeUNC(true).append(uri.getPath())",
+      "revId": "cfb17dda2cf01ae8b99f789af314676fbb08ef19",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

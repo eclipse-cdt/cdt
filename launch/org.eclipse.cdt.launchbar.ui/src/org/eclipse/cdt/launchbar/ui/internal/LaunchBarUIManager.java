@@ -14,9 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
 import org.eclipse.cdt.launchbar.core.internal.ExecutableExtension;
 import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
@@ -28,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.INewWizard;
 
 public class LaunchBarUIManager {
 
@@ -36,7 +39,7 @@ public class LaunchBarUIManager {
 	Map<String, LaunchBarTargetContribution> targetContributions = new HashMap<>();
 
 	private final LaunchBarTargetContribution DEFAULT_CONTRIBUTION = new LaunchBarTargetContribution(null, null, null, null,
-	        null, null);
+	        null, null, null);
 
 	public LaunchBarUIManager(LaunchBarManager manager) {
 		this.manager = manager;
@@ -63,9 +66,14 @@ public class LaunchBarUIManager {
 
 					String editCommandId = element.getAttribute("editCommandId");
 					String addNewCommandId = element.getAttribute("addNewTargetCommandId");
+					
+					ExecutableExtension<INewWizard> newWizard = null;
+					if (element.getAttribute("newWizard") != null) {
+						newWizard = new ExecutableExtension<INewWizard>(element, "newWizard");
+					}
 
 					targetContributions.put(targetTypeId, new LaunchBarTargetContribution(targetName, iconStr,
-					        labelProvider, hoverProvider, editCommandId, addNewCommandId));
+					        labelProvider, hoverProvider, editCommandId, addNewCommandId, newWizard));
 				}
 			}
 		}
@@ -100,6 +108,19 @@ public class LaunchBarUIManager {
 
 	public String getAddTargetCommand(ILaunchTarget target) {
 		return getContribution(target).addNewCommandId;
+	}
+
+	public Map<ILaunchTargetType, ExecutableExtension<INewWizard>> getNewTargetWizards() {
+		Map<ILaunchTargetType, ExecutableExtension<INewWizard>> wizards = new HashMap<>();
+		for (Entry<String, LaunchBarTargetContribution> contrib : targetContributions.entrySet()) {
+			if (contrib.getValue().newWizard != null) {
+				ILaunchTargetType type = manager.getLaunchTargetType(contrib.getKey());
+				if (type != null) {
+					wizards.put(type, contrib.getValue().newWizard);
+				}
+			}
+		}
+		return wizards;
 	}
 
 	public Map<String, String> getAddTargetCommands() {
@@ -138,11 +159,13 @@ public class LaunchBarUIManager {
 		ExecutableExtension<IHoverProvider> hoverProvider;
 		String editCommandId;
 		String addNewCommandId;
+		ExecutableExtension<INewWizard> newWizard;
 
 		LaunchBarTargetContribution(String name, String iconStr,
 				ExecutableExtension<ILabelProvider> labelProvider,
 		        ExecutableExtension<IHoverProvider> hoverProvider,
-		        String editCommand, String addNewCommand) {
+		        String editCommand, String addNewCommand,
+		        ExecutableExtension<INewWizard> newWizard) {
 			this.name = name;
 			this.iconStr = iconStr;
 			this.icon = null;
@@ -150,6 +173,7 @@ public class LaunchBarUIManager {
 			this.hoverProvider = hoverProvider;
 			this.editCommandId = editCommand;
 			this.addNewCommandId = addNewCommand;
+			this.newWizard = newWizard;
 		}
 
 		Image getIcon() {

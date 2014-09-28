@@ -14,9 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.launchbar.core.ILaunchDescriptor;
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
+import org.eclipse.cdt.launchbar.core.ILaunchTargetType;
 import org.eclipse.cdt.launchbar.core.internal.ExecutableExtension;
 import org.eclipse.cdt.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
@@ -28,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.INewWizard;
 
 public class LaunchBarUIManager {
 
@@ -62,10 +65,14 @@ public class LaunchBarUIManager {
 					}
 
 					String editCommandId = element.getAttribute("editCommandId");
-					String addNewCommandId = element.getAttribute("addNewTargetCommandId");
+					
+					ExecutableExtension<INewWizard> newWizard = null;
+					if (element.getAttribute("newWizard") != null) {
+						newWizard = new ExecutableExtension<INewWizard>(element, "newWizard");
+					}
 
 					targetContributions.put(targetTypeId, new LaunchBarTargetContribution(targetName, iconStr,
-					        labelProvider, hoverProvider, editCommandId, addNewCommandId));
+					        labelProvider, hoverProvider, editCommandId, newWizard));
 				}
 			}
 		}
@@ -81,7 +88,18 @@ public class LaunchBarUIManager {
 	}
 
 	public String getTargetTypeName(ILaunchTarget target) {
-		return getContribution(target).name;
+		return getTargetTypeName(target.getType());
+	}
+
+	public String getTargetTypeName(ILaunchTargetType targetType) {
+		String typeId = manager.getTargetTypeId(targetType);
+		String name = targetContributions.get(typeId).name;
+		return name != null ? name : typeId;
+	}
+
+	public Image getTargetTypeIcon(ILaunchTargetType targetType) {
+		String typeId = manager.getTargetTypeId(targetType);
+		return targetContributions.get(typeId).getIcon();
 	}
 
 	public ILabelProvider getLabelProvider(ILaunchTarget target) throws CoreException {
@@ -98,17 +116,17 @@ public class LaunchBarUIManager {
 		return getContribution(target).editCommandId;
 	}
 
-	public String getAddTargetCommand(ILaunchTarget target) {
-		return getContribution(target).addNewCommandId;
-	}
-
-	public Map<String, String> getAddTargetCommands() {
-		Map<String, String> commands = new HashMap<>();
-		for (LaunchBarTargetContribution contribution : targetContributions.values()) {
-			if (contribution.addNewCommandId != null)
-				commands.put(contribution.name, contribution.addNewCommandId);
+	public Map<ILaunchTargetType, ExecutableExtension<INewWizard>> getNewTargetWizards() {
+		Map<ILaunchTargetType, ExecutableExtension<INewWizard>> wizards = new HashMap<>();
+		for (Entry<String, LaunchBarTargetContribution> contrib : targetContributions.entrySet()) {
+			if (contrib.getValue().newWizard != null) {
+				ILaunchTargetType type = manager.getLaunchTargetType(contrib.getKey());
+				if (type != null) {
+					wizards.put(type, contrib.getValue().newWizard);
+				}
+			}
 		}
-		return commands;
+		return wizards;
 	}
 
 	public Map<String, Image> getTargetIcons() {
@@ -137,19 +155,20 @@ public class LaunchBarUIManager {
 		ExecutableExtension<ILabelProvider> labelProvider;
 		ExecutableExtension<IHoverProvider> hoverProvider;
 		String editCommandId;
-		String addNewCommandId;
+		ExecutableExtension<INewWizard> newWizard;
 
 		LaunchBarTargetContribution(String name, String iconStr,
 				ExecutableExtension<ILabelProvider> labelProvider,
 		        ExecutableExtension<IHoverProvider> hoverProvider,
-		        String editCommand, String addNewCommand) {
+		        String editCommand,
+		        ExecutableExtension<INewWizard> newWizard) {
 			this.name = name;
 			this.iconStr = iconStr;
 			this.icon = null;
 			this.labelProvider = labelProvider;
 			this.hoverProvider = hoverProvider;
 			this.editCommandId = editCommand;
-			this.addNewCommandId = addNewCommand;
+			this.newWizard = newWizard;
 		}
 
 		Image getIcon() {

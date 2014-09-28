@@ -85,7 +85,6 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		tabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
 
 		checkName();
-		changeLaunchConfigType();
 
 		setControl(comp);
 	}
@@ -110,11 +109,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 	}
 
-	void changeLaunchConfigType() {
-		ILaunchConfigurationType type = ((NewLaunchConfigWizard)getWizard()).typePage.type;
-		if (type == null)
-			return;
-
+	void changeLaunchConfigType(ILaunchConfigurationType type) {
 		try {
 			String initialMode = ((NewLaunchConfigWizard)getWizard()).modePage.selectedGroup.getMode();
 			workingCopy = type.newInstance(null, "New Configuration");

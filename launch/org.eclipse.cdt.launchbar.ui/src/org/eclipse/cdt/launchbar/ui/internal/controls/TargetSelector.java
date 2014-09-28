@@ -11,20 +11,19 @@
 package org.eclipse.cdt.launchbar.ui.internal.controls;
 
 import java.util.Comparator;
-import java.util.Map;
 
 import org.eclipse.cdt.launchbar.core.ILaunchTarget;
 import org.eclipse.cdt.launchbar.ui.IHoverProvider;
 import org.eclipse.cdt.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.cdt.launchbar.ui.internal.LaunchBarUIManager;
+import org.eclipse.cdt.launchbar.ui.internal.dialogs.NewLaunchTargetWizard;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -40,7 +39,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.dialogs.ListDialog;
 
 public class TargetSelector extends CSelector {
 
@@ -170,7 +168,7 @@ public class TargetSelector extends CSelector {
 
 	@Override
 	public boolean hasActionArea() {
-		return !uiManager.getAddTargetCommands().isEmpty();
+		return !uiManager.getNewTargetWizards().isEmpty();
 	}
 
 	@Override
@@ -180,7 +178,7 @@ public class TargetSelector extends CSelector {
 		actionLayout.marginWidth = actionLayout.marginHeight = 0;
 		actionArea.setLayout(actionLayout);
 		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
+	
 		final Composite createButton = new Composite(actionArea, SWT.NONE);
 		createButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		GridLayout buttonLayout = new GridLayout();
@@ -196,28 +194,29 @@ public class TargetSelector extends CSelector {
 				gc.drawLine(0, 0, size.x, 0);
 			}
 		});
-
+	
 		final Label createLabel = new Label(createButton, SWT.None);
 		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		createLabel.setText("Add New Target...");
+		createLabel.setText("Create New Target...");
 		createLabel.setBackground(white);
-
+	
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
-				handleCreateTarget();
+				NewLaunchTargetWizard wizard = new NewLaunchTargetWizard(uiManager);
+				WizardDialog dialog = new WizardDialog(getShell(), wizard);
+				dialog.open();
 			}
 		};
-
+	
 		createButton.addMouseListener(mouseListener);
 		createLabel.addMouseListener(mouseListener);
-
+	
 		MouseTrackListener mouseTrackListener = new MouseTrackAdapter() {
 			@Override
 			public void mouseEnter(MouseEvent e) {
 				createButton.setBackground(highlightColor);
 				createLabel.setBackground(highlightColor);
 			}
-
 			@Override
 			public void mouseExit(MouseEvent e) {
 				createButton.setBackground(white);
@@ -226,33 +225,6 @@ public class TargetSelector extends CSelector {
 		};
 		createButton.addMouseTrackListener(mouseTrackListener);
 		createLabel.addMouseTrackListener(mouseTrackListener);
-	}
-
-	protected void handleCreateTarget() {
-		final Map<String, String> commands = uiManager.getAddTargetCommands();
-		final Map<String, Image> images = uiManager.getTargetIcons();
-		if (!commands.isEmpty()) {
-			ListDialog ld = new ListDialog(getShell());
-			ld.setTitle("New Launch Target");
-			ld.setMessage("Select target type to create");
-			ld.setContentProvider(new ArrayContentProvider());
-			ld.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					return (String)element;
-				}
-				
-				@Override
-				public Image getImage(Object element) {
-					return images.get(element);
-				}
-			});
-			ld.setInput(commands.keySet().toArray());
-			if (ld.open() == Window.OK) {
-				String command = commands.get((String) (ld.getResult()[0]));
-				Activator.runCommand(command);
-			}
-		}
 	}
 
 	@Override

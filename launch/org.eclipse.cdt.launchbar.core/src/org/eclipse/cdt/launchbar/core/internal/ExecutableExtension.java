@@ -50,4 +50,16 @@ public class ExecutableExtension<T> {
 		return object;
 	}
 
+	/**
+	 * Creates a new object. Can't be done if you've done a get already.
+	 * @return a new object from the extension or null if get was called earlier
+	 * @throws CoreException
+	 */
+	@SuppressWarnings("unchecked")
+	public T create() throws CoreException {
+		if (element != null) {
+			return (T) element.createExecutableExtension(propertyName);
+		}
+		return null;
+	}
 }

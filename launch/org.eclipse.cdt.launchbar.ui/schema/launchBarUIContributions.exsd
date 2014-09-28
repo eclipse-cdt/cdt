@@ -135,13 +135,13 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="addNewTargetCommandId" type="string">
+         <attribute name="newWizard" type="string">
             <annotation>
                <documentation>
-                  
+                  An INewWizard that creates a target of this type.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.INewWizard"/>
                </appinfo>
             </annotation>
          </attribute>

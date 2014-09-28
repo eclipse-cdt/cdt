@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.TableItem;
 public class NewLaunchConfigTypePage extends WizardPage {
 
 	private Table table;
-	ILaunchConfigurationType type;
 	
 	public NewLaunchConfigTypePage() {
 		super("Select Launch Configuration Type");
@@ -75,8 +74,6 @@ public class NewLaunchConfigTypePage extends WizardPage {
 			table.select(0);
 		}
 		setPageComplete(haveItems);
-
-		type = null;
 	}
 
 	@Override
@@ -86,10 +83,9 @@ public class NewLaunchConfigTypePage extends WizardPage {
 
 	@Override
 	public IWizardPage getNextPage() {
-		setMessage("Initializing. Please wait...", INFORMATION);
-		type = (ILaunchConfigurationType)table.getSelection()[0].getData();
+		ILaunchConfigurationType type = (ILaunchConfigurationType)table.getSelection()[0].getData();
 		NewLaunchConfigEditPage editPage = ((NewLaunchConfigWizard)getWizard()).editPage;
-		editPage.changeLaunchConfigType();
+		editPage.changeLaunchConfigType(type);
 		return editPage;
 	}
 

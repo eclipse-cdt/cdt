@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Freescale 	- Add support for conditionally activating an action
+ *     Freescale 	- add support for conditionally activating action
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
@@ -20,36 +20,36 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * A toggle method breakpoint action that can be contributed an object
- * contribution. The action will toggle method breakpoints on objects
+ * A toggle watchpoint action that can be contributed an object
+ * contribution. The action will toggle watchpoints on objects
  * that provide an <code>IToggleBreakpointsTarget</code> adapter.
  * <p>
- * This class is based on {@link org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate }
+ * This class is based on {@link org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate }
  * class.  In addition to the copied functionality, it adds the handling of 
  * action-triggering event.
  * </p>
  * 
- * @since 7.2
+ * @since 7.5
  */
-public class CToggleMethodBreakpointActionDelegate extends CToggleBreakpointObjectActionDelegate {
+public class CToggleWatchpointActionDelegate extends CToggleBreakpointObjectActionDelegate {
 
 	protected void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection, Event event) 
 	    throws CoreException 
 	{
 	    if ((event.stateMask & SWT.MOD1) != 0 && 
 	        target instanceof IToggleBreakpointsTargetCExtension &&
-	        ((IToggleBreakpointsTargetCExtension)target).canCreateFunctionBreakpointInteractive(part, selection)) 
+	        ((IToggleBreakpointsTargetCExtension)target).canCreateWatchpointsInteractive(part, selection)) 
 	    {
-	        ((IToggleBreakpointsTargetCExtension)target).createFunctionBreakpointInteractive(part, selection);
+	        ((IToggleBreakpointsTargetCExtension)target).createWatchpointsInteractive(part, selection);
 	    } 
 	    else {
-	        target.toggleMethodBreakpoints(part, selection);
+	        target.toggleWatchpoints(part, selection);
 	    }
 	}
 
 	@Override
 	protected boolean canPerformAction(IToggleBreakpointsTarget target,
 			IWorkbenchPart part, ISelection selection) {
-		return target.canToggleMethodBreakpoints(part, selection);
+		return target.canToggleWatchpoints(part, selection);
 	}
 }

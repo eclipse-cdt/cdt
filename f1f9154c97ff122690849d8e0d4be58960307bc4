@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_8db2b579",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-09-29T14:48:39Z",
+      "side": 1,
+      "message": "API breakage errors. You should declare another method and mark for deprecation this one.",
+      "revId": "f1f9154c97ff122690849d8e0d4be58960307bc4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ed9ec9ea",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-09-29T14:48:39Z",
+      "side": 1,
+      "message": "Same as above. API breakage errors. You should declare another method and mark for deprecation this one.",
+      "revId": "f1f9154c97ff122690849d8e0d4be58960307bc4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

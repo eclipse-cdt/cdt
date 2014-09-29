@@ -1358,7 +1358,6 @@ public class CDIDebugModel {
     public static ICFunctionBreakpoint functionBreakpointExists(String sourceHandle, IResource resource, String function)
         throws CoreException {
         String modelId = getPluginIdentifier();
-        String markerType = ICFunctionBreakpoint.C_FUNCTION_BREAKPOINT_MARKER;
         IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
         IBreakpoint[] breakpoints = manager.getBreakpoints(modelId);
         for (int i = 0; i < breakpoints.length; i++) {
@@ -1366,12 +1365,10 @@ public class CDIDebugModel {
                 continue;
             }
             ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint) breakpoints[i];
-            if (breakpoint.getMarker().getType().equals(markerType)) {
-                if (sameSourceHandle(sourceHandle, breakpoint.getSourceHandle())) {
-                    if (breakpoint.getMarker().getResource().equals(resource)) {
-                        if (breakpoint.getFunction() != null && breakpoint.getFunction().equals(function)) {
-                            return breakpoint;
-                        }
+            if (sameSourceHandle(sourceHandle, breakpoint.getSourceHandle())) {
+                if (breakpoint.getMarker().getResource().equals(resource)) {
+                    if (breakpoint.getFunction() != null && breakpoint.getFunction().equals(function)) {
+                        return breakpoint;
                     }
                 }
             }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_7fcffca3",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-09-29T15:58:29Z",
+      "side": 1,
+      "message": "It\u0027s probably better to check host before authority and to call the variable \"host\" since this is what it becomes in line 80.",
+      "revId": "d9c1e57f0080ae1fb1cebd2cf7bc23eb4646aa1b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -11,6 +11,7 @@
  *     Ericsson
  *     Marc Khouzam (Ericsson) - Use the new IMIBackend2 interface (Bug 350837)
  *     Mark Bozeman (Mentor Graphics) - Report GDB start failures (Bug 376203)
+ *     Iulia Vasii (Freescale Semiconductor) - Separate GDB command from its arguments (Bug 445360)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -28,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -180,25 +182,35 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
         return LaunchUtils.getGDBPath(fLaunchConfiguration);
     }
 
-	/*
+	/**
 	 * Options for GDB process. 
 	 * Allow subclass to override.
+	 * @deprecated Use {@link #getGDBCommandLineArray()} instead
 	 */
+	@Deprecated
 	protected String getGDBCommandLine() {
-		StringBuffer gdbCommandLine = new StringBuffer(getGDBPath().toOSString());
+		String cmdArray[] = getGDBCommandLineArray();
+		return StringUtil.join(cmdArray, " "); //$NON-NLS-1$
+	}
 
+	/**
+	 * Options for GDB process.
+	 * Returns the GDB command and its arguments as an array.
+	 * Allow subclass to override.
+	 * @since 4.6
+	 */
+	protected String[] getGDBCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
-		// All configuration should be done in the launch sequence
+		// All configuration should be done in the final launch sequence
 		// to allow for more flexibility.
-		gdbCommandLine.append(" --interpreter"); //$NON-NLS-1$
-		// We currently work with MI version 2.  Don't use just 'mi' because it 
-		// points to the latest MI version, while we want mi2 specifically.
-		gdbCommandLine.append(" mi2"); //$NON-NLS-1$
-		// Don't read the gdbinit file here.  It is read explicitly in
-		// the LaunchSequence to make it easier to customize.
-		gdbCommandLine.append(" --nx"); //$NON-NLS-1$
-		
-		return gdbCommandLine.toString();
+		return new String[] { getGDBPath().toOSString(), // This could contain spaces
+							"--interpreter", //$NON-NLS-1$
+							// We currently work with MI version 2. Don't use just 'mi' because it
+							// points to the latest MI version, while we want mi2 specifically.
+							"mi2", //$NON-NLS-1$
+							// Don't read the gdbinit file here. It is read explicitly in
+							// the LaunchSequence to make it easier to customize.
+							"--nx" }; //$NON-NLS-1$
 	}
 
 	@Override
@@ -361,16 +373,35 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 						IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 	}
 	
-	/*
+	/**
 	 * Launch GDB process. 
 	 * Allow subclass to override.
+	 * @deprecated Use {@link #launchGDBProcess(String[])} instead
 	 */
+	@Deprecated
 	protected Process launchGDBProcess(String commandLine) throws CoreException {
         Process proc = null;
 		try {
 			proc = ProcessFactory.getFactory().exec(commandLine, LaunchUtils.getLaunchEnvironment(fLaunchConfiguration));
 		} catch (IOException e) {
             String message = "Error while launching command " + commandLine;   //$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
+		}
+		
+		return proc;
+	}
+	
+	/**
+	 * Launch GDB process with command and arguments.
+	 * Allow subclass to override.
+	 * @since 4.6
+	 */
+	protected Process launchGDBProcess(String[] commandLine) throws CoreException {
+        Process proc = null;
+		try {
+			proc = ProcessFactory.getFactory().exec(commandLine, LaunchUtils.getLaunchEnvironment(fLaunchConfiguration));
+		} catch (IOException e) {
+            String message = "Error while launching command: " + StringUtil.join(commandLine, " "); //$NON-NLS-1$ //$NON-NLS-2$
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
 		}
 		
@@ -542,7 +573,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                         return Status.OK_STATUS;
                     }
                     
-                    String commandLine = getGDBCommandLine();
+                    String[] commandLine = getGDBCommandLineArray();
         
                     try {                        
                         fProcess = launchGDBProcess(commandLine);

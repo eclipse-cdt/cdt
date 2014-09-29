@@ -297,11 +297,12 @@ public class LaunchUtils {
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
+        String cmd = getGDBPath(configuration).toOSString();
+        String[] args = new String[] { cmd, "--version" }; //$NON-NLS-1$
         Process process = null;
         Job timeoutJob = null;
         try {
-        	process = ProcessFactory.getFactory().exec(cmd, getLaunchEnvironment(configuration));
+        	process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
 
             // Start a timeout job to make sure we don't get stuck waiting for
             // an answer from a gdb that is hanging

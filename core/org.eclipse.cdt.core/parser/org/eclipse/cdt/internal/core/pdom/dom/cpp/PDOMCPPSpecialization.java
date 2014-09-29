@@ -43,15 +43,20 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 	private volatile IBinding fSpecializedCache= null;
 	private volatile ICPPTemplateParameterMap fArgMap;
 	
-	public PDOMCPPSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPSpecialization spec,
+	public PDOMCPPSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPSpecialization spec,
 			IPDOMBinding specialized) throws CoreException {
 		super(linkage, parent, spec.getNameCharArray());
 		getDB().putRecPtr(record + SPECIALIZED, specialized.getRecord());
 
 		// Specializations that are not instances have the same map as their owner.
 		if (this instanceof ICPPTemplateInstance) {
-			long rec= PDOMCPPTemplateParameterMap.putMap(this, spec.getTemplateParameterMap());
-			getDB().putRecPtr(record + ARGMAP, rec);
+			// Defer storing of template parameter map to the post-process
+			// to avoid infinite recursion when the evaluation of a non-type 
+			// template argument tries to store its template definition.
+			// Until the post-process runs, temporarily store the input (possibly 
+			// non-PDOM) map.
+			fArgMap = spec.getTemplateParameterMap();
+			linkage.new ConfigureInstance(this);
 		}
 		try {
 			Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(spec);
@@ -105,6 +110,22 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 			}
 		}
 		return fArgMap;
+	}
+	
+	public void storeTemplateParameterMap() {
+		try {
+			// fArgMap here is the temporarily stored, possibly non-PDOM
+			// map stored by the constructor. Construct the PDOM map and
+			// store it.
+			long rec= PDOMCPPTemplateParameterMap.putMap(this, fArgMap);
+			getDB().putRecPtr(record + ARGMAP, rec);
+			
+			// Read the stored map next time getTemplateParameterMap()
+			// is called.
+			fArgMap = null;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2578,6 +2578,32 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    bar(decl());  // ERROR HERE: Invalid arguments
 	//	}
 	public void testInstantiationOfFunctionInstance_437675() throws Exception {
+		checkBindings();
+	}
+	
+	//	struct IID { };
+	//	
+	//	struct IUnknown {};
+	//	
+	//	template<class T>
+	//	class IID_DUMMY : IID { };
+	//	
+	//	template<class T>
+	//	const IID &__uuidof(T x) { return IID_DUMMY<T>(); }
+	//
+	//	static IID IID_IUnknown = {};
+	//
+	//	template<class T>
+	//	class MYCComPtr { };
+	//
+	//	template <class T, const IID* piid = &__uuidof<T> >
+	//	class MYCComQIPtr : public MYCComPtr<T> {};
+	//	
+	//	template<>
+	//	class MYCComQIPtr<IUnknown, &IID_IUnknown> : public MYCComPtr<IUnknown> {};
+	
+	//	// source file is deliberately empty
+	public void testInfiniteRecursionMarshallingTemplateDefinition_439923() throws Exception {
 		checkBindings();
 	}
 }

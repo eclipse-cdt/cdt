@@ -38,7 +38,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
 	
-	public PDOMCPPFieldSpecialization(PDOMLinkage linkage, PDOMNode parent,
+	public PDOMCPPFieldSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			ICPPField field, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) field, specialized);

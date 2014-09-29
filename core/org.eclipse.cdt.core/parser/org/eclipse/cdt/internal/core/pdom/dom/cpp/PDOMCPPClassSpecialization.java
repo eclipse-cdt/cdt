@@ -74,7 +74,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	};
 
-	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
+	public PDOMCPPClassSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassType classType,
 			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) classType, specialized);
 		setFinal(classType);

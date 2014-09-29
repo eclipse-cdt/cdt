@@ -33,7 +33,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITyp
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = TYPE_OFFSET + Database.TYPE_SIZE;
 	
-	public PDOMCPPTypedefSpecialization(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
+	public PDOMCPPTypedefSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ITypedef typedef, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) typedef, specialized);
 

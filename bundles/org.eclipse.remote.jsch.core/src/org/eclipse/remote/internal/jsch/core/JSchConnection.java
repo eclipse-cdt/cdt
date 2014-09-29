@@ -109,7 +109,7 @@ public class JSchConnection implements IRemoteConnection {
 				return true;
 			}
 			if (fAuthenticator != null) {
-				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
+				PasswordAuthentication auth = fAuthenticator.prompt(getUsername(), message);
 				if (auth == null) {
 					return false;
 				}
@@ -126,7 +126,7 @@ public class JSchConnection implements IRemoteConnection {
 				System.out.println("promptPassword:" + message); //$NON-NLS-1$
 			}
 			if (fAuthenticator != null) {
-				PasswordAuthentication auth = fAuthenticator.prompt(null, message);
+				PasswordAuthentication auth = fAuthenticator.prompt(getUsername(), message);
 				if (auth == null) {
 					return false;
 				}

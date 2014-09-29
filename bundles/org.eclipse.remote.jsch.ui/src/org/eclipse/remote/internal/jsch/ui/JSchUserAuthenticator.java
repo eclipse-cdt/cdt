@@ -37,6 +37,10 @@ public class JSchUserAuthenticator implements IUserAuthenticator {
 	@Override
 	public PasswordAuthentication prompt(String username, String message) {
 		if (prompter.promptPassword(message)) {
+			String sessionUserName = prompter.getSession().getUserName();
+			if (sessionUserName != null) {
+				username = sessionUserName;
+			}
 			PasswordAuthentication auth = new PasswordAuthentication(username, prompter.getPassword().toCharArray());
 			return auth;
 		}

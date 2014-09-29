@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_1fbc08b1",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e3.8.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-09-29T17:22:12Z",
+      "side": 1,
+      "message": "Did you want to remove this commented out part?",
+      "revId": "4cd52277304a1d2a5a3d701eff404cadc23708cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -11,6 +11,7 @@
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - Add timer when fetching GDB version (Bug 376203)
  *     Marc Khouzam (Ericsson) - Better error reporting when obtaining GDB version (Bug 424996)
+ *     Iulia Vasii (Freescale Semiconductor) - Separate GDB command from its arguments (Bug 445360)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -297,11 +298,12 @@ public class LaunchUtils {
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
+        String cmd = getGDBPath(configuration).toOSString();
+        String[] args = new String[] { cmd, "--version" }; //$NON-NLS-1$
         Process process = null;
         Job timeoutJob = null;
         try {
-        	process = ProcessFactory.getFactory().exec(cmd, getLaunchEnvironment(configuration));
+        	process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
 
             // Start a timeout job to make sure we don't get stuck waiting for
             // an answer from a gdb that is hanging

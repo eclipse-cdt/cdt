@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_1fe9a8f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-29T16:01:44Z",
+      "side": 1,
+      "message": "Actually, using  StringUtil.join() would probably do the trick.",
+      "parentUuid": "a766b734_4d57fd51",
+      "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_2d61e12d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
         "patchSetId": 2

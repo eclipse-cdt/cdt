@@ -65,14 +65,19 @@ public abstract class UNCPathConverter {
 	 */
 	public static IPath toPath(URI uri) {
 		IPath localPath = URIUtil.toPath(uri);
-		String host = uri.getHost();
-		// try local path first
-		// that'll give EFS a chance to resolve a custom protocol path.
-		if (host != null && localPath == null) { 
-			return new Path(host + uri.getPath()).makeUNC(true);
-		} else {
+		if (localPath != null) {
 			return localPath;
-		}	
+		}
+		// see if the uri has an host part
+		String host = uri.getHost();
+		if (host == null) {
+			// see if the uri has a authority part
+			host = uri.getAuthority();
+			if (host == null) {
+				return localPath;
+			}
+		}
+		return new Path(host).makeUNC(true).append(uri.getPath());
 	}
 
 	/**

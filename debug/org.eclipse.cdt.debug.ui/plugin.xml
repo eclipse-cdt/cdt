@@ -679,7 +679,7 @@
                enablesFor="1"
                label="%ToggleWatchpointAction.label"
                icon="icons/elcl16/watchpoint_co.gif"
-               class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CToggleWatchpointActionDelegate"
                tooltip="%ToggleWatchpointAction.tooltip"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.ui.actions.ToggleWatchpointAction"/>

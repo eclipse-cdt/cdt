@@ -8,6 +8,7 @@
  * Contributors:
  * Mentor Graphics - Initial API and implementation
  * Marc Khouzam (Ericsson) - Don't allow to set two bps at same line (bug 432503)
+ * Teodor Madan (Freescale) - Do not create multiple watchpoints /method breakpoints at same location ( 445375 )
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.breakpoints;
@@ -183,8 +184,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	
 	@Override
 	public boolean canCreateWatchpointsInteractive(IWorkbenchPart part, ISelection selection) {
-	    // Gather all input from user if needed.
-	    return true;
+	    return canToggleWatchpoints(part, selection) && !hasWatchpoint(part, selection);
 	}
 	
 	@Override
@@ -228,7 +228,7 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	@Override
 	public boolean canCreateFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) {
-	    return true;
+	    return canToggleMethodBreakpoints(part, selection) && !hasMethodBreakpoints(part, selection);
 	}
 	
 	@Override
@@ -254,6 +254,40 @@ abstract public class AbstractToggleBreakpointAdapter
     	}
     	return false;
     }
+
+    private boolean hasWatchpoint(IWorkbenchPart part, ISelection selection) {
+		ICElement element = getCElementFromSelection( part, selection );
+		if (element instanceof IVariable) {
+	        IVariable variable = (IVariable) element;
+			String sourceHandle = getSourceHandle(variable );
+	        IResource resource = getElementResource(variable);
+	        String expression = getVariableName(variable);		
+	        try {
+				return null != findWatchpoint(sourceHandle, resource, expression);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
+		}
+		return false;
+	}
+
+    private boolean hasMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
+        ICElement element = getCElementFromSelection( part, selection );
+        if ( element instanceof IFunction || element instanceof IMethod ) {
+        	IDeclaration declaration =  (IDeclaration) element;
+            String sourceHandle = getSourceHandle(declaration);
+            IResource resource = getElementResource(declaration);
+            String functionName = (declaration instanceof IFunction) ? 
+            		getFunctionName((IFunction) declaration) 
+            		: getMethodName((IMethod) declaration);
+            try {
+				return null != findFunctionBreakpoint(sourceHandle, resource, functionName);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
+			}
+		}
+		return false;
+	}
 
     /**
      * Updates the breakpoint for given part and selection.  
@@ -606,7 +640,8 @@ abstract public class AbstractToggleBreakpointAdapter
         return null;
 	}
 
-    protected ICWatchpointTarget getWatchpointTarget( IWorkbenchPart part, ISelection selection ) {
+    @SuppressWarnings("deprecation")
+	protected ICWatchpointTarget getWatchpointTarget( IWorkbenchPart part, ISelection selection ) {
         if (selection != null && selection instanceof IStructuredSelection && !selection.isEmpty()) {
             Object obj = ((IStructuredSelection)selection).getFirstElement();
             if (obj != null) {

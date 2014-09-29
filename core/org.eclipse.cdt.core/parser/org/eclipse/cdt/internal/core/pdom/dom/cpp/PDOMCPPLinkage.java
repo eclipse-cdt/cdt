@@ -324,6 +324,34 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fTemplate.initData(fOriginalAliasedType);
 		}
 	}
+	
+	class ConfigureInstance implements Runnable {
+		PDOMCPPSpecialization fInstance;
+		
+		public ConfigureInstance(PDOMCPPSpecialization specialization) {
+			fInstance = specialization;
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fInstance.storeTemplateParameterMap();
+		}
+	}
+	
+	class ConfigureClassInstance implements Runnable {
+		PDOMCPPClassInstance fClassInstance;
+		
+		public ConfigureClassInstance(PDOMCPPClassInstance classInstance) {
+			fClassInstance = classInstance;
+			postProcesses.add(this);
+		}
+		
+		@Override
+		public void run() {
+			fClassInstance.storeTemplateArguments();
+		}
+	}
 
 	/**
 	 * Adds or returns existing binding for the given name.
@@ -336,13 +364,26 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		IBinding binding = name.resolveBinding();
 
 		PDOMBinding pdomBinding = addBinding(binding, name);
+		
+		// Some nodes schedule some of their initialization to be done
+		// after the binding has been added to the PDOM, to avoid
+		// infinite recursion. We run those post-processes now.
+		// Note that we need to run it before addImplicitMethods() is
+		// called, since addImplicitMethods() expects the binding to
+		// be fully initialized.
+		handlePostProcesses();
+
 		if (pdomBinding instanceof PDOMCPPClassType || pdomBinding instanceof PDOMCPPClassSpecialization) {
 			if (binding instanceof ICPPClassType && name.isDefinition()) {
 				addImplicitMethods(pdomBinding, (ICPPClassType) binding, name);
 			}
 		}
-
+		
+		// Some of the nodes created during addImplicitMethods() can
+		// also schedule post-processes, so we need to run through
+		// them again.
 		handlePostProcesses();
+
 		return pdomBinding;
 	}
 

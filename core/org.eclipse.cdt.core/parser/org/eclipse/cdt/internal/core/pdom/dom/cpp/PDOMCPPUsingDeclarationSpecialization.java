@@ -36,7 +36,7 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 	
 	private volatile IBinding[] delegates;
 	
-	public PDOMCPPUsingDeclarationSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPUsingDeclaration using, PDOMBinding specialized)
+	public PDOMCPPUsingDeclarationSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPUsingDeclaration using, PDOMBinding specialized)
 			throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) using, specialized);
 

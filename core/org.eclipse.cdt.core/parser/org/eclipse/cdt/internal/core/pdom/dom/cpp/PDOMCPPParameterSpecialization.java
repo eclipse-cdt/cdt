@@ -45,7 +45,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		fType= t;
 	}
 		
-	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMCPPFunctionSpecialization parent, ICPPParameter astParam,
+	public PDOMCPPParameterSpecialization(PDOMCPPLinkage linkage, PDOMCPPFunctionSpecialization parent, ICPPParameter astParam,
 			PDOMCPPParameter original, PDOMCPPParameterSpecialization next) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astParam, original);
 		fType= null;  // This constructor is used for adding parameters to the database, only.

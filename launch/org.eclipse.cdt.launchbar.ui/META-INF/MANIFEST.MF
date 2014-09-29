@@ -26,3 +26,4 @@ Export-Package: org.eclipse.cdt.launchbar.ui,
  org.eclipse.cdt.launchbar.ui.internal.commands;x-internal:=true,
  org.eclipse.cdt.launchbar.ui.internal.controls;x-internal:=true,
  org.eclipse.cdt.launchbar.ui.internal.dialogs;x-internal:=true
+Import-Package: javax.inject

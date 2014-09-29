@@ -53,11 +53,6 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 		return Collections.unmodifiableMap(fWorkingAttributes.getAttributes());
 	}
 
-	@Override
-	public String getKeyFile() {
-		return fWorkingAttributes.getAttribute(JSchConnectionAttributes.KEYFILE_ATTR, EMPTY_STRING);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -225,11 +220,6 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	public void setIsPasswordAuth(boolean flag) {
 		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.IS_PASSWORD_ATTR, Boolean.toString(flag));
-	}
-
-	public void setKeyFile(String keyFile) {
-		fIsDirty = true;
-		fWorkingAttributes.setAttribute(JSchConnectionAttributes.KEYFILE_ATTR, keyFile);
 	}
 
 	/*

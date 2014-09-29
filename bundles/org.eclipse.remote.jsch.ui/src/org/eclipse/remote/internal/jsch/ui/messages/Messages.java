@@ -27,6 +27,7 @@ public class Messages extends NLS {
 	public static String JSchConnectionPage_Please_enter_name_for_connection;
 	public static String JSchConnectionPage_Proxy;
 	public static String JSchConnectionPage_Help;
+	public static String JSchConnectionPage_KeysAtSSH2;
 	public static String JSchConnectionPage_SelectCommand;
 	public static String JSchConnectionPage_SelectConnection;
 	public static String JSchConnectionPage_Settings0;

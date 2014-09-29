@@ -36,7 +36,6 @@ public class JSchConnectionAttributes {
 	public static final String PROXYCOMMAND_ATTR = "JSCH_PROXYCOMMAND_ATTR"; //$NON-NLS-1$
 	public static final String IS_PASSWORD_ATTR = "JSCH_IS_PASSWORD_ATTR"; //$NON-NLS-1$
 	public static final String PASSPHRASE_ATTR = "JSCH_PASSPHRASE_ATTR"; //$NON-NLS-1$
-	public static final String KEYFILE_ATTR = "JSCH_KEYFILE_ATTR"; //$NON-NLS-1$
 	public static final String TIMEOUT_ATTR = "JSCH_TIMEOUT_ATTR"; //$NON-NLS-1$
 	public static final String USE_LOGIN_SHELL_ATTR = "JSCH_USE_LOGIN_SHELL_ATTR"; //$NON-NLS-1$
 

@@ -11,7 +11,6 @@
  */
 package org.eclipse.remote.internal.jsch.ui.wizards;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +27,6 @@ import org.eclipse.remote.internal.jsch.core.JSchConnectionAttributes;
 import org.eclipse.remote.internal.jsch.core.JSchConnectionWorkingCopy;
 import org.eclipse.remote.internal.jsch.ui.messages.Messages;
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
-import org.eclipse.remote.ui.widgets.RemoteFileWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -70,7 +68,6 @@ public class JSchConnectionPage extends WizardPage {
 	private Text fPassphraseText;
 	private Text fPortText;
 	private Text fTimeoutText;
-	private RemoteFileWidget fFileWidget;
 
 	private String fInitialName = "Remote Host"; //$NON-NLS-1$
 	private Set<String> fInvalidConnectionNames;
@@ -133,7 +130,6 @@ public class JSchConnectionPage extends WizardPage {
 
 		Label portLabel = new Label(settingsComp, SWT.NONE);
 		portLabel.setText(Messages.JSchNewConnectionPage_Port);
-		portLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fPortText = new Text(settingsComp, SWT.BORDER | SWT.SINGLE);
 		fPortText.setText(Integer.toString(JSchConnection.DEFAULT_PORT));
 		fPortText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
@@ -141,7 +137,6 @@ public class JSchConnectionPage extends WizardPage {
 
 		Label timeoutLabel = new Label(settingsComp, SWT.NONE);
 		timeoutLabel.setText(Messages.JSchNewConnectionPage_Timeout);
-		timeoutLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fTimeoutText = new Text(settingsComp, SWT.BORDER | SWT.SINGLE);
 		fTimeoutText.setText(Integer.toString(JSchConnection.DEFAULT_TIMEOUT));
 		fTimeoutText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
@@ -158,39 +153,18 @@ public class JSchConnectionPage extends WizardPage {
 
 	private void createAuthControls(Composite parent) {
 		Composite controls = new Composite(parent, SWT.NONE);
-		controls.setLayout(new GridLayout(2, false));
+		controls.setLayout(new GridLayout(3, false));
 		controls.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		Label hostLabel = new Label(controls, SWT.NONE);
 		hostLabel.setText(Messages.JSchNewConnectionPage_Host);
-		hostLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fHostText = new Text(controls, SWT.BORDER | SWT.SINGLE);
-		fHostText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fHostText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		Label userLabel = new Label(controls, SWT.NONE);
 		userLabel.setText(Messages.JSchNewConnectionPage_User);
-		userLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fUserText = new Text(controls, SWT.BORDER | SWT.SINGLE);
-		fUserText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		// User option box
-		fPasswordButton = new Button(controls, SWT.RADIO);
-		fPasswordButton.setText(Messages.JSchNewConnectionPage_Password_based_authentication);
-		fPasswordButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
-		fPasswordButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				validateFields();
-				updateEnablement();
-			}
-		});
-
-		// Password field
-		Label passwordLabel = new Label(controls, SWT.NONE);
-		passwordLabel.setText(Messages.JSchNewConnectionPage_Password);
-		passwordLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		fPasswordText = new Text(controls, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
-		fPasswordText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fUserText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		// Key option box
 		fPublicKeyButton = new Button(controls, SWT.RADIO);
@@ -204,24 +178,53 @@ public class JSchConnectionPage extends WizardPage {
 			}
 		});
 
-		// Key file selection
-		fFileWidget = new RemoteFileWidget(controls, SWT.NONE, 0, null, ""); //$NON-NLS-1$
-		fFileWidget.setConnection(RemoteServices.getLocalServices().getConnectionManager()
-				.getConnection(IRemoteConnectionManager.LOCAL_CONNECTION_NAME));
-		fFileWidget.setLabel(Messages.JSchNewConnectionPage_File_with_private_key);
-		fFileWidget.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		Link link = new Link(controls, SWT.WRAP);
+		final GridData linkLayoutData = new GridData(GridData.FILL_HORIZONTAL);
+		link.setLayoutData(linkLayoutData);
+		final String PREFS_PAGE_ID_NET_SSH = "org.eclipse.jsch.ui.SSHPreferences"; //$NON-NLS-1$
+		link.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PreferenceDialog dlg = PreferencesUtil.createPreferenceDialogOn(getShell(), PREFS_PAGE_ID_NET_SSH,
+						new String[] { PREFS_PAGE_ID_NET_SSH }, null);
+				dlg.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// ignore
+			}
+		});
+		link.setText(Messages.JSchConnectionPage_KeysAtSSH2);
 
 		// Passphrase field
 		Label passphraseLabel = new Label(controls, SWT.NONE);
 		passphraseLabel.setText(Messages.JSchNewConnectionPage_Passphrase);
-		passphraseLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fPassphraseText = new Text(controls, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
-		fPassphraseText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fPassphraseText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		fPasswordButton.setSelection(true);
-		fPublicKeyButton.setSelection(false);
-		controls.setTabList(new Control[] { fHostText, fUserText, fPasswordButton, fPasswordText, fPublicKeyButton, fFileWidget,
-				fPassphraseText });
+		// User option box
+		fPasswordButton = new Button(controls, SWT.RADIO);
+		fPasswordButton.setText(Messages.JSchNewConnectionPage_Password_based_authentication);
+		fPasswordButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 3, 1));
+		fPasswordButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				validateFields();
+				updateEnablement();
+			}
+		});
+
+		// Password field
+		Label passwordLabel = new Label(controls, SWT.NONE);
+		passwordLabel.setText(Messages.JSchNewConnectionPage_Password);
+		fPasswordText = new Text(controls, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
+		fPasswordText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+		fPasswordButton.setSelection(false);
+		fPublicKeyButton.setSelection(true);
+		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton,
+				fPassphraseText, fPasswordButton, fPasswordText });
 	}
 
 	@Override
@@ -243,7 +246,6 @@ public class JSchConnectionPage extends WizardPage {
 
 		Label label = new Label(topControl, SWT.NONE);
 		label.setText(Messages.JSchNewConnectionPage_Connection_name);
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
 		fConnectionName = new Text(topControl, SWT.BORDER | SWT.SINGLE);
 		fConnectionName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -345,7 +347,6 @@ public class JSchConnectionPage extends WizardPage {
 				fPasswordText.setText(fConnection.getPassword());
 			} else {
 				fPassphraseText.setText(fConnection.getPassphrase());
-				fFileWidget.setLocationPath(fConnection.getKeyFile());
 			}
 			fProxyCommandText.setText(fConnection.getProxyCommand());
 
@@ -380,10 +381,6 @@ public class JSchConnectionPage extends WizardPage {
 			if (passphrase != null) {
 				fPassphraseText.setText(passphrase);
 			}
-			String file = fInitialAttributes.get(JSchConnectionAttributes.KEYFILE_ATTR);
-			if (file != null) {
-				fFileWidget.setLocationPath(file);
-			}
 			fProxyConnectionWidget.setConnection(RemoteServices.getLocalServices().getConnectionManager().getConnection(
 					IRemoteConnectionManager.LOCAL_CONNECTION_NAME));
 		}
@@ -393,7 +390,6 @@ public class JSchConnectionPage extends WizardPage {
 		fConnectionName.addModifyListener(fDataModifyListener);
 		fHostText.addModifyListener(fDataModifyListener);
 		fUserText.addModifyListener(fDataModifyListener);
-		fFileWidget.addModifyListener(fDataModifyListener);
 		fPasswordText.addModifyListener(fDataModifyListener);
 		fPassphraseText.addModifyListener(fDataModifyListener);
 		fPortText.addModifyListener(fDataModifyListener);
@@ -481,9 +477,6 @@ public class JSchConnectionPage extends WizardPage {
 			if (!fConnection.getPassphrase().equals(fPassphraseText.getText().trim())) {
 				fConnection.setPassphrase(fPassphraseText.getText().trim());
 			}
-			if (!fConnection.getKeyFile().equals(fFileWidget.getLocationPath())) {
-				fConnection.setKeyFile(fFileWidget.getLocationPath());
-			}
 			if (fConnection.isPasswordAuth() != fPasswordButton.getSelection()) {
 				fConnection.setIsPasswordAuth(fPasswordButton.getSelection());
 			}
@@ -513,7 +506,6 @@ public class JSchConnectionPage extends WizardPage {
 		boolean isPasswordAuth = fPasswordButton.getSelection();
 		fPasswordText.setEnabled(isPasswordAuth);
 		fPassphraseText.setEnabled(!isPasswordAuth);
-		fFileWidget.setEnabled(!isPasswordAuth);
 	}
 
 	private String validateAdvanced() {
@@ -544,9 +536,6 @@ public class JSchConnectionPage extends WizardPage {
 		} else if (fUserText.getText().trim().length() == 0) {
 			message = Messages.JSchNewConnectionPage_User_name_cannot_be_empty;
 		}
-		if (message == null) {
-			message = validatePasskey();
-		}
 		if (message == null && fProxyConnectionWidget.getConnection() == null) {
 			message = Messages.JSchConnectionPage_selectProxyConnection;
 		}
@@ -558,22 +547,4 @@ public class JSchConnectionPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
-	private String validatePasskey() {
-		if (!fPasswordButton.getSelection()) {
-			if (fFileWidget.getLocationPath().trim().length() == 0) {
-				return Messages.JSchNewConnectionPage_Private_key_path_cannot_be_empty;
-			}
-			File path = new File(fFileWidget.getLocationPath().trim());
-			if (!path.exists()) {
-				return Messages.JSchNewConnectionPage_Private_key_file_does_not_exist;
-			}
-			if (!path.isFile()) {
-				return Messages.JSchNewConnectionPage_Private_key_file_is_invalid;
-			}
-			if (!path.canRead()) {
-				return Messages.JSchNewConnectionPage_Private_key_file_cannot_be_read;
-			}
-		}
-		return null;
-	}
 }

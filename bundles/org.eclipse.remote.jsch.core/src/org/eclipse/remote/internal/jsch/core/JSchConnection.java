@@ -518,10 +518,6 @@ public class JSchConnection implements IRemoteConnection {
 		return fAttributes;
 	}
 
-	public String getKeyFile() {
-		return fAttributes.getAttribute(JSchConnectionAttributes.KEYFILE_ATTR, EMPTY_STRING);
-	}
-
 	public JSchConnectionManager getManager() {
 		return fManager;
 	}
@@ -835,13 +831,13 @@ public class JSchConnection implements IRemoteConnection {
 	private Session newSession(final IUserAuthenticator authenticator, IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor progress = SubMonitor.convert(monitor, 10);
 		try {
-			if (!isPasswordAuth()) {
-				fJSchService.getJSch().addIdentity(getKeyFile());
-			}
 			Session session = fJSchService.createSession(getAddress(), getPort(), getUsername());
 			session.setUserInfo(new JSchUserInfo(authenticator));
 			if (isPasswordAuth()) {
+				session.setConfig("PreferredAuthentications", "password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$ //$NON-NLS-2$
 				session.setPassword(getPassword());
+			} else {
+				session.setConfig("PreferredAuthentications", "publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (getProxyCommand().equals(EMPTY_STRING) && getProxyConnectionName().equals(EMPTY_STRING)) {
 				fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10)); // connect without proxy

@@ -39,6 +39,7 @@ import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.internal.ui.actions.breakpoints.EnableDisableBreakpointRulerAction;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.core.filesystem.URIUtil;
@@ -646,31 +647,37 @@ abstract public class AbstractToggleBreakpointAdapter
 
 	/**
 	 * Returns the resource being edited in the given workbench part. 
-	 * @param part Workbench part to checm.
+	 * @param part Workbench part to check.
 	 * @return Resource being edited.
 	 */
 	protected static IResource getResource( IWorkbenchPart part ) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if ( part instanceof IEditorPart ) {
 			IEditorInput editorInput = ((IEditorPart)part).getEditorInput();
-			IResource resource = null;
-			if ( editorInput instanceof IFileEditorInput ) {
-				resource = ((IFileEditorInput)editorInput).getFile();
-			}
-			else if ( editorInput instanceof ExternalEditorInput ) {
-				resource = ((ExternalEditorInput)editorInput).getMarkerResource();
-			}
-			if ( resource != null )
-				return resource;
-			/* This file is not in a project, let default case handle it */
-			ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
-			if ( provider != null ) {
-				IPath location = provider.getPath( editorInput );
-				if ( location != null ) {
-					IFile[] files = root.findFilesForLocationURI( URIUtil.toURI( location ) );
-					if ( files.length > 0 && files[0].isAccessible())
-						return files[0];
-				}
+			return getResource(editorInput);
+		}
+		return root;
+	}
+
+	private static IResource getResource(IEditorInput editorInput) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IResource resource = null;
+		if ( editorInput instanceof IFileEditorInput ) {
+			resource = ((IFileEditorInput)editorInput).getFile();
+		}
+		else if ( editorInput instanceof ExternalEditorInput ) {
+			resource = ((ExternalEditorInput)editorInput).getMarkerResource();
+		}
+		if ( resource != null )
+			return resource;
+		/* This file is not in a project, let default case handle it */
+		ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
+		if ( provider != null ) {
+			IPath location = provider.getPath( editorInput );
+			if ( location != null ) {
+				IFile[] files = root.findFilesForLocationURI( URIUtil.toURI( location ) );
+				if ( files.length > 0 && files[0].isAccessible())
+					return files[0];
 			}
 		}
 		return root;
@@ -691,8 +698,25 @@ abstract public class AbstractToggleBreakpointAdapter
 		return ""; //$NON-NLS-1$
 	}
 
+	/**
+	 * Returns the resource file containing the C model element. 
+	 * 
+	 * @param declaration model element
+	 * @return resource for c model element. Cannot be null, will return workspace root when no resource file can be found.  
+	 */
+	
 	protected IResource getElementResource( IDeclaration declaration ) {
-		return declaration.getUnderlyingResource();
+		IResource resource = declaration.getUnderlyingResource();
+		if (resource != null)
+			return resource;
+		
+		try {
+			IEditorInput editorInput = EditorUtility.getEditorInput(declaration);
+			return getResource(editorInput);
+		} catch (CModelException e) {
+			DebugPlugin.log(e);
+		}
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	private String getFunctionName( IFunction function ) {

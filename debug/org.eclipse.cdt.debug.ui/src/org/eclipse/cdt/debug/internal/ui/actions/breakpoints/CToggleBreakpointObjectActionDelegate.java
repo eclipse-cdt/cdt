@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
+ *     Freescale 	- Add support for conditionally activating an action
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
@@ -71,6 +72,16 @@ public abstract class CToggleBreakpointObjectActionDelegate implements IObjectAc
 	protected abstract void performAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection, Event event) 
 	    throws CoreException;
 	
+	/**
+	 * Returns whether the specific operation is supported.
+	 * 
+	 * @param target the target adapter
+	 * @param selection the selection to verify the operation on
+	 * @param part the part the operation has been requested on
+	 * @return whether the operation can be performed
+	 */
+	protected abstract boolean canPerformAction(IToggleBreakpointsTarget target, IWorkbenchPart part, ISelection selection);
+	
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled = false;
 		if (selection instanceof IStructuredSelection) {
@@ -81,7 +92,7 @@ public abstract class CToggleBreakpointObjectActionDelegate implements IObjectAc
 			if (fPart != null) {
 			    IToggleBreakpointsTarget target = 
 			        DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, fSelection);
-			    enabled = target != null;
+			    enabled = target != null && canPerformAction(target, fPart, fSelection);
 			}
 		}
 		action.setEnabled(enabled);

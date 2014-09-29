@@ -34,7 +34,7 @@ class PDOMCPPEnumeratorSpecialization extends PDOMCPPSpecialization implements I
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = VALUE + Database.VALUE_SIZE;
 
-	public PDOMCPPEnumeratorSpecialization(PDOMLinkage linkage, PDOMNode parent,
+	public PDOMCPPEnumeratorSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
 			IEnumerator enumerator, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) enumerator, specialized);
 		storeValue(enumerator);

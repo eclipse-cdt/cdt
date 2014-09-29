@@ -40,12 +40,19 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE + 4;
 	
-	public PDOMCPPClassInstance(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding orig)
+	private volatile ICPPTemplateArgument[] fTemplateArguments;
+	
+	public PDOMCPPClassInstance(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassType classType, PDOMBinding orig)
 			throws CoreException {
 		super(linkage, parent, classType, orig);
 		final ICPPTemplateInstance asInstance= (ICPPTemplateInstance) classType;
-		final long argListRec= PDOMCPPArgumentList.putArguments(this, asInstance.getTemplateArguments());
-		getDB().putRecPtr(record + ARGUMENTS, argListRec);
+		// Defer storing of template arguments to the post-process
+		// to avoid infinite recursion when the evaluation of a non-type 
+		// template argument tries to store its template definition.
+		// Until the post-process runs, temporarily store the input (possibly
+		// non-PDOM) arguments.
+		fTemplateArguments = asInstance.getTemplateArguments();
+		linkage.new ConfigureClassInstance(this);
 	}
 	
 	public PDOMCPPClassInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -69,12 +76,29 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
+		if (fTemplateArguments == null) {
+			try {
+				final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
+				fTemplateArguments = PDOMCPPArgumentList.getArguments(this, rec);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return fTemplateArguments;
+	}
+	
+	public void storeTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
-			return PDOMCPPArgumentList.getArguments(this, rec);
+			// fTemplateArguments here are the temporarily stored, possibly non-PDOM
+			// arguments stored by the constructor. Construct the PDOM arguments and
+			// store them.
+			final long argListRec= PDOMCPPArgumentList.putArguments(this, fTemplateArguments);
+			getDB().putRecPtr(record + ARGUMENTS, argListRec);
+			
+			// Read the stored arguments next time getTemplateArguments() is called.
+			fTemplateArguments = null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 	}
 	

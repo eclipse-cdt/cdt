@@ -27,18 +27,21 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
+import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IUserAuthenticator;
+import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.AddressInUseException;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
 import org.eclipse.remote.internal.jsch.core.commands.ExecCommand;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -388,7 +391,7 @@ public class JSchConnection implements IRemoteConnection {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.remote.core.IRemoteConnection#forwardRemotePort(java. lang.String, int,
+	 * @see org.eclipse.remote.core.IRemoteConnection#forwardRemotePort(java.lang.String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -581,6 +584,38 @@ public class JSchConnection implements IRemoteConnection {
 		return fProperties.get(key);
 	}
 
+	/**
+	 * Gets the proxy command. For no proxy command an empty string is returned.
+	 *
+	 * @return proxy command
+	 */
+	public String getProxyCommand() {
+		return fAttributes.getAttribute(JSchConnectionAttributes.PROXYCOMMAND_ATTR, EMPTY_STRING);
+	}
+
+	/**
+	 * Gets the proxy connection. If no proxy is used it returns a local connection.
+	 *
+	 * @return proxy connection
+	 */
+	public IRemoteConnection getProxyConnection() {
+		String proxyConnectionName = getProxyConnectionName();
+		if (proxyConnectionName.equals(EMPTY_STRING)) {
+			return RemoteServices.getLocalServices().getConnectionManager().getConnection(
+					IRemoteConnectionManager.LOCAL_CONNECTION_NAME);
+		}
+		return fManager.getConnection(proxyConnectionName);
+	}
+
+	/**
+	 * Gets the proxy connection name
+	 *
+	 * @return proxy connection name
+	 */
+	public String getProxyConnectionName() {
+		return fAttributes.getAttribute(JSchConnectionAttributes.PROXYCONNECTION_ATTR, EMPTY_STRING);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -610,6 +645,22 @@ public class JSchConnection implements IRemoteConnection {
 			}
 		}
 		return fSftpChannel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see com.jcraft.jsch.Session#getStreamForwarder(java.lang.String, int)
+	 */
+	public Channel getStreamForwarder(String host, int port) throws RemoteConnectionException
+	{
+		try {
+			Channel channel = fSessions.get(0).getStreamForwarder(host, port);
+			channel.connect();
+			return channel;
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e);
+		}
 	}
 
 	public int getTimeout() {
@@ -792,7 +843,19 @@ public class JSchConnection implements IRemoteConnection {
 			if (isPasswordAuth()) {
 				session.setPassword(getPassword());
 			}
-			fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10));
+			if (getProxyCommand().equals(EMPTY_STRING) && getProxyConnectionName().equals(EMPTY_STRING)) {
+				fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10)); // connect without proxy
+			} else {
+				if (getProxyCommand().equals(EMPTY_STRING)) {
+					session.setProxy(JSchConnectionProxyFactory.createForwardProxy(getProxyConnection(),
+							progress.newChild(10)));
+					fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10));
+				} else {
+					session.setProxy(JSchConnectionProxyFactory.createCommandProxy(getProxyConnection(), getProxyCommand(),
+							progress.newChild(10)));
+					session.connect(getTimeout() * 1000); // the fJSchService doesn't pass the timeout correctly
+				}
+			}
 			if (!progress.isCanceled()) {
 				fSessions.add(session);
 				return session;

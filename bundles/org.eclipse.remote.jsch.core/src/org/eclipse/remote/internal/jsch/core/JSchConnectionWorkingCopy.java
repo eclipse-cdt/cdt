@@ -110,6 +110,26 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#getProxyCommand()
+	 */
+	@Override
+	public String getProxyCommand() {
+		return fWorkingAttributes.getAttribute(JSchConnectionAttributes.PROXYCOMMAND_ATTR, EMPTY_STRING);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#getProxyConnectionName()
+	 */
+	@Override
+	public String getProxyConnectionName() {
+		return fWorkingAttributes.getAttribute(JSchConnectionAttributes.PROXYCONNECTION_ATTR, EMPTY_STRING);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#getTimeout()
 	 */
 	@Override
@@ -253,6 +273,28 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 	public void setPort(int port) {
 		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.PORT_ATTR, Integer.toString(port));
+	}
+
+	/**
+	 * Sets the proxy command. Set to empty string for no command
+	 * 
+	 * @param proxyCommand
+	 *            proxy command
+	 */
+	public void setProxyCommand(String proxyCommand) {
+		fIsDirty = true;
+		fWorkingAttributes.setAttribute(JSchConnectionAttributes.PROXYCOMMAND_ATTR, proxyCommand);
+	}
+
+	/**
+	 * Sets the proxy connection name. Set to empty string for no proxy connection
+	 * 
+	 * @param proxyCommand
+	 *            proxy connection name
+	 */
+	public void setProxyConnectionName(String proxyConnectionName) {
+		fIsDirty = true;
+		fWorkingAttributes.setAttribute(JSchConnectionAttributes.PROXYCONNECTION_ATTR, proxyConnectionName);
 	}
 
 	public void setTimeout(int timeout) {

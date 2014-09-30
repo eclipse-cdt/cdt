@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
@@ -25,6 +26,7 @@ import org.eclipse.remote.internal.jsch.core.JSchConnection;
 import org.eclipse.remote.internal.jsch.core.JSchConnectionAttributes;
 import org.eclipse.remote.internal.jsch.core.JSchConnectionWorkingCopy;
 import org.eclipse.remote.internal.jsch.ui.messages.Messages;
+import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.remote.ui.widgets.RemoteFileWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
@@ -74,6 +77,8 @@ public class JSchConnectionPage extends WizardPage {
 	private final IRemoteConnectionManager fConnectionManager;
 
 	private final DataModifyListener fDataModifyListener = new DataModifyListener();
+	private RemoteConnectionWidget fProxyConnectionWidget;
+	private Text fProxyCommandText;
 
 	public JSchConnectionPage(IRemoteConnectionManager connMgr) {
 		super(Messages.JSchNewConnectionPage_New_Connection);
@@ -82,7 +87,7 @@ public class JSchConnectionPage extends WizardPage {
 	}
 
 	/**
-	 * Create controls for the bottom (hideable) composite
+	 * Create controls for the bottom (hideable) advanced composite
 	 *
 	 * @param mold
 	 *
@@ -96,13 +101,15 @@ public class JSchConnectionPage extends WizardPage {
 
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
-				Point newSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				Point currentSize = parent.getSize();
-				int deltaY = newSize.y - currentSize.y;
-				Point shellSize = getShell().getSize();
-				shellSize.y += deltaY;
-				getShell().setSize(shellSize);
-				getShell().layout(true, true);
+				for (int i = 0; i < 2; i++) { // sometimes the size compute isn't correct on first try
+					Point newSize = parent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					Point currentSize = parent.getSize();
+					int deltaY = newSize.y - currentSize.y;
+					Point shellSize = getShell().getSize();
+					shellSize.y += deltaY;
+					getShell().setSize(shellSize);
+					getShell().layout(true, true);
+				}
 			}
 
 			@Override
@@ -112,24 +119,35 @@ public class JSchConnectionPage extends WizardPage {
 		});
 
 		Composite advancedComp = new Composite(expComp, SWT.NONE);
-		advancedComp.setLayout(new GridLayout(2, false));
+		advancedComp.setLayout(new GridLayout(1, false));
 		advancedComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-		Label portLabel = new Label(advancedComp, SWT.NONE);
+		Group settingsComp = new Group(advancedComp, SWT.NONE);
+		settingsComp.setText(Messages.JSchConnectionPage_Settings0);
+		settingsComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		settingsComp.setLayout(new GridLayout(2, false));
+
+		Label portLabel = new Label(settingsComp, SWT.NONE);
 		portLabel.setText(Messages.JSchNewConnectionPage_Port);
 		portLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		fPortText = new Text(advancedComp, SWT.BORDER | SWT.SINGLE);
+		fPortText = new Text(settingsComp, SWT.BORDER | SWT.SINGLE);
 		fPortText.setText(Integer.toString(JSchConnection.DEFAULT_PORT));
 		fPortText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		setTextFieldWidthInChars(fPortText, 5);
 
-		Label timeoutLabel = new Label(advancedComp, SWT.NONE);
+		Label timeoutLabel = new Label(settingsComp, SWT.NONE);
 		timeoutLabel.setText(Messages.JSchNewConnectionPage_Timeout);
 		timeoutLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		fTimeoutText = new Text(advancedComp, SWT.BORDER | SWT.SINGLE);
+		fTimeoutText = new Text(settingsComp, SWT.BORDER | SWT.SINGLE);
 		fTimeoutText.setText(Integer.toString(JSchConnection.DEFAULT_TIMEOUT));
 		fTimeoutText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		setTextFieldWidthInChars(fTimeoutText, 5);
+
+		Group proxyComp = new Group(advancedComp, SWT.NONE);
+		proxyComp.setText(Messages.JSchConnectionPage_Proxy);
+		proxyComp.setLayout(new GridLayout(1, false));
+		proxyComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		createProxyControls(proxyComp);
 
 		expComp.setClient(advancedComp);
 	}
@@ -248,6 +266,33 @@ public class JSchConnectionPage extends WizardPage {
 		updateEnablement();
 	}
 
+	/**
+	 * Create controls for the bottom (hideable) proxy composite
+	 *
+	 * @param mold
+	 *
+	 */
+	private void createProxyControls(final Composite proxyComp) {
+		Label lblConnection = new Label(proxyComp, SWT.WRAP);
+		lblConnection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		lblConnection.setText(Messages.JSchConnectionPage_SelectConnection);
+
+		fProxyConnectionWidget = new RemoteConnectionWidget(proxyComp, SWT.NONE, null, 0, null);
+
+		Label lblCommand = new Label(proxyComp, SWT.WRAP);
+		lblCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		lblCommand.setText(Messages.JSchConnectionPage_SelectCommand);
+
+		fProxyCommandText = new Text(proxyComp, SWT.BORDER);
+		fProxyCommandText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Link link = new Link(proxyComp, SWT.WRAP);
+		final GridData linkLayoutData = new GridData(GridData.FILL_HORIZONTAL);
+		link.setLayoutData(linkLayoutData);
+		linkLayoutData.widthHint = 400;
+		link.setText(Messages.JSchConnectionPage_Help);
+	}
+
 	public JSchConnectionWorkingCopy getConnection() {
 		return fConnection;
 	}
@@ -285,6 +330,9 @@ public class JSchConnectionPage extends WizardPage {
 				fPassphraseText.setText(fConnection.getPassphrase());
 				fFileWidget.setLocationPath(fConnection.getKeyFile());
 			}
+			fProxyCommandText.setText(fConnection.getProxyCommand());
+
+			fProxyConnectionWidget.setConnection(fConnection.getProxyConnection());
 		} else {
 			fConnectionName.setText(fInitialName);
 			String host = fInitialAttributes.get(JSchConnectionAttributes.ADDRESS_ATTR);
@@ -319,6 +367,8 @@ public class JSchConnectionPage extends WizardPage {
 			if (file != null) {
 				fFileWidget.setLocationPath(file);
 			}
+			fProxyConnectionWidget.setConnection(RemoteServices.getLocalServices().getConnectionManager().getConnection(
+					IRemoteConnectionManager.LOCAL_CONNECTION_NAME));
 		}
 	}
 
@@ -331,6 +381,14 @@ public class JSchConnectionPage extends WizardPage {
 		fPassphraseText.addModifyListener(fDataModifyListener);
 		fPortText.addModifyListener(fDataModifyListener);
 		fTimeoutText.addModifyListener(fDataModifyListener);
+		fProxyCommandText.addModifyListener(fDataModifyListener);
+		fProxyConnectionWidget.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				validateFields();
+				getContainer().updateButtons();
+			}
+		});
 	}
 
 	public void setAddress(String address) {
@@ -420,6 +478,17 @@ public class JSchConnectionPage extends WizardPage {
 			if (fConnection.getPort() != port) {
 				fConnection.setPort(port);
 			}
+			if (!fConnection.getProxyCommand().equals(fProxyCommandText.getText().trim())) {
+				fConnection.setProxyCommand(fProxyCommandText.getText().trim());
+			}
+			IRemoteConnection proxyConnection = fProxyConnectionWidget.getConnection();
+			String proxyConnectionName = ""; //$NON-NLS-1$
+			if (proxyConnection != null && proxyConnection.getRemoteServices() != RemoteServices.getLocalServices()) {
+				proxyConnectionName = proxyConnection.getName();
+			}
+			if (!fConnection.getProxyConnectionName().equals(proxyConnectionName)) {
+				fConnection.setProxyConnectionName(proxyConnectionName);
+			}
 		}
 	}
 
@@ -461,9 +530,13 @@ public class JSchConnectionPage extends WizardPage {
 		if (message == null) {
 			message = validatePasskey();
 		}
+		if (message == null && fProxyConnectionWidget.getConnection() == null) {
+			message = Messages.JSchConnectionPage_selectProxyConnection;
+		}
 		if (message == null) {
 			message = validateAdvanced();
 		}
+
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}

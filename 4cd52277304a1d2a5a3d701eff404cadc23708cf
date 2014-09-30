@@ -16,6 +16,24 @@
       "revId": "4cd52277304a1d2a5a3d701eff404cadc23708cf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b52093a4",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e3.8.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-09-30T12:08:29Z",
+      "side": 1,
+      "message": "Yes, I missed removing this block as the ..test.feature.group is moved to the updates/3.8 repo above, to be consistent with the rest of the target files.\n\n  This is now removed in ps2",
+      "parentUuid": "a766b734_1fbc08b1",
+      "revId": "4cd52277304a1d2a5a3d701eff404cadc23708cf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

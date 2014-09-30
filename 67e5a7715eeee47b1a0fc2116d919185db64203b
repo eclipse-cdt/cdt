@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_b8940a9b",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-30T19:46:55Z",
+      "side": 1,
+      "message": "Why did you choose to change the id?  The action is not limited to methods from what I understand.",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_98994ed4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleBreakpointObjectActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-30T19:46:55Z",
+      "side": 1,
+      "message": "I was told a while back that you should only put two dates here, the earliest and latest.  So it should be \n2000, 2014",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f88e828a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleMethodBreakpointActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-30T19:46:55Z",
+      "side": 1,
+      "message": "MIght as well update the 2008 to 2014 since you\u0027re at it.",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d893c6ad",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleWatchpointActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-30T19:46:55Z",
+      "side": 1,
+      "message": "Nice that you enabled the interactive creation.",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_78a272f7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleWatchpointActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-09-30T19:46:55Z",
+      "side": 1,
+      "message": "Here there is a little bug if you press CTRL when toggling and there is already a watchpoint.  Instead of opening the properties of the existing watchpoint it creates a second one.\n\nI believe we had the same bug elsewhere before, and the bug still happens for method breakpoints (from which you copied the code).",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

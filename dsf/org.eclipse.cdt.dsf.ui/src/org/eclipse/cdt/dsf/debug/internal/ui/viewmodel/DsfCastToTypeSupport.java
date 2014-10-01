@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionGroupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IIndexedPartitionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.CastInfo;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2.CastInfo2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.MessagesForVariablesVM;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
@@ -214,6 +215,17 @@ public class DsfCastToTypeSupport  {
         			startIndex,
         			length);
 		}
+	    
+		@Override
+		public void castToArray(int startIndex, String length)
+				throws DebugException {
+			CastInfo currentContext = fCastedExpressionStorage.get(memento);
+			
+        	updateCastInformation(currentContext != null ? currentContext.getTypeString() : null, 
+        			startIndex,
+        			length);
+
+		}
 
 		private void updateCastInformation(
 				String type, int arrayStartIndex, 
@@ -223,6 +235,14 @@ public class DsfCastToTypeSupport  {
 		    fireExpressionChangedEvent(exprDMC);
 		}
 
+		private void updateCastInformation(
+				String type, int arrayStartIndex, 
+				String arrayCount) {
+			final CastInfo info = new CastInfo2(arrayStartIndex, arrayCount);
+			fCastedExpressionStorage.put(memento, info);
+		    fireExpressionChangedEvent(exprDMC);
+		}
+		
 		private class ExpressionChangedEvent extends AbstractDMEvent<IExpressionDMContext> implements IExpressionChangedDMEvent {
 			public ExpressionChangedEvent(IExpressionDMContext context) {
 				super(context);

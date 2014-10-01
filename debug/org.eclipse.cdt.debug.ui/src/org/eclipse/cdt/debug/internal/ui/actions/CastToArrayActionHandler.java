@@ -62,7 +62,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		private int fFirstIndex = 0;
 
-		private int fLength = 0;
+		private String fLength = "0";
 
 		private Button fOkButton;
 
@@ -72,7 +72,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		private Text fLengthText;
 
-		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, int initialLength ) {
+		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, String initialLength ) {
 			super( parentShell );
 			fType = (initialType == null) ? "" : initialType; //$NON-NLS-1$
 			fFirstIndex = initialStart;
@@ -87,7 +87,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 			return fFirstIndex;
 		}
 
-		protected int getLength() {
+		protected String getLength() {
 			return fLength;
 		}
 
@@ -189,20 +189,20 @@ public class CastToArrayActionHandler extends AbstractHandler {
 						message = ActionMessages.getString( "CastToArrayActionDelegate.5" ); //$NON-NLS-1$
 						enabled = false;
 					}
-					else {
-						int length = -1;
-						try {
-							length = Integer.parseInt( lengthText );
-						}
-						catch( NumberFormatException e ) {
-							message = ActionMessages.getString( "CastToArrayActionDelegate.6" ); //$NON-NLS-1$
-							enabled = false;
-						}
-						if ( enabled && length < 1 ) {
-							message = ActionMessages.getString( "CastToArrayActionDelegate.7" ); //$NON-NLS-1$
-							enabled = false;
-						}
-					}
+//					else {
+//						int length = -1;
+//						try {
+//							length = Integer.parseInt( lengthText );
+//						}
+//						catch( NumberFormatException e ) {
+//							message = ActionMessages.getString( "CastToArrayActionDelegate.6" ); //$NON-NLS-1$
+//							enabled = false;
+//						}
+//						if ( enabled && length < 1 ) {
+//							message = ActionMessages.getString( "CastToArrayActionDelegate.7" ); //$NON-NLS-1$
+//							enabled = false;
+//						}
+//					}
 				}
 			}
 			fOkButton.setEnabled( enabled );
@@ -221,11 +221,11 @@ public class CastToArrayActionHandler extends AbstractHandler {
 				String lengthText = fLengthText.getText().trim();
 				try {
 					fFirstIndex = Integer.parseInt( firstIndex );
-					fLength = Integer.parseInt( lengthText );
+					fLength = lengthText;
 				}
 				catch( NumberFormatException e ) {
 					fFirstIndex = 0;
-					fLength = 0;
+					fLength = "0";
 				}
 			}
 			else {
@@ -321,10 +321,10 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 	protected void doAction( ICastToArray[] castableItems ) throws DebugException {
 		String currentType = castableItems[0].getCurrentType().trim();
-		CastToArrayDialog dialog = new CastToArrayDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType, 0, 1 );
+		CastToArrayDialog dialog = new CastToArrayDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType, 0, "1" );
 		if ( dialog.open() == Window.OK ) {
 			int firstIndex = dialog.getFirstIndex();
-			int lastIndex = dialog.getLength();
+			String lastIndex = dialog.getLength();
 			for ( ICastToArray castableItem : castableItems ) {
 				castableItem.castToArray( firstIndex, lastIndex );
 			}

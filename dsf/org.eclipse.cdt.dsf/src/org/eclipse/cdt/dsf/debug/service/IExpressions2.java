@@ -23,7 +23,20 @@ public interface IExpressions2 extends IExpressions {
 	/**
 	 * This class specifies how an expression should be
 	 * typecast to another type and/or displayed as an array.
+	 * @since 2.5
 	 */
+	public static class CastInfo2 extends CastInfo {
+
+		private final String arrayCountExpr;
+		
+		public CastInfo2(int arrayStart, String arrayCountExpression) {
+			super(null, arrayStart, 0);
+			arrayCountExpr = arrayCountExpression;
+		}
+		public String getArrayCountExpr(){
+			return arrayCountExpr;
+		}
+	}
 	public static class CastInfo {
 		private final String typeString;
 		private final int arrayCount;

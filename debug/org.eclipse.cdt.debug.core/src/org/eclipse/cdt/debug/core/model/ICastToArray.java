@@ -33,4 +33,7 @@ public interface ICastToArray extends ICastToType {
 	 * @throws DebugException
 	 */
 	void castToArray( int startIndex, int length ) throws DebugException;
+	
+	void castToArray( int startIndex, String length ) throws DebugException;
+
 }

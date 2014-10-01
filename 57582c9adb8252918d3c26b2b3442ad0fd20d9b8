@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_ae35e462",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-01T11:03:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_6d73d90a",
+      "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_4d709dfc",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-09-29T15:58:18Z",
       "side": 1,
       "message": "Please use StringUtil.join with \u0027args\u0027 like you did in GDBBackend",
+      "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0e2b3808",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-01T11:03:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_4d709dfc",
       "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -71,6 +107,42 @@
     },
     {
       "key": {
+        "uuid": "a766b734_4e4410d0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-01T11:03:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_1fe9a8f3",
+      "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ee2fdc10",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-01T11:03:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_4d57fd51",
+      "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_2d61e12d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
         "patchSetId": 2
@@ -82,6 +154,24 @@
       "writtenOn": "2014-09-29T15:58:18Z",
       "side": 1,
       "message": "I think we can easily avoid using a list here.  How about:\n\n    protected String[] getGDBCommandLineArray() {\n\t\t// The goal here is to keep options to an absolute minimum.\n\t\t// All configuration should be done in the final launch sequence\n\t\t// to allow for more flexibility.\n\t\treturn new String[] { getGDBPath().toOSString(), // This could contain spaces\n\t\t\t\t\t      \"--interpreter\",   //$NON-NLS-1$\n\t\t\t\t\t      // We currently work with MI version 2.  Don\u0027t use just \u0027mi\u0027 because it \n\t\t\t\t\t      // points to the latest MI version, while we want mi2 specifically.\n\t\t\t\t              \"mi2\",  //$NON-NLS-1$\n\t\t\t\t              // Don\u0027t read the gdbinit file here.  It is read explicitly in\n\t\t\t\t              // the LaunchSequence to make it easier to customize.\n\t\t\t\t              \"--nx\"}; //$NON-NLS-1$\n}",
+      "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_eeea3c21",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-01T11:03:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_2d61e12d",
       "revId": "57582c9adb8252918d3c26b2b3442ad0fd20d9b8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

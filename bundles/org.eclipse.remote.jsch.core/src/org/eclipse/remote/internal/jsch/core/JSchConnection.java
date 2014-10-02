@@ -193,7 +193,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#addConnectionChangeListener
 	 * (org.eclipse.remote.core.IRemoteConnectionChangeListener)
 	 */
@@ -245,7 +245,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#close()
 	 */
 	@Override
@@ -267,7 +267,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -277,7 +277,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/**
 	 * Execute the command and return the result as a string.
-	 * 
+	 *
 	 * @param cmd
 	 *            command to execute
 	 * @param monitor
@@ -293,7 +293,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/**
 	 * Notify all fListeners when this connection's status changes.
-	 * 
+	 *
 	 * @param event
 	 */
 	@Override
@@ -317,7 +317,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardLocalPort(int, java.lang.String, int)
 	 */
 	@Override
@@ -334,7 +334,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardLocalPort(java.lang .String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -370,7 +370,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardRemotePort(int, java.lang.String, int)
 	 */
 	@Override
@@ -387,7 +387,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#forwardRemotePort(java. lang.String, int,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -422,7 +422,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAddress()
 	 */
 	@Override
@@ -432,7 +432,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAttributes()
 	 */
 	@Override
@@ -442,7 +442,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteServices#getCommandShell(int)
 	 */
 	@Override
@@ -452,7 +452,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/**
 	 * Get the result of executing a pwd command.
-	 * 
+	 *
 	 * @return current working directory
 	 */
 	private String getCwd(IProgressMonitor monitor) {
@@ -467,7 +467,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv()
 	 */
 	@Override
@@ -477,7 +477,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getEnv(java.lang.String)
 	 */
 	@Override
@@ -487,9 +487,9 @@ public class JSchConnection implements IRemoteConnection {
 
 	/**
 	 * Open an exec channel to the remote host.
-	 * 
+	 *
 	 * @return exec channel or null if the progress monitor was cancelled
-	 * 
+	 *
 	 * @throws RemoteConnectionException
 	 *             if a channel could not be opened
 	 */
@@ -503,7 +503,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteServices#getFileManager()
 	 */
 	@Override
@@ -525,7 +525,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getName()
 	 */
 	@Override
@@ -543,7 +543,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getPort()
 	 */
 	@Override
@@ -553,7 +553,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.util.List)
 	 */
 	@Override
@@ -563,7 +563,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteServices#getProcessBuilder(java.lang.String[])
 	 */
 	@Override
@@ -573,7 +573,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getProperty(java.lang.String )
 	 */
 	@Override
@@ -583,7 +583,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getRemoteServices()
 	 */
 	@Override
@@ -593,7 +593,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/**
 	 * Open an sftp channel to the remote host. Always use the second session if available.
-	 * 
+	 *
 	 * @return sftp channel or null if the progress monitor was cancelled
 	 * @throws RemoteConnectionException
 	 *             if a channel could not be opened
@@ -618,7 +618,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getUsername()
 	 */
 	@Override
@@ -628,7 +628,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingCopy()
 	 */
 	@Override
@@ -638,7 +638,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingDirectory()
 	 */
 	@Override
@@ -654,7 +654,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#isOpen()
 	 */
 	@Override
@@ -688,9 +688,9 @@ public class JSchConnection implements IRemoteConnection {
 	}
 
 	/**
-	 * 
+	 *
 	 * Load the following hard-coded properties at runtime:
-	 * 
+	 *
 	 * <dl>
 	 * <dt>file.separator
 	 * <dd>File separator character of the (remote) connection. Hardcoded "/" (forward slash).
@@ -735,7 +735,7 @@ public class JSchConnection implements IRemoteConnection {
 	 * <li>For everything else - "unknown"</li>
 	 * </ul>
 	 * <dl>
-	 * 
+	 *
 	 */
 	private void loadProperties(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, 100);
@@ -805,7 +805,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#open()
 	 */
 	@Override
@@ -817,8 +817,8 @@ public class JSchConnection implements IRemoteConnection {
 			if (subMon.isCanceled()) {
 				throw new RemoteConnectionException(Messages.JSchConnection_Connection_was_cancelled);
 			}
-			//getCwd checks the exec channel before checkConfiguration checks the sftp channel
-			fWorkingDir = getCwd(subMon.newChild(10)); 
+			// getCwd checks the exec channel before checkConfiguration checks the sftp channel
+			fWorkingDir = getCwd(subMon.newChild(10));
 			if (!checkConfiguration(session, subMon.newChild(20))) {
 				newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 				loadEnv(subMon.newChild(10));
@@ -840,7 +840,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#removeConnectionChangeListener
 	 * (org.eclipse.remote.core.IRemoteConnectionChangeListener)
 	 */
@@ -851,7 +851,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#removeLocalPortForwarding(int)
 	 */
 	@Override
@@ -868,7 +868,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#removeRemotePortForwarding(int)
 	 */
 	@Override
@@ -885,7 +885,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#setWorkingDirectory(java.lang.String)
 	 */
 	@Override
@@ -897,7 +897,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#supportsTCPPortForwarding()
 	 */
 	@Override
@@ -907,7 +907,7 @@ public class JSchConnection implements IRemoteConnection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

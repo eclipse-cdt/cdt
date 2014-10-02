@@ -34,7 +34,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAddress()
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getAttributes()
 	 */
 	@Override
@@ -59,7 +59,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getName()
 	 */
 	@Override
@@ -69,16 +69,17 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#getOriginal()
 	 */
+	@Override
 	public IRemoteConnection getOriginal() {
 		return fOriginal;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#getPassphrase()
 	 */
 	@Override
@@ -88,7 +89,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#getPassword()
 	 */
 	@Override
@@ -98,7 +99,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getPort()
 	 */
 	@Override
@@ -108,7 +109,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#getTimeout()
 	 */
 	@Override
@@ -118,7 +119,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getUsername()
 	 */
 	@Override
@@ -128,7 +129,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnection#getWorkingCopy()
 	 */
 	@Override
@@ -138,16 +139,17 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return fIsDirty;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.internal.jsch.core.JSchConnection#isPasswordAuth()
 	 */
 	@Override
@@ -157,9 +159,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#save()
 	 */
+	@Override
 	public IRemoteConnection save() {
 		JSchConnectionAttributes info = fOriginal.getInfo();
 		info.getAttributes().clear();
@@ -179,9 +182,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setAddress(java.lang.String)
 	 */
+	@Override
 	public void setAddress(String address) {
 		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.ADDRESS_ATTR, address);
@@ -189,9 +193,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setAttribute(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setAttribute(String key, String value) {
 		fIsDirty = true;
 		fWorkingAttributes.setAttribute(key, value);
@@ -209,14 +214,15 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setName(java.lang.String)
 	 */
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		fIsDirty = true;
 		fWorkingAttributes.setName(name);
@@ -229,9 +235,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setPassword(java.lang.String)
 	 */
+	@Override
 	public void setPassword(String password) {
 		fIsDirty = true;
 		fWorkingAttributes.setSecureAttribute(JSchConnectionAttributes.PASSWORD_ATTR, password);
@@ -239,9 +246,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setPort(int)
 	 */
+	@Override
 	public void setPort(int port) {
 		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.PORT_ATTR, Integer.toString(port));
@@ -259,9 +267,10 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.remote.core.IRemoteConnectionWorkingCopy#setUsername(java.lang.String)
 	 */
+	@Override
 	public void setUsername(String userName) {
 		fIsDirty = true;
 		fWorkingAttributes.setAttribute(JSchConnectionAttributes.USERNAME_ATTR, userName);

@@ -88,6 +88,21 @@ public class JSchConnectionAttributes {
 		return fAttributes;
 	}
 
+	public boolean getBoolean(String key, boolean def) {
+		if (fAttributes.containsKey(key)) {
+			return Boolean.parseBoolean(fAttributes.get(key));
+		}
+		return def;
+	}
+
+	public int getInt(String key, int def) {
+		try {
+			return Integer.parseInt(fAttributes.get(key));
+		} catch (NumberFormatException e) {
+			return def;
+		}
+	}
+
 	public String getName() {
 		if (fNewName == null) {
 			return fName;
@@ -104,21 +119,6 @@ public class JSchConnectionAttributes {
 	public String getSecureAttribute(String key, String def) {
 		if (fSecureAttributes.containsKey(key)) {
 			return fSecureAttributes.get(key);
-		}
-		return def;
-	}
-
-	public int getInt(String key, int def) {
-		try {
-			return Integer.parseInt(fAttributes.get(key));
-		} catch (NumberFormatException e) {
-			return def;
-		}
-	}
-
-	public boolean getBoolean(String key, boolean def) {
-		if (fAttributes.containsKey(key)) {
-			return Boolean.parseBoolean(fAttributes.get(key));
 		}
 		return def;
 	}
@@ -166,6 +166,11 @@ public class JSchConnectionAttributes {
 		}
 	}
 
+	public void remove() {
+		clearPreferences();
+		flushPreferences();
+	}
+
 	public void save() {
 		clearPreferences();
 		if (fNewName != null) {
@@ -173,11 +178,6 @@ public class JSchConnectionAttributes {
 			fNewName = null;
 		}
 		savePreferences();
-		flushPreferences();
-	}
-
-	public void remove() {
-		clearPreferences();
 		flushPreferences();
 	}
 

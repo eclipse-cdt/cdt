@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial Implementation
  *
@@ -38,13 +38,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.swt.widgets.Control;
 
 public class JSchConnectionPage extends WizardPage {
 	private class DataModifyListener implements ModifyListener {
@@ -83,9 +83,9 @@ public class JSchConnectionPage extends WizardPage {
 
 	/**
 	 * Create controls for the bottom (hideable) composite
-	 * 
+	 *
 	 * @param mold
-	 * 
+	 *
 	 */
 	private void createAdvancedControls(final Composite parent) {
 		ExpandableComposite expComp = new ExpandableComposite(parent, ExpandableComposite.TWISTIE);
@@ -198,7 +198,8 @@ public class JSchConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(true);
 		fPublicKeyButton.setSelection(false);
-		controls.setTabList(new Control[]{fHostText, fUserText, fPasswordButton, fPasswordText, fPublicKeyButton, fFileWidget, fPassphraseText});
+		controls.setTabList(new Control[] { fHostText, fUserText, fPasswordButton, fPasswordText, fPublicKeyButton, fFileWidget,
+				fPassphraseText });
 	}
 
 	@Override
@@ -253,7 +254,7 @@ public class JSchConnectionPage extends WizardPage {
 
 	/**
 	 * Check if the connection name is invalid. This only applies to new connections (when fConnection is null).
-	 * 
+	 *
 	 * @param name
 	 *            connection name
 	 * @return true if the name is invalid, false otherwise
@@ -364,6 +365,18 @@ public class JSchConnectionPage extends WizardPage {
 		fInitialAttributes.put(JSchConnectionAttributes.PORT_ATTR, Integer.toString(port));
 	}
 
+	private void setTextFieldWidthInChars(Text text, int chars) {
+		text.setTextLimit(chars);
+		Object data = text.getLayoutData();
+		if (data instanceof GridData) {
+			GC gc = new GC(text);
+			FontMetrics fm = gc.getFontMetrics();
+			int width = chars * fm.getAverageCharWidth();
+			gc.dispose();
+			((GridData) data).widthHint = width;
+		}
+	}
+
 	public void setUsername(String username) {
 		fInitialAttributes.put(JSchConnectionAttributes.USERNAME_ATTR, username);
 	}
@@ -472,17 +485,5 @@ public class JSchConnectionPage extends WizardPage {
 			}
 		}
 		return null;
-	}
-
-	private void setTextFieldWidthInChars(Text text, int chars) {
-		text.setTextLimit(chars);
-		Object data = text.getLayoutData();
-		if (data instanceof GridData) {
-			GC gc = new GC(text);
-			FontMetrics fm = gc.getFontMetrics();
-			int width = chars * fm.getAverageCharWidth();
-			gc.dispose();
-			((GridData) data).widthHint = width;
-		}
 	}
 }

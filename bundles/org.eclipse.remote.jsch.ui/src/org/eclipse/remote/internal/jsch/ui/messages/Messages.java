@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - Initial Implementation
  *
@@ -19,10 +19,6 @@ public class Messages extends NLS {
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_ID, Messages.class);
-	}
-
-	private Messages() {
-		// cannot create new instance
 	}
 
 	public static String JSchConnectionPage_A_connection_with_that_name_already_exists;
@@ -55,4 +51,8 @@ public class Messages extends NLS {
 	public static String JSchNewConnectionPage_User_name_cannot_be_empty;
 	public static String JSchUIConnectionManager_Connection_Error;
 	public static String JSchUIConnectionManager_Could_not_open_connection;
+
+	private Messages() {
+		// cannot create new instance
+	}
 }

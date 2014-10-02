@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2014 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -304,9 +304,37 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 			}
 		}
 
-		// bug # 211935 : allow items filtering.
-		if (ls != null) // NULL means call from prefs
-			items = ls.filterItems(items);
+		// items filtering
+		if (ls != null) { // NULL means call from prefs
+			List<EntryDescriptor> filteredItems = ls.filterItems(items);
+			List<EntryDescriptor> newItems = new ArrayList<EntryDescriptor>(filteredItems);
+
+			// Add parent folders
+			for (EntryDescriptor ed : filteredItems) {
+				if (!ed.isCategory()) {
+					String parentId = ed.getParentId();
+					if (parentId != null) {
+						boolean found = false;
+						for (EntryDescriptor item : newItems) {
+							if (item.isCategory() && parentId.equals(item.getId())) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							for (EntryDescriptor item : items) {
+								if (item.isCategory() && parentId.equals(item.getId())) {
+									newItems.add(item);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			items = newItems;
+		}
+
 		addItemsToTree(tree, items);
 
 		if (tree.getItemCount() > 0) {
@@ -428,6 +456,8 @@ public class CDTMainWizardPage extends WizardNewProjectCreationPage implements I
 	}
 
 	private void switchTo(CWizardHandler h, EntryDescriptor ed) {
+		if (ed == null)
+			return;
 		if (h == null)
 			h = ed.getHandler();
 		if (ed.isCategory())

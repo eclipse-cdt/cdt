@@ -128,17 +128,17 @@ public class NewLaunchConfigEditPage extends WizardPage {
 					// tab.setDefaults likely renames it
 					nameText.setText(workingCopy.getName());
 				}
+			}
+
+			// Do this after all the tabs have their controls created
+			for (ILaunchConfigurationTab tab : tabGroup.getTabs()) {
+				tab.initializeFrom(workingCopy);
 
 				CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
 				tabItem.setText(tab.getName());
 				tabItem.setImage(!tab.isValid(workingCopy) && tab.getErrorMessage() != null ?
 						launchConfigurationMgr.getErrorTabImage(tab) : tab.getImage());
 				tabItem.setControl(tab.getControl());
-			}
-
-			// Do this after all the tabs have their controls created
-			for (ILaunchConfigurationTab tab : tabGroup.getTabs()) {
-				tab.initializeFrom(workingCopy);
 			}
 
 			tabFolder.setSelection(0);

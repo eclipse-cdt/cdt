@@ -27,14 +27,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
-import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemoteFileManager;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteServices;
 import org.eclipse.remote.core.IUserAuthenticator;
-import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.AddressInUseException;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
@@ -186,6 +184,7 @@ public class JSchConnection implements IRemoteConnection {
 	private final List<Session> fSessions = new ArrayList<Session>();
 
 	private ChannelSftp fSftpChannel;
+	private boolean isFullySetup; // including sftp channel and environment
 
 	public JSchConnection(String name, IRemoteServices services) {
 		fRemoteServices = services;
@@ -590,23 +589,22 @@ public class JSchConnection implements IRemoteConnection {
 	}
 
 	/**
-	 * Gets the proxy connection. If no proxy is used it returns a local connection.
+	 * Gets the proxy connection. If no proxy connection is used it returns null.
 	 *
 	 * @return proxy connection
 	 */
-	public IRemoteConnection getProxyConnection() {
+	public JSchConnection getProxyConnection() {
 		String proxyConnectionName = getProxyConnectionName();
 		if (proxyConnectionName.equals(EMPTY_STRING)) {
-			return RemoteServices.getLocalServices().getConnectionManager().getConnection(
-					IRemoteConnectionManager.LOCAL_CONNECTION_NAME);
+			return null;
 		}
-		return fManager.getConnection(proxyConnectionName);
+		return (JSchConnection) fManager.getConnection(proxyConnectionName);
 	}
 
 	/**
 	 * Gets the proxy connection name
 	 *
-	 * @return proxy connection name
+	 * @return proxy connection name. If no proxy is used returns an empty string. Never returns null.
 	 */
 	public String getProxyConnectionName() {
 		return fAttributes.getAttribute(JSchConnectionAttributes.PROXYCONNECTION_ATTR, EMPTY_STRING);
@@ -699,6 +697,24 @@ public class JSchConnection implements IRemoteConnection {
 		return fWorkingDir;
 	}
 
+	/**
+	 * Test if the connection has a valid open session. Doesn't check whether the connection is fully setup.
+	 *
+	 * @return true if a valid session is available.
+	 */
+	public boolean hasOpenSession() {
+		boolean hasOpenSession = fSessions.size() > 0;
+		if (hasOpenSession) {
+			for (Session session : fSessions) {
+				hasOpenSession &= session.isConnected();
+			}
+		}
+		if (!hasOpenSession) {
+			close(); // Cleanup if session is closed
+		}
+		return hasOpenSession;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -706,16 +722,7 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	@Override
 	public boolean isOpen() {
-		boolean isOpen = fSessions.size() > 0;
-		if (isOpen) {
-			for (Session session : fSessions) {
-				isOpen &= session.isConnected();
-			}
-		}
-		if (!isOpen) {
-			close(); // Cleanup if session is closed
-		}
-		return isOpen;
+		return hasOpenSession() && isFullySetup;
 	}
 
 	public boolean isPasswordAuth() {
@@ -869,16 +876,44 @@ public class JSchConnection implements IRemoteConnection {
 	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws RemoteConnectionException {
-		if (!isOpen()) {
-			checkIsConfigured();
+		open(monitor, true);
+	}
+
+	/**
+	 * Open ssh connection without full setup (environment, sftp)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnection#open()
+	 *
+	 * @param monitor
+	 * @throws RemoteConnectionException
+	 */
+	public void openMinimal(IProgressMonitor monitor) throws RemoteConnectionException {
+		open(monitor, false);
+	}
+
+	/**
+	 * @see org.eclipse.remote.core.IRemoteConnection#open()
+	 *
+	 * @param monitor
+	 * @param setupFully
+	 *            open a full featured connection (environment query and sftp)
+	 * @throws RemoteConnectionException
+	 */
+	private void open(IProgressMonitor monitor, boolean setupFully) throws RemoteConnectionException {
 			SubMonitor subMon = SubMonitor.convert(monitor, 60);
-			Session session = newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
+		if (!hasOpenSession()) {
+			checkIsConfigured();
+			newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 			if (subMon.isCanceled()) {
 				throw new RemoteConnectionException(Messages.JSchConnection_Connection_was_cancelled);
 			}
+			isFullySetup = false;
+		}
+		if (setupFully && !isFullySetup) { // happens on the first open with setupFully==true, which might not be the first open
+			isFullySetup = true;
 			// getCwd checks the exec channel before checkConfiguration checks the sftp channel
 			fWorkingDir = getCwd(subMon.newChild(10));
-			if (!checkConfiguration(session, subMon.newChild(20))) {
+			if (!checkConfiguration(fSessions.get(0), subMon.newChild(20))) {
 				newSession(fManager.getUserAuthenticator(this), subMon.newChild(10));
 				loadEnv(subMon.newChild(10));
 			}

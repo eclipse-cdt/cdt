@@ -24,13 +24,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionManager;
 import org.eclipse.remote.core.IRemoteProcess;
-import org.eclipse.remote.core.IRemoteProcessBuilder;
+import org.eclipse.remote.core.RemoteServices;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Proxy;
 import com.jcraft.jsch.SocketFactory;
 
@@ -45,11 +47,12 @@ public class JSchConnectionProxyFactory {
 	private static class CommandProxy implements Proxy {
 		private String command;
 		private IRemoteProcess process;
-		private IRemoteConnection connection;
+		private JSchConnection connection;
 		private IProgressMonitor monitor;
+		private boolean connectCalled = false;
 
-		private CommandProxy(IRemoteConnection connection, String command, IProgressMonitor monitor) {
-			if (command == null || connection == null || monitor == null)
+		private CommandProxy(JSchConnection connection, String command, IProgressMonitor monitor) {
+			if (command == null || monitor == null)
 				throw new IllegalArgumentException();
 			this.command = command;
 			this.connection = connection;
@@ -74,33 +77,45 @@ public class JSchConnectionProxyFactory {
 		@Override
 		public void connect(SocketFactory socket_factory, String host,
 				int port, int timeout) throws IOException {
-			assert connection != null : "connect should only be called once"; //$NON-NLS-1$
+			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
 			try {
 				if (timeout == 0) {
 					timeout = 10000; // default to 10s
 				}
 				final int waitTime = 50;
 				final int waitSteps = timeout / waitTime;
-				SubMonitor subMon;
+				SubMonitor subMon = SubMonitor.convert(monitor, waitSteps * 2);
+				final SubMonitor childMon = subMon.newChild(waitSteps);
 
 				// Open connection if it isn't already opened
-				if (!connection.isOpen()) {
-					subMon = SubMonitor.convert(monitor, waitSteps * 2);
-					try {
-						connection.open(subMon.newChild(waitSteps));
-					} catch (RemoteConnectionException e) {
-						throw new IOException(e);
+				try {
+					if (connection != null) {
+						connection.openMinimal(childMon);
 					}
-				} else {
-					subMon = SubMonitor.convert(monitor, waitSteps);
+				} catch (RemoteConnectionException e) {
+					throw new IOException(e);
 				}
+				subMon.setWorkRemaining(waitSteps);
 
 				// Start command
 				command = command.replace("%h", host); //$NON-NLS-1$
 				command = command.replace("%p", Integer.toString(port)); //$NON-NLS-1$
-				List<String> cmd = new ArgumentParser(command).getTokenList();
-				IRemoteProcessBuilder pb = connection.getProcessBuilder(cmd);
-				process = pb.start();
+
+				if (connection != null) {
+					// The process-builder adds unnecessary extra commands (cd, export, ..) and might not work for restricted shells
+					try {
+						ChannelExec exec = connection.getExecChannel();
+						exec.setCommand(command);
+						exec.connect();
+						process = new JSchProcess(exec, false);
+					} catch (JSchException | RemoteConnectionException e) {
+						throw new IOException(e);
+					}
+				} else {
+					List<String> cmd = new ArgumentParser(command).getTokenList();
+					process = RemoteServices.getLocalServices().getConnectionManager().getConnection(
+							IRemoteConnectionManager.LOCAL_CONNECTION_NAME).getProcessBuilder(cmd).start();
+				}
 
 				// Wait on command to produce stdout output
 				long endTime = System.currentTimeMillis() + timeout;
@@ -158,8 +173,7 @@ public class JSchConnectionProxyFactory {
 					};
 				}.start();
 			} finally {
-				// Not valid to call connect again or for any other command to access these variables. Setting to null to ensure.
-				connection = null;
+				connectCalled = true;
 			}
 		}
 
@@ -198,11 +212,12 @@ public class JSchConnectionProxyFactory {
 		private Channel channel;
 		private JSchConnection connection;
 		private IProgressMonitor monitor;
+		private boolean connectCalled = false;
 
-		private SSHForwardProxy(IRemoteConnection proxyConnection, IProgressMonitor monitor) {
+		private SSHForwardProxy(JSchConnection proxyConnection, IProgressMonitor monitor) {
 			if (proxyConnection == null || monitor == null)
 				throw new IllegalArgumentException();
-			this.connection = (JSchConnection) proxyConnection; // only JSch supported for ForwardProxy
+			this.connection = proxyConnection;
 			this.monitor = monitor;
 		}
 
@@ -224,19 +239,18 @@ public class JSchConnectionProxyFactory {
 		@Override
 		public void connect(SocketFactory socket_factory, String host, int port,
 				int timeout) throws Exception {
-			assert connection != null : "connect should only be called once"; //$NON-NLS-1$
+			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
 			try {
-				if (!connection.isOpen()) {
+				if (!connection.hasOpenSession()) {
 					try {
-						connection.open(monitor);
+						connection.openMinimal(monitor);
 					} catch (RemoteConnectionException e) {
 						throw new IOException(e);
 					}
 				}
 				channel = connection.getStreamForwarder(host, port);
 			} finally {
-				// Not valid to call connect again or for any other command to access these variables. Setting to null to ensure.
-				connection = null;
+				connectCalled = true;
 			}
 		}
 
@@ -285,14 +299,14 @@ public class JSchConnectionProxyFactory {
 	 * Creates a (local or remote) command proxy.
 	 *
 	 * @param connection
-	 *            Any (local or remote) connection. Cannot be null.
+	 *            Either a valid connection or null for a local command
 	 * @param command
 	 *            A valid proxy command. Cannot be null or empty.
 	 * @param monitor
 	 *            A valid progress monitor. Cannot be null.
 	 * @return ssh proxy
 	 */
-	public static Proxy createCommandProxy(IRemoteConnection connection, String command, IProgressMonitor monitor) {
+	public static Proxy createCommandProxy(JSchConnection connection, String command, IProgressMonitor monitor) {
 		return new CommandProxy(connection, command, monitor);
 	}
 
@@ -305,7 +319,7 @@ public class JSchConnectionProxyFactory {
 	 *            A valid progress monitor. Cannot be null.
 	 * @return ssh proxy
 	 */
-	public static Proxy createForwardProxy(IRemoteConnection proxyConnection, IProgressMonitor monitor) {
+	public static Proxy createForwardProxy(JSchConnection proxyConnection, IProgressMonitor monitor) {
 		return new SSHForwardProxy(proxyConnection, monitor);
 	}
 }

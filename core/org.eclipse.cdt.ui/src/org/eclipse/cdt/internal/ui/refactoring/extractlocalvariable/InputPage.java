@@ -63,6 +63,7 @@ public class InputPage extends UserInputWizardPage {
 		});
 
 		nameText.selectAll();
+		nameText.setFocus();
 		checkName();
 		setControl(control);
 	}

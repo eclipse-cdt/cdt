@@ -704,6 +704,9 @@ public class CPPTemplates {
 				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) template;
 				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
 				args = addDefaultArguments(aliasTemplate, args, id);
+				if (args == null) {
+					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
+				}
 				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
 				IType aliasedType = aliasTemplate.getType();
 				IBinding owner = template.getOwner();
@@ -716,6 +719,9 @@ public class CPPTemplates {
 				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
 				ICPPAliasTemplate aliasTemplate = aliasTemplateInstance.getTemplateDefinition();
 				args = addDefaultArguments(aliasTemplate, args, id);
+				if (args == null) {
+					return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
+				}
 				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
 				IType aliasedType = aliasTemplateInstance.getType();
 				IBinding owner = aliasTemplateInstance.getOwner();

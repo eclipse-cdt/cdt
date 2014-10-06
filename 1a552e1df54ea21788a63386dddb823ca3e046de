@@ -70,6 +70,23 @@
     },
     {
       "key": {
+        "uuid": "a766b734_91447dd1",
+        "filename": "doc/org.eclipse.cdt.doc.user/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:17:06Z",
+      "side": 1,
+      "message": "This fixes missing doc in Main, Debugger, Arguments tabs.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_114d0d19",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/plugin.xml",
         "patchSetId": 2

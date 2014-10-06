@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_91791d3d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 1,
+      "message": "Link context help to existing \"C/C++ Development User Guide \u003e Getting Started \u003e Debugging projects / Reference \u003e C/C++ Run and Debug\" help.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7176014b",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 1,
+      "message": "Same as above.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d18395a4",
+        "filename": "doc/org.eclipse.cdt.doc.user/contexts_CDT_LAUNCH.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 1,
+      "message": "Created new context id with two topics: \"Debugging Projects\" and \"C/C++ Run and Debug\". This represents the context help id for \"C/C++ Application\", \"C/C++ Remote Application\" and \"GDB Hardware Debugging\" launch configurations.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b1809999",
+        "filename": "doc/org.eclipse.cdt.doc.user/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 1,
+      "message": "Make documentation visible in these cdt plug-ins.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_114d0d19",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 1,
+      "message": "Link context help to existing \"C/C++ Development User Guide \u003e Getting Started \u003e Debugging projects / Reference \u003e C/C++ Run and Debug\" help in \"GDB Hardware Debugging\" launch configuration.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_711a81fb",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 1,
+      "message": "- add context help in \"GDB Hardware Debugging\" -\u003e Debugger tab.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

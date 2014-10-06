@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_5170254f",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-06T08:14:50Z",
+      "side": 0,
+      "message": "C/C++ Remote Application -\u003e Main Tab: this context id doesn\u0027t exist, replaced by \"org.eclipse.cdt.launch.remote.launchgroup\"; possibly that context id was not updated after moving remote launch plugin to DSF (saw in history).",
+      "revId": "0a3f35c3ed626a76e041da23cd56dc0f6c12c584",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

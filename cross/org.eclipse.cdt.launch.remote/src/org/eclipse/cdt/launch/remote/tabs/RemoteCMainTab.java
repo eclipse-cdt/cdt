@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2014 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@
 
 package org.eclipse.cdt.launch.remote.tabs;
 
+import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionHostConstants;
@@ -142,7 +143,7 @@ public class RemoteCMainTab extends CMainTab {
 		});
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
-				"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
+				Activator.PLUGIN_ID + ".launchgroup"); //$NON-NLS-1$
 
 		// //No more needed according to
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=178832

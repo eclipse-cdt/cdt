@@ -70,6 +70,18 @@
             plugin="org.eclipse.cdt.launch">
       </contexts>
       <contexts
+            file="contexts_CDT_LAUNCH.xml"
+            plugin="org.eclipse.cdt.debug.gdbjtag.ui">
+      </contexts>
+      <contexts
+            file="contexts_CDT_LAUNCH.xml"
+            plugin="org.eclipse.cdt.dsf.gdb.ui">
+      </contexts>
+      <contexts
+            file="contexts_CDT_LAUNCH.xml"
+            plugin="org.eclipse.cdt.debug.ui">
+      </contexts>
+      <contexts
             file="contexts_CDT_DEBUGGER_DSFGDB.xml"
             plugin="org.eclipse.cdt.dsf.gdb.ui">
       </contexts>

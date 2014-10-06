@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_d041d60d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 685,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-06T11:35:03Z",
+      "side": 1,
+      "message": "No intention. It slipped from another test. Changed to keep the ID,",
+      "parentUuid": "a766b734_b8940a9b",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_98994ed4",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleBreakpointObjectActionDelegate.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_50d146c5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleBreakpointObjectActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-06T11:35:03Z",
+      "side": 1,
+      "message": "Ok. Changed",
+      "parentUuid": "a766b734_98994ed4",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_f88e828a",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleMethodBreakpointActionDelegate.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2014-09-30T19:46:55Z",
       "side": 1,
       "message": "MIght as well update the 2008 to 2014 since you\u0027re at it.",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b0d53ab4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleMethodBreakpointActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-06T11:35:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_f88e828a",
       "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -81,6 +135,24 @@
       "writtenOn": "2014-09-30T19:46:55Z",
       "side": 1,
       "message": "Here there is a little bug if you press CTRL when toggling and there is already a watchpoint.  Instead of opening the properties of the existing watchpoint it creates a second one.\n\nI believe we had the same bug elsewhere before, and the bug still happens for method breakpoints (from which you copied the code).",
+      "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_94c58b86",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/CToggleWatchpointActionDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-06T11:35:03Z",
+      "side": 1,
+      "message": "Indeed. it is about 432503. \nI am submitting a patch that would remove existing watchpoint/method breakpoint when toggling interactively.\n\nWith current IToggleBreakpointsTargetCExtension API it is not possible to force *editing* of an existing watchpoint. Would need an API similar to IToggleBreakpointsTargetExtension2.",
+      "parentUuid": "a766b734_78a272f7",
       "revId": "67e5a7715eeee47b1a0fc2116d919185db64203b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

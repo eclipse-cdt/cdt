@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems and others.
+ * Copyright (c) 2008, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
  
     protected IServiceLocator fServiceLocator;
 
-    private static IContributionItem[] NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS = new IContributionItem[] { 
+    private static IContributionItem[] NO_FORMAT_CONTRIBUTION_ITEMS = new IContributionItem[] { 
     	new ContributionItem() {
             @Override
 			public void fill(Menu menu, int index) {
@@ -90,7 +90,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
 
         // If no part or selection, disable all.
         if (provider == null) {
-            return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
+            return NO_FORMAT_CONTRIBUTION_ITEMS;
         }
         
         IPresentationContext context = provider.getPresentationContext(); 
@@ -109,7 +109,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
         }
         
         if ( actions.isEmpty() ) {
-            return NO_BREAKPOINT_TYPES_CONTRIBUTION_ITEMS;
+            return NO_FORMAT_CONTRIBUTION_ITEMS;
         }
         
         IContributionItem[] items = new IContributionItem[actions.size()];

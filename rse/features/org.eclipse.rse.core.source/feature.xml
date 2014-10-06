@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.core.source"
       label="%featureName"
-      version="3.4.100.qualifier"
+      version="3.6.1.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
@@ -20,7 +20,7 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 

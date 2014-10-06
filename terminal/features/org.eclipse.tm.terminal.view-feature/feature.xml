@@ -14,7 +14,7 @@
 <feature
       id="org.eclipse.tm.terminal.view"
       label="%featureName"
-      version="2.4.100.qualifier"
+      version="3.6.1.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">

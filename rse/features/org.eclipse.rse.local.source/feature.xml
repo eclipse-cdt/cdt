@@ -1,23 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.eclipse.rse.local.source" version="2.1.500.qualifier" label="%featureName" provider-name="%providerName"     
-	license-feature="org.eclipse.license"
-	license-feature-version="1.0.1.qualifier">
-	<description >
-		%description
-	</description>
-	<copyright>
-		%copyright
-	</copyright>
-	<license url="%licenseURL">
-		%license
-	</license>
-	<url>
-		<update url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
-		<discovery url="http://download.eclipse.org/tm/updates/3.5" label="%tmUpdateSiteName"/>
-	</url>
-	<plugin id="org.eclipse.rse.services.local.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.subsystems.files.local.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.subsystems.processes.local.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.subsystems.shells.local.source" version="0.0.0"     unpack="false"/>
-	<plugin id="org.eclipse.rse.connectorservice.local.source" version="0.0.0"     unpack="false"/>
+<feature
+      id="org.eclipse.rse.local.source"
+      label="%featureName"
+      version="3.6.1.qualifier"
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.6"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
+   </url>
+
+   <plugin
+         id="org.eclipse.rse.services.local.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.subsystems.files.local.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.subsystems.processes.local.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.subsystems.shells.local.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.rse.connectorservice.local.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

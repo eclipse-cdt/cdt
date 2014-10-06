@@ -16,7 +16,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICElement;
 
 import org.eclipse.cdt.internal.ui.actions.AbstractUpdateIndexAction;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
@@ -34,13 +34,13 @@ public class FindUnresolvedIncludesProjectAction extends AbstractUpdateIndexActi
 	}
 
 	@Override
-	protected void doRun(ICProject[] projects) {
-		if (projects.length == 0) {
+	protected void doRun(ICElement[] elements) {
+		if (elements.length == 0) {
 			StatusLineHandler.showStatusLineMessage(fSite, CSearchMessages.CSearchOperation_operationUnavailable_message);
 	 		return;
 	 	}
 
-	 	ISearchQuery searchJob= new CSearchUnresolvedIncludesQuery(projects);
+	 	ISearchQuery searchJob= new CSearchUnresolvedIncludesQuery(elements);
 
 		StatusLineHandler.clearStatusLine(fSite);
 		NewSearchUI.activateSearchResultView();

@@ -26,6 +26,7 @@
 package org.eclipse.cdt.launch.remote.tabs;
 
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab;
+import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionHostConstants;
@@ -121,7 +122,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				.getWorkbench()
 				.getHelpSystem()
 				.setHelp(getControl(),
-						"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
+						Activator.PLUGIN_ID + ".launchgroup"); //$NON-NLS-1$
 
 	}
 

@@ -35,9 +35,10 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.applicationLaunchType"
             class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.applicationLaunchTabGroup">
+            helpContextId="org.eclipse.cdt.debug.ui.cdt_debugging_projects"
+            id="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            type="org.eclipse.cdt.launch.applicationLaunchType">
          <launchMode mode="debug"/>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
@@ -57,9 +58,10 @@
             id="org.eclipse.cdt.launch.postmortemLaunchTabGroup">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
             class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup">
+            helpContextId="org.eclipse.cdt.debug.ui.cdt_debugging_projects"
+            id="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType">
          <launchMode mode="debug"/>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup

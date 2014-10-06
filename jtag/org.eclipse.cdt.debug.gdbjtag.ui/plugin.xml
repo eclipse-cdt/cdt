@@ -12,6 +12,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             class="org.eclipse.cdt.debug.gdbjtag.ui.GDBJtagLaunchConfigurationTabGroup"
+            helpContextId="org.eclipse.cdt.debug.gdbjtag.ui.cdt_debugging_projects"
             id="org.eclipse.cdt.debug.gdbjtag.launchConfigurationTabGroup"
             type="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"/>
    </extension>

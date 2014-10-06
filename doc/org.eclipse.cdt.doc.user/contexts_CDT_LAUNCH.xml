@@ -52,4 +52,12 @@
    	label="Common"/>
 </context>
 
+<context id="cdt_debugging_projects" title="Debugging Projects">
+   <description>How to debug projects, click below to see help.</description>
+   <topic href="reference/cdt_o_run_dbg_pages.htm"
+    label="Launch Configurations Common Tabs"/>
+   <topic href="getting_started/cdt_w_debug.htm"
+    label="Debugging Projects"/>
+</context>
+
 </contexts>

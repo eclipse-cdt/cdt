@@ -10175,12 +10175,50 @@ public class AST2CPPTests extends AST2TestBase {
 	//	template <bool> struct A {};
 	//	template <>
 	//	struct A<false> {
-	//	    typedef int type;
+	//	  typedef int type;
 	//	};
 	//	struct S {};
 	//	const bool b = __is_base_of(S, int);
 	//	typedef A<b>::type T;
 	public void testIsBaseOf_395019() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
+	//	template<typename T, T v>
+	//	struct integral_constant {
+	//	  static constexpr T value = v;
+	//	  typedef integral_constant<T, v> type;
+	//	};
+	//
+	//	typedef integral_constant<bool, true> true_type;
+	//
+	//	typedef integral_constant<bool, false> false_type;
+	//
+	//	template<typename Base, typename Derived>
+	//	struct is_base_of : public integral_constant<bool, __is_base_of(Base, Derived)> {};
+	//
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <class BaseType, class SubType>
+	//	using EnableIfIsBaseOf =
+	//	    typename enable_if<is_base_of<BaseType, SubType>::value, int>::type;
+	//
+	//	class A {};
+	//
+	//	template <typename T>
+	//	class B {};
+	//
+	//	template <typename T, EnableIfIsBaseOf<A, T> = 0>
+	//	using Waldo = B<T>;
+	//
+	//	Waldo<A> c;
+	public void testIsBaseOf_446094() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 

@@ -359,11 +359,12 @@ public class Value implements IValue {
 		case __is_base_of:
 			type1 = SemanticUtil.getNestedType(type1, TDEF);
 			type2 = SemanticUtil.getNestedType(type2, TDEF);
-			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType) {
-				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1, point) ? 1 : 0;
-			} else {
-				return 0;
+			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType &&
+					(type1.isSameType(type2) ||
+							ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1, point))) {
+				return 1;
 			}
+			return 0;
 		}
 		return VALUE_CANNOT_BE_DETERMINED;
 	}

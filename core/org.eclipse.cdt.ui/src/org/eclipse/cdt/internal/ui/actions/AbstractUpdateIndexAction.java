@@ -44,13 +44,13 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 		if(!(fSelection instanceof IStructuredSelection) && !(fSelection instanceof ITextSelection)) {
 			return;
 		}
-		ICProject[] projects = getSelectedCProjects();
-		doRun(projects);
+		ICElement[] elements = getSelectedCElements();
+		doRun(elements);
 	}
 
-	protected void doRun(ICProject[] projects) {
+	protected void doRun(ICElement[] elements) {
 		try {
-			CCorePlugin.getIndexManager().update(projects, getUpdateOptions());
+			CCorePlugin.getIndexManager().update(elements, getUpdateOptions());
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		}
@@ -70,20 +70,20 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	
 	public boolean isEnabledFor(ISelection selection) {
 		selectionChanged(null, selection);
-		ICProject[] project = getSelectedCProjects();
+		ICElement[] project = getSelectedCElements();
 		return project.length > 0;
 	}
 	
-	protected ICProject[] getSelectedCProjects() {
-		ArrayList<ICProject> tuSelection= new ArrayList<ICProject>();
+	protected ICElement[] getSelectedCElements() {
+		ArrayList<ICElement> tuSelection= new ArrayList<ICElement>();
 		if(fSelection instanceof IStructuredSelection) {
 			IStructuredSelection resources = SelectionConverter.convertSelectionToResources(fSelection);
 			for (Iterator<?> i= resources.iterator(); i.hasNext();) {
 				Object o= i.next();
 				if(o instanceof IResource) {
-					ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(((IResource)o).getProject());
-					if(cproject != null) {
-						tuSelection.add(cproject);
+					ICElement celement= CCorePlugin.getDefault().getCoreModel().create((IResource)o);
+					if(celement != null) {
+						tuSelection.add(celement);
 					}
 				}
 			}
@@ -96,6 +96,6 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 				}
 			}
 		}
-		return tuSelection.toArray(new ICProject[tuSelection.size()]);
+		return tuSelection.toArray(new ICElement[tuSelection.size()]);
 	}
 }

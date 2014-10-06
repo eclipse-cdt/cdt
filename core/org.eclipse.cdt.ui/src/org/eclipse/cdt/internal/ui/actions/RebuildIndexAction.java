@@ -11,15 +11,15 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICElement;
 
 public class RebuildIndexAction extends AbstractUpdateIndexAction {
 	
 	@Override
-	protected void doRun(ICProject[] projects) {
-		for (ICProject proj : projects) {
-			if(proj != null) {
-				CCorePlugin.getIndexManager().reindex(proj);
+	protected void doRun(ICElement[] elements) {
+		for (ICElement elm : elements) {
+			if (elm != null) {
+				CCorePlugin.getIndexManager().reindex(elm.getCProject());
 			}
 		}
 	}

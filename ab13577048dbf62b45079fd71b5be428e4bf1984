@@ -52,6 +52,42 @@
       "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c5cbcfb5",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-07T21:12:48Z",
+      "side": 1,
+      "message": "That someone can be you, can\u0027t he?",
+      "parentUuid": "a766b734_25bd6320",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0595c795",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-07T21:12:48Z",
+      "side": 1,
+      "message": "If uri.getScheme() \u003d\u003d null, URIUtil.toPath(uri) returns a non-null path. Is it ok to ignore host information in such a case?",
+      "parentUuid": "a766b734_a5edf32f",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

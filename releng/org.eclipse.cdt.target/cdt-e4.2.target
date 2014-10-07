@@ -14,7 +14,7 @@
 <unit id="org.junit" version="0.0.0"/>
 <unit id="org.junit.source" version="0.0.0"/>
 <unit id="org.mockito" version="0.0.0"/>
-<unit id="org.hamcrest" version="0.0.0"/>
+<unit id="org.hamcrest.core" version="0.0.0"/>
 <unit id="javax.inject" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
 </location>

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launchbar.core.internal;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -444,7 +445,8 @@ public class LaunchBarManagerTest extends TestCase {
 
 		ILaunchTargetType targetType = manager.getLaunchTargetType(DEFAULT_TARGET_TYPE_ID);
 		assertNotNull(targetType);
-		manager.launchTargetAdded(new TestLaunchTarget("testTarget", targetType));
+		ILaunchTarget testTarget = new TestLaunchTarget("testTarget", targetType);
+		manager.launchTargetAdded(testTarget);
 
 		// verify that our launch config got created and saved
 		assertNotNull(manager.getActiveLaunchMode());
@@ -457,6 +459,12 @@ public class LaunchBarManagerTest extends TestCase {
 		assertNull(manager.getActiveLaunchTarget());
 		assertNull(manager.getActiveLaunchMode());
 		verify(wc).delete();
+		
+		// remove the target and make sure it's gone.
+		manager.launchTargetRemoved(testTarget);
+		ILaunchTarget[] allTargets = manager.getAllLaunchTargets();
+		assertEquals(1, allTargets.length);
+		assertNotEquals(testTarget, allTargets[0]);
 	}
 
 	@Test

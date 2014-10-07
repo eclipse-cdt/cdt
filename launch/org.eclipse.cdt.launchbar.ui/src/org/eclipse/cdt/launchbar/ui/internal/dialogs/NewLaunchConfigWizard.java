@@ -53,13 +53,13 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 
 	@Override
 	public boolean performFinish() {
-		cleanUpListeners();
+		cleanUpConfigs();
 		return editPage.performFinish();
 	}
 
 	@Override
 	public boolean performCancel() {
-		cleanUpListeners();
+		cleanUpConfigs();
 		return super.performCancel();
 	}
 
@@ -68,12 +68,10 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 		// We need to make sure those saves are deleted when the dialog is finished.
 		// We also need to turn off listening in the tool bar manager so that we don't treat these
 		// as real launch configs.
-
-//		LaunchToolBarManager.getInstance().setIgnoreLaunchConfigEvents(true);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
 	}
 
-	private void cleanUpListeners() {
+	void cleanUpConfigs() {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
 		for (ILaunchConfiguration config : configsToDelete) {
 			try {
@@ -82,7 +80,6 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 				Activator.log(e);
 			}
 		}
-//		LaunchToolBarManager.getInstance().setIgnoreLaunchConfigEvents(false);
 	}
 
 	@Override

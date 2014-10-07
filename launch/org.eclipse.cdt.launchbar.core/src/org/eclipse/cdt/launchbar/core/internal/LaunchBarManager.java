@@ -895,6 +895,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	@Override
 	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
+		targets.remove(getTargetId(target));
 		for (Listener listener : listeners) {
 			try {
 				listener.launchTargetsChanged();

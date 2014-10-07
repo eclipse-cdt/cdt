@@ -8336,6 +8336,7 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPVariable foo1= bh.assertNonProblemOnFirstIdentifier("foo =", ICPPVariable.class);
 		ICPPVariable foo2= bh.assertNonProblemOnFirstIdentifier("[foo]", ICPPVariable.class);
 		assertTrue(foo1 == foo2);
+		assertEquals(2, bh.getTranslationUnit().getReferences(foo1).length);
 	}
 
 	//	typedef int TInt;

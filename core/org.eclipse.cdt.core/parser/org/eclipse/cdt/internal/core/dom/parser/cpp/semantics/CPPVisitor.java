@@ -1443,7 +1443,7 @@ public class CPPVisitor extends ASTQueries {
 
 		private void addProblem(IASTProblem problem) {
 			if (fProblems == null) {
-				fProblems= new ArrayList<IASTProblem>();
+				fProblems= new ArrayList<>();
 			}
 			fProblems.add(problem);
 		}
@@ -1610,7 +1610,7 @@ public class CPPVisitor extends ASTQueries {
 					if (areEquivalentBindings(nameBinding, binding, index)) {
 						return true;
 					}
-					// A using declaration is a declaration for the references of its delegates
+					// A using declaration is a declaration for the references of its delegates.
 					if (nameBinding instanceof ICPPUsingDeclaration) {
 						if (ArrayUtil.contains(((ICPPUsingDeclaration) nameBinding).getDelegates(), binding)) {
 							return true;
@@ -1634,8 +1634,9 @@ public class CPPVisitor extends ASTQueries {
 			return true;
 		}
 		if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) && index != null) {
-			// Even though we know one of them is an index binding, we need to adapt both because they might not come from an
-			// index with the same number of fragments. So one of them could be a composite binding and the other one not.
+			// Even though we know one of them is an index binding, we need to adapt both because
+			// they might not come from an index with the same number of fragments. So one of them
+			// could be a composite binding and the other one not.
 			binding1 = index.adaptBinding(binding1);
 			binding2 = index.adaptBinding(binding2);
 
@@ -1753,6 +1754,7 @@ public class CPPVisitor extends ASTQueries {
 						prop == IASTNamedTypeSpecifier.NAME ||
 						prop == ICPPASTConstructorChainInitializer.MEMBER_ID ||
 						prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ||
+						prop == ICPPASTCapture.IDENTIFIER ||
 						prop == IASTImplicitNameOwner.IMPLICIT_NAME) {
 					break;
 				}

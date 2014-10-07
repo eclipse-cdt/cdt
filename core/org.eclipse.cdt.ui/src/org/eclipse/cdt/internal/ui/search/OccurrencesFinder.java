@@ -57,7 +57,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		if (!(node instanceof IASTName))
 			return CSearchMessages.OccurrencesFinder_no_element; 
 		fRoot= root;
-		fSelectedNode= (IASTName)node;
+		fSelectedNode= (IASTName) node;
 		fTarget= fSelectedNode.resolveBinding();
 		if (fTarget == null)
 			return CSearchMessages.OccurrencesFinder_no_binding; 

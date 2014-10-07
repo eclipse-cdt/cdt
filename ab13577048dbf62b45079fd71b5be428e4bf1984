@@ -34,6 +34,24 @@
       "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_25bd6320",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2014-10-07T21:04:19Z",
+      "side": 1,
+      "message": "I don\u0027t see a test case for UNCPathConverter at all. Are you asking me to create a new test case? I think someone will need to stub out a test before I can add it.",
+      "parentUuid": "a766b734_a5edf32f",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

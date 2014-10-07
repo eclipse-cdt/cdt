@@ -16,6 +16,24 @@
       "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a5edf32f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2014-10-07T20:58:40Z",
+      "side": 1,
+      "message": "No, I think this is correct. If the URI can be converted to a local path the just use that, otherwise check for a host or authority part and convert to a UNC path using whichever is available.",
+      "parentUuid": "a766b734_98182e37",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

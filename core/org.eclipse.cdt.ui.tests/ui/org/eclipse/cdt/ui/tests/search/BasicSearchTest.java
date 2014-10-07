@@ -112,7 +112,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		
 		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
 		ISearchResultPage page= vp.getActivePage();
-		assertTrue(""+page, page instanceof CSearchViewPage);
+		assertTrue(String.valueOf(page), page instanceof CSearchViewPage);
 		
 		CSearchViewPage pdomsvp= (CSearchViewPage) page;
 		StructuredViewer viewer= pdomsvp.getViewer();
@@ -221,9 +221,7 @@ public class BasicSearchTest extends BaseUITestCase {
 
 		coreTestIndexerInProgress(true);
 	}
-	/**
-	 * 
-	 */
+
 	private void coreTestIndexerInProgress(boolean expectComplete) {
 		// open a query
 		CSearchQuery query= makeProjectQuery("data*");
@@ -231,10 +229,11 @@ public class BasicSearchTest extends BaseUITestCase {
 		
 		final int maximumHits = INDEXER_IN_PROGRESS_FILE_COUNT * INDEXER_IN_PROGRESS_STRUCT_COUNT;
 		Object[] elements = result.getElements();
-		if (expectComplete)
+		if (expectComplete) {
 			assertEquals(maximumHits, elements.length);
-		else
+		} else {
 			assertTrue(maximumHits >= elements.length);	// >= because may still be done
+		}
 
 		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
 		ISearchResultPage page= vp.getActivePage();
@@ -269,14 +268,11 @@ public class BasicSearchTest extends BaseUITestCase {
 			
 			assertFalse(firstRootNode instanceof IStatus);
 		}
-		
 	}
 
 	/**
-	 * Run the specified query, and return the result. When tehis method returns the
-	 * search page will have been opened.
-	 * @param query
-	 * @return
+	 * Runs the specified query, and returns the result. When this method returns,
+	 * the search page will have been opened.
 	 */
 	protected CSearchResult runQuery(CSearchQuery query) {
 		final ISearchResult result[]= new ISearchResult[1];
@@ -304,6 +300,17 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertTrue(result[0] instanceof CSearchResult);
 		runEventQueue(500);
 		return (CSearchResult) result[0];
+	}
+
+	private CSearchQuery makeProjectQuery(String pattern) {
+		String scope1= "Human Readable Description";
+		return new CSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
+	}
+	
+	private void assertOccurrences(CSearchQuery query, int expected) {
+		query.run(npm());
+		CSearchResult result= (CSearchResult) query.getSearchResult();
+		assertEquals(expected, result.getMatchCount());
 	}
 	
 	// void foo() {}
@@ -350,17 +357,6 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertOccurrences(query, 3);
 	}
 	
-	private CSearchQuery makeProjectQuery(String pattern) {
-		String scope1= "Human Readable Description";
-		return new CSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
-	}
-	
-	private void assertOccurrences(CSearchQuery query, int expected) {
-		query.run(npm());
-		CSearchResult result= (CSearchResult) query.getSearchResult();
-		assertEquals(expected, result.getMatchCount());
-	}
-	
 	//	template<typename T> class CT {};
 	//	template<typename T> class CT<T*> {};
 	//	template<typename T> void f(T) {};
@@ -383,5 +379,4 @@ public class BasicSearchTest extends BaseUITestCase {
 		query= makeProjectQuery("f");
 		assertOccurrences(query, 6);
 	}
-
 }

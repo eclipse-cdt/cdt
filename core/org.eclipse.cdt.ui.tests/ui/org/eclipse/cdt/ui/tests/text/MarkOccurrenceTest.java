@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.text;
 
 import java.util.Iterator;
@@ -58,14 +57,12 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
 import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 
-
 /**
  * Tests the C/C++ Editor's occurrence marking feature.
  * 
  * @since 5.0
  */
 public class MarkOccurrenceTest extends BaseUITestCase {
-	
 	private static final String PROJECT = "MarkOccurrenceTest";
 
 	private static final String OCCURRENCE_ANNOTATION= "org.eclipse.cdt.ui.occurrences";
@@ -92,11 +89,13 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		public MarkOccurrenceTestSetup(Test test) {
 			super(test);
 		}
+
 		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
 		}
+
 		@Override
 		protected void tearDown() throws Exception {
 			if (fCProject != null)
@@ -160,9 +159,6 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		SelectionListenerWithASTManager.getDefault().addListener(fEditor, fSelWASTListener);
 	}
 	
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
@@ -585,8 +581,6 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	
 	/**
 	 * Returns the occurrence annotation color.
-	 * 
-	 * @return the occurrence annotation color
 	 */
 	private static RGB getHighlightRGB() {
 		AnnotationPreference annotationPref= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(OCCURRENCE_ANNOTATION);
@@ -599,8 +593,6 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 	/**
 	 * Returns the write occurrence annotation color.
-	 * 
-	 * @return the write occurrence annotation color
 	 */
 	private static RGB getWriteHighlightRGB() {
 		AnnotationPreference annotationPref= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(WRITE_OCCURRENCE_ANNOTATION);

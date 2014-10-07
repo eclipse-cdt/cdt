@@ -99,6 +99,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -256,7 +257,7 @@ public class CPPVisitor extends ASTQueries {
 			new ThreadLocal<Set<IASTDeclSpecifier>>() {
 		@Override
 		protected Set<IASTDeclSpecifier> initialValue() {
-			return new HashSet<IASTDeclSpecifier>();
+			return new HashSet<>();
 		}
 	};
 
@@ -266,6 +267,7 @@ public class CPPVisitor extends ASTQueries {
 		if (parent instanceof IASTNamedTypeSpecifier ||
 				parent instanceof ICPPASTBaseSpecifier ||
 				parent instanceof ICPPASTConstructorChainInitializer ||
+				parent instanceof ICPPASTCapture ||
 				name.getPropertyInParent() == ICPPASTNamespaceAlias.MAPPING_NAME) {
 		    if (name.getLookupKey().length == 0)
 		    	return null;
@@ -284,7 +286,7 @@ public class CPPVisitor extends ASTQueries {
 				binding = CPPSemantics.resolveBinding(name);
 				if (parent instanceof IASTCompositeTypeSpecifier) {
 					if (binding instanceof IIndexBinding) {
-						// Need to create an AST binding
+						// Need to create an AST binding.
 					} else {
 						ASTInternal.addDefinition(binding, parent);
 						return binding;
@@ -298,7 +300,7 @@ public class CPPVisitor extends ASTQueries {
 			if (CPPTemplates.isClassTemplate(id))
 				return CPPSemantics.resolveBinding(name);
 
-			// function templates/instances/specializations must be resolved via the id
+			// Function templates/instances/specializations must be resolved via the id.
 			id.resolveBinding();
 			return name.getBinding();
 		}

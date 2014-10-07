@@ -8329,6 +8329,15 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	int foo = 0;
+	//	auto bar = [foo] { return foo; };
+	public void testLambdaWithCapture_446225() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPVariable foo1= bh.assertNonProblemOnFirstIdentifier("foo =", ICPPVariable.class);
+		ICPPVariable foo2= bh.assertNonProblemOnFirstIdentifier("foo]", ICPPVariable.class);
+		assertTrue(foo1 == foo2);
+	}
+
 	//	typedef int TInt;
 	//	void test() {
 	//		int a1= {}, a2{};		// Initializer for declarator

@@ -142,7 +142,7 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		public ASTNodeProperty getPropertyInParent() {
+		public final ASTNodeProperty getPropertyInParent() {
 			return fDelegate.getPropertyInParent();
 		}
 

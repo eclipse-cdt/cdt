@@ -60,7 +60,7 @@ public abstract class ASTNode implements IASTNode {
 	}
 
 	@Override
-	public boolean isFrozen() {
+	public final boolean isFrozen() {
 		return frozen;
 	}
 
@@ -74,14 +74,13 @@ public abstract class ASTNode implements IASTNode {
 	}
 
 	public void setInactive() {
-		if (frozen)
-			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
+    	assertNotFrozen();
 		active= false;
 	}
 
-	protected void assertNotFrozen() throws IllegalStateException {
+	protected final void assertNotFrozen() throws IllegalStateException {
 		if (frozen)
-			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
+			throw new IllegalStateException("Attempt to modify a frozen AST node"); //$NON-NLS-1$
 	}
 
     @Override
@@ -91,7 +90,7 @@ public abstract class ASTNode implements IASTNode {
     }
 
     @Override
-	public ASTNodeProperty getPropertyInParent() {
+	public final ASTNodeProperty getPropertyInParent() {
     	return property;
     }
 
@@ -105,7 +104,7 @@ public abstract class ASTNode implements IASTNode {
         return offset;
     }
 
-    public int getLength() {
+    public final int getLength() {
         return length;
     }
 

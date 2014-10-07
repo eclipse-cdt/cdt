@@ -75,7 +75,7 @@ public class ASTLiteralNode implements IASTNode {
 	}
 
 	@Override
-	public ASTNodeProperty getPropertyInParent() {
+	public final ASTNodeProperty getPropertyInParent() {
 		return null;
 	}
 

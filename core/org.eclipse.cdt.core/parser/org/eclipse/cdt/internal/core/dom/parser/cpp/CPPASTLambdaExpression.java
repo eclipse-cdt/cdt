@@ -113,9 +113,9 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	public boolean accept(ASTVisitor visitor) {
         if (visitor.shouldVisitExpressions) {
 		    switch (visitor.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 

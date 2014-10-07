@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public interface IOccurrencesFinder {
-	
 	public static final int K_OCCURRENCE= 5;
 	
 	public static final int F_WRITE_OCCURRENCE= 1;

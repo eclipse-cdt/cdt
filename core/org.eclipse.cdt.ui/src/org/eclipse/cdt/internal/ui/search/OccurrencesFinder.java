@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class OccurrencesFinder implements IOccurrencesFinder {
-	
 	public static final String ID= "OccurrencesFinder"; //$NON-NLS-1$
 	
 	/**
@@ -79,7 +78,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	
 	private void performSearch() {
 		if (fResult == null) {
-			fResult= new ArrayList<OccurrenceLocation>();
+			fResult= new ArrayList<>();
 			IASTName[] names= fRoot.getDeclarationsInAST(fTarget);
 			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
@@ -137,13 +136,6 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return fRoot;
 	}
 		
-	/*
-	 * @see org.eclipse.cdt.internal.ui.search.IOccurrencesFinder#getJobLabel()
-	 */
-	public String getJobLabel() {
-		return CSearchMessages.OccurrencesFinder_searchfor ; 
-	}
-	
 	@Override
 	public String getElementName() {
 		if (fSelectedNode != null) {
@@ -180,8 +172,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 						int flag = isWriteOccurrence ? F_WRITE_OCCURRENCE : F_READ_OCCURRENCE;
 						String description = isWriteOccurrence ? fWriteDescription : fReadDescription;
 						fResult.add(new OccurrenceLocation(offset, length, flag, description));
-					}
-					else {
+					} else {
 						fResult.add(new OccurrenceLocation(offset, length, F_READ_OCCURRENCE, fWriteDescription));
 					}
 				}

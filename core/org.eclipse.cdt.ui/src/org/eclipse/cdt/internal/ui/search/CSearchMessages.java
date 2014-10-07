@@ -75,7 +75,6 @@ public final class CSearchMessages extends NLS {
 	public static String SelectionParseAction_IncludeNotFound_format;
 	public static String OccurrencesFinder_no_element;
 	public static String OccurrencesFinder_no_binding;
-	public static String OccurrencesFinder_searchfor;
 	public static String OccurrencesFinder_label_singular;
 	public static String OccurrencesFinder_label_plural;
 	public static String OccurrencesFinder_occurrence_description;

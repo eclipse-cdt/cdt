@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_45ccdf32",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e3.8.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-07T17:10:33Z",
+      "side": 1,
+      "message": "is org.hamcrest.core available in Eclipse 3.8? If not, please revert this file.",
+      "revId": "6bf12c09c292d5fd26f59c4bf8c4b5151b7266c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_25d1e3c6",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.2.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-07T17:10:33Z",
+      "side": 1,
+      "message": "is org.hamcrest.core available in Eclipse 4.2? If not, please revert this file.",
+      "revId": "6bf12c09c292d5fd26f59c4bf8c4b5151b7266c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_65d2bbca",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.3.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-07T17:10:33Z",
+      "side": 1,
+      "message": "is org.hamcrest.core available in Eclipse 4.3? If not, please revert this file.",
+      "revId": "6bf12c09c292d5fd26f59c4bf8c4b5151b7266c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c5df4fd0",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.4.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-07T17:10:33Z",
+      "side": 1,
+      "message": "is org.hamcrest.core available in Eclipse 4.4? If not, please revert this file.",
+      "revId": "6bf12c09c292d5fd26f59c4bf8c4b5151b7266c3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

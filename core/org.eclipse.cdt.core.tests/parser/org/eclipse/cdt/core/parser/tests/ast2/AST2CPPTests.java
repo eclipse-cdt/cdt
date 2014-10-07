@@ -8334,7 +8334,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testLambdaWithCapture_446225() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPVariable foo1= bh.assertNonProblemOnFirstIdentifier("foo =", ICPPVariable.class);
-		ICPPVariable foo2= bh.assertNonProblemOnFirstIdentifier("foo]", ICPPVariable.class);
+		ICPPVariable foo2= bh.assertNonProblemOnFirstIdentifier("[foo]", ICPPVariable.class);
 		assertTrue(foo1 == foo2);
 	}
 

@@ -15,6 +15,8 @@ noinst_PROGRAMS=exampleProgram
 # replaced by '_'. So a.out becomes a_out and the appropriate suffex added.
 # '_SOURCES' for example.
 
+ACLOCAL_AMFLAGS=-I ../m4
+
 # Sources for the a.out 
 exampleProgram_SOURCES= exampleProgram.c
 

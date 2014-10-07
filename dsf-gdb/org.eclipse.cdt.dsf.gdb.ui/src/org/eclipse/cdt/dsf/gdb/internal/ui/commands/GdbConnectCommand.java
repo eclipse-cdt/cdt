@@ -494,18 +494,18 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     									// to do that before we supported multi-process.
     									// Must do this here to be in the executor
     									// Bug 350365
-    									IPath processPath = new Path(process.getName());
-    									String processShortName = processPath.lastSegment();
     									if (fProcessNameToBinaryMap.isEmpty()) {
    											IPath binaryPath = backend.getProgramPath();
    											if (binaryPath != null && !binaryPath.isEmpty()) {
-   												fProcessNameToBinaryMap.put(processShortName, binaryPath.toOSString());
+   												fProcessNameToBinaryMap.put(binaryPath.lastSegment(), binaryPath.toOSString());
    											}
     									}
     									
     									// Because the prompt is a very long operation, we need to run outside the
     									// executor, so we don't lock it.
     									// Bug 344892
+    									IPath processPath = new Path(process.getName());
+    									String processShortName = processPath.lastSegment();
     									new PromptAndAttachToProcessJob(pidStr, 
     											                        LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + process.getName(), //$NON-NLS-1$
     											                        processShortName, new AttachToProcessRequestMonitor()).schedule();

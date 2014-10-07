@@ -52,6 +52,11 @@
 		<simple name="path" value="include"/>
 	</process>
 
+	<process type="org.eclipse.cdt.core.CreateSourceFolder">
+		<simple name="projectName" value="$(projectName)"/>
+		<simple name="path" value="m4"/>
+	</process>
+
 	<process type="org.eclipse.cdt.core.AddFiles">
 		<simple name="projectName" value="$(projectName)"/>
 		<complex-array name="files">

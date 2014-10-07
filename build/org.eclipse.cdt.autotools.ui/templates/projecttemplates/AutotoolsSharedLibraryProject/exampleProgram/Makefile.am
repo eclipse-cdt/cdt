@@ -15,11 +15,16 @@ noinst_PROGRAMS=exampleProgram
 # replaced by '_'. So a.out becomes a_out and the appropriate suffex added.
 # '_SOURCES' for example.
 
+ACLOCAL_AMFLAGS=-I ../m4
+
 # Sources for the a.out 
 exampleProgram_SOURCES= exampleProgram.c
 
+# Libraries for a.out
+exampleProgram_LDADD = $(top_srcdir)/$(libName)/$(libName).la
+
 # Linker options for a.out
-exampleProgram_LDFLAGS = $(top_srcdir)/$(libName)/$(libName).la
+exampleProgram_LDFLAGS = -rpath `cd $(top_srcdir);pwd`/$(libName)/.libs
 
 # Compiler options for a.out
 exampleProgram_CPPFLAGS = -I$(top_srcdir)/include

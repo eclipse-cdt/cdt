@@ -6,6 +6,8 @@ AC_PROG_CC
 
 AC_CANONICAL_SYSTEM
 
+AC_CONFIG_MACRO_DIR([m4])
+
 dnl Initialize automake
 AM_INIT_AUTOMAKE
 
@@ -14,10 +16,6 @@ AM_PROG_CC_C_O
 
 dnl Initialize Libtool
 LT_INIT
-
-dnl Check if Libtool is present
-dnl Libtool is used for building share libraries 
-AC_PROG_LIBTOOL
 
 AC_CONFIG_FILES(Makefile
                 exampleProgram/Makefile

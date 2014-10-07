@@ -15,8 +15,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.cdt.launchbar.ui.internal.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
@@ -77,15 +80,14 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		nameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				String name = nameText.getText();
-				if (!name.equals(workingCopy.getName())) {
-					String errMessage = checkName(name);
-					if (errMessage == null) {
-						workingCopy.rename(name);
-						validateFields();
-					} else {
-						setErrorMessage(errMessage);
-					}
+				String name = nameText.getText().trim();
+				workingCopy.rename(name);
+
+				String errMessage = checkName(name);
+				if (errMessage == null) {
+					validateFields();
+				} else {
+					setErrorMessage(errMessage);
 				}
 			}
 		});
@@ -96,8 +98,14 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		try {
 			if (name.isEmpty()) {
 				return "Name can not be empty";
-			} else if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(name)) {
-				return ("A configuration with this name already exists");
+			}
+			
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+			if (manager.isExistingLaunchConfigurationName(name)) {
+				ILaunchConfiguration config = ((LaunchManager) manager).findLaunchConfiguration(name);
+				if (config != workingCopy.getOriginal()) {
+					return ("A configuration with this name already exists");
+				}
 			}
 		} catch (Exception e) {
 			Activator.log(e);
@@ -114,7 +122,6 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			String initialMode = ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
 			workingCopy = type.newInstance(null, "New Configuration");
 			tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(workingCopy, initialMode);
-			nameText.setText(workingCopy.getName());
 			for (CTabItem item : tabFolder.getItems())
 				item.dispose();
 			tabGroup.createTabs(launchConfigurationDialog, initialMode);
@@ -125,8 +132,6 @@ public class NewLaunchConfigEditPage extends WizardPage {
 				tab.setDefaults(workingCopy);
 				if (firstTab) {
 					firstTab = false;
-					// tab.setDefaults likely renames it
-					nameText.setText(workingCopy.getName());
 				}
 			}
 
@@ -141,7 +146,12 @@ public class NewLaunchConfigEditPage extends WizardPage {
 				tabItem.setControl(tab.getControl());
 			}
 
+			// Clean up any created configs before we set the name and trigger
+			// any validation
+			((NewLaunchConfigWizard) getWizard()).cleanUpConfigs();
+
 			tabFolder.setSelection(0);
+			nameText.setText(workingCopy.getName());
 		} catch (CoreException e) {
 			Activator.log(e);
 			return;

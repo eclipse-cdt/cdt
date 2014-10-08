@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_367ab761",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-08T17:28:25Z",
+      "side": 1,
+      "message": "Simpler:\nif (otherInitListType) {\n  return initListType \u003d\u003d null ? 1 : -1;\n}",
+      "revId": "9a2333d59281779453b1f035a6d5aa6f4d391a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b66d27a9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-08T17:28:25Z",
+      "side": 1,
+      "message": "Better: size.compareTo(otherSize)",
+      "revId": "9a2333d59281779453b1f035a6d5aa6f4d391a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

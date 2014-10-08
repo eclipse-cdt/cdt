@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -536,6 +537,36 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
         return GdbPlugin.getBundleContext();
 	}
 
+	private boolean isMethodOverriden(Method m) {
+		return !m.getDeclaringClass().equals(GDBBackend.class);
+	}
+	
+	/**
+	 * Workaround for backword compatibility for gdb backends that do override {@link #getGDBPath()} 
+	 * or {@link #launchGDBProcess(String)}
+	 * 
+	 * @return launch process
+	 * @throws CoreException
+	 */
+	private Process launchGDBProcess() throws CoreException {
+		try {
+			Method mLaunchGDB = getClass().getDeclaredMethod("launchGDBProcess", new Class[] {String.class}); //$NON-NLS-1$
+			Method mGetGDB = getClass().getDeclaredMethod("getGDBCommandLine"); //$NON-NLS-1$
+			if (isMethodOverriden(mLaunchGDB) || isMethodOverriden(mGetGDB)) {
+				// in case any of the method is overriden, fall-back to old style
+				return launchGDBProcess(getGDBCommandLine());
+			} else {
+				// the new API
+				return launchGDBProcess(getGDBCommandLineArray());
+			}
+		} catch (NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	protected class GDBProcessStep extends InitializationShutdownStep {
         GDBProcessStep(Direction direction) { super(direction); }
         
@@ -572,11 +603,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                         gdbLaunchRequestMonitor.done();
                         return Status.OK_STATUS;
                     }
-                    
-                    String[] commandLine = getGDBCommandLineArray();
-        
+                            
                     try {                        
-                        fProcess = launchGDBProcess(commandLine);
+                        fProcess = launchGDBProcess();
                     	// Need to do this on the executor for thread-safety
                     	getExecutor().submit(
                                 new DsfRunnable() {

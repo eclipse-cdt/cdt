@@ -28,8 +28,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
-public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
-        ICPPASTSimpleTypeConstructorExpression {
+public class CPPASTSimpleTypeConstructorExpression extends ASTNode
+		implements ICPPASTSimpleTypeConstructorExpression {
 	private ICPPASTDeclSpecifier fDeclSpec;
 	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;

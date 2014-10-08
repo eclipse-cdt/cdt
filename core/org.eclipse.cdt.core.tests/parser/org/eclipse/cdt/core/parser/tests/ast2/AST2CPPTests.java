@@ -7607,16 +7607,45 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(IBasicType.IS_LONG, ((ICPPBasicType) t3).getModifiers());
 	}
 
-	// typedef enum enum_name enum_name;
+	//	void f(int t);
+	//	void f(long t);
+	//
+	//	enum e {
+	//	  i1 = 0L,
+	//	  i2 = (long) i1 + 1,
+	//	  i3 = long(i2 + 1)
+	//	};
+	//
+	//	void test() {
+	//	  f(i3);
+	//	}
+	public void testCastInEnumeratorValue_446380() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IEnumerator i2 = ba.assertNonProblem("i2", IEnumerator.class);
+		Long v2 = i2.getValue().numericalValue();
+		assertNotNull(v2);
+		assertEquals(1, v2.intValue());
+		IEnumerator i3 = ba.assertNonProblem("i3", IEnumerator.class);
+		Long v3 = i3.getValue().numericalValue();
+		assertNotNull(v3);
+		assertEquals(2, v3.intValue());
+		ICPPFunction f = ba.assertNonProblemOnFirstIdentifier("f(i3)",ICPPFunction.class);
+		IType t = f.getType().getParameterTypes()[0];
+		// The declared types of the enum values don't affect the underlying type of the enum,
+		// only the values themselves do.
+		assertEquals("int", ASTTypeUtil.getType(t));
+	}
+
+	//	typedef enum enum_name enum_name;
 	public void testTypedefRecursion_285457() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("enum_name", 9);
 	}
 
-	// struct MyStruct {
-	//   enum MyEnum {};
-	//   MyStruct(MyEnum value) {}
-	// };
+	//	struct MyStruct {
+	//	  enum MyEnum {};
+	//	  MyStruct(MyEnum value) {}
+	//	};
 	public void testEnumRedefinitionInStruct_385144() throws Exception {
 		parseAndCheckBindings();
 	}

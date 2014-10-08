@@ -372,7 +372,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 						IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 	}
-	
+
+	private Process launchGDBProcess() throws CoreException {
+		// Keep calling deprecated getGDBCommandLine() in case it was overridden
+		String command = getGDBCommandLine();
+		// Keep calling deprecated launchGDBProcess(String) in case it was overridden
+		return launchGDBProcess(command);
+	}
+
 	/**
 	 * Launch GDB process. 
 	 * Allow subclass to override.
@@ -380,15 +387,25 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 */
 	@Deprecated
 	protected Process launchGDBProcess(String commandLine) throws CoreException {
-        Process proc = null;
-		try {
-			proc = ProcessFactory.getFactory().exec(commandLine, LaunchUtils.getLaunchEnvironment(fLaunchConfiguration));
-		} catch (IOException e) {
-            String message = "Error while launching command " + commandLine;   //$NON-NLS-1$
-            throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
-		}
-		
-		return proc;
+		// Backwards-compatibility check
+		// If the commandLine parameter is not the same as the command line array we provide
+		// it implies that the commandLine was modified by an extender and should be used as
+		// is.  If it is the same, we can use the command line array instead using the more robust
+		// non-deprecated call to launchGDBProcess.
+		String unmodifiedCmdLine = StringUtil.join(getGDBCommandLineArray(), " ").trim(); //$NON-NLS-1$
+		if (unmodifiedCmdLine.equals(commandLine.trim()) == false) {
+			Process proc = null;
+			try {
+				proc = ProcessFactory.getFactory().exec(commandLine, LaunchUtils.getLaunchEnvironment(fLaunchConfiguration));
+			} catch (IOException e) {
+				String message = "Error while launching command " + commandLine;   //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));
+			}
+			return proc;
+		}		
+		// End of Backwards-compatibility check
+
+		return launchGDBProcess(getGDBCommandLineArray());
 	}
 	
 	/**
@@ -573,10 +590,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                         return Status.OK_STATUS;
                     }
                     
-                    String[] commandLine = getGDBCommandLineArray();
-        
                     try {                        
-                        fProcess = launchGDBProcess(commandLine);
+                        fProcess = launchGDBProcess();
                     	// Need to do this on the executor for thread-safety
                     	getExecutor().submit(
                                 new DsfRunnable() {

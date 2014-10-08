@@ -7545,11 +7545,11 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	//	class C {
-	//		C& operator()() {return *this;}
+	//	  C& operator()() { return *this; }
 	//	};
 	//	void test() {
-	//		C c;
-	//		c()()()()()()()()()()()()()();
+	//	  C c;
+	//	  c()()()()()()()()()()()()()();
 	//	}
 	public void testNestedOverloadedFunctionCalls_283324() throws Exception {
 		final String code = getAboveComment();
@@ -7593,18 +7593,18 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPFunction f1 = ba.assertNonProblem("f(i1)", 1, ICPPFunction.class);
 		IType t1 = f1.getType().getParameterTypes()[0];
 		assertTrue(t1 instanceof ICPPBasicType);
-		assertEquals(IBasicType.t_int, ((ICPPBasicType) t1).getType());
-		assertEquals(0, ((ICPPBasicType) t1).getQualifierBits());
+		assertEquals(IBasicType.Kind.eInt, ((ICPPBasicType) t1).getKind());
+		assertEquals(0, ((ICPPBasicType) t1).getModifiers());
 		ICPPFunction f2 = ba.assertNonProblem("f(u1)", 1, ICPPFunction.class);
 		IType t2 = f2.getType().getParameterTypes()[0];
 		assertTrue(t2 instanceof ICPPBasicType);
-		assertEquals(IBasicType.t_int, ((ICPPBasicType) t2).getType());
-		assertEquals(IBasicType.IS_UNSIGNED, ((ICPPBasicType) t2).getQualifierBits());
+		assertEquals(IBasicType.Kind.eInt, ((ICPPBasicType) t2).getKind());
+		assertEquals(IBasicType.IS_UNSIGNED, ((ICPPBasicType) t2).getModifiers());
 		ICPPFunction f3 = ba.assertNonProblem("f(l1)", 1, ICPPFunction.class);
 		IType t3 = f3.getType().getParameterTypes()[0];
 		assertTrue(t3 instanceof ICPPBasicType);
-		assertEquals(IBasicType.t_int, ((ICPPBasicType) t3).getType());
-		assertEquals(IBasicType.IS_LONG, ((ICPPBasicType) t3).getQualifierBits());
+		assertEquals(IBasicType.Kind.eInt, ((ICPPBasicType) t3).getKind());
+		assertEquals(IBasicType.IS_LONG, ((ICPPBasicType) t3).getModifiers());
 	}
 
 	// typedef enum enum_name enum_name;

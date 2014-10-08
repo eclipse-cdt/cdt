@@ -11,7 +11,6 @@
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - Add timer when fetching GDB version (Bug 376203)
  *     Marc Khouzam (Ericsson) - Better error reporting when obtaining GDB version (Bug 424996)
- *     Iulia Vasii (Freescale Semiconductor) - Separate GDB command from its arguments (Bug 445360)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -37,7 +36,6 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -299,12 +297,11 @@ public class LaunchUtils {
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        String cmd = getGDBPath(configuration).toOSString();
-        String[] args = new String[] { cmd, "--version" }; //$NON-NLS-1$
+        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
         Process process = null;
         Job timeoutJob = null;
         try {
-        	process = ProcessFactory.getFactory().exec(args, getLaunchEnvironment(configuration));
+        	process = ProcessFactory.getFactory().exec(cmd, getLaunchEnvironment(configuration));
 
             // Start a timeout job to make sure we don't get stuck waiting for
             // an answer from a gdb that is hanging
@@ -339,13 +336,13 @@ public class LaunchUtils {
         		}
         		
         		throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        				"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$ 
+        				"Could not determine GDB version using command: " + cmd, //$NON-NLS-1$ 
         				detailedException));
         	}
         	return gdbVersion;
         } catch (IOException e) {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
-        			"Error with command: " + StringUtil.join(args, " "), e));//$NON-NLS-1$ //$NON-NLS-2$
+        			"Error with command: " + cmd, e));//$NON-NLS-1$
         } finally {
         	// If we get here we are obviously not stuck reading the stream so we can cancel the timeout job.
         	// Note that it may already have executed, but that is not a problem.

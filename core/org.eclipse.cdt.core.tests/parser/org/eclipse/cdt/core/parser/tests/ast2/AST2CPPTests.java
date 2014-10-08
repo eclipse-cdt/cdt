@@ -328,16 +328,16 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
-	// int *p1; int *p2;
-	// union {
-	// struct {int a; int b;} A;
-	// struct {int a; int b;};
-	// } MyStruct;
-	// void test (void) {
-	// p1 = &MyStruct.A.a;
-	// p2 = &MyStruct.b;
-	//         MyStruct.b = 1;
-	// }
+	//	int *p1; int *p2;
+	//	union {
+	//	  struct {int a; int b;} A;
+	//	  struct {int a; int b;};
+	//	} MyStruct;
+	//	void test (void) {
+	//	  p1 = &MyStruct.A.a;
+	//	  p2 = &MyStruct.b;
+	//	  MyStruct.b = 1;
+	//	}
 	public void testBug78103() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
@@ -347,7 +347,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  B(int t);
 	//	};
 	//	class A : public B {
-	//	  public:
+	//	public:
 	//	  A(int t);
 	//	};
 	//	A::A(int t) : B(t - 1) {}
@@ -401,12 +401,12 @@ public class AST2CPPTests extends AST2TestBase {
 		assertTrue(es.getExpression() instanceof IASTFunctionCallExpression);
 	}
 
-	// #define CURLOPTTYPE_OBJECTPOINT   10000
-	// #define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
-	// typedef enum {
-	// CINIT(FILE, OBJECTPOINT, 1),
-	//     CINIT(URL,  OBJECTPOINT, 2)
-	// } CURLoption ;
+	//	#define CURLOPTTYPE_OBJECTPOINT   10000
+	//	#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
+	//	typedef enum {
+	//	  CINIT(FILE, OBJECTPOINT, 1),
+	//	  CINIT(URL,  OBJECTPOINT, 2)
+	//	} CURLoption;
 	public void testBug102825() throws Exception {
 		parseAndCheckBindings(getAboveComment());
 	}
@@ -2884,11 +2884,11 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNotNull(whileStatement.getConditionDeclaration());
 	}
 
-	// void foo() {
-	//    const int x = 12;
-	//    {   enum { x = x };  }
-	// }
-	// enum { RED };
+	//	void foo() {
+	//	  const int x = 12;
+	//	  {   enum { x = x };  }
+	//	}
+	//	enum { RED };
 	public void testBug86353() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();

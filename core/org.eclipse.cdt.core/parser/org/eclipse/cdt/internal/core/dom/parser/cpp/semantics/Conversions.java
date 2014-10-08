@@ -342,7 +342,25 @@ public class Conversions {
 	 * 13.3.3.1.5 List-initialization sequence [over.ics.list]
 	 */
 	static Cost listInitializationSequence(EvalInitList arg, IType target, UDCMode udc, boolean isDirect, IASTNode point) throws DOMException {
+		Cost result = listInitializationSequenceHelper(arg, target, udc, isDirect, point);
+		result.setListInitializationTarget(target);
+		return result;
+	}
+	
+	static Cost listInitializationSequenceHelper(EvalInitList arg, IType target, UDCMode udc, boolean isDirect, IASTNode point) throws DOMException {
 		IType listType= getInitListType(target);
+		if (listType == null && target instanceof IArrayType) {
+			Long arraySize = ((IArrayType) target).getSize().numericalValue();
+			if (arraySize != null) {
+				IType elementType = ((IArrayType) target).getType();
+				// TODO(nathanridge): If there are fewer initializer clauses than the array size,
+				// then the element type is required to be default-constructible.
+				if (arg.getClauses().length <= arraySize.longValue()) {
+					listType = elementType;
+				}
+			}
+		}
+		
 		if (listType != null) {
 			ICPPEvaluation[] clauses = arg.getClauses();
 			Cost worstCost= new Cost(arg.getTypeOrFunctionSet(point), target, Rank.IDENTITY);

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_d6c6e312",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-10-08T17:39:48Z",
+      "side": 1,
+      "message": "That\u0027s not equivalent. It would give:\n\ni \u003d null, o \u003d null:                    0\ni \u003d not null, o \u003d null:             0\ni \u003d null, o \u003d not null:             1\ni \u003d not null, o \u003d not null:       -1\n\nwhereas what we want is:\n\ni \u003d null, o \u003d null:                    0\ni \u003d not null, o \u003d null:             -1\ni \u003d null, o \u003d not null:             1\ni \u003d not null, o \u003d not null:       0\n\n(where i \u003d initListType, o \u003d otherInitListType).",
+      "parentUuid": "a766b734_367ab761",
+      "revId": "9a2333d59281779453b1f035a6d5aa6f4d391a98",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_b66d27a9",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
         "patchSetId": 1

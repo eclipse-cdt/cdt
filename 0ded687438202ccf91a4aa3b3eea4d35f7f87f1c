@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_d689c304",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/AbstractUpdateIndexAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-08T17:21:12Z",
+      "side": 1,
+      "message": "Please rename the variable to elements.",
+      "revId": "0ded687438202ccf91a4aa3b3eea4d35f7f87f1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7698af4a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/RebuildIndexAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-08T17:21:12Z",
+      "side": 1,
+      "message": "Add a space before (",
+      "revId": "0ded687438202ccf91a4aa3b3eea4d35f7f87f1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_367f575b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/RebuildIndexAction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-08T17:21:12Z",
+      "side": 1,
+      "message": "This may result in reindexing the same project multiple times.",
+      "revId": "0ded687438202ccf91a4aa3b3eea4d35f7f87f1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

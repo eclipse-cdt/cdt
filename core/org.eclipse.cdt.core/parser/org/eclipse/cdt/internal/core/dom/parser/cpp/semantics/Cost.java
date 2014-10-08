@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -93,8 +94,15 @@ public class Cost {
 	private boolean fImpliedObject;
 	private ICPPFunction fUserDefinedConversion;
 	private ReferenceBinding fReferenceBinding;
-
 	private boolean fCouldNarrow;
+	
+	// For a list-initialization sequence, 'target' is not always the original
+	// target type. Specifically, for an original target type of 
+	// std::initializer_list<T> or array of T, 'target' will be T, but we need
+	// to know the original target as well so we store it here.
+	// This will be null iff. this is not a list-initialization sequence. 
+	private IType fListInitializationTarget;
+	
 	private ICPPFunction fSelectedFunction; // For targeted functions
 	
 	public Cost(IType s, IType t, Rank rank) {
@@ -233,6 +241,35 @@ public class Cost {
 			if ((other.fQualificationAdjustments & qdiff) == 0)
 				return 1;
 		}		
+		
+		// [over.ics.rank] p3:
+		// List-initialization sequence L1 is a better conversion sequence than
+		// list-initialization sequence L2 if 
+		if (fListInitializationTarget != null && other.fListInitializationTarget != null) {
+			//   - L1 converts to std::initializer_list<X> for some X and L2 does not,
+			//     or if not that,
+			IType initListType = Conversions.getInitListType(fListInitializationTarget);
+			IType otherInitListType = Conversions.getInitListType(other.fListInitializationTarget);
+			if (initListType != null && otherInitListType == null) {
+				return -1;
+			} else if (initListType == null && otherInitListType != null) {
+				return 1;
+			}
+			
+			//   - L1 converts to type "array of N1 T", L2 converts to type "array of
+			//     N2 T", and N1 is smaller than N2
+			if (fListInitializationTarget instanceof IArrayType && other.fListInitializationTarget instanceof IArrayType) {
+				IArrayType arrayType = (IArrayType) fListInitializationTarget;
+				IArrayType otherArrayType = (IArrayType) other.fListInitializationTarget;
+				if (arrayType.getType().isSameType(otherArrayType.getType())) {
+					Long size = arrayType.getSize().numericalValue();
+					Long otherSize = otherArrayType.getSize().numericalValue();
+					if (size != null && otherSize != null) {
+						return (int) (size.longValue() - otherSize.longValue());
+					}
+				}
+			}
+		}
 		return 0;
 	}
 
@@ -351,5 +388,9 @@ public class Cost {
 
 	public void setImpliedObject() {
 		fImpliedObject= true;
+	}
+	
+	public void setListInitializationTarget(IType target) {
+		fListInitializationTarget = target;
 	}
 }

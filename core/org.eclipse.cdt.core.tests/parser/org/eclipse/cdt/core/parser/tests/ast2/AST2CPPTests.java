@@ -8576,6 +8576,43 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	//	namespace std {
+	//		template <typename T> class initializer_list;
+	//	}
+	//	void waldo(int);
+	//	void waldo(std::initializer_list<int>);
+	//	void foo() {
+	//		waldo({});
+	//		waldo({1});
+	//		waldo({short(1)});
+	//		waldo({1, 2});
+	//	}
+	public void testListInitialization_439477a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	void waldo(int const (&)[2]);
+	//	void waldo(int const (&)[3]);
+	//	void foo1() {
+	//		waldo({1, 2});        // should resolve to waldo(int const (&)[2])
+	//		waldo({1, 2, 3});     // should resolve to waldo(int const (&)[3])
+	//		waldo({1, 2, 3, 4});  // should not resolve
+	//	}
+	public void testListInitialization_439477b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		ICPPFunction def1 = helper.assertNonProblem("waldo(int const (&)[2])", "waldo");
+		ICPPFunction def2 = helper.assertNonProblem("waldo(int const (&)[3])", "waldo");
+		
+		ICPPFunction call1 = helper.assertNonProblem("waldo({1, 2})", "waldo");
+		ICPPFunction call2 = helper.assertNonProblem("waldo({1, 2, 3})", "waldo");
+		
+		assertEquals(call1, def1);
+		assertEquals(call2, def2);
+		
+		helper.assertProblem("waldo({1, 2, 3, 4})", "waldo", IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+	}
+	
+	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}
 	//	struct A {};

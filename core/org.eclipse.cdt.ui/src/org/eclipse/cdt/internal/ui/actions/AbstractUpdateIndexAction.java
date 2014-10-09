@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 
 	@Override
 	public void run(IAction action) {
-		if(!(fSelection instanceof IStructuredSelection) && !(fSelection instanceof ITextSelection)) {
+		if (!(fSelection instanceof IStructuredSelection) && !(fSelection instanceof ITextSelection)) {
 			return;
 		}
 		ICElement[] elements = getSelectedCElements();
@@ -57,7 +57,7 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	}
 
 	/**
-	 * Return the options to update the translation.
+	 * Returns the options to update the translation.
 	 * @see IIndexManager#update(ICElement[], int)
 	 * @since 4.0
 	 */
@@ -76,22 +76,22 @@ public abstract class AbstractUpdateIndexAction implements IObjectActionDelegate
 	
 	protected ICElement[] getSelectedCElements() {
 		ArrayList<ICElement> tuSelection= new ArrayList<ICElement>();
-		if(fSelection instanceof IStructuredSelection) {
+		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection resources = SelectionConverter.convertSelectionToResources(fSelection);
 			for (Iterator<?> i= resources.iterator(); i.hasNext();) {
 				Object o= i.next();
-				if(o instanceof IResource) {
-					ICElement celement= CCorePlugin.getDefault().getCoreModel().create((IResource)o);
-					if(celement != null) {
+				if (o instanceof IResource) {
+					ICElement celement= CCorePlugin.getDefault().getCoreModel().create((IResource) o);
+					if (celement != null) {
 						tuSelection.add(celement);
 					}
 				}
 			}
-		} else if(fSelection == null || fSelection instanceof ITextSelection) {
+		} else if (fSelection == null || fSelection instanceof ITextSelection) {
 			IProject project = EditorUtility.getProjectForActiveEditor();
-			if(project != null) {
+			if (project != null) {
 				ICProject cproject= CCorePlugin.getDefault().getCoreModel().create(project);
-				if(cproject != null) {
+				if (cproject != null) {
 					tuSelection.add(cproject);
 				}
 			}

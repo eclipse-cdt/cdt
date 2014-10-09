@@ -20,11 +20,11 @@ public interface IEnumerator extends IBinding {
 	/**
 	 * Returns the type of this enumeration.  The type of an enumerator
 	 * is the enumeration in which it is declared.
-	 * 
+	 *
 	 * @return the type of the enumeration
 	 */
 	public IType getType();
-	
+
 	/**
 	 * Returns the value assigned to this enumerator.
 	 * @since 5.1

@@ -52,9 +52,9 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	
 	@Override
 	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
-		CPPASTEnumerationSpecifier copy =
-				new CPPASTEnumerationSpecifier(fIsScoped, fName == null ? null : fName.copy(style),
-						fBaseType == null ? null : fBaseType.copy(style));
+		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped,
+				fName == null ? null : fName.copy(style),
+				fBaseType == null ? null : fBaseType.copy(style));
 		copy.fIsOpaque = fIsOpaque;
 		for (IASTEnumerator enumerator : getEnumerators()) {
 			copy.addEnumerator(enumerator == null ? null : enumerator.copy(style));

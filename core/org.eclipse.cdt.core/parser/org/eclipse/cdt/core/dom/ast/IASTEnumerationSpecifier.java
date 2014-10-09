@@ -20,21 +20,27 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	/**
 	 * This interface represents an enumerator member of an enum specifier.
 	 * 
-	 * @author jcamelon
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	public interface IASTEnumerator extends IASTNode, IASTNameOwner {
 		/**
 		 * Empty array (constant).
 		 */
-		public static final IASTEnumerator[] EMPTY_ENUMERATOR_ARRAY = new IASTEnumerator[0];
+		public static final IASTEnumerator[] EMPTY_ENUMERATOR_ARRAY = {};
 
 		/**
-		 * <code>ENUMERATOR_NAME</code> describes the relationship between
-		 * <code>IASTEnumerator</code> and <code>IASTName</code>.
+		 * {@code ENUMERATOR_NAME} describes the relationship between
+		 * {@code IASTEnumerator} and {@code IASTName}.
 		 */
 		public static final ASTNodeProperty ENUMERATOR_NAME = new ASTNodeProperty(
 				"IASTEnumerator.ENUMERATOR_NAME - IASTName for IASTEnumerator"); //$NON-NLS-1$
+
+		/**
+		 * {@code ENUMERATOR_VALUE} describes the relationship between
+		 * {@code IASTEnumerator} and {@code IASTExpression}.
+		 */
+		public static final ASTNodeProperty ENUMERATOR_VALUE = new ASTNodeProperty(
+				"IASTEnumerator.ENUMERATOR_VALUE - IASTExpression (value) for IASTEnumerator"); //$NON-NLS-1$
 
 		/**
 		 * Set the enumerator's name.
@@ -46,16 +52,9 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		/**
 		 * Get the enumerator's name.
 		 * 
-		 * @return <code>IASTName</code>
+		 * @return {@code IASTName}
 		 */
 		public IASTName getName();
-
-		/**
-		 * <code>ENUMERATOR_VALUE</code> describes the relationship between
-		 * <code>IASTEnumerator</code> and <code>IASTExpression</code>.
-		 */
-		public static final ASTNodeProperty ENUMERATOR_VALUE = new ASTNodeProperty(
-				"IASTEnumerator.ENUMERATOR_VALUE - IASTExpression (value) for IASTEnumerator"); //$NON-NLS-1$
 
 		/**
 		 * Sets enumerator value.
@@ -67,7 +66,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		/**
 		 * Returns enumerator value.
 		 * 
-		 * @return <code>IASTExpression</code> value
+		 * @return {@code IASTExpression} value
 		 */
 		public IASTExpression getValue();
 		
@@ -82,13 +81,19 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		 */
 		@Override
 		public IASTEnumerator copy(CopyStyle style);
-
 	}
 
 	/**
-	 * <code>ENUMERATOR</code> describes the relationship between
-	 * <code>IASTEnumerationSpecifier</code> and the nested
-	 * <code>IASTEnumerator</code>s.
+	 * {@code ENUMERATION_NAME} describes the relationship between
+	 * {@code IASTEnumerationSpecifier} and its {@link IASTName}.
+	 */
+	public static final ASTNodeProperty ENUMERATION_NAME = new ASTNodeProperty(
+			"IASTEnumerationSpecifier.ENUMERATION_NAME - IASTName for IASTEnumerationSpecifier"); //$NON-NLS-1$
+
+	/**
+	 * {@code ENUMERATOR} describes the relationship between
+	 * {@code IASTEnumerationSpecifier} and the nested
+	 * {@link IASTEnumerator}s.
 	 */
 	public static final ASTNodeProperty ENUMERATOR = new ASTNodeProperty(
 			"IASTEnumerationSpecifier.ENUMERATOR - nested IASTEnumerator for IASTEnumerationSpecifier"); //$NON-NLS-1$
@@ -96,24 +101,16 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	/**
 	 * Adds an enumerator.
 	 * 
-	 * @param enumerator
-	 *            <code>IASTEnumerator</code>
+	 * @param enumerator {@code IASTEnumerator}
 	 */
 	public void addEnumerator(IASTEnumerator enumerator);
 
 	/**
 	 * Returns enumerators.
 	 * 
-	 * @return <code>IASTEnumerator []</code> array
+	 * @return {@code IASTEnumerator[]} array
 	 */
 	public IASTEnumerator[] getEnumerators();
-
-	/**
-	 * <code>ENUMERATION_NAME</code> describes the relationship between
-	 * <code>IASTEnumerationSpecifier</code> and its <code>IASTName</code>.
-	 */
-	public static final ASTNodeProperty ENUMERATION_NAME = new ASTNodeProperty(
-			"IASTEnumerationSpecifier.ENUMERATION_NAME - IASTName for IASTEnumerationSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Sets the enum's name.
@@ -123,7 +120,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	public void setName(IASTName name);
 
 	/**
-	 * Get the enum's name.
+	 * Returns the enum's name.
 	 */
 	public IASTName getName();
 

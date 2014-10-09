@@ -47,7 +47,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Enumerations in C++
+ * Enumeration in C++
  */
 public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, ICPPInternalBinding {
 	private static final IASTName NOT_INITIALIZED = CPPASTName.NOT_INITIALIZED;
@@ -90,8 +90,8 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 	private Long fMaxValue;
 	private Long fMinValue;
 
-	private ICPPEnumeration fIndexBinding= null;
-	private boolean fSearchedIndex= false;
+	private ICPPEnumeration fIndexBinding;
+	private boolean fSearchedIndex;
 
     public CPPEnumeration(ICPPASTEnumerationSpecifier spec, IType fixedType) {
         final IASTName name = spec.getName();

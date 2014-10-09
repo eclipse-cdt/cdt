@@ -34,6 +34,7 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	 * Creates a CPPDeferredFunction given a set of overloaded functions
 	 * (some of which may be templates) that the function might resolve to.
 	 * At least one candidate must be provided.
+	 *
 	 * @param candidates a set of overloaded functions, some of which may be templates
 	 * @return the constructed CPPDeferredFunction
 	 */
@@ -47,7 +48,8 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPDeferr
 	
 	/**
 	 * Creates a CPPDeferredFunction given a name. This is for cases where there
-	 * are no candidates that could be passed to createForCandidates().
+	 * are no candidates that could be passed to {@link #createForCandidates}.
+	 *
 	 * @param name the name of the function
 	 * @return the constructed CPPDeferredFunction
 	 */

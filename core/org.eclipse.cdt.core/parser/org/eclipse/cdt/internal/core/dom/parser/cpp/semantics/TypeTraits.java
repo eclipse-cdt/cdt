@@ -165,20 +165,20 @@ public class TypeTraits {
 	}
 
 	/**
-	 * Returns <code>true</code> if and only if the given class has a trivial copy constructor.
+	 * Returns {@code true} if and only if the given class has a trivial copy constructor.
 	 * A copy constructor is trivial if:
 	 * <ul>
 	 * <li>it is implicitly defined by the compiler, and</li>
-	 * <li><code>isPolymorphic(classType) is false</code>, and</li>
+	 * <li>{@code isPolymorphic(classType)} is {@code false}, and</li>
 	 * <li>the class has no virtual base classes, and</li>
 	 * <li>every direct base class has trivial copy constructor, and</li>
 	 * <li>for every nonstatic data member that has class type or array of class type, that type
 	 * has trivial copy constructor.</li>
 	 * </ul>
-	 * Similar to <code>std::tr1::has_trivial_copy</code>.
+	 * Similar to {@code std::tr1::has_trivial_copy}.
 	 *
 	 * @param classType the class to check
-	 * @return <code>true</code> if the class has a trivial copy constructor
+	 * @return {@code true} if the class has a trivial copy constructor
 	 */
 	public static boolean hasTrivialCopyCtor(ICPPClassType classType, IASTNode point) {
 		if (getImplicitCopyCtor(classType, point) == null)
@@ -207,7 +207,7 @@ public class TypeTraits {
 	}
 
 	/**
-	 * Returns <code>true</code> if and only if the given class has a trivial default constructor.
+	 * Returns {@code true} if and only if the given class has a trivial default constructor.
 	 * A default constructor is trivial if:
 	 * <ul>
 	 * <li>it is implicitly defined by the compiler, and</li>
@@ -215,11 +215,11 @@ public class TypeTraits {
 	 * <li>for every nonstatic data member that has class type or array of class type, that type
 	 * has trivial default constructor.</li>
 	 * </ul>
-	 * Similar to <code>std::tr1::has_trivial_default_constructor</code>.
+	 * Similar to {@code std::tr1::has_trivial_default_constructor}.
 	 *
 	 * @param classType the class to check
 	 * @param point
-	 * @return <code>true</code> if the class has a trivial default constructor
+	 * @return {@code true} if the class has a trivial default constructor
 	 */
 	public static boolean hasTrivialDefaultConstructor(ICPPClassType classType, IASTNode point) {
 		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
@@ -244,7 +244,7 @@ public class TypeTraits {
 	}
 
 	/**
-	 * Returns <code>true</code> if and only if the given class has a trivial destructor.
+	 * Returns {@code true} if and only if the given class has a trivial destructor.
 	 * A destructor is trivial if:
 	 * <ul>
 	 * <li>it is implicitly defined by the compiler, and</li>
@@ -252,10 +252,10 @@ public class TypeTraits {
 	 * <li>for every nonstatic data member that has class type or array of class type, that type
 	 * has trivial destructor.</li>
 	 * </ul>
-	 * Similar to <code>std::tr1::has_trivial_destructor</code>.
+	 * Similar to {@code std::tr1::has_trivial_destructor}.
 	 *
 	 * @param classType the class to check
-	 * @return <code>true</code> if the class has a trivial destructor
+	 * @return {@code true} if the class has a trivial destructor
 	 */
 	public static boolean hasTrivialDestructor(ICPPClassType classType, IASTNode point) {
 		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
@@ -280,11 +280,11 @@ public class TypeTraits {
 	}
 
 	/**
-	 * Returns <code>true</code> if and only if the given class declares or inherits a virtual
-	 * function. Similar to <code>std::tr1::is_polymorphic</code>.
+	 * Returns {@code true} if and only if the given class declares or inherits a virtual
+	 * function. Similar to {@code std::tr1::is_polymorphic}.
 	 *
 	 * @param classType the class to check
-	 * @return <code>true</code> if the class declares or inherits a virtual function.
+	 * @return {@code true} if the class declares or inherits a virtual function.
 	 */
 	public static boolean isPolymorphic(ICPPClassType classType, IASTNode point) {
 		if (hasDeclaredVirtualMethod(classType, point))
@@ -310,12 +310,12 @@ public class TypeTraits {
 	}
 
 	/**
-	 * Returns the compiler-generated copy constructor for the given class, or <code>null</code>
+	 * Returns the compiler-generated copy constructor for the given class, or {@code null}
 	 * if the class doesn't have a compiler-generated copy constructor.
 	 *
 	 * @param classType the class to get the copy ctor for.
-	 * @return the compiler-generated copy constructor, or <code>null</code> if the class doesn't
-	 * have a compiler-generated copy constructor.
+	 * @return the compiler-generated copy constructor, or {@code null} if the class doesn't
+	 *     have a compiler-generated copy constructor.
 	 */
 	private static ICPPConstructor getImplicitCopyCtor(ICPPClassType classType, IASTNode point) {
 		for (ICPPConstructor ctor : ClassTypeHelper.getConstructors(classType, point)) {
@@ -383,10 +383,10 @@ public class TypeTraits {
 	private static IBasicType smallestFittingType(ICPPEnumeration enumeration, ICPPBasicType... types) {
 		for (int i = 0; i < types.length - 1; ++i) {
 			if (ArithmeticConversion.fitsIntoType(types[i], enumeration.getMinValue())
-			 && ArithmeticConversion.fitsIntoType(types[i], enumeration.getMaxValue())) {
+					&& ArithmeticConversion.fitsIntoType(types[i], enumeration.getMaxValue())) {
 				return types[i];
 			}
 		}
-		return types[types.length - 1];  // assume it fits into the largest type provided
+		return types[types.length - 1];  // Assume it fits into the largest type provided.
 	}
 }

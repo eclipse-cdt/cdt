@@ -25,6 +25,7 @@ public interface IEnumeration extends IBinding, IType {
 	 * @since 5.2
 	 */
     long getMinValue();
+
     /**
 	 * @since 5.2
 	 */

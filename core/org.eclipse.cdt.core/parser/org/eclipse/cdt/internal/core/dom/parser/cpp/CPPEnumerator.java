@@ -43,56 +43,35 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
         enumerator.setBinding(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
-     */
     @Override
 	public IASTNode[] getDeclarations() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
-     */
     @Override
 	public IASTNode getDefinition() {
         return enumName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-     */
     @Override
 	public String getName() {
         return new String(getNameCharArray());
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-     */
     @Override
 	public char[] getNameCharArray() {
         return enumName.getSimpleID();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-     */
     @Override
 	public IScope getScope() {
         return CPPVisitor.getContainingScope(enumName);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-     */
     public IASTNode getPhysicalNode() {
         return enumName;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IEnumerator#getType()
-	 */
 	@Override
 	public IType getType() {
 	    IASTEnumerator etor = (IASTEnumerator) enumName.getParent();
@@ -100,25 +79,16 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
 		return (IType) enumSpec.getName().resolveBinding();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
     @Override
 	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
     @Override
 	public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
     @Override
 	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();

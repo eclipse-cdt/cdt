@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
  */
 public interface IASTInternalEnumerationSpecifier extends IASTEnumerationSpecifier {
 	/**
-	 * Notifies that the value computation for the enumeration is started. Returns whether this is
+	 * Notifies that the value computation for the enumeration has started. Returns whether this is
 	 * the first attempt to do so.
 	 */
 	boolean startValueComputation();

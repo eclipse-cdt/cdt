@@ -114,7 +114,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 			IASTNode parent= getParent();
 			if (parent instanceof IASTInternalEnumerationSpecifier) {
 				IASTInternalEnumerationSpecifier ies= (IASTInternalEnumerationSpecifier) parent;
-				if (ies.startValueComputation()) { // prevents infinite recursions
+				if (ies.startValueComputation()) { // Prevent infinite recursion.
 					createEnumValues((IASTEnumerationSpecifier) parent);
 				}
 			}		

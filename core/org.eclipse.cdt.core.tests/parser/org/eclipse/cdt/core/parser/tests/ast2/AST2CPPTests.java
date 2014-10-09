@@ -4629,12 +4629,12 @@ public class AST2CPPTests extends AST2TestBase {
 		assertInstances(col, B, 4);
 	}
 
-	// class X {
-	//   public:
-	//   void f(int);
-	//   int a;
-	// };
-	// int X:: * pmi = &X::a;
+	//	class X {
+	//	public:
+	//	  void f(int);
+	//	  int a;
+	//	};
+	//	int X:: * pmi = &X::a;
 	public void testBasicPointerToMember() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		assertEquals(tu.getDeclarations().length, 2);
@@ -4644,12 +4644,11 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("X::", po.getName().toString());
 	}
 
-	// struct B {};
-	// struct D : B {};
-	// void foo(D* dp)
-	// {
-	// B* bp = dynamic_cast<B*>(dp);
-	// }
+	//	struct B {};
+	//	struct D : B {};
+	//	void foo(D* dp) {
+	//	  B* bp = dynamic_cast<B*>(dp);
+	//	}
 	public void testBug84466() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		ICPPASTCastExpression dynamic_cast =
@@ -4663,8 +4662,7 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	public void testBug88338_CPP() throws Exception {
-		IASTTranslationUnit tu = parse(
-				"struct A; struct A* a;", CPP);
+		IASTTranslationUnit tu = parse("struct A; struct A* a;", CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -4692,11 +4690,11 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(f.getNestedDeclarator().getName().toString(), "pfi");
 	}
 
-	// class X { public: int bar; };
-	// void f(){
-	//    X a[10];
-	//    a[0].bar;
-	// }
+	//	class X { public: int bar; };
+	//	void f(){
+	//	  X a[10];
+	//	  a[0].bar;
+	//	}
 	public void testBug95484() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
@@ -4706,10 +4704,10 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(bar, col.getName(6).resolveBinding());
 	}
 
-	// int strcmp(const char *);
-	// void f(const char * const * argv){
-	//    strcmp(*argv);
-	// }
+	//	int strcmp(const char *);
+	//	void f(const char * const * argv){
+	//	  strcmp(*argv);
+	//	}
 	public void testBug95419() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
@@ -4719,14 +4717,14 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(strcmp, col.getName(4).resolveBinding());
 	}
 
-	//    class Other;
-	//    class Base {
-	//       public: Base(Other *);
-	//    };
-	//    class Sub : public Base {
-	//       public: Sub(Other *);
-	//    };
-	//    Sub::Sub(Other * b) : Base(b) {}
+	//	class Other;
+	//	class Base {
+	//	  public: Base(Other *);
+	//	};
+	//	class Sub : public Base {
+	//	  public: Sub(Other *);
+	//	};
+	//	Sub::Sub(Other * b) : Base(b) {}
 	public void testBug95673() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 
@@ -4735,12 +4733,12 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(ctor, ctor2);
 	}
 
-	// void mem(void *, const void *);
-	// void f() {
-	//    char *x;  int offset;
-	//    mem(x, "FUNC");
-	//    mem(x + offset, "FUNC2");
-	// }
+	//	void mem(void *, const void *);
+	//	void f() {
+	//	  char *x;  int offset;
+	//	  mem(x, "FUNC");
+	//	  mem(x + offset, "FUNC2");
+	//	}
 	public void testBug95768() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
@@ -4908,14 +4906,14 @@ public class AST2CPPTests extends AST2TestBase {
 		assertSame(i, col.getName(7).resolveBinding());
 	}
 
-	// int f() {
-	//     return 5;
-	// }
-	// int main() {
-	// int a(5);
-	// int b(f());
-	// return a+b;
-	// }
+	//	int f() {
+	//	  return 5;
+	//	}
+	//	int main() {
+	//	  int a(5);
+	//	  int b(f());
+	//	  return a+b;
+	//  }
 	public void testBug86849() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		NameCollector col = new NameCollector();
@@ -6263,24 +6261,24 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void test2(char []);
 	//	void test3(t);
 	//	void xx() {
-	//	   char* x= 0;
-	//	   test1(x);
-	//	   test2(x); // problem binding here
-	//	   test3(x); // problem binding here
+	//	  char* x= 0;
+	//	  test1(x);
+	//	  test2(x);
+	//	  test3(x);
 	//	}
 	public void testAdjustmentOfParameterTypes_239975() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
 	}
 
 	//	class A {
-	//		public:
-	//			void m(int c);
+	//	public:
+	//	  void m(int c);
 	//	};
 	//
 	//	void test(char c) {
-	//		void (A::* ptr2mem)(char);
-	//		ptr2mem= reinterpret_cast<void (A::*)(char)>(&A::m);
-	//      ptr2mem= (void (A::*)(int))(0);
+	//	  void (A::* ptr2mem)(char);
+	//	  ptr2mem= reinterpret_cast<void (A::*)(char)>(&A::m);
+	//	  ptr2mem= (void (A::*)(int))(0);
 	//	}
 	public void testTypeIdForPtrToMember_242197() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP);
@@ -7236,24 +7234,23 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	//	class S {
-	//		S(int);
+	//	  S(int);
 	//	};
 	//	void test() {
-	//		S **temp = new S*[1]; // problem on S
-	//		temp = new S*;        // problem on S
-	//		temp = new (S*);      // problem on S
-	//		temp = new ::S*[1]; // problem on S
-	//		temp = new ::S*;        // problem on S
-	//		temp = new (::S*);      // problem on S
+	//	  S **temp = new S*[1];
+	//	  temp = new S*;
+	//	  temp = new (S*);
+	//	  temp = new ::S*[1];
+	//	  temp = new ::S*;
+	//	  temp = new (::S*);
 	//	}
 	public void testNewPointerOfClass_267168() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP);
+		parseAndCheckBindings();
 	}
 
 	//	void f(char *(names[2])= 0);
 	//  void f2(const char *(n[])) {
-	//     if (n && 1){}
+	//    if (n && 1){}
 	//  }
 	public void testPointerToArrayWithDefaultVal_267184() throws Exception {
 		final String code = getAboveComment();
@@ -7270,10 +7267,10 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings(code, CPP);
 	}
 
-	// class X {
-	//    virtual void pv() = 0;
-	//    void (*ptrToFunc) ()= 0;
-	// };
+	//	class X {
+	//	  virtual void pv() = 0;
+	//	  void (*ptrToFunc) ()= 0;
+	//	};
 	public void testPureVirtualVsInitDeclarator_267184() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu= parseAndCheckBindings(code, CPP);

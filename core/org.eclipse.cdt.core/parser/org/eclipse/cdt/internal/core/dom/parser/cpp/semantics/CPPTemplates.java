@@ -982,7 +982,7 @@ public class CPPTemplates {
 				spec = enumSpec.specializeEnumerator(enumerator);
 			} else if (decl instanceof ICPPUsingDeclaration) {
 				IBinding[] delegates= ((ICPPUsingDeclaration) decl).getDelegates();
-				List<IBinding> result= new ArrayList<IBinding>();
+				List<IBinding> result= new ArrayList<>();
 				ICPPClassSpecialization within = getSpecializationContext(owner);
 				for (IBinding delegate : delegates) {
 					try {
@@ -2853,7 +2853,7 @@ public class CPPTemplates {
 		if (keys.length == 0)
 			return ObjectMap.EMPTY_MAP;
 
-		List<ICPPTemplateDefinition> defs= new ArrayList<ICPPTemplateDefinition>();
+		List<ICPPTemplateDefinition> defs= new ArrayList<>();
 		IBinding owner= b;
 		while (owner != null) {
 			if (owner instanceof ICPPTemplateDefinition) {

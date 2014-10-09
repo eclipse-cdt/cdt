@@ -340,7 +340,7 @@ public abstract class ArithmeticConversion {
 				if (basicTarget.isShort()) {
 					return Short.MIN_VALUE <= n && n <= Short.MAX_VALUE;
 				}
-				// Can't represent long longs with java longs.
+				// Can't represent long longs with Java longs.
 				if (basicTarget.isLong() || basicTarget.isLongLong()) {
 					return true;
 				}
@@ -352,7 +352,7 @@ public abstract class ArithmeticConversion {
 			if (basicTarget.isShort()) {
 				return n < (Short.MAX_VALUE + 1L) * 2;
 			}
-			// Can't represent long longs with java longs.
+			// Can't represent long longs with Java longs.
 			if (basicTarget.isLong() || basicTarget.isLongLong()) {
 				return true;
 			}
@@ -419,9 +419,10 @@ public abstract class ArithmeticConversion {
 		long sizeofSource = sourceSizeAndAlignment == null ? getApproximateSize(source) : sourceSizeAndAlignment.size;
 		long sizeofTarget = targetSizeAndAlignment == null ? getApproximateSize(target) : targetSizeAndAlignment.size;
 
-		if (sizeofSource == sizeofTarget)
+		if (sizeofSource == sizeofTarget) {
 			return target.isUnsigned() == source.isUnsigned();
-		else
+		} else {
 			return sizeofSource < sizeofTarget;
+		}
 	}
 }

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -23,10 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier
  */
 public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier 
 		implements IASTInternalEnumerationSpecifier, ICASTEnumerationSpecifier {
-
     private IASTName name;
-	private boolean valuesComputed= false;
-
+	private boolean valuesComputed;
     
     public CASTEnumerationSpecifier() {
 	}
@@ -54,7 +52,6 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		return super.copy(copy, style);
 	}
 	
-	
 	@Override
 	public boolean startValueComputation() {
 		if (valuesComputed)
@@ -70,20 +67,19 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
     	if (enumerator != null) {
     		enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-    		enumerators = ArrayUtil.appendAt( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
+    		enumerators = ArrayUtil.appendAt(IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator);
     	}
     }
 
-    
     @Override
 	public IASTEnumerator[] getEnumerators() {        
-        if( enumerators == null ) return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-        enumerators = ArrayUtil.trimAt( IASTEnumerator.class, enumerators, enumeratorsPos );
+        if (enumerators == null) return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
+        enumerators = ArrayUtil.trimAt(IASTEnumerator.class, enumerators, enumeratorsPos);
         return enumerators;
     }
 
     private IASTEnumerator [] enumerators = null;
-    private int enumeratorsPos=-1;
+    private int enumeratorsPos = -1;
 
  
     @Override
@@ -102,34 +98,35 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch(action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( name != null ) if( !name.accept( action ) ) return false;
+        if (name != null && !name.accept(action))
+        	return false;
         IASTEnumerator[] etors = getEnumerators();
-        for ( int i = 0; i < etors.length; i++ ) {
-            if( !etors[i].accept( action ) ) return false;
+        for (int i = 0; i < etors.length; i++) {
+            if (!etors[i].accept(action))
+            	return false;
         }
-        if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclSpecifiers) {
+		    switch(action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
 	@Override
-	public int getRoleForName(IASTName n ) {
-		if( this.name == n  )
+	public int getRoleForName(IASTName n) {
+		if (this.name == n)
 			return r_definition;
 		return r_unclear;
 	}
-
 }

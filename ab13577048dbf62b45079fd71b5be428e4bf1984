@@ -88,6 +88,42 @@
       "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_438e8d07",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2014-10-13T19:42:06Z",
+      "side": 1,
+      "message": "I believe so, since it will just be treated as a local file in this case.",
+      "parentUuid": "a766b734_0595c795",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a3704182",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2014-10-13T19:42:06Z",
+      "side": 1,
+      "message": "Unfortunately I don\u0027t have the resources to create a new test case.",
+      "parentUuid": "a766b734_c5cbcfb5",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

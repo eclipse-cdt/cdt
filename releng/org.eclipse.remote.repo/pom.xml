@@ -47,7 +47,7 @@
 										<mkdir dir="${remote-install-dir}" />
 										<delete includeemptydirs="true">
 											<fileset dir="${remote-install-dir}">
-												<include name="**" />
+												<include name="**/*" />
 											</fileset>
 										</delete>
 										<unzip

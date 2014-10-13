@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.rse.terminals</artifactId>
-  <version>3.6.1-SNAPSHOT</version>
+  <version>3.6.100-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   
   <build>

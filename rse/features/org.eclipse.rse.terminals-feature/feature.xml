@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.terminals"
       label="%featureName"
-      version="3.6.1.qualifier"
+      version="3.6.100.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.terminals.ui"
       image="eclipse_update_120.jpg"
@@ -36,11 +36,6 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.5"/>
    </url>
 
-   <includes
-         id="org.eclipse.tm.terminal"
-         version="0.0.0"
-         search-location="self"/>
-
    <requires>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -51,6 +46,7 @@
       <import plugin="org.eclipse.rse.core" version="3.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.ui" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.rse.connectorservice.ssh" version="2.1.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal" version="3.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

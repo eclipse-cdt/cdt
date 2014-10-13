@@ -124,6 +124,42 @@
       "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_23fd512f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-13T20:33:41Z",
+      "side": 1,
+      "message": "Changing this method is too risky without a unit test.",
+      "parentUuid": "a766b734_a3704182",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e3e35994",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-13T20:33:41Z",
+      "side": 1,
+      "message": "I do not understand this statement without concrete examples.",
+      "parentUuid": "a766b734_438e8d07",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

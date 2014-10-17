@@ -139,6 +139,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -7233,6 +7234,134 @@ public class AST2CPPTests extends AST2TestBase {
 		ba.assertNonProblem("f(!p)", 1);
 	}
 
+	//	template<typename T>
+	//	struct A {
+	//	  enum {
+	//	    e1 = 0,
+	//	    e2 = int(e1)
+	//	  };
+	//	};
+	//
+	//	template<typename T, int v = A<T>::e2>
+	//	struct B;
+	//
+	//	template<typename T>
+	//	struct B<T, 0> {
+	//	  void waldo();
+	//	};
+	//
+	//	void test(B<int>& p) {
+	//	  p.waldo();
+	//	}
+	public void testDependentEnumeration_446711a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	constexpr int f(int p) { return p; }
+	//	constexpr long f(long p) { return p + 0x100000000L; }
+	//
+	//	template<typename T>
+	//	struct A {
+	//	  enum {
+	//	    e1 = 0,
+	//	    e2 = f(e1)
+	//	  };
+	//	};
+	//
+	//	template<typename T, long v = A<T>::e2>
+	//	struct B;
+	//
+	//	template<typename T>
+	//	struct B<T, 0> {
+	//	  void waldo();
+	//	};
+	//
+	//	void test(B<int>& p) {
+	//	  p.waldo();
+	//	}
+	public void testDependentEnumeration_446711b() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	constexpr int f(long p) { return p; }
+	//	constexpr long f(int p) { return p + 0x100000000L; }
+	//
+	//	template<typename T>
+	//	struct A {
+	//	  enum {
+	//	    e1 = 0L,
+	//	    e2 = f(e1)
+	//	  };
+	//	};
+	//
+	//	template<typename T, long v = A<T>::e2>
+	//	struct B;
+	//
+	//	template<typename T>
+	//	struct B<T, 0> {
+	//	  void waldo();
+	//	};
+	//
+	//	void test(B<int>& p) {
+	//	  p.waldo();
+	//	}
+	public void testDependentEnumeration_446711c() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	constexpr int f(int p) { return p; }
+	//	constexpr long f(long p) { return p + 0x100000000L; }
+	//
+	//	template<typename T, T v>
+	//	struct A {
+	//	  enum {
+	//	    e1 = v,
+	//	    e2 = f(e1)
+	//	  };
+	//	};
+	//
+	//	template<typename T, T u, long v = A<T, u>::e2>
+	//	struct B;
+	//
+	//	template<typename T, T u>
+	//	struct B<T, u, 0> {
+	//	  void waldo();
+	//	};
+	//
+	//	void test(B<int, 0>& p) {
+	//	  p.waldo();
+	//	}
+	public void _testDependentEnumeration_446711d() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	constexpr int f(int p) { return p; }
+	//	constexpr long f(long p) { return p + 0x100000000L; }
+	//
+	//	template<typename T, T v>
+	//	struct A {
+	//	  enum {
+	//	    e1 = v,
+	//	    e2 = f(e1)
+	//	  };
+	//	};
+	//
+	//	template<typename T, T u, long v = A<T, u>::e2>
+	//	struct B;
+	//
+	//	template<typename T, T u>
+	//	struct B<T, u, 0> {
+	//	  void waldo();
+	//	};
+	//
+	//	void test(B<long, 0>& p) {
+	//	  p.waldo();
+	//	}
+	public void _testDependentEnumeration_446711e() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertProblemOnFirstIdentifier(".waldo()");
+	}
+
 	//	class S {
 	//	  S(int);
 	//	};
@@ -8862,7 +8991,7 @@ public class AST2CPPTests extends AST2TestBase {
 		bh.assertProblem("xl;", -1);
 	}
 
-	//	void f(int);
+	//	constexpr int f(int);
 	//	enum class X {e1, e2= e1+2, e3};
 	//	enum class Y {e1, e2= f(e1)+2, e3};
 	//	enum A {e1, e2= e1+2, e3};
@@ -10634,15 +10763,15 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testUnderlyingTypeBuiltin_411196() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
-		assertSameType((ITypedef) helper.assertNonProblem("short1_type"), CPPVisitor.SHORT_TYPE);
-		assertSameType((ITypedef) helper.assertNonProblem("short2_type"), CPPVisitor.SHORT_TYPE);
+		assertSameType((ITypedef) helper.assertNonProblem("short1_type"), CPPBasicType.SHORT);
+		assertSameType((ITypedef) helper.assertNonProblem("short2_type"), CPPBasicType.SHORT);
 
-		assertSameType((ITypedef) helper.assertNonProblem("scoped_type"), CPPVisitor.INT_TYPE);
+		assertSameType((ITypedef) helper.assertNonProblem("scoped_type"), CPPBasicType.INT);
 
-		assertSameType((ITypedef) helper.assertNonProblem("unsigned_type"), CPPVisitor.UNSIGNED_INT);
-		assertSameType((ITypedef) helper.assertNonProblem("int_type"), CPPVisitor.INT_TYPE);
-		assertSameType((ITypedef) helper.assertNonProblem("ulong_type"), CPPVisitor.UNSIGNED_LONG);
-		assertSameType((ITypedef) helper.assertNonProblem("loong_type"), CPPVisitor.LONG_TYPE);
+		assertSameType((ITypedef) helper.assertNonProblem("unsigned_type"), CPPBasicType.UNSIGNED_INT);
+		assertSameType((ITypedef) helper.assertNonProblem("int_type"), CPPBasicType.INT);
+		assertSameType((ITypedef) helper.assertNonProblem("ulong_type"), CPPBasicType.UNSIGNED_LONG);
+		assertSameType((ITypedef) helper.assertNonProblem("loong_type"), CPPBasicType.LONG);
 	}
 
 	// namespace A {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -253,14 +255,13 @@ public class EvalID extends CPPDependentEvaluation {
 			IType type= ((IEnumerator) binding).getType();
 			if (type instanceof ICPPEnumeration) {
 				ICPPEnumeration enumType= (ICPPEnumeration) type;
-				if (enumType.asScope() == CPPVisitor.getContainingScope(expr)) {
-					// C++0x: 7.2-5
-					type= enumType.getFixedType();
-					if (type == null) {
-						// This is a simplification, the actual type is determined
-						// - in an implementation dependent manner - by the value
-						// of the enumerator.
-						type= CPPSemantics.INT_TYPE;
+				// [dcl.enum] 7.2-5
+				if (isInsideEnum(expr, enumType)) {
+					if (binding instanceof ICPPInternalEnumerator) {
+						type = enumType.getFixedType();
+						if (type == null) {
+							type = ((ICPPInternalEnumerator) binding).getInternalType();
+						}
 					}
 					return new EvalBinding(binding, type, expr);
 				}
@@ -272,6 +273,17 @@ public class EvalID extends CPPDependentEvaluation {
 			return new EvalBinding(binding, null, expr);
 		}
 		return EvalFixed.INCOMPLETE;
+	}
+
+	/**
+	 * Returns {@code true} if the given node is located inside the given enum.
+	 */
+	private static boolean isInsideEnum(IASTNode node, ICPPEnumeration enumBinding) {
+		IASTEnumerator enumeratorNode = CPPVisitor.findAncestorWithType(node, IASTEnumerator.class);
+		if (enumeratorNode == null)
+			return false;
+		IBinding enumerator = enumeratorNode.getName().getBinding();
+		return enumerator != null && enumBinding == enumerator.getOwner();
 	}
 
 	private static IType withinNonStaticMethod(IASTExpression expr) {

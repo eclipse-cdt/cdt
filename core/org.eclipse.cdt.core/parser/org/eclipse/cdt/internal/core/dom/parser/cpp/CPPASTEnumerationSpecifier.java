@@ -9,6 +9,7 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier;
 
 /**
- * AST node for c++ enumeration specifiers.
+ * AST node for C++ enumeration specifiers.
  */
 public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		implements IASTInternalEnumerationSpecifier, ICPPASTEnumerationSpecifier {
@@ -30,10 +31,10 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	private IASTName fName;
 	private ICPPASTDeclSpecifier fBaseType;
 
-	private IASTEnumerator[] fItems;
-	private int fItemPos= -1;
+	private IASTEnumerator[] fEnumerators = IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
+	private int fNumEnumerators;
 
-	private boolean fValuesComputed;
+	private Boolean fValuesComputed;
 	private CPPEnumScope fScope;
 
 	public CPPASTEnumerationSpecifier() {
@@ -64,11 +65,21 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	
 	@Override
 	public boolean startValueComputation() {
-		if (fValuesComputed)
+		if (fValuesComputed != null)
 			return false;
 		
-		fValuesComputed= true;
+		fValuesComputed= Boolean.FALSE;
 		return true;
+	}
+
+	@Override
+	public void finishValueComputation() {
+		fValuesComputed= Boolean.TRUE;
+	}
+
+	@Override
+	public boolean isValueComputationInProgress() {
+		return fValuesComputed != null && !fValuesComputed;
 	}
 
 	@Override
@@ -77,17 +88,14 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (enumerator != null) {
 			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-			fItems = ArrayUtil.appendAt( IASTEnumerator.class, fItems, ++fItemPos, enumerator );
+			fEnumerators = ArrayUtil.appendAt(fEnumerators, fNumEnumerators++, enumerator);
 		}
 	}
 
 	@Override
 	public IASTEnumerator[] getEnumerators() {
-		if (fItems == null)
-			return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-		
-		fItems = ArrayUtil.trimAt(IASTEnumerator.class, fItems, fItemPos);
-		return fItems;
+		fEnumerators = ArrayUtil.trim(fEnumerators, fNumEnumerators);
+		return fEnumerators;
 	}
 
 	@Override

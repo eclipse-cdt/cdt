@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -74,6 +73,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
@@ -578,8 +578,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 						return new CompositeCPPUsingDeclarationSpecialization(this, (ICPPUsingDeclaration) binding);
 					} else if (binding instanceof ICPPEnumeration) {
 						return new CompositeCPPEnumerationSpecialization(this, (ICPPEnumeration) binding);
-					} else if (binding instanceof IEnumerator) {
-						return new CompositeCPPEnumeratorSpecialization(this, (IEnumerator) binding);
+					} else if (binding instanceof ICPPInternalEnumerator) {
+						return new CompositeCPPEnumeratorSpecialization(this, (ICPPInternalEnumerator) binding);
 					} else {
 						throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
@@ -655,8 +655,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = def == null ? null : new CompositeCPPEnumeration(this, def);
 			} else if (binding instanceof ICPPFunction) {
 				result = new CompositeCPPFunction(this, (ICPPFunction) binding);				
-			} else if (binding instanceof IEnumerator) {
-				result = new CompositeCPPEnumerator(this, (IEnumerator) binding);
+			} else if (binding instanceof ICPPInternalEnumerator) {
+				result = new CompositeCPPEnumerator(this, (ICPPInternalEnumerator) binding);
 			} else if (binding instanceof ITypedef) {
 				result = new CompositeCPPTypedef(this, (ICPPBinding) binding);
 			} else if (binding instanceof IIndexMacroContainer) {

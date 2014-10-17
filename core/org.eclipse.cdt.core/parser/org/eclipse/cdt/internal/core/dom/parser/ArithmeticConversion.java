@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -196,7 +195,7 @@ public abstract class ArithmeticConversion {
 			return unsignedType;
 		}
 		
-		// the signed has the higher rank
+		// The signed has the higher rank.
 		if (signedRank.ordinal() > unsignedRank.ordinal()) {
 			return signedType;
 		}
@@ -227,7 +226,7 @@ public abstract class ArithmeticConversion {
 				return createBasicType(Kind.eInt, domain.getModifier());
 
 			case eChar32:
-				// Assuming 32 bits
+				// Assuming 32 bits.
 				return createBasicType(Kind.eInt, domain.getModifier() | IBasicType.IS_UNSIGNED);
 
 			case eInt:
@@ -332,7 +331,7 @@ public abstract class ArithmeticConversion {
 		}
 	}
 
-	public static boolean fitsIntoType(ICPPBasicType basicTarget, long n) {
+	public static boolean fitsIntoType(IBasicType basicTarget, long n) {
 		final Kind kind = basicTarget.getKind();
 		switch (kind) {
 		case eInt:
@@ -372,9 +371,9 @@ public abstract class ArithmeticConversion {
 	}
 
 	/**
-	 * Make a best-effort guess at the sizeof() of an integral type.  
+	 * Makes a best-effort guess at the sizeof() of an integral type.  
 	 */
-	private static long getApproximateSize(ICPPBasicType type) {
+	private static long getApproximateSize(IBasicType type) {
 		switch (type.getKind()) {
 			case eChar: return 1;
 			case eWChar: return 2;
@@ -396,12 +395,13 @@ public abstract class ArithmeticConversion {
 
 	/**
 	 * Checks whether a target integral type can represent all values of a source integral type.
+	 *
 	 * @param target the target integral type
 	 * @param source the source integral type
 	 * @param point point for sizeof lookup
 	 * @return whether the target integral type can represent all values of the source integral type
 	 */
-	public static boolean fitsIntoType(ICPPBasicType target, ICPPBasicType source, IASTNode point) {
+	public static boolean fitsIntoType(IBasicType target, IBasicType source, IASTNode point) {
 		// A boolean cannot represent any other type.
 		if (target.getKind() == Kind.eBoolean && source.getKind() != Kind.eBoolean)
 			return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -30,14 +32,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 	private static final int VALUE= PDOMCPPBinding.RECORD_SIZE;
+	private static final int INTERNAL_TYPE= VALUE + Database.VALUE_SIZE;
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = VALUE + Database.VALUE_SIZE;
+	protected static final int RECORD_SIZE = INTERNAL_TYPE + Database.TYPE_SIZE;
 		
-	public PDOMCPPEnumerator(PDOMLinkage linkage, PDOMNode parent, IEnumerator enumerator)
+	public PDOMCPPEnumerator(PDOMLinkage linkage, PDOMNode parent, ICPPInternalEnumerator enumerator)
 			throws CoreException {
 		super(linkage, parent, enumerator.getNameCharArray());
-		storeValue(enumerator);
+		IValue value= enumerator.getValue();
+		if (value != null) {
+			linkage.storeValue(record + VALUE, value);
+		}
+		IType internalType = enumerator.getInternalType();
+		if (internalType != null) {
+			linkage.storeType(record + INTERNAL_TYPE, internalType);
+		}
 	}
 
 	public PDOMCPPEnumerator(PDOMLinkage linkage, long record) {
@@ -54,17 +64,14 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 		return IIndexCPPBindingConstants.CPPENUMERATOR;
 	}
 
-	private void storeValue(IEnumerator enumerator) throws CoreException {
-		IValue value= enumerator.getValue();
-		if (value != null) {
-			getLinkage().storeValue(record + VALUE, value);
-		}
-	}
-
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
-		if (newBinding instanceof IEnumerator)
-			storeValue((IEnumerator) newBinding);
+		if (newBinding instanceof IEnumerator) {
+			IValue value= ((IEnumerator) newBinding).getValue();
+			if (value != null) {
+				getLinkage().storeValue(record + VALUE, value);
+			}
+		}
 	}
 
 	@Override
@@ -74,7 +81,17 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 			return (IType) owner;
 		return null;
 	}
-	
+
+	@Override
+	public IType getInternalType() {
+		try {
+			return getLinkage().loadType(record + INTERNAL_TYPE);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
+	}
+
 	@Override
 	public IValue getValue() {
 		try {

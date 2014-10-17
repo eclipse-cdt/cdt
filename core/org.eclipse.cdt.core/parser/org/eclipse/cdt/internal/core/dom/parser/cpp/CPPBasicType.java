@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,22 @@ import org.eclipse.core.runtime.CoreException;
  * Built-in c++ type.
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
-	private static final int FROM_STRING_LITERAL = 1 << 31;
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
 	public static final CPPBasicType NULL_PTR = new CPPBasicType(Kind.eNullPtr, 0, null);
     public static final CPPBasicType UNSPECIFIED_TYPE = new CPPBasicType(Kind.eUnspecified, 0);
-	
+	public static final CPPBasicType SHORT = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT);
+	public static final CPPBasicType INT = new CPPBasicType(Kind.eInt, 0);
+	public static final CPPBasicType LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG);
+	public static final CPPBasicType LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG);
+	public static final CPPBasicType INT128 = new CPPBasicType(Kind.eInt128, 0);
+	public static final CPPBasicType UNSIGNED_SHORT = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_INT = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
+	public static final CPPBasicType UNSIGNED_INT128 = new CPPBasicType(Kind.eInt128, IBasicType.IS_UNSIGNED);
+
+	private static final int FROM_STRING_LITERAL = 1 << 31;
+
 	private final Kind fKind;
 	private final int fModifiers;
 	private Long fAssociatedValue;

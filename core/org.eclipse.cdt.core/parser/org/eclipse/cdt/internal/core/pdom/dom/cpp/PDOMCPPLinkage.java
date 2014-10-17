@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 QNX Software Systems and others.
+ * Copyright (c) 2005, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
@@ -539,9 +540,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = new PDOMCPPUsingDeclaration(this, parent, (ICPPUsingDeclaration) binding);
 		} else if (binding instanceof ICPPEnumeration) {
 			pdomBinding = new PDOMCPPEnumeration(this, parent, (ICPPEnumeration) binding);
-		} else if (binding instanceof IEnumerator) {
+		} else if (binding instanceof ICPPInternalEnumerator) {
 			assert parent instanceof ICPPEnumeration;
-			pdomBinding = new PDOMCPPEnumerator(this, parent, (IEnumerator) binding);
+			pdomBinding = new PDOMCPPEnumerator(this, parent, (ICPPInternalEnumerator) binding);
 			if (parent instanceof ICPPEnumeration && !((ICPPEnumeration) parent).isScoped()) {
 				parent2= parent.getParentNode();
 				if (parent2 == null) {
@@ -673,8 +674,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			result= new PDOMCPPUsingDeclarationSpecialization(this, parent, (ICPPUsingDeclaration) special, orig);
 		} else if (special instanceof ICPPEnumeration) {
 			result= new PDOMCPPEnumerationSpecialization(this, parent, (ICPPEnumeration) special, orig);
-		} else if (special instanceof IEnumerator) {
-			result= new PDOMCPPEnumeratorSpecialization(this, parent, (IEnumerator) special, orig);
+		} else if (special instanceof ICPPInternalEnumerator) {
+			result= new PDOMCPPEnumeratorSpecialization(this, parent, (ICPPInternalEnumerator) special, orig);
 		}
 
 		return result;
@@ -685,7 +686,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			final long fileLocalRec= type.getLocalToFileRec();
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
-				List<ICPPMethod> old= new ArrayList<ICPPMethod>();
+				List<ICPPMethod> old= new ArrayList<>();
 				if (type instanceof ICPPClassType) {
 					ArrayUtil.addAll(old, ClassTypeHelper.getImplicitMethods((ICPPClassType) type, point));
 				}

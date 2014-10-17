@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,20 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Base class for C and C++ enumerators.
@@ -113,9 +121,9 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		if (integralValue == null) {
 			IASTNode parent= getParent();
 			if (parent instanceof IASTInternalEnumerationSpecifier) {
-				IASTInternalEnumerationSpecifier ies= (IASTInternalEnumerationSpecifier) parent;
-				if (ies.startValueComputation()) { // Prevent infinite recursion.
-					createEnumValues((IASTEnumerationSpecifier) parent);
+				IASTInternalEnumerationSpecifier enumeration= (IASTInternalEnumerationSpecifier) parent;
+				if (enumeration.startValueComputation()) { // Prevent infinite recursion.
+					computeEnumValues(enumeration);
 				}
 			}		
 			if (integralValue == null) {
@@ -125,28 +133,104 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		return integralValue;
 	}
 
-	private void createEnumValues(IASTEnumerationSpecifier parent) {
-		IValue previousExplicitValue = null;
-		int delta = 0;
-		IASTEnumerator[] etors= parent.getEnumerators();
-		for (IASTEnumerator etor : etors) {
-			IValue val;
-			IASTExpression expr= etor.getValue();
-			if (expr != null) {
-				val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
-				previousExplicitValue = val;
-				delta = 1;
-			} else {
-				if (previousExplicitValue != null) {
-					val = Value.incrementedValue(previousExplicitValue, delta);
-				} else {
-					val = Value.create(delta);
+	private static void computeEnumValues(IASTInternalEnumerationSpecifier enumeration) {
+		try {
+			IType fixedType = null;
+			if (enumeration instanceof ICPPASTEnumerationSpecifier) {
+				IBinding binding = enumeration.getName().resolveBinding();
+				if (binding instanceof ICPPEnumeration) {
+					fixedType = ((ICPPEnumeration) binding).getFixedType();
 				}
-				delta++;
 			}
-			if (etor instanceof ASTEnumerator) {
-				((ASTEnumerator) etor).integralValue= val;
+			IType type = fixedType == null ? CPPBasicType.INT : null;
+			IValue previousExplicitValue = null;
+			int delta = 0;
+			IASTEnumerator[] etors= enumeration.getEnumerators();
+			for (IASTEnumerator etor : etors) {
+				IBinding etorBinding = etor.getName().resolveBinding();
+				IValue val;
+				IASTExpression expr= etor.getValue();
+				if (expr != null) {
+					val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
+					previousExplicitValue = val;
+					delta = 1;
+					if (fixedType == null) {
+						type = expr.getExpressionType();
+						type = SemanticUtil.getNestedType(type, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
+						if (etorBinding instanceof CPPEnumerator) {
+							((CPPEnumerator) etorBinding).setInternalType(type);
+						}
+					}
+				} else {
+					if (previousExplicitValue != null) {
+						val = Value.incrementedValue(previousExplicitValue, delta);
+					} else {
+						val = Value.create(delta);
+					}
+					delta++;
+					if (fixedType == null && type instanceof IBasicType) {
+						type = getTypeOfIncrementedValue((IBasicType) type, val);
+						if (etorBinding instanceof CPPEnumerator) {
+							((CPPEnumerator) etorBinding).setInternalType(type);
+						}
+					}
+				}
+				if (etor instanceof ASTEnumerator) {
+					((ASTEnumerator) etor).integralValue= val;
+				}
+			}
+		} finally {
+			enumeration.finishValueComputation();
+		}
+	}
+
+	/**
+	 * [dcl.enum] 7.2-5:
+	 * "... the type of the initializing value is the same as the type of the initializing value of
+	 * the preceding enumerator unless the incremented value is not representable in that type, in
+	 * which case the type is an unspecified integral type sufficient to contain the incremented
+	 * value. If no such type exists, the program is ill-formed."
+	 *
+	 * @param type the type of the previous value
+	 * @param val the incremented value
+	 * @return the type of the incremented value
+	 */
+	public static IBasicType getTypeOfIncrementedValue(IBasicType type, IValue val) {
+		Long numericalValue = val.numericalValue();
+		if (numericalValue != null) {
+			long longValue = numericalValue.longValue();
+			if ((type.getKind() != Kind.eInt && type.getKind() != Kind.eInt128) ||
+					type.isShort()) {
+				type = type.isUnsigned() ? CPPBasicType.UNSIGNED_INT : CPPBasicType.INT;
+			}
+			if (!ArithmeticConversion.fitsIntoType(type, longValue)) {
+				if (!type.isUnsigned()) {
+					if (type.getKind() != Kind.eInt128) {
+						if (type.isLongLong()) {
+							type = CPPBasicType.UNSIGNED_INT128;
+						} else if (type.isLong()) {
+							type = CPPBasicType.UNSIGNED_LONG_LONG;
+						} else {
+							type = CPPBasicType.UNSIGNED_LONG;
+						}
+					}
+				} else {
+					if (type.getKind() == Kind.eInt128) {
+						if (longValue >= 0) {
+							type = CPPBasicType.UNSIGNED_INT128;
+						}
+					} else {
+						if (type.isLongLong()) {
+							type = CPPBasicType.INT128;
+						} else if (type.isLong()) {
+							type = CPPBasicType.LONG_LONG;
+						} else {
+							type = CPPBasicType.LONG;
+						}
+					}
+				}
 			}
 		}
+		return type;
 	}
 }

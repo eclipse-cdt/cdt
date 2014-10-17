@@ -81,7 +81,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -227,18 +226,6 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * Collection of methods to extract information from a C++ translation unit.
  */
 public class CPPVisitor extends ASTQueries {
-	public static final CPPBasicType SHORT_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT);
-	public static final CPPBasicType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
-	public static final CPPBasicType LONG_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG);
-	public static final CPPBasicType LONG_LONG_TYPE = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG);
-	public static final CPPBasicType INT128_TYPE = new CPPBasicType(Kind.eInt128, 0);
-	
-	public static final CPPBasicType UNSIGNED_SHORT = new CPPBasicType(Kind.eInt, IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED);
-	public static final CPPBasicType UNSIGNED_INT = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED);
-	public static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
-	public static final CPPBasicType UNSIGNED_LONG_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
-	public static final CPPBasicType UNSIGNED_INT128 = new CPPBasicType(Kind.eInt128, IBasicType.IS_UNSIGNED);
-
 	public static final String BEGIN_STR = "begin"; //$NON-NLS-1$
 	public static final char[] BEGIN = BEGIN_STR.toCharArray();
 	public static final char[] END = "end".toCharArray();  //$NON-NLS-1$
@@ -480,6 +467,13 @@ public class CPPVisitor extends ASTQueries {
 				}
 			}
 			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
+		}
+		// [dcl.enum] 7.2-5
+		// "The underlying type can be explicitly specified using enum-base;
+		// if not explicitly specified, the underlying type of a scoped
+		// enumeration type is int."
+		if (fixedType == null && specifier.isScoped()) {
+			fixedType = CPPBasicType.INT;
 		}
 		return new CPPEnumeration(specifier, fixedType);
     }
@@ -2356,7 +2350,7 @@ public class CPPVisitor extends ASTQueries {
 
 	public static IType getPointerDiffType(final IASTNode point) {
 		IType t= getStdType(point, PTRDIFF_T);
-		return t != null ? t : LONG_TYPE;
+		return t != null ? t : CPPBasicType.LONG;
 	}
 
 	private static IType getStdType(final IASTNode node, char[] name) {
@@ -2382,12 +2376,12 @@ public class CPPVisitor extends ASTQueries {
 
 	public static IType get_type_info(IASTNode point) {
 		IType t= getStdType(point, TYPE_INFO);
-		return t != null ? t : INT_TYPE;
+		return t != null ? t : CPPBasicType.INT;
 	}
 
 	public static IType get_SIZE_T(IASTNode sizeofExpr) {
 		IType t= getStdType(sizeofExpr, SIZE_T);
-		return t != null ? t : UNSIGNED_LONG;
+		return t != null ? t : CPPBasicType.UNSIGNED_LONG;
 	}
 
 	public static ICPPClassTemplate get_initializer_list(IASTNode node) {

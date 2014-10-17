@@ -258,6 +258,6 @@ class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
 				return i < enumerators.length ? enumerators[i] : enumerator;
 			}
 		}
-		return null;
+		return enumerator;
 	}
 }

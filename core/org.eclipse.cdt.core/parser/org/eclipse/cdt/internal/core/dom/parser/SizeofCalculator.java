@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Google, Inc and others.
+ * Copyright (c) 2011, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,12 +30,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 
 /**
  * Calculator of in-memory size and alignment of types.
@@ -85,7 +85,7 @@ public class SizeofCalculator {
 	 * @param type the type to get size and alignment for.
 	 * @param point a node belonging to the AST of the translation unit defining context for
 	 *     the size calculation.
-	 * @return size and alignment, or <code>null</code> if could not be calculated.
+	 * @return size and alignment, or {@code null} if could not be calculated.
 	 */
 	public static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode point) {
 		SizeofCalculator calc = point == null ?
@@ -173,7 +173,7 @@ public class SizeofCalculator {
 	/**
 	 * Calculates size and alignment for the given type.
 	 * @param type the type to get size and alignment for.
-	 * @return size and alignment, or <code>null</code> if could not be calculated.
+	 * @return size and alignment, or {@code null} if could not be calculated.
 	 */
 	public SizeAndAlignment sizeAndAlignment(IType type) {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
@@ -183,8 +183,8 @@ public class SizeofCalculator {
 		if (type instanceof IBasicType) {
 			return sizeAndAlignment((IBasicType) type);
 		}
-		// [expr.sizeof]/2: "When applied to a reference or a reference type, the
-		// result is the size of the referenced type."
+		// [expr.sizeof]/2: "When applied to a reference or a reference type,
+		// the result is the size of the referenced type."
 		if (type instanceof ICPPReferenceType) {
 			return sizeAndAlignment(((ICPPReferenceType) type).getType());
 		}
@@ -207,7 +207,7 @@ public class SizeofCalculator {
 
 	/**
 	 * Returns size and alignment of pointer types.
-	 * @return size and alignment of pointer types, or <code>null</code> if unknown.
+	 * @return size and alignment of pointer types, or {@code null} if unknown.
 	 */
 	public SizeAndAlignment sizeAndAlignmentOfPointer() {
 		return sizeof_pointer;
@@ -247,24 +247,11 @@ public class SizeofCalculator {
 	}
 
 	private SizeAndAlignment sizeAndAlignment(IEnumeration type) {
-		if (type instanceof ICPPEnumeration) {
-			IType fixedType = ((ICPPEnumeration) type).getFixedType();
-			if (fixedType != null) {
-				return sizeAndAlignment(fixedType);
-			}
+		IType underlyingType = TypeTraits.underlyingType(type);
+		if (underlyingType instanceof IBasicType) {
+			return sizeAndAlignment((IBasicType) underlyingType);
 		}
-		long range = Math.max(Math.abs(type.getMinValue()) - 1, Math.abs(type.getMaxValue()));
-		if (range >= (2 << 32))
-			return size_8;
-		if (type.getMinValue() < 0)
-			range *= 2;
-		if (range >= (2 << 32))
-			return size_8;
-		if (range >= (2 << 16))
-			return size_4;
-		if (range >= (2 << 8))
-			return size_2;
-		return SIZE_1;
+		return null;
 	}
 
 	private SizeAndAlignment sizeAndAlignment(IArrayType type) {

@@ -16,7 +16,9 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -30,14 +32,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPEnumeratorSpecialization extends PDOMCPPSpecialization implements IPDOMCPPEnumerator {
 	private static final int VALUE= PDOMCPPSpecialization.RECORD_SIZE;
+	private static final int INTERNAL_TYPE= VALUE + Database.VALUE_SIZE;
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = VALUE + Database.VALUE_SIZE;
+	protected static final int RECORD_SIZE = INTERNAL_TYPE + Database.TYPE_SIZE;
 
 	public PDOMCPPEnumeratorSpecialization(PDOMCPPLinkage linkage, PDOMNode parent,
-			IEnumerator enumerator, PDOMBinding specialized) throws CoreException {
+			ICPPInternalEnumerator enumerator, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) enumerator, specialized);
-		storeValue(enumerator);
+		IValue value= enumerator.getValue();
+		if (value != null) {
+			getLinkage().storeValue(record + VALUE, value);
+		}
+		IType internalType = enumerator.getInternalType();
+		if (internalType != null) {
+			linkage.storeType(record + INTERNAL_TYPE, internalType);
+		}
 	}
 
 	public PDOMCPPEnumeratorSpecialization(PDOMLinkage linkage, long record) {
@@ -54,17 +64,14 @@ class PDOMCPPEnumeratorSpecialization extends PDOMCPPSpecialization implements I
 		return IIndexCPPBindingConstants.CPP_ENUMERATOR_SPECIALIZATION;
 	}
 
-	private void storeValue(IEnumerator enumerator) throws CoreException {
-		IValue value= enumerator.getValue();
-		if (value != null) {
-			getLinkage().storeValue(record + VALUE, value);
-		}
-	}
-
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
-		if (newBinding instanceof IEnumerator)
-			storeValue((IEnumerator) newBinding);
+		if (newBinding instanceof IEnumerator) {
+			IValue value= ((IEnumerator) newBinding).getValue();
+			if (value != null) {
+				getLinkage().storeValue(record + VALUE, value);
+			}
+		}
 	}
 
 	@Override
@@ -73,6 +80,16 @@ class PDOMCPPEnumeratorSpecialization extends PDOMCPPSpecialization implements I
 		if (owner instanceof IType)
 			return (IType) owner;
 		return null;
+	}
+
+	@Override
+	public IType getInternalType() {
+		try {
+			return getLinkage().loadType(record + INTERNAL_TYPE);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override

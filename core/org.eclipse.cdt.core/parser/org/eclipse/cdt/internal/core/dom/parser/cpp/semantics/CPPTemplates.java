@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -106,6 +107,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
@@ -116,6 +118,7 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
@@ -161,6 +164,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
@@ -958,22 +962,7 @@ public class CPPTemplates {
 				IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
 			    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), aliasTemplate, type);
 			} else if (decl instanceof ICPPEnumeration) {
-				ICPPClassSpecialization within = getSpecializationContext(owner);
-				ICPPEnumeration enumeration = (ICPPEnumeration) decl;
-				IType fixedType = instantiateType(enumeration.getFixedType(), tpMap, -1, within, point);
-				CPPEnumerationSpecialization specializedEnumeration =
-						new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
-				IEnumerator[] enumerators = enumeration.getEnumerators();
-				IEnumerator[] specializedEnumerators = new IEnumerator[enumerators.length];
-				for (int i = 0; i < enumerators.length; ++i) {
-					IEnumerator enumerator = enumerators[i];
-					IValue specializedValue =
-							instantiateValue(enumerator.getValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
-					specializedEnumerators[i] =
-							new CPPEnumeratorSpecialization(enumerator, specializedEnumeration, tpMap, specializedValue);
-				}
-				specializedEnumeration.setEnumerators(specializedEnumerators);
-				spec = specializedEnumeration;
+				spec = instantiateEnumeration((ICPPEnumeration) decl, getSpecializationContext(owner), tpMap, point);
 			} else if (decl instanceof IEnumerator) {
 				IEnumerator enumerator = (IEnumerator) decl;
 				ICPPEnumeration enumeration = (ICPPEnumeration) enumerator.getOwner();
@@ -1006,6 +995,38 @@ public class CPPTemplates {
 			CCorePlugin.log(e);
 		}
 		return spec;
+	}
+
+	private static IBinding instantiateEnumeration(ICPPEnumeration enumeration, ICPPClassSpecialization within,
+			final ICPPTemplateParameterMap tpMap, IASTNode point) {
+		IType fixedType = instantiateType(enumeration.getFixedType(), tpMap, -1, within, point);
+		CPPEnumerationSpecialization specializedEnumeration =
+				new CPPEnumerationSpecialization(enumeration, within, tpMap, fixedType);
+		IEnumerator[] enumerators = enumeration.getEnumerators();
+		IEnumerator[] specializedEnumerators = new IEnumerator[enumerators.length];
+		specializedEnumeration.setEnumerators(specializedEnumerators);
+		IType previousInternalType = CPPBasicType.INT;
+		for (int i = 0; i < enumerators.length; ++i) {
+			IEnumerator enumerator = enumerators[i];
+			IValue specializedValue =
+					instantiateValue(enumerator.getValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
+			IType internalType = null;
+			if (fixedType == null && enumerator instanceof ICPPInternalEnumerator) {
+				internalType = ((ICPPInternalEnumerator) enumerator).getInternalType();
+				if (internalType != null) {
+					internalType = instantiateType(internalType, tpMap, -1, within, point);
+				} else {
+					if (previousInternalType instanceof IBasicType) {
+						internalType = ASTEnumerator.getTypeOfIncrementedValue((IBasicType) previousInternalType, specializedValue);
+					}						}
+				if (internalType != null) {
+					previousInternalType = internalType;
+				}
+			}
+			specializedEnumerators[i] =	new CPPEnumeratorSpecialization(enumerator,
+					specializedEnumeration, tpMap, specializedValue, internalType);
+		}
+		return specializedEnumeration;
 	}
 
 	private static ICPPClassSpecialization getSpecializationContext(IBinding owner) {

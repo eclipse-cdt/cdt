@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
@@ -38,6 +39,19 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
  * A collection of static methods for determining type traits.
  */
 public class TypeTraits {
+	private static final ICPPBasicType[] SIGNED_UNDERLYING_ENUM_TYPES = {
+		CPPBasicType.INT,
+		CPPBasicType.LONG,
+		CPPBasicType.LONG_LONG,
+		CPPBasicType.INT128
+	};
+	private static final ICPPBasicType[] UNSIGNED_UNDERLYING_ENUM_TYPES = {
+		CPPBasicType.UNSIGNED_INT,
+		CPPBasicType.UNSIGNED_LONG,
+		CPPBasicType.UNSIGNED_LONG_LONG,
+		CPPBasicType.UNSIGNED_INT128
+	};
+
 	private TypeTraits() {}
 
 	/**
@@ -342,17 +356,11 @@ public class TypeTraits {
 		} else {
 			ICPPEnumeration enumeration = (ICPPEnumeration) type;
 
-			// [dcl.enum] p5
-			// "The underlying type can be explicitly specified using enum-base;
-			// if not explicitly specified, the underlying type of a scoped
-			// enumeration type is int."
 			IType fixedType = enumeration.getFixedType();
 			if (fixedType != null)
 				return fixedType;
-			if (enumeration.isScoped())
-				return CPPVisitor.INT_TYPE;
 			
-			// [dcl.enum] p6
+			// [dcl.enum] 7.2-6:
 			// "For an enumeration whose underlying type is not fixed, the
 			// underlying type is an integral type that can represent all
 			// the numerator values defined in the enumeration. ... It is
@@ -363,28 +371,22 @@ public class TypeTraits {
 			// the underlying type is as if the enumeration had a single
 			// enumerator with value 0."
 			if (enumeration.getEnumerators().length == 0)
-				return CPPVisitor.INT_TYPE;
-			if (enumeration.getMinValue() < 0 || enumeration.getMaxValue() < 0) {
-				return smallestFittingType(enumeration,
-						CPPVisitor.INT_TYPE, 
-						CPPVisitor.LONG_TYPE, 
-						CPPVisitor.LONG_LONG_TYPE,
-						CPPVisitor.INT128_TYPE);
+				return CPPBasicType.INT;
+			long minValue = enumeration.getMinValue();
+			long maxValue = enumeration.getMaxValue();
+			if (minValue < 0 || maxValue < 0) {
+				return smallestFittingType(minValue, maxValue, SIGNED_UNDERLYING_ENUM_TYPES);
 			} else {
-				return smallestFittingType(enumeration,
-						CPPVisitor.UNSIGNED_INT, 
-						CPPVisitor.UNSIGNED_LONG, 
-						CPPVisitor.UNSIGNED_LONG_LONG,
-						CPPVisitor.UNSIGNED_INT128);
+				return smallestFittingType(minValue, maxValue, UNSIGNED_UNDERLYING_ENUM_TYPES);
 			}
 		}
 	}
-	
-	private static IBasicType smallestFittingType(ICPPEnumeration enumeration, ICPPBasicType... types) {
-		for (int i = 0; i < types.length - 1; ++i) {
-			if (ArithmeticConversion.fitsIntoType(types[i], enumeration.getMinValue())
-					&& ArithmeticConversion.fitsIntoType(types[i], enumeration.getMaxValue())) {
-				return types[i];
+
+	private static IBasicType smallestFittingType(long minValue, long maxValue, ICPPBasicType[] types) {
+		for (ICPPBasicType type : types) {
+			if (ArithmeticConversion.fitsIntoType(type, minValue)
+					&& ArithmeticConversion.fitsIntoType(type, maxValue)) {
+				return type;
 			}
 		}
 		return types[types.length - 1];  // Assume it fits into the largest type provided.

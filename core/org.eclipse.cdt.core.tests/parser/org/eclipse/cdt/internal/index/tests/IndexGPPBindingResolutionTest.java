@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Nathan Ridge.
+ * Copyright (c) 2013, 2014 Nathan Ridge.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-
-import junit.framework.TestSuite;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 
 /**
  * For testing resolution of bindings in C++ code with GNU extensions.
@@ -107,14 +107,14 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 	//	typedef underlying_type<e_ulong>::type ulong_type;
 	//	typedef underlying_type<e_long>::type loong_type;
 	public void testUnderlyingTypeBuiltin_bug411196() throws Exception {
-		assertSameType((ITypedef) getBindingFromASTName("short1_type", 0), CPPVisitor.SHORT_TYPE);
-		assertSameType((ITypedef) getBindingFromASTName("short2_type", 0), CPPVisitor.SHORT_TYPE);
+		assertSameType((ITypedef) getBindingFromASTName("short1_type", 0), CPPBasicType.SHORT);
+		assertSameType((ITypedef) getBindingFromASTName("short2_type", 0), CPPBasicType.SHORT);
 
-		assertSameType((ITypedef) getBindingFromASTName("scoped_type", 0), CPPVisitor.INT_TYPE);
+		assertSameType((ITypedef) getBindingFromASTName("scoped_type", 0), CPPBasicType.INT);
 		
-		assertSameType((ITypedef) getBindingFromASTName("unsigned_type", 0), CPPVisitor.UNSIGNED_INT);
-		assertSameType((ITypedef) getBindingFromASTName("int_type", 0), CPPVisitor.INT_TYPE);
-		assertSameType((ITypedef) getBindingFromASTName("ulong_type", 0), CPPVisitor.UNSIGNED_LONG);
-		assertSameType((ITypedef) getBindingFromASTName("loong_type", 0), CPPVisitor.LONG_TYPE);
+		assertSameType((ITypedef) getBindingFromASTName("unsigned_type", 0), CPPBasicType.UNSIGNED_INT);
+		assertSameType((ITypedef) getBindingFromASTName("int_type", 0), CPPBasicType.INT);
+		assertSameType((ITypedef) getBindingFromASTName("ulong_type", 0), CPPBasicType.UNSIGNED_LONG);
+		assertSameType((ITypedef) getBindingFromASTName("loong_type", 0), CPPBasicType.LONG);
 	}
 }

@@ -18,6 +18,7 @@ public class NewLaunchTargetWizard extends Wizard {
 	private final NewLaunchTargetTypePage typePage;
 
 	public NewLaunchTargetWizard(LaunchBarUIManager uiManager) {
+		setWindowTitle("Launch Target Type");
 		typePage = new NewLaunchTargetTypePage(uiManager);
 		setForcePreviousAndNextButtons(true);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,22 +15,22 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualiz
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.MulticoreVisualizer;
 import org.eclipse.cdt.visualizer.ui.VisualizerAction;
 
-/**
- * @since 1.1
- */
+/** Action that creates or clears a canvas filter */
 public class FilterCanvasAction extends VisualizerAction {
 
 	/** Visualizer instance we're associated with. */
 	MulticoreVisualizer m_visualizer = null;
-	boolean m_haveFilter = false;
 	
+	/** Does this action enable or disable the filter mechanism? */
+	boolean m_createFilter = false;
 
 	/**
-	 * @param filterType: the type of canvas object the filter applies-to.  If null, reset filter
+	 * Constructor
+	 * @param create : Controls whether this action will create or clear the filter
 	 */
-	public FilterCanvasAction(boolean enable) {	
-		m_haveFilter = enable;
-		if (m_haveFilter) {
+	public FilterCanvasAction(boolean create) {	
+		m_createFilter = create;
+		if (m_createFilter) {
 			setText(MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetFilter.text")); //$NON-NLS-1$
 		}
 		else {
@@ -61,7 +61,7 @@ public class FilterCanvasAction extends VisualizerAction {
 	@Override
 	public void run() {
 		if (m_visualizer != null) {
-			if (m_haveFilter) {
+			if (m_createFilter) {
 				m_visualizer.applyCanvasFilter();
 			}
 			else {

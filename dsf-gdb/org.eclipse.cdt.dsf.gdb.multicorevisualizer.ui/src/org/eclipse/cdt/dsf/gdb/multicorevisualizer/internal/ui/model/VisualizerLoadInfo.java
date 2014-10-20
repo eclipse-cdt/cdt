@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,13 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
 //----------------------------------------------------------------------------
 
 /**
- * @since 1.1
+ * Object that represents the load of a CPU or core
  */
 public class VisualizerLoadInfo {
 
 	// --- members ---
 	
-	/**  load */
+	/** load */
 	protected Integer m_load = null;
 	
 	/** the high load water-mark */

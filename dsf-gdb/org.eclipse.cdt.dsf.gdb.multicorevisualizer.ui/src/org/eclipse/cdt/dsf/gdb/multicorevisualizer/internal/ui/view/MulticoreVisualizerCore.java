@@ -39,10 +39,7 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 	/** List of threads currently on this core. */
 	protected ArrayList<MulticoreVisualizerThread> m_threads;
 	
-	/**
-	 *  Load meter associated to this core
-	 * @since 1.1
-	 */
+	/** Load meter associated to this core */
 	protected MulticoreVisualizerLoadMeter m_loadMeter;
 	
 	// --- constructors/destructors ---
@@ -111,16 +108,12 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 		return m_threads;
 	}
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Sets the load meter associated to this core */
 	public void setLoadMeter (MulticoreVisualizerLoadMeter meter) {
 		m_loadMeter = meter;
 	}
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Gets the load meter associated to this core */
 	public MulticoreVisualizerLoadMeter getLoadMeter() {
 		return m_loadMeter;
 	}

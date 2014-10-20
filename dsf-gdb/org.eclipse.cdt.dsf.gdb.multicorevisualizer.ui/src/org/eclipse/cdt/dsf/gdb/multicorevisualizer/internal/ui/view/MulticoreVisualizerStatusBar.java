@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.swt.graphics.GC;
 
+/** Status bar graphic object */
 public class MulticoreVisualizerStatusBar extends MulticoreVisualizerGraphicObject {
 
 	// --- members ---

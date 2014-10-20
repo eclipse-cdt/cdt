@@ -70,16 +70,10 @@ public interface DSFDebugModelListener {
 							                VisualizerExecutionState state,
 							                Object arg);
 	
-	/**
-	 * Invoked when getLoad() request completes.
-	 * @since 1.1
-	 */
+	/** Invoked when getLoad() request completes. */
 	public void getLoadDone(IDMContext context, ILoadInfo loads, Object arg);
 
-	/**
-	 * Invoked when the load timer triggers
-	 * @since 1.1
-	 */
+	/** Invoked when the load timer triggers. */
 	public void updateLoads();
 	
 }

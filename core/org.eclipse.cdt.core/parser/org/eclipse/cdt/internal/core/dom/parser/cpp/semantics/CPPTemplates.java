@@ -962,7 +962,7 @@ public class CPPTemplates {
 				IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
 			    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), aliasTemplate, type);
 			} else if (decl instanceof ICPPEnumeration) {
-				spec = instantiateEnumeration((ICPPEnumeration) decl, getSpecializationContext(owner), tpMap, point);
+				spec = instantiateEnumeration((ICPPEnumeration) decl, owner, tpMap, point);
 			} else if (decl instanceof IEnumerator) {
 				IEnumerator enumerator = (IEnumerator) decl;
 				ICPPEnumeration enumeration = (ICPPEnumeration) enumerator.getOwner();
@@ -997,11 +997,12 @@ public class CPPTemplates {
 		return spec;
 	}
 
-	private static IBinding instantiateEnumeration(ICPPEnumeration enumeration, ICPPClassSpecialization within,
+	private static IBinding instantiateEnumeration(ICPPEnumeration enumeration, ICPPClassSpecialization owner,
 			final ICPPTemplateParameterMap tpMap, IASTNode point) {
+		ICPPClassSpecialization within = getSpecializationContext(owner);
 		IType fixedType = instantiateType(enumeration.getFixedType(), tpMap, -1, within, point);
 		CPPEnumerationSpecialization specializedEnumeration =
-				new CPPEnumerationSpecialization(enumeration, within, tpMap, fixedType);
+				new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		IEnumerator[] specializedEnumerators = new IEnumerator[enumerators.length];
 		specializedEnumeration.setEnumerators(specializedEnumerators);
@@ -1015,10 +1016,9 @@ public class CPPTemplates {
 				internalType = ((ICPPInternalEnumerator) enumerator).getInternalType();
 				if (internalType != null) {
 					internalType = instantiateType(internalType, tpMap, -1, within, point);
-				} else {
-					if (previousInternalType instanceof IBasicType) {
-						internalType = ASTEnumerator.getTypeOfIncrementedValue((IBasicType) previousInternalType, specializedValue);
-					}						}
+				} else if (previousInternalType instanceof IBasicType) {
+					internalType = ASTEnumerator.getTypeOfIncrementedValue((IBasicType) previousInternalType, specializedValue);
+				}
 				if (internalType != null) {
 					previousInternalType = internalType;
 				}

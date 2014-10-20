@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
- * @since 1.1
+ * Load meter graphic object
  */
 public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObject {
 
@@ -53,7 +53,6 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 	// --- constructors/destructors ---
 	
 	/** Constructor */
-	
 	public MulticoreVisualizerLoadMeter(Integer load) {
 		m_currentLoad = load;
 	}
@@ -73,14 +72,17 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 	
 	// --- accessors ---
 	
-	public void setEnabled (boolean enabled) {
+	/** Sets whether the load meter is enabled */
+	public void setEnabled(boolean enabled) {
 		m_enabled = enabled;
 	}
 	
+	/** Gets whether the load meter is enabled */
 	public boolean getEnabled() {
 		return m_enabled;
 	}
 	
+	/** Sets the load associated to this load meter */
 	public void setLoad(Integer load) {
 		m_currentLoad = load;
 	}
@@ -106,6 +108,7 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 		m_highLoadWatermark = wm;
 	}
 	
+	/** Sets the load value over which the load is considered overload */
 	public void setOverloadThreshold (int t) {
 		m_overloadThreshold = t;
 	}
@@ -121,8 +124,7 @@ public class MulticoreVisualizerLoadMeter extends MulticoreVisualizerGraphicObje
 	// --- paint methods ---
 	
 	/** get a color that corresponds to the current load */
-	private Color getLoadColor() {		
-		
+	private Color getLoadColor() {
 		if (getLoad() < m_overloadThreshold) {
 			return IMulticoreVisualizerConstants.COLOR_LOAD_LOADBAR_NORMAL;
 		}

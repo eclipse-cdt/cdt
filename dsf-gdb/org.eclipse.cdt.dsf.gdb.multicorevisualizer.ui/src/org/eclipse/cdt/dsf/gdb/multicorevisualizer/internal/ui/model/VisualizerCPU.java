@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,9 +31,7 @@ public class VisualizerCPU
 	/** ID of this core. */
 	public int m_id;
 	
-	/** Contains load information
-	 * @since 1.1
-	 */
+	/** Load object associated to this cpu */
 	protected VisualizerLoadInfo m_loadinfo;
 	
 	/** List of cores */
@@ -90,20 +88,17 @@ public class VisualizerCPU
 		return null;
 	}
 	
-	/** sets the load info for this CPU 
-	 * @since 1.1*/
+	/** Sets the load object associated to this CPU */
 	public synchronized void setLoadInfo (VisualizerLoadInfo info) {
 		m_loadinfo = info;
 	}
 	
-	/** Gets the CPU usage load of this CPU. 
-	 * @since 1.1*/
+	/** Gets the load value associated to this CPU */
 	public synchronized Integer getLoad() {
 		return (m_loadinfo == null) ? null : m_loadinfo.getLoad();
 	}
 	
-	/** get the highest recorded load for this CPU
-	 * @since 1.1*/
+	/** get the highest recorded load value for this CPU*/
 	public synchronized Integer getHighLoadWatermark() {
 		return (m_loadinfo == null) ? null : m_loadinfo.getHighLoadWaterMark();
 	}

@@ -132,33 +132,24 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	// contexts, each time the model is recreated.  This way
 	// we can avoid asking the backend for the CPU/core
 	// geometry each time we want to update the load information.
-	/**
-	 * @since 1.1
-	 */
 	protected ICPUDMContext[] m_cpuContextsCache = null;
-	/**
-	 * @since 1.1
-	 */
 	protected ICoreDMContext[] m_coreContextsCache = null;
 	
-	/**
-	 * Main switch that determines if we should display the load meters
-	 * @since 1.1
-	 */
+	/** Main switch that determines if we should display the load meters */
 	protected boolean m_loadMetersEnabled = false;
-	/**
-	 * Timer used to trigger the update of the CPU/core load meters
-	 * @since 1.1
-	 */
+	/** Timer used to trigger the update of the CPU/core load meters */
 	protected Timer m_updateLoadMeterTimer = null;
-	/**
-	 * @since 1.1
-	 */
+	/** update period for the load meters */
 	protected int m_loadMeterTimerPeriod = LOAD_METER_TIMER_MEDIUM; // default 1000ms
+	
 	// Load meters refresh periods, in ms
+	/** constant for the very short load meters update period */
 	private static final int LOAD_METER_TIMER_MIN = 100;
+	/** constant for the short load meters update period */
 	private static final int LOAD_METER_TIMER_FAST = 500;
-	private static final int LOAD_METER_TIMER_MEDIUM = 1000; 
+	/** constant for the medium load meters update period */
+	private static final int LOAD_METER_TIMER_MEDIUM = 1000;
+	/** constant for the long load meters update period */
 	private static final int  LOAD_METER_TIMER_SLOW = 5000;
 	
 	/** Currently pinned session id, if any  */
@@ -202,6 +193,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	
 	/** Sub-menu */
 	IMenuManager m_loadMetersSubMenu = null;
+	
 	/** Sub-sub menu */
 	IMenuManager m_loadMetersRefreshSubSubmenu = null;
 	
@@ -248,7 +240,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	}
 	
 	/**
-	 * @since 1.1
+	 * Sets-up the timer associated to load meters refresh
 	 */
 	protected void initializeLoadMeterTimer() {
 		if (!m_loadMetersEnabled) return;
@@ -258,7 +250,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	}
 	
 	/**
-	 * @since 1.1
+	 * disposes of the load meter timer
 	 */
 	protected void disposeLoadMeterTimer() {
 		if(m_updateLoadMeterTimer != null) {
@@ -297,7 +289,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	}
 	
 	/**
-	 * @since 1.1
+	 * takes care of the details of changing the load meter timer period
 	 */
 	public void setLoadMeterTimerPeriod(int p) {
 		assert (p > LOAD_METER_TIMER_MIN);
@@ -308,7 +300,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	}
 	
 	/**
-	 * @since 1.1
+	 * enables or disables the load meters
 	 */
 	public void setLoadMetersEnabled(boolean enabled) {
 		if (m_loadMetersEnabled == enabled) return;
@@ -555,7 +547,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			m_refreshAction = null;
 		}
 		
-		
 		if (m_loadMetersSubMenu != null) {
 			m_loadMetersSubMenu.dispose();
 			m_loadMetersSubMenu = null;
@@ -635,7 +626,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		createActions();
 
 		// TODO: Anything we want to hide on the toolbar menu?
-		
 		updateActions();
 	}
 
@@ -1203,7 +1193,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 				// Collect thread data
 				DSFDebugModel.getThreadData(m_sessionState, cpuContext, coreContext, execContext, this, model);
 			}
-			
 		}
 		
 		// keep track of cores visited
@@ -1277,9 +1266,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	}
 	
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Updates the loads for all cpus and cores */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	@Override
 	public void updateLoads() {
@@ -1309,9 +1296,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		}
 	}
 	
-	/**  
-	 * Invoked when a getLoad() request completes.
-	 * @since 1.1*/
+	/** Invoked when a getLoad() request completes. */
 	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getLoadDone(IDMContext context, ILoadInfo load, Object arg) 

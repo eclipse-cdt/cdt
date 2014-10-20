@@ -228,12 +228,6 @@ public class CMainTab extends CAbstractMainTab {
 	 */
 	@Override
 	protected void handleSearchButtonSelected() {
-		if (getCProject() == null) {
-			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required, 
-					LaunchMessages.CMainTab_Enter_project_before_searching_for_program); 
-			return;
-		}
-
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 
 			@Override

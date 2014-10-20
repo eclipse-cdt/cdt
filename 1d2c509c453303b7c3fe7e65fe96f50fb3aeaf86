@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_63bf3af9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerSelectionFinder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-20T14:36:55Z",
+      "side": 1,
+      "message": "old typo ?\nchange to \"we have found\"",
+      "revId": "1d2c509c453303b7c3fe7e65fe96f50fb3aeaf86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

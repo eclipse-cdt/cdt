@@ -34,20 +34,13 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	/** Child cores. */
 	protected ArrayList<MulticoreVisualizerCore> m_cores;
 	
-	/**
-	 * Load meter associated to this CPU
-	 * @since 1.1
-	 */
+	/** Load meter associated to this CPU */
 	protected MulticoreVisualizerLoadMeter m_loadMeter;
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Background color used to draw cpu */
 	protected static final Color BG_COLOR = IMulticoreVisualizerConstants.COLOR_CPU_BG;
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Foreground coloe used to draw cpu */
 	protected static final Color FG_COLOR = IMulticoreVisualizerConstants.COLOR_CPU_FG;
 	
 
@@ -101,16 +94,12 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 		return m_cores;
 	}
 
-	/**
-	 * @since 1.1
-	 */
+	/** Sets the load meter associated to this CPU */
 	public void setLoadMeter (MulticoreVisualizerLoadMeter meter) {
 		m_loadMeter = meter;
 	}
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Gets the load meter associated to this CPU */
 	public MulticoreVisualizerLoadMeter getLoadMeter() {
 		return m_loadMeter;
 	}

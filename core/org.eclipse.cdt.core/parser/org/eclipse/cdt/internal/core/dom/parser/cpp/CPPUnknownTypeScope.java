@@ -32,9 +32,9 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
- * Models the scope represented by an unknown type (e.g.: typeof(template type parameter)). Used within
- * the context of templates, only.
- * For safe usage in index bindings, all fields need to be final or used in a thread-safe manner otherwise.
+ * Models the scope represented by an unknown type (e.g.: typeof(template type parameter)).
+ * Used within the context of templates, only. For safe usage in index bindings, all fields need
+ * to be final or used in a thread-safe manner otherwise.
  */
 public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     private final IASTName fName;
@@ -111,8 +111,8 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     		}
     		if (!type) {
     			if (parent instanceof ICPPASTBaseSpecifier ||
-    				parent instanceof ICPPASTConstructorChainInitializer) {
-    					type= true;
+    					parent instanceof ICPPASTConstructorChainInitializer) {
+    				type= true;
     			} else if (parent instanceof ICPPASTNamedTypeSpecifier) {
     				ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) parent;
     				type= nts.isTypename();
@@ -123,7 +123,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     			}
     			
     			if (!type && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-    				function=  true;
+    				function= true;
     			}
     		}
     	}
@@ -158,11 +158,11 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     	}
     	IASTName lookupName= lookup.getLookupName();
     	if (lookupName != null)
-    		return new IBinding[] {getBinding(lookupName, lookup.isResolve(), lookup.getIncludedFiles())};
+    		return new IBinding[] { getBinding(lookupName, lookup.isResolve(), lookup.getIncludedFiles()) };
     	
     	// When dealing with dependent expressions we always create an unknown class. That is because
     	// unknown objects are not used within the expressions, they are attached to names only.
-    	return new IBinding[] {getOrCreateBinding(lookup.getLookupKey(), 0)};
+    	return new IBinding[] { getOrCreateBinding(lookup.getLookupKey(), 0) };
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 
 	protected IBinding getOrCreateBinding(final char[] name, int idx) {
 		if (map == null)
-            map = new CharArrayObjectMap<IBinding[]>(2);
+            map = new CharArrayObjectMap<>(2);
 
         IBinding[] o = map.get(name);
 		if (o == null) {
@@ -204,7 +204,7 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 
 	@Override
 	public void addBinding(IBinding binding) {
-		// do nothing, this is part of template magic and not a normal scope
+		// Do nothing, this is part of template magic and not a normal scope.
 	}
 
 	@Override

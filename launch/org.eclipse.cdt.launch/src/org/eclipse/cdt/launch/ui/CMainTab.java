@@ -229,11 +229,10 @@ public class CMainTab extends CAbstractMainTab {
 	@Override
 	protected void handleSearchButtonSelected() {
 		if (getCProject() == null) {
-			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required, 
-					LaunchMessages.CMainTab_Enter_project_before_searching_for_program); 
+			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required,
+					LaunchMessages.CMainTab_Enter_project_before_searching_for_program);
 			return;
 		}
-
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 
 			@Override
@@ -401,12 +400,6 @@ public class CMainTab extends CAbstractMainTab {
 	 * the specified project.
 	 */
 	protected void handleBinaryBrowseButtonSelected() {
-		final ICProject cproject = getCProject();
-		if (cproject == null) {
-			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required, 
-					LaunchMessages.CMainTab_Enter_project_before_browsing_for_program); 
-			return;
-		}
 		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
 		fileDialog.setFileName(fProgText.getText());
 		String text= fileDialog.open();

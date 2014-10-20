@@ -92,8 +92,7 @@ public class DSFDebugModel {
 	}
 	
 	
-	/** Request load information for a single CPU or core
-	 * @since 1.1*/
+	/** Request load information for a single CPU or core */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public static void getLoad(DSFSessionState sessionState,
 			final IDMContext context,
@@ -357,8 +356,8 @@ public class DSFDebugModel {
 		}
 	}
 
-	// For a suspended thread, let's see why it is suspended,
-	// to find out if the thread is crashed
+	/** For a suspended thread, let's see why it is suspended, 
+	 * to find out if the thread is crashed */
 	private static void getThreadSuspendReason(DSFSessionState sessionState,
             final ICPUDMContext cpuContext,
             final ICoreDMContext coreContext,
@@ -414,15 +413,11 @@ public class DSFDebugModel {
 		return false;
 	}
 
-	/**
-	 * Creates and returns a timer that refreshes the load meters
-	 * @since 1.1
-	 */
+	/** Creates and returns a timer that refreshes the load meters */
 	public static Timer getLoadTimer(final DSFSessionState sessionState,
 									 final int timeout,
 									 final DSFDebugModelListener listener) 
 	{
-		
 		Timer t = new Timer(timeout) {
 			@Override
 			public void run() {

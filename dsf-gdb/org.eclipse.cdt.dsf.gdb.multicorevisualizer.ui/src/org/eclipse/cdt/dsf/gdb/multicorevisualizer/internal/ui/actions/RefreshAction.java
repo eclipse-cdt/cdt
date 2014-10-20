@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.MulticoreVis
 import org.eclipse.cdt.visualizer.ui.VisualizerAction;
 import org.eclipse.swt.SWT;
 
-/** Select All action for Visualizer context menu. */
+/** Action that refreshes the Visualizer canvas. */
 public class RefreshAction extends VisualizerAction
 {
 	// --- members ---

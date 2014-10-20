@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Ericsson and others.
+ * Copyright (c) 2012, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,28 +52,23 @@ public class IMulticoreVisualizerConstants
 	
 	// Colors for drawing CPUs
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Foreground color for cpu */
 	public static final Color COLOR_CPU_FG = Colors.GREEN;
-	/** 
-	 * @since 1.1
-	 */
+	/** Background color for cpu */
 	public static final Color COLOR_CPU_BG = Colors.getColor(0,64,0);
 	
 	// Colors for text
 
-	/** Color to be used to draw a the text for a thread */
-	public static final Color COLOR_THREAD_TEXT_FG = Colors.WHITE; 
+	/** Foreground color to be used to draw a the text for a thread */
+	public static final Color COLOR_THREAD_TEXT_FG = Colors.WHITE;
+	/** Background color to be used to draw a the text for a thread */
 	public static final Color COLOR_THREAD_TEXT_BG = Colors.BLACK;
 
 	/** Color to be used to draw a the text for a core */
 	public static final Color COLOR_CORE_TEXT_FG = Colors.WHITE; 
 	public static final Color COLOR_CORE_TEXT_BG = Colors.BLACK;
 	
-	/** Color to be used to draw the load text
-	 * @since 1.1
-	 */
+	/** Color to be used to draw the load text */
 	public static final Color COLOR_LOAD_TEXT = Colors.GREEN;
 	
 	/** Color used to draw text to the status bar */
@@ -81,20 +76,12 @@ public class IMulticoreVisualizerConstants
 	
 	// Colors for load meters
 	
-	/**
-	 * @since 1.1
-	 */
+	/** Color used to draw the bar representing load, under normal load */
 	public static final Color COLOR_LOAD_LOADBAR_NORMAL = Colors.GREEN;
-	/**
-	 * @since 1.1
-	 */
+	/** Color used to draw the bar representing load, under high load */
 	public static final Color COLOR_LOAD_LOADBAR_OVERLOAD = Colors.RED;
-	/**
-	 * @since 1.1
-	 */
+	/** Color used to draw the load meter foreground */
 	public static final Color COLOR_LOAD_UNDERBAR_FG = Colors.getColor(0,200,0);
-	/**
-	 * @since 1.1
-	 */
+	/** Color used to draw the load meter background */
 	public static final Color COLOR_LOAD_UNDERBAR_BG_DEFAULT = Colors.getColor(0,64,0);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.MulticoreVis
 import org.eclipse.cdt.visualizer.ui.VisualizerAction;
 
 /**
- * @since 1.1
+ * Action that enables or disables load meters
  */
 public class EnableLoadMetersAction extends VisualizerAction {
 
@@ -25,6 +25,7 @@ public class EnableLoadMetersAction extends VisualizerAction {
 	
 	boolean m_enabled = false;
 
+	/** Constructor */
 	public EnableLoadMetersAction(boolean enable) {
 		m_enabled = enable;
 		setText(getTextToDisplay());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,41 +31,59 @@ import org.eclipse.jface.viewers.ISelection;
  */
 public class MulticoreVisualizerCanvasFilter {
 		
-	/** The white list */ 
+	/** white list of objects on which the filter is based */ 
 	List<IVisualizerModelObject> m_filterList = null;
-	/** the dynamically expanded list, containing elements in the */
-	/** white list and their parents - recalculated as required */
-	/** since some elements can move around and change parent */
+	
+	/** 
+	 * the dynamically expanded list, containing elements in the
+	 * white list and their parents - recalculated as required
+	 * since some elements can move around and change parent 
+	 */
 	List<IVisualizerModelObject> m_dynamicFilterList = null;
+	
 	/** reference to the canvas */
 	private MulticoreVisualizerCanvas m_canvas = null;
 	
-	/** is the filter is active/set */
+	/** whether the filter is active */
 	private boolean m_filterActive = false;	
 	
-	/** for stats */
+	/** counter that reflects the number of CPUs shown once the filter is applied */
 	private int m_shownCpu = 0;
-	/** for stats */
+	
+	/** counter that reflects the number of cores shown once the filter is applied */
 	private int m_shownCore = 0;
-	/** for stats */
+	
+	/** counter that reflects the number of threads shown once the filter is applied */
 	private int m_shownThread = 0;
-	/** for stats */
+	
+	/** total number of CPUs in the current MV model */
 	private int m_totalCpu = 0;
-	/** for stats */
+	
+	/** total number of cores in the current MV model */
 	private int m_totalCore = 0;
-	/** for stats */
+	
+	/** total number of threads in the current MV model */
 	private int m_totalThread = 0;
 	
-	/** String constant used in this class */
-	private static final String STR_FILTER_NOT_ACTIVE = MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.NotActive.text"); //$NON-NLS-1$
-	/** String constant used in this class */
-	private static final String STR_FILTER_ACTIVE = MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.Active.text"); //$NON-NLS-1$
-	/** String constant used in this class */
-	private static final String STR_CPU = MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.cpu.text"); //$NON-NLS-1$
-	/** String constant used in this class */
-	private static final String STR_CORE = MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.core.text"); //$NON-NLS-1$
-	/** String constant used in this class */
-	private static final String STR_THREAD = MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.thread.text"); //$NON-NLS-1$
+	/** String constant used to denote that the filter is not active */
+	private static final String STR_FILTER_NOT_ACTIVE = 
+			MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.NotActive.text"); //$NON-NLS-1$
+	
+	/** String constant used to denote that the filter is active */
+	private static final String STR_FILTER_ACTIVE = 
+			MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.Active.text"); //$NON-NLS-1$
+	
+	/** String constant used to represent CPUs */
+	private static final String STR_CPU = 
+			MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.cpu.text"); //$NON-NLS-1$
+	
+	/** String constant used to represent cores */
+	private static final String STR_CORE = 
+			MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.core.text"); //$NON-NLS-1$
+	
+	/** String constant used to represent threads */
+	private static final String STR_THREAD = 
+			MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.view.CanvasFilter.thread.text"); //$NON-NLS-1$
 
 	// --- constructors/destructors ---
 
@@ -84,8 +102,8 @@ public class MulticoreVisualizerCanvasFilter {
 	// --- filter methods ---
 	
 	/**
-     * Set-up a canvas white-list filter.  Any applicable selected object is added to 
-     * the filter. 
+     * Sets-up a canvas white-list filter from the current canvas selection.  
+     * Any applicable selected objects are added to the filter. 
      */
     public void applyFilter() {
     	// replace current filter? Clear old one first.
@@ -125,14 +143,13 @@ public class MulticoreVisualizerCanvasFilter {
 		
 	}
 
-	/** tells if a canvas filter is currently in place */
+	/** returns whether a canvas filter is currently in place */
 	public boolean isFilterActive() {
 		return m_filterActive;
 	}
     
     /**
-     * Updates the filter to contain the up-to-date parent objects,
-     * for all filter objects. 
+     * Updates the dynamic filter so it contains the up-to-date parent objects
      */
     public void updateFilter() {
     	if (m_filterList == null || m_canvas == null)
@@ -169,8 +186,8 @@ public class MulticoreVisualizerCanvasFilter {
     }
 
 	/**
-	 * Tells if a candidate model object should be displayed, according to the 
-	 * filter in place.  
+	 * returns whether a candidate model object should be displayed, 
+	 * according to the current filter.  
 	 */
 	public boolean displayObject(final IVisualizerModelObject candidate) {
 		// filter not active? Let anything be displayed 
@@ -191,7 +208,7 @@ public class MulticoreVisualizerCanvasFilter {
 	
 	/**
 	 * Adds an element to the dynamic filter list, if an equivalent 
-	 * element is not already there.
+	 * element is not already in there.
 	 */
 	private void addElementToFilterList(final IVisualizerModelObject elem) {
 		if (!isElementInFilterList(elem)) {
@@ -201,7 +218,7 @@ public class MulticoreVisualizerCanvasFilter {
 	}
 	
 	/**
-	 * Checks if an element already has an equivalent in the 
+	 * Returns whether an element already has an equivalent in the 
 	 * dynamic filter list.
 	 */
 	private boolean isElementInFilterList(final IVisualizerModelObject candidate) {
@@ -216,7 +233,9 @@ public class MulticoreVisualizerCanvasFilter {
 	}
 	
 	
-	/** Used to check if model elements in the filter still exist in the current model.	 */
+	/** returns whether a model object currently in the filter still exists in 
+	 * the current model.
+	 */
 	private boolean isElementInCurrentModel(IVisualizerModelObject element) {
 		VisualizerModel model = m_canvas.getModel();
 		if (model != null) {
@@ -254,8 +273,7 @@ public class MulticoreVisualizerCanvasFilter {
 	// --- Stats counters ---
 	
     /**	
-     * Used to step the filtered counters for a given type of 
-     * model object.
+     * Steps the filter counters for a given type of model object.
      */
 	private void stepStatsCounter(IVisualizerModelObject modelObj) {
 		if (modelObj instanceof VisualizerCPU) {
@@ -269,7 +287,7 @@ public class MulticoreVisualizerCanvasFilter {
 		}
 	}
 	
-	/**	Reset the filtering counters */
+	/** Resets the filter counters */
 	private void resetCounters() {
 		m_shownCpu = 0;
 		m_shownCore = 0;
@@ -286,10 +304,8 @@ public class MulticoreVisualizerCanvasFilter {
 	}
 	
 
-	/**	returns a String giving the current filtering stats */
+	/** returns a String giving the current filtering stats */
 	private String getStats() {
-		
-		
 		return STR_FILTER_ACTIVE + " " + STR_CPU + " " + m_shownCpu + "/" + m_totalCpu + ", " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				STR_CORE + " " + m_shownCore + "/" + m_totalCore + ", " + //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 				STR_THREAD + " " + m_shownThread + "/" + m_totalThread;    //$NON-NLS-1$//$NON-NLS-2$

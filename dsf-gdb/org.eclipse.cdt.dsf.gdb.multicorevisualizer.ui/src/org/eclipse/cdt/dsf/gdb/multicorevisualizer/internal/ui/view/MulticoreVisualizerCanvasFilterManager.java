@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,8 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 	}
 	
 	/**
-	 * Returns existing filter for a given debug session or creates a new
-	 * filter if it doesn't exist yet. 
+	 * Returns the filter for a given debug session if it exists, or else 
+	 * creates a new filter for that session.
 	 */
 	public MulticoreVisualizerCanvasFilter getFilter(String sessionId) {
 		MulticoreVisualizerCanvasFilter filter = null;
@@ -82,28 +82,28 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 		}
 	}
 	
-	/**	Re-computes the current filter to reflect latest model changes */
+	/** Re-computes the current filter to reflect latest model changes */
 	public void updateCurrentFilter() {
 		if( m_currentFilter != null) {
 			m_currentFilter.updateFilter();
 		}
 	}
 	
-	/**	Sets-up a filter, based on the current canvas selection */
+	/** Sets-up a filter, based on the current canvas selection */
 	public void applyFilter() {
 		if( m_currentFilter != null) {
 			m_currentFilter.applyFilter();
 		}
 	}
 	
-	/**	Clears the current filter */
+	/** Clears the current filter */
 	public void clearFilter() {
 		if( m_currentFilter != null) {
 			m_currentFilter.clearFilter();
 		}
 	}
 	
-	/**	Sets the current filter for a given model/session */
+	/** Sets the current filter for a given model/session */
 	public void setCurrentFilter(String sessionId) {
 		if (sessionId == null) {
 			m_currentFilter = null;
@@ -113,12 +113,12 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 		}
 	}
 	
-	/**	Returns the current filter */
+	/** Returns the current filter */
 	public MulticoreVisualizerCanvasFilter getCurrentFilter() {
 		return m_currentFilter;
 	}
 	
-	/**	Checks if the current filter is active */
+	/** Checks if the current filter is active */
 	public boolean isCurrentFilterActive() {
 		if( m_currentFilter != null) {
 			return m_currentFilter.isFilterActive();
@@ -126,7 +126,7 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 		return false;
 	}
 	
-	/**	Checks if the current filter permits the display of an object */
+	/** Checks if the current filter permits the display of an object */
 	public boolean displayObject(final IVisualizerModelObject obj) {
 		if( m_currentFilter != null) {
 			return m_currentFilter.displayObject(obj);
@@ -136,6 +136,7 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 
 	@Override
 	public void sessionEnded(DsfSession session) {
+		// session has ended - remove corresponding filter
 		removeFilter(session.getId());
 	}
 }

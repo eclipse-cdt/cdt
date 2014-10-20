@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2014 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - bug 447897
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -40,10 +41,10 @@ public class MulticoreVisualizerSelectionFinder
 	// --- members ---
 
 	/** Selection item(s) we're currently looking for. */
-	List<Object> m_selection = null;
+	protected List<Object> m_selection = null;
 
-	/** Result we're found, if any. */
-	Set<Object> m_result = null;
+	/** Result we've found, if any. */
+	protected Set<Object> m_result = null;
 
 
 	// --- constructors/destructors ---

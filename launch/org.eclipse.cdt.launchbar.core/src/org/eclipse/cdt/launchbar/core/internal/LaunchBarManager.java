@@ -33,9 +33,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugPlugin;
@@ -227,7 +231,21 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget";
 	private static final String PREF_CONFIG_DESC_ORDER = "configDescList";
 
-	public LaunchBarManager() throws CoreException {
+	public LaunchBarManager() {
+		new Job("Launch Bar Initialization") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					init();
+					return Status.OK_STATUS;
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+			}
+		}.schedule();
+	}
+	
+	public void init() throws CoreException {
 		// Fetch the desc order before the init messes it up
 		IEclipsePreferences store = getPreferenceStore();
 		String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, "");

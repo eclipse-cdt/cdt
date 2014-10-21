@@ -62,11 +62,31 @@ public class LaunchBarManagerTest extends TestCase {
 
 	public class TestLaunchBarManager extends LaunchBarManager {
 		private ILaunchMode[] defaultLaunchModes;
+		boolean done;
 
 		public TestLaunchBarManager() throws CoreException {
 			super();
+			// For the tests, need to wait until the init is done
+			synchronized (this) {
+				while (!done) {
+					try {
+						wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
+		@Override
+		public void init() throws CoreException {
+			super.init();
+			synchronized (this) {
+				done = true;
+				notify();
+			}
+		}
+		
 		@Override
 		public IExtensionPoint getExtensionPoint() throws CoreException {
 			// default things

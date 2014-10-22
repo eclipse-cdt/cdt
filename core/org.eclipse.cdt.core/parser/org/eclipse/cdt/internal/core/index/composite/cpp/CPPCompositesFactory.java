@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -96,6 +97,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -235,6 +237,13 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			if (e != e2)
 				return new TypeOfDependentExpression(e2);
 			return type;
+		}
+		if (rtype instanceof TypeOfUnknownMember) {
+			CPPUnknownMember member = ((TypeOfUnknownMember) rtype).getUnknownMember();
+			if (member instanceof IIndexFragmentBinding)
+				member = (CPPUnknownMember) getCompositeBinding((IIndexFragmentBinding) member);
+			return new TypeOfUnknownMember(member);
+			
 		}
 		if (rtype instanceof ICPPUnaryTypeTransformation) {
 			ICPPUnaryTypeTransformation typeTransformation= (ICPPUnaryTypeTransformation) rtype;
@@ -611,12 +620,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				} else {
 					throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			} else if (binding instanceof ICPPParameter) {
-				result = new CompositeCPPParameter(this, (ICPPParameter) binding);
-			} else if (binding instanceof ICPPField) {
-				result = new CompositeCPPField(this, (ICPPField) binding);
-			} else if (binding instanceof ICPPVariable) {
-				result = new CompositeCPPVariable(this, (ICPPVariable) binding);
 			} else if (binding instanceof ICPPUnknownBinding) {
 				if (binding instanceof ICPPUnknownMember) {
 					ICPPUnknownMember def= (ICPPUnknownMember) binding;
@@ -636,6 +639,12 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					}
 				}
 				throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+			} else if (binding instanceof ICPPParameter) {
+				result = new CompositeCPPParameter(this, (ICPPParameter) binding);
+			} else if (binding instanceof ICPPField) {
+				result = new CompositeCPPField(this, (ICPPField) binding);
+			} else if (binding instanceof ICPPVariable) {
+				result = new CompositeCPPVariable(this, (ICPPVariable) binding);
 			} else if (binding instanceof ICPPClassType) {
 				ICPPClassType def = (ICPPClassType) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPClassType(this, def);

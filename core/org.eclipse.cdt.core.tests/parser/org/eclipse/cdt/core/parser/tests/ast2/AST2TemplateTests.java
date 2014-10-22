@@ -8594,4 +8594,28 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testLocalTypeAsTemplateArgument_442832() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	struct Bar {};
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> Bar<decltype(t.foo)> {
+	//	    Bar<decltype(t.foo)> bar; // bogus `invalid template arguments` error here
+	//		return bar;
+	//	}
+	//	
+	//	struct S {
+	//		int foo;
+	//	};
+	//	
+	//	int main() {
+	//		Bar<int> var1;
+	//		auto var2 = foo(S());
+	//	}
+	public void testTypeOfUnknownMember_447728() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable var1 = helper.assertNonProblem("var1");
+		IVariable var2 = helper.assertNonProblem("var2");
+		assertSameType(var1.getType(), var2.getType());
+	}
 }

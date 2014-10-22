@@ -1,0 +1,310 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_6e043e54",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbViewModelAdapter.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "update to 2014",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_aea81663",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbViewModelAdapter.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "There is a contribution entry removed, \nit used to say:\n *     John Dallaway - DSF-GDB register format persistence (bug 395909)",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ebab200b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 15
+      },
+      "lineNbr": 897,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "This Id does not match with the one in the SimpleMapPersistableFactory.java  so persistence is not working.\nshould it be update to the one below in both files? org.eclipse.cdt.dsf.debug.ui.simpleMapPersistableFactory",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ae7ad65e",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "This appears as a brand new file, \nso 2011 should be removed from the copyright, and Ericsson shall replace Wind River",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3f06ee93",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "I think this implementation should be in an internal package",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_bf931e2c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "It seems we can actually remove fType and simplify the synchronization and fix the exception mentioned below.\n  fType can be derived from the received memento, so there is no need to keep it as an instance variable, and we make sure that there is always a consistent type with the memento.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0b401c07",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "A null pointer exception is triggered here, \nfType may not be initialized as the empty constructor is used at least in one place.\n  fType is used with synchronized in multiple places\n\n\njava.lang.NullPointerException\n\tat org.eclipse.cdt.dsf.debug.ui.viewmodel.SimpleMapPersistable.restore(SimpleMapPersistable.java:78)",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4e34e264",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistableFactory.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "New file, I guess we need to remove 2011 and replace Wind River with Ericsson + your name as first contributor",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_8bc54cd7",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistableFactory.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "This Id does not match with the one in the plugin.xml, so persistence is not working.\n\nshould it be update to the one below in both files?\norg.eclipse.cdt.dsf.debug.ui.simpleMapPersistableFactory",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_8ec55ad7",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "if brand new, we should remove 2012, and state Ericsson.,",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_fff11657",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "this field can be set to final (immutable) as is defined at construction time.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_1f29723a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "This is nice to allow subclasses override the default implementation although Dependency Injection would be a more solid implementation as this would not be limited to sublclasses.\n  Nothing to change here, but just brain storming as we could investigate the possibility to use the Dependency injection mechanism offered by E4.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ae2bf605",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "one more copyright update, year, company, contributors as new file",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7f4a26ff",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "This default implementation is exposed as new API however you are doing a good job encapsulating it in an abstract class, I think this should be moved to an internal package and limit the new API to the interface and abstract class.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ce55924a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "fSession and fFilterProperties can be set to final, better to have fields immutable when ever possible",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ce3f523d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/register/RegisterVMNode.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "Needs update for year 2014",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_2e3fe63e",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/variable/VariableVMNode.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "needs copyright update for year 2014",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0e3aea4b",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/service/PDAExpressions.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-22T17:19:11Z",
+      "side": 1,
+      "message": "needs copyright update to 2014",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

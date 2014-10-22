@@ -96,6 +96,7 @@ public class ServerAttributes extends DataStoreAttributes
 			}			
 			if (hostname == null){
 				// fall back to reading hostname from shell
+				System.err.println("The server can not resolve the hostname so falling back to reading hostname from the console.");
 				try {
 					Process p = Runtime.getRuntime().exec("hostname"); //$NON-NLS-1$
 					InputStream inStream = p.getInputStream();

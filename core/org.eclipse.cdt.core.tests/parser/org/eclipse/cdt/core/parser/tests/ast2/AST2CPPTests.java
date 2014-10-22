@@ -7331,7 +7331,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void test(B<int, 0>& p) {
 	//	  p.waldo();
 	//	}
-	public void _testDependentEnumeration_446711d() throws Exception {
+	public void testDependentEnumeration_446711d() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -7347,7 +7347,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	};
 	//
 	//	template<typename T, T u, long v = A<T, u>::e2>
-	//	struct B;
+	//	struct B {};
 	//
 	//	template<typename T, T u>
 	//	struct B<T, u, 0> {
@@ -7357,7 +7357,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	void test(B<long, 0>& p) {
 	//	  p.waldo();
 	//	}
-	public void _testDependentEnumeration_446711e() throws Exception {
+	public void testDependentEnumeration_446711e() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertProblemOnFirstIdentifier(".waldo()");
 	}

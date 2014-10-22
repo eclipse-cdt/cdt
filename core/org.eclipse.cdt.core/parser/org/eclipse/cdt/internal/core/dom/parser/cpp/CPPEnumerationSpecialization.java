@@ -12,32 +12,80 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Binding for a specialization of an enumeration.
  */
 public class CPPEnumerationSpecialization extends CPPSpecialization implements ICPPEnumerationSpecialization {
-	private IEnumerator[] fEnumerators;
+	private final IEnumerator[] fEnumerators;
 	private final IType fFixedType;
+	private boolean fInitializationComplete;
 
-	public CPPEnumerationSpecialization(ICPPEnumeration specialized, IBinding owner,
+	public static IBinding createInstance(ICPPEnumeration enumeration,
+			ICPPClassSpecialization owner, ICPPTemplateParameterMap tpMap, IASTNode point) {
+		ICPPClassSpecialization within = CPPTemplates.getSpecializationContext(owner);
+		IType fixedType = enumeration.getFixedType();
+		if (fixedType != null)
+			fixedType = CPPTemplates.instantiateType(fixedType, tpMap, -1, within, point);
+		CPPEnumerationSpecialization specializedEnumeration =
+				new CPPEnumerationSpecialization(enumeration, owner, tpMap, fixedType);
+		specializedEnumeration.initialize(point);
+		return specializedEnumeration;
+	}
+
+	private CPPEnumerationSpecialization(ICPPEnumeration specialized, IBinding owner,
 			ICPPTemplateParameterMap argumentMap, IType fixedType) {
 		super(specialized, owner, argumentMap);
 		fFixedType = fixedType;
+		fEnumerators = new IEnumerator[specialized.getEnumerators().length];
 	}
 
-	public void setEnumerators(IEnumerator[] enumerators) {
-		fEnumerators = enumerators;
+	private void initialize(IASTNode point) {
+		ICPPTemplateParameterMap tpMap = getTemplateParameterMap();
+		IEnumerator[] enumerators = getSpecializedBinding().getEnumerators();
+		IType previousInternalType = CPPBasicType.INT;
+		for (int i = 0; i < enumerators.length; ++i) {
+			IEnumerator enumerator = enumerators[i];
+			IValue specializedValue = CPPTemplates.instantiateValue(enumerator.getValue(), tpMap, -1,
+					this, Value.MAX_RECURSION_DEPTH, point);
+			IType internalType = null;
+			if (fFixedType == null && enumerator instanceof ICPPInternalEnumerator) {
+				internalType = ((ICPPInternalEnumerator) enumerator).getInternalType();
+				if (internalType != null) {
+					internalType = CPPTemplates.instantiateType(internalType, tpMap, -1, this, point);
+				} else if (previousInternalType instanceof IBasicType) {
+					internalType = ASTEnumerator.getTypeOfIncrementedValue(
+							(IBasicType) previousInternalType, specializedValue);
+				}
+				if (internalType != null) {
+					previousInternalType = internalType;
+				}
+			}
+			fEnumerators[i] = new CPPEnumeratorSpecialization(enumerator, this, tpMap, specializedValue,
+					internalType);
+		}
+		fInitializationComplete = true;
+	}
+
+	public boolean isInitializing() {
+		return !fInitializationComplete;
 	}
 
 	@Override
@@ -103,8 +151,10 @@ public class CPPEnumerationSpecialization extends CPPSpecialization implements I
 		// The specialized enumerators are already computed, just need to look up the right one.
 		IEnumerator[] unspecializedEnumerators = getSpecializedBinding().getEnumerators();
 		for (int i = 0; i < fEnumerators.length; ++i) {
-			if (enumerator.equals(unspecializedEnumerators[i]))
-				return fEnumerators[i];
+			if (enumerator.equals(unspecializedEnumerators[i])) {
+				IEnumerator specializedEnumerator = fEnumerators[i];
+				return specializedEnumerator == null ? enumerator : specializedEnumerator;
+			}
 		}
 		return enumerator;
 	}

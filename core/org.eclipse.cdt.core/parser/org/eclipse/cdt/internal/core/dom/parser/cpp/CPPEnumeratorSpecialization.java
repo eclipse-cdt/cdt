@@ -38,7 +38,14 @@ public class CPPEnumeratorSpecialization extends CPPSpecialization implements IC
 
 	@Override
 	public IType getType() {
-		return getOwner();
+		ICPPEnumerationSpecialization owner = getOwner();
+		if (((CPPEnumerationSpecialization) owner).isInitializing()) {
+		    // During enumeration instantiation enumerators can be referenced only by initializer
+			// expressions of other enumerators of the same enumeration. Return the internal type
+			// of the enumerator ([dcl.enum] 7.2-5).
+			return fInternalType;
+		}
+		return owner;
 	}
 
 	@Override

@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
@@ -108,7 +108,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 	 */
 	protected static ICPPEvaluation[] instantiateCommaSeparatedSubexpressions(
 			ICPPEvaluation[] subexpressions, ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
 		ICPPEvaluation[] result = subexpressions;
 		int resultShift = 0;
 		for (int i = 0; i < subexpressions.length; i++) {
@@ -141,9 +141,9 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 				newEval = origEval.instantiate(tpMap, packOffset, within, maxdepth, point);
 			}
 			
-			if (result != subexpressions)
+			if (result != subexpressions) {
 				result[i + resultShift] = newEval;
-			else if (newEval != origEval) {
+			} else if (newEval != origEval) {
 				assert resultShift == 0;
 				result = new ICPPEvaluation[subexpressions.length];
 				System.arraycopy(subexpressions, 0, result, 0, i);

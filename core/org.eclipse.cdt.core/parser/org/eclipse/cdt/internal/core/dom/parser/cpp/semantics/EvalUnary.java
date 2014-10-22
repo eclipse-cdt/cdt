@@ -46,11 +46,11 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -350,19 +350,20 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPTypeSpecialization within, int maxdepth, IASTNode point) {
 		ICPPEvaluation argument = fArgument.instantiate(tpMap, packOffset, within, maxdepth, point);
-		IBinding aoqn = fAddressOfQualifiedNameBinding;
-		if (aoqn instanceof ICPPUnknownBinding) {
+		IBinding binding = fAddressOfQualifiedNameBinding;
+		if (binding instanceof ICPPUnknownBinding) {
 			try {
-				aoqn= CPPTemplates.resolveUnknown((ICPPUnknownBinding) aoqn, tpMap, packOffset, within, point);
+				binding= CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, tpMap, packOffset,
+						within, point);
 			} catch (DOMException e) {
 			}
 		}
-		if (argument == fArgument && aoqn == fAddressOfQualifiedNameBinding)
+		if (argument == fArgument && binding == fAddressOfQualifiedNameBinding)
 			return this;
 
-		return new EvalUnary(fOperator, argument, aoqn, getTemplateDefinition());
+		return new EvalUnary(fOperator, argument, binding, getTemplateDefinition());
 	}
 
 	@Override

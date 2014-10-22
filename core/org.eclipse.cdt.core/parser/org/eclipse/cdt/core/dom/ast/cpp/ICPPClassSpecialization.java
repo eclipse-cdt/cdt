@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassType {
+public interface ICPPClassSpecialization extends ICPPTypeSpecialization, ICPPClassType {
 	@Override
 	ICPPClassType getSpecializedBinding();
 

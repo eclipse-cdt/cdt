@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 /**
  * @since 5.5
  */
-public interface ICPPEnumerationSpecialization extends ICPPEnumeration, ICPPSpecialization {
+public interface ICPPEnumerationSpecialization extends ICPPEnumeration, ICPPTypeSpecialization {
 	@Override
 	ICPPEnumeration getSpecializedBinding();
 

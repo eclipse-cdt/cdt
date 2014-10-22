@@ -121,6 +121,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
@@ -1267,6 +1268,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPAliasTemplateInstance.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.TYPE_TRANSFORMATION:
 			return CPPUnaryTypeTransformation.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.UNKNOWN_MEMBER_TYPE:
+			return TypeOfUnknownMember.unmarshal(getPDOM(), firstBytes, buffer);
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first bytes=" + firstBytes)); //$NON-NLS-1$

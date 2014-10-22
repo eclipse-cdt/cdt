@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 
 /**
  * Represents a reference to a field, which cannot be resolved because the owner is
@@ -78,7 +78,7 @@ public class CPPUnknownField extends CPPUnknownMember implements ICPPField {
 
 	@Override
 	public IType getType() {
-		return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		return new TypeOfUnknownMember(this);
 	}
 
 	@Override

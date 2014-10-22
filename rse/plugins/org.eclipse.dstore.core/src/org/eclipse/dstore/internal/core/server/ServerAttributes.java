@@ -16,7 +16,7 @@
  * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
  * David McKnight    (IBM) - [448400] [dstore] automatically fallback to exec(hostname) if no hostname detected and print message if needed
  *******************************************************************************/
-
+ 
 package org.eclipse.dstore.internal.core.server;
 
 import java.io.BufferedReader;

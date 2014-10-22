@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -2605,5 +2606,29 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	// source file is deliberately empty
 	public void testInfiniteRecursionMarshallingTemplateDefinition_439923() throws Exception {
 		checkBindings();
+	}
+	
+	
+	//	template <typename T>
+	//	struct Bar {};
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> Bar<decltype(t.foo)> {
+	//	    Bar<decltype(t.foo)> bar; // bogus `invalid template arguments` error here
+	//		return bar;
+	//	}
+	//	
+	//	struct S {
+	//		int foo;
+	//	};
+	
+	//	int main() {
+	//		Bar<int> var1;
+	//		auto var2 = foo(S());
+	//	}
+	public void testTypeOfUnknownMember_447728() throws Exception {
+		IVariable var1 = getBindingFromASTName("var1", 4);
+		IVariable var2 = getBindingFromASTName("var2", 4);
+		assertSameType(var1.getType(), var2.getType());
 	}
 }

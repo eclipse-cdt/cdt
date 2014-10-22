@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -1342,6 +1344,18 @@ public class CPPTemplates {
 	
 					return type;
 				}
+			}
+			
+			if (type instanceof TypeOfUnknownMember) {
+				IBinding binding = resolveUnknown(((TypeOfUnknownMember) type).getUnknownMember(), tpMap, packOffset, within, point);
+				if (binding instanceof IType) {
+					return (IType) binding;
+				} else if (binding instanceof IVariable) {
+					return ((IVariable) binding).getType();
+				} else if (binding instanceof IFunction) {
+					return ((IFunction) binding).getType();
+				}
+				return type;
 			}
 
 			if (within != null && type instanceof IBinding) {

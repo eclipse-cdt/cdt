@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_dfc1ba98",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbViewModelAdapter.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "This is undoing a change that was part of the previous commit.",
+      "parentUuid": "a766b734_6e043e54",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_aea81663",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbViewModelAdapter.java",
         "patchSetId": 15
@@ -30,6 +48,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "There is a contribution entry removed, \nit used to say:\n *     John Dallaway - DSF-GDB register format persistence (bug 395909)",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3f98aecc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/GdbViewModelAdapter.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "This is a weird situation.  In the review on which this one depends, John D made a change that I\u0027m removing completely.  So, in the end, this file does not change at all compared to master, and John\u0027s change was never released.",
+      "parentUuid": "a766b734_aea81663",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_bfa31efa",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 15
+      },
+      "lineNbr": 897,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Good catch!  I\u0027ve updated the one in SimpleMapPersistableFactory.java to match and put a comment.",
+      "parentUuid": "a766b734_ebab200b",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_ae7ad65e",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
         "patchSetId": 15
@@ -64,6 +118,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "This appears as a brand new file, \nso 2011 should be removed from the copyright, and Ericsson shall replace Wind River",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_df5a5a7a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "I took the original code for this class from a patch from WindRiver posted in 2011.",
+      "parentUuid": "a766b734_ae7ad65e",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_bf55de4a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "I believe Pawel created this class in a generic way to allow to persist other things.  So I assume he meant it to be used by others, which is probably why he made it public.\n\nAre you worried about making it API?",
+      "parentUuid": "a766b734_3f06ee93",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_bf931e2c",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
         "patchSetId": 15
@@ -98,6 +188,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "It seems we can actually remove fType and simplify the synchronization and fix the exception mentioned below.\n  fType can be derived from the received memento, so there is no need to keep it as an instance variable, and we make sure that there is always a consistent type with the memento.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_5ab2d832",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "There are two ways to create an instance of this class.\n\n1- From a memento; calling:\nSimpleMapPersistable();\nrestore();\n\n2- Before a memento exists; calling:\nSimpleMapPersistable(Class\u003cV\u003e type);\n\nThat is one of the reasons we need to remember the type.  Also, fType is used in other methods, so we need to store it somewhere :)",
+      "parentUuid": "a766b734_bf931e2c",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,41 @@
     },
     {
       "key": {
+        "uuid": "a766b734_1f55f247",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Woops.  I don\u0027t think we need to synchronize when setting the variable right?  So I just removed the synchronized here.",
+      "parentUuid": "a766b734_0b401c07",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3ab55c19",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "I also remove the above synchronized since I don\u0027t think we need to protect when doing an assignment.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_4e34e264",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistableFactory.java",
         "patchSetId": 15
@@ -132,6 +275,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "New file, I guess we need to remove 2011 and replace Wind River with Ericsson + your name as first contributor",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_9abc7006",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistableFactory.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Taken from a WindRiver patch posted in 2011",
+      "parentUuid": "a766b734_4e34e264",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +316,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_7abfd4f8",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistableFactory.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_8bc54cd7",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_8ec55ad7",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
         "patchSetId": 15
@@ -166,6 +345,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "if brand new, we should remove 2012, and state Ericsson.,",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_facac490",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_8ec55ad7",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +386,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_dac54885",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_fff11657",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_1f29723a",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
         "patchSetId": 15
@@ -200,6 +415,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "This is nice to allow subclasses override the default implementation although Dependency Injection would be a more solid implementation as this would not be limited to sublclasses.\n  Nothing to change here, but just brain storming as we could investigate the possibility to use the Dependency injection mechanism offered by E4.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_5ad93869",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/AbstractElementVMProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "You\u0027ll have to show me what you mean",
+      "parentUuid": "a766b734_1f29723a",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -240,6 +473,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_3adc3c59",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Although not indicated in the name, this package is internal at this time (you can see it in plugin.xml).  So we\u0027re good.  \n\nBut for the sake of discussion, I got inspired by Pawel\u0027s work and I believe he wanted to provide a default implementation of IElementFormatProvider for DSF which other could use and modify.",
+      "parentUuid": "a766b734_7f4a26ff",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_ce55924a",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
         "patchSetId": 15
@@ -251,6 +502,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "fSession and fFilterProperties can be set to final, better to have fields immutable when ever possible",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_9ad3d047",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_ce55924a",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -274,6 +543,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_7ad6b438",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/register/RegisterVMNode.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_ce3f523d",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_2e3fe63e",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/variable/VariableVMNode.java",
         "patchSetId": 15
@@ -291,6 +578,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_1ae7c01f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/variable/VariableVMNode.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_2e3fe63e",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_0e3aea4b",
         "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/service/PDAExpressions.java",
         "patchSetId": 15
@@ -302,6 +607,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "needs copyright update to 2014",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_fae12409",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/service/PDAExpressions.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-22T18:30:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_0e3aea4b",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

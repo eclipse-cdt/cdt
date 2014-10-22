@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
+ * David McKnight    (IBM) - [448400] [dstore] automatically fallback to exec(hostname) if no hostname detected and print message if needed
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -93,8 +94,26 @@ public class ServerAttributes extends DataStoreAttributes
 				} catch (UnknownHostException e) {
 				}
 			}			
-			// set this so we don't have to do it again
-			System.setProperty("hostname", hostname); //$NON-NLS-1$
+			if (hostname == null){
+				// fall back to reading hostname from shell
+				try {
+					Process p = Runtime.getRuntime().exec("hostname"); //$NON-NLS-1$
+					InputStream inStream = p.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));					
+					hostname = reader.readLine();				    				    
+				} catch (IOException e) {
+				}
+			}
+			
+			
+			if (hostname != null && hostname.length() > 0){
+				// set this so we don't have to do it again
+				System.setProperty("hostname", hostname); //$NON-NLS-1$
+			}
+			else {
+				System.err.println("The server can not resolve the hostname.  There may be a problem with the host DNS settings.  This can be worked around by using the following JVM option with the server: -Dhostname=<hostname>");
+				hostname ="";
+			}
 		}
 		return hostname;
 	}

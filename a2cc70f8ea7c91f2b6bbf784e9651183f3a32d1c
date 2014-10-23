@@ -247,6 +247,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_c3fd64a5",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-23T17:50:01Z",
+      "side": 1,
+      "message": "You are right about restore() but I don\u0027t think it works for saveState().  In saveState() we are given the memento so we can store things in it, it won\u0027t contain the type yet.",
+      "parentUuid": "a766b734_6090c6a3",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_0b401c07",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
         "patchSetId": 15
@@ -311,6 +329,24 @@
       "side": 1,
       "message": "Reference assignments are atomic but does not guarantee visibility to other threads, so you may want to add \"volatile\" to \"fValues\"",
       "parentUuid": "a766b734_3ab55c19",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e31980ad",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-23T17:50:01Z",
+      "side": 1,
+      "message": "Yes, this whole thing was poorly coded.  As you can see, I don\u0027t do synchronization very often.\n\nThe solution is to never re-assign fValues but replace its elements.  I\u0027ve done that in the next patchset.",
+      "parentUuid": "a766b734_806fe21f",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -521,6 +557,24 @@
       "side": 1,
       "message": "This file did not exist in the base patch so the copyright needs to be updated",
       "parentUuid": "a766b734_ae2bf605",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e3a6a0c1",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-23T17:50:01Z",
+      "side": 1,
+      "message": "This file was also created by Pawel in the original patch he posted.  It had a date of 2010.  I added 2014 since I modified that file but the original content was from WindRiver.",
+      "parentUuid": "a766b734_c050ba58",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

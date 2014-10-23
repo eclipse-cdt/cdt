@@ -177,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_e0ccd6d0",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-23T14:57:31Z",
+      "side": 1,
+      "message": "This is actually included in an internal package, so we are good.",
+      "parentUuid": "a766b734_bf55de4a",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_bf931e2c",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
         "patchSetId": 15
@@ -206,6 +224,23 @@
       "side": 1,
       "message": "There are two ways to create an instance of this class.\n\n1- From a memento; calling:\nSimpleMapPersistable();\nrestore();\n\n2- Before a memento exists; calling:\nSimpleMapPersistable(Class\u003cV\u003e type);\n\nThat is one of the reasons we need to remember the type.  Also, fType is used in other methods, so we need to store it somewhere :)",
       "parentUuid": "a766b734_bf931e2c",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_6090c6a3",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-23T14:57:31Z",
+      "side": 1,
+      "message": "fType does not need to be remembered, \nif you look at all places where fType is actually used, we have a handle to the corresponding memento.\n\nLook at the restore method and see how fType can be derived from the memento.\n\nSo storing it introduces the possibility to have a mismatch with the actual memento being handled\n\nSo we can simply remove fType and derive it from the actual memento being used in each method",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -258,6 +293,24 @@
       "writtenOn": "2014-10-22T18:30:15Z",
       "side": 1,
       "message": "I also remove the above synchronized since I don\u0027t think we need to protect when doing an assignment.",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_806fe21f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-23T14:57:31Z",
+      "side": 1,
+      "message": "Reference assignments are atomic but does not guarantee visibility to other threads, so you may want to add \"volatile\" to \"fValues\"",
+      "parentUuid": "a766b734_3ab55c19",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -450,6 +503,24 @@
       "writtenOn": "2014-10-22T17:19:11Z",
       "side": 1,
       "message": "one more copyright update, year, company, contributors as new file",
+      "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c050ba58",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/numberformat/ElementNumberFormatProvider.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-23T14:57:31Z",
+      "side": 1,
+      "message": "This file did not exist in the base patch so the copyright needs to be updated",
+      "parentUuid": "a766b734_ae2bf605",
       "revId": "a2cc70f8ea7c91f2b6bbf784e9651183f3a32d1c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

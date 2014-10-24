@@ -16,6 +16,24 @@
       "revId": "900801da5f1975c1a6df746c5f9e7fbf820007bb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_6638def8",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-24T01:54:46Z",
+      "side": 1,
+      "message": "#2 is very nice.  I think it was not written like that because it evolved from VariablePersistable.java (which is removed by this patch) and that class didn\u0027t store the type, so the issue was not a problem, although your way would have been nicer then too.\n\nI\u0027ve made the change.\n\nThanks!",
+      "parentUuid": "a766b734_6661fe04",
+      "revId": "900801da5f1975c1a6df746c5f9e7fbf820007bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

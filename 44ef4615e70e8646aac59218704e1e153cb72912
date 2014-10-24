@@ -16,6 +16,24 @@
       "revId": "44ef4615e70e8646aac59218704e1e153cb72912",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_efe7a11c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-24T22:39:32Z",
+      "side": 1,
+      "message": "Yes, that is better.\n\nDone.",
+      "parentUuid": "a766b734_894c2d99",
+      "revId": "44ef4615e70e8646aac59218704e1e153cb72912",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

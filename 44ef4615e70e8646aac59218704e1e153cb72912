@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_894c2d99",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-24T12:20:16Z",
+      "side": 1,
+      "message": "It is possible to receive a memento not populated with KEY_TYPE causing type to be null and generating a null pointer exception,   \n   This was already present in the logic of the former \"restore\" method, but it would be nice to make it more robust to either throw two types of exceptions or wrap either one on a CoreException.\nLet me know what you think",
+      "revId": "44ef4615e70e8646aac59218704e1e153cb72912",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_6661fe04",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/viewmodel/SimpleMapPersistable.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-10-24T01:07:18Z",
+      "side": 1,
+      "message": "It is not solid to rely on the user to use restore right after construction in order to make the class initialize properly and to make sure we don\u0027t have NP Exceptions on the syncrhronize(fType) statements.\n\nI can see two alternatives here:\n\n1) remove the empty constructor\nI think the empty constructor can be removed since the only caller has a populated memento which can be used to resolve the type.\n\n2) replace the empty constructor for one receiving a populated memento, so the caller does not need to use restore after construction and the instance is initialized in one go.  \n   If the memento is not populated with a valid type the constructor can trigger and exception to make sure the constructor is used properly.\n\nI lean towards option 2)",
+      "revId": "900801da5f1975c1a6df746c5f9e7fbf820007bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

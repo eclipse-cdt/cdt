@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  * David McKnight   (IBM)        - [431060][local] RSE performance over local network drives are suboptimal
  * David McKnight   (IBM)        - [444621][local]need ability to disable local natives
+ * Wayne Beaton     (The Eclipse Foundation) - [448158] Hidden local files and folders are not hidden on Linux 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -109,12 +110,15 @@ public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 	public boolean isHidden()
 	{	
 		if (_isHidden == null || needsQuery()){
-			if (_info != null){
+			String name = getName();
+			if (name != null && name.charAt(0) == '.'){
+				_isHidden = Boolean.TRUE;	
+			}
+			else if (_info != null){
 				_isHidden = new Boolean(_info.getAttribute(EFS.ATTRIBUTE_HIDDEN));
 			}
 			else {
-				String name = getName();
-				_isHidden = new Boolean(name.charAt(0) == '.' || (!_isRoot && _file.isHidden()));			
+				_isHidden = new Boolean(!_isRoot && _file.isHidden());			
 			}
 		}
 		return _isHidden.booleanValue();

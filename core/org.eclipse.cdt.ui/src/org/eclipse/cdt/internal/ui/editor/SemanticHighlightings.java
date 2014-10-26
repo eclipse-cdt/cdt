@@ -52,6 +52,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -482,6 +484,12 @@ public class SemanticHighlightings {
 				IBinding binding= token.getBinding();
 				if (binding instanceof ICPPMethod) {
 					return true;
+				} else if (binding instanceof ICPPDeferredFunction) {
+					for (ICPPFunction candidate : ((ICPPDeferredFunction) binding).getCandidates()) {
+						if (candidate instanceof ICPPMethod) {
+							return true;
+						}
+					}
 				}
 			}
 			return false;

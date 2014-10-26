@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,51 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
+ *     Nathan Ridge - refactoring
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.SourceViewer;
+
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.text.Position;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 
-import org.eclipse.cdt.ui.text.ICColorConstants;
-
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingPresenter;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingPresenter.TestHighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 
 /**
@@ -27,419 +62,323 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
  *
  * @since 4.0
  */
-public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
-	private static final boolean PRINT_POSITIONS= false;
-
-	private static final Class<?> THIS= SemanticHighlightingTest.class;
-	
+public class SemanticHighlightingTest extends TestCase {
 	public static Test suite() {
-		return new SemanticHighlightingTestSetup(new TestSuite(THIS), TESTFILE);
+		return new TestSuite(SemanticHighlightingTest.class);
 	}
 
-	public void testStaticFieldHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.STATIC_FIELD);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(25, 15, 14),
-				createPosition(27, 21, 19),
-				createPosition(44, 21, 20),
-				createPosition(45, 15, 15),
-				createPosition(59, 21, 20),
-				createPosition(60, 15, 15),
-				createPosition(122, 20, 15),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
+	private File fExternalFile;
+	private ICProject fCProject;
+	private CEditor fEditor;
+	private SourceViewer fSourceViewer;
+	private IIndex fIndex;
+	private IASTTranslationUnit fAST;
 	
-	public void testFieldHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.FIELD);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(25, 15, 14),
-				createPosition(26, 14, 13),
-				createPosition(27, 21, 19),
-				createPosition(28, 8, 8),
-				createPosition(44, 21, 20),
-				createPosition(45, 15, 15),
-				createPosition(46, 15, 14),
-				createPosition(47, 8, 9),
-				createPosition(59, 21, 20),
-				createPosition(60, 15, 15),
-				createPosition(61, 15, 14),
-				createPosition(62, 8, 9),
-				createPosition(77, 7, 5),
-				createPosition(78, 7, 5),
-				createPosition(80, 8, 5),
-				createPosition(81, 8, 5),
-				createPosition(89, 8, 11),
-				createPosition(93, 8, 10),
-				createPosition(109, 11, 9),
-				createPosition(114, 11, 8),
-				createPosition(119, 8, 11),
-				createPosition(121, 7, 10),
-				createPosition(122, 20, 15),
-				createPosition(126, 11, 10),
-				createPosition(126, 28, 11),
-				createPosition(159, 8, 5),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testMethodDeclarationHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.METHOD_DECLARATION);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(30, 15, 15),
-				createPosition(35, 8, 9),
-				createPosition(49, 15, 16),
-				createPosition(50, 8, 10),
-				createPosition(64, 15, 16),
-				createPosition(65, 8, 10),
-				createPosition(79, 4, 13),
-				createPosition(94, 13, 9),
-				createPosition(95, 13, 10),
-				createPosition(108, 4, 26),
-				createPosition(112, 4, 25),
-				createPosition(117, 4, 32),
-				createPosition(156, 9, 11),
-				createPosition(157, 9, 14),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testMethodHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.METHOD);
-		Position[] expected= new Position[] {
-				createPosition(30, 15, 15),
-				createPosition(35, 8, 9),
-				createPosition(49, 15, 16),
-				createPosition(50, 8, 10),
-				createPosition(64, 15, 16),
-				createPosition(65, 8, 10),
-				createPosition(79, 4, 13),
-				createPosition(94, 13, 9),
-				createPosition(95, 13, 10),
-				createPosition(108, 4, 26),
-				createPosition(112, 4, 25),
-				createPosition(117, 4, 32),
-				createPosition(122, 4, 15),
-				createPosition(130, 13, 9),
-				createPosition(156, 9, 11),
-				createPosition(157, 9, 14),
-			};
-		Position[] actual= getSemanticHighlightingPositions();
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	private static File createExternalFile(final String code) throws Exception {
+		File dest = File.createTempFile("external", ".h");
+		FileOutputStream fos = new FileOutputStream(dest);
+		fos.write(code.getBytes());
+		fos.close();
+		return dest;
 	}
 
-	public void testStaticMethodInvocationHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.STATIC_METHOD_INVOCATION);
-		Position[] expected= new Position[] {
-				createPosition(122, 4, 15),
-			};
-		Position[] actual= getSemanticHighlightingPositions();
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	private static void enableAllSemanticHighlightings() {
+		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
+		SemanticHighlighting[] semanticHilightings= SemanticHighlightings.getSemanticHighlightings();
+		for (SemanticHighlighting semanticHilighting : semanticHilightings) {
+			String enabledPreferenceKey = SemanticHighlightings.getEnabledPreferenceKey(semanticHilighting);
+			if (!store.getBoolean(enabledPreferenceKey))
+				store.setValue(enabledPreferenceKey, true);
+		}
 	}
 	
-	public void testLocalVariableDeclarationHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.LOCAL_VARIABLE_DECLARATION);
-		Position[] expected= new Position[] {
-				createPosition(113, 8, 8),
-				createPosition(118, 15, 2),
-				createPosition(120, 13, 2),
-				createPosition(129, 13, 8),
-			};
-		Position[] actual= getSemanticHighlightingPositions();
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	private static void restoreAllSemanticHighlightingToDefaults() {
+		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		store.setToDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
+		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
+		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
+			String enabledPreferenceKey= SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting);
+			if (!store.isDefault(enabledPreferenceKey))
+				store.setToDefault(enabledPreferenceKey);
+		}
 	}
 	
-	public void testLocalVariableReferencesHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.LOCAL_VARIABLE);
-		Position[] expected= new Position[] {
-				createPosition(114, 22, 8),
-				createPosition(119, 4, 2),
-				createPosition(121, 4, 2),
-				createPosition(123, 4, 2),
-				createPosition(123, 9, 2),
-				createPosition(126, 8, 2),
-				createPosition(126, 24, 2),
-				createPosition(130, 4, 8),
-			};
-		Position[] actual= getSemanticHighlightingPositions();
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testParameterVariableHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.PARAMETER_VARIABLE);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(12, 20, 1),
-				createPosition(30, 35, 3),
-				createPosition(31, 23, 3),
-				createPosition(32, 19, 3),
-				createPosition(79, 21, 4),
-				createPosition(79, 30, 4),
-				createPosition(80, 16, 4),
-				createPosition(81, 16, 4),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		enableAllSemanticHighlightings();
+		
+		SemanticHighlightingPresenter.sIsForTest = true;
+		
+		StringBuilder[] testData = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), 0);
+		
+		if (testData.length == 2) {
+			fExternalFile= createExternalFile(testData[0].toString());
+			assertNotNull(fExternalFile);
+			// Load the file using option -include to make it part of the index.
+			TestScannerProvider.sIncludeFiles= new String[] {fExternalFile.getAbsolutePath()};
+		}
+		
+		fCProject= CProjectHelper.createCCProject("SHTest", "bin", IPDOMManager.ID_FAST_INDEXER);
+		IFile cppfile = TestSourceReader.createFile(fCProject.getProject(), new Path("SHTest.cpp"), 
+				testData.length == 2 ? testData[1].toString() : testData[0].toString());
+		IIndexManager indexManager= CCorePlugin.getIndexManager();
+		indexManager.joinIndexer(5000, new NullProgressMonitor());
+		
+		BaseTestCase.waitForIndexer(fCProject);
+		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile("/SHTest/SHTest.cpp"), true);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
+		EditorTestHelper.joinBackgroundActivities();
+		
+		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
+		fIndex.acquireReadLock();
+		fAST = TestSourceReader.createIndexBasedAST(fIndex, fCProject, cppfile);
 	}
 
-	public void testTemplateParameterHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.TEMPLATE_PARAMETER);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(76, 15, 2),
-				createPosition(76, 25, 2),
-				createPosition(77, 4, 2),
-				createPosition(78, 4, 2),
-				createPosition(79, 18, 2),
-				createPosition(79, 27, 2),
-				createPosition(85, 15, 2),
-				createPosition(85, 66, 2),
-				createPosition(136, 14, 1),
-				createPosition(139, 9, 1),
-				createPosition(147, 32, 1),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testEnumHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.ENUM);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(4, 5, 11),
-				createPosition(37, 9, 14),
-				createPosition(52, 9, 15),
-				createPosition(67, 9, 15),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testClassHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.CLASS);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(17, 6, 5),
-				createPosition(18, 6, 5),
-				createPosition(20, 6, 14),
-				createPosition(20, 23, 5),
-				createPosition(20, 30, 5),
-				createPosition(22, 17, 11),
-				createPosition(38, 10, 8),
-				createPosition(39, 10, 9),
-				createPosition(40, 10, 8),
-				createPosition(41, 12, 8),
-				createPosition(53, 10, 9),
-				createPosition(54, 10, 10),
-				createPosition(55, 10, 9),
-				createPosition(56, 12, 9),
-				createPosition(68, 10, 9),
-				createPosition(69, 10, 10),
-				createPosition(70, 10, 9),
-				createPosition(71, 12, 9),
-				createPosition(76, 35, 13),
-				createPosition(85, 25, 24),
-				createPosition(85, 52, 13),
-				createPosition(85, 70, 5),
-				createPosition(88, 7, 9),
-				createPosition(92, 6, 8),
-				createPosition(94, 4, 8),
-				createPosition(94, 23, 8),
-				createPosition(95, 4, 8),
-				createPosition(98, 8, 8),
-				createPosition(108, 4, 14),
-				createPosition(112, 4, 14),
-				createPosition(117, 4, 14),
-				createPosition(118, 4, 9),
-				createPosition(118, 23, 9),
-				createPosition(120, 4, 8),
-				createPosition(129, 4, 8),
-				createPosition(147, 42, 7),
-				createPosition(155, 6, 1),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testFunctionDeclarationHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.FUNCTION_DECLARATION);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(12, 5, 10),
-				createPosition(13, 12, 16),
-				createPosition(21, 16, 10),
-				createPosition(102, 8, 13),
-				createPosition(137, 4, 1),
-				createPosition(144, 10, 1),
-				createPosition(150, 5, 1),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testFunctionHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.FUNCTION);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(12, 5, 10),
-				createPosition(13, 12, 16),
-				createPosition(21, 16, 10),
-				createPosition(32, 8, 10),
-				createPosition(102, 8, 13),
-				createPosition(103, 1, 16),
-				createPosition(131, 4, 11),
-				createPosition(137, 4, 1),
-				createPosition(144, 10, 1),
-				createPosition(150, 5, 1),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testGlobalVariableHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.GLOBAL_VARIABLE);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(8, 10, 14),
-				createPosition(9, 4, 14),
-				createPosition(10, 11, 20),
-				createPosition(33, 15, 20),
-				createPosition(101, 8, 12),
-				createPosition(104, 8, 12),
-				createPosition(151, 15, 14),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testMacroDefinitionHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.MACRO_DEFINITION);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(0, 8, 3),
-				createPosition(1, 8, 14),
-				createPosition(2, 8, 11),
-				createPosition(143, 8, 5),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	@Override
+	protected void tearDown() throws Exception {
+		fIndex.releaseReadLock();
+		
+		EditorTestHelper.closeEditor(fEditor);
+		
+		if (fCProject != null)
+			CProjectHelper.delete(fCProject);
+		
+		if (fExternalFile != null) {
+			fExternalFile.delete();
+		}
+		
+		TestScannerProvider.sIncludeFiles= null;
+		SemanticHighlightingPresenter.sIsForTest = false;
+		
+		restoreAllSemanticHighlightingToDefaults();
+
+		super.tearDown();
 	}
 
-	public void testMacroReferencesHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.MACRO_REFERENCE);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(14, 4, 11),
-				createPosition(31, 8, 14),
-				createPosition(108, 0, 3),
-				createPosition(112, 0, 3),
-				createPosition(117, 0, 3),
-				createPosition(125, 4, 14),
-				createPosition(144, 0, 5),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	private Position[] getSemanticHighlightingPositions() throws BadPositionCategoryException {
+		SemanticHighlightingManager manager= (SemanticHighlightingManager) new Accessor(fEditor, CEditor.class).get("fSemanticManager");
+		SemanticHighlightingPresenter presenter= (SemanticHighlightingPresenter) new Accessor(manager, manager.getClass()).get("fPresenter");
+		String positionCategory= (String) new Accessor(presenter, presenter.getClass()).invoke("getPositionCategory", new Object[0]);
+		IDocument document= fSourceViewer.getDocument();
+		return document.getPositions(positionCategory);
 	}
 
-	public void testTypedefHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.TYPEDEF);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(41, 21, 10),
-				createPosition(56, 22, 11),
-				createPosition(71, 22, 11),
-				createPosition(98, 17, 6),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	private void makeAssertions() throws Exception {
+		IDocument document = fSourceViewer.getDocument();
+		int lines = document.getNumberOfLines();
+		
+		List<String>[] expected = new List[lines];
+		for (int i = 0; i < lines; ++i) {
+			expected[i] = new ArrayList<String>();
+		}
+		for (IASTComment comment : fAST.getComments()) {
+			String contents = new String(comment.getComment());
+			if (contents.length() > 2 && contents.substring(0, 3).equals("//$")) {
+				for (String component : contents.substring(3).split(",")) {
+					// subtract 1 to make it into a 0-based line number
+					expected[comment.getFileLocation().getStartingLineNumber() - 1].add(component);
+				}
+			}
+		}
+		
+		List<String>[] actual = new List[lines];
+		for (int i = 0; i < lines; ++i) {
+			actual[i] = new ArrayList<String>();
+		}
+		for (Position p : getSemanticHighlightingPositions()) {
+			assertTrue(p instanceof TestHighlightedPosition);
+			int line = document.getLineOfOffset(p.getOffset());
+			actual[line].add(((TestHighlightedPosition) p).getPreferenceKey());
+		}
+		
+		assertEqualMaps(actual, expected);
 	}
 
-	public void testNamespaceHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.NAMESPACE);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(100, 10, 2),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	private void assertEqualMaps(List<String>[] actual, List<String>[] expected) {
+		assertEquals(expected.length, actual.length);
+		for (int i = 0; i < actual.length; ++i) {
+			assertEquals("Expected " + expected[i].size() + " positions on line " + i + ", got " + actual[i].size(),
+					expected[i].size(), actual[i].size());
+			for (int j = 0; j < actual[i].size(); ++j) {
+				assertEquals(expected[i].get(j), actual[i].get(j));
+			}
+		}
 	}
 
-	public void testLabelHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.LABEL);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(124, 0, 5),
-				createPosition(126, 46, 5),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-
-	public void testEnumeratorHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.ENUMERATOR);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(5, 4, 10),
-				createPosition(37, 25, 13),
-				createPosition(52, 26, 14),
-				createPosition(67, 26, 14),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
+	//  void SDKFunction();
+	//	class SDKClass { public: void SDKMethod(); };\n\n";
 	
-	public void testProblemHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.PROBLEM);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(127, 4, 13),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-
-	public void testExternalSDKHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.EXTERNAL_SDK);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(130, 13, 9),
-				createPosition(131, 4, 11),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testOverloadedOperatorHighlighting() throws Exception {
-		setUpSemanticHighlighting(SemanticHighlightings.OVERLOADED_OPERATOR);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(123, 7, 1),
-				createPosition(123, 11, 1),
-				createPosition(123, 13, 1),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
-	}
-	
-	public void testContextSensitiveKeywordHighlighting() throws Exception {
-		setUpSemanticHighlighting(ICColorConstants.C_KEYWORD);
-		Position[] actual= getSemanticHighlightingPositions();
-		Position[] expected= new Position[] {
-				createPosition(155, 8, 5),
-				createPosition(156, 23, 5),
-				createPosition(157, 26, 8),
-			};
-		if (PRINT_POSITIONS) System.out.println(toString(actual));
-		assertEqualPositions(expected, actual);
+	//#define INT      int                               //$macroDefinition
+	//#define FUNCTION_MACRO(arg) globalFunc(arg)        //$macroDefinition
+	//#define EMPTY_MACRO(arg)                           //$macroDefinition
+	//#include "SHTest.h"
+	//enum Enumeration {                                 //$enum
+	//    enumerator                                     //$enumerator
+	//};
+	//
+	//const int globalConstant = 0;                      //$globalVariable
+	//int globalVariable = 0;                            //$globalVariable
+	//static int globalStaticVariable = 0;               //$globalVariable
+	//
+	//void globalFunc(int a);                            //$functionDeclaration,parameterVariable
+	//static void globalStaticFunc() {                   //$functionDeclaration
+	//    EMPTY_MACRO(n);                                //$macroSubstitution
+	//};
+	//
+	//class Base1 {};                                    //$class
+	//class Base2 {};                                    //$class
+	//
+	//class ClassContainer : Base1, Base2 {              //$class,class,class
+	//    friend void friendFunc();                      //$functionDeclaration
+	//    friend class FriendClass;                      //$class
+	//    
+	//public:
+	//    static int staticPubField;                     //$staticField
+	//    const int constPubField;                       //$field
+	//    const static int constStaticPubField;          //$staticField
+	//    int pubField;                                  //$field
+	//
+	//    static int staticPubMethod(int arg) {          //$methodDeclaration,parameterVariable
+	//        FUNCTION_MACRO(arg);                       //$macroSubstitution,parameterVariable
+	//        globalFunc(arg);                           //$function,parameterVariable
+	//        return globalStaticVariable;               //$globalVariable
+	//    }
+	//    int pubMethod();                               //$methodDeclaration
+	//
+	//    enum pubEnumeration {pubEnumerator};           //$enum,enumerator
+	//    class pubClass{};                              //$class
+	//    class pubStruct{};                             //$class
+	//    class pubUnion{};                              //$class
+	//    typedef pubClass pubTypedef;                   //$class,typedef
+	//    
+	//protected:
+	//    static const int constStaticProtField = 12;    //$staticField
+	//    static int staticProtField;                    //$staticField
+	//    const  int constProtField;                     //$field
+	//    int protField;                                 //$field
+	//
+	//    static int staticProtMethod();                 //$methodDeclaration
+	//    int protMethod();                              //$methodDeclaration
+	//
+	//    enum protEnumeration {protEnumerator};         //$enum,enumerator
+	//    class protClass{};                             //$class
+	//    class protStruct{};                            //$class
+	//    class protUnion{};                             //$class
+	//    typedef protClass protTypedef;                 //$class,typedef
+	//    
+	//private:
+	//    static const int constStaticPrivField = 12;    //$staticField
+	//    static int staticPrivField;                    //$staticField
+	//    const  int constPrivField;                     //$field
+	//    int privField;                                 //$field
+	//
+	//    static int staticPrivMethod();                 //$methodDeclaration
+	//    int privMethod();                              //$methodDeclaration
+	//
+	//    enum privEnumeration {privEnumerator};         //$enum,enumerator
+	//    class privClass{};                             //$class
+	//    class privStruct{};                            //$class
+	//    class privUnion{};                             //$class
+	//    typedef privClass privTypedef;                 //$class,typedef
+	//
+	//
+	//};
+	//
+	//template<class T1, class T2> class TemplateClass { //$templateParameter,templateParameter,class
+	//    T1 tArg1;                                      //$templateParameter,field
+	//    T2 tArg2;                                      //$templateParameter,field
+	//    TemplateClass(T1 arg1, T2 arg2) {              //$methodDeclaration,templateParameter,parameterVariable,templateParameter,parameterVariable
+	//        tArg1 = arg1;                              //$field,parameterVariable
+	//        tArg2 = arg2;                              //$field,parameterVariable
+	//    }
+	//};
+	//
+	//template<class T1> class PartialInstantiatedClass  //$templateParameter,class
+	//    : TemplateClass<T1, Base1> {};                 //$class,templateParameter,class
+	//
+	//
+	//struct CppStruct {                                 //$class
+	//    int structField;                               //$field
+	//};
+	//
+	//union CppUnion {                                   //$class
+	//    int unionField;                                //$field
+	//    CppUnion operator+(CppUnion);                  //$class,methodDeclaration,class
+	//    CppUnion operator[](int);                      //$class,methodDeclaration
+	//};
+	//
+	//typedef CppUnion TUnion;                           //$class,typedef
+	//
+	//namespace ns {                                     //$namespace
+	//    int namespaceVar = 0;                          //$globalVariable
+	//    int namespaceFunc() {                          //$functionDeclaration
+	//	globalStaticFunc();                              //$function
+	//	return namespaceVar;                             //$globalVariable
+	//    }
+	//}
+	//
+	//INT ClassContainer::protMethod() {                 //$macroSubstitution,methodDeclaration
+	//    return protField;                              //$field
+	//}
+	//
+	//INT ClassContainer::pubMethod() {                  //$macroSubstitution,methodDeclaration
+	//    int localVar = 0;                              //$localVariableDeclaration
+	//    return pubField + localVar;                    //$field,localVariable
+	//}
+	//
+	//INT ClassContainer::staticPrivMethod() {           //$macroSubstitution,methodDeclaration
+	//    CppStruct* st= new CppStruct();                //$class,localVariableDeclaration,class
+	//    st->structField= 1;                            //$localVariable,field
+	//    CppUnion un;                                   //$class,localVariableDeclaration
+	//    un.unionField= 2;                              //$localVariable,field
+	//    staticPubMethod(staticPrivField);              //$staticMethod,staticField
+	//    un + un[6];                                    //$localVariable,overloadedOperator,localVariable,overloadedOperator,overloadedOperator
+	//label:                                             //$label
+	//    FUNCTION_MACRO(0);                             //$macroSubstitution
+	//    if (un.unionField < st->structField)           //$localVariable,field,localVariable,field
+	//      goto label;                                  //$label
+	//    problemMethod();                               //$problem
+	//    // external SDK
+	//    SDKClass sdkClass;                             //$class,localVariableDeclaration
+	//    sdkClass.SDKMethod();                          //$localVariable,externalSDK
+	//    SDKFunction();                                 //$externalSDK
+	//    return 0;
+	//}
+	//
+	////http://bugs.eclipse.org/209203
+	//template <int n>                                   //$templateParameter
+	//int f()                                            //$functionDeclaration
+	//{
+	//  return n;                                        //$templateParameter
+	//}
+	//
+	////http://bugs.eclipse.org/220392
+	//#define EMPTY                                      //$macroDefinition
+	//EMPTY int f();                                     //$macroSubstitution,functionDeclaration
+	//
+	////http://bugs.eclipse.org/340492
+	//template< template<class> class U >                //$templateParameter
+	//class myClass {};                                  //$class
+	//
+	////http://bugs.eclipse.org/372004
+	//void g() {                                         //$functionDeclaration
+	//    // declared as global near top
+	//    extern int globalVariable;                     //$globalVariable
+	//}
+	//
+	////http://bugs.eclipse.org/399149
+	//class C final {                                    //$class,c_keyword
+	//    void finalMethod() final;                      //$methodDeclaration,c_keyword
+	//    void overrideMethod() override;                //$methodDeclaration,c_keyword
+	//
+	//    // ordinary field, happens to be named 'final'
+	//    int final;                                     //$field
+	//};
+	public void testVariousHighlightings() throws Exception {
+		makeAssertions();
 	}
 }

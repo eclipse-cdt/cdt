@@ -184,9 +184,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
 					if (node instanceof IASTName) {
-						addNameLocation((IASTName) node, fJobHighlightings[i]);
+						addNameLocation((IASTName) node, i);
 					} else {
-						addNodeLocation(node.getFileLocation(), fJobHighlightings[i]);
+						addNodeLocation(node.getFileLocation(), i);
 					}
 					consumed= true;
 					break;
@@ -202,7 +202,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @param name  The name
 		 * @param highlighting The highlighting
 		 */
-		private void addNameLocation(IASTName name, HighlightingStyle highlightingStyle) {
+		private void addNameLocation(IASTName name, int highlighting) {
 			IASTImageLocation imageLocation= name.getImageLocation();
 			if (imageLocation != null) {
 				if (imageLocation.getLocationKind() != IASTImageLocation.MACRO_DEFINITION) {
@@ -211,7 +211,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						int length= imageLocation.getNodeLength();
 						if (offset >= 0 && length > 0) {
 							fMinLocation= offset + length;
-							addPosition(offset, length, highlightingStyle);
+							addPosition(offset, length, highlighting);
 						}
 					}
 				}
@@ -219,7 +219,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				// Fallback in case no image location available.
 				IASTNodeLocation[] nodeLocations= name.getNodeLocations();
 				if (nodeLocations.length == 1 && !(nodeLocations[0] instanceof IASTMacroExpansionLocation)) {
-					addNodeLocation(nodeLocations[0], highlightingStyle);
+					addNodeLocation(nodeLocations[0], highlighting);
 				}
 			}
 		}
@@ -230,7 +230,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @param nodeLocation  The node location
 		 * @param highlighting The highlighting
 		 */
-		private void addNodeLocation(IASTNodeLocation nodeLocation, HighlightingStyle highlighting) {
+		private void addNodeLocation(IASTNodeLocation nodeLocation, int highlighting) {
 			if (nodeLocation == null) {
 				return;
 			}
@@ -251,14 +251,15 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @param length The range length
 		 * @param highlighting The highlighting
 		 */
-		private void addPosition(int offset, int length, HighlightingStyle highlighting) {
+		private void addPosition(int offset, int length, int highlighting) {
 			boolean isExisting= false;
 			// TODO: use binary search
+			HighlightingStyle style = fJobHighlightings[highlighting];
 			for (int i= 0, n= fRemovedPositions.size(); i < n; i++) {
 				HighlightedPosition position= fRemovedPositions.get(i);
 				if (position == null)
 					continue;
-				if (position.isEqual(offset, length, highlighting)) {
+				if (position.isEqual(offset, length, style)) {
 					isExisting= true;
 					fRemovedPositions.set(i, null);
 					fNOfRemovedPositions--;
@@ -267,7 +268,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 
 			if (!isExisting) {
-				HighlightedPosition position= fJobPresenter.createHighlightedPosition(offset, length, highlighting);
+				HighlightedPosition position= fJobPresenter.createHighlightedPosition(offset, length, style,
+						fJobSemanticHighlightings[highlighting].getPreferenceKey());
 				fAddedPositions.add(position);
 			}
 		}

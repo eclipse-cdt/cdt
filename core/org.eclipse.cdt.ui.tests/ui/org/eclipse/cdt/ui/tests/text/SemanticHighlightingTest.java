@@ -381,4 +381,16 @@ public class SemanticHighlightingTest extends TestCase {
 	public void testVariousHighlightings() throws Exception {
 		makeAssertions();
 	}
+	
+    //  class C {                                        //$class
+    //    template <typename T> void bar(T);             //$templateParameter,methodDeclaration,templateParameter
+    //  };  
+    //  
+    //  template <typename U>                            //$templateParameter
+    //  void foo(U u) {                                  //$functionDeclaration,templateParameter,parameterVariable
+    //    C().bar(u);                                    //$class,method,parameterVariable
+    //  }
+    public void testDependentMethodCall_379626() throws Exception {
+        makeAssertions();
+    }
 }

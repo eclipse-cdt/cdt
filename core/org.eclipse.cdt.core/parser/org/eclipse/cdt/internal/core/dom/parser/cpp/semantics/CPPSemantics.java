@@ -475,14 +475,10 @@ public class CPPSemantics {
 		// binding.
 		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
-			if (data.hasFunctionArguments()) {
-				binding= new CPPDeferredFunction(data.skippedScope, name.getSimpleID(), null);
+			if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
+				binding= new CPPUnknownMemberClass(data.skippedScope, name.getSimpleID());
 			} else {
-				if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
-					binding= new CPPUnknownMemberClass(data.skippedScope, name.getSimpleID());
-				} else {
-					binding= new CPPUnknownMethod(data.skippedScope, name.getSimpleID());
-				}
+				binding= new CPPUnknownMethod(data.skippedScope, name.getSimpleID());
 			}
 		}
 

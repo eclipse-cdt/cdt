@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_afd00972",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SemanticHighlightingPresenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-10-26T16:00:48Z",
+      "side": 1,
+      "message": "Can we avoid this by creating large enough number of unique highlighting styles?",
+      "revId": "5d799f86ea21f72efc7fa86c433b603aa8db3cc7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

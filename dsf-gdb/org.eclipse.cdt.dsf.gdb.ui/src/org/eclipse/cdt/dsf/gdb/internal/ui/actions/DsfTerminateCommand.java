@@ -11,19 +11,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMultiTerminate;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
@@ -50,148 +57,71 @@ public class DsfTerminateCommand implements ITerminateHandler {
 
     @Override
     public void canExecute(final IEnabledStateRequest request) {
-        if (request.getElements().length != 1 || 
-            !(request.getElements()[0] instanceof IDMVMContext || 
-              request.getElements()[0] instanceof GdbLaunch)) {
+        if (request.getElements().length == 0) {
             request.setEnabled(false);
             request.done();
             return;
         }
 
-        if (request.getElements()[0] instanceof GdbLaunch) {
-        	canExecute(((GdbLaunch)request.getElements()[0]), request);
-        	return;
-        }
-
-        IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
-        
-        // First check if there is an ancestor process to terminate.  This is the smallest entity we can terminate
-        final IProcessDMContext processDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IProcessDMContext.class);
-        if (processDmc == null) {
-            request.setEnabled(false);
-            request.done();
-            return;
-        }
-
-        canExecute(processDmc, request);
+        getProcessDMContexts(request, new DataRequestMonitor<IProcessDMContext[]>(fExecutor, null) {
+        	@Override
+        	protected void handleCompleted() {
+        		if (!isSuccess()) {
+        			request.setEnabled(false);
+        			request.done();
+        		}
+        		else {
+        			canTerminate(getData(), new ImmediateDataRequestMonitor<Boolean>() {
+        				@Override
+						protected void handleCompleted() {
+            				if (!isSuccess()) {
+            					request.setEnabled(false);
+            				}
+            				else {
+            					request.setEnabled(getData());;
+            				}
+            				request.done();
+        				}
+					});
+        		}
+        	}
+        });
     }
 
     @Override
     public boolean execute(final IDebugCommandRequest request) {
-        if (request.getElements().length != 1 || 
-        	!(request.getElements()[0] instanceof IDMVMContext || 
-              request.getElements()[0] instanceof GdbLaunch)) {
+        if (request.getElements().length == 0) {
         	request.done();
         	return false;
         }
-
-        if (request.getElements()[0] instanceof GdbLaunch) {
-        	return execute(((GdbLaunch)request.getElements()[0]), request);
-        }
-
-        IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
-
-        // First check if there is an ancestor process to terminate.  This is the smallest entity we can terminate
-        final IProcessDMContext processDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IProcessDMContext.class);
-        if (processDmc == null) {
-        	request.done();
-        	return false;
-        }
-
-        return execute(processDmc, request);
-    }
-
-    private void canExecute(GdbLaunch launch, IEnabledStateRequest request) {
-    	request.setEnabled(launch.canTerminate());
-    	request.done();
-    }
-
-    private boolean execute(GdbLaunch launch, final IDebugCommandRequest request) {    	
-        try {
-            fExecutor.execute(new DsfRunnable() { 
-                @Override
-                public void run() {
-                	final IGDBControl commandControl = fTracker.getService(IGDBControl.class);
-                    if (commandControl != null) {
-                    	commandControl.terminate(new ImmediateRequestMonitor() {
-                            @Override
-                            protected void handleCompleted() {
-                            	if (!isSuccess()) {
-                            		request.setStatus(getStatus());
-                            		request.done();
-                            	}
-                            	else {
-                            		waitForTermination(request);
-                            	}
-                            };
-                        });
-                    } else {
-                    	request.done();
-                    }
-                 }
-            });
-        } catch (RejectedExecutionException e) {
-            request.done();
-        }
-        return false;
-    }
-
-    private void canExecute(final IProcessDMContext processDmc, final IEnabledStateRequest request) {
-        try {
-            fExecutor.execute(
-                new DsfRunnable() { 
-                    @Override
-                    public void run() {
-                        // Get the processes service and the exec context.
-                    	IProcesses procService = fTracker.getService(IProcesses.class);
-                        if (procService == null) {
-                            // Service already invalid.
-                            request.setEnabled(false);
-                            request.done();
-                        } else {
-                        	procService.canTerminate(processDmc, new ImmediateDataRequestMonitor<Boolean>() {
-                        		@Override
-                        		protected void handleCompleted() {
-                        			request.setEnabled(isSuccess() && getData());
-                        			request.done();
-                        		}
-                        	});
-                        }
-                    }
-                });
-        } catch (RejectedExecutionException e) {
-            request.setEnabled(false);
-            request.done();
-        }
-    }
-
-    private boolean execute(final IProcessDMContext processDmc, final IDebugCommandRequest request) {
-        try {
-            fExecutor.execute(new DsfRunnable() { 
-                @Override
-                public void run() {
-                	IProcesses procService = fTracker.getService(IProcesses.class);
-                    if (procService != null) {
-                    	procService.terminate(processDmc, new ImmediateRequestMonitor() {
-                            @Override
-                            protected void handleCompleted() {
-                            	if (!isSuccess()) {
-                            		request.setStatus(getStatus());
-                            		request.done();
-                            	}
-                            	else {
-                            		waitForTermination(request);
-                            	}
-                            };
-                        });
-                    } else {
-                    	request.done();
-                    }
-                 }
-            });
-        } catch (RejectedExecutionException e) {
-            request.done();
-        }
+        
+        getProcessDMContexts(request, new DataRequestMonitor<IProcessDMContext[]>(fExecutor, null) {
+        	@Override
+        	protected void handleCompleted() {
+        		if (!isSuccess()) {
+        			request.setStatus(getStatus());
+        			request.done();
+        		}
+        		else if (getData().length == 0){
+        			request.done();
+        		}
+        		else {
+        			terminate(getData(), new ImmediateRequestMonitor() {
+        				@Override
+						protected void handleCompleted() {
+            				if (!isSuccess()) {
+            					request.setStatus(getStatus());
+            					request.done();
+            				}
+            				else {
+            					waitForTermination(request);
+            				}
+        				}
+        			});
+        		}
+        	}
+        });
+        
         return false;
     }
     
@@ -253,5 +183,109 @@ public class DsfTerminateCommand implements ITerminateHandler {
 				}
 			}},
 			1, TimeUnit.MINUTES);
+    }
+
+    private void getProcessDMContexts(final IDebugCommandRequest request, final DataRequestMonitor<IProcessDMContext[]> rm) {
+    	GdbLaunch launch = null;
+    	final Set<IProcessDMContext> procDmcs = new HashSet<IProcessDMContext>();
+    	for (Object obj : request.getElements()) {
+    		if (obj instanceof GdbLaunch && ((GdbLaunch)obj).getSession().getId().equals(fSession.getId())) {
+    			launch = (GdbLaunch)obj;
+    			break;
+    		}
+    		if (obj instanceof IDMVMContext) {
+				IProcessDMContext procDmc = 
+					DMContexts.getAncestorOfType(((IDMVMContext)obj).getDMContext(), IProcessDMContext.class);
+				if (procDmc != null) {
+					procDmcs.add(procDmc);
+				}
+    		}
+    	}
+    	if (launch == null) {
+    		rm.setData(procDmcs.toArray(new IProcessDMContext[procDmcs.size()]));
+    		rm.done();
+    	}
+    	else {
+            try {
+            	ImmediateExecutor.getInstance().execute(new DsfRunnable() { 
+                    @Override
+                    public void run() {
+                    	ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+                    	final IProcesses procService = fTracker.getService(IProcesses.class);
+                        if (commandControl != null && procService != null) {
+                        	procService.getProcessesBeingDebugged(
+                        		commandControl.getContext(), 
+                        		new ImmediateDataRequestMonitor<IDMContext[]>() {
+                        			@Override
+									protected void handleCompleted() {
+                        				if (!isSuccess()) {
+                        					rm.setStatus(getStatus());
+                        				}
+                        				else {
+                        					for (IDMContext ctx : getData()) {
+                        						IProcessDMContext procDmc = DMContexts.getAncestorOfType(ctx, IProcessDMContext.class);
+                        						if (procDmc != null) {
+                        							procDmcs.add(procDmc);
+                        						}
+                        					}
+                        		    		rm.setData(procDmcs.toArray(new IProcessDMContext[procDmcs.size()]));
+                        				}
+                    					rm.done();
+                        			};
+                        		});
+                        } 
+                        else {
+                        	request.done();
+                        }
+                     }
+                });
+            } catch (RejectedExecutionException e) {
+                request.done();
+            }    		
+    	}    	
+    }
+
+    private void canTerminate(IProcessDMContext[] procDmcs, DataRequestMonitor<Boolean> rm) {
+    	if (procDmcs.length == 0) {
+    		rm.setData(false);
+    		rm.done();
+    		return;
+    	}
+    	
+    	IMultiTerminate multiTerminate = fTracker.getService(IMultiTerminate.class);
+		if (multiTerminate != null) {
+			multiTerminate.canTerminateSome(procDmcs, rm); 
+		}
+		else {
+			IProcesses procService = fTracker.getService(IProcesses.class);
+			if (procService != null) {
+				procService.canTerminate(procDmcs[0], rm);
+			}
+			else {
+				rm.setData(false);;
+				rm.done();
+			}
+		}    	
+    }
+    
+    private void terminate(IProcessDMContext[] procDmcs, RequestMonitor rm) {
+    	if (procDmcs.length == 0) {
+    		rm.done();
+    		return;
+    	}
+
+    	IMultiTerminate multiTerminate = fTracker.getService(IMultiTerminate.class);
+    	if (multiTerminate != null) {
+    		multiTerminate.terminate(procDmcs, rm);
+    	}
+    	else {
+    		IProcesses procService = fTracker.getService(IProcesses.class);
+    		if (procService != null) {
+    			procService.terminate(procDmcs[0], rm);
+    		}
+    		else {
+    			rm.done();
+    		}
+    	}
     }
 }

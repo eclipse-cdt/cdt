@@ -980,24 +980,32 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
     	
     	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-    	IMIProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc, IMIProcessDMContext.class);
+    	IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 
-    	if (controlDmc != null && procDmc != null) {
-        	if (!doCanDetachDebuggerFromProcess()) {
-                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Detach not supported.", null)); //$NON-NLS-1$
+    	if (controlDmc != null && contDmc != null) {
+    		String pid = getGroupToPidMap().get(contDmc.getGroupId());
+    		if (pid != null) {
+	        	if (!doCanDetachDebuggerFromProcess()) {
+	                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Detach not supported.", null)); //$NON-NLS-1$
+	                rm.done();
+	                return;
+	        	}
+	
+				IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+				if (runControl != null && !runControl.isTargetAcceptingCommands()) {
+					fBackend.interrupt();
+				}
+	
+	        	fCommandControl.queueCommand(
+	        			fCommandFactory.createMITargetDetach(controlDmc, pid),
+	    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+    		}
+        	else {
+                rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid group id.", null)); //$NON-NLS-1$
                 rm.done();
-                return;
-        	}
-
-			IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
-			if (runControl != null && !runControl.isTargetAcceptingCommands()) {
-				fBackend.interrupt();
-			}
-
-        	fCommandControl.queueCommand(
-        			fCommandFactory.createMITargetDetach(controlDmc, procDmc.getProcId()),
-    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-    	} else {
+    	    }
+    	} 
+    	else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
             rm.done();
 	    }

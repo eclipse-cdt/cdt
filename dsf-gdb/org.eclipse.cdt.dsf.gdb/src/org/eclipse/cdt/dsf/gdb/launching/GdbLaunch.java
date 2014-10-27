@@ -57,6 +57,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -195,10 +196,10 @@ public class GdbLaunch extends DsfLaunch
     ///////////////////////////////////////////////////////////////////////////
     // ITerminate
     
-    static class TerminateRequest extends CRequest implements IDebugCommandRequest {
+    static class LaunchCommandRequest extends CRequest implements IDebugCommandRequest {
     	Object[] elements;
     	
-    	public TerminateRequest(Object[] objects) {
+    	public LaunchCommandRequest(Object[] objects) {
     		elements = objects;
     	}
     	
@@ -244,7 +245,7 @@ public class GdbLaunch extends DsfLaunch
  			return;
  		}
 
- 		TerminateRequest req = new TerminateRequest(new Object[] {this});
+ 		LaunchCommandRequest req = new LaunchCommandRequest(new Object[] {this});
  		handler.execute(req);
  	}
  	
@@ -265,7 +266,14 @@ public class GdbLaunch extends DsfLaunch
 
     @Override
     public void disconnect() throws DebugException {
-    	terminate();
+ 		IDisconnectHandler handler = (IDisconnectHandler)getAdapter(IDisconnectHandler.class);
+ 		if (handler == null) {
+ 			super.disconnect();
+ 			return;
+ 		}
+
+ 		LaunchCommandRequest req = new LaunchCommandRequest(new Object[] {this});
+ 		handler.execute(req);
     }
 
     // IDisconnect
@@ -361,6 +369,8 @@ public class GdbLaunch extends DsfLaunch
     	// We replace the standard terminate handler by DsfTerminateHandler
     	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=377447.
     	if (adapter.equals(ITerminateHandler.class))
+    		return getSession().getModelAdapter(adapter);
+    	if (adapter.equals(IDisconnectHandler.class))
     		return getSession().getModelAdapter(adapter);
 
     	// Allow to call the connect handler when the launch is selected

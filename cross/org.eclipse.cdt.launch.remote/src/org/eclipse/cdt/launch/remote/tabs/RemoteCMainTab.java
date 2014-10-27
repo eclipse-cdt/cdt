@@ -21,6 +21,7 @@
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
  * Anna Dushistova  (Mentor Graphics) - [333453] adapted the fix from RemoteCDSFMainTab.java
  * Dan Ungureanu          (Freescale) - [428367] [remote launch] Fix missing title for Properties dialog
+ * Iulia Vasii            (Freescale) - [370768] new 'Edit...' button to access connection properties
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote.tabs;
@@ -38,6 +39,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -61,6 +63,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class RemoteCMainTab extends CMainTab {
 
@@ -74,8 +77,12 @@ public class RemoteCMainTab extends CMainTab {
 	/* Defaults */
 	private static final String REMOTE_PATH_DEFAULT = EMPTY_STRING;
 	private static final boolean SKIP_DOWNLOAD_TO_REMOTE_DEFAULT = false;
+	
+	/* SystemConnectionPropertyPage id*/
+	private static final String SYSTEM_PAGE_ID = "org.eclipse.rse.SystemPropertyPage"; //$NON-NLS-1$
 
 	protected Button newRemoteConnectionButton;
+	protected Button editRemoteConnectionButton;
 	protected Button remoteConnectionPropertiesButton;
 	protected Button remoteBrowseButton;
 	protected Label connectionLabel;
@@ -173,7 +180,7 @@ public class RemoteCMainTab extends CMainTab {
 	protected void createRemoteConnectionGroup(Composite parent, int colSpan) {
 		Composite projComp = new Composite(parent, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 4;
+		projLayout.numColumns = 5;
 		projLayout.marginHeight = 0;
 		projLayout.marginWidth = 0;
 		projComp.setLayout(projLayout);
@@ -195,7 +202,7 @@ public class RemoteCMainTab extends CMainTab {
 
 			public void modifyText(ModifyEvent e) {
 				useDefaultsFromConnection();
-				updatePropertiesButton();
+				updateConnectionButtons();
 				setDirty(true);
 				updateLaunchConfigurationDialog();
 			}
@@ -210,6 +217,16 @@ public class RemoteCMainTab extends CMainTab {
 				handleNewRemoteConnectionSelected();
 				updateLaunchConfigurationDialog();
 				updateConnectionPulldown();
+			}
+		});
+		
+		editRemoteConnectionButton = createPushButton(projComp,
+				Messages.RemoteCMainTab_Edit, null);
+		editRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent evt) {
+				handleEditRemoteConnectionSelected();
 			}
 		});
 
@@ -374,7 +391,7 @@ public class RemoteCMainTab extends CMainTab {
 
 		updateTargetProgFromConfig(config);
 		updateSkipDownloadFromConfig(config);
-		updatePropertiesButton();
+		updateConnectionButtons();
 		isInitializing = false;
 	}
 
@@ -388,6 +405,17 @@ public class RemoteCMainTab extends CMainTab {
 			action.run();
 		} catch (Exception e) {
 			// Ignore
+		}
+	}
+	
+	/**
+	 * Opens the <code>SystemConnectionPropertyPage</code> page for the selected connection.
+	 */
+	protected void handleEditRemoteConnectionSelected() {
+		IHost currentConnectionSelected = getCurrentConnection();
+		PreferenceDialog dialog = PreferencesUtil.createPropertyDialogOn(getControl().getShell(), currentConnectionSelected, SYSTEM_PAGE_ID, null, null);
+		if (dialog != null) {
+			dialog.open();
 		}
 	}
 
@@ -534,23 +562,28 @@ public class RemoteCMainTab extends CMainTab {
 		if (connections.length > 0) {
 			connectionCombo.select(connections.length - 1);
 		}
-		updatePropertiesButton();
+		updateConnectionButtons();
 	}
 
-	private void updatePropertiesButton() {
+	private void updateConnectionButtons() {
 		if ((remoteConnectionPropertiesButton == null)
 				|| remoteConnectionPropertiesButton.isDisposed()) {
 			return;
 		}
-		boolean bEnableProperties = false;
+		if ((editRemoteConnectionButton == null)
+				|| editRemoteConnectionButton.isDisposed()) {
+			return;
+		}
+		boolean bEnable = false;
 		IHost currentConnectionSelected = getCurrentConnection();
 		if (currentConnectionSelected != null) {
 			IRSESystemType sysType = currentConnectionSelected.getSystemType();
 			if (sysType != null && sysType.isEnabled() && !sysType.isLocal()) {
-				bEnableProperties = true;
+				bEnable = true;
 			}
 		}
-		remoteConnectionPropertiesButton.setEnabled(bEnableProperties);
+		remoteConnectionPropertiesButton.setEnabled(bEnable);
+		editRemoteConnectionButton.setEnabled(bEnable);
 	}
 
 	protected void updateTargetProgFromConfig(ILaunchConfiguration config) {

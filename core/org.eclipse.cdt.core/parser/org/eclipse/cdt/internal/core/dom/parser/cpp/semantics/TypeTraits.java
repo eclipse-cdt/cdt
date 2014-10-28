@@ -207,7 +207,7 @@ public class TypeTraits {
 			if (!classType.isSameType(baseClass) && !hasTrivialCopyCtor(baseClass, point))
 				return false;
 		}
-		for (ICPPField field : classType.getDeclaredFields()) {
+		for (ICPPField field : ClassTypeHelper.getDeclaredFields(classType, point)) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);

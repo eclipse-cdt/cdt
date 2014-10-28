@@ -64,7 +64,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 		for (BranchPoint v= fVariants; v != null; v= v.getNext()) {
 			Variant selected= null;
 			int bestCount= 0;
-			for (Variant q= v.getFirstVariant(); q != null ; q=q.getNext()) {
+			for (Variant q= v.getFirstVariant(); q != null ; q= q.getNext()) {
 				final IASTName[] templateNames = q.getTemplateNames();
 				if (templateNames.length > bestCount) {
 					// Don't check branch-points inside of a selected variant.
@@ -72,7 +72,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 					if (((ASTNode) expression).getOffset() < minOffset)
 						break;
 
-					// Setup the ast to use the alternative
+					// Setup the AST to use the alternative.
 					owner.replace(nodeToReplace, expression);
 					nodeToReplace= resolveNestedAmbiguities(expression, resolver);
 
@@ -84,7 +84,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 				}
 			}
 			
-			// Adjust the operator sequence
+			// Adjust the operator sequence.
 			if (selected != null) {
 				minOffset= selected.getRightOffset();
 				BinaryOperator targetOp = selected.getTargetOperator();
@@ -141,7 +141,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode
 	@Override
 	public IASTNode[] getNodes() {
 		if (fNodes == null) {
-			List<IASTNode> nl= new ArrayList<IASTNode>();
+			List<IASTNode> nl= new ArrayList<>();
 			BinaryOperator op= fEndOperator;
 			while (op != null) {
 				nl.add(op.getExpression());

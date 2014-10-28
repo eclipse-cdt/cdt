@@ -40,7 +40,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     private ICPPASTInitializerClause operand2;
 
     private ICPPEvaluation evaluation;
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
 
     public CPPASTBinaryExpression() {
 	}
@@ -58,10 +58,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 
 	@Override
 	public CPPASTBinaryExpression copy(CopyStyle style) {
-		CPPASTBinaryExpression copy = new CPPASTBinaryExpression();
-		copy.op = op;
-		copy.setOperand1(operand1 == null ? null : operand1.copy(style));
-		copy.setInitOperand2(operand2 == null ? null : operand2.copy(style));
+		CPPASTBinaryExpression copy = new CPPASTBinaryExpression(op,
+				operand1 == null ? null : operand1.copy(style),
+				operand2 == null ? null : operand2.copy(style));
 		return copy(copy, style);
 	}
 

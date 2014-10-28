@@ -7054,6 +7054,31 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSameType(tRef.getTemplateParameterMap().getArgument(0).getTypeValue(), Sint);
 	}
 
+	//	template <typename T>
+	//	struct A {
+	//	  typedef void (T::*func)();
+	//	};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  template <typename A<T>::func U>
+	//	  class C {};
+	//
+	//	  template <typename A<T>::func U>
+	//	  using Waldo = C<U>;
+	//	};
+	//
+	//	struct D {
+	//	  void m();
+	//	};
+	//
+	//	void test() {
+	//	  B<D>::Waldo<&D::m>();
+	//	}
+	public void testTemplatedAliasWithPointerToMember_448785() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	// namespace NS {
 	//     template<typename T>
 	//     struct S {

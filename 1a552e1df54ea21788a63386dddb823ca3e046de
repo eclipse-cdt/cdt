@@ -19,6 +19,69 @@
     },
     {
       "key": {
+        "uuid": "a766b734_6a4c1c98",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-28T13:56:55Z",
+      "side": 1,
+      "message": "Any reasons why run launch group would not have the same help context? After all reference page for common LC tabs is called \"C/C++ Run and Debug\"",
+      "range": {
+        "startLine": 47,
+        "startChar": 39,
+        "endLine": 47,
+        "endChar": 67
+      },
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4a3840f8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-28T13:56:55Z",
+      "side": 1,
+      "message": "Add help context id here as well",
+      "range": {
+        "startLine": 53,
+        "startChar": 39,
+        "endLine": 53,
+        "endChar": 59
+      },
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_2a3b44f5",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-28T13:56:55Z",
+      "side": 1,
+      "message": "Add help context id here as well",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_7176014b",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 2
@@ -36,6 +99,29 @@
     },
     {
       "key": {
+        "uuid": "a766b734_aa463473",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-28T13:56:55Z",
+      "side": 1,
+      "message": "Same as above",
+      "range": {
+        "startLine": 70,
+        "startChar": 28,
+        "endLine": 70,
+        "endChar": 31
+      },
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_d18395a4",
         "filename": "doc/org.eclipse.cdt.doc.user/contexts_CDT_LAUNCH.xml",
         "patchSetId": 2
@@ -47,6 +133,23 @@
       "writtenOn": "2014-10-06T08:14:50Z",
       "side": 1,
       "message": "Created new context id with two topics: \"Debugging Projects\" and \"C/C++ Run and Debug\". This represents the context help id for \"C/C++ Application\", \"C/C++ Remote Application\" and \"GDB Hardware Debugging\" launch configurations.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_aa6f54ed",
+        "filename": "doc/org.eclipse.cdt.doc.user/contexts_CDT_LAUNCH.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2014-10-28T13:56:55Z",
+      "side": 1,
+      "message": "I would reverse the order. First LC Common Tabs, then general overview on how to debug. User\u0027s intention is to use first link where should be the closest possible information.",
       "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

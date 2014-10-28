@@ -234,12 +234,12 @@ public class MacroDefinitionParser {
 			default:
 				throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), param.getEndOffset());
 			}
-		}
-		while (fHasVarArgs==0 && next.getType() == IToken.tCOMMA);
+		} while (fHasVarArgs == 0 && next.getType() == IToken.tCOMMA);
+
 		if (next.getType() != IToken.tRPAREN) {
 			throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), next.getEndOffset());
 		}
-		next= lex.nextToken(); // consume the closing parenthesis
+		next= lex.nextToken(); // Consume the closing parenthesis.
 
 		return paramList.toArray(new char[paramList.size()][]);
 	}

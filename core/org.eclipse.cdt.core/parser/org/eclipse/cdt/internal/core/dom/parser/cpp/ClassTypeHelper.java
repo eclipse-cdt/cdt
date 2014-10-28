@@ -15,11 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +97,7 @@ public class ClassTypeHelper {
 				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
 			}
 		}
-		ObjectSet<IBinding> resultSet = new ObjectSet<IBinding>(2);
+		ObjectSet<IBinding> resultSet = new ObjectSet<>(2);
 		IASTDeclaration[] members = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : members) {
 			while (decl instanceof ICPPASTTemplateDeclaration) {
@@ -134,7 +136,7 @@ public class ClassTypeHelper {
 	 * A class is considered a friend of itself.
 	 * @param binding a binding.
 	 * @param classType a class.
-	 * @return <code>true</code> if <code>binding</code> is a friend of <code>classType</code>.
+	 * @return {@code true} if {@code binding} is a friend of {@code classType}.
 	 */
 	public static boolean isFriend(IBinding binding, ICPPClassType classType) {
 		IType type;
@@ -282,7 +284,7 @@ public class ClassTypeHelper {
 	 * @return An array of base classes in arbitrary order.
 	 */
 	public static ICPPClassType[] getAllBases(ICPPClassType classType, IASTNode point) {
-		HashSet<ICPPClassType> result= new HashSet<ICPPClassType>();
+		HashSet<ICPPClassType> result= new HashSet<>();
 		result.add(classType);
 		getAllBases(classType, result, point);
 		result.remove(classType);
@@ -304,7 +306,7 @@ public class ClassTypeHelper {
 
 	/**
 	 * Checks inheritance relationship between two classes.
-	 * @return <code>true</code> if {@code subclass} is a subclass of {@code superclass}.
+	 * @return {@code true} if {@code subclass} is a subclass of {@code superclass}.
 	 */
 	public static boolean isSubclass(ICPPClassType subclass, ICPPClassType superclass, IASTNode point) {
 		ICPPBase[] bases= getBases(subclass, point);
@@ -348,7 +350,7 @@ public class ClassTypeHelper {
 	 * include methods declared in base classes.
 	 */
 	public static ObjectSet<ICPPMethod> getOwnMethods(ICPPClassType classType, IASTNode point) {
-		ObjectSet<ICPPMethod> set= new ObjectSet<ICPPMethod>(4);
+		ObjectSet<ICPPMethod> set= new ObjectSet<>(4);
 		set.addAll(ClassTypeHelper.getDeclaredMethods(classType, point));
 		set.addAll(getImplicitMethods(classType, point));
 		return set;
@@ -585,8 +587,8 @@ public class ClassTypeHelper {
 		if (mcl == null)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
-		final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
-		final HashMap<ICPPClassType, Boolean> virtualInClass= new HashMap<ICPPClassType, Boolean>();
+		final ArrayList<ICPPMethod> result= new ArrayList<>();
+		final HashMap<ICPPClassType, Boolean> virtualInClass= new HashMap<>();
 		final ICPPFunctionType methodType= method.getType();
 
 		virtualInClass.put(mcl, method.isVirtual());
@@ -679,7 +681,7 @@ public class ClassTypeHelper {
 	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method) {
 		final char[] mname= method.getNameCharArray();
 		final ICPPFunctionType mft= method.getType();
-		final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
+		final ArrayList<ICPPMethod> result= new ArrayList<>();
 		for (ICPPClassType subClass : subclasses) {
 			ICPPMethod[] methods= subClass.getDeclaredMethods();
 			for (ICPPMethod candidate : methods) {
@@ -693,14 +695,15 @@ public class ClassTypeHelper {
 	}
 
 	private static ICPPClassType[] getSubClasses(IIndex index, ICPPClassType mcl) throws CoreException {
-		List<ICPPBinding> result= new LinkedList<ICPPBinding>();
-		HashSet<String> handled= new HashSet<String>();
+		Deque<ICPPBinding> result= new ArrayDeque<>();
+		HashSet<String> handled= new HashSet<>();
 		getSubClasses(index, mcl, result, handled);
 		result.remove(0);
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 
-	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef, List<ICPPBinding> result, HashSet<String> handled) throws CoreException {
+	private static void getSubClasses(IIndex index, ICPPBinding classOrTypedef,
+			Collection<ICPPBinding> result, HashSet<String> handled) throws CoreException {
 		if (!(classOrTypedef instanceof IType))
 			return;
 
@@ -778,7 +781,7 @@ public class ClassTypeHelper {
 		ICPPParameter[] parameters = method.getParameters();
 		if (parameters.length == 0)
 			return Collections.emptyList();
-		List<IType> types = new ArrayList<IType>(parameters.length);
+		List<IType> types = new ArrayList<>(parameters.length);
 		for (ICPPParameter parameter : parameters) {
 			if (!parameter.hasDefaultValue() && !parameter.isParameterPack())
 				types.add(parameter.getType());
@@ -800,7 +803,7 @@ public class ClassTypeHelper {
 		if (kind == MethodKind.OTHER)
 			return null;
 
-		List<IType> inheritedTypeids = new ArrayList<IType>();
+		List<IType> inheritedTypeids = new ArrayList<>();
 		ICPPClassType[] bases= getAllBases(owner, point);
 		for (ICPPClassType base : bases) {
 			if (!(base instanceof ICPPDeferredClassInstance)) {
@@ -874,11 +877,11 @@ public class ClassTypeHelper {
 	}
 
 	/**
-	 * Returns the visibility for a given <code>member</code> in the <code>host</code>.
-	 * Throws an IllegalArgumentException if <code>member</code> is not a member of <code>host</code>
+	 * Returns the visibility for a given {@code member} in the {@code host}.
+	 * Throws an IllegalArgumentException if {@code member} is not a member of {@code host}
 	 *
 	 * @param classType The class to get the member's visibility specifier of.
-	 * @return the visibility of the <code>member</code>.
+	 * @return the visibility of the {@code member}.
 	 */
 	public static int getVisibility(ICPPInternalClassTypeMixinHost classType, IBinding member) {
 		if (classType.getDefinition() == null) {

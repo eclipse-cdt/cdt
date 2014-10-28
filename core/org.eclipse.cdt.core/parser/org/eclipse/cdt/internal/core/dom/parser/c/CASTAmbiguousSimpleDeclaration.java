@@ -30,8 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
  * Handles ambiguities for parameter declarations.
- * <br>
+ * <pre>
  * void function(const D*); // is D a type?
+ * </pre>
  * @since 5.0.1
  */
 public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements IASTAmbiguousSimpleDeclaration {
@@ -47,7 +48,7 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 
 	@Override
 	protected void beforeResolution() {
-		// populate containing scope, so that it will not be affected by the alternative branches.
+		// Populate containing scope, so that it will not be affected by the alternative branches.
 		IScope scope= CVisitor.getContainingScope(this);
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).populateCache();
@@ -94,6 +95,7 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 		return fSimpleDecl.getAttributes();
 	}
 
+	@Deprecated
 	@Override
 	public void addAttribute(IASTAttribute attribute) {
 		fSimpleDecl.addAttribute(attribute);
@@ -114,18 +116,18 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 
-		// handle nested ambiguities first
+		// Handle nested ambiguities first.
 		owner.replace(nodeToReplace, fSimpleDecl);
 		IASTDeclSpecifier declSpec= fSimpleDecl.getDeclSpecifier();
 		declSpec.accept(resolver);
 		
 
-		// find nested names
+		// Find nested names.
 		final NameCollector nameCollector= new NameCollector();
 		declSpec.accept(nameCollector);
 		final IASTName[] names= nameCollector.getNames();
 
-		// resolve names 
+		// Resolve names. 
 		boolean hasIssue= false;
 		for (IASTName name : names) {
 			try {
@@ -140,13 +142,13 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 			}
 		}
 		if (hasIssue) {
-			// use the alternate version
+			// Use the alternate version.
 			final IASTAmbiguityParent parent = (IASTAmbiguityParent) fSimpleDecl;
 			parent.replace(declSpec, fAltDeclSpec);
 			parent.replace(fSimpleDecl.getDeclarators()[0], fAltDtor);
 		}
 			
-		// resolve further nested ambiguities
+		// Resolve further nested ambiguities.
 		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;
 	}

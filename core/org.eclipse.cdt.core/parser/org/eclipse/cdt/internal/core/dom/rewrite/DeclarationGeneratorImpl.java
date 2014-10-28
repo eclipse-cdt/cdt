@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tomasz Wesolowski
+ * Copyright (c) 2010, 2014 Tomasz Wesolowski
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -128,18 +129,19 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		IASTDeclarator returnedDeclarator = null;
 
 		try {
-			// Addition of pointer operators has to be in reverse order, so it's deferred until the end
+			// Addition of pointer operators has to be in reverse order, so it's deferred until
+			// the end.
 			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
 
 			IASTName newName = name != null ? factory.newName(name) : factory.newName();
 
-			// If the type is an array of something, create a declaration of a pointer to something instead
-			// (to allow assignment, etc)
+			// If the type is an array of something, create a declaration of a pointer to something
+			// instead (to allow assignment, etc).
 
 			boolean replaceInitialArrayWithPointer = true;
 
 			// If the type is a function, create a declaration of a pointer to this function
-			// (shorthand notation for function address)
+			// (shorthand notation for function address).
 
 			boolean changeInitialFunctionToFuncPtr = true;
 
@@ -151,7 +153,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				} else if (changeInitialFunctionToFuncPtr && type instanceof IFunctionType) {
 					returnedDeclarator = factory.newDeclarator(newName);
 					returnedDeclarator.addPointerOperator(factory.newPointer());
-					// leave type as it is, next iteration will handle the function
+					// Leave type as it is, next iteration will handle the function.
 				} else if (type instanceof IArrayType) {
 					IArrayType arrayType = (IArrayType) type;
 					IASTArrayDeclarator arrayDeclarator = factory.newArrayDeclarator(null);
@@ -161,7 +163,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 						arrayDeclarator.setNestedDeclarator(returnedDeclarator);
 						arrayDeclarator.setName(factory.newName());
 					}
-					// consume all immediately following array expressions
+					// Consume all immediately following array expressions.
 					while (type instanceof IArrayType) {
 						arrayType = (IArrayType) type;
 						IASTExpression arraySizeExpression = arrayType.getArraySizeExpression();
@@ -233,7 +235,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			IASTDeclarator returnedDeclarator, IASTPointerOperator ptrOp) {
 		LinkedList<IASTPointerOperator> list;
 		if (!pointerOperatorMap.containsKey(returnedDeclarator)) {
-			list = new LinkedList<IASTPointerOperator>();
+			list = new LinkedList<>();
 			pointerOperatorMap.put(returnedDeclarator, list);
 		} else {
 			list = pointerOperatorMap.get(returnedDeclarator);
@@ -289,13 +291,12 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				ICPPASTTemplateId tempId = getTemplateId(type, templateName);
 				
 				ICPPASTQualifiedName newQualifiedName =
-						((ICPPNodeFactory) factory).newQualifiedName();
+						((ICPPNodeFactory) factory).newQualifiedName(tempId);
 				ICPPASTNameSpecifier[] qualifier = fullQualifiedName.getQualifier();
 				int nbQualifiedNames = qualifier.length;
 				for (int i = 0; i < nbQualifiedNames; i++) {
 					newQualifiedName.addNameSpecifier(qualifier[i].copy(CopyStyle.withLocations));
 				}
-				newQualifiedName.setLastName(tempId);
 
 				return factory.newTypedefNameSpecifier(newQualifiedName);
 			} else {
@@ -329,9 +330,12 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		char[][] qualifiedNameCharArray = CPPVisitor.getQualifiedNameCharArray(binding);
 		IASTName name;
 		if (qualifiedNameCharArray.length > 1) {
-			name = ((ICPPNodeFactory) factory).newQualifiedName();
-			for (char[] cs : qualifiedNameCharArray) {
-				((ICPPASTQualifiedName) name).addName(factory.newName(cs));
+			char[] cs = qualifiedNameCharArray[qualifiedNameCharArray.length - 1];
+			IASTName segment = factory.newName(cs);
+			name = ((ICPPNodeFactory) factory).newQualifiedName((ICPPASTName) segment);
+			for (int i = 0; i < qualifiedNameCharArray.length - 1; i++) {
+				segment = factory.newName(cs);
+				((ICPPASTQualifiedName) name).addName(factory.newName(qualifiedNameCharArray[i]));
 			}
 		} else if (qualifiedNameCharArray.length == 1) {
 			name = factory.newName(qualifiedNameCharArray[0]);

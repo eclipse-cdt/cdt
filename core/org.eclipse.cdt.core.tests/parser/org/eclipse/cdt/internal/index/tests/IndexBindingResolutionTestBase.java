@@ -495,8 +495,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		@Override
 		public void setUp() throws Exception {
 			cproject = cpp ?
-					CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+					CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 

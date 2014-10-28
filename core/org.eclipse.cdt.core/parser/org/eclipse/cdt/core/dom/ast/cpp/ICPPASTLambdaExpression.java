@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
- * Lambda expression, introduced in C++0x.
+ * Lambda expression, introduced in C++11.
  * 
  * @since 5.3
  * @noextend This interface is not intended to be extended by clients.
@@ -64,8 +64,7 @@ public interface ICPPASTLambdaExpression extends ICPPASTExpression, IASTImplicit
 	 * when creating AST for content assist.
 	 */
 	IASTCompoundStatement getBody();
-	
-	
+
 	/**
 	 * Not allowed on frozen AST.
 	 * @see #getCaptureDefault()

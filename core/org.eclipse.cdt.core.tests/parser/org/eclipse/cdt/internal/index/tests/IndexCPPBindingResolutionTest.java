@@ -1836,17 +1836,17 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public void testInheritedConstructorFromUnknownClass() throws Exception {
 		checkBindings();
 	}
-	
+
 	//	constexpr int foo(int a = 42) {
 	//		return a;
 	//	}
-	
+
 	//	constexpr int waldo = foo();
 	public void testNameLookupInDefaultArgument_432701() throws Exception {
 		IVariable waldo = getBindingFromASTName("waldo", 5);
 		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
 	}
-	
+
 	//	struct function {
 	//	    template <typename T>
 	//	    function(T);
@@ -1854,17 +1854,26 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//
 	//	struct test {
 	//		// These lambdas have the class 'test' as their owner.
-	//	    test(function f = [](int c){ return c; });
-	//		function member = [](int c){ return c; };
+	//	    test(function f = [](int c) { return c; });
+	//		function member = [](int c) { return c; };
 	//	};
-	
+
 	//	int z;
-	public void testLambdaOwnedByClass() throws Exception {
+	public void testLambdaOwnedByClass_409882() throws Exception {
 		checkBindings();
 	}
-	
+
+	//	struct A {
+	//	  auto a = [](int p) { int waldo = p; return waldo; };
+	//	};
+
+	//  // No code in this file.
+	public void testLambdaOwnedByClass_449099() throws Exception {
+		checkBindings();
+	}
+
 	//	extern char TableValue[10];
-	
+
 	//	char TableValue[sizeof TableValue];
 	public void testNameLookupFromArrayModifier_435075() throws Exception {
 		checkBindings();

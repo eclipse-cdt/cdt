@@ -2614,36 +2614,33 @@ public class CPPVisitor extends ASTQueries {
 
 		boolean isFriend= isFriendDeclaration(node);
 
-		// Search for enclosing binding
-		IASTName name= null;
-		node= node.getParent();
-		for (; node != null; node= node.getParent()) {
+		// Search for enclosing binding.
+		for (node= node.getParent(); node != null; node= node.getParent()) {
 			if (node instanceof IASTFunctionDefinition) {
-				if (!allowFunction)
-					return null;
-
-				IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
-				if (dtor != null) {
-					name= dtor.getName();
+				if (allowFunction) {
+					IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+					if (dtor != null) {
+						return dtor.getName();
+					}
 				}
-				break;
+				return null;
 			}
 			if (node instanceof IASTCompositeTypeSpecifier) {
 				if (isFriend || isNonSimpleElabDecl)
 					continue;
-				name= ((IASTCompositeTypeSpecifier) node).getName();
-				break;
+				return ((IASTCompositeTypeSpecifier) node).getName();
 			}
 			if (node instanceof ICPPASTNamespaceDefinition) {
-				name= ((ICPPASTNamespaceDefinition) node).getName();
-				break;
+				return ((ICPPASTNamespaceDefinition) node).getName();
 			}
 			if (node instanceof ICPPASTEnumerationSpecifier) {
-				name= ((ICPPASTEnumerationSpecifier) node).getName();
-				break;
+				return ((ICPPASTEnumerationSpecifier) node).getName();
+			}
+			if (node instanceof ICPPASTLambdaExpression) {
+				return ((ICPPASTLambdaExpression) node).getClosureTypeName();
 			}
 		}
-		return name;
+		return null;
 	}
 
 	public static boolean doesNotSpecifyType(IASTDeclSpecifier declspec) {

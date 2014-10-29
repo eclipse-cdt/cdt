@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_3d90aca2",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-29T14:17:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_6a4c1c98",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_4a3840f8",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 2
@@ -65,6 +83,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_1d9330b0",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-29T14:17:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_4a3840f8",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_2a3b44f5",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 2
@@ -76,6 +112,24 @@
       "writtenOn": "2014-10-28T13:56:55Z",
       "side": 1,
       "message": "Add help context id here as well",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7da984db",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-29T14:17:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_2a3b44f5",
       "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -122,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_5da48802",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-29T14:17:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_aa463473",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_d18395a4",
         "filename": "doc/org.eclipse.cdt.doc.user/contexts_CDT_LAUNCH.xml",
         "patchSetId": 2
@@ -150,6 +222,24 @@
       "writtenOn": "2014-10-28T13:56:55Z",
       "side": 1,
       "message": "I would reverse the order. First LC Common Tabs, then general overview on how to debug. User\u0027s intention is to use first link where should be the closest possible information.",
+      "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_bda31cf9",
+        "filename": "doc/org.eclipse.cdt.doc.user/contexts_CDT_LAUNCH.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6674
+      },
+      "writtenOn": "2014-10-29T14:17:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_aa6f54ed",
       "revId": "1a552e1df54ea21788a63386dddb823ca3e046de",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

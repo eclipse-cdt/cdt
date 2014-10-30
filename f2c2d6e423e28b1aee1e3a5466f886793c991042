@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_80954098",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfMultiTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Thanks, but I decided to move this code into DsfTerminateCommand :) Doesn\u0027t make much sense to have a separate implementation. It\u0027s easier to combine both single and multi in the same code. What do you think?",
+      "parentUuid": "e76c2f17_12318f75",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_d227173d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfMultiTerminateCommand.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "super.dispose()",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_6098e4cd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfMultiTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_d227173d",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_c08f3886",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfMultiTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_b2c89bba",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_a12840ba",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "Reading a below comment, I believe this is added to workaround a limitation of DsfCommandRunnable.\n\nI think I shouldn\u0027t have used DsfCommandRunnable in GdbDisconnectCommand and we should not be using it here.  We should be able to use a DsfRunnable with less effort than what was needed here.  Just like DsfMultiTerminateCommand and DsfTerminateCommand do.\n\nWhat do you think?",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d6a6b5c1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done, except I added support for multi to the new DsfDisconnectCommand. The other comments are not relevant for the new implementation.",
+      "parentUuid": "e76c2f17_a12840ba",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_005bf07f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_01c65490",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_e1c07874",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "Move to after the below first check, to avoid getting the service for nothing.",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_43d0523f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_e1c07874",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_83fa6a81",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_41d04c3f",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_61dc685a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
         "patchSetId": 2
@@ -132,6 +258,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "repeated isSuccess() check",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_030e5a41",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_61dc685a",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "c7672b30_e3087e35",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_c1d3bc46",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_a1d68035",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
         "patchSetId": 2
@@ -166,6 +328,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "Only need an RM instead of a DRM.\n\nIf you want, you can instead use \n\nnew ImmediateRequestMonitor()",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7672b30_8321caa9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbMultiDisconnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_a1d68035",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +403,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_b6a179aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_1204ef52",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_05d9476a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
         "patchSetId": 2
@@ -234,6 +432,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "The multi-select for terminate/detach works when selecting multiple threads also.  Therefore, it can be supported for GDB older than 7.2 (i.e., not just for multi-process).\n\nThis would mean we could support those interfaces in GDBProcesses_7_0 (GDB 7.0 and 7.1) and GDBProcesses (GDB \u003c\u003d 6.8).\n\nThis is an example of when supporting older versions of GDB is starting to be more work than it may be worth.  So, I\u0027m mentioning this point for completeness but I\u0027m ok with leaving this support for in 7.2 only.",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_764c0198",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "I left it in 7.2. Just don\u0027t have time moving the code around.",
+      "parentUuid": "e76c2f17_05d9476a",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +473,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_d64b557d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_4525ffe0",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_32092b3a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiDetach.java",
         "patchSetId": 2
@@ -268,6 +502,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "Nice interface that maps to a part of IProcesses.  I suggest moving this to the o.e.cdt.dsf where IMultiRunControl is located.  It makes it available to more people.",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b6469973",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiDetach.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_32092b3a",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +543,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_f6abf18d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiTerminate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_920d9f47",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_128fcf3a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiTerminate.java",
         "patchSetId": 2
@@ -302,6 +572,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "IThreadDMContext is also the base for IProcessDMContext, so this interface allows to terminate threads or processes, which should be mentioned in the javadoc.\n\n\"... the specified threads or processes.\"",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_56b3c503",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiTerminate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_128fcf3a",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +613,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_36b609f4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiTerminate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_f293335f",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_52894731",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiTerminate.java",
         "patchSetId": 2
@@ -336,6 +642,24 @@
       "writtenOn": "2014-07-07T17:20:04Z",
       "side": 1,
       "message": "Same as above",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_969c3d78",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IMultiTerminate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-10-30T19:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e76c2f17_52894731",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

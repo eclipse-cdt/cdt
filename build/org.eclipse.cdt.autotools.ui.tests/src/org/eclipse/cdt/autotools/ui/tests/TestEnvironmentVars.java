@@ -25,10 +25,13 @@ import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestEnvironmentVars extends AbstractTest {
 
 	@BeforeClass
@@ -40,7 +43,7 @@ public class TestEnvironmentVars extends AbstractTest {
 	// nulled out
 	// Verifies fix for Bug: #303616
 	@Test
-	public void referenceUnknownEnvVar() throws Exception {
+	public void t1referenceUnknownEnvVar() throws Exception {
 		SWTBotShell shell = openProperties("Autotools", "Configure Settings");
 		// Set the configure parameters to be --enable-jeff via user-defined
 		// options
@@ -80,7 +83,7 @@ public class TestEnvironmentVars extends AbstractTest {
 	// Verify we can set an environment variable and use it as a configure
 	// parameter
 	// Verifies fix for Bug: #303616
-	public void setEnvVar() throws Exception {
+	private void setEnvVar() throws Exception {
 		openProperties("C/C++ Build", "Environment");
 		bot.button("Add...").click();
 		SWTBotShell shell = bot.shell("New variable");
@@ -124,7 +127,7 @@ public class TestEnvironmentVars extends AbstractTest {
 	// Verify we can set an environment variable prior to the configuration
 	// command and
 	// it will be seen by the configure script
-	public void setEnvVarOnCommandLine() throws Exception {
+	private void setEnvVarOnCommandLine() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Create a fake configure script which prints out the values of
 		// envvars some_var1, some_var2, and some_var3

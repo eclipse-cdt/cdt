@@ -698,7 +698,7 @@ public class ClassTypeHelper {
 		Deque<ICPPBinding> result= new ArrayDeque<>();
 		HashSet<String> handled= new HashSet<>();
 		getSubClasses(index, mcl, result, handled);
-		result.remove(0);
+		result.removeFirst();
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 

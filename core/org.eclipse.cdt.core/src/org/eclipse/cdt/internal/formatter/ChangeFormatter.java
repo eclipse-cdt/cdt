@@ -72,13 +72,15 @@ public class ChangeFormatter {
 				int newEnd = lineInfo.getOffset();
 				newEnd = (originalEnd == 0 || code.charAt(originalEnd - 1) == '\n') && end == newEnd ?
 						end : endOffset(lineInfo);
-				if (newOffset <= prevEnd) {
+				if (newOffset <= prevEnd && numRegions > 0) {
 					numRegions--;
 					newOffset = regions[numRegions].getOffset();
 				}
 				prevEnd = newEnd;
-				regions[numRegions] = new Region(newOffset, newEnd - newOffset);
-				numRegions++;
+				if (newEnd != newOffset) {  // Don't produce empty regions.
+					regions[numRegions] = new Region(newOffset, newEnd - newOffset);
+					numRegions++;
+				}
 			}
 
 			if (numRegions == 0)

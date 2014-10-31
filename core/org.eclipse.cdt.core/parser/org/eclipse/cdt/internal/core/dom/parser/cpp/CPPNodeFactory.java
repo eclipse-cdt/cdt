@@ -499,12 +499,12 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	}
 
 	@Override
-	public IASTName newName() {
+	public ICPPASTName newName() {
 		return new CPPASTName();
 	}
 
 	@Override
-	public IASTName newName(char[] name) {
+	public ICPPASTName newName(char[] name) {
 		return new CPPASTName(name);
 	}
 

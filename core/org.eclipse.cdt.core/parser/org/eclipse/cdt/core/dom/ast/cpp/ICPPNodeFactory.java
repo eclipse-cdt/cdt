@@ -279,6 +279,18 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTQualifiedName newQualifiedName();
 
 	/**
+	 * @since 5.9
+	 */
+	@Override
+	public ICPPASTName newName();
+	
+	/**
+	 * @since 5.9
+	 */
+	@Override
+	public ICPPASTName newName(char[] name);
+
+	/**
 	 * Creates a range based for statement.
 	 * @since 5.3
 	 */

@@ -331,11 +331,12 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		IASTName name;
 		if (qualifiedNameCharArray.length > 1) {
 			char[] cs = qualifiedNameCharArray[qualifiedNameCharArray.length - 1];
-			IASTName segment = factory.newName(cs);
-			name = ((ICPPNodeFactory) factory).newQualifiedName((ICPPASTName) segment);
+			ICPPNodeFactory cppFactory = (ICPPNodeFactory) factory;
+			ICPPASTName segment = cppFactory.newName(cs);
+			name = cppFactory.newQualifiedName(segment);
 			for (int i = 0; i < qualifiedNameCharArray.length - 1; i++) {
-				segment = factory.newName(cs);
-				((ICPPASTQualifiedName) name).addName(factory.newName(qualifiedNameCharArray[i]));
+				segment = cppFactory.newName(cs);
+				((ICPPASTQualifiedName) name).addNameSpecifier(cppFactory.newName(qualifiedNameCharArray[i]));
 			}
 		} else if (qualifiedNameCharArray.length == 1) {
 			name = factory.newName(qualifiedNameCharArray[0]);

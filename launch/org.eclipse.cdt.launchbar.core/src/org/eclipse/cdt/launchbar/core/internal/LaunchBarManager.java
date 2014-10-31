@@ -1057,22 +1057,44 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		Activator.trace("launch config removed " + configuration);
-
-		try {
-			LaunchConfigProviderInfo info = configProviders.get(configuration.getType().getIdentifier());
-			if (info != null) {
-				ILaunchConfigurationProvider provider = info.getProvider();
-				if (provider.launchConfigurationRemoved(configuration)) {
-					Activator.trace("launch config removed by " + provider);
-					return;
+		
+		// Is there any way this method is called when a LC still exists??? This may be dead code.
+		// configuration.getType() will fail when !configuration.exists()
+		if (configuration.exists()) {
+			try {
+				LaunchConfigProviderInfo info = configProviders.get(configuration.getType().getIdentifier());
+				if (info != null) {
+					ILaunchConfigurationProvider provider = info.getProvider();
+					if (provider.launchConfigurationRemoved(configuration)) {
+						Activator.trace("launch config removed by " + provider);
+						return;
+					}
 				}
+			} catch (CoreException e) {
+				Activator.log(e.getStatus());
 			}
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
 		}
 
 		Activator.trace("launch config not claimed");
 		ILaunchDescriptor desc = objectDescriptorMap.get(configuration);
+		if (desc == null) {
+			/* WARNING: This is slow. Call only as a last resort */
+			 Iterator<Entry<ILaunchDescriptor, Map<ILaunchConfigurationProvider, ILaunchConfiguration>>> iter = configs.entrySet().iterator();
+			 while (iter.hasNext()) {
+				 Entry<ILaunchDescriptor, Map<ILaunchConfigurationProvider, ILaunchConfiguration>> e1 = iter.next();
+				 if (e1.getValue().containsValue(configuration)) {
+					 Iterator<Entry<ILaunchConfigurationProvider, ILaunchConfiguration>> iter2 = e1.getValue().entrySet().iterator();
+					 while (iter2.hasNext()) {
+						 Entry<ILaunchConfigurationProvider, ILaunchConfiguration> e2 = iter2.next();
+						 if (e2.getValue().equals(configuration)) {
+							e1.getValue().remove((ILaunchConfigurationProvider) e2.getKey());
+							return;
+						 }
+					 }
+					 break;
+				 }
+			 }
+		}
 		try {
 			removeDescriptor(configuration, desc);
 		} catch (CoreException e) {

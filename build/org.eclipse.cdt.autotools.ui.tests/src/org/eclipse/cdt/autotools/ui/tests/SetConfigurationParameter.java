@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.cdt.autotools.ui.tests.AbstractTest.NodeAvailableAndSelect;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -34,8 +35,10 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -43,6 +46,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SetConfigurationParameter extends AbstractTest {
 
 	@BeforeClass
@@ -96,7 +100,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	// Verify we can set a configuration parameter and that it is recorded in
 	// the .autotools file for the project
 	@Test
-	public void canSetConfigParm() throws Exception {
+	public void t1canSetConfigParm() throws Exception {
 		IProject project = checkProject();
 		assertTrue(project != null);
 		IPath path = project.getLocation();
@@ -137,7 +141,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	// Verify we can build the project with a configuration parameter and that
 	// the configuration parameter can be found in the config.status file.
 	@Test
-	public void canBuildWithConfigParm() throws Exception {
+	public void t2canBuildWithConfigParm() throws Exception {
 		projectExplorer.bot().tree().select(projectName);
 		clickContextMenu(projectExplorer.bot().tree().select(projectName),
 				"Build Project");
@@ -217,7 +221,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	// Verify a new configuration will copy the configuration parameters
 	// of its base configuration.
 	@Test
-	public void newConfigCopiesParms() throws Exception {
+	public void t3newConfigCopiesParms() throws Exception {
 		projectExplorer.bot().tree().select(projectName);
 		clickContextMenu(projectExplorer.bot().tree().select(projectName),
 				"Build Configurations", "Manage...");
@@ -249,6 +253,10 @@ public class SetConfigurationParameter extends AbstractTest {
 		assertEquals("--enable-jeff", val);
 		// Verify that the build directory for the new configuration has been
 		// switched to build-debug
+		shell = bot.shell("Properties for " + projectName);
+		shell.activate();
+		bot.text().setText("");
+
 		bot.tree().select("C/C++ Build");
 		String buildDir = bot.textWithLabel("Build directory:").getText();
 		assertTrue(buildDir.endsWith("build-debug"));
@@ -368,7 +376,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	// configuration to
 	// another and then cancel without changing configuration settings.
 	@Test
-	public void doubleRenameCancel() throws Exception {
+	public void t4doubleRenameCancel() throws Exception {
 		openProperties("Autotools", "Configure Settings");
 		SWTBotCombo configs = bot.comboBoxWithLabel("Configuration: ");
 		bot.button("Manage Configurations...").click();
@@ -423,7 +431,7 @@ public class SetConfigurationParameter extends AbstractTest {
 	// configuration to
 	// another and inheriting the settings properly.
 	@Test
-	public void doubleRenameOk() throws Exception {
+	public void t5doubleRenameOk() throws Exception {
 		openProperties("Autotools", "Configure Settings");
 		SWTBotCombo configs = bot.comboBoxWithLabel("Configuration: ");
 		bot.button("Manage Configurations...").click();

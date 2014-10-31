@@ -26,10 +26,13 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestMakeTargets extends AbstractTest {
 
 	@BeforeClass
@@ -39,7 +42,7 @@ public class TestMakeTargets extends AbstractTest {
 
 	@Test
 	// Verify we can build and run the info MakeTarget tool
-	public void canBuildAndAccessInfoTarget() throws Exception {
+	public void t1canBuildAndAccessInfoTarget() throws Exception {
 		clickProjectContextMenu("Build Project");
 
 		// Wait until the project is built

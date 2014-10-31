@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_ac792ce9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfMultiTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-31T14:29:11Z",
+      "side": 1,
+      "message": "OK with me.",
+      "parentUuid": "c7672b30_80954098",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_d227173d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfMultiTerminateCommand.java",
         "patchSetId": 2
@@ -450,6 +468,24 @@
       "side": 1,
       "message": "I left it in 7.2. Just don\u0027t have time moving the code around.",
       "parentUuid": "e76c2f17_05d9476a",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4c621833",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-10-31T14:29:11Z",
+      "side": 1,
+      "message": "That is fine.",
+      "parentUuid": "a766b734_764c0198",
       "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -61,7 +61,9 @@ public abstract class AbstractTest {
 
 	public static void init(String projectName) throws Exception {
 		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
+		SWTBotPreferences.PLAYBACK_DELAY = 10;
 		bot = new SWTWorkbenchBot();
+		bot.sleep(5000);
 		mainShell = null;
 		for (int i = 0, attempts = 100; i < attempts; i++) {
 			for (SWTBotShell shell : bot.shells()) {

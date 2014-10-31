@@ -21,20 +21,23 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestToolActions extends AbstractTest {
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		AbstractTest.init("GnuProject1");
+		AbstractTest.init("GnuProject4");
 	}
 
 	@Test
 	// Verify we can set the tools via the Autotools Tools page
-	public void canSeeTools() throws Exception {
+	public void t1canSeeTools() throws Exception {
 		openProperties("Autotools", "General");
 		bot.tabItem("Tools Settings").activate();
 		String aclocalName = bot.textWithLabel("aclocal").getText();
@@ -54,7 +57,7 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can access the aclocal tool
 	@Test
-	public void canAccessAclocal() throws Exception {
+	public void t2canAccessAclocal() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Verify configure does not exist initially
 		path = path.append("aclocal.m4");
@@ -108,7 +111,7 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can access the autoconf tool
 	@Test
-	public void canAccessAutoconf() throws Exception {
+	public void t3canAccessAutoconf() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Verify configure does not exist initially
 		path = path.append("configure");
@@ -171,7 +174,7 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can access the automake tool
 	@Test
-	public void canAccessAutomake() throws Exception {
+	public void t4canAccessAutomake() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Verify configure does not exist initially
 		IPath path2 = path.append("src/Makefile.in");
@@ -242,7 +245,7 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can access the libtoolize tool
 	@Test
-	public void canAccessLibtoolize() throws Exception {
+	public void t5canAccessLibtoolize() throws Exception {
 		clickProjectContextMenu("Invoke Autotools", "Invoke Libtoolize");
 		SWTBotShell shell = bot.shell("Libtoolize Options");
 		shell.activate();
@@ -261,13 +264,13 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can access the libtoolize tool
 	@Test
-	public void canAccessAutoheader() throws Exception {
+	public void t6canAccessAutoheader() throws Exception {
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoheader");
 		SWTBotShell shell = bot.shell("Autoheader Options");
 		shell.activate();
 		bot.text(0).typeText("--help");
 		bot.button("OK").click();
-		bot.sleep(1000);
+		bot.sleep(2000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
 		String output = consoleView.bot().styledText().getText();
@@ -280,7 +283,7 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can access the autoreconf tool
 	@Test
-	public void canAccessAutoreconf() throws Exception {
+	public void t7canAccessAutoreconf() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Remove a number of generated files
 		File f = new File(path.append("src/Makefile.in").toOSString());
@@ -339,7 +342,7 @@ public class TestToolActions extends AbstractTest {
 	}
 
 	@Test
-	public void canReconfigureProject() throws Exception {
+	public void t8canReconfigureProject() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Remove a number of generated files
 		File f = new File(path.append("src/Makefile.in").toOSString());
@@ -389,7 +392,7 @@ public class TestToolActions extends AbstractTest {
 	// Verify we can set and reset the tools via the Autotools Tools page
 	// Verifies bug #317345
 	@Test
-	public void canResetTools() throws Exception {
+	public void t9canResetTools() throws Exception {
 		openProperties("Autotools", "General");
 		bot.tabItem("Tools Settings").activate();
 		bot.textWithLabel("aclocal").setText("");
@@ -435,7 +438,7 @@ public class TestToolActions extends AbstractTest {
 
 	// Verify we can set the tools via the Autotools Tools page
 	@Test
-	public void canSetTools() throws Exception {
+	public void u1canSetTools() throws Exception {
 		openProperties("Autotools", "General");
 		bot.tabItem("Tools Settings").activate();
 		bot.textWithLabel("aclocal").setText("");

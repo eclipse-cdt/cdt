@@ -421,6 +421,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 							PreferenceConstants.FORMATTING_SCOPE_DOCUMENT, null);
 					if (PreferenceConstants.FORMATTING_SCOPE_DOCUMENT.equals(scope)) {
 						formatWholeDocument = true;
+					} else {
+						preferences.put(DefaultCodeFormatterConstants.FORMATTER_STATEMENT_SCOPE, Boolean.TRUE);
 					}
 				}
 				if (!formatWholeDocument) {

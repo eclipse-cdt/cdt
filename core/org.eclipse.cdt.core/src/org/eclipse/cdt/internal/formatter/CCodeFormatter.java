@@ -194,10 +194,10 @@ public class CCodeFormatter extends CodeFormatter {
 			IASTTranslationUnit ast) {
 		for (int i = 0; i < regions.length; i++) {
 			IRegion region = regions[i];
-			if (region.getLength() == 0) {
+			if (shouldFormatWholeStatements()) {
 				// An empty region is replaced by the region containing the line corresponding to
 				// the offset and all statements overlapping with that line.
-				region = getLineOrStatementRegion(source, region.getOffset(), ast);
+				region = getLineOrStatementRegion(source, region, ast);
 			}
 			CodeFormatterVisitor codeFormatter =
 					new CodeFormatterVisitor(preferences, region.getOffset(), region.getLength());
@@ -209,13 +209,18 @@ public class CCodeFormatter extends CodeFormatter {
 		}
 	}
 
+	private boolean shouldFormatWholeStatements() {
+		Object obj = options.get(DefaultCodeFormatterConstants.FORMATTER_STATEMENT_SCOPE);
+		return obj instanceof Boolean && ((Boolean) obj).booleanValue();
+	}
+
 	/**
-	 * Returns the smallest region containing the line corresponding to the given offset and all
-	 * statements overlapping with that line.
+	 * Returns the smallest region containing the lines overlapping with the given region and all
+	 * statements overlapping with those lines.
 	 */
-	private IRegion getLineOrStatementRegion(String source, int offset, IASTTranslationUnit ast) {
-		int start = TextUtil.getLineStart(source, offset);
-		int end = TextUtil.skipToNextLine(source, offset);
+	private IRegion getLineOrStatementRegion(String source, IRegion region, IASTTranslationUnit ast) {
+		int start = TextUtil.getLineStart(source, region.getOffset());
+		int end = TextUtil.skipToNextLine(source, region.getOffset() + region.getLength());
 		IASTNode node = findOverlappingPreprocessorStatement(start, end, ast);
 		if (node != null) {
 			IASTFileLocation location = node.getFileLocation();

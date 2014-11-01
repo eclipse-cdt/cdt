@@ -14,9 +14,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -129,12 +135,10 @@ public class MIBreakpointsTest extends BaseTestCase {
 	protected final String WRITE_TAG       = MIBreakpoints.WRITE;
 
     // Target application 'special' locations
-	protected  final int    LINE_NUMBER_1   = 20;
-	protected  final int    LINE_NUMBER_2   = 21;
-	protected  final int    LINE_NUMBER_3   = 27;
-    protected  final int    LINE_NUMBER_4   = 36;
-    protected  final int    LINE_NUMBER_5   = 49;
-    protected  final int    LINE_NUMBER_6   = 50;
+	protected final String[] BREAKPOINT_LIST = { "BREAKPOINT_1",
+			"BREAKPOINT_2", "BREAKPOINT_3", "BREAKPOINT_4", "BREAKPOINT_5",
+			"BREAKPOINT_6" };
+	protected Map<String, Integer> breakpointLines = new HashMap<String, Integer>();
     protected  final String FUNCTION        = "zeroBlocks";
     protected  final String SIGNED_FUNCTION = "zeroBlocks(int)";
     protected  final String NO_CONDITION    = "";
@@ -204,9 +208,56 @@ public class MIBreakpointsTest extends BaseTestCase {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
         assert(fBreakpointsDmc != null);
+
+        resolveBreakpointLineNumbers();
     }
 
-    @Override
+	protected void resolveBreakpointLineNumbers() throws IOException {
+		String line;
+		int lineNum = 1;
+
+		/* Open the file */
+		String path = System.getProperty("user.dir") + "/" + SOURCE_PATH + "/"
+				+ SOURCE_FILE;
+		FileReader fileReader = new FileReader(path);
+		BufferedReader reader = new BufferedReader(fileReader);
+
+		/* Set of breakpoints to find. */
+		Set<String> breakpointstoFind = new HashSet<String>(
+				Arrays.asList(BREAKPOINT_LIST));
+
+		line = reader.readLine();
+		while (line != null && breakpointstoFind.size() > 0) {
+			for (String bp : breakpointstoFind) {
+				if (line.contains(bp)) {
+					breakpointLines.put(bp, lineNum);
+					breakpointstoFind.remove(bp);
+					break;
+				}
+			}
+
+			line = reader.readLine();
+			lineNum++;
+		}
+
+		/* Make sure that all breakpoints have been found. */
+		if (breakpointstoFind.size() > 0) {
+			throw new RuntimeException(
+					"AAAAH WE DIDN'T FIND SOME BREAKPOINTS!!");
+		}
+	}
+
+	protected int getBreakpointLine(String bp) {
+		Integer line = breakpointLines.get(bp);
+		if (line != null) {
+			return line;
+		} else {
+			throw new RuntimeException("AAAAH BREAKPOINT " + bp
+					+ " DOES NOT EXIST!!");
+		}
+	}
+
+	@Override
     public void doAfterTest() throws Exception {
     	super.doAfterTest();
     	
@@ -692,7 +743,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Perform the test
 		String expected = UNKNOWN_EXECUTION_CONTEXT;
@@ -716,7 +767,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE + "_bad");
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Perform the test
 		String expected = BREAKPOINT_INSERTION_FAILURE;
@@ -861,7 +912,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -880,7 +931,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint1.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
+				breakpoint1.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -911,7 +962,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(IS_ENABLED_TAG, false);
 
 		// Perform the test
@@ -931,7 +982,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint1.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
+				breakpoint1.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -1010,7 +1061,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 
 		// Perform the test
@@ -1030,7 +1081,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint1.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
+				breakpoint1.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(CONDITION_1));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -1059,7 +1110,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
 
 		// Perform the test
@@ -1079,7 +1130,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint1.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
+				breakpoint1.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -1108,7 +1159,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1127,7 +1178,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint1.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
+				breakpoint1.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -1198,7 +1249,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1217,7 +1268,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint1.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == LINE_NUMBER_1);
+				breakpoint1.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -1242,7 +1293,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
 				breakpoint2.getFileName().equals(SOURCE_FILE));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint2.getLineNumber() == LINE_NUMBER_1);
+				breakpoint2.getLineNumber() == getBreakpointLine("BREAKPOINT_1"));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint2.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
@@ -1291,7 +1342,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 
 		// Run the program. It will make a two second sleep() call, during which time... 
 		SyncUtil.resume();
@@ -1318,7 +1369,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		
 		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
 				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == ref.getReference());
 	}
 	
@@ -1346,7 +1397,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, "Bad file name");
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 
 		// Run the program. It will make a two second sleep() call, during which time... 
 		SyncUtil.resume();
@@ -1378,7 +1429,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		
 		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
 				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == ref.getReference());
 	}
 	
@@ -1618,7 +1669,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1676,7 +1727,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1773,7 +1824,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 			Map<String, Object> breakpoint = new HashMap<String, Object>();
 			breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 			breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-			breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1 + i);
+			breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1") + i);
 			insertBreakpoint(fBreakpointsDmc, breakpoint);
 			assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -1845,14 +1896,14 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Install a second breakpoint
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_6);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_6"));
 
 		// Install the breakpoint
 		MIBreakpointDMContext ref1 = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1878,7 +1929,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		
 		assertTrue("Did not stop on a breakpoint!",
 				event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == ref1.getReference());
 	}
 	
@@ -1903,7 +1954,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		properties.put(FILE_NAME_TAG, SOURCE_FILE);
-		properties.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		properties.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		updateBreakpoint(invalid_ref, properties);
 		assertFalse(fWait.getMessage(), fWait.isOK());
 		assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
@@ -1926,7 +1977,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1972,7 +2023,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 
 		// Install the breakpoint
@@ -2019,7 +2070,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 
 		// Install the breakpoint
@@ -2075,7 +2126,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 		breakpoint.put(CONDITION_TAG, CONDITION_4);
 
 		// Install the breakpoint
@@ -2120,7 +2171,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		assertTrue("Did not stop on our modified breakpoint!",
 				event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint2.getReference());
 	}
 	
@@ -2132,7 +2183,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Test
 	public void updateWatchpoint_AddCondition() throws Throwable {
 		// Run to the point where the variable is initialized
-		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
+		insertAndRunToLineBreakpoint(getBreakpointLine("BREAKPOINT_1"));
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -2180,7 +2231,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Test
 	public void updateWatchpoint_RemoveCondition() throws Throwable {
 		// Run to the point where the variable is initialized
-		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
+		insertAndRunToLineBreakpoint(getBreakpointLine("BREAKPOINT_1"));
 		
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -2229,7 +2280,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Test
 	public void updateWatchpoint_ModifyCondition() throws Throwable {
 		// Run to the point where the variable is initialized
-		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
+		insertAndRunToLineBreakpoint(getBreakpointLine("BREAKPOINT_1"));
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -2282,7 +2333,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -2328,7 +2379,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 
 		// Install the breakpoint
@@ -2375,7 +2426,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
 
 		// Install the breakpoint
@@ -2431,7 +2482,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
 
 		// Install the breakpoint
@@ -2477,7 +2528,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		assertTrue("Did not stop on our modified breakpoint!",
 				event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint2.getReference());	
 	}
 	
@@ -2493,7 +2544,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref1 = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -2503,7 +2554,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_2);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_2"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref2 = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -2578,14 +2629,14 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Install a second breakpoint
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_6);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_6"));
 		MIBreakpointDMContext ref1 = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -2620,7 +2671,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		assertTrue("Did not stop on a breakpoint!",
 				event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == ref1.getReference());
 	}
 	
@@ -2637,7 +2688,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref1 = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -2647,7 +2698,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_2);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_2"));
 
 		// Install the breakpoint
 		IBreakpointDMContext ref2 = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -2755,7 +2806,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_5"));
 		breakpoint.put(IS_ENABLED_TAG, false);
 
 		// Install the breakpoint
@@ -2797,7 +2848,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("Did not stop on our enabled breakpoint!",
 				event instanceof MIBreakpointHitEvent);
-		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+		assertTrue("Did not stop because of the correct breakpoint at line " + getBreakpointLine("BREAKPOINT_5"),
 				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint1.getReference());	
 	}
 	///////////////////////////////////////////////////////////////////////////
@@ -2815,7 +2866,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -2901,7 +2952,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(CONDITION_TAG, CONDITION_1);
 
 		// Install the breakpoint
@@ -2951,7 +3002,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -3014,7 +3065,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_2);
 
 		// Install the breakpoint
@@ -3064,7 +3115,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getBreakpointLine("BREAKPOINT_1"));
 
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -3267,7 +3318,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Test
 	public void breakpointHit_watchpointUpdateCount() throws Throwable {
 		// Run to the point where the variable is initialized
-		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
+		insertAndRunToLineBreakpoint(getBreakpointLine("BREAKPOINT_4"));
 		
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -3332,7 +3383,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Test
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
 		// Run to the point where the variable is initialized
-		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
+		insertAndRunToLineBreakpoint(getBreakpointLine("BREAKPOINT_4"));
 		
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -3398,7 +3449,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Test
 	public void breakpointHit_WatchpointOutOfScope() throws Throwable {
 		// Run to the point where the variable is initialized
-		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
+		insertAndRunToLineBreakpoint(getBreakpointLine("BREAKPOINT_4"));
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_d56a280b",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-01T19:12:01Z",
+      "side": 1,
+      "message": "This one is not needed.",
+      "revId": "a65774ccb024346a6605976e4fa40672d08c8a0c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

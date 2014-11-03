@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_8679a8e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_9269e69b",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_d2735e8b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "Can use ImmediateExecutor, please see GdbDisconnectCommand corresponding comment",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e667bc42",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_d2735e8b",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_06659838",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_127e7654",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_72640ac4",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "Must complete RM. Please see GdbDisconnectCommand corresponding comment",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_665bac7f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_72640ac4",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_46567056",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_f2577ad4",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_525f4ef2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "Don\u0027t allow multi-select here. Please see GdbDisconnectCommand corresponding comment",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a655c449",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_525f4ef2",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_1512e092",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "This is intentional. It does nothing wrong for the current implementation but may be handy for some extensions. If somebody wants to implement something like \"Disconnect and Remove\", this code will become important. I can remove it if you have objections but IMO it\u0027s better to have it.",
+      "parentUuid": "a766b734_128dd63d",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_32d732ee",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "Are you sure we need to check the session is ours?  We didn\u0027t do this before and I believe the platform only gives us the selection that are relevant to our session.",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_95143074",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "You\u0027re right, I realized it after I wrote this code.",
+      "parentUuid": "a766b734_32d732ee",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_d5598862",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_12acb674",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_f285bae8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
         "patchSetId": 5
@@ -166,6 +328,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "I think we still need to complete the rm here.  Probably with an error status, or an empty array.",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_46195004",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_f285bae8",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_a628240f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_d2887e01",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_9278c69c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
         "patchSetId": 5
@@ -200,6 +398,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "If there is no MultiDetach service, maybe we should revert to the previous behaviour of not allowing detaching when multiple elements are selected? It may be confusing to arbitrarily allow to detail because the first selection allows it.\n\nWe would just need to add a check  here\n\nif (contDmcs.length !\u003d 1) rm.done(false);",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_66744cf2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_9278c69c",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_466f9020",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_f2213aa8",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_3205721e",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
         "patchSetId": 5
@@ -234,6 +468,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "Same comment as above about checking that there is only a single selection in this case.",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a67e64cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_3205721e",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_611f1694",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 983,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "You\u0027re right. There is no need for this change. I keep mistaking the class inheritance of contexts with the parent-child relation.",
+      "parentUuid": "a766b734_cca3c8f8",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_ec068492",
         "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IMultiTerminate.java",
         "patchSetId": 5
@@ -268,6 +538,24 @@
       "writtenOn": "2014-10-31T15:37:55Z",
       "side": 1,
       "message": "I think we should also mention \u0027processes\u0027 in the @param description while we\u0027re at it.\nSame for the two methods below.",
+      "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a1192eae",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IMultiTerminate.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-03T17:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_ec068492",
       "revId": "cf0daa81b3069493312610881a7e32c561bfcb69",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

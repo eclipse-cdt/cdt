@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_dcfa4c82",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T21:39:13Z",
+      "side": 1,
+      "message": "This causes a problem.  We support not killing GDB when the last process is terminated or detached.  In that case, there are no processes left, so this method returns no process, which means that when the launch is selected, we can no longer terminate.\n\nYou can reproduce this two ways:\n1- unselect our preference to \"terminate GDB when last process exits\"\n2- use a remote-attach as it starts without any process being debugged\n\nThis also means that the big red button of the new launch bar is not able to kill a session that has no processes.",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_9c7d748f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T21:39:13Z",
+      "side": 1,
+      "message": "So my suggestion to only allow terminate for a single selection when there is no MultiTerminate service causes a problem with multi-process.  In that case, when selecting the launch, the code converts it to multiple processes and then does not allow to terminate with the launch selected because it looks like there are multiple selections.\n\nThis is a pretty rare bug:\n1- someone replacing our IMultiTerminate service with one that does not support multi-terminate (maybe they don\u0027t want to support it)\n2- running multi-process\n\nI wanted to let you know, but I am ok with leaving this in.  If someone wants to replace our service, they would have to replace this class as well.",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_fcd90820",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T21:39:13Z",
+      "side": 1,
+      "message": "Similar to terminate case, this breaks when there are no processes.\nHowever, if we can fix this, it is a bit different for disconnect, when there are no processes.  Should we kill GDB in that case (that is what we do on master), should we have GDB call \u0027disconnect\u0027 for remote sessions (only), should we keep this button disabled if there are no processes?\n\nAlthough I like the idea of supporting the GDB \u0027disconnect\u0027 command, we could open a new bug for that.  I\u0027d be fine in this patch, to simply have the disconnect button disabled when the launch is selected and there are no processes.",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_dccc0c67",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T21:39:13Z",
+      "side": 1,
+      "message": "Repeating this comment from patchset 2:\n\nI noticed that the new code \u0027magically\u0027 supports multi-terminate/disconnect for older GDBs even though only this clas supports the IMulti* calsses :) The reason is that the new DsfTerminateCommand and GdbDisconnectCommand first convert the selection into a list of processes, and for GDB \u003c 7.2, there is only one process, so only one to terminate, so the buttons are now enabled when selecting multiple threads. Cool!",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -40,7 +40,8 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
  */
 public class NamespaceHelper {
 	/**
-	 * Returns the qualified name of all namespaces that are defined at the specified translation unit and offset.
+	 * Returns the qualified name of all namespaces that are defined at the specified translation
+	 * unit and offset.
 	 * 
 	 * @param translationUnit
 	 * @param offset
@@ -55,11 +56,12 @@ public class NamespaceHelper {
 		astCache.getAST(translationUnit, null).accept(new CPPASTAllVisitor() {
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
-				if (declSpec instanceof ICPPASTCompositeTypeSpecifier && checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
-						qualifiedName.addName(createNameWithTemplates(declSpec));
-					}
-					return super.visit(declSpec);
+				if (declSpec instanceof ICPPASTCompositeTypeSpecifier &&
+						checkFileNameAndLocation(translationUnit.getLocation(), offset, declSpec)) {
+					qualifiedName.addName(createNameWithTemplates(declSpec));
 				}
+				return super.visit(declSpec);
+			}
 		
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespace) {
@@ -92,16 +94,14 @@ public class NamespaceHelper {
 	}
 	
 	private static IASTName createNameWithTemplates(IASTNode declarationParent) {
-		IASTName parentName;
-		parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName().copy(
+		IASTName parentName = ((ICPPASTCompositeTypeSpecifier) declarationParent).getName().copy(
 				CopyStyle.withLocations);
 		
 		if (classHasTemplates(declarationParent)) {
 			CPPASTTemplateId templateId = new CPPASTTemplateId();
 			templateId.setTemplateName(parentName);
 				
-			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
-					
+			for (ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent()).getTemplateParameters()) {
 				if (templateParameter instanceof CPPASTSimpleTypeTemplateParameter) {
 					CPPASTSimpleTypeTemplateParameter simpleTypeTemplateParameter = (CPPASTSimpleTypeTemplateParameter) templateParameter;
 					

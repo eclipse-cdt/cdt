@@ -289,7 +289,7 @@ public class IndexUI {
 		if (binding != null) {
 			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 
-			ArrayList<ICElementHandle> result= new ArrayList<ICElementHandle>();
+			ArrayList<ICElementHandle> result= new ArrayList<>();
 			for (IIndexName in : defs) {
 				ICElementHandle definition= getCElementForName((ICProject) null, index, in);
 				if (definition != null) {
@@ -506,7 +506,7 @@ public class IndexUI {
 			for (ICPPTemplateInstance inst : instances) {
 				if (!ASTInternal.hasDeclaration(inst)) {
 					if (result == null)
-						result= new ArrayList<IBinding>(instances.length);
+						result= new ArrayList<>(instances.length);
 					result.add(inst);
 				}
 			}
@@ -524,7 +524,7 @@ public class IndexUI {
 					specializedMember= index.adaptBinding(specializedMember);
 					if (specializedMember != null) {
 						if (result == null)
-							result= new ArrayList<IBinding>(specializations.size());
+							result= new ArrayList<>(specializations.size());
 						result.add(specializedMember);
 						// Also add instances of the specialized member.
 						if (specializedMember instanceof ICPPInstanceCache) {

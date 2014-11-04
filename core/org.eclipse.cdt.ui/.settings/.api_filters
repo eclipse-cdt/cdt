@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.ui" version="2">
+    <resource path="src/org/eclipse/cdt/internal/ui/search/CSearchUnresolvedIncludesQuery.java" type="org.eclipse.cdt.internal.ui.search.CSearchUnresolvedIncludesQuery">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="IIndex"/>
+                <message_argument value="CSearchUnresolvedIncludesQuery"/>
+                <message_argument value="getFilesWithUnresolvedIncludes()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

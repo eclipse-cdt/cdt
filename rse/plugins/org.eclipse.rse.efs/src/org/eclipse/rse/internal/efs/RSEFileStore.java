@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  * David McKnight  (IBM)         - [291738] [efs] repeated queries to RSEFileStoreImpl.fetchInfo() in short time-span should be reduced
  * Szymon Brandys  (IBM)         - [303092] [efs] RSE portion to deal with FileSystemResourceManager makes second call to efs provider on exception due to cancel
+ * David McKnight  (IBM)         - [449177] RSEFileStore.fetchInfo contains workaround which throws an exception when FileStore.fetchInfo wouldn't
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -271,32 +272,7 @@ public class RSEFileStore extends FileStore
 		return getImpl().childInfos(options, monitor);
 	}
 
-	/**
-	 * Fetch information for this file store.
-	 * <p>
-	 * FIXME This is a HACK to fix early startup problems until
-	 * Platform bug 182006 is resolved! Returns an info
-	 * object indicating a non-existing file while the Eclipse resources
-	 * plugin is not fully activated. This is in order to avoid problems
-	 * of activating too much of RSE while Eclipse is not yet ready.
-	 * </p>
-	 * @return a file info object for this file store.
-	 */
-	public IFileInfo fetchInfo() {
-		try {
-			return fetchInfo(EFS.NONE, null);
-		} catch (CoreException e) {
-			if (!isResourcesPluginUp()) {
-				//FIXME HACK workaround for platform bug 182006:
-				//Claim that files do not exist while resources
-				//plugin is not yet fully up.
-				return new FileInfo(getName());
-			}
-			//Whoa! Bad bad... wrapping a checked exception in an unchecked one...
-			throw new RuntimeException(e);
-		}
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#fetchInfo(int, org.eclipse.core.runtime.IProgressMonitor)

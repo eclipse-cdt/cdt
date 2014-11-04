@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Nokia and others.
+ * Copyright (c) 2010, 2014 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,17 +14,21 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.ICSourceNotFoundDescription;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.MessagesForLaunchVM;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -163,7 +167,13 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
         if (address != null) {
         	properties.put(ILaunchVMConstants.PROP_FRAME_ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
         }
-        properties.put(ILaunchVMConstants.PROP_FRAME_FILE, data.getFile());
+        String file = data.getFile();
+        IPreferenceStore cStore= CDebugUIPlugin.getDefault().getPreferenceStore();
+        boolean show_full_path = cStore.getBoolean(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY);
+        if (!show_full_path) {
+        	file = new Path(file).lastSegment();
+        }
+		properties.put(ILaunchVMConstants.PROP_FRAME_FILE, file);
         properties.put(ILaunchVMConstants.PROP_FRAME_FUNCTION, data.getFunction());
         properties.put(ILaunchVMConstants.PROP_FRAME_LINE, data.getLine());
         properties.put(ILaunchVMConstants.PROP_FRAME_COLUMN, data.getColumn());

@@ -492,6 +492,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_9c2f348f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T21:19:25Z",
+      "side": 1,
+      "message": "I noticed that the new code \u0027magically\u0027 supports multi-terminate/disconnect for older GDBs :) The reason is that the new DsfTerminateCommand and GdbDisconnectCommand first convert the selection into a list of processes, and for GDB \u003c 7.2, there is only one process, so only one to terminate, so the buttons are now enabled when selecting multiple threads.  Cool!",
+      "parentUuid": "a766b734_4c621833",
+      "revId": "f2c2d6e423e28b1aee1e3a5466f886793c991042",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e76c2f17_4525ffe0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
         "patchSetId": 2

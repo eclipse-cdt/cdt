@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Broadcom Corporation and others.
+ * Copyright (c) 2009, 2014 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Broadcom Corporation - initial API and implementation
+ *     R. Zulliger, C. Walther (Indel AG) - Bug 355609 Disable indexer
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -56,6 +57,7 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_invalid_uri;
 	public static String HeadlessBuilder_PreprocessorDefine;
 	public static String HeadlessBuilder_usage_import;
+	public static String HeadlessBuilder_usage_no_indexer;
 	public static String HeadlessBuilder_Workspace;
 	public static String HeadlessBuilder_WorkspaceInUse;
 	static {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Broadcom Corporation and others.
+ * Copyright (c) 2009, 2014 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *                                    silently with relative pathname
  *                                  - Bug 300554 Build status not propagated
  *                                    to exit code
+ *     R. Zulliger, C. Walther (Indel AG) - Bug 355609 Disable indexer
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -30,6 +31,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
@@ -37,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -91,6 +95,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Append to a tool option value:          -Ta         {toolid} {optionid=value}
  *   - Prepend to a tool option value:         -Tp         {toolid} {optionid=value}
  *   - Remove a tool option:                   -Tr         {toolid} {optionid=value}
+ *   - Disable indexer:                        -no-indexer
  *
  * Build output is automatically sent to stdout.
  * @since 6.0
@@ -170,6 +175,7 @@ public class HeadlessBuilder implements IApplication {
 	private final Set<String> projectRegExToClean = new HashSet<String>();
 	private boolean buildAll = false;
 	private boolean cleanAll = false;
+	private boolean disableIndexer = false;
 
 	/** List of Tool Option values being set */
 	private List<ToolOption> toolOptions = new ArrayList<ToolOption>();
@@ -419,6 +425,22 @@ public class HeadlessBuilder implements IApplication {
 			if (!getArguments((String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS)))
 				return ERROR;
 
+			if (disableIndexer) {
+				CCorePlugin.getIndexManager().setDefaultIndexerId(IPDOMManager.ID_NO_INDEXER);
+				// yes, this is ugly - but I haven't found a way to "officially"
+				// stop the indexer.
+				// The problem is that the "workspace job" for the
+				// "index manager" (PDOMIndexerJob) is created and scheduled
+				// during plugin activation (CCorePlugin.start(BundleContext))
+				// and therefore, it may already be running when we first reach
+				// this line of code. Therefore, we do not just (temporarily)
+				// disable the indexer but also stop it.
+				if (CCorePlugin.getIndexManager() instanceof PDOMManager) {
+					PDOMManager man = (PDOMManager) CCorePlugin.getIndexManager();
+					man.shutdown();
+				}
+			}
+
 			// Set the console environment so build output is echo'd to stdout
 			if (System.getProperty("org.eclipse.cdt.core.console") == null) //$NON-NLS-1$
 				System.setProperty("org.eclipse.cdt.core.console", "org.eclipse.cdt.core.systemConsole"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -584,6 +606,7 @@ public class HeadlessBuilder implements IApplication {
 	 *   -Ta         {toolid} {optionid=value} append to a tool option value
 	 *   -Tp         {toolid} {optionid=value} prepend to a tool option value
 	 *   -Tr         {toolid} {optionid=value} remove a tool option value
+	 *   -no-indexer Disable indexer
 	 *
 	 * Each argument may be specified more than once
 	 * @param args String[] of arguments to parse
@@ -638,6 +661,8 @@ public class HeadlessBuilder implements IApplication {
 					String toolId = args[++i];
 					String option = args[++i];
 					addToolOption(toolId, option, ToolOption.REMOVE);
+				} else if ("-no-indexer".equals(args[i])) { //$NON-NLS-1$
+					disableIndexer = true;
 				} else {
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_unknown_argument + args[i]);
 				}
@@ -651,6 +676,7 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_importAll);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_clean_build);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_no_indexer);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_InlucdePath);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_IncludeFile);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_PreprocessorDefine);

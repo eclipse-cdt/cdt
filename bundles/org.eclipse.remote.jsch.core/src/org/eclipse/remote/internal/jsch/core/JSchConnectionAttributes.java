@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - Initial API and implementation
+ *    IBM Corporation - Initial API and implementation
+ *    Markus Schorn - Bug 449306: Unnecessary access to secure storage.
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
@@ -45,6 +46,8 @@ public class JSchConnectionAttributes {
 	private final Map<String, String> fAttributes = Collections.synchronizedMap(new HashMap<String, String>());
 	private final Map<String, String> fSecureAttributes = Collections.synchronizedMap(new HashMap<String, String>());
 
+	private boolean fSecureAttributesLoaded;
+
 	public JSchConnectionAttributes(String name) {
 		fName = name;
 		load();
@@ -62,7 +65,7 @@ public class JSchConnectionAttributes {
 	public JSchConnectionAttributes copy() {
 		JSchConnectionAttributes copy = new JSchConnectionAttributes(fName);
 		copy.getAttributes().putAll(fAttributes);
-		copy.getSecureAttributes().putAll(fSecureAttributes);
+		copy.setSecureAttributes(getSecureAttributes());
 		return copy;
 	}
 
@@ -119,6 +122,7 @@ public class JSchConnectionAttributes {
 	}
 
 	public String getSecureAttribute(String key, String def) {
+		loadSecureAttributes();
 		if (fSecureAttributes.containsKey(key)) {
 			return fSecureAttributes.get(key);
 		}
@@ -126,7 +130,14 @@ public class JSchConnectionAttributes {
 	}
 
 	public Map<String, String> getSecureAttributes() {
+		loadSecureAttributes();
 		return fSecureAttributes;
+	}
+	
+	void setSecureAttributes(Map<String, String> secureAttributes) {
+		fSecureAttributes.clear();
+		fSecureAttributes.putAll(secureAttributes);
+		fSecureAttributesLoaded = true;
 	}
 
 	private ISecurePreferences getSecurePreferences() {
@@ -144,14 +155,7 @@ public class JSchConnectionAttributes {
 		} catch (BackingStoreException e) {
 			Activator.log(e.getMessage());
 		}
-		ISecurePreferences secRoot = SecurePreferencesFactory.getDefault();
-		ISecurePreferences secConnections = secRoot.node(CONNECTIONS_KEY);
-		ISecurePreferences secNode = secConnections.node(fName);
-		try {
-			loadAuthAttributes(secNode);
-		} catch (StorageException e) {
-			Activator.log(e.getMessage());
-		}
+		fSecureAttributesLoaded = false;
 	}
 
 	private void loadAttributes(Preferences node) throws BackingStoreException {
@@ -161,11 +165,20 @@ public class JSchConnectionAttributes {
 		}
 	}
 
-	private void loadAuthAttributes(ISecurePreferences node) throws StorageException {
-		fSecureAttributes.clear();
-		for (String key : node.keys()) {
-			fSecureAttributes.put(key, node.get(key, null));
+	private void loadSecureAttributes() {
+		if (fSecureAttributesLoaded)
+			return;
+		
+		ISecurePreferences secNode = getSecurePreferences();
+		try {
+			fSecureAttributes.clear();
+			for (String key : secNode.keys()) {
+				fSecureAttributes.put(key, secNode.get(key, null));
+			}
+		} catch (StorageException e) {
+			Activator.log(e.getMessage());
 		}
+		fSecureAttributesLoaded = true;
 	}
 
 	public void remove() {
@@ -190,15 +203,17 @@ public class JSchConnectionAttributes {
 				node.put(entry.getKey(), entry.getValue());
 			}
 		}
-		try {
-			ISecurePreferences secNode = getSecurePreferences();
-			synchronized (fSecureAttributes) {
-				for (Entry<String, String> entry : fSecureAttributes.entrySet()) {
-					secNode.put(entry.getKey(), entry.getValue(), true);
+		if (fSecureAttributesLoaded) {
+			try {
+				ISecurePreferences secNode = getSecurePreferences();
+				synchronized (fSecureAttributes) {
+					for (Entry<String, String> entry : fSecureAttributes.entrySet()) {
+						secNode.put(entry.getKey(), entry.getValue(), true);
+					}
 				}
+			} catch (StorageException e) {
+				Activator.log(e.getMessage());
 			}
-		} catch (StorageException e) {
-			Activator.log(e.getMessage());
 		}
 	}
 
@@ -211,6 +226,7 @@ public class JSchConnectionAttributes {
 	}
 
 	public void setSecureAttribute(String key, String value) {
+		loadSecureAttributes();
 		fSecureAttributes.put(key, value);
 	}
 }

@@ -311,7 +311,7 @@ public class SyncUtil {
 		});
 
 		// Wait for the execution to suspend after the step
-    	return eventWaitor.waitForEvent(timeout);			
+		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(timeout));
 	}
 
 	public static MIStoppedEvent resumeUntilStopped() throws Throwable {

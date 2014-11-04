@@ -31,9 +31,11 @@ public class AllTests {
 	// needed for this class to compile
 	@BeforeClass
 	public static void beforeClassMethod() {
-		// Verify that the necessary binaries are available, and if it is not, 
+		// Verify that the necessary binaries are available, and if they are not, 
 		// the tests will be ignored.
-		String[] testBinaryCommands = { "libtool --version", "autoconf --version" };
+		String[] testBinaryCommands = { "libtool --version", 
+				                        "autoconf --version", 
+				                        "automake --version" };
 		try {
 			for (String cmd : testBinaryCommands) {
 				Process process = ProcessFactory.getFactory().exec(cmd);

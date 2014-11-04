@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_b9a20229",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-04T17:17:02Z",
+      "side": 1,
+      "message": "Yes, you\u0027re right. In fact we don\u0027t really need to pass IDebugCommandRequest to this method. All we need here is the request\u0027s elements.",
+      "parentUuid": "a766b734_ecd95d6b",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_ccdc615c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2014-11-04T04:23:30Z",
       "side": 1,
       "message": "I think we need to complete the RequestMonitor (rm) here, not the IDebugCommandRequest (request)",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_199a16f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-04T17:17:02Z",
+      "side": 1,
+      "message": "See the previous comment.",
+      "parentUuid": "a766b734_ccdc615c",
       "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_998d86bd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-04T17:17:02Z",
+      "side": 1,
+      "message": "Same as for DsfTerminateCommand.",
+      "parentUuid": "a766b734_2cd4f52e",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_0cd77934",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
         "patchSetId": 6
@@ -64,6 +118,24 @@
       "writtenOn": "2014-11-04T04:23:30Z",
       "side": 1,
       "message": "I think we need to complete the RequestMonitor (rm) here, not the IDebugCommandRequest (request)",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_79886aa9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-04T17:17:02Z",
+      "side": 1,
+      "message": "Same as for DsfTerminateCommand.",
+      "parentUuid": "a766b734_0cd77934",
       "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

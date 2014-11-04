@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_ecd95d6b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T04:23:30Z",
+      "side": 1,
+      "message": "I think we need to complete the RequestMonitor (rm) here, not the IDebugCommandRequest (request)",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ccdc615c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T04:23:30Z",
+      "side": 1,
+      "message": "I think we need to complete the RequestMonitor (rm) here, not the IDebugCommandRequest (request)",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_2cd4f52e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T04:23:30Z",
+      "side": 1,
+      "message": "I think we need to complete the RequestMonitor (rm) here, not the IDebugCommandRequest (request)",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0cd77934",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-04T04:23:30Z",
+      "side": 1,
+      "message": "I think we need to complete the RequestMonitor (rm) here, not the IDebugCommandRequest (request)",
+      "revId": "36500440e5cb110d60ca9aca557b66a72a6b598d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

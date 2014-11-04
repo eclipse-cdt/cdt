@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -497,7 +497,8 @@ public class IndexUI {
 	/**
 	 * Searches for all specializations that depend on the definition of the given binding.
 	 */
-	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding) throws CoreException {
+	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding, IASTNode point)
+			throws CoreException {
 		List<IBinding> result= null;
 
 		// Check for instances of the given binding.
@@ -515,8 +516,7 @@ public class IndexUI {
 		// Check for specializations of the owner.
 		IBinding owner = binding.getOwner();
 		if (owner != null) {
-			IASTNode point= null; // Instantiation of dependent expressions may not work.
-			List<? extends IBinding> specializations = findSpecializations(index, owner);
+			List<? extends IBinding> specializations = findSpecializations(index, owner, point);
 			for (IBinding specOwner : specializations) {
 				if (specOwner instanceof ICPPClassSpecialization) {
 					// Add the specialized member.

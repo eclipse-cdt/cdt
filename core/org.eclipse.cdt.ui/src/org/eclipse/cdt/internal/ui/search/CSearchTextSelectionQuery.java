@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,8 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 	private ITextSelection selection;
 	private String label;
 	
-	public CSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
+	public CSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection,
+			int flags) {
 		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.tu = tu;
 		this.selection = selection;
@@ -76,7 +77,7 @@ public class CSearchTextSelectionQuery extends CSearchQuery {
 							binding= CPPTemplates.findDeclarationForSpecialization(binding);
 							if (binding != null) {
 								label= labelForBinding(index, binding, label);
-								createMatches(index, binding);
+								createMatches(index, binding, searchName);
 								return Status.OK_STATUS;
 							}
 						}

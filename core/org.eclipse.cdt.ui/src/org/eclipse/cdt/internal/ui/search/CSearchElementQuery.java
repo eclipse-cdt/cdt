@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICElement;
@@ -46,7 +47,8 @@ public class CSearchElementQuery extends CSearchQuery {
 				IBinding binding= IndexUI.elementToBinding(index, (ICElement) element);
 				if (binding != null) {
 					label= labelForBinding(index, binding, label);
-					createMatches(index, binding);
+					IASTNode point= null; // Instantiation of dependent expressions may not work.
+					createMatches(index, binding, point);
 				}
 			}
 			return Status.OK_STATUS;

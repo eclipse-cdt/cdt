@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -109,7 +110,8 @@ public class CHQueries {
 	private static void findCalledBy1(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
 			ICProject project, CalledByResult result) throws CoreException {
 		findCalledBy2(index, callee, includeOrdinaryCalls, project, result);
-		List<? extends IBinding> specializations = IndexUI.findSpecializations(index, callee);
+		IASTNode point= null; // Instantiation of dependent expressions may not work.
+		List<? extends IBinding> specializations = IndexUI.findSpecializations(index, callee, point);
 		for (IBinding spec : specializations) {
 			findCalledBy2(index, spec, includeOrdinaryCalls, project, result);
 		}

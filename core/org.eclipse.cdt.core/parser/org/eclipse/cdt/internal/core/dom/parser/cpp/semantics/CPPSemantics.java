@@ -817,7 +817,7 @@ public class CPPSemantics {
 		if (binding == null)
 			return null;
         IScope scope = binding.getScope();
-        if (scope instanceof IIndexScope) {
+        if (scope instanceof IIndexScope && tu != null) {
         	scope= tu.mapToASTScope((IIndexScope) scope);
         }
         while (scope != null && !(scope instanceof ICPPNamespaceScope)) {

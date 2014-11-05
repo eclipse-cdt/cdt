@@ -45,7 +45,6 @@
 		<module>core/org.eclipse.cdt.core.linux.x86</module>
 		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
 		<module>core/org.eclipse.cdt.core.linux.ppc64</module>
-		<module>core/org.eclipse.cdt.core.linux.ppc64le</module>
 		<module>core/org.eclipse.cdt.core.win32</module>
 		<module>core/org.eclipse.cdt.core.win32.x86</module>
 		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
@@ -343,8 +342,85 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>ppc64le</id>
+			    <activation>
+        			<property>
+          				<name>!skip-ppc64le</name>
+        			</property>
+      			</activation>
+      			<modules>
+					<module>core/org.eclipse.cdt.core.linux.ppc64le</module>
+				</modules>
+				<build>				
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.tycho</groupId>
+							<artifactId>target-platform-configuration</artifactId>
+							<version>${tycho-version}</version>
+							<configuration>
+							  <resolver>p2</resolver>
+							  <pomDependencies>consider</pomDependencies>
+							<!-- We need to add all supported environments here as tycho does not currently -->
+							<!-- append the environments but replaces them with this definition -->
+							  <environments>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86</arch>
+								</environment>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>ppc64</arch>
+								</environment>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86</arch>
+								</environment>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>x86</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>aix</os>
+									<ws>gtk</ws>
+									<arch>ppc</arch>
+								</environment>
+								<environment>
+									<os>solaris</os>
+									<ws>gtk</ws>
+									<arch>sparc</arch>
+								</environment>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>ppc64le</arch>
+								</environment>
+							  </environments>
+							</configuration>
+						</plugin>
+					</plugins>
+				</build>	
+		</profile>
 	</profiles>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -376,11 +452,6 @@
 							<ws>gtk</ws>
 							<arch>ppc64</arch>
 						</environment>
-                                                <environment>
-                                                        <os>linux</os>
-                                                        <ws>gtk</ws>
-                                                        <arch>ppc64le</arch>
-                                                </environment>
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>

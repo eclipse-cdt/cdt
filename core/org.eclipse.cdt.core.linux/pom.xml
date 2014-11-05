@@ -15,6 +15,32 @@
   <artifactId>org.eclipse.cdt.core.linux</artifactId>
   <packaging>eclipse-plugin</packaging>
 
+	<profiles>
+		<profile>
+			<id>ppc64le</id>
+				<build>				
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.tycho</groupId>
+							<artifactId>target-platform-configuration</artifactId>
+							<version>${tycho-version}</version>
+							<configuration>
+								<resolver>p2</resolver>
+								<pomDependencies>consider</pomDependencies>
+								<environments>
+                    				<environment>
+                        				<os>linux</os>
+                            			<ws>gtk</ws>
+                            			<arch>ppc64le</arch>
+                        			</environment>
+								</environments>
+							</configuration>
+						</plugin>
+					</plugins>
+				</build>	
+		</profile>
+	</profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -45,11 +71,6 @@
 	      <ws>gtk</ws>
 	      <arch>ppc64</arch>
 	    </environment>
-            <environment>
-              <os>linux</os>
-              <ws>gtk</ws>
-              <arch>ppc64le</arch>
-            </environment>
 	  </environments>
 	</configuration>
       </plugin>

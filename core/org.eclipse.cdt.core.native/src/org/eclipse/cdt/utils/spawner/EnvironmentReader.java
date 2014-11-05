@@ -55,7 +55,8 @@ public class EnvironmentReader {
 	 */
 	public static Properties getEnvVars() {
 		init();
-		return (Properties) envVars.clone();
+		//Use normalized environment to avoid issues with Windows Case-Insensitivity
+		return (Properties) envVarsNormalized.clone();
 	}
 
 	/**

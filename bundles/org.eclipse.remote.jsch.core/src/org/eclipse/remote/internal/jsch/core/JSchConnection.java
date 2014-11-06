@@ -168,7 +168,7 @@ public class JSchConnection implements IRemoteConnection {
 	private final boolean logging = false;
 
 	public static final int DEFAULT_PORT = 22;
-	public static final int DEFAULT_TIMEOUT = 5;
+	public static final int DEFAULT_TIMEOUT = 0;
 	public static final boolean DEFAULT_IS_PASSWORD = true;
 	public static final boolean DEFAULT_USE_LOGIN_SHELL = true;
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$

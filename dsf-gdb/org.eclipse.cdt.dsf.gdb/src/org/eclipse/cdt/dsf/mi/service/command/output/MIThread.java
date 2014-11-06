@@ -39,10 +39,12 @@ public class MIThread {
 	final private String       fDetails;
 	final private String       fState;
 	final private String       fCore;
+	final private String       fName;
 	
 	/** @since 4.4 */
 	protected MIThread(String threadId, String targetId, String osId, String parentId,
-			           MIFrame topFrame, String details, String state, String core) {
+			           MIFrame topFrame, String details, String state, String core,
+			           String name) {
 		fThreadId  = threadId;
 		fTargetId  = targetId;
 		fOsId      = osId;
@@ -51,6 +53,7 @@ public class MIThread {
 		fDetails   = details;
 		fState     = state;
 		fCore      = core;
+		fName      = name;
 	}
 
 	public String getThreadId()       { return fThreadId; }
@@ -77,6 +80,7 @@ public class MIThread {
         String state = null;
         String details = null;
         String core = null;
+        String name = null;
 
         for (int j = 0; j < results.length; j++) {
             MIResult result = results[j];
@@ -116,10 +120,16 @@ public class MIThread {
                 if (val instanceof MIConst) {
                     core = ((MIConst) val).getCString().trim();
                 }
+            } else if (var.equals("name")) { //$NON-NLS-1$
+                MIValue val = results[j].getMIValue();
+                if (val instanceof MIConst) {
+                    name = ((MIConst) val).getCString().trim();
+                }
             }
         }
         
-        return new MIThread(threadId, targetId, osId, parentId, topFrame, details, state, core);
+        return new MIThread(threadId, targetId, osId, parentId, topFrame,
+                            details, state, core, name);
 	}
 	
 	// Note that windows gdbs returns lower case "thread" , so the matcher needs to be case-insensitive. 

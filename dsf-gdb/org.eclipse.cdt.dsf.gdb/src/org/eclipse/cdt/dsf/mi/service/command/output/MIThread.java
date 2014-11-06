@@ -11,6 +11,7 @@
  *     John Dallaway - GDB 7.x getOsId() pattern match too restrictive (Bug 325552)
  *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
  *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
+ *     Simon Marchi (Ericsson) - Bug 378154 - Have MIThread provide thread name
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -40,10 +41,17 @@ public class MIThread {
 	final private String       fDetails;
 	final private String       fState;
 	final private String       fCore;
+	final private String       fName;
 	
 	/** @since 4.4 */
 	protected MIThread(String threadId, String targetId, String osId, String parentId,
 			           MIFrame topFrame, String details, String state, String core) {
+		this(threadId, targetId, osId, parentId, topFrame, details, state, core, null);
+	}
+
+	protected MIThread(String threadId, String targetId, String osId, String parentId,
+					   MIFrame topFrame, String details, String state, String core,
+					   String name) {
 		fThreadId  = threadId;
 		fTargetId  = targetId;
 		fOsId      = osId;
@@ -52,6 +60,7 @@ public class MIThread {
 		fDetails   = details;
 		fState     = state;
 		fCore      = core;
+		fName      = name;
 	}
 
 	public String getThreadId()       { return fThreadId; }
@@ -66,7 +75,9 @@ public class MIThread {
 	 * @since 4.0
 	 */
 	public String getCore()           { return fCore; }
-	
+
+	public String getName()           { return fName; }
+
 	public static MIThread parse(MITuple tuple) {
         MIResult[] results = tuple.getMIResults();
 
@@ -78,6 +89,7 @@ public class MIThread {
         String state = null;
         String details = null;
         String core = null;
+        String name = null;
 
         for (int j = 0; j < results.length; j++) {
             MIResult result = results[j];
@@ -118,9 +130,16 @@ public class MIThread {
                     core = ((MIConst) val).getCString().trim();
                 }
             }
+            else if (var.equals("name")) { //$NON-NLS-1$
+                MIValue val = results[j].getMIValue();
+                if (val instanceof MIConst) {
+                    name = ((MIConst) val).getCString().trim();
+                }
+            }
         }
-        
-        return new MIThread(threadId, targetId, osId, parentId, topFrame, details, state, core);
+
+        return new MIThread(threadId, targetId, osId, parentId, topFrame,
+                            details, state, core, name);
 	}
 	
 	// Note that windows gdbs returns lower case "thread" , so the matcher needs to be case-insensitive. 

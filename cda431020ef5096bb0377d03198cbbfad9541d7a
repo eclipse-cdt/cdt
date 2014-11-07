@@ -16,6 +16,24 @@
       "revId": "cda431020ef5096bb0377d03198cbbfad9541d7a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f80bc960",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-11-07T20:00:06Z",
+      "side": 1,
+      "message": "Done\n\nAddressed in patch set 4\n\nThanks for the comments and good collaboration Marc-Andre",
+      "parentUuid": "a766b734_6dd7fd68",
+      "revId": "cda431020ef5096bb0377d03198cbbfad9541d7a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

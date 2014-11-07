@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_78421913",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-11-07T21:49:55Z",
+      "side": 1,
+      "message": "there\u0027s a lonely \"+\" at the start of the line. I\u0027m surprised it actually builds!",
+      "revId": "12aa5a3623aef5f7c570f76ee22e9ce3a83f2f26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

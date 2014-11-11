@@ -43,7 +43,6 @@ public class DebugCoreFile {
 					throws CoreException, InterruptedException {
 		ILaunchConfiguration config = null;
 
-		//					System.out.println("about to create launch configuration");
 		config = createConfiguration(coreFile, executable, true);
 		monitor.worked(1);
 		return config;
@@ -55,7 +54,6 @@ public class DebugCoreFile {
 	}
 	
 	protected static ILaunchConfiguration createConfiguration(String corePath, String exePath, boolean save) {
-//		System.out.println("creating launch configuration");
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getLaunchConfigType();

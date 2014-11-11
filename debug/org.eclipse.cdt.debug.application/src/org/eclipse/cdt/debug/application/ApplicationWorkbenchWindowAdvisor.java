@@ -57,9 +57,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private ILaunchConfiguration config;
 
 	private class StartupException extends FileNotFoundException {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		public StartupException(String s) {
@@ -86,17 +83,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowProgressIndicator(true);
 		configurer.setTitle(Messages.Debugger_Title);
 	}
-
-//	private class CWDTracker implements IWorkingDirectoryTracker {
-//
-//		@Override
-//		public URI getWorkingDirectoryURI() {
-//			return null;
-//		}
-//
-//	}
-	
-
 
 	@Override
 	public void postWindowCreate() {
@@ -154,10 +140,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			String buildLog = null;
 			String arguments = null;
 			String[] args = Platform.getCommandLineArgs();
-//			System.out.println("program args length is " + args.length);
+
 			try {
 				for (int i = 0; i < args.length; ++i) {
-//									System.out.println("arg <" + i + "> is " + args[i]);
 					if ("-application".equals(args[i]))
 						i++; // ignore the application specifier
 					else if ("-product".equals(args[i]))
@@ -358,21 +343,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					monitor.worked(7);
 				}
 				if (config != null) {
-//					System.out.println("about to add job change listener");
 					final JobContainer LaunchJobs = new JobContainer();
 					Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
 
 						@Override
 						public void scheduled(IJobChangeEvent event) {
 							Job job = event.getJob();
-//							System.out.println("Job name is " + job.getName());
 							if (job.getName().contains(config.getName()))
 								LaunchJobs.setLaunchJob(job);
 						}
 
 						@Override
 						public void done(IJobChangeEvent event) {
-//							System.out.println("Job " + event.getJob().getName() + " is done");
 						}
 					});
 					monitor.subTask(Messages.LaunchingConfig);
@@ -381,7 +363,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						@Override
 						public void run() {
 							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-//							System.out.println("about to join " + LaunchJobs.getLaunchJob());
 						}
 					});
 					if (LaunchJobs.getLaunchJob() != null) {
@@ -394,20 +375,15 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					}
 				}
-//				System.out.println("end");
 			} catch (InterruptedException e) {
-//				System.out.println("Interrupted exception");
 				throw e; // rethrow exception
 			} catch (CoreException e) {
-//				System.out.println("Core Exception");
 				e.printStackTrace();
 			} catch (StartupException e) {
 				// do nothing..just quit
 			} catch (Exception e) {
-//				System.out.println("Exception");
 				e.printStackTrace();
 			} finally {
-//				System.out.println("Finally");
 				monitor.done();
 			}
 		}

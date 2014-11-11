@@ -50,21 +50,18 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 			try {
 				final ILaunchConfiguration config = DebugExecutable.importAndCreateLaunchConfig(new NullProgressMonitor(), executable, buildLog, arguments, false);
 				if (config != null) {
-//					System.out.println("about to add job change listener");
 					final JobContainer LaunchJobs = new JobContainer();
 					Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
 
 						@Override
 						public void scheduled(IJobChangeEvent event) {
 							Job job = event.getJob();
-//							System.out.println("Job name is " + job.getName());
 							if (job.getName().contains(config.getName()))
 								LaunchJobs.setLaunchJob(job);
 						}
 
 						@Override
 						public void done(IJobChangeEvent event) {
-//							System.out.println("Job " + event.getJob().getName() + " is done");
 						}
 					});
 					Display.getDefault().syncExec(new Runnable() {
@@ -72,7 +69,6 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 						@Override
 						public void run() {
 							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-//							System.out.println("about to join " + LaunchJobs.getLaunchJob());
 						}
 					});
 					if (LaunchJobs.getLaunchJob() != null) {
@@ -85,21 +81,15 @@ public class DebugNewExecutableHandler extends AbstractHandler {
 						}
 					}
 				}
-//				System.out.println("end");
 			} catch (InterruptedException e) {
-//				System.out.println("Interrupted exception");
 				e.printStackTrace();
 			} catch (CoreException e) {
-//				System.out.println("Core Exception");
 				e.printStackTrace();
 			} catch (Exception e) {
-//				System.out.println("Exception");
 				e.printStackTrace();
 			} finally {
-				//		System.out.println("Finally");
 			}
 		}
-
 
 		return null;
 	}

@@ -87,13 +87,10 @@ public class BuildOptionsParser implements IWorkspaceRunnable, IMarkerGenerator 
 				br.close();
 			
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		monitor.done();

@@ -125,8 +125,6 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 						(ICompileOptionsFinder) reader;
 				for (String fileName : sourceFiles) {
 					parser.setCurrentResourceName(fileName);
-//					String cmdline = f.getCompileOptions(fileName);
-//					System.out.println("Command line is " + cmdline);
 					parser.processLine(f
 							.getCompileOptions(fileName));
 					monitor.worked(1);
@@ -135,10 +133,8 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 				monitor.worked(1);
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		monitor.done();
@@ -159,6 +155,4 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 
 		return currentFolder;
 	}
-
-
 };

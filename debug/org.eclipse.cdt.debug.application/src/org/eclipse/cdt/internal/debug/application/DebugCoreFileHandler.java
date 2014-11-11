@@ -43,31 +43,16 @@ public class DebugCoreFileHandler extends AbstractHandler {
 						@Override
 						public void run() {
 							DebugUITools.launch(config, ILaunchManager.DEBUG_MODE);
-							//							System.out.println("about to join " + LaunchJobs.getLaunchJob());
 						}
 					});
-					//				if (LaunchJobs.getLaunchJob() != null) {
-					//					try {
-					//						LaunchJobs.getLaunchJob().join();
-					//					} catch (InterruptedException e) {
-					//						IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
-					//								Messages.LaunchInterruptedError, e);
-					//						ResourcesPlugin.getPlugin().getLog().log(status);
-					//					}
-					//				}
 				}
-				//				System.out.println("end");
 			} catch (InterruptedException e) {
-				//				System.out.println("Interrupted exception");
 				e.printStackTrace();
 			} catch (CoreException e) {
-				//				System.out.println("Core Exception");
 				e.printStackTrace();
 			} catch (Exception e) {
-				//				System.out.println("Exception");
 				e.printStackTrace();
 			} finally {
-				//		System.out.println("Finally");
 			}
 		}
 

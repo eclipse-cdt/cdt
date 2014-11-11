@@ -46,6 +46,8 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 				PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.ENSURE_NEWLINE_AT_EOF));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
+				PreferenceConstants.FORMAT_SOURCE_CODE));
 
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -88,11 +90,14 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 				PreferenceConstants.REMOVE_TRAILING_WHITESPACE, fRadioEditedLines);
 		createDependency(checkboxTrailingWhitespace,
 				PreferenceConstants.REMOVE_TRAILING_WHITESPACE, fRadioAllLines);
-
+		
 		ControlFactory.createEmptySpace(composite, 1);
 
 		label = PreferencesMessages.SaveActionsPreferencePage_ensureNewline;
 		addCheckBox(composite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);
+		
+		label = PreferencesMessages.SaveActionsPreferencePage_formatSourceCode;
+		addCheckBox(composite, label, PreferenceConstants.FORMAT_SOURCE_CODE, 0);
 		
 		return composite;
 	}

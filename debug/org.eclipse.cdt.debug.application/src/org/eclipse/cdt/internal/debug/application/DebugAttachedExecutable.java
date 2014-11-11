@@ -160,7 +160,6 @@ public class DebugAttachedExecutable {
 			}
 		}
 
-		//						System.out.println("creating language settings providers");
 		// Create all the LanguageSettingsProviders
 		List<ILanguageSettingsProvider> providers = LanguageSettingsManager
 				.createLanguageSettingsProviders(langProviderIds);
@@ -171,13 +170,10 @@ public class DebugAttachedExecutable {
 
 		monitor.worked(1);
 
-		//						System.out.println("before setProjectDescription");
-
 		// Update the project description.
 		projDescManager.setProjectDescription(project,
 				projectDescription);
 
-		//						System.out.println("after setProjectDescription");
 
 		// Serialize the language settings for the project now in case we don't run a
 		// language settings provider which will do this in shutdown.
@@ -205,7 +201,7 @@ public class DebugAttachedExecutable {
 					activePage.closeAllEditors(false);
 			}
 		}
-		//					System.out.println("about to create launch configuration");
+
 		config = createConfiguration(true);
 		monitor.worked(1);
 		return config;
@@ -217,7 +213,6 @@ public class DebugAttachedExecutable {
 	}
 
 	protected static ILaunchConfiguration createConfiguration(boolean save) {
-		//		System.out.println("creating launch configuration");
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getLaunchConfigType();

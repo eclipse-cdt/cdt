@@ -21,7 +21,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
-		// TODO Auto-generated method stub
 		super.initialize(configurer);
 		configurer.setSaveAndRestore(false);
 	}

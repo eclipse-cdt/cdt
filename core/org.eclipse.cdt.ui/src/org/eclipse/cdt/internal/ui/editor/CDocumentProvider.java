@@ -14,8 +14,10 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
@@ -34,14 +36,22 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.formatter.FormattingContext;
+import org.eclipse.jface.text.formatter.FormattingContextProperties;
+import org.eclipse.jface.text.formatter.IFormattingContext;
+import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -69,6 +79,7 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -85,6 +96,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
+import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
 import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -697,6 +709,8 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	/** Annotation model listener added to all created CU annotation models */
 	private GlobalAnnotationModelListener fGlobalAnnotationModelListener;
 
+	private DocumentRewriteSession fRewriteSession;
+
 	public CDocumentProvider() {
 		super();
 		IDocumentProvider parentProvider= new ExternalSearchDocumentProvider();
@@ -897,16 +911,22 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 			try {
 				CoreException saveActionException= null;
+				ICProject cproject = null;
+				IProgressMonitor sub = getSubProgressMonitor(monitor, 20);
 				try {
-					performSaveActions(info.fTextFileBuffer, getSubProgressMonitor(monitor, 20));
+					// Project needed to obtain formatting preferences.
+					if (resource != null) {
+						cproject = CoreModel.getDefault().create(resource.getProject());
+					}
+					performSaveActions(cproject, info.fTextFileBuffer, sub);
 				} catch (CoreException e) {
 					saveActionException = e;
 				}
 
-				commitFileBuffer(monitor, info, overwrite);
+				commitFileBuffer(sub, info, overwrite);
 
 				if (saveActionException != null) {
-					throw saveActionException;
+					CUIPlugin.log(saveActionException);
 				}
 			} catch (CoreException x) {
 				// Inform about the failure
@@ -946,17 +966,41 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		return null;
 	}
 
+	private void formatCode(ICProject project, IDocument document) {
+		if (shouldStyleFormatCode() && project != null) {
+			final IFormattingContext context = new FormattingContext();
+			try {
+				context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, project.getOptions(true));
+				context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.valueOf(true));
+
+				final MultiPassContentFormatter formatter= new MultiPassContentFormatter(ICPartitions.C_PARTITIONING, IDocument.DEFAULT_CONTENT_TYPE);
+				formatter.setMasterStrategy(new CFormattingStrategy());
+				
+				try {
+					// Begin a single editing event
+					startSequentialRewriteMode(document);
+					formatter.format(document, context);
+				} finally {
+					stopSequentialRewriteMode(document);
+				}
+			} finally {
+			    context.dispose();
+			}
+		}	
+	}
+	
 	/**
 	 * Removes trailing whitespaces from changed lines and adds newline at the end of the file,
 	 * if the last line of the file was changed.
 	 * @throws BadLocationException
 	 */
-	private void performSaveActions(ITextFileBuffer buffer, IProgressMonitor monitor) throws CoreException {
-		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof()) {
+	private void performSaveActions(ICProject project, ITextFileBuffer buffer, IProgressMonitor monitor) throws CoreException {
+		if (shouldRemoveTrailingWhitespace() || shouldAddNewlineAtEof() || shouldStyleFormatCode()) {
 			IRegion[] changedRegions= needsChangedRegions() ?
 					EditorUtility.calculateChangedLineRegions(buffer, getSubProgressMonitor(monitor, 20)) :
 				    null;
 			IDocument document = buffer.getDocument();
+			formatCode(project, document);
 			TextEdit edit = createSaveActionEdit(document, changedRegions);
 			if (edit != null) {
 				try {
@@ -979,6 +1023,11 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 	}
 
+	private static boolean shouldStyleFormatCode() {
+		return PreferenceConstants.getPreferenceStore().getBoolean(
+				PreferenceConstants.FORMAT_SOURCE_CODE);
+	}
+	
 	private static boolean shouldAddNewlineAtEof() {
 		return PreferenceConstants.getPreferenceStore().getBoolean(
 				PreferenceConstants.ENSURE_NEWLINE_AT_EOF);
@@ -1065,6 +1114,28 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			CUIPlugin.log(e);
 		}
 		return rootEdit;
+	}
+
+	@SuppressWarnings("deprecation")
+	private void startSequentialRewriteMode(IDocument document) {
+		if (document instanceof IDocumentExtension4) {
+			IDocumentExtension4 extension= (IDocumentExtension4) document;
+			fRewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
+		} else if (document instanceof IDocumentExtension) {
+			IDocumentExtension extension= (IDocumentExtension) document;
+			extension.startSequentialRewrite(false);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void stopSequentialRewriteMode(IDocument document) {
+		if (document instanceof IDocumentExtension4) {
+			IDocumentExtension4 extension= (IDocumentExtension4) document;
+			extension.stopRewriteSession(fRewriteSession);
+		} else if (document instanceof IDocumentExtension) {
+			IDocumentExtension extension= (IDocumentExtension)document;
+			extension.stopSequentialRewrite();
+		}
 	}
 
 //	private static boolean isWhitespaceRegion(IDocument document, IRegion region) throws BadLocationException {

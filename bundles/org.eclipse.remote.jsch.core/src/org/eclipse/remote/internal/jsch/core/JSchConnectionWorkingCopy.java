@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Corporation - Initial API and implementation
+ *    IBM Corporation - Initial API and implementation
+ *    Markus Schorn - Bug 449306: Unnecessary access to secure storage.
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
@@ -187,8 +188,7 @@ public class JSchConnectionWorkingCopy extends JSchConnection implements IRemote
 		JSchConnectionAttributes info = fOriginal.getInfo();
 		info.getAttributes().clear();
 		info.getAttributes().putAll(fWorkingAttributes.getAttributes());
-		info.getSecureAttributes().clear();
-		info.getSecureAttributes().putAll(fWorkingAttributes.getSecureAttributes());
+		info.setSecureAttributes(fWorkingAttributes.getSecureAttributes());
 		if (!getName().equals(info.getName())) {
 			info.setName(getName());
 			getManager().remove(fOriginal);

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionManager;
@@ -33,6 +34,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -45,6 +47,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -79,6 +82,7 @@ public class JSchConnectionPage extends WizardPage {
 	private final DataModifyListener fDataModifyListener = new DataModifyListener();
 	private RemoteConnectionWidget fProxyConnectionWidget;
 	private Text fProxyCommandText;
+	private static final String PREFS_PAGE_ID_NET_PROXY = "org.eclipse.ui.net.NetPreferences"; //$NON-NLS-1$
 
 	public JSchConnectionPage(IRemoteConnectionManager connMgr) {
 		super(Messages.JSchNewConnectionPage_New_Connection);
@@ -289,6 +293,19 @@ public class JSchConnectionPage extends WizardPage {
 		Link link = new Link(proxyComp, SWT.WRAP);
 		final GridData linkLayoutData = new GridData(GridData.FILL_HORIZONTAL);
 		link.setLayoutData(linkLayoutData);
+		link.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PreferenceDialog dlg = PreferencesUtil.createPreferenceDialogOn(getShell(), PREFS_PAGE_ID_NET_PROXY,
+						new String[] { PREFS_PAGE_ID_NET_PROXY }, null);
+				dlg.open();
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// ignore
+			}
+		});
+
 		linkLayoutData.widthHint = 400;
 		link.setText(Messages.JSchConnectionPage_Help);
 	}

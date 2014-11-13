@@ -49,6 +49,7 @@ public class MIThread {
 		this(threadId, targetId, osId, parentId, topFrame, details, state, core, null);
 	}
 
+	/** @since 4.6 */
 	protected MIThread(String threadId, String targetId, String osId, String parentId,
 					   MIFrame topFrame, String details, String state, String core,
 					   String name) {
@@ -76,6 +77,7 @@ public class MIThread {
 	 */
 	public String getCore()           { return fCore; }
 
+	/** @since 4.6 */
 	public String getName()           { return fName; }
 
 	public static MIThread parse(MITuple tuple) {

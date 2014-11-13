@@ -93,17 +93,16 @@ public class MIThread {
         String core = null;
         String name = null;
 
-        for (int j = 0; j < results.length; j++) {
-            MIResult result = results[j];
+        for (MIResult result : results) {
             String var = result.getVariable();
             if (var.equals("id")) { //$NON-NLS-1$
-                MIValue val = results[j].getMIValue();
+                MIValue val = result.getMIValue();
                 if (val instanceof MIConst) {
                     threadId = ((MIConst) val).getCString().trim();
                 }
             }
             else if (var.equals("target-id")) { //$NON-NLS-1$
-                MIValue val = results[j].getMIValue();
+                MIValue val = result.getMIValue();
                 if (val instanceof MIConst) {
                     targetId = ((MIConst) val).getCString().trim();
                     osId = parseOsId(targetId);
@@ -111,29 +110,29 @@ public class MIThread {
                 }
             }
             else if (var.equals("frame")) { //$NON-NLS-1$
-                MITuple val = (MITuple)results[j].getMIValue();
+                MITuple val = (MITuple)result.getMIValue();
                 topFrame = new MIFrame(val);
             }
             else if (var.equals("state")) { //$NON-NLS-1$
-                MIValue val = results[j].getMIValue();
+                MIValue val = result.getMIValue();
                 if (val instanceof MIConst) {
                     state = ((MIConst) val).getCString().trim();
                 }
             }
             else if (var.equals("details")) { //$NON-NLS-1$
-                MIValue val = results[j].getMIValue();
+                MIValue val = result.getMIValue();
                 if (val instanceof MIConst) {
                     details = ((MIConst) val).getCString().trim();
                 }
             }
             else if (var.equals("core")) { //$NON-NLS-1$
-                MIValue val = results[j].getMIValue();
+                MIValue val = result.getMIValue();
                 if (val instanceof MIConst) {
                     core = ((MIConst) val).getCString().trim();
                 }
             }
             else if (var.equals("name")) { //$NON-NLS-1$
-                MIValue val = results[j].getMIValue();
+                MIValue val = result.getMIValue();
                 if (val instanceof MIConst) {
                     name = ((MIConst) val).getCString().trim();
                 }

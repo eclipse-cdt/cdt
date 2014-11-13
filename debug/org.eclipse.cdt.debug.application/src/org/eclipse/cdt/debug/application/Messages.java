@@ -53,6 +53,9 @@ public class Messages extends NLS {
 	public static String GdbDebugNewExecutableCommand_Select_binaries_on_host_and_target;
 	public static String GdbDebugNewExecutableCommand_Select_Binary;
 	public static String GdbDebugNewExecutableCommand_Select_binary_and_specify_arguments;
+	public static String GdbDebugRemoteExecutableCommand_address_must_be_specified;
+	public static String GdbDebugRemoteExecutableCommand_port_must_be_specified;
+	public static String GdbDebugRemoteExecutableCommand_port_must_be_a_number;
 	public static String GdbDebugCoreFileCommand_CoreFile;
 	public static String GdbDebugCoreFileCommand_Debug_Core_File;
 	public static String GdbDebugCoreFileCommand_Select_binary_and_specify_corefile;
@@ -90,6 +93,8 @@ public class Messages extends NLS {
 	public static String CoreFile_toolTip;
 	public static String NewExecutable_toolTip;
 	public static String NewExecutableMenuName;
+	public static String RemoteExecutable_toolTip;
+	public static String RemoteExecutableMenuName;
 	public static String AttachedExecutable_toolTip;
 	public static String AttachedExecutableMenuName;
 

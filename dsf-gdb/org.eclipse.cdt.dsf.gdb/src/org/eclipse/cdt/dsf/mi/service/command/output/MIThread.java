@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Wind River Systems - refactored to match pattern in package
  *     John Dallaway - GDB 7.x getOsId() pattern match too restrictive (Bug 325552)
  *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
+ *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -128,7 +129,10 @@ public class MIThread {
     private static Pattern fgOsIdPattern3 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\S+)", 0); //$NON-NLS-1$
     private static Pattern fgOsIdPattern4 = Pattern.compile("[Pp][Rr][Oo][Cc][Ee][Ss][Ss]\\s*(\\S+)", 0); //$NON-NLS-1$
 
-    static String parseOsId(String str) {
+    /**
+	 * @since 4.6
+	 */
+    protected static String parseOsId(String str) {
         // General format:
         //      "Thread 0xb7c8ab90 (LWP 7010)"
     	//                              ^^^^
@@ -169,8 +173,9 @@ public class MIThread {
 	 * This is used to parse the same ID fed to {@link #parseOsId(String)}. The
 	 * difference is that we return the first portion when the ID is in format
 	 * "Thread pppp.tttt". If the ID is not in that format, we return null.
+	 * @since 4.6
 	 */
-    static String parseParentId(String str) {
+    protected static String parseParentId(String str) {
         // General format:
         //      "Thread 162.32942"
     	//              ^^^

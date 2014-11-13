@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Red Hat Inc. - initial API and implementation
+ *    Marc Khouzam (Ericsson) - Update for remote debugging support (bug 450080)
  *******************************************************************************/
 package org.eclipse.cdt.debug.application;
 
@@ -22,6 +23,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.internal.debug.application.DebugAttachedExecutable;
 import org.eclipse.cdt.internal.debug.application.DebugCoreFile;
 import org.eclipse.cdt.internal.debug.application.DebugExecutable;
+import org.eclipse.cdt.internal.debug.application.DebugRemoteExecutable;
 import org.eclipse.cdt.internal.debug.application.JobContainer;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -139,6 +141,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			String corefile = null;
 			String buildLog = null;
 			String arguments = null;
+			String remoteAddress = null;
+			String remotePort = null;
 			String[] args = Platform.getCommandLineArgs();
 
 			try {
@@ -154,6 +158,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 					else if ("-a".equals(args[i])) {
 						attachExecutable = true;
+						// Make sure 'executable' is still null in case we are dealing with a remote
+						// session that is also an attach, as the -r flag could have been set first
+						executable = null;
 					}
 					else if ("-c".equals(args[i])) {
 						++i;
@@ -161,6 +168,18 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						executable = "";
 						if (i < args.length)
 							corefile = args[i];
+					}
+					else if ("-r".equals(args[i])) {
+						++i;
+						remoteAddress = "";
+						if (!attachExecutable) executable = "";
+						if (i < args.length) {
+							String[] params = args[i].split(":");
+							if (params.length == 2) {
+								remoteAddress = params[0];
+								remotePort = params[1];
+							}
+						}
 					}
 					else if ("-e".equals(args[i])) {
 						++i;
@@ -222,6 +241,61 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						executable = info.getHostPath();
 						corefile = info.getCoreFilePath();
 					}
+				} else if (remoteAddress != null) {
+					// Verify what we can about the port, address and executable.
+					File executableFile = null;
+					if (executable != null) {
+						executableFile = new File(executable);
+						executable = executableFile.getCanonicalPath();
+					}
+					
+					Integer port = null;
+					try {
+						port = Integer.parseInt(remotePort);
+					} catch (NumberFormatException e) {
+						port = null;
+					}
+					
+					if (executable == null || !executableFile.exists() ||
+							remoteAddress.length() == 0 || port == null) {
+						final RemoteExecutableInfo[] info = new RemoteExecutableInfo[1];
+						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
+								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
+						final String executablePath = executable;
+						final String addressStr = remoteAddress;
+						final String portStr = remotePort;
+						final String buildLogPath = buildLog;
+						
+						Display.getDefault().syncExec(new Runnable() {
+
+							@Override
+							public void run() {
+
+								RemoteExecutableDialog dialog = new RemoteExecutableDialog(getWindowConfigurer().getWindow().getShell(),
+										executablePath, buildLogPath, addressStr, portStr);
+								dialog.setBlockOnOpen(true);
+								if (dialog.open() == IDialogConstants.OK_ID) {
+									info[0] = dialog.getExecutableInfo();
+								} else {
+									info[0] = null;
+									ErrorDialog.openError(null,
+											Messages.DebuggerInitializingProblem, null, errorStatus,
+											IStatus.ERROR | IStatus.WARNING);
+								}
+							}
+						});
+						// Check and see if we failed above and if so, quit
+						if (info[0] == null) {
+							monitor.done();
+							// throw internal exception which will be caught below
+							throw new StartupException(errorStatus.getMessage());
+						}
+						executable = info[0].getHostPath();
+						buildLog = info[0].getBuildLog();
+						remoteAddress = info[0].getAddress();
+						remotePort = info[0].getPort();
+						attachExecutable = info[0].isAttach();
+					}
 				} else if (executable != null) {
 					File executableFile = new File(executable);
 					executable = executableFile.getCanonicalPath();
@@ -268,7 +342,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					}
 				}
 				monitor.worked(1);
-				if (attachExecutable) {
+				if (remoteAddress != null && remoteAddress.length() > 0 && remotePort.length() > 0) {
+					config = DebugRemoteExecutable.createLaunchConfig(monitor, buildLog, executable, remoteAddress, remotePort, attachExecutable);
+				} else if (attachExecutable) {
 					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog);
 				} else if (corefile != null && corefile.length() > 0) {
 					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);

@@ -175,8 +175,8 @@ public class GDBProcessesTest extends BaseTestCase {
     	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher(threadData.getId());
 		assertTrue("Thread ID is a series of number", matcher.find());
-    	// Name is blank in case of GDB back end
-    	assertEquals("Thread name is should have been blank for GDB Back end", "", threadData.getName());
+		// Check thread name
+		assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
     	
     	fWait.waitReset(); 
 	}

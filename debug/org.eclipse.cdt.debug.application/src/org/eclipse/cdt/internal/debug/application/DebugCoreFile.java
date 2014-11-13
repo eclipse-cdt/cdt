@@ -49,8 +49,7 @@ public class DebugCoreFile {
 	}
 
 	protected static ILaunchConfigurationType getLaunchConfigType() {
-		return getLaunchManager().getLaunchConfigurationType(
-				"org.eclipse.cdt.launch.postmortemLaunchType"); //$NON-NLS-1$
+		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM);				
 	}
 	
 	protected static ILaunchConfiguration createConfiguration(String corePath, String exePath, boolean save) {

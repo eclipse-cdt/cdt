@@ -274,8 +274,7 @@ public class DebugExecutable {
 	}
 
 	protected static ILaunchConfigurationType getLaunchConfigType() {
-		return getLaunchManager().getLaunchConfigurationType(
-				"org.eclipse.cdt.launch.applicationLaunchType"); //$NON-NLS-1$
+		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
 	}
 	
 	protected static ILaunchConfiguration createConfiguration(String bin,

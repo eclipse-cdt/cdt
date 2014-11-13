@@ -208,8 +208,7 @@ public class DebugAttachedExecutable {
 	}
 
 	protected static ILaunchConfigurationType getLaunchConfigType() {
-		return getLaunchManager().getLaunchConfigurationType(
-				"org.eclipse.cdt.launch.attachLaunchType"); //$NON-NLS-1$
+		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
 	}
 
 	protected static ILaunchConfiguration createConfiguration(boolean save) {

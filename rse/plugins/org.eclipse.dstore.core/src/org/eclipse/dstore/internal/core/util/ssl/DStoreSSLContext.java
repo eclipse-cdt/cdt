@@ -17,11 +17,13 @@
  * David McKnight  (IBM) - [259905][api] provide public API for getting/setting key managers for SSLContext
  * David McKnight  (IBM)  - [264858][dstore] OpenRSE always picks the first trusted certificate
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM) - [451405] need to be able to specify the SSL/TLS algorithm used by DSTORE
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util.ssl;
 
 import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -37,6 +39,7 @@ import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 public class DStoreSSLContext
 {
+	private final static String _defaultAlg = "SSL"; //$NON-NLS-1$ // original algorithm
 	
 	public static SSLContext getServerSSLContext(String filePath, String password)
 	{
@@ -44,6 +47,11 @@ public class DStoreSSLContext
 
 		try
 		{
+			String alg = System.getProperty("DSTORE_SSL_ALGORITHM");  //$NON-NLS-1$
+			if (alg == null || alg.length() == 0){
+				alg = _defaultAlg;
+			}
+			
 			KeyManager[] keyManagers = BaseSSLContext.getKeyManagers();
 			if (keyManagers == null)
 			{
@@ -51,8 +59,14 @@ public class DStoreSSLContext
 				String keymgrAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
 				KeyManagerFactory kmf = KeyManagerFactory.getInstance(keymgrAlgorithm);
 				kmf.init(ks, password.toCharArray());								
-	
-				serverContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+				
+				try {				
+					serverContext = SSLContext.getInstance(alg);
+				}
+				catch (NoSuchAlgorithmException e){
+					// fall back to plain "SSL"		
+					serverContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+				}
 				
 				keyManagers = kmf.getKeyManagers();
 				
@@ -74,7 +88,7 @@ public class DStoreSSLContext
 			}
 			else
 			{
-				serverContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+				serverContext = SSLContext.getInstance(alg);
 				serverContext.init(keyManagers, null, null);
 			}
 			
@@ -90,18 +104,27 @@ public class DStoreSSLContext
 	public static SSLContext getClientSSLContext(String filePath, String password, IDataStoreTrustManager trustManager)
 	{
 		SSLContext clientContext = null;
-
+		String alg = System.getProperty("DSTORE_SSL_ALGORITHM");  //$NON-NLS-1$
+		if (alg == null || alg.length() == 0){
+			// default alg
+			alg = _defaultAlg;
+		}
 		try
 		{
-			trustManager.setKeystore(filePath, password);			
-			clientContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+			trustManager.setKeystore(filePath, password);				
+			try {				
+				clientContext = SSLContext.getInstance(alg);
+			}
+			catch (NoSuchAlgorithmException e){
+				// fall back to plain "SSL"		
+				clientContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
+			}
 			TrustManager[] mgrs = new TrustManager[1];
 			mgrs[0] = trustManager;
-			
-			
+						
 			KeyManager[] keyManagers = BaseSSLContext.getKeyManagers();
 			clientContext.init(keyManagers, mgrs, null);
-			}
+		}			
 		catch (Exception e)
 		{
 			e.printStackTrace();
@@ -110,5 +133,4 @@ public class DStoreSSLContext
 		return clientContext;		
 	}
 	
-
 }

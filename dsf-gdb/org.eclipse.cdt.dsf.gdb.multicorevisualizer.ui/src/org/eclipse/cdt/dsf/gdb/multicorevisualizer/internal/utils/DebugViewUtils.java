@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 451392
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -75,5 +76,14 @@ public class DebugViewUtils
 		TreeModelViewer viewer = DebugViewUtils.getDebugViewer();
 		if (viewer == null || selection == null) return false;
 		return viewer.trySelection(selection, true, true);
+    }
+    
+    /**
+     * Returns the debug view selection.
+     */
+    public static ISelection getDebugViewSelection() {
+    	TreeModelViewer viewer = DebugViewUtils.getDebugViewer();
+    	if (viewer == null) return null;
+    	return viewer.getSelection();
     }
 }

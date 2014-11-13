@@ -130,6 +130,8 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 
 	public IDynamicVariable getDynamicVariable(String name) {
 		IDynamicVariable var = variableManager.getDynamicVariable(name);
+		if (var == null)
+			return null;
 		return substituteVariable(var);
 	}
 

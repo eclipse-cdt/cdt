@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
+ *     Simon Marchi (Ericsson) - Pass thread name from MIThread to the data model.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -177,6 +178,8 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 				        		MIThread thread = getData().getThreadList()[0];
 				        		if (thread.getThreadId().equals(threadDmc.getId())) {
 				        			String id = ""; //$NON-NLS-1$
+				        			String name;
+
 				        			if (thread.getOsId() != null) {
 				        				id = thread.getOsId();
 				        			}
@@ -190,8 +193,10 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
         	        				// We must indicate and empty id by using null
 				        			if (id.isEmpty()) id = null;
 				        			
+				        			name = thread.getName();
+				        			
 				        			String core = thread.getCore();
-				        			threadData = new MIThreadDMData_7_1("", id, //$NON-NLS-1$
+				        			threadData = new MIThreadDMData_7_1(name, id, //$NON-NLS-1$
 				        					                            core == null ? null : new String[] { core });
 				        		}
 				        	}

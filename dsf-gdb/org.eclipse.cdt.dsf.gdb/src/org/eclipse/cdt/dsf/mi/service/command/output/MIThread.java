@@ -69,6 +69,7 @@ public class MIThread {
 	public MIFrame getTopFrame()      { return fTopFrame; } 
 	public String getDetails()        { return fDetails;  }
 	public String getState()          { return fState;    }
+	public String getName()           { return fName;     }
 	/**
 	 * Available since GDB 7.1
 	 * @since 4.0

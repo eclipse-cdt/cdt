@@ -19,6 +19,7 @@
  *     Xavier Raynaud (kalray) - Bug 431935
  *     Marc Dumais (Ericsson) - Bug 441713
  *     Marc Dumais (Ericsson) - Bug 442312
+ *     Marc Dumais (Ericsson) - Bug 451392
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -86,6 +87,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -127,6 +129,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	
 	/** Model changed listener, attached to Debug View. */
 	protected IModelChangedListener m_modelChangedListener = null;
+	
+	/** Debug view selection changed listener, attached to Debug View. */
+	protected ISelectionChangedListener m_debugViewSelectionChangedListener = null;
+	
 	
 	// These two arrays are used to cache the CPU and core
 	// contexts, each time the model is recreated.  This way
@@ -751,7 +757,19 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 						}});
 					}
 				};
+				m_debugViewSelectionChangedListener = 
+						new ISelectionChangedListener() {
+							@Override
+							public void selectionChanged(SelectionChangedEvent event) {
+								// Execute a refresh after any pending UI updates.
+								GUIUtils.exec( new Runnable() { @Override public void run() {
+									// Update canvas selection to match to dbg view selection
+									updateCanvasSelectionFromDebugView();
+								}});
+							}
+						};
 				m_debugViewer.addModelChangedListener(m_modelChangedListener);
+				m_debugViewer.addSelectionChangedListener(m_debugViewSelectionChangedListener);
 			}
 		}
 	}
@@ -759,11 +777,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Removes debug viewer listener. */
 	protected void removeDebugViewerListener()
 	{
-		if (m_modelChangedListener != null) {
+		if (m_modelChangedListener != null && m_debugViewSelectionChangedListener != null) {
 			if (m_debugViewer != null) {
 				m_debugViewer.removeModelChangedListener(m_modelChangedListener);
+				m_debugViewer.removeSelectionChangedListener(m_debugViewSelectionChangedListener);
 				m_debugViewer = null;
 				m_modelChangedListener = null;
+				m_debugViewSelectionChangedListener = null;
 			}
 		}
 	}
@@ -1050,6 +1070,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	protected void updateCanvasSelectionInternal()
 	{
 		updateCanvasSelectionInternal(SelectionUtils.getWorkbenchSelection());
+	}
+	
+	/** Updates canvas selection from current debug view selection.
+	 *  Note: this method assumes it is called on the UI thread. */
+	protected void updateCanvasSelectionFromDebugView()
+	{
+		updateCanvasSelectionInternal(DebugViewUtils.getDebugViewSelection());
 	}
 	
 	/** Updates canvas selection from current workbench selection.

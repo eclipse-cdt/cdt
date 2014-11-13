@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - Initial API and implementation
  *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
+ *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -316,7 +317,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 						}
 					} else if (var.equals("threads")) { //$NON-NLS-1$
 						// Re-use the MIThreadInfoInfo parsing
-						fThreadInfo = new MIThreadInfoInfo(out);
+						fThreadInfo = createMIThreadInfoInfo(out);
 					}
 				}
 			}
@@ -325,10 +326,17 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			fGroupList = new IThreadGroupInfo[0];
 		}
 		if (fThreadInfo == null) {
-			fThreadInfo = new MIThreadInfoInfo(null);
+			fThreadInfo = createMIThreadInfoInfo(null);
 		}
 	}
 
+	/**
+	 * @since 4.6
+	 */
+	protected MIThreadInfoInfo createMIThreadInfoInfo(MIOutput output) {
+		return new MIThreadInfoInfo(output);
+	}
+	
 	/** @since 4.4 */
 	protected void parseGroups(MIList list) {
 		MIValue[] values = list.getMIValues();

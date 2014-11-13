@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
+ *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -176,23 +177,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 				        	if (getData().getThreadList().length != 0) {
 				        		MIThread thread = getData().getThreadList()[0];
 				        		if (thread.getThreadId().equals(threadDmc.getId())) {
-				        			String id = ""; //$NON-NLS-1$
-				        			if (thread.getOsId() != null) {
-				        				id = thread.getOsId();
-				        			}
-        	        				// append thread details (if any) to the thread ID
-        	        				// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
-        	        				final String details = thread.getDetails();
-        	        				if (details != null && details.length() > 0) {
-        	        					if (!id.isEmpty()) id += " "; //$NON-NLS-1$
-        	        					id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-        	        				}
-        	        				// We must indicate and empty id by using null
-				        			if (id.isEmpty()) id = null;
-				        			
-				        			String core = thread.getCore();
-				        			threadData = new MIThreadDMData_7_1("", id, //$NON-NLS-1$
-				        					                            core == null ? null : new String[] { core });
+				        			threadData = createThreadDMData(thread);
 				        		}
 				        	}
 
@@ -208,6 +193,29 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
 			rm.done();
 		}
+	}
+	
+	/**
+	 * @since 4.6
+	 */
+	protected IGdbThreadDMData createThreadDMData(MIThread thread) {
+		String id = ""; //$NON-NLS-1$
+		if (thread.getOsId() != null) {
+			id = thread.getOsId();
+		}
+		// append thread details (if any) to the thread ID
+		// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
+		final String details = thread.getDetails();
+		if (details != null && details.length() > 0) {
+			if (!id.isEmpty()) id += " "; //$NON-NLS-1$
+			id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		// We must indicate and empty id by using null
+		if (id.isEmpty()) id = null;
+		
+		String core = thread.getCore();
+		return new MIThreadDMData_7_1("", id, //$NON-NLS-1$
+				                            core == null ? null : new String[] { core });
 	}
 	
 	@DsfServiceEventHandler

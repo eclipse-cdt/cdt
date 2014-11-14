@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_ffb9e166",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T18:37:41Z",
+      "side": 1,
+      "message": "Bug 378154 - Display thread name reported by GDB in Debug view",
+      "revId": "23b47b401c755c9ae41f6d6419b0a3c3e467af31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_9f554d99",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T18:37:41Z",
+      "side": 1,
+      "message": "Space after name.",
+      "revId": "23b47b401c755c9ae41f6d6419b0a3c3e467af31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_df0a255f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T17:17:31Z",
+      "side": 1,
+      "message": "Please replace\n2010\nwith\n2010, 2014",
+      "revId": "600b60ba5923a2f9513ee05fd78078232ad2710a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3f0cf979",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T17:17:31Z",
+      "side": 1,
+      "message": "Please add bug number.  Note that a bug can be used for different git commits.",
+      "revId": "600b60ba5923a2f9513ee05fd78078232ad2710a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_df950546",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T17:17:31Z",
+      "side": 1,
+      "message": "You can declare right above where it is used.  Or you could not use it at all and call thread.getName() directly.",
+      "revId": "600b60ba5923a2f9513ee05fd78078232ad2710a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_fffba184",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T17:17:31Z",
+      "side": 1,
+      "message": "Remove //$NON_NLS_1$\nWe add those comments next to lines that have a hard-coded string that should not be translated to another language.\nWhen you removed the \"\", you can remove the NLS comment.\nYou should have seen a warning in Eclipse because of this.",
+      "revId": "600b60ba5923a2f9513ee05fd78078232ad2710a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ff056150",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T17:17:31Z",
+      "side": 1,
+      "message": "Please rename to getThreadName(). I realize that in MIThread, getName() should apply to a thread name, but one can imagine that the thread may know the name of its parent for example.  Just like we use getThreadId()",
+      "revId": "600b60ba5923a2f9513ee05fd78078232ad2710a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

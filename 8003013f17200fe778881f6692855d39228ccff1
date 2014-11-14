@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_9f6eedf0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-14T17:59:08Z",
+      "side": 1,
+      "message": "Do I add an @since notice to the new one?\n\nI will add a getName() method as well, I guess it needs an @since too?",
+      "parentUuid": "a766b734_dfb86513",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_3fba3909",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
         "patchSetId": 7
@@ -64,6 +82,24 @@
       "writtenOn": "2014-11-14T16:27:59Z",
       "side": 1,
       "message": "Please follow file format and put the \u0027else if\u0027 on a separate line.",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_df5d05f7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-14T17:59:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_3fba3909",
       "revId": "8003013f17200fe778881f6692855d39228ccff1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

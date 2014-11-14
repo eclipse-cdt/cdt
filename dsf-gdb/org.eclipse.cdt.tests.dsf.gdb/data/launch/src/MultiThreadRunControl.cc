@@ -21,7 +21,7 @@ void firstBreakpoint(long id)
   
 
 #ifdef __MINGW32__
-unsigned int __stdcall PrintHello(void *threadid)
+unsigned int __stdcall PrintHello(void *threadId)
 #else
 void *PrintHello(void *threadId)
 #endif

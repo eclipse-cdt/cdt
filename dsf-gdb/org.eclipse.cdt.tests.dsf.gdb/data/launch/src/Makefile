@@ -1,17 +1,37 @@
-src = $(wildcard *.cc *.c)
-destDir = ../bin
-GCCFLAGS = -gdwarf-2 -pthread
+BINDIR = ../bin
+SRC_C = $(wildcard *.c)
+SRC_CXX = $(wildcard *.cc)
 
-all:
-	@mkdir -p $(destDir)
-# Name the target with an .exe extension so that CVS does not
-# include it when making a patch
-	@for file in $(src) ; \
-	do \
-		target=`basename $$file .c` ; \
-		target=`basename $$target .cc` ; \
-		g++ $(GCCFLAGS) $$file -o $(destDir)/$$target.exe ; \
-	done
-# Now generate the core file that we need for the post-mortem core-file tests
-	@gdb --nx --batch -ex "b testLocals" -ex run -ex "next 16" -ex "gcore ../bin/core" \
-	../bin/ExpressionTestApp.exe > /dev/null
+# Use .exe extension so that files are named the same way in Linux and Windows.
+BINS = $(patsubst %.c,$(BINDIR)/%.exe,$(SRC_C)) $(patsubst %.cc,$(BINDIR)/%.exe,$(SRC_CXX))
+COREFILE = $(BINDIR)/core
+
+CC = gcc
+CFLAGS = -gdwarf-2 -pthread
+
+CXX = g++
+CXXFLAGS = -gdwarf-2 -pthread
+
+MKDIR = mkdir -p
+RM = rm -f
+RMDIR = rmdir
+
+.PHONY: all clean
+
+all: $(BINS) $(COREFILE)
+
+$(BINDIR):
+	$(MKDIR) $@
+
+$(BINDIR)/%.exe: %.c | $(BINDIR)
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(BINDIR)/%.exe: %.cc | $(BINDIR)
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+# Generate a core file that is needed for post-morted core-file tests
+$(COREFILE): $(BINDIR)/ExpressionTestApp.exe | $(BINDIR)
+	gdb -nx --batch -ex 'b testLocals' -ex 'run' --ex 'next 16' -ex 'gcore ../bin/core' $(BINDIR)/ExpressionTestApp.exe
+
+clean:
+	$(RM) -r $(BINDIR)

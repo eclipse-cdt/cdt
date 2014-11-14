@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_df1065de",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-14T18:52:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_3f4519ee",
+      "revId": "ff07860fd5a80ecf8d412cb9c1e94fbdf4cda47f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_1f4addfd",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
         "patchSetId": 10
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_3f1239e4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-14T18:52:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_1f4addfd",
+      "revId": "ff07860fd5a80ecf8d412cb9c1e94fbdf4cda47f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_7f62f180",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
         "patchSetId": 10
@@ -47,6 +83,24 @@
       "writtenOn": "2014-11-14T18:33:23Z",
       "side": 1,
       "message": "@since tag",
+      "revId": "ff07860fd5a80ecf8d412cb9c1e94fbdf4cda47f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_1f177dd4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-14T18:52:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_7f62f180",
       "revId": "ff07860fd5a80ecf8d412cb9c1e94fbdf4cda47f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

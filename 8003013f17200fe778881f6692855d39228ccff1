@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_5fd455b4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T18:09:34Z",
+      "side": 1,
+      "message": "Anything public or protected (part of non-internal packages) needs a @since when added.  The API Tooling will tell you all that.",
+      "parentUuid": "a766b734_9f6eedf0",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_3fba3909",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
         "patchSetId": 7

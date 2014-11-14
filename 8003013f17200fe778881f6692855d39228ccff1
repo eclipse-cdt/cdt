@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_1c64ab3b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T16:27:59Z",
+      "side": 1,
+      "message": "Change 2013 to 2104.  We only keep the first and last date, and we update the last date to the current year when making a change.",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7c5cbf76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T16:27:59Z",
+      "side": 1,
+      "message": "Please add bug number at the end.  If there is no bug, please open one.  For features, we still require a bugzilla.",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_dfb86513",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T16:27:59Z",
+      "side": 1,
+      "message": "Can\u0027t modify an existing public/protected method signature.  Please create a new one instead, and make the original call the new one.",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3fba3909",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIThread.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-14T16:27:59Z",
+      "side": 1,
+      "message": "Please follow file format and put the \u0027else if\u0027 on a separate line.",
+      "revId": "8003013f17200fe778881f6692855d39228ccff1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

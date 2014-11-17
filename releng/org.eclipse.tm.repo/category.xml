@@ -21,9 +21,6 @@
    <feature url="features/org.eclipse.rse.scp_0.0.0.jar" id="org.eclipse.rse.scp" version="0.0.0">
       <category name="tm_37_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.sdk" version="0.0.0">
-      <category name="tm_37_main"/>
-   </feature>
    <feature url="features/org.eclipse.tm.terminal.core.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.core.sdk" version="0.0.0">
       <category name="tm_37_main"/>
    </feature>

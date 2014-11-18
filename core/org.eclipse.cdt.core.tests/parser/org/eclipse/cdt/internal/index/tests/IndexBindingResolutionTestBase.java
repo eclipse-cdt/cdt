@@ -334,7 +334,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
         {
             shouldVisitNames = true;
         }
-        public List<IASTName> nameList = new ArrayList<IASTName>();
+        public List<IASTName> nameList = new ArrayList<>();
 
         @Override
 		public int visit(IASTName name) {
@@ -559,8 +559,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		public SinglePDOMTestNamedFilesStrategy(boolean cpp) {
 			this.cpp = cpp;
-			astSources = new ArrayList<StringBuilder>();
-			asts = new ArrayList<IASTTranslationUnit>();
+			astSources = new ArrayList<>();
+			asts = new ArrayList<>();
 		}
 
 		@Override
@@ -596,7 +596,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 0);
 
-			List<IFile> astFiles = new ArrayList<IFile>();
+			List<IFile> astFiles = new ArrayList<>();
 			for (int i = 0; i < testData.length; i++) {
 				StringBuilder contents = testData[i];
 				int endOfLine = contents.indexOf("\n");

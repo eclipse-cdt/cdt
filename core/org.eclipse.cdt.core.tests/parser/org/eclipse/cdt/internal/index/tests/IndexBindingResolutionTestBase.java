@@ -16,7 +16,9 @@ package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -62,7 +64,7 @@ import org.osgi.framework.Bundle;
  * then it is assumed to have come from a file which is already indexed.
  *
  * This class is for testing the process by which bindings are looked up in
- * the PDOM purely from AST information (i.e. without a real binding from the DOM)
+ * the PDOM purely from AST information (i.e. without a real binding from the DOM).
  */
 public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	private static final boolean DEBUG= false;
@@ -548,6 +550,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * The first line of each comment section preceding the test contains the name of the file
 	 * to put the contents of the section to. To request the AST of a file, put an asterisk after
 	 * the file name.
+	 *
+	 * If the same file name is repeated more than once, the file will be created and then updated
+	 * with the new contents. It is guaranteed that the indexer will run for the original and then
+	 * for the updated file contents.
 	 */
 	protected class SinglePDOMTestNamedFilesStrategy implements ITestStrategy {
 		private IIndex index;
@@ -597,27 +603,41 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 0);
 
 			List<IFile> astFiles = new ArrayList<>();
-			for (int i = 0; i < testData.length; i++) {
-				StringBuilder contents = testData[i];
-				int endOfLine = contents.indexOf("\n");
-				if (endOfLine >= 0)
-					endOfLine++;
-				else
-					endOfLine = contents.length();
-				String filename = contents.substring(0, endOfLine).trim();
-				contents.delete(0, endOfLine);  // Remove first line from the file contents
-				boolean astRequested = filename.endsWith("*");
-				if (astRequested) {
-					filename = filename.substring(0, filename.length() - 1).trim();
+			for (int i = 0; i < testData.length;) {
+				Set<String> createdFiles = new HashSet<>();
+				for (int j = i; j < testData.length; j++, i++) {
+					StringBuilder contents = testData[j];
+					int endOfLine = contents.indexOf("\n");
+					if (endOfLine >= 0) {
+						endOfLine++;
+					} else {
+						endOfLine = contents.length();
+					}
+					String filename = contents.substring(0, endOfLine).trim();
+					boolean astRequested = filename.endsWith("*");
+					if (astRequested) {
+						filename = filename.substring(0, filename.length() - 1).trim();
+					}
+					if (!createdFiles.add(filename)) {
+						// The file has already been encountered since the project was indexed.
+						// Wait for the indexer before updating the file.
+						break;
+					}
+					contents.delete(0, endOfLine);  // Remove first line from the file contents.
+					IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename), contents.toString());
+					if (astRequested || (j == testData.length - 1 && astFiles.isEmpty())) {
+						int pos = astFiles.indexOf(file);
+						if (pos < 0) {
+							astFiles.add(file);
+							astSources.add(contents);
+						} else {
+							astSources.set(pos, contents);
+						}
+					}
 				}
-				IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename), contents.toString());
-				if (astRequested || (i == testData.length - 1 && astFiles.isEmpty())) {
-					astSources.add(contents);
-					astFiles.add(file);
-				}
+				CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
+		        waitForIndexer(cproject);
 			}
-			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-	        waitForIndexer(cproject);
 
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());

@@ -187,7 +187,7 @@ public class BaseTestCase extends TestCase {
 			}
 		};
 		final CCorePlugin corePlugin = CCorePlugin.getDefault();
-		if (corePlugin != null) { //Iif we don't run a JUnit Plugin Test
+		if (corePlugin != null) { // Iff we don't run as a JUnit Plugin Test.
 			corePlugin.getLog().addLogListener(logListener);
 		}
 
@@ -200,8 +200,8 @@ public class BaseTestCase extends TestCase {
 			}
 
 			if (statusLog.size() != fExpectedLoggedNonOK) {
-				StringBuffer msg= new StringBuffer("Expected number (" + fExpectedLoggedNonOK + ") of ");
-				msg.append("non-OK status objects in log differs from actual (" + statusLog.size() + ").\n");
+				StringBuilder msg= new StringBuilder("Expected number (" + fExpectedLoggedNonOK + ") of ");
+				msg.append("Non-OK status objects in log differs from actual (" + statusLog.size() + ").\n");
 				Throwable cause= null;
 				if (!statusLog.isEmpty()) {
 					synchronized (statusLog) {

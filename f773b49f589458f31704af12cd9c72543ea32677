@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_28e2f74a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-19T17:56:13Z",
+      "side": 1,
+      "message": "Unless there is a good reason, I think we should not hide the printouts. All it can do is hide relevant information in case there is a problem.\n\nWhat we could do is add an \"echo\" before and after, so that we know where gdb\u0027s output start and end.",
+      "parentUuid": "a766b734_c84543cd",
+      "revId": "f773b49f589458f31704af12cd9c72543ea32677",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_871fbbea",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
         "patchSetId": 11
@@ -30,6 +48,24 @@
       "writtenOn": "2014-11-19T17:50:52Z",
       "side": 1,
       "message": "Doesn\u0027t this remove all the content of BINDIR, including the core file?  No point in removing the core file after no?",
+      "revId": "f773b49f589458f31704af12cd9c72543ea32677",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_48ddb38d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-19T17:56:13Z",
+      "side": 1,
+      "message": "You are right. In my local version, I changed it to have just\n\n$(RM) -r $(BINDIR)\n\nThis way, we are sure not to leave anything behind.",
+      "parentUuid": "a766b734_871fbbea",
       "revId": "f773b49f589458f31704af12cd9c72543ea32677",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

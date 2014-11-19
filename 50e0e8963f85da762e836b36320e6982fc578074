@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_88fa2be7",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 12
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-11-19T18:01:19Z",
+      "side": 1,
+      "message": "In case you wonder what the pipe ( | ) does:\n\nhttps://www.gnu.org/software/make/manual/html_node/Prerequisite-Types.html\n\nI just learned about it today. Creating the BINDIR is a prerequisite to generating the executable, but we don\u0027t want to rebuild the executable only because the BINDIR\u0027s modification time is more recent than the executable\u0027s modification time. The modification time of a directory changes whenever a file inside is modified, so the Makefile would end up always rebuilding everything. The example in the page linked above is exactly about that.",
+      "revId": "50e0e8963f85da762e836b36320e6982fc578074",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

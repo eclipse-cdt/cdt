@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_c84543cd",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-19T17:50:52Z",
+      "side": 1,
+      "message": "The previous makefile would silence all the compiler commands.  However, with this better formatting, the new printouts look good, so let\u0027s keep them.\n\nBut, how would you feel about redirecting the output of the core-generating gdb command to /dev/null?  That output is ugly and confusing.  That is how the old makefile did it.",
+      "revId": "f773b49f589458f31704af12cd9c72543ea32677",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_871fbbea",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-19T17:50:52Z",
+      "side": 1,
+      "message": "Doesn\u0027t this remove all the content of BINDIR, including the core file?  No point in removing the core file after no?",
+      "revId": "f773b49f589458f31704af12cd9c72543ea32677",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

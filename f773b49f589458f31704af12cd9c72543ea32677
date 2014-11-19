@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_88b50b3a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-19T18:11:45Z",
+      "side": 1,
+      "message": "Those printouts are not actually helpful.  They don\u0027t show the GDB commands we issue.  If there is a problem, we are not redirecting stderror, so we should see them.\n\nSo, unless you are really against it, I prefer to redirect to /dev/null",
+      "parentUuid": "a766b734_28e2f74a",
+      "revId": "f773b49f589458f31704af12cd9c72543ea32677",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_871fbbea",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
         "patchSetId": 11

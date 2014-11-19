@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_a8cd67dd",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/cdtdebug.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-19T17:57:30Z",
+      "side": 1,
+      "message": "You need to duplicate this new stuff in the README file as well as the docs file:\ncdt_t_standalone_startup.htm",
+      "revId": "563a289e6d196c655b6b14df26d4b465a3487478",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_689b4ff8",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/RemoteExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-19T17:57:30Z",
+      "side": 1,
+      "message": "This should be an NLS message in Messages.  You have misspelled address.",
+      "revId": "563a289e6d196c655b6b14df26d4b465a3487478",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c89383dc",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/RemoteExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-19T17:57:30Z",
+      "side": 1,
+      "message": "This text should also be in Messages.",
+      "revId": "563a289e6d196c655b6b14df26d4b465a3487478",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_088a9ba2",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/RemoteExecutableDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-19T17:57:30Z",
+      "side": 1,
+      "message": "This text as well should be in Messages.  Why have you got a Label beside a button?  You probably should have set the button text to be Messages.xxxxAttach.",
+      "revId": "563a289e6d196c655b6b14df26d4b465a3487478",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_88118be1",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-19T17:57:30Z",
+      "side": 1,
+      "message": "address mis-spelled",
+      "revId": "563a289e6d196c655b6b14df26d4b465a3487478",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

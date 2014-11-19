@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_2bd2f1fc",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-11-19T21:10:42Z",
+      "side": 1,
+      "message": "Why this is a class member? It look likes it used within same function,\nso it probably better just pass this as local var/function parameter for helper functions. Otherwise it is making this class non thread safe",
+      "revId": "1f3ed3d1b85a4d16a3fa0bddcd9b5cde8e1da4a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_abaf2167",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 926,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-11-19T21:10:42Z",
+      "side": 1,
+      "message": "the monitor handling is still wrong.\nEach function must assume it own the monitor so it either\npass it as it to another function (one and only one), it has to do \nmonitor.beginTask()\n...\nmonitor.done()\nAnd it between either monitor.work() OR pass subprogressmonitor(monitor)\nto another function (each call has to has separate sub mon). \n\nThis one starts it THEN passes to craeteFileFromDocument which is wrong\nthen you re-use sub monitor object in two calls which is wrong",
+      "revId": "1f3ed3d1b85a4d16a3fa0bddcd9b5cde8e1da4a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_cb99bd4f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 981,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-11-19T21:10:42Z",
+      "side": 1,
+      "message": "Considering my comment above about introducing unneeded state object (class field), this code probably would be better off without private functions\n(i.e. inline  them and refactor to just use one if)",
+      "revId": "1f3ed3d1b85a4d16a3fa0bddcd9b5cde8e1da4a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

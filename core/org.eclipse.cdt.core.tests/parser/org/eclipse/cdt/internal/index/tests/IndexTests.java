@@ -27,6 +27,7 @@ public class IndexTests extends TestSuite {
 		suite.addTest(IndexSearchTest.suite());
 		suite.addTest(IndexIncludeTest.suite());
 		suite.addTest(IndexUpdateTests.suite());
+		suite.addTest(IndexUpdateMultiFileTest.suite());
 		suite.addTest(IndexBugsTests.suite());
 		suite.addTest(IndexNamesTests.suite());
 		suite.addTest(TeamSharedIndexTest.suite());

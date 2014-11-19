@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -322,11 +321,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		if (owner != null)
 			return owner.getSignificantMacros();
 
-		IASTTranslationUnit tu = node.getTranslationUnit();
-		if (tu != null)
-			return tu.getSignificantMacros();
-
-		return null;
+		return ISignificantMacros.NONE;
 	}
 
 	@Override

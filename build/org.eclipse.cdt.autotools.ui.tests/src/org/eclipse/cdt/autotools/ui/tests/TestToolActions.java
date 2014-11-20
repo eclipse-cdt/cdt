@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +28,6 @@ import org.junit.runners.MethodSorters;
 @RunWith(SWTBotJunit4ClassRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestToolActions extends AbstractTest {
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		AbstractTest.init("GnuProject4");
-	}
 
 	@Test
 	// Verify we can set the tools via the Autotools Tools page

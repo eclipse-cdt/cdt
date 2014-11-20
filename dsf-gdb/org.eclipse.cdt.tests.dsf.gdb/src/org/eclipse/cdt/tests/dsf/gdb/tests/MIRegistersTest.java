@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
+ *     Simon Marchi (Ericsson)- Adapt test code to thread platform compatibility layer.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 

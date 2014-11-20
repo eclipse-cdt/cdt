@@ -10,10 +10,15 @@ BINS = $(patsubst %.c,$(BINDIR)/%.exe,$(SRC_C)) $(patsubst %.cc,$(BINDIR)/%.exe,
 COREFILE = $(BINDIR)/core
 
 CC = gcc
-CFLAGS = -gdwarf-2 -pthread
-
 CXX = g++
-CXXFLAGS = -gdwarf-2 -pthread
+
+CFLAGS = -gdwarf-2
+CXXFLAGS = -gdwarf-2
+
+ifneq ($(OS),Windows_NT)
+	CFLAGS += -pthread
+	CXXFLAGS += -pthread
+endif
 
 MKDIR = mkdir -p
 RM = rm -f

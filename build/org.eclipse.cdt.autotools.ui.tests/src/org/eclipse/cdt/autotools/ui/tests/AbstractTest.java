@@ -17,8 +17,8 @@ import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withRe
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withStyle;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForWidget;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.widgetIsEnabled;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
@@ -64,17 +64,8 @@ public abstract class AbstractTest {
 		SWTBotPreferences.PLAYBACK_DELAY = 10;
 		bot = new SWTWorkbenchBot();
 		bot.sleep(5000);
-		mainShell = null;
-		for (int i = 0, attempts = 100; i < attempts; i++) {
-			for (SWTBotShell shell : bot.shells()) {
-				if (shell.getText().contains("Eclipse Platform")) {
-					mainShell = shell;
-					shell.setFocus();
-					break;
-				}
-			}
-		}
-		assertNotNull(mainShell);
+		mainShell = getMainShell();
+
 		// Close the Welcome view if it exists
 		try {
 			bot.viewByTitle("Welcome").close();
@@ -305,7 +296,7 @@ public abstract class AbstractTest {
 				.toolbarDropDownButton("Display Selected Console");
 		org.hamcrest.Matcher<MenuItem> withRegex = withRegex(".*" + consoleType
 				+ ".*");
-		bot.shell("C/C++ - Eclipse Platform").activate();
+		focusMainShell();
 		b.menuItem(withRegex).click();
 		try {
 			b.pressShortcut(KeyStroke.getInstance("ESC"));
@@ -313,6 +304,24 @@ public abstract class AbstractTest {
 		}
 		view.setFocus();
 		return view;
+	}
+
+    /**
+     * Focus on the main window
+     */
+    public static void focusMainShell() {
+        SWTBotShell shell = getMainShell();
+        shell.activate();
+    }
+
+	private static SWTBotShell getMainShell() {
+		for (SWTBotShell shellBot : bot.shells()) {
+			if (shellBot.getText().toLowerCase().contains("eclipse")) {
+				return shellBot;
+			}
+		}
+		fail("Could not find main shell");
+		return null;
 	}
 
 	@After

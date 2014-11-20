@@ -87,7 +87,7 @@ public class CoreFileDialog extends TitleAreaDialog {
 		comp.setLayout( layout );
 		comp.setLayoutData( gd );
 		
-		new Label( comp, SWT.None ).setText( remote ? Messages.GdbDebugNewExecutableCommand_Binary_on_host : Messages.GdbDebugNewExecutableCommand_Binary );
+		new Label( comp, SWT.None ).setText( remote ? Messages.GdbDebugNewExecutableCommand_Binary_on_host : Messages.GdbDebugExecutableCommand_Binary );
 		fHostBinaryText = new Text( comp, SWT.BORDER );
 		if (fHostBinary != null)
 			fHostBinaryText.setText(fHostBinary);
@@ -100,7 +100,7 @@ public class CoreFileDialog extends TitleAreaDialog {
 			}
 		} );
 		Button browseButton = new Button( comp, SWT.PUSH );
-		browseButton.setText( Messages.GdbDebugNewExecutableCommand_Browse );
+		browseButton.setText( Messages.GdbDebugExecutableCommand_Browse );
 		browseButton.setFont( JFaceResources.getDialogFont() );
 		setButtonLayoutData( browseButton );
 		browseButton.addSelectionListener( new SelectionAdapter() {
@@ -144,7 +144,7 @@ public class CoreFileDialog extends TitleAreaDialog {
 		} );
 		
 		Button browseButton2 = new Button( comp, SWT.PUSH );
-		browseButton2.setText( Messages.GdbDebugNewExecutableCommand_Browse );
+		browseButton2.setText( Messages.GdbDebugExecutableCommand_Browse );
 		browseButton2.setFont( JFaceResources.getDialogFont() );
 		setButtonLayoutData( browseButton2 );
 		browseButton2.addSelectionListener( new SelectionAdapter() {

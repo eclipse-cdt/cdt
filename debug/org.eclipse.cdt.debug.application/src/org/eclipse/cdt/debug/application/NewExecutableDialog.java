@@ -90,7 +90,7 @@ public class NewExecutableDialog extends TitleAreaDialog {
 		comp.setLayout( layout );
 		comp.setLayoutData( gd );
 		
-		new Label( comp, SWT.None ).setText( remote ? Messages.GdbDebugNewExecutableCommand_Binary_on_host : Messages.GdbDebugNewExecutableCommand_Binary );
+		new Label( comp, SWT.None ).setText( remote ? Messages.GdbDebugNewExecutableCommand_Binary_on_host : Messages.GdbDebugExecutableCommand_Binary );
 		fHostBinaryText = new Text( comp, SWT.BORDER );
 		if (fHostBinary != null)
 			fHostBinaryText.setText(fHostBinary);
@@ -103,7 +103,7 @@ public class NewExecutableDialog extends TitleAreaDialog {
 			}
 		} );
 		Button browseButton = new Button( comp, SWT.PUSH );
-		browseButton.setText( Messages.GdbDebugNewExecutableCommand_Browse );
+		browseButton.setText( Messages.GdbDebugExecutableCommand_Browse );
 		browseButton.setFont( JFaceResources.getDialogFont() );
 		setButtonLayoutData( browseButton );
 		browseButton.addSelectionListener( new SelectionAdapter() {
@@ -140,7 +140,7 @@ public class NewExecutableDialog extends TitleAreaDialog {
 			fArgumentsText.setText(fArgs);
 
 
-		new Label( comp, SWT.None ).setText( Messages.GdbDebugNewExecutableCommand_BuildLog );
+		new Label( comp, SWT.None ).setText( Messages.GdbDebugExecutableCommand_BuildLog );
 		fBuildLogText = new Text( comp, SWT.BORDER );
 		if (fBuildLog != null)
 			fBuildLogText.setText(fBuildLog);

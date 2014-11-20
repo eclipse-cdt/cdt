@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Red Hat Inc. - initial API and implementation
+ *    Marc Khouzam (Ericsson) - Update for remote debugging support (bug 450080)
  *******************************************************************************/
 package org.eclipse.cdt.debug.application;
 
@@ -35,14 +36,15 @@ public class Messages extends NLS {
 	public static String DebuggerInitializingProblem;
 	
 	public static String GdbDebugNewExecutableCommand_Arguments;
-	public static String GdbDebugNewExecutableCommand_Binary;
+	public static String GdbDebugExecutableCommand_Binary;
+	public static String GdbDebugExecutableCommand_Binary_Optional;
 	public static String GdbDebugNewExecutableCommand_Binary_file_does_not_exist;
 	public static String GdbDebugNewExecutableCommand_Binary_must_be_specified;
 	public static String GdbDebugNewExecutableCommand_Binary_on_host;
 	public static String GdbDebugNewExecutableCommand_Binary_on_target;
 	public static String GdbDebugNewExecutableCommand_Binary_on_target_must_be_specified;
-	public static String GdbDebugNewExecutableCommand_Browse;
-	public static String GdbDebugNewExecutableCommand_BuildLog;
+	public static String GdbDebugExecutableCommand_Browse;
+	public static String GdbDebugExecutableCommand_BuildLog;
 	public static String GdbDebugNewExecutableCommand_BuildLog_file_does_not_exist;
 	public static String GdbDebugNewExecutableCommand_Debug_New_Executable;
 	public static String GdbDebugNewExecutableCommand_Host_binary_file_does_not_exist;
@@ -53,6 +55,14 @@ public class Messages extends NLS {
 	public static String GdbDebugNewExecutableCommand_Select_binaries_on_host_and_target;
 	public static String GdbDebugNewExecutableCommand_Select_Binary;
 	public static String GdbDebugNewExecutableCommand_Select_binary_and_specify_arguments;
+	public static String GdbDebugRemoteExecutableCommand_Debug_Remote_Executable;
+	public static String GdbDebugRemoteExecutableCommand_Select_Remote_Options;
+	public static String GdbDebugRemoteExecutableCommand_Host_name_or_ip_address;
+	public static String GdbDebugRemoteExecutableCommand_Port_number;
+	public static String GdbDebugRemoteExecutableCommand_Attach;
+	public static String GdbDebugRemoteExecutableCommand_address_must_be_specified;
+	public static String GdbDebugRemoteExecutableCommand_port_must_be_specified;
+	public static String GdbDebugRemoteExecutableCommand_port_must_be_a_number;
 	public static String GdbDebugCoreFileCommand_CoreFile;
 	public static String GdbDebugCoreFileCommand_Debug_Core_File;
 	public static String GdbDebugCoreFileCommand_Select_binary_and_specify_corefile;
@@ -90,6 +100,8 @@ public class Messages extends NLS {
 	public static String CoreFile_toolTip;
 	public static String NewExecutable_toolTip;
 	public static String NewExecutableMenuName;
+	public static String RemoteExecutable_toolTip;
+	public static String RemoteExecutableMenuName;
 	public static String AttachedExecutable_toolTip;
 	public static String AttachedExecutableMenuName;
 

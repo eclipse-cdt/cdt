@@ -67,7 +67,7 @@ public abstract class AbstractTest {
 		mainShell = null;
 		for (int i = 0, attempts = 100; i < attempts; i++) {
 			for (SWTBotShell shell : bot.shells()) {
-				if (shell.getText().contains("Eclipse Platform")) {
+				if (shell.getText().contains("Eclipse")) {
 					mainShell = shell;
 					shell.setFocus();
 					break;

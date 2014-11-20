@@ -143,26 +143,26 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 			try {
 				for (int i = 0; i < args.length; ++i) {
-					if ("-application".equals(args[i]))
+					if ("-application".equals(args[i])) //$NON-NLS-1$
 						i++; // ignore the application specifier
-					else if ("-product".equals(args[i]))
+					else if ("-product".equals(args[i])) //$NON-NLS-1$
 						i++; // ignore the product specifier
-					else if ("-b".equals(args[i])) {
+					else if ("-b".equals(args[i])) { //$NON-NLS-1$
 						++i;
 						if (i < args.length)
 							buildLog = args[i];
 					}
-					else if ("-a".equals(args[i])) {
+					else if ("-a".equals(args[i])) { //$NON-NLS-1$
 						attachExecutable = true;
 					}
-					else if ("-c".equals(args[i])) {
+					else if ("-c".equals(args[i])) { //$NON-NLS-1$
 						++i;
-						corefile = "";
-						executable = "";
+						corefile = ""; //$NON-NLS-1$
+						executable = ""; //$NON-NLS-1$
 						if (i < args.length)
 							corefile = args[i];
 					}
-					else if ("-e".equals(args[i])) {
+					else if ("-e".equals(args[i])) { //$NON-NLS-1$
 						++i;
 						if (i < args.length)
 							executable = findExecutable(args[i]);
@@ -172,7 +172,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						if (i < args.length)
 							argBuffer.append(args[i++]);
 						while (i < args.length) {
-							argBuffer.append(" ");
+							argBuffer.append(" "); //$NON-NLS-1$
 							argBuffer.append(args[i++]);
 						}
 						arguments = argBuffer.toString();
@@ -188,7 +188,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					File coreFile = new File(corefile);
 					corefile = coreFile.getCanonicalPath();
 					if (executable == null || !executableFile.exists() || !coreFile.exists()) {
-						final CoreFileInfo info = new CoreFileInfo("", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+						final CoreFileInfo info = new CoreFileInfo("", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ $NON-NLS-2$ $NON-NLS-3$
 						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 						final String executablePath = executable;
@@ -214,7 +214,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						});
 						// Check and see if we failed above and if so, quit
-						if (info.getHostPath().equals("")) {
+						if (info.getHostPath().equals("")) { //$NON-NLS-1$
 							monitor.done();
 							// throw internal exception which will be caught below
 							throw new StartupException(errorStatus.getMessage());
@@ -231,7 +231,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						buildLog = buildLogFile.getCanonicalPath();
 					}
 					if (!executableFile.exists() || (buildLog != null && !buildLogFile.exists())) {
-						final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+						final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ $NON-NLS-2$ $NON-NLS-3$
 						final IStatus errorStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0, 
 								Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 						final String executablePath = executable;
@@ -258,7 +258,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							}
 						});
 						// Check and see if we failed above and if so, quit
-						if (info.getHostPath().equals("")) {
+						if (info.getHostPath().equals("")) { //$NON-NLS-1$
 							monitor.done();
 							// throw internal exception which will be caught below
 							throw new StartupException(errorStatus.getMessage());
@@ -281,15 +281,15 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					String memento = ResourcesPlugin.getWorkspace().getRoot().getPersistentProperty(new QualifiedName(STANDALONE_QUALIFIER, LAST_LAUNCH));
 					if (memento != null)
 						config = DebugExecutable.getLaunchManager().getLaunchConfiguration(memento);
-					String oldExecutable = "";
-					String oldArguments = "";
-					String oldBuildLog = "";
+					String oldExecutable = ""; //$NON-NLS-1$
+					String oldArguments = ""; //$NON-NLS-1$
+					String oldBuildLog = ""; //$NON-NLS-1$
 					if (config != null) {
 						oldExecutable = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
 						oldArguments = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 						oldBuildLog = config.getAttribute(ICDTStandaloneDebugLaunchConstants.BUILD_LOG_LOCATION, ""); //$NON-NLS-1$
 					}
-					final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+					final NewExecutableInfo info = new NewExecutableInfo("", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ $NON-NLS-2$ $NON-NLS-3$
 					final IStatus errorStatus = new Status(IStatus.WARNING, Activator.PLUGIN_ID, 0, 
 							Messages.GdbDebugNewExecutableCommand_Binary_file_does_not_exist, null);
 					final String executablePath = oldExecutable;
@@ -318,7 +318,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						}
 					});
 					// Check and see if we failed above and if so, quit
-					if (info.getHostPath().equals("")) {
+					if (info.getHostPath().equals("")) { //$NON-NLS-1$
 						monitor.done();
 						// throw internal exception which will be caught below
 						throw new StartupException(errorStatus.getMessage());

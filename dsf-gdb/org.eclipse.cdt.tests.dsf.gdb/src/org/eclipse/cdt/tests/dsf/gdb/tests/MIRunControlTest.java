@@ -82,9 +82,11 @@ public class MIRunControlTest extends BaseTestCase {
 	private IExecutionDMContext fThreadExecDmc;
 	
 	// line numbers in MultiThread.cc
-	static final int LINE_MAIN_RETURN = 63;
-	static final int LINE_MAIN_PRINTF = 41;
-	
+	static final int LINE_MAIN_BEFORE_THREAD_START = 57; // Just before StartThread
+	static final int LINE_MAIN_AFTER_THREAD_START = 59; // Just after StartThread
+	static final int LINE_MAIN_ALL_THREADS_STARTED = 69; // Where all threads are guaranteed to be started.
+
+
 	/*
 	 * Path to executable
 	 */
@@ -268,22 +270,15 @@ public class MIRunControlTest extends BaseTestCase {
             new ServiceEventWaitor<IStartedDMEvent>(
             		getGDBLaunch().getSession(),
             		IStartedDMEvent.class);
-		
-		// Run past the line that creates a thread and past the sleep that
-		// follows it. This is a bit tricky because the code that creates the
-		// thread is conditional depending on environment. Run to the printf
-		// before it (which is common), then do step operations over the
-		// non-common code (but same number of lines)
-        SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, Integer.toString(LINE_MAIN_PRINTF), true);
+
+        MIStoppedEvent stoppedEvent = SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, Integer.toString(LINE_MAIN_BEFORE_THREAD_START), true);
         
         // Because the program is about to go multi-threaded, we have to select the thread
-        // we want to keep stepping.  If we don't, we will ask GDB to step the entire process
+        // we want to resume.  If we don't, we will ask GDB to resume the entire process
         // which is not what we want.  We can fetch the thread from the stopped event
         // but we should do that before the second thread is created, to be sure the stopped
         // event is for the main thread.
-        MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);	// over the printf
-        SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER);	// over the create-thread call
-        SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER, TestsPlugin.massageTimeout(2000));	// over the one second sleep
+        SyncUtil.runToLine(stoppedEvent.getDMContext(), SOURCE_NAME, Integer.toString(LINE_MAIN_AFTER_THREAD_START), true);
         
 		// Make sure thread started event was received 
         IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
@@ -432,7 +427,7 @@ public class MIRunControlTest extends BaseTestCase {
 		/* 
 		 * Add a breakpoint
 		 */
-	    SyncUtil.addBreakpoint(SOURCE_NAME + ":" + LINE_MAIN_PRINTF, false);
+	    SyncUtil.addBreakpoint(SOURCE_NAME + ":" + LINE_MAIN_BEFORE_THREAD_START, false);
 		
 		/*
 		 * Resume till the breakpoint is hit
@@ -683,27 +678,25 @@ public class MIRunControlTest extends BaseTestCase {
         		ISuspendedDMEvent.class);
 
  
-         fRunCtrl.getExecutor().submit(new Runnable() {
-            @Override
+		fRunCtrl.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
-           		fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, LINE_MAIN_RETURN, true,
-           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
-           			@Override
-           			protected void handleCompleted() {
-           				wait.waitFinished(getStatus());
-           			}
-                });
-            }
-        });
+				fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME,
+						LINE_MAIN_ALL_THREADS_STARTED, true,
+						new RequestMonitor(fRunCtrl.getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								wait.waitFinished(getStatus());
+							}
+						});
+			}
+		});
          
         wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
 
-        // The program takes five seconds to run. There's five iterations of a
-		// loop that has a one second sleep in it
         suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(10000));
-		
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
         fRunCtrl.getExecutor().submit(new Runnable() {
@@ -745,13 +738,16 @@ public class MIRunControlTest extends BaseTestCase {
                 });
             }
         });
-        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));         
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
          
-		// The program takes five seconds to run. There's five iterations of a
-		// loop that has a one second sleep in it. Wait a second then attempt to
-		// interrupt the target
+		// Wait one second and attempt to interrupt the target.
+        // As of gdb 7.8, interrupting execution after a thread exit does not
+        // work well. This test works around it by interrupting before threads
+        // exit. Once the bug in gdb is fixed, we should add a test that
+        // interrupts after the threads exit.
+        // Ref: https://sourceware.org/bugzilla/show_bug.cgi?id=17497
         Thread.sleep(1000);	
         fRunCtrl.getExecutor().submit(new Runnable() {
             @Override
@@ -765,6 +761,7 @@ public class MIRunControlTest extends BaseTestCase {
                 });
             }
         });
+
         wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();

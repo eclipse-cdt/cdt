@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "a766b734_dc7a212e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11366,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T19:07:22Z",
+      "side": 1,
+      "message": "A test can be disabled by renaming it to start with \"_test\" prefix",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_1c5819cf",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11367,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T19:07:22Z",
+      "side": 1,
+      "message": "The test can be written as:\n    BindingAssertionHelper bh \u003d getAssertionHelper();\n    ICPPVariable test \u003d bh.assertNonProblemOnFirstIdentifier(\"test\");\n    assertTrue(test.getType() instanceof IProblemType); // Type is abiguous.",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_4e22dbac",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IScanner.java",
         "patchSetId": 2
@@ -13,6 +47,74 @@
       "writtenOn": "2014-11-20T04:20:56Z",
       "side": 1,
       "message": "Describe semantics of the method.",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_3cbeb54e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3062,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T19:07:22Z",
+      "side": 1,
+      "message": "I\u0027m not sure I understand the question. Did you mean PDOM bindings as opposed to the AST ones? This could be an indication that lookup in AST scopes failed. If so, it should be investigated.",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_9cbf0949",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T19:07:22Z",
+      "side": 1,
+      "message": "Using AST nodes without a parent is dangerous. Can EvalFixed be used instead?",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7cc4add8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3149,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T19:07:22Z",
+      "side": 1,
+      "message": "Should it be ICPPFunctionInstance?",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_dc9341dc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3151,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T19:07:22Z",
+      "side": 1,
+      "message": "ProblemBinding is the right way to report name resolution problems. I a case of ambiguity it\u0027s useful to pass candidates to the ProblemBinding.",
       "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

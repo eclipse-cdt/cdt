@@ -162,7 +162,7 @@ public class TestEnvironmentVars extends AbstractTest {
 		// the script
 		clickContextMenu(projectExplorer.bot().tree().select(projectName),
 				"Reconfigure Project");
-		bot.shell("C/C++ - Eclipse Platform").activate();
+		focusMainShell();
 		bot.sleep(3000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();

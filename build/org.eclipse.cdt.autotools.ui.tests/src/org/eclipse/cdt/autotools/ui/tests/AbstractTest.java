@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.swt.SWT;
@@ -52,12 +53,28 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.hamcrest.Matcher;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 public abstract class AbstractTest {
+
+	private static final String PROJECT_NAME = "GnuProject";
+
 	protected static SWTWorkbenchBot bot;
 	protected static String projectName;
 	protected static SWTBotShell mainShell;
 	protected static SWTBotView projectExplorer;
+
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		System.out.println("AbstractTest");
+		AbstractTest.init(PROJECT_NAME);
+	}
+
+	@AfterClass
+	public static void afterClass() throws Exception {
+		AbstractTest.deleteProject(PROJECT_NAME);
+	}
 
 	public static void init(String projectName) throws Exception {
 		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
@@ -65,7 +82,6 @@ public abstract class AbstractTest {
 		bot = new SWTWorkbenchBot();
 		bot.sleep(5000);
 		mainShell = getMainShell();
-
 		// Close the Welcome view if it exists
 		try {
 			bot.viewByTitle("Welcome").close();
@@ -113,6 +129,10 @@ public abstract class AbstractTest {
 		assertTrue(nature != null);
 
 		projectExplorer = bot.viewByTitle("Project Explorer");
+	}
+
+	public static void deleteProject(String projectName) throws CoreException {
+		ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).delete(true, null);
 	}
 
 	public static class NodeAvailableAndSelect extends DefaultCondition {

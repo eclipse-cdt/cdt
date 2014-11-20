@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_4e22dbac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-20T04:20:56Z",
+      "side": 1,
+      "message": "Describe semantics of the method.",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

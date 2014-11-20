@@ -227,6 +227,13 @@
       </command>
       <command
             categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+            defaultHandler="org.eclipse.cdt.internal.debug.application.DebugRemoteExecutableHandler"
+            description="%DebugRemoteExecutable.description"
+            id="org.eclipse.cdt.debug.application.command.debugRemoteExecutable"
+            name="%DebugRemoteExecutable.name">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
             defaultHandler="org.eclipse.cdt.internal.debug.application.DebugCoreFileHandler"
             description="%DebugCore.description"
             id="org.eclipse.cdt.debug.application.command.debugCore"

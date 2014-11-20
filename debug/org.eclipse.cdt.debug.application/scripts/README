@@ -34,12 +34,25 @@ The script takes a few options which are mentioned below:
                      arguments to pass to main().  This option must be last and should
                      not precede any other arguments as they will be treated as arguments
                      to main.
+
+-r $ADDR:$PORT : remote debugging towards hostname or IP address $ADDR and IP port $PORT.
+                 The gdbserver must be running on the target and waiting for a connection.
+                 This option can be used at the same time as the -a option.  In such a case
+                 a Remote-Attach session will be started allowing the user to attach to 
+                 different processes on the remote target.  The user will need to press
+                 the 'connect' button or use the context-menu of the Debug view to choose 
+                 one or more processes to attach to. In this case the -e flag is optional, 
+                 and when not specified, a dialog will be used instead to prompt for the 
+                 binary's location. This option, when used without -a, will trigger a
+                 manual Remote debugging session to a single, pre-selected binary, and 
+                 therefore requires the use of the -e option to specify the location of
+                 the binary on the local machine that matches the one on the remote target.
                      
 If no -a or -e option is specified, the last executable debugged via -e will be offered for
 debugging.  Otherwise, if this is the first time, a dialog will be presented to enter
 an executable, build log, and program arguments.
 
-  e.g. ~/cdtdebugger/cdtdebug.sh -b ~/build.log ~/myproject/bin/a.out arg1 arg2
+  e.g. ~/cdtdebugger/cdtdebug.sh -b ~/build.log -e ~/myproject/bin/a.out arg1 arg2
 
 The cdtdebug.sh script that is found in the plug-in can also be run directly, but cannot
 be moved.  The one installed in the cdtdebugger directory on the other hand, can be moved.

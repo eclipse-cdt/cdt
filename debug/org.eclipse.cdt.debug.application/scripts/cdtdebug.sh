@@ -8,6 +8,7 @@
 #
 # Contributors:
 #    Red Hat Inc. - initial API and implementation
+#    Marc Khouzam (Ericsson) - Update for remote debugging support (bug 450080)
 ###############################################################################
 
 SCRIPT_DIR=`dirname $0`
@@ -29,6 +30,8 @@ Target options:
   -a                        attach to an existing process (list will be shown) 
   -c COREFILE               debug core-file (should also specify executable)
   -e EXECUTABLE [ARGS...]   debug given executable (passing ARGS to main)
+  -r ADDRESS:PORT           debug toward the specified remote server. Can be
+                            combined with the -a option.
 
 The -e option must be used last as subsequent options are passed to main.
 
@@ -61,7 +64,7 @@ while test $# -gt 0 ; do
           options="$options \"$1\""
           shift;
        done ;;
-    -c )
+    -c | -r )
        test $# = 1 && eval "$exit_missing_arg"
        options="$options $1 $2"
        shift; shift ;;

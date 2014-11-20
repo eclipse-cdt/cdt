@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Red Hat Inc. - initial API and implementation
+ *    Marc Khouzam (Ericsson) - Update for remote debugging support (bug 450080)
  *******************************************************************************/
 package org.eclipse.cdt.debug.application;
 
@@ -39,11 +40,13 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	public static String COREFILE_COMMAND_ID = "org.eclipse.cdt.debug.application.command.debugCore"; //$NON-NLS-1$
 	public static String NEW_EXECUTABLE_COMMAND_ID = "org.eclipse.cdt.debug.application.command.debugNewExecutable"; //$NON-NLS-1$
 	public static String ATTACH_EXECUTABLE_COMMAND_ID = "org.eclipse.cdt.debug.application.command.debugAttachedExecutable"; //$NON-NLS-1$
+	public static String REMOTE_EXECUTABLE_COMMAND_ID = "org.eclipse.cdt.debug.application.command.debugRemoteExecutable"; //$NON-NLS-1$
 
 	private final IWorkbenchWindow window;
 
 	private IWorkbenchAction corefileAction;
 	private IWorkbenchAction newExecutableAction;
+	private IWorkbenchAction remoteExecutableAction;
 	private IWorkbenchAction attachExecutableAction;
 	private IWorkbenchAction quitAction;
 
@@ -80,6 +83,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 		attachExecutableAction = ATTACH_EXECUTABLE.create(window);
 		register(attachExecutableAction);
+
+		remoteExecutableAction = REMOTE_EXECUTABLE.create(window);
+		register(remoteExecutableAction);
 
 		corefileAction = COREFILE.create(window);
 		register(corefileAction);
@@ -131,6 +137,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 		ActionContributionItem newExecutableItem = new ActionContributionItem(newExecutableAction);
 		menu.add(newExecutableItem);
+
+		ActionContributionItem remoteExecutableItem = new ActionContributionItem(remoteExecutableAction);
+		menu.add(remoteExecutableItem);
 
 		ActionContributionItem attachExecutableItem = new ActionContributionItem(attachExecutableAction);
 		menu.add(attachExecutableItem);
@@ -411,6 +420,30 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 			 action.setId(getId());
 			 action.setText(Messages.NewExecutableMenuName);
 			 action.setToolTipText(Messages.NewExecutable_toolTip);
+			 return action;
+		 }
+	 };
+
+	 /**
+	  * Workbench action (id: "remoteexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugRemoteExecutable"): 
+	  * Debug a remote executable.  This action maintains its enablement state.
+	  */
+	 private static final ActionFactory REMOTE_EXECUTABLE = new ActionFactory("remoteexecutable", //$NON-NLS-1$
+			 REMOTE_EXECUTABLE_COMMAND_ID) {
+
+		 /* (non-Javadoc)
+		  * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+		  */
+		 @Override
+		 public IWorkbenchAction create(IWorkbenchWindow window) {
+			 if (window == null) {
+				 throw new IllegalArgumentException();
+			 }
+			 WorkbenchCommandAction action = new WorkbenchCommandAction(
+					 getCommandId(), window);
+			 action.setId(getId());
+			 action.setText(Messages.RemoteExecutableMenuName);
+			 action.setToolTipText(Messages.RemoteExecutable_toolTip);
 			 return action;
 		 }
 	 };

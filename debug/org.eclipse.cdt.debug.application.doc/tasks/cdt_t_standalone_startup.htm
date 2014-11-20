@@ -49,6 +49,21 @@ as desired.  If the executable location you specify is invalid or no executable 
 a dialog will be brought up to allow you to enter the required information.  The dialog will be appropriate to whether
 you have selected to debug a core file (-c specified) or not.</p>
 
+<h4>-r &lt;addr:port&gt;</h4>
+<p>This option specified a hostname or IP address and and IP port to connect to to perform remote debugging.
+The gdbserver must be running on the target and waiting for a connection on the specified port.
+This option can be used at the same time as the -a option.  In such a case
+a Remote-Attach session will be started allowing the user to attach to  
+different processes on the remote target.  The user will need to press
+the 'connect' button or use the context-menu of the Debug view to choose one or more processes
+to attach to. In this case the -e flag is optional, and when not specified,
+a dialog will be used instead to prompt for the binary's location.
+This option, when used without -a, will trigger a manual Remote debugging session towards
+a single, pre-selected binary and therefore requires the use of the -e option
+to specify the location of the binary on the local machine that matches the one on the 
+remote target.</p>
+
+
 <h2>Automated Set-up</h3>
 
 <p>As mentioned, the Stand-alone Debugger will initialize Eclipse objects on your behalf on

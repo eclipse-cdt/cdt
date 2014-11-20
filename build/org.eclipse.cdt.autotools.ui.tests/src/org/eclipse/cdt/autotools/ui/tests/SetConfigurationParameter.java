@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eclipse.cdt.autotools.ui.tests.AbstractTest.NodeAvailableAndSelect;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -50,8 +49,7 @@ import org.w3c.dom.NodeList;
 public class SetConfigurationParameter extends AbstractTest {
 
 	@BeforeClass
-	public static void beforeClass() throws Exception {
-		AbstractTest.init("GnuProject0");
+	public static void initClass() throws Exception {
 		initConfigParm();
 	}
 

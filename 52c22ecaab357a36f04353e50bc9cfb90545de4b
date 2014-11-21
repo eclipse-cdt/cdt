@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_1db3f380",
+        "filename": "debug/org.eclipse.cdt.debug.application.doc/tasks/cdt_t_standalone_startup.htm",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-21T17:36:58Z",
+      "side": 1,
+      "message": "This option specifies a hostname or IP address and IP port to connect to in order to perform remote debugging.",
+      "revId": "52c22ecaab357a36f04353e50bc9cfb90545de4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_fdaf1714",
+        "filename": "debug/org.eclipse.cdt.debug.application.doc/tasks/cdt_t_standalone_startup.htm",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-21T17:36:58Z",
+      "side": 1,
+      "message": "Why is -e optional when -a is specified?  Not sure how this is meant to work..",
+      "revId": "52c22ecaab357a36f04353e50bc9cfb90545de4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_bd90ffd0",
+        "filename": "debug/org.eclipse.cdt.debug.application/scripts/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2014-11-21T17:36:58Z",
+      "side": 1,
+      "message": "I\u0027m not clear how this works when you specify the -a flag.  In the local case, the end-user picks from a list of running processes.  Is this the same for remote?  If so, what happens if the user specifies a -e binary that doesn\u0027t match?  This might best be spelled out here and in the docs.",
+      "revId": "52c22ecaab357a36f04353e50bc9cfb90545de4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

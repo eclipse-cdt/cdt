@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "Sleep.h"
 
+static int stay_in_loop = 0;
+
 // Set a breakpoint here so that both threads stop.
 void firstBreakpoint(long id)
 {
@@ -33,7 +35,9 @@ int main(int argc, char *argv[])
 	struct PrintHelloArgs args;
 	args.thread_id = 1; // Break at main will stop here: we have a single thread stopped
 
-	SLEEP(1);  // When resuming past here, we have a single thread running
+	for (int i = 0; i < 1000 && stay_in_loop; i++) {
+		MSLEEP(60);
+	}
 
 	StartThread(PrintHello, &args, &thread);
 

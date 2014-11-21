@@ -22,6 +22,8 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -666,6 +668,17 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 		});
 		assertFalse("expected no threads to be suspended, but found some", result);
 	}
+
+	private void setStayInLoop(boolean value) throws Throwable {
+		final IMIExecutionDMContext execContext = SyncUtil
+				.getExecutionContext(0);
+
+		IExpressionDMContext lalaExpression = SyncUtil.createExpression(
+				execContext, "stay_in_loop");
+
+		SyncUtil.setExpressionValue(lalaExpression, value ? "1" : "0",
+				IFormattedValues.DECIMAL_FORMAT);
+	}
 	
 	/**
 	 * Test resume of multiple contexts with one thread which is running.
@@ -674,11 +687,14 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	public void testResumeOneThreadRunning() throws Throwable {
 		final IMIExecutionDMContext[] threads = SyncUtil.getExecutionContexts();
 		assertTrue("Expected a single thread but got " + threads.length, threads.length == 1);
-
+		
+		setStayInLoop(true);
+		
 		// Resume the program to get thread running
 		SyncUtil.resume();
-
-		// Confirm that all threads are running
+		
+		// The program should not be stuck in the for loop, confirm that all
+		// threads are running
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() { 
 			@Override public void run(DataRequestMonitor<Boolean> drm) {
 				fMultiRun.isSuspendedSome(threads, drm);
@@ -3143,7 +3159,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	public void testResumeProcessThreadOneThreadRunning() throws Throwable {
 		final IExecutionDMContext[] execDmcs = new IExecutionDMContext[] { 
 				SyncUtil.getContainerContext(), SyncUtil.getExecutionContext(0) };
-
+		
 		// Resume the program to get thread running
 		SyncUtil.resume();
 		

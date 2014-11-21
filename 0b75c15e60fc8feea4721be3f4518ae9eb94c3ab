@@ -124,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_178ab2a2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3062,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-21T04:48:26Z",
+      "side": 1,
+      "message": "Returning PDOMBindings is not an error. Multiple representations of the same symbol can be filtered out by the resolveAmbiguities method. If only PDOMBindings are returned when the symbol is defined in the current AST, it may indicate that the definition is missed by the lookup.",
+      "parentUuid": "a766b734_9796c2ce",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_9cbf0949",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 2
@@ -153,6 +171,24 @@
       "side": 1,
       "message": "Could you explain this further? First, is it just the template arguments that you want me to use EvalFixed for, or for all of the other places in this function that construct AST nodes? Second, out of curiosity, in what way is it dangerous? Lastly, how do I pass an EvalFixed into addTemplateArgument?",
       "parentUuid": "a766b734_9cbf0949",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f786169c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-21T04:48:26Z",
+      "side": 1,
+      "message": "Various places in the code assume that when given a IASTNode they can navigate the parent chain up to the IASTTranslationUnit.\n\nFunction resolution in this loop has to be rewritten to avoid creation of orphan ASTNodes. See AutoTypeResolver and EvalFunctionCall for the source of ideas.",
+      "parentUuid": "a766b734_57a0aa22",
       "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

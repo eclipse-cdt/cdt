@@ -797,8 +797,8 @@ public class CVisitor extends ASTQueries {
 								return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray());
 							} else if (binding instanceof IVariable) {
 								t2 = ((IVariable) binding).getType();
-								if (t1 != null && t2 != null && (
-										t1.isSameType(t2) || isCompatibleArray(t1, t2) != null)) {
+								if (t1 != null && t2 != null &&
+										(areArraysOfTheSameElementType(t1, t2) || t1.isSameType(t2))) {
 									if (binding instanceof CVariable)
 										((CVariable) binding).addDeclaration(name);
 								} else {

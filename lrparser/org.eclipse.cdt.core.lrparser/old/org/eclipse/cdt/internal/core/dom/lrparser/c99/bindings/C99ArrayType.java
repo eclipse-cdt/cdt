@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 @SuppressWarnings("restriction")
 public class C99ArrayType implements ICArrayType, ITypeContainer {
-
 	private boolean isConst;
 	private boolean isRestrict;
 	private boolean isStatic;
@@ -37,6 +36,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		this.type = type;
 	}
 	
+	@Override
 	public boolean isConst() {
 		return isConst;
 	}
@@ -45,6 +45,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		this.isConst = isConst;
 	}
 
+	@Override
 	public boolean isRestrict() {
 		return isRestrict;
 	}
@@ -53,6 +54,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		this.isRestrict = isRestrict;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return isStatic;
 	}
@@ -61,6 +63,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		this.isStatic = isStatic;
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
@@ -69,6 +72,7 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		this.isVolatile = isVolatile;
 	}
 
+	@Override
 	public boolean isVariableLength() {
 		return isVariableLength;
 	}
@@ -77,38 +81,52 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		this.isVariableLength = isVariableLength;
 	}
 
+	@Deprecated
+	@Override
 	public IASTExpression getArraySizeExpression() throws DOMException {
 		return null;
 	}
 
+	@Override
 	public IType getType() {
 		return type;
 	}
 	
+	@Override
 	public void setType(IType type) {
 		this.type = type;
 	}
 
+	@Override
 	public boolean isSameType(IType t) {
-		if(t == this)
+		if (t == this)
 			return true;
-		if(t instanceof ITypedef)
+		if (t instanceof ITypedef)
 			return t.isSameType(this);
-		if(t instanceof ICArrayType) {
+		if (t instanceof ICArrayType) {
 			ICArrayType at = (ICArrayType)t;
-			if(at.isConst() == isConst &&
-			   at.isRestrict() == isRestrict &&
-			   at.isStatic() == isStatic &&
-			   at.isVolatile() == isVolatile &&
-			   at.isVariableLength() == isVariableLength) {
+			if (at.isConst() == isConst &&
+					at.isRestrict() == isRestrict &&
+					at.isStatic() == isStatic &&
+					at.isVolatile() == isVolatile &&
+					at.isVariableLength() == isVariableLength) {
 				return at.isSameType(type);
 			}
 		}
 		return false;
 	}
-
 	
-	@Override
+    @Override
+	public IValue getSize() {
+		return null;
+	}
+
+    @Override
+    public boolean hasSize() {
+    	return false;
+    }
+
+    @Override
 	public C99ArrayType clone() {
 		C99ArrayType clone = null;
 		try {
@@ -119,10 +137,4 @@ public class C99ArrayType implements ICArrayType, ITypeContainer {
 		}
 		return clone;
 	}
-
-	public IValue getSize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

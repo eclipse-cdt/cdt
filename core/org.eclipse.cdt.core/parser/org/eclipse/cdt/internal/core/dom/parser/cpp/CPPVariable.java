@@ -47,7 +47,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	private boolean fAllResolved;
 	
 	public CPPVariable(IASTName name) {
-	    boolean isDef = name == null ? false : name.isDefinition();
+	    boolean isDef = name != null && name.isDefinition();
 	    if (name instanceof ICPPASTQualifiedName) {
 	    	name = name.getLastName();
 	    }
@@ -145,7 +145,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 				IASTNode node = n.getParent();
 				if (node instanceof IASTDeclarator) {
 					IType t= CPPVisitor.createType((IASTDeclarator) node);
-					if (t instanceof IArrayType && ((IArrayType) t).getSize() == null) {
+					if (t instanceof IArrayType && !((IArrayType) t).hasSize()) {
 						if (firstCandidate == null) {
 							firstCandidate= (IArrayType) t;
 						}

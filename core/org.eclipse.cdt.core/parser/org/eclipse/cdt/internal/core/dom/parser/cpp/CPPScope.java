@@ -225,7 +225,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	public IBinding[] getBindingsInAST(ScopeLookupData lookup) {
 		populateCache();
 	    final char[] c = lookup.getLookupKey();
-	    IBinding[] result = null;
+	    IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
 
 	    Object obj = null;
 	    if (lookup.isPrefixLookup()) {
@@ -257,7 +257,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	        	result = addCandidate(obj, lookup, result);
 	        }
 	    }
-	    return ArrayUtil.trim(IBinding.class, result);
+	    return ArrayUtil.trim(result);
 	}
 
 	private IBinding[] addCandidate(Object candidate, ScopeLookupData lookup, IBinding[] result) {
@@ -287,7 +287,9 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			binding= (IBinding) candidate;
 		}
 
-		return ArrayUtil.append(IBinding.class, result, binding);
+		if (binding != null)
+			result = ArrayUtil.append(result, binding);
+		return result;
 	}
 
 	@Override

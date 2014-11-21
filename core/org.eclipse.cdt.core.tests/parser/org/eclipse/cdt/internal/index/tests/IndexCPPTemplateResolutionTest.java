@@ -247,7 +247,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  void m2(const StrT<T> s) {}
 	//	};
 
-    // #include "header.h"
 	//  void main() {
 	//     C1<char> c1;
 	//	   c1.m1("aaa");  // OK
@@ -282,7 +281,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//   public: void assign(const T* s) {}
 	// };
 
-    // #include "header.h"
 	// void main() {
 	//   StrT<char> x;
 	//   x.assign("aaa");
@@ -364,7 +362,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  void m3();
 	//	};
 
-    // #include "header.h"
 	//  void C1::m3() {
 	//	   m1("aaa");  // OK
 	//	   m2("aaa");  // problem
@@ -609,7 +606,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  B<int>::a;
 	//	}
 	public void testInstanceInheritance_258745() throws Exception {
-		getBindingFromASTName("a", 1, ICPPField.class);
+		getBindingFromFirstIdentifier("a", ICPPField.class);
 	}
 
 	// class A {}; class B {}; class C {};
@@ -619,7 +616,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// template<typename T3>
 	// class D<A, T3> {};
 
-    // #include "header.h"
 	// template<typename T3> class D<A, T3>; // harmless declaration for test purposes
 	// template<typename T3> class D<B, T3> {};
 	// template<typename T3> class D<C, T3> {};
@@ -1231,7 +1227,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //   class B {};
     // };
 
-    // #include "header.h"
     // void refs() {
     //    A<C>::B acb;
     //    A<D>::B adb;
@@ -1687,7 +1682,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	// template <typename T= int> class XT;
 
-    // #include "header.h"
 	// template <typename T> class XT {};
 	// void test() {
 	//    XT<> x;
@@ -1946,7 +1940,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	B<float> b;
 	//	C<float> c;
 
-	// #include "header.h"
 	//	void test() {
 	//		b.f();
 	//		b.f(1);
@@ -1979,7 +1972,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    typedef int type;
 	//	};
 
-	// #include "header.h"
 	//	template <typename>	struct foo {};
 	//	int main() {
 	//	    typedef foo<int>::type type;  // ERROR HERE: 'foo<int>::type' could not be
@@ -1993,7 +1985,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    typedef int type;
 	//	};
 
-	// #include "header.h"
 	//	template <typename>	struct foo {};
 	//	int main() {
 	//	    typedef foo<int*>::type type;  // ERROR HERE: 'foo<int>::type' could not be
@@ -2444,7 +2435,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template <typename = void>
 	//	struct S;
 
-	//	#include "header.h"
 	//	template <>
 	//	struct S<void> {
 	//		typedef int type;
@@ -2473,7 +2463,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    friend T operator *(const T& lhs, const T& rhs);
 	//	};
 
-	//	#include "header.h"
 	//	struct overloaded : multipliable1<overloaded> {};
 	//
 	//	int foo(overloaded);
@@ -2499,7 +2488,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    friend T operator *(const T& lhs, const T& rhs) {}
 	//	};
 
-	//	#include "header.h"
 	//	struct overloaded : multipliable1 <overloaded> {};
 	//
 	//	int foo(overloaded);
@@ -2569,13 +2557,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template <typename T>
 	//	class Derived : public Base<B<S>, f<T> > {};
 
-	//	#include "header.h"
 	//	const Derived<S> decl;
 	//	
 	//	void bar(const B<S>&);
 	//	
-	//	void foo()
-	//	{
+	//	void foo() {
 	//	    bar(decl());  // ERROR HERE: Invalid arguments
 	//	}
 	public void testInstantiationOfFunctionInstance_437675() throws Exception {

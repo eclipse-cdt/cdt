@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,7 +24,10 @@ public interface ICPPInternalBinding extends ICPPBinding {
 	 */
 	IASTNode getDefinition();
 
-	/** Implementors must keep the node with the lowest offset in declarations[0] */
+	/**
+	 * Returns an array of declarations or {@code null} if the binding has no declarations.
+	 * Implementors must keep the node with the lowest offset in declarations[0].
+	 */
 	IASTNode[] getDeclarations();
 
 	void addDefinition(IASTNode node);

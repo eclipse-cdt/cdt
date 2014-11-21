@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2014 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	private static final boolean DEBUG= false;
+	private static final String END_OF_ADDED_CODE_MARKER = "/*END_OF_ADDED_CODE*/";
 	protected ITestStrategy strategy;
 
 	public void setStrategy(ITestStrategy strategy) {
@@ -93,16 +94,24 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		for (int i = 0; i < strategy.getAstCount(); i++) {
 			IASTTranslationUnit ast = strategy.getAst(i);
 			final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-			final int offset = strategy.getAstSource(i).indexOf(section);
+			String source = ast.getRawSignature();
+			// Skip the automatically added code.
+			int offset = source.indexOf(END_OF_ADDED_CODE_MARKER);
 			if (offset >= 0) {
-				if (preferImplicitName) {
-					return nodeSelector.findImplicitName(offset, len);
-				} else {
-					IASTName name= nodeSelector.findName(offset, len);
-					if (name == null)
-						name= nodeSelector.findImplicitName(offset, len);
-					return name;
-				}
+				offset += END_OF_ADDED_CODE_MARKER.length();
+				if (source.charAt(offset) == '\n')
+					offset++;
+			} else {
+				offset = 0;
+			}
+			offset = source.indexOf(section, offset);
+			if (offset >= 0) {
+				IASTName name= null;
+				if (!preferImplicitName)
+					name= nodeSelector.findName(offset, len);
+				if (name == null)
+					name= nodeSelector.findImplicitName(offset, len);
+				return name;
 			}
 		}
 
@@ -314,14 +323,17 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	final protected void checkBindings() throws Exception {
+	protected final void checkBindings() throws Exception {
 		for (int i = 0; i < strategy.getAstCount(); i++) {
-			IASTTranslationUnit ast = strategy.getAst(i);
-			NameCollector col = new NameCollector();
-			ast.accept(col);
-			for (IASTName n : col.nameList) {
-				assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
-			}
+			checkBindings(strategy.getAst(i));
+		}
+	}
+
+	protected final void checkBindings(IASTTranslationUnit ast) {
+		NameCollector col = new NameCollector();
+		ast.accept(col);
+		for (IASTName n : col.nameList) {
+			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
 		}
 	}
 
@@ -417,6 +429,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			if (testData.length < 2)
 				fail("Insufficient test data");
+			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
+
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 	        waitForIndexer(cproject);
@@ -504,6 +518,8 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			if (testData.length < 2)
 				fail("Insufficient test data");
+			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
+
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 	        waitForIndexer(cproject);
@@ -709,6 +725,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 					CProjectHelper.createCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b= CTestPlugin.getDefault().getBundle();
 			testData= TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
+			if (testData.length < 2)
+				fail("Insufficient test data");
+			testData[1].insert(0, "#include \"header.h\" " + END_OF_ADDED_CODE_MARKER + "\n");
+
 			referenced = createReferencedContent();
 
 			TestScannerProvider.sIncludes= new String[] {referenced.getProject().getLocation().toOSString()};
@@ -724,7 +744,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			waitForIndexer(cproject);
 
 			if (DEBUG) {
-				System.out.println("Online: "+getName());
+				System.out.println("Online: " + getName());
 			 	((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
@@ -746,7 +766,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			waitForIndexer(referenced);
 
 			if (DEBUG) {
-				System.out.println("Referenced: "+getName());
+				System.out.println("Referenced: " + getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
 			}
 

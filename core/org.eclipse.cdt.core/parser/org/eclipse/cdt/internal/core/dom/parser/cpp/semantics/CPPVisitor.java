@@ -872,7 +872,7 @@ public class CPPVisitor extends ASTQueries {
         	    		t2 = ((IVariable) binding).getType();
         	    	}
         	    	if (t1 != null && t2 != null) {
-        	    		if (t1.isSameType(t2) || isCompatibleArray(t1, t2) != null) {
+        	    		if (areArraysOfTheSameElementType(t1, t2) || t1.isSameType(t2)) {
         	    			ASTInternal.addDeclaration(binding, name);
         	    		} else {
         	    			binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);

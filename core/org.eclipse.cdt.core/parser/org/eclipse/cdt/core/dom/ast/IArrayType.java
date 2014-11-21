@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,19 +18,26 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IArrayType extends IType {
     /**
-     * get the type that this is an array of
+     * Returns the type that this is an array of.
      */
     IType getType();
     
     /**
-     * Returns the value for the size of the array type, or <code>null</code> if it is unspecified.
+     * Returns the value for the size of the array type, or {@code null} if it is unspecified.
      * @since 5.2
      */
     IValue getSize();
-    
+
     /**
-     * get the expression that represents the size of this array
+     * Checks is the array type has specified size.
+     * @since 5.9
+     */
+    boolean hasSize();
+
+    /**
+     * Returns the expression that represents the size of this array
      * @throws DOMException
      */
+    @Deprecated
     IASTExpression getArraySizeExpression() throws DOMException;
 }

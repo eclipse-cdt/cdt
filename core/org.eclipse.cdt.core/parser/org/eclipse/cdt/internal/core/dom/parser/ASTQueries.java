@@ -177,22 +177,13 @@ public class ASTQueries {
 		return type1.isSameType(type2);
 	}
 	
-	protected static IType isCompatibleArray(IType t1, IType t2) {
+	protected static boolean areArraysOfTheSameElementType(IType t1, IType t2) {
 		if (t1 instanceof IArrayType && t2 instanceof IArrayType) {
 			IArrayType a1 = (IArrayType) t1;
 			IArrayType a2 = (IArrayType) t2;
-			if (!isSameType(a1.getType(), a2.getType())) {
-				return null;
-			}
-			if (a1.getSize() == null) {
-				if (a2.getSize() != null) {
-					return a2;
-				}
-			} else if (a2.getSize() == null) {
-				return a1;
-			}
+			return isSameType(a1.getType(), a2.getType());
 		}
-		return null;
+		return false;
 	}
 	
 	/**

@@ -233,7 +233,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//     class B {};
 	// }
 
-	// #include "header.h"
 	// namespace n { class C{}; }
 	// m::C c;
 	public void testUsingNamingDirective_177917_1b() {
@@ -268,7 +267,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//     class B {};
 	// }
 
-	// #include "header.h"
 	// b::A aa;
 	// b::B bb;
 	public void testUsingTypeDeclaration_177917_2() {
@@ -290,7 +288,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	using header::clh;
 	//	using header::fh;
 
-	//	#include "header.h"
 	//	namespace source {
 	//		class cls {
 	//		};
@@ -361,7 +358,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertInstance(f1.getParameterTypes()[0], ICPPBasicType.class);
 	}
 
-	// // header file
 	//  class Base {public: int field; void foo() {}};
 	//	class C : public Base {
 	//		public:
@@ -373,9 +369,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//			C* (CS::*method)(CS **);
 	//		};
 
-	// // referencing file
-	//	#include "header.h"
-	//
 	//  C *cp = new C(); /*b0, b1*/
 	//	void references() {
 	//		long l = 5, *lp;
@@ -420,15 +413,12 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertPTM(((ICPPField)b3).getType(), "C::CS", null);
 	}
 
-	// // header file
 	// class C {}; struct S {}; union U {}; enum E {ER1,ER2,ER3};
 	// int var1; C var2; S *var3; void func(E); void func(C);
 	// namespace ns {}
 	// typedef int Int; typedef int *IntPtr;
 	// void func(int*); void func(int);
 
-	// // referencing file
-	// #include "header.h"
 	// void references() {
 	// 	C c; /*c*/ S s; /*s*/ U u; /*u*/ E e; /*e*/
 	//  var1 = 1; /*var1*/ var2 = c; /*var2*/ var3 = &s; /*var3*/
@@ -844,33 +834,26 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b2 = getBindingFromASTName("ER2; }", 3);
 	}
 
-	// // the header
 	// void foo(int a=2, int b=3);
 
-	// #include "header.h"
 	// void ref() { foo(); }
 	public void testFunctionDefaultArguments() {
 		IBinding b0 = getBindingFromASTName("foo();", 3);
 	}
 
-	// // the header
 	// typedef int TYPE;
 	// namespace ns {
 	//    const TYPE* foo(int a);
 	// };
 
-	// #include "header.h"
 	// const TYPE* ns::foo(int a) { return 0; }
 	public void testTypeQualifier() {
 		IBinding b0 = getBindingFromASTName("foo(", 3);
 	}
 
-	// // header
 	//	class Base { public: void foo(int i) {} };
 	//	class Derived : public Base { public: void foo(long l) {} };
 
-	// // references
-	// #include "header.h"
 	// void references() {
 	//    Derived d; /*d*/
 	//    d.foo(55L); // calls long version
@@ -883,11 +866,8 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b2 = getBindingFromASTName("foo(4);", 3);
 	}
 
-	// // header content
 	// namespace x { namespace y { int i; } }
 
-	// // the references
-	// #include "header.h"
 	// class C { public:
 	//    class x { public:
 	//       class y { public:
@@ -963,15 +943,12 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b18 = getBindingFromASTName("i/*18*/", 1);
 	}
 
-	//	// header file
 	//	class C {public: C* cp;};
 	//	C foo(C c);
 	//	C* foo(C* c);
 	//	int foo(int i);
 	//	int foo(int i, C c);
 
-	//	// referencing content
-	//	#include "header.h"
 	//	void references() {
 	//		C c, *cp;
 	//		foo/*a*/(cp[1]);                        // IASTArraySubscriptExpression
@@ -1036,7 +1013,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		// IBinding b13 = getBindingFromASTName(ast, "foo/*n*/", 3);
 	}
 
-	// // header content
 	//	class C { public:
 	//	typedef int i1;	typedef long *lp1;
 	//	class C1 {}; struct S1 {}; union U1 {}; enum E1 {A1};
@@ -1062,8 +1038,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	void f(n::i4); void f(n::lp4); void f(n::S4); void f(n::U4); void f(n::E4);
 	//	void f(E);
 
-	// // reference content
-	//  #include "header.h"
 	//	void references() {
 	//		void (*fintptr)(int), (*flongptr)(long);
 	//		void (*fC)(C), (*fCi1)(C::i1), (*fClp1)(C::lp1), (*fCS1)(C::S1), (*fCU1)(C::U1), (*fCE1)(C::E1);
@@ -1124,12 +1098,10 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertNotSame(fn1, fn2);
     }
 
-	// // the header
 	// void f_int(int);
 	// void f_const_int(const int);
 	// void f_int_ptr(int*);
 
-	// #include "header.h"
 	// void ref() {
 	// 	 int 			i				= 0;
 	//   const int 		const_int		= 0;
@@ -1151,7 +1123,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		getProblemFromASTName("f_int_ptr(&const_int)", 9);
 	}
 
-	// // the header
 	// void f_int_ptr(int*);
 	// void f_const_int_ptr(const int*);
 	// void f_int_const_ptr(int const*);
@@ -1159,7 +1130,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void f_const_int_ptr_const(const int*const);
 	// void f_int_const_ptr_const(int const*const);
 
-	// #include "header.h"
 	// void ref() {
 	// 	 int* 			int_ptr			= 0;
 	//   const int*		const_int_ptr   = 0;
@@ -1321,7 +1291,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertEquals(binding2, getBindingFromASTName("f(int_const_ptr_const)", 1));
 	}
 
-	// // the header
 	// void f(int*);		// b1
 	// void f(const int*);	// b2
 	// void f(int const*);	// b2
@@ -1329,7 +1298,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void f(const int*const);	// b2
 	// void f(int const*const); // b2
 
-	// #include "header.h"
 	// void f(int*){}		// b1
 	// void f(const int*){}	// b2
 	//
@@ -1393,7 +1361,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     // using namespace x;
 	// using x::a;
 
-	// #include "header.h"
 	// void test() {
 	//    a(1);
 	// }
@@ -1465,7 +1432,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}}
 	//	using namespace ns1::ns2;
 
-	//	#include "header.h"
 	//	A a;
 	public void testUsingDirectiveWithQualifiedName_269727() throws Exception {
     	getBindingFromASTName("A a", 1, ICPPClassType.class);
@@ -1659,7 +1625,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//      }
 	//	}
 
-	// #include "header.h"
 	//	void test() {
 	//		::f(1);
 	//      ::g(1);
@@ -1684,7 +1649,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//      }
 	//	}
 
-	// #include "header.h"
 	//	namespace out {}
 	//  namespace out2 {}
 	//	namespace in {}

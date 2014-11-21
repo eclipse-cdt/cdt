@@ -28,6 +28,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -516,7 +517,30 @@ public class SyncUtil {
 		fSession.getExecutor().execute(query);
 		return query.get(); 
 	}
-	
+
+	public static void setExpressionValue(final IExpressionDMContext exprDmc,
+			final String value, final String format)
+			throws InterruptedException {
+		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+		// Write the new value using its formatted value
+		fExpressions.getExecutor().submit(new Runnable() {
+			@Override
+			public void run() {
+				fExpressions.writeExpression(exprDmc, value, format,
+						new RequestMonitor(fExpressions.getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								wait.waitFinished(getStatus());
+							}
+						});
+			}
+		});
+
+		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+		assertTrue(wait.getMessage(), wait.isOK());
+	}
+    
     public static FormattedValueDMContext getFormattedValue(
         final IFormattedValues service, final IFormattedDataDMContext dmc, final String formatId) throws Throwable 
     {

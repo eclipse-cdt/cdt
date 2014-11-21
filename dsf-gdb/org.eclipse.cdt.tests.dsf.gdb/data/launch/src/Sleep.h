@@ -3,10 +3,22 @@
 
 #ifdef __MINGW32__ // MinGW has no POSIX support; use Win32 API
  #include <windows.h>
- #define SLEEP(s) Sleep((s)*1000)	// Win32's Sleep takes milliseconds
+ void SLEEP(s) {
+	 Sleep(s * 1000);
+ }
+ 
+ void MSLEEP(int ms) {
+	 Sleep(ms)
+ }
 #else
  #include <unistd.h>
- #define SLEEP(s) sleep(s)			// POSIX sleep takes seconds
+ void SLEEP(int s) {
+	 sleep(s);
+ }
+ 
+ void MSLEEP(int ms) {
+	 usleep(ms * 1000);
+ }
 #endif
 
 #endif // Sleep_h

@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
@@ -71,6 +72,7 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.junit.Assert;
 
 /**
  * Timeout wait values are in milliseconds, or WAIT_FOREVER.
@@ -479,6 +481,45 @@ public class SyncUtil {
     	fSession.getExecutor().execute(query);
     	return query.get(500, TimeUnit.MILLISECONDS);
     }
+
+	public static IThreadDMData getThreadData(final int threadId)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+		final DataRequestMonitor<IThreadDMData> rm = new DataRequestMonitor<IThreadDMData>(
+				fSession.getExecutor(), null) {
+			@Override
+			protected void handleCompleted() {
+				if (isSuccess()) {
+					wait.setReturnInfo(getData());
+				}
+				wait.waitFinished(getStatus());
+			}
+		};
+
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
+				SyncUtil.getContainerContext(), IProcessDMContext.class);
+		fProcessesService.getExecutor().submit(new Runnable() {
+			@Override
+			public void run() {
+				IThreadDMContext threadDmc = fProcessesService
+						.createThreadContext(processContext,
+								Integer.toString(threadId));
+				fProcessesService.getExecutionData(threadDmc, rm);
+			}
+		});
+
+		// Wait for the operation to complete and validate success.
+		wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+		assertTrue(wait.getMessage(), wait.isOK());
+
+		IThreadDMData threadData = (IThreadDMData) wait.getReturnInfo();
+		Assert.assertNotNull("Thread data not returned for thread id = "
+				+ threadId, threadData);
+
+		wait.waitReset();
+		return threadData;
+	}
 
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
         throws Throwable {

@@ -119,15 +119,10 @@ public class MIRegistersTest extends BaseTestCase {
 	}
 
 	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
-
-	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
-	private static final String SRC_NAME = "MultiThread.cc";
+	private static final String SOURCE_NAME = "MultiThread.cc";
 
 	private static final String GROUP_X = "GroupX";
 	private static final String GROUP_Y = "GroupY";
@@ -145,6 +140,7 @@ public class MIRegistersTest extends BaseTestCase {
 		super.doBeforeTest();
 
 		fSession = getGDBLaunch().getSession();
+		resolveLineTagLocations(SOURCE_NAME, MIRunControlTest.LINE_TAGS);
 
 		Runnable runnable = new Runnable() {
 			@Override
@@ -389,19 +385,8 @@ public class MIRegistersTest extends BaseTestCase {
 
 	@Test
 	public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-		// Run past the line that creates a thread and past the sleep that
-		// follows it. This is a bit tricky because the code that creates the
-		// thread is conditional depending on environment. Run to the printf
-		// before it (which is common), then do step operations over the
-		// non-common code (but same number of lines)
-		SyncUtil.runToLine(SRC_NAME, MIRunControlTest.LINE_MAIN_PRINTF);
-
-		// Because the program is about to go multi-threaded, we have to select the thread we want to keep stepping. If we don't, we will ask GDB to step
-		// the entire process which is not what we want. We can fetch the thread from the stopped event but we should do that before the second thread is
-		// created, to be sure the stopped event is for the main thread.
-		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER); // over the printf
-		SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER); // over the create-thread call
-		stoppedEvent = SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER, TestsPlugin.massageTimeout(2000)); // over the one second sleep
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SOURCE_NAME,
+				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
 		// Get the thread IDs
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);

@@ -22,7 +22,6 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -46,7 +45,7 @@ public class GDBProcessesTest extends BaseTestCase {
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
-	
+	private static final String SOURCE_NAME = "MultiThread.cc";
 	
 	private DsfSession fSession;
     private DsfServicesTracker fServicesTracker;	
@@ -135,49 +134,33 @@ public class GDBProcessesTest extends BaseTestCase {
         Assert.assertTrue("Process data should be executable name " + EXEC_NAME + "but we got " + processData.getName(),
         		 processData.getName().contains(EXEC_NAME));
 	}
-	
-	/* 
+
+	/*
 	 * getThreadData() for multiple threads
 	 */
 	@Test
-	public void getThreadData() throws InterruptedException{
-		
-		final String THREAD_ID = "1";
-        final DataRequestMonitor<IThreadDMData> rm = 
-        	new DataRequestMonitor<IThreadDMData>(fSession.getExecutor(), null) {
-            @Override
-            protected void handleCompleted() {
-               if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
-                }
-                fWait.waitFinished(getStatus());
-            }
-        };
+	public void getThreadData() throws Throwable {
+		// Start all threads, stop when they are all started
+		SyncUtil.runToLine(SOURCE_NAME, Integer
+				.toString(MIRunControlTest.LINE_MAIN_ALL_THREADS_STARTED));
 
+		IThreadDMData mainThreadData = SyncUtil.getThreadData(1);
 
-		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(), IProcessDMContext.class);
-        fProcService.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-            	IThreadDMContext threadDmc = fProcService.createThreadContext(processContext, THREAD_ID);
-				fProcService.getExecutionData(threadDmc, rm);
-            }
-        });
+		// Test that thread id is only a series of numbers
+		Pattern pattern = Pattern.compile("\\d*", Pattern.MULTILINE); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher(mainThreadData.getId());
+		assertTrue("Thread ID is a series of number", matcher.matches());
 
-        // Wait for the operation to complete and validate success.
-        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        
-        IThreadDMData threadData = (IThreadDMData)fWait.getReturnInfo();
-        Assert.assertNotNull("Thread data not returned for thread id = " + THREAD_ID, threadData);
+		// Check the thread names. We did not change the main thread's name, so
+		// it should be the same as the executable name.
+		final String names[] = { EXEC_NAME, "monday", "tuesday", "wednesday",
+				"thursday", "friday" };
 
-        // Thread id is only a series of numbers
-    	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
-		Matcher matcher = pattern.matcher(threadData.getId());
-		assertTrue("Thread ID is a series of number", matcher.find());
-		// Check thread name
-		assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
-    	
-    	fWait.waitReset(); 
+		// Check that we have correct data for PrintHello
+		for (int i = 2; i <= 6; i++) {
+			IThreadDMData threadData = SyncUtil.getThreadData(i);
+			String name = threadData.getName();
+			assertEquals("Thread name of thread " + i, names[i - 1], name);
+		}
 	}
 }

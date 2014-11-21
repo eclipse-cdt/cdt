@@ -55,7 +55,7 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 		// exceeds MAX_RESOLUTION_DEPTH. If the resolution depth exceeds
 		// MAX_RESOLUTION_DEPTH + 1, it means that attempting to create the
 		// recursion resolving binding has led us back to trying to resolve
-		// the bidning for this name again, so the recursion isn't broken. 
+		// the binding for this name again, so the recursion isn't broken. 
 		// This can happen because the constructor of RecursionResolvingBinding 
 		// calls ProblemBinding.getMessage(), which can try to do name 
 		// resolution to build an argument string if one wasn't provided in the

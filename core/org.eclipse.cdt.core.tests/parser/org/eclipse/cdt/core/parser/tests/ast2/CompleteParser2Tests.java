@@ -2452,7 +2452,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void test158192_declspec_on_class() throws Exception {
     	if (!Platform.getOS().equals(Platform.OS_WIN32))
-    		return; // XXX: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
+    		return; // TODO: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
 
     	Writer writer = new StringWriter();
     	writer.write("class __declspec(foobar) Foo1 {};\n");
@@ -2479,7 +2479,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void test158192_declspec_on_variable() throws Exception {
     	if (!Platform.getOS().equals(Platform.OS_WIN32))
-    		return; // XXX: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
+    		return; // TODO: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
 
     	Writer writer = new StringWriter();
     	writer.write("__declspec(foobar) class Foo {} bar;\n");
@@ -2500,7 +2500,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158192
     public void test158192_declspec_in_declarator() throws Exception {
     	if (!Platform.getOS().equals(Platform.OS_WIN32))
-    		return; // XXX: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
+    		return; // TODO: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
 
     	Writer writer = new StringWriter();
 

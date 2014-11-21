@@ -20,13 +20,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
+
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 
 /**
  * Compares two <code>IParitionTokenScanner</code>s for performance.
@@ -141,7 +142,7 @@ public class PartitionTokenScannerTest extends TestCase {
 
 			int offsetIndex= offset - region.getOffset();
 
-			// XXX kludge
+			// TODO kludge
 			if (offsetIndex > line.length())
 				offsetIndex= line.length();
 
@@ -150,7 +151,6 @@ public class PartitionTokenScannerTest extends TestCase {
 			buffer.append("<POS>");
 			buffer.append(line.substring(offsetIndex));
 			buffer.append(']');
-
 		} catch (BadLocationException e) {
 		}
 

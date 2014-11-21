@@ -437,7 +437,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//  void foo()X{}
 	//  void bar(int x);
 	//  };
-	public void _testFollowingDeclaration4b() { // XXX - this is likely invalid anyhow
+	public void _testFollowingDeclaration4b() { // TODO - this is likely invalid anyhow
 		assertDeclarationFollowingX("void foo(){}"); // (X is just the cursor position)
 	}
 	
@@ -449,7 +449,7 @@ public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//  }
 	//  void bar(int x);
 	//  };
-	public void _testFollowingDeclaration4c() { // XXX - this is likely invalid anyhow
+	public void _testFollowingDeclaration4c() { // TODO - this is likely invalid anyhow
 		assertDeclarationFollowingX("void foo()\n  {\n     int x;\n  }\n"); // (X is just the cursor position)
 	}
 	

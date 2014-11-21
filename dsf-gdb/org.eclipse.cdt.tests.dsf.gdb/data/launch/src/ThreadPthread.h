@@ -2,8 +2,7 @@
 #define THREADPTHREAD_H
 
 #include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <sys/prctl.h>
 
 /* Thread functions */
 
@@ -35,5 +34,11 @@ static int ThreadBarrierWait(ThreadBarrier *barrier)
 	ret = pthread_barrier_wait(barrier);
 	return ret == 0 || ret == PTHREAD_BARRIER_SERIAL_THREAD;
 }
+
+static int ThreadSetName(const char *name)
+{
+	return prctl(PR_SET_NAME, name, 0, 0, 0) == 0;
+}
+
 
 #endif // THREADPTHREAD_H

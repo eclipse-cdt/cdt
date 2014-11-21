@@ -117,15 +117,10 @@ public class MIRegistersTest extends BaseTestCase {
 	}
 
 	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
-
-	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
-	private static final String SRC_NAME = "MultiThread.cc";
+	private static final String SOURCE_NAME = "MultiThread.cc";
 
 	private static final String GROUP_X = "GroupX";
 	private static final String GROUP_Y = "GroupY";
@@ -143,6 +138,7 @@ public class MIRegistersTest extends BaseTestCase {
 		super.doBeforeTest();
 
 		fSession = getGDBLaunch().getSession();
+		resolveLineTagLocations(SOURCE_NAME, MIRunControlTest.LINE_TAGS);
 
 		Runnable runnable = new Runnable() {
 			@Override
@@ -368,7 +364,8 @@ public class MIRegistersTest extends BaseTestCase {
 
 	@Test
 	public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SRC_NAME, MIRunControlTest.LINE_MAIN_ALL_THREADS_STARTED);
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SOURCE_NAME,
+				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
 		// Get the thread IDs
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);

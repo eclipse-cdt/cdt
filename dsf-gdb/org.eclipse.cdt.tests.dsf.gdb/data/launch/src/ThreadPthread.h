@@ -2,8 +2,7 @@
 #define THREADPTHREAD_H
 
 #include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <sys/prctl.h>
 
 /* Thread functions */
 
@@ -53,6 +52,11 @@ static int ThreadSemaphorePut(ThreadSemaphore *sem)
 static int ThreadSemaphoreDestroy(ThreadSemaphore *sem)
 {
 	return sem_destroy(sem) == 0;
+}
+
+static int ThreadSetName(const char *name)
+{
+	return prctl(PR_SET_NAME, name, 0, 0, 0) == 0;
 }
 
 #endif // THREADPTHREAD_H

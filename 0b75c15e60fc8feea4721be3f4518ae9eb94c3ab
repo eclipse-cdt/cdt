@@ -106,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_9796c2ce",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3062,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-21T04:19:30Z",
+      "side": 1,
+      "message": "(...continued) I\u0027m unsure of what is a typical return value for findBindings, that\u0027s why I was confused as to why it returned both PDOMNodes and AST nodes. If it is indicative that a lookup failed, how would I investigate further?",
+      "parentUuid": "a766b734_37536eba",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_9cbf0949",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 2

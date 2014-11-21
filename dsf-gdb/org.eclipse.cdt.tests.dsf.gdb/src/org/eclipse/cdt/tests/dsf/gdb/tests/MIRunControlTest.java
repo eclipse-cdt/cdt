@@ -9,6 +9,7 @@
  *     Ericsson AB - Initial implementation of Test cases
  *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
  *     Simon Marchi (Ericsson) - Adapt test code to thread platform compatibility layer.
+ *     Simon Marchi (Ericsson) - Change breakpoint line numbers.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -85,21 +86,21 @@ public class MIRunControlTest extends BaseTestCase {
 	private IExecutionDMContext fThreadExecDmc;
 
 	// line numbers in MultiThread.cc
-	static final int LINE_MAIN_BEFORE_THREAD_START = 69; // Just before StartThread
-	static final int LINE_MAIN_AFTER_THREAD_START = 80; // Just after StartThread, where the thread is guaranteed to be started.
-	static final int LINE_MAIN_ALL_THREADS_STARTED = 88; // Where all threads are guaranteed to be started.
-
+	static final int LINE_MAIN_BEFORE_THREAD_START = 75; // Just before StartThread
+	static final int LINE_MAIN_AFTER_THREAD_START = 86; // Just after StartThread, where the thread is guaranteed to be started.
+	static final int LINE_MAIN_ALL_THREADS_STARTED = 92; // Where all threads are guaranteed to be started.
 
 	/*
 	 * Path to executable
 	 */
 	private static final String EXEC_PATH = "data/launch/bin/";
+
 	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SOURCE_NAME = "MultiThread.cc";
-	
+
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();

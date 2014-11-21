@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Ericsson and others.
+ * Copyright (c) 2007, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson	AB		  - Initial implementation of Test cases
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *     Simon Marchi (Ericsson) - Make canRestart and restart throw Exception instead of Throwable.
+ *     Simon Marchi (Ericsson) - Add getThreadData.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -43,6 +44,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
@@ -479,6 +481,26 @@ public class SyncUtil {
     	fSession.getExecutor().execute(query);
     	return query.get(500, TimeUnit.MILLISECONDS);
     }
+
+	public static IThreadDMData getThreadData(final int threadId)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
+				SyncUtil.getContainerContext(), IProcessDMContext.class);
+
+		Query<IThreadDMData> query = new Query<IThreadDMData>() {
+			@Override
+			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
+				IThreadDMContext threadDmc = fProcessesService
+						.createThreadContext(processContext,
+								Integer.toString(threadId));
+				fProcessesService.getExecutionData(threadDmc, rm);
+
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		return query.get(500, TimeUnit.MILLISECONDS);
+	}
 
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
         throws Throwable {

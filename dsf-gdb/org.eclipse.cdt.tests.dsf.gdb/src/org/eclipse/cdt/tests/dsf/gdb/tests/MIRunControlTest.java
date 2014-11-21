@@ -81,6 +81,7 @@ public class MIRunControlTest extends BaseTestCase {
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
 	
+	static final String[] = {"LINE_MAIN_BEFORE_THREAD_START", "LINE_MAIN_AFTER_THREAD_START", "LINE_MAIN_ALL_THREADS_STARTED"};
 	// line numbers in MultiThread.cc
 	static final int LINE_MAIN_BEFORE_THREAD_START = 63; // Just before StartThread
 	static final int LINE_MAIN_AFTER_THREAD_START = 65; // Just after StartThread

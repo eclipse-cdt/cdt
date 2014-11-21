@@ -11,11 +11,17 @@
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
@@ -64,7 +70,7 @@ import org.junit.rules.Timeout;
  * code is to be run.
  */
 @SuppressWarnings("restriction")
-public class BaseTestCase {
+public abstract class BaseTestCase {
 	// Timeout value for each individual test
 	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 	
@@ -101,6 +107,8 @@ public class BaseTestCase {
 	final private String fTargetSuspendedSem = new String(); // just used as a semaphore
 
 	private static boolean fgStatusHandlersEnabled = true;
+	
+	private static HashMap<String, Integer> fBreakpointLocations = new HashMap<>();
 
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
@@ -196,8 +204,8 @@ public class BaseTestCase {
 		setLaunchAttributes();
 		doLaunch();
 	}
-	
-    protected void setLaunchAttributes() {
+
+	protected void setLaunchAttributes() {
     	// Clear all launch attributes before starting a new test
     	launchAttributes = new HashMap<String, Object>();
     	
@@ -223,6 +231,40 @@ public class BaseTestCase {
     	// Set the global launch attributes
     	launchAttributes.putAll(globalLaunchAttributes);
     }
+
+	/**
+	 * Given a set of tags (strings), find the first line containing each one.
+	 * @param sourceFile
+	 * @param tags
+	 * @throws IOException
+	 */
+	protected void resolveBreakpointLocations(File sourceFile,
+			Collection<String> tags) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
+		Set<String> tagsToFind = new HashSet<>(tags);
+		String line;
+		int lineNumber = 1;
+
+		line = reader.readLine();
+		while (line != null) {
+			for (String tag : tagsToFind) {
+				if (line.contains(tag)) {
+					fBreakpointLocations.put(tag, lineNumber);
+					tagsToFind.remove(tag);
+					break;
+				}
+			}
+
+			lineNumber++;
+			line = reader.readLine();
+		}
+
+		/* Make sure all breakpoints have been found */
+		if (tagsToFind.size() > 0) {
+			throw new RuntimeException(
+					"Some breakpoint tags were not found in " + sourceFile);
+		}
+	}
 
     /**
      * Launch GDB.  The launch attributes must have been set already.

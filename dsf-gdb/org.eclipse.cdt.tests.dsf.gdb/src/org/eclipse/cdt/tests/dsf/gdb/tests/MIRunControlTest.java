@@ -81,16 +81,14 @@ public class MIRunControlTest extends BaseTestCase {
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
 	
-	// line numbers in MultiThread.cc
-	static final int LINE_MAIN_BEFORE_THREAD_START = 63; // Just before StartThread
-	static final int LINE_MAIN_AFTER_THREAD_START = 65; // Just after StartThread
-	static final int LINE_MAIN_ALL_THREADS_STARTED = 75; // Where all threads are guaranteed to be started.
+	// Breakpoint tags in MultiThread.cc
+	public static final String[] BREAKPOINT_TAGS = new String[] {
+			"LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
+			"LINE_MAIN_AFTER_THREAD_START", // Just after StartThread
+			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started.
+	};
 
 
-	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
 	/*
 	 * Name of the executable
 	 */
@@ -100,7 +98,9 @@ public class MIRunControlTest extends BaseTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
+		resolveBreakpointLocations(SOURCE_NAME, BREAKPOINT_TAGS);
+
 		final DsfSession session = getGDBLaunch().getSession();
 		
         Runnable runnable = new Runnable() {
@@ -271,14 +271,23 @@ public class MIRunControlTest extends BaseTestCase {
             		getGDBLaunch().getSession(),
             		IStartedDMEvent.class);
 
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, Integer.toString(LINE_MAIN_BEFORE_THREAD_START), true);
+		MIStoppedEvent stoppedEvent = SyncUtil
+				.runToLine(
+						fContainerDmc,
+						SOURCE_NAME,
+						getLineForTag("LINE_MAIN_BEFORE_THREAD_START"),
+						true);
 
         // Because the program is about to go multi-threaded, we have to select the thread
         // we want to resume.  If we don't, we will ask GDB to resume the entire process
         // which is not what we want.  We can fetch the thread from the stopped event
         // but we should do that before the second thread is created, to be sure the stopped
         // event is for the main thread.
-        SyncUtil.runToLine(stoppedEvent.getDMContext(), SOURCE_NAME, Integer.toString(LINE_MAIN_AFTER_THREAD_START), true);
+		SyncUtil.runToLine(
+				stoppedEvent.getDMContext(),
+				SOURCE_NAME,
+				getLineForTag("LINE_MAIN_AFTER_THREAD_START"),
+				true);
         
 		// Make sure thread started event was received 
         IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
@@ -427,7 +436,8 @@ public class MIRunControlTest extends BaseTestCase {
 		/* 
 		 * Add a breakpoint
 		 */
-	    SyncUtil.addBreakpoint(SOURCE_NAME + ":" + LINE_MAIN_BEFORE_THREAD_START, false);
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":"
+				+ getLineForTag("LINE_MAIN_BEFORE_THREAD_START"), false);
 		
 		/*
 		 * Resume till the breakpoint is hit
@@ -682,7 +692,7 @@ public class MIRunControlTest extends BaseTestCase {
 			@Override
 			public void run() {
 				fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME,
-						LINE_MAIN_ALL_THREADS_STARTED, true,
+						getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), true,
 						new RequestMonitor(fRunCtrl.getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {

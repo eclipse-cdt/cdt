@@ -112,15 +112,12 @@ public class MIRegistersTest extends BaseTestCase {
 		return fRegisterNames;
 	}
 	
-	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
+
 	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
-	private static final String SRC_NAME = "MultiThread.cc";
+	private static final String SOURCE_NAME = "MultiThread.cc";
 
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
@@ -131,7 +128,9 @@ public class MIRegistersTest extends BaseTestCase {
     @Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
+		resolveBreakpointLocations(SOURCE_NAME, MIRunControlTest.BREAKPOINT_TAGS);
+
 	    fSession = getGDBLaunch().getSession();
 	    
         Runnable runnable = new Runnable() {
@@ -401,8 +400,8 @@ public class MIRegistersTest extends BaseTestCase {
 
     @Test
     public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SRC_NAME, Integer
-				.toString(MIRunControlTest.LINE_MAIN_ALL_THREADS_STARTED));
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SOURCE_NAME,
+				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
         // Get the thread IDs
     	final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);

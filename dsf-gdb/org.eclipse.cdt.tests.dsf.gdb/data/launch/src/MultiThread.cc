@@ -11,6 +11,7 @@ struct PrintHelloArgs {
 	ThreadBarrier *barrier_start;
 	ThreadBarrier *barrier_finish;
 	ThreadSemaphore *sem_start;
+	const char *name;
 };
 
 static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg)
@@ -20,11 +21,14 @@ static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg)
 	ThreadBarrier *barrier_start = args->barrier_start;
 	ThreadBarrier *barrier_finish = args->barrier_finish;
 	ThreadSemaphore *sem_start = args->sem_start;
+	const char *name = args->name;
 
 	/* Indicate to main thread that the thread is started. */
 	ThreadSemaphorePut(sem_start);
 
 	printf("Hello World! It's me, thread #%d!\n", thread_id);
+
+	ThreadSetName(name);
 
 	/* Make sure that all threads are started before the breakpoint in main hits. */
 	ThreadBarrierWait(barrier_start);
@@ -43,6 +47,7 @@ int main(int argc, char *argv[])
 {
 	ThreadHandle threads[NUM_THREADS];
 	struct PrintHelloArgs args[NUM_THREADS];
+	const char *thread_names[NUM_THREADS] = {"monday", "tuesday", "wednesday", "thursday", "friday"};
 
 	/* Used to make rendez-vous points between all threads. */
 	ThreadBarrier barrier_start;
@@ -65,10 +70,11 @@ int main(int argc, char *argv[])
 		args[t].barrier_start = &barrier_start;
 		args[t].barrier_finish = &barrier_finish;
 		args[t].sem_start = &sem_start;
+		args[t].name = thread_names[t];
 
-		int ret = StartThread(PrintHello, &args[t], &threads[t]);
+		int ret = StartThread(PrintHello, &args[t], &threads[t]); /* Breakpoint LINE_MAIN_BEFORE_THREAD_START */
 
-		if (!ret)
+		if (!ret) /* Breakpoint LINE_MAIN_AFTER_THREAD_START */
 		{
 				printf("Error: StartThread failed.\n");
 				exit(-1);
@@ -83,7 +89,7 @@ int main(int argc, char *argv[])
 	/* Let the threads continue to the 'critical' section> */
 	ThreadBarrierWait(&barrier_start);
 
-	printf("In main thread, all threads created.\n"); /* main breakpoint here */
+	printf("In main thread, all threads created.\n"); /* Breakpoint LINE_MAIN_ALL_THREADS_STARTED */
 
 	SLEEP(30);
 

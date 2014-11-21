@@ -35,6 +35,7 @@ static int JoinThread(ThreadHandle handle, ThreadRet *ret);
 static int ThreadBarrierInit(ThreadBarrier *barrier, unsigned int count);
 static int ThreadBarrierDestroy(ThreadBarrier *barrier);
 static int ThreadBarrierWait(ThreadBarrier *barrier);
+static int ThreadSetName(const char *name);
 
 
 /* Then, include the implemention of the API. */

@@ -36,4 +36,14 @@ static int ThreadBarrierWait(ThreadBarrier *barrier)
 	return ret == 0 || ret == PTHREAD_BARRIER_SERIAL_THREAD;
 }
 
+static int ThreadSetName(ThreadHandle thread, const char *name)
+{
+	return pthread_setname_np(thread, name) == 0;
+}
+
+static ThreadHandle ThreadSelf(void)
+{
+	return pthread_self();
+}
+
 #endif // THREADPTHREAD_H

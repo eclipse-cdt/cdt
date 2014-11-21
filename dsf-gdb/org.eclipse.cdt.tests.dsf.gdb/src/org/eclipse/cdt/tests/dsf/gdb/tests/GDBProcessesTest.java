@@ -38,10 +38,6 @@ import org.junit.runner.RunWith;
 @RunWith(BackgroundRunner.class)
 public class GDBProcessesTest extends BaseTestCase {
 	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
-	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
@@ -61,7 +57,9 @@ public class GDBProcessesTest extends BaseTestCase {
     @Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
+		resolveBreakpointLocations(SOURCE_NAME, MIRunControlTest.BREAKPOINT_TAGS);
+
 	    fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
             @Override
@@ -142,7 +140,7 @@ public class GDBProcessesTest extends BaseTestCase {
 	public void getThreadData() throws Throwable {
 		// Start all threads, stop when they are all started
 		SyncUtil.runToLine(SOURCE_NAME, Integer
-				.toString(MIRunControlTest.LINE_MAIN_ALL_THREADS_STARTED));
+				.toString(getLineForTag("LINE_MAIN_ALL_THREADS_STARTED")));
 
 		IThreadDMData mainThreadData = SyncUtil.getThreadData(1);
 

@@ -11,11 +11,15 @@
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
@@ -64,7 +68,13 @@ import org.junit.rules.Timeout;
  * code is to be run.
  */
 @SuppressWarnings("restriction")
-public class BaseTestCase {
+public abstract class BaseTestCase {
+	/*
+	 * Path to executable
+	 */
+	protected static final String EXEC_PATH = "data/launch/bin/";
+	protected static final String SOURCE_PATH = "data/launch/src/";
+
 	// Timeout value for each individual test
 	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 	
@@ -101,6 +111,8 @@ public class BaseTestCase {
 	final private String fTargetSuspendedSem = new String(); // just used as a semaphore
 
 	private static boolean fgStatusHandlersEnabled = true;
+	
+	private static HashMap<String, Integer> fBreakpointLocations = new HashMap<>();
 
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
@@ -196,8 +208,8 @@ public class BaseTestCase {
 		setLaunchAttributes();
 		doLaunch();
 	}
-	
-    protected void setLaunchAttributes() {
+
+	protected void setLaunchAttributes() {
     	// Clear all launch attributes before starting a new test
     	launchAttributes = new HashMap<String, Object>();
     	
@@ -223,6 +235,50 @@ public class BaseTestCase {
     	// Set the global launch attributes
     	launchAttributes.putAll(globalLaunchAttributes);
     }
+
+	/**
+	 * Given a set of tags (strings) to find in sourceFile, populate the
+	 * fBreakpointLocations map with the line numbers where they are found.
+	 * 
+	 * @param sourceName The path of the source file. 
+	 * @param fbreakpointtags A collection of strings to find in sourceFile.
+	 * @throws IOException If sourceFile is not found or can't be read. 
+	 * @throws RuntimeException If one or more tags are not found in sourceFile. 
+	 */
+	protected void resolveBreakpointLocations(String sourceName,
+			String[] fbreakpointtags) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(SOURCE_PATH
+				+ sourceName));
+		Set<String> tagsToFind = new HashSet<>(Arrays.asList(fbreakpointtags));
+		String line;
+		int lineNumber = 1;
+
+		fBreakpointLocations.clear();
+
+		line = reader.readLine();
+		while (line != null) {
+			for (String tag : tagsToFind) {
+				if (line.contains(tag)) {
+					fBreakpointLocations.put(tag, lineNumber);
+					tagsToFind.remove(tag);
+					break;
+				}
+			}
+
+			lineNumber++;
+			line = reader.readLine();
+		}
+
+		/* Make sure all breakpoints have been found */
+		if (tagsToFind.size() > 0) {
+			throw new RuntimeException(
+					"Some breakpoint tags were not found in " + sourceName);
+		}
+	}
+	
+	protected int getLineForTag(String tag) {
+		return fBreakpointLocations.get(tag);
+	}
 
     /**
      * Launch GDB.  The launch attributes must have been set already.

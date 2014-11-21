@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_77496608",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-21T04:16:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_4e22dbac",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_3cbeb54e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 2
@@ -64,6 +82,24 @@
       "writtenOn": "2014-11-20T19:07:22Z",
       "side": 1,
       "message": "I\u0027m not sure I understand the question. Did you mean PDOM bindings as opposed to the AST ones? This could be an indication that lookup in AST scopes failed. If so, it should be investigated.",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_37536eba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3062,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-21T04:16:18Z",
+      "side": 1,
+      "message": "I think it was returning PDOM bindings as well as the AST ones",
+      "parentUuid": "a766b734_3cbeb54e",
       "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_57a0aa22",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3141,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-21T04:16:18Z",
+      "side": 1,
+      "message": "Could you explain this further? First, is it just the template arguments that you want me to use EvalFixed for, or for all of the other places in this function that construct AST nodes? Second, out of curiosity, in what way is it dangerous? Lastly, how do I pass an EvalFixed into addTemplateArgument?",
+      "parentUuid": "a766b734_9cbf0949",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_7cc4add8",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 2
@@ -104,6 +158,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_974402f3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3149,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-21T04:16:18Z",
+      "side": 1,
+      "message": "Possibly, I don\u0027t think that interface existed when I first wrote the code.",
+      "parentUuid": "a766b734_7cc4add8",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_dc9341dc",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 2
@@ -115,6 +187,24 @@
       "writtenOn": "2014-11-20T19:07:22Z",
       "side": 1,
       "message": "ProblemBinding is the right way to report name resolution problems. I a case of ambiguity it\u0027s useful to pass candidates to the ProblemBinding.",
+      "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_574eea15",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3151,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-21T04:16:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_dc9341dc",
       "revId": "0b75c15e60fc8feea4721be3f4518ae9eb94c3ab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

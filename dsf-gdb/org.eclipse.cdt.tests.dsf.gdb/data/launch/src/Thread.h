@@ -32,6 +32,8 @@ typedef ThreadRet (*ThreadFunc)(void *);
 /* Public API */
 static int StartThread(ThreadFunc func, void *arg, ThreadHandle *handle);
 static int JoinThread(ThreadHandle handle, ThreadRet *ret);
+static int ThreadSetName(ThreadHandle handle, const char *name);
+static ThreadHandle ThreadSelf(void);
 static int ThreadBarrierInit(ThreadBarrier *barrier, unsigned int count);
 static int ThreadBarrierDestroy(ThreadBarrier *barrier);
 static int ThreadBarrierWait(ThreadBarrier *barrier);

@@ -1,9 +1,12 @@
 #ifndef THREADPTHREAD_H
 #define THREADPTHREAD_H
 
+// For pthread_setname_np,
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 /* Thread functions */
 
@@ -16,6 +19,15 @@ static int JoinThread(ThreadHandle handle, ThreadRet *ret)
 	return pthread_join(handle, ret) == 0;
 }
 
+static int ThreadSetName(ThreadHandle handle, const char *name)
+{
+	return pthread_setname_np(handle, name) == 0;
+}
+
+static ThreadHandle ThreadSelf(void)
+{
+	return pthread_self();
+}
 
 /* Barrier functions */
 

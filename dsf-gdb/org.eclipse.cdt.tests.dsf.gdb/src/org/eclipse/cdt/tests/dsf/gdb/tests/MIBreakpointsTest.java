@@ -79,7 +79,6 @@ public class MIBreakpointsTest extends BaseTestCase {
     // Global constants
     public static final String PLUGIN_ID   = "org.eclipse.cdt.debug.core" ; //$NON-NLS-1$
     public static final String TEST_APPL   = "data/launch/bin/BreakpointTestApp.exe"; //$NON-NLS-1$
-    public static final String SOURCE_PATH = "data/launch/src"; //$NON-NLS-1$
 
     public static final String SOURCE_PROJECT = "MIBreakpointsTest";
     public static final String SOURCE_FOLDER  = "src";

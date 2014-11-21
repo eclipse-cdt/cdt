@@ -85,15 +85,12 @@ public class MIRunControlTest extends BaseTestCase {
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
 
-	// line numbers in MultiThread.cc
-	static final int LINE_MAIN_BEFORE_THREAD_START = 75; // Just before StartThread
-	static final int LINE_MAIN_AFTER_THREAD_START = 86; // Just after StartThread, where the thread is guaranteed to be started.
-	static final int LINE_MAIN_ALL_THREADS_STARTED = 92; // Where all threads are guaranteed to be started.
-
-	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
+	// Breakpoint tags in MultiThread.cc
+	public static final String[] LINE_TAGS = new String[] {
+			"LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
+			"LINE_MAIN_AFTER_THREAD_START", // Just after StartThread
+			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started.
+	};
 
 	/*
 	 * Name of the executable
@@ -104,7 +101,9 @@ public class MIRunControlTest extends BaseTestCase {
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
-		
+
+		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
+
 		final DsfSession session = getGDBLaunch().getSession();
 		
         Runnable runnable = new Runnable() {
@@ -275,7 +274,11 @@ public class MIRunControlTest extends BaseTestCase {
             		getGDBLaunch().getSession(),
             		IStartedDMEvent.class);
 
-        SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, LINE_MAIN_AFTER_THREAD_START, true);
+		SyncUtil.runToLine(
+				fContainerDmc,
+				SOURCE_NAME,
+				getLineForTag("LINE_MAIN_AFTER_THREAD_START"),
+				true);
 
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
@@ -426,7 +429,8 @@ public class MIRunControlTest extends BaseTestCase {
 		/* 
 		 * Add a breakpoint
 		 */
-	    SyncUtil.addBreakpoint(SOURCE_NAME + ":" + LINE_MAIN_BEFORE_THREAD_START, false);
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":"
+				+ getLineForTag("LINE_MAIN_BEFORE_THREAD_START"), false);
 		
 		/*
 		 * Resume till the breakpoint is hit
@@ -681,7 +685,7 @@ public class MIRunControlTest extends BaseTestCase {
 			@Override
 			public void run() {
 				fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME,
-						LINE_MAIN_ALL_THREADS_STARTED, true,
+						getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), true,
 						new RequestMonitor(fRunCtrl.getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {

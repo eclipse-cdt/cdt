@@ -83,7 +83,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
@@ -2451,9 +2450,6 @@ public class CompleteParser2Tests extends BaseTestCase {
     }
 
     public void test158192_declspec_on_class() throws Exception {
-    	if (!Platform.getOS().equals(Platform.OS_WIN32))
-    		return; // TODO: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
-
     	Writer writer = new StringWriter();
     	writer.write("class __declspec(foobar) Foo1 {};\n");
     	writer.write("union __declspec(foobar) Foo2 {};\n");
@@ -2478,9 +2474,6 @@ public class CompleteParser2Tests extends BaseTestCase {
     }
 
     public void test158192_declspec_on_variable() throws Exception {
-    	if (!Platform.getOS().equals(Platform.OS_WIN32))
-    		return; // TODO: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
-
     	Writer writer = new StringWriter();
     	writer.write("__declspec(foobar) class Foo {} bar;\n");
     	IASTTranslationUnit tu = parse(writer.toString(), true, ParserLanguage.CPP, true);
@@ -2496,19 +2489,14 @@ public class CompleteParser2Tests extends BaseTestCase {
     	assertInstances(col, bar, 1);
     }
 
-    // MSVC does not allow declspec in this position, GCC does so we test for this
-    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158192
     public void test158192_declspec_in_declarator() throws Exception {
-    	if (!Platform.getOS().equals(Platform.OS_WIN32))
-    		return; // TODO: see GPPParserExtensionConfiguration.supportDeclspecSpecifiers()
-
     	Writer writer = new StringWriter();
 
     	writer.write("int * __declspec(foo) bar = 0;\n");
     	IASTTranslationUnit tu = parse(writer.toString(), true, ParserLanguage.CPP, true);
 
     	IASTProblem[] problems = CPPVisitor.getProblems(tu);
-    	assertFalse("__declspec rejected inside declarator", problems.length>0);
+    	assertFalse("__declspec rejected inside declarator", problems.length > 0);
 
     	NameCollector col = new NameCollector();
     	tu.accept(col);

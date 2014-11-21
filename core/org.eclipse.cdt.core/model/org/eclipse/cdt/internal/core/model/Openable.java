@@ -81,7 +81,7 @@ public abstract class Openable extends Parent implements IOpenable {
 			Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException;
 
 	/**
-	 * Close the buffer associated with this element, if any.
+	 * Closes the buffer associated with this element, if any.
 	 */
 	protected void closeBuffer() {
 		if (!hasBuffer()) return; // nothing to do
@@ -94,7 +94,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	}
 
 	/**
-	 * This element is being closed.  Do any necessary cleanup.
+	 * Does any necessary cleanup when this element is being closed.
 	 */
 	@Override
 	protected void closing(Object info) throws CModelException {
@@ -107,13 +107,13 @@ public abstract class Openable extends Parent implements IOpenable {
 	@Override
 	public IBuffer getBuffer() throws CModelException {
 		if (hasBuffer()) {
-			// ensure element is open
+			// Ensure element is open.
 			if (!isOpen()) {
 				getElementInfo();
 			}
 			IBuffer buffer = getBufferManager().getBuffer(this);
 			if (buffer == null) {
-				// try to (re)open a buffer
+				// Try to (re)open a buffer.
 				buffer = openBuffer(null);
 			}
 			return buffer;
@@ -122,7 +122,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	}
 
 	/**
-	 * Answers the buffer factory to use for creating new buffers
+	 * Returns the buffer factory to use for creating new buffers.
 	 */
 	public IBufferFactory getBufferFactory(){
 		return getBufferManager().getDefaultBufferFactory();
@@ -142,9 +142,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	protected boolean hasBuffer() {
 		return false;
 	}
-	/**
-	 * @see org.eclipse.cdt.core.model.IOpenable#hasUnsavedChanges()
-	 */
+
 	@Override
 	public boolean hasUnsavedChanges() throws CModelException{
 		if (isReadOnly() || !isOpen()) {
@@ -154,8 +152,8 @@ public abstract class Openable extends Parent implements IOpenable {
 		if (buf != null && buf.hasUnsavedChanges()) {
 			return true;
 		}
-		// for roots and projects must check open buffers
-		// to see if they have an child with unsaved changes
+		// For roots and projects must check open buffers to see
+		// if they have an child with unsaved changes.
 		if (fType == C_MODEL ||	fType == C_PROJECT) {
 			Enumeration<IBuffer> openBuffers= getBufferManager().getOpenBuffers();
 			while (openBuffers.hasMoreElements()) {
@@ -182,9 +180,6 @@ public abstract class Openable extends Parent implements IOpenable {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IOpenable#isOpen()
-	 */
 	@Override
 	public boolean isOpen() {
 		return CModelManager.getDefault().getInfo(this) != null;
@@ -197,9 +192,8 @@ public abstract class Openable extends Parent implements IOpenable {
 	}
 
 	/**
-	 * Returns true if this represents a source element.
-	 * Openable source elements have an associated buffer created
-	 * when they are opened.
+	 * Returns true if this represents a source element. Openable source elements have
+	 * an associated buffer created when they are opened.
 	 */
 	protected boolean isSourceElement() {
 		return false;
@@ -215,13 +209,10 @@ public abstract class Openable extends Parent implements IOpenable {
 
 	@Override
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
-		// only translation units can be inconsistent
-		// other openables cannot be inconsistent so default is to do nothing
+		// Only translation units can be inconsistent.
+		// Other Openables cannot be inconsistent so default is to do nothing.
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IOpenable#open(IProgressMonitor)
-	 */
 	@Override
 	public void open(IProgressMonitor pm) throws CModelException {
 		getElementInfo(pm);
@@ -248,9 +239,6 @@ public abstract class Openable extends Parent implements IOpenable {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void generateInfos(CElementInfo info, Map<ICElement, CElementInfo> newElements,
 			IProgressMonitor monitor) throws CModelException {
@@ -258,16 +246,16 @@ public abstract class Openable extends Parent implements IOpenable {
 			System.out.println("OPENING Element ("+ Thread.currentThread()+"): " + this); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		// open the parent if necessary
+		// Open the parent if necessary.
 		openParent(info, newElements, monitor);
 		if (monitor != null && monitor.isCanceled())
 			return;
 
-		 // puts the info before building the structure so that questions to the handle behave as if the element existed
-		 // (case of compilation units becoming working copies)
+		// Put the info before building the structure so that questions to the handle behave as if
+		// the element existed (case of compilation units becoming working copies).
 		newElements.put(this, info);
 
-		// build the structure of the openable (this will open the buffer if needed)
+		// Build the structure of the Openable (this will open the buffer if needed).
 		try {
 			OpenableInfo openableInfo = (OpenableInfo) info;
 			boolean isStructureKnown = buildStructure(openableInfo, monitor, newElements, getResource());
@@ -277,13 +265,10 @@ public abstract class Openable extends Parent implements IOpenable {
 			throw e;
 		}
 
-		// remove out of sync buffer for this element
+		// Remove out of sync buffer for this element.
 		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IOpenable#save(IProgressMonitor, boolean)
-	 */
 	@Override
 	public void save(IProgressMonitor pm, boolean force) throws CModelException {
 		IResource res = getResource();
@@ -293,7 +278,7 @@ public abstract class Openable extends Parent implements IOpenable {
 				throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 			}
 		}
-		// check also the underlying resource
+		// Check also the underlying resource.
 		if (isReadOnly()) {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 		}
@@ -305,7 +290,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	}
 
 	/**
-	 * Find enclosing package fragment root if any
+	 * Finds enclosing package fragment root if any.
 	 */
 	public SourceRoot getSourceRoot() {
 		ICElement current = this;

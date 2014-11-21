@@ -1,4 +1,4 @@
-                                                   /*******************************************************************************
+/*******************************************************************************
  * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -35,7 +35,8 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	private final ICPPClassTemplate fClassTemplate;
 	private final ICPPTemplateArgument[] fArguments;
 
-	public CPPClassTemplatePartialSpecializationSpecialization(ICPPClassTemplatePartialSpecialization orig, ICPPTemplateParameterMap argumentMap, ICPPClassTemplate template,
+	public CPPClassTemplatePartialSpecializationSpecialization(ICPPClassTemplatePartialSpecialization orig,
+			ICPPTemplateParameterMap argumentMap, ICPPClassTemplate template,
 			ICPPTemplateArgument[] args) throws DOMException {
 		super(orig, template.getOwner(), argumentMap);
 		fClassTemplate= template;

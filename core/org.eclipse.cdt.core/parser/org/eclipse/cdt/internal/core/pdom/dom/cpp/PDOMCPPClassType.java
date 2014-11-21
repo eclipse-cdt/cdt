@@ -66,7 +66,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		setKind(classType);
 		setAnonymous(classType);
 		setFinal(classType);
-		// Linked list is initialized by storage being zero'd by malloc
+		// Linked list is initialized by storage being zero'd by malloc.
 	}
 
 	public PDOMCPPClassType(PDOMLinkage linkage, long bindingRecord) {
@@ -304,7 +304,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	public ICPPBase[] getBases() {
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
-		if (bases != null) 
+		if (bases != null)
 			return bases;
 
 		try {

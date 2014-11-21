@@ -11,6 +11,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener2;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.IWidgetTokenKeeper;
+import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
+import org.eclipse.jface.text.IWidgetTokenOwner;
+import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.link.LinkedPosition;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.Util;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -45,36 +71,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tracker;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener2;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.bindings.keys.IKeyLookup;
-import org.eclipse.jface.bindings.keys.KeyLookupFactory;
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.Util;
-
-import org.eclipse.jface.text.ITextListener;
-import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.IViewportListener;
-import org.eclipse.jface.text.IWidgetTokenKeeper;
-import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
-import org.eclipse.jface.text.IWidgetTokenOwner;
-import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
-import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.source.ISourceViewer;
-
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -347,10 +343,6 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 				}
 			});
 		}
-
-//		fPopup.moveBelow(null); // make sure hovers are on top of the info popup
-// 		XXX workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=170774
-//		fPopup.moveBelow(workbenchShell.getShells()[0]);
 
 		UIJob delayJob= new UIJob(display, RenameMessages.RenameInformationPopup_delayJobName) {
 			@Override

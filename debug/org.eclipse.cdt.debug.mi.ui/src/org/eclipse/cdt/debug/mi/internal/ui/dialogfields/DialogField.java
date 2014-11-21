@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.internal.ui.dialogfields;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -153,6 +154,7 @@ public class DialogField {
 
 	/**
 	 * Creates a spacer control.
+	 *
 	 * @param parent The parent composite
 	 */		
 	public static Control createEmptySpace(Composite parent) {
@@ -161,8 +163,8 @@ public class DialogField {
 
 	/**
 	 * Creates a spacer control with the given span.
-	 * The composite is assumed to have <code>MGridLayout</code> as
-	 * layout.
+	 * The composite is assumed to have {@link GridLayout} as layout.
+	 *
 	 * @param parent The parent composite
 	 */			
 	public static Control createEmptySpace(Composite parent, int span) {

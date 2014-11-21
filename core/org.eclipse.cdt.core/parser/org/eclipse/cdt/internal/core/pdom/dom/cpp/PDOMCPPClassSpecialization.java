@@ -53,8 +53,8 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Bryan Wilkinson
  */
-class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
-		ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
+class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
+		implements ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
 	private static final int FIRST_BASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int MEMBERLIST = FIRST_BASE + 4;
 	private static final int FINAL = MEMBERLIST + PDOMCPPMemberBlock.RECORD_SIZE; // byte
@@ -66,11 +66,11 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	protected static final int RECORD_SIZE = FINAL + 1;
 
 	private volatile ICPPClassScope fScope;
-	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache
+	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache.
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
-			return new HashSet<IBinding>();
+			return new HashSet<>();
 		}
 	};
 
@@ -257,7 +257,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			return bases;
 
 		try {
-			List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
+			List<PDOMCPPBase> list = new ArrayList<>();
 			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
 				list.add(base);
 			}

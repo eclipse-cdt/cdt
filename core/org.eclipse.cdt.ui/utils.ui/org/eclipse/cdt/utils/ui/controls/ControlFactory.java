@@ -173,6 +173,7 @@ public class ControlFactory {
 
 	/**
 	 * Creates a spacer control.
+	 *
 	 * @param parent The parent composite
 	 */
 	public static Control createEmptySpace(Composite parent) {
@@ -181,8 +182,8 @@ public class ControlFactory {
 
 	/**
 	 * Creates a spacer control with the given span.
-	 * The composite is assumed to have <code>MGridLayout</code> as
-	 * layout.
+	 * The composite is assumed to have {@link GridLayout} as layout.
+	 *
 	 * @param parent The parent composite
 	 */
 	public static Control createEmptySpace(Composite parent, int span) {

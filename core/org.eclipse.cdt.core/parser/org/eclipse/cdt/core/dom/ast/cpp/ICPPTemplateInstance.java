@@ -31,7 +31,7 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	ICPPTemplateInstance[] EMPTY_TEMPLATE_INSTANCE_ARRAY = {};
 
 	/**
-	 * get the template that this was instantiated from
+	 * Returns the template that this instance was instantiated from.
 	 */
 	public ICPPTemplateDefinition getTemplateDefinition();
 	
@@ -43,7 +43,7 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	
 	/**
 	 * Explicit specializations are modeled as instances of a template. 
-	 * Returns <code>true</code> if this binding is an explicit specialization.
+	 * Returns {@code true} if this binding is an explicit specialization.
 	 * @since 5.2
 	 */
 	public boolean isExplicitSpecialization();

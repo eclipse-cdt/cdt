@@ -1972,9 +1972,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	    typedef int type;
 	//	};
 
-	//	template <typename>	struct foo {};
+	//	template <typename> struct foo {};
 	//	int main() {
-	//	    typedef foo<int>::type type;  // ERROR HERE: 'foo<int>::type' could not be
+	//	    typedef foo<int>::type type;
 	//	}
 	public void testSpecializationInIndex_367563a() throws Exception {
 		getBindingFromASTName("type type", 4, ITypedef.class);
@@ -1987,7 +1987,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	template <typename>	struct foo {};
 	//	int main() {
-	//	    typedef foo<int*>::type type;  // ERROR HERE: 'foo<int>::type' could not be
+	//	    typedef foo<int*>::type type;
 	//	}
 	public void testSpecializationInIndex_367563b() throws Exception {
 		getBindingFromASTName("type type", 4, ITypedef.class);
@@ -2008,7 +2008,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template <> struct foo<int> {
 	//	    typedef int type;
 	//	};
-	//	typedef foo<remove_const<const int>::type>::type t;  // ERROR HERE
+	//	typedef foo<remove_const<const int>::type>::type t;
 	public void testCurrentInstanceOfClassTemplatePartialSpec_368404() throws Exception {
 		ITypedef tdef= getBindingFromASTName("type t;", 4, ITypedef.class);
 		assertEquals("int", ASTTypeUtil.getType(tdef, true));
@@ -2452,14 +2452,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 
 	//	template <class T, class U>
-	//	struct multipliable2
-	//	{
+	//	struct multipliable2 {
 	//	    friend T operator *(const U& lhs, const T& rhs);
 	//	};
 	//
 	//	template <class T>
-	//	struct multipliable1
-	//	{
+	//	struct multipliable1 {
 	//	    friend T operator *(const T& lhs, const T& rhs);
 	//	};
 
@@ -2467,8 +2465,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//
 	//	int foo(overloaded);
 	//
-	//	int main()
-	//	{
+	//	int main() {
 	//	    overloaded c, d;
 	//	    foo(c * d);
 	//	}
@@ -2477,14 +2474,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 
 	//	template <class T, class U>
-	//	struct multipliable2
-	//	{
+	//	struct multipliable2 {
 	//	    friend T operator *(const U& lhs, const T& rhs);
 	//	};
 	//
 	//	template <class T>
-	//	struct multipliable1
-	//	{
+	//	struct multipliable1 {
 	//	    friend T operator *(const T& lhs, const T& rhs) {}
 	//	};
 

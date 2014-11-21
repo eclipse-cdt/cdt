@@ -32,39 +32,33 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
  * Implementation of scope for structs and unions.
  */
 public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope {
-    public CCompositeTypeScope( ICASTCompositeTypeSpecifier compTypeSpec ){
-        super( compTypeSpec, EScopeKind.eClassType);
+    public CCompositeTypeScope(ICASTCompositeTypeSpecifier compTypeSpec) {
+        super(compTypeSpec, EScopeKind.eClassType);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope#getBinding(char[])
-     */
     @Override
-	public IBinding getBinding( char[] name ) {
-        return super.getBinding( NAMESPACE_TYPE_OTHER, name );
+	public IBinding getBinding(char[] name) {
+        return super.getBinding(NAMESPACE_TYPE_OTHER, name);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
     @Override
-	public IBinding[] find( String name ) {
-        CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
-        getPhysicalNode().accept( action );
+	public IBinding[] find(String name) {
+        CollectNamesAction action = new CollectNamesAction(name.toCharArray());
+        getPhysicalNode().accept(action);
         
-        IASTName [] names = action.getNames();
-        IBinding [] result = null;
+        IASTName[] names = action.getNames();
+        IBinding[] result = null;
         for (IASTName astName : names) {
             IBinding b = astName.resolveBinding();
-            if( b == null ) continue;
+            if (b == null) continue;
             try {
-                if( b.getScope() == this )
-                    result = ArrayUtil.append( IBinding.class, result, b );
-            } catch ( DOMException e ) {
+                if (b.getScope() == this)
+                    result = ArrayUtil.append(IBinding.class, result, b);
+            } catch (DOMException e) {
             }
         }
             
-        return ArrayUtil.trim( IBinding.class, result );
+        return ArrayUtil.trim(IBinding.class, result);
     }
 
 	@Override
@@ -74,7 +68,7 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 		if (binding instanceof ICompositeType)
 			return (ICompositeType) binding;
 
-		return new CStructure.CStructureProblem(compSpec.getName(), ISemanticProblem.BINDING_NO_CLASS, compSpec.getName().toCharArray() );
+		return new CStructure.CStructureProblem(compSpec.getName(), ISemanticProblem.BINDING_NO_CLASS, compSpec.getName().toCharArray());
 	}
 	
 	@Override

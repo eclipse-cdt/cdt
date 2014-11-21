@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
@@ -28,7 +28,6 @@ import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
-
 
 abstract class AbstractDocCommentProposalComputer implements ICompletionProposalComputer {
 	
@@ -58,14 +57,11 @@ abstract class AbstractDocCommentProposalComputer implements ICompletionProposal
 
 	@Override
 	public void sessionEnded() {
-		// XXX
 	}
 
 	@Override
 	public void sessionStarted() {
-		// XXX
 	}
-	
 	
 	private static IResource getResource() {
 		ITranslationUnit tu= getTranslationUnit();

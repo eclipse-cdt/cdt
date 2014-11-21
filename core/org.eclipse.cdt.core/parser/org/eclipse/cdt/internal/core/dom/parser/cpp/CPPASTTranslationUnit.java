@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,13 +165,16 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		super.skippedFile(offset, fileContent);
 		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());
 	}	
-	
-	// bug 217102: namespace scopes from the index have to be mapped back to the AST.
-	public IScope mapToASTScope(IIndexScope scope) {
-		return fScopeMapper.mapToASTScope(scope);
+
+	// Namespace scopes from the index have to be mapped back to the AST (bug 217102).
+	public IScope mapToASTScope(IScope scope) {
+		if (scope instanceof IIndexScope) {
+			return fScopeMapper.mapToASTScope((IIndexScope) scope);
+		}
+		return scope;
 	}
 
-	// bug 262719: class types from the index have to be mapped back to the AST.
+	// Class types from the index have to be mapped back to the AST (bug 262719).
 	public ICPPClassType mapToAST(ICPPClassType binding, IASTNode point) {
 		return fScopeMapper.mapToAST(binding, point);
 	}

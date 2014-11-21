@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * C-specific implementation of a translation unit.
  */
 public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbiguityParent {
-	private CScope compilationUnit = null;
+	private CScope compilationUnit;
 	private final CStructMapper fStructMapper;
 
 	public CASTTranslationUnit() {
@@ -78,11 +78,6 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
     	return ArrayUtil.removeNulls(IASTName.class, names);
     }
     
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
 	@Override
 	public IASTName[] getReferences(IBinding binding) {
         if (binding instanceof IMacroBinding)
@@ -112,7 +107,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	public ICompositeType mapToASTType(ICompositeType type) {
 		return fStructMapper.mapToAST(type);
 	}
-	
+
 	@Override
 	protected IType createType(IASTTypeId typeid) {
 		return CVisitor.createType(typeid.getAbstractDeclarator());

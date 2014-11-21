@@ -54,7 +54,7 @@ public interface ICompositeType extends IBinding, IType {
 	public IField findField(String name);
 	
 	/**
-	 * Returns the IScope object that is associated with this composite type
+	 * Returns the IScope object that is associated with this composite type.
 	 */
 	public IScope getCompositeScope();
 }

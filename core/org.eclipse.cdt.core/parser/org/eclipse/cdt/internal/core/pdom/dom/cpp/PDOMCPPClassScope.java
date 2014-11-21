@@ -152,7 +152,8 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
 			if (lookup.getLookupName() instanceof ICPPASTConversionName) {
-				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), Keywords.cOPERATOR, CONVERSION_FILTER, true, false, true);
+				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(),
+						Keywords.cOPERATOR, CONVERSION_FILTER, true, false, true);
 				acceptViaCache(fBinding, visitor, true);
 				return visitor.getBindings();
 			} 
@@ -171,10 +172,11 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			    return getBindingsViaCache(fBinding, nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE);
 			}
 			
-			// prefix lookup
-			BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, true, true, !true);
+			// Prefix lookup.
+			BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), nameChars,
+					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, true, true, false);
 			if (ContentAssistMatcherFactory.getInstance().match(nameChars, fBinding.getNameCharArray())) {
-				// add the class itself, constructors will be found during the visit
+				// Add the class itself, constructors will be found during the visit.
 		        visitor.visit((IPDOMNode) getClassNameBinding());
 			}
 			acceptViaCache(fBinding, visitor, true);

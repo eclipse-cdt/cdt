@@ -137,40 +137,40 @@ public interface IScope {
 			}
 		}
 
-		public void setPrefixLookup(boolean prefixLookup) {
+		public final void setPrefixLookup(boolean prefixLookup) {
 			fPrefixLookup = prefixLookup;
 		}
-		public void setResolve(boolean resolve) {
+		public final void setResolve(boolean resolve) {
 			fResolve = resolve;
 		}
-		public void setIgnorePointOfDeclaration(boolean ignorePointOfDeclaration) {
+		public final void setIgnorePointOfDeclaration(boolean ignorePointOfDeclaration) {
 			fIgnorePointOfDeclaration = ignorePointOfDeclaration;
 		}
-		public void setLookupKey(char[] key) {
+		public final void setLookupKey(char[] key) {
 			fLookupKey= key;
 		}
-		public char[] getLookupKey() {
+		public final char[] getLookupKey() {
 			return fLookupKey;
 		}
-		public IASTNode getLookupPoint() {
+		public final IASTNode getLookupPoint() {
 			return fLookupPoint;
 		}
-		public boolean isResolve() {
+		public final boolean isResolve() {
 			return fResolve;
 		}
-		public boolean isPrefixLookup() {
+		public final boolean isPrefixLookup() {
 			return fPrefixLookup;
 		}
-		public boolean isIgnorePointOfDeclaration() {
+		public final boolean isIgnorePointOfDeclaration() {
 			return fIgnorePointOfDeclaration;
 		}
-		public IIndexFileSet getIncludedFiles() {
+		public final IIndexFileSet getIncludedFiles() {
 			return fTu == null ? IIndexFileSet.EMPTY : fTu.getIndexFileSet();
 		}
-		public IIndex getIndex() {
+		public final IIndex getIndex() {
 			return fTu == null ? null : fTu.getIndex();
 		}
-		public IASTName getLookupName() {
+		public final IASTName getLookupName() {
 			return fLookupPointIsName ? (IASTName) fLookupPoint : null;
 		}
 		public IASTTranslationUnit getTranslationUnit() {

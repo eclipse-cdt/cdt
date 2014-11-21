@@ -41,10 +41,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
 /**
- * Helper class for performing the base class lookup. First a directed graph without loops is computed
- * to represent the base class hierarchy up to those bases for which the lookup finds matches. Next, from
- * these leaves we search for virtual bases that are hidden. With this information the matches are extracted
- * from the graph.
+ * Helper class for performing the base class lookup. First a directed graph without loops is
+ * computed to represent the base class hierarchy up to those bases for which the lookup finds
+ * matches. Next, from these leaves we search for virtual bases that are hidden. With this
+ * information the matches are extracted from the graph.
  */
 class BaseClassLookup {
 	public static void lookupInBaseClasses(LookupData data, ICPPClassScope classScope) {
@@ -55,7 +55,7 @@ class BaseClassLookup {
 		if (classType == null) 
 			return;
 		
-		final HashMap<IScope, BaseClassLookup> infoMap = new HashMap<IScope, BaseClassLookup>();
+		final HashMap<IScope, BaseClassLookup> infoMap = new HashMap<>();
 		BaseClassLookup rootInfo= lookupInBaseClass(data, null, false, classType, infoMap, 0);
 		if (data.contentAssist) {
 			rootInfo.collectResultForContentAssist(data);
@@ -108,7 +108,7 @@ class BaseClassLookup {
 			return;
 		
 		if (fChildren.isEmpty()) {
-			fChildren= new ArrayList<BaseClassLookup>();
+			fChildren= new ArrayList<>();
 			fVirtual= new BitSet();
 		}
 		fVirtual.set(fChildren.size(), virtual);
@@ -156,7 +156,7 @@ class BaseClassLookup {
 		if (baseClassScope != null) {
 			BaseClassLookup info= infoMap.get(baseClassScope);
 			if (info != null) {
-				// avoid loops
+				// Avoid loops.
 				if (info.getResult() == null) {
 				    data.problem = new ProblemBinding(null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE,
 				    		root.getNameCharArray());
@@ -204,12 +204,12 @@ class BaseClassLookup {
 					}
 				}
 			} catch (DOMException e) {
-				// continue the lookup
+				// Continue the lookup.
 			}
 		}
 		
-		// There is no result in the baseClass itself or we do content assist, we have to examine its
-		// base-classes
+		// There is no result in the baseClass itself or we do content assist, we have to examine
+		// its base classes.
 		ICPPClassType baseClass= result.getClassType();
 		if (baseClass != null) { 
 			ICPPBase[] grandBases= ClassTypeHelper.getBases(baseClass, data.getLookupPoint());
@@ -217,9 +217,9 @@ class BaseClassLookup {
 				HashSet<IBinding> grandBaseBindings= null;
 				BitSet selectedBases= null;
 				if (grandBases.length > 1) {
-					grandBaseBindings= new HashSet<IBinding>();
+					grandBaseBindings= new HashSet<>();
 
-					// if we have reachable bases, then ignore the others
+					// If we have reachable bases, then ignore the others.
 					selectedBases = selectPreferredBases(data, grandBases);
 				}
 				for (int i = 0; i < grandBases.length; i++) {
@@ -229,7 +229,7 @@ class BaseClassLookup {
 	
 					IBinding grandBaseBinding = grandBase.getBaseClass();
 					if (!(grandBaseBinding instanceof ICPPClassType)) {
-						// 14.6.2.3 scope is not examined 
+						// 14.6.2.3 scope is not examined. 
 						if (grandBaseBinding instanceof ICPPUnknownBinding) {
 							if (data.skippedScope == null)
 								data.skippedScope= root;
@@ -247,7 +247,7 @@ class BaseClassLookup {
 
 					final IScope grandBaseScope= grandBaseClass.getCompositeScope();
 					if (grandBaseScope == null || grandBaseScope instanceof ICPPInternalUnknownScope) {
-						// 14.6.2.3 scope is not examined 
+						// 14.6.2.3 scope is not examined.
 						if (data.skippedScope == null)
 							data.skippedScope= root;
 						continue;
@@ -335,7 +335,7 @@ class BaseClassLookup {
 						}
 						baseInfo.propagateHiddenAsVirtual();
 					} else {
-						// mark to catch recursions
+						// Mark to catch recursions.
 						baseInfo= new BaseClassLookup(baseClass, fLookupPoint);
 						infoMap.put(baseScope, baseInfo);
 						baseInfo.hideVirtualBases(infoMap, depth);

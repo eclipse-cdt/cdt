@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
@@ -479,6 +480,26 @@ public class SyncUtil {
     	fSession.getExecutor().execute(query);
     	return query.get(500, TimeUnit.MILLISECONDS);
     }
+
+	public static IThreadDMData getThreadData(final int threadId)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
+				SyncUtil.getContainerContext(), IProcessDMContext.class);
+
+		Query<IThreadDMData> query = new Query<IThreadDMData>() {
+			@Override
+			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
+				IThreadDMContext threadDmc = fProcessesService
+						.createThreadContext(processContext,
+								Integer.toString(threadId));
+				fProcessesService.getExecutionData(threadDmc, rm);
+
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		return query.get(500, TimeUnit.MILLISECONDS);
+	}
 
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
         throws Throwable {

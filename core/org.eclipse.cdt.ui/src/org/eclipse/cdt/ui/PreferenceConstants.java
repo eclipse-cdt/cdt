@@ -990,6 +990,13 @@ public class PreferenceConstants {
 	public final static String REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES = "removeTrailingWhitespaceEditedLines"; //$NON-NLS-1$
 
 	/**
+	 * Style format code on save
+	 *
+	 * @since 5.10
+	 */
+	public final static String FORMAT_SOURCE_CODE = "formatSourceCode"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
 	 *
 	 * @since 3.1.1
@@ -2190,6 +2197,7 @@ public class PreferenceConstants {
 		store.setDefault(REMOVE_TRAILING_WHITESPACE, true);
 		store.setDefault(REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, true);
 		store.setDefault(ENSURE_NEWLINE_AT_EOF, true);
+		store.setDefault(PreferenceConstants.FORMAT_SOURCE_CODE, false);
 
 		// Formatter profile
 		store.setDefault(FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);

@@ -83,9 +83,9 @@ public class MIRunControlTest extends BaseTestCase {
 	private IExecutionDMContext fThreadExecDmc;
 
 	// line numbers in MultiThread.cc
-	static final int LINE_MAIN_BEFORE_THREAD_START = 70; // Just before StartThread
-	static final int LINE_MAIN_AFTER_THREAD_START = 81; // Just after StartThread, where the thread is guaranteed to be started.
-	static final int LINE_MAIN_ALL_THREADS_STARTED = 87; // Where all threads are guaranteed to be started.
+	static final int LINE_MAIN_BEFORE_THREAD_START = 76; // Just before StartThread
+	static final int LINE_MAIN_AFTER_THREAD_START = 87; // Just after StartThread, where the thread is guaranteed to be started.
+	static final int LINE_MAIN_ALL_THREADS_STARTED = 93; // Where all threads are guaranteed to be started.
 
 
 	/*

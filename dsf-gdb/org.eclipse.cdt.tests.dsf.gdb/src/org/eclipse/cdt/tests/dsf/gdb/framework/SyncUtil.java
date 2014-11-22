@@ -168,13 +168,13 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(timeout);
 	}
 
-	public static MIStoppedEvent runToLine(IExecutionDMContext dmc, String fileName, String lineNo, 
-            boolean skipBreakpoints) throws Throwable {
+	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final int lineNo,
+			final boolean skipBreakpoints) throws Throwable {
 		return runToLine(dmc, fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
 	}
 
-	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final String lineNo, 
-			                               boolean skipBreakpoints, int timeout) throws Throwable {
+	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final int lineNo,
+			final boolean skipBreakpoints, final int timeout) throws Throwable {
 		
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
             new ServiceEventWaitor<MIStoppedEvent>(
@@ -197,22 +197,22 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(timeout);	
 	}
 
-	public static MIStoppedEvent runToLine(String fileName, String lineNo, 
+	public static MIStoppedEvent runToLine(String fileName, int lineNo,
             boolean skipBreakpoints) throws Throwable {
 		return runToLine(fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
 	}
 
-	public static MIStoppedEvent runToLine(String fileName, String lineNo, 
+	public static MIStoppedEvent runToLine(String fileName, int lineNo,
             boolean skipBreakpoints, int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return runToLine(containerDmc, fileName, lineNo, skipBreakpoints, timeout);
 	}
 
-	public static MIStoppedEvent runToLine(String fileName, String lineNo) throws Throwable {
+	public static MIStoppedEvent runToLine(String fileName, int lineNo) throws Throwable {
 		return runToLine(fileName, lineNo, DefaultTimeouts.get(ETimeout.runToLine));
 	}
 
-	public static MIStoppedEvent runToLine(String fileName, String lineNo, int timeout) throws Throwable {
+	public static MIStoppedEvent runToLine(String fileName, int lineNo, int timeout) throws Throwable {
 		return runToLine(fileName, lineNo, false, timeout);
 	}
 

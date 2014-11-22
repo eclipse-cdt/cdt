@@ -274,7 +274,7 @@ public class MIRunControlTest extends BaseTestCase {
 		// thread is conditional depending on environment. Run to the printf
 		// before it (which is common), then do step operations over the
 		// non-common code (but same number of lines)
-        SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, Integer.toString(LINE_MAIN_PRINTF), true);
+        SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, LINE_MAIN_PRINTF, true);
         
         // Because the program is about to go multi-threaded, we have to select the thread
         // we want to keep stepping.  If we don't, we will ask GDB to step the entire process

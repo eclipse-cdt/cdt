@@ -15,16 +15,20 @@ package org.eclipse.cdt.ui.tests.text;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.swt.graphics.RGB;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -52,8 +56,8 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingPresenter;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingPresenter.TestHighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 
 /**
  * Semantic highlighting tests.
@@ -74,6 +78,12 @@ public class SemanticHighlightingTest extends TestCase {
 	private IIndex fIndex;
 	private IASTTranslationUnit fAST;
 	
+	// The highlighted positions stored in the document don't store any information
+	// that directly identifies which highligting they are for. To recover this
+	// information, we assign a different color to each highlighting, and then
+	// look up the highlighting's preference key based on the color.
+	private Map<RGB, String> fColorToPreferenceKeyMap;
+	
 	private static File createExternalFile(final String code) throws Exception {
 		File dest = File.createTempFile("external", ".h");
 		FileOutputStream fos = new FileOutputStream(dest);
@@ -82,18 +92,28 @@ public class SemanticHighlightingTest extends TestCase {
 		return dest;
 	}
 
-	private static void enableAllSemanticHighlightings() {
+	private void enableHighlightingsAndAssignColors() {
+		fColorToPreferenceKeyMap = new HashMap<>();
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED, true);
-		SemanticHighlighting[] semanticHilightings= SemanticHighlightings.getSemanticHighlightings();
-		for (SemanticHighlighting semanticHilighting : semanticHilightings) {
-			String enabledPreferenceKey = SemanticHighlightings.getEnabledPreferenceKey(semanticHilighting);
+		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
+		int blue = 0;  // for assigning colors to preferences below
+		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
+			// Enable the highlighting.
+			String enabledPreferenceKey = SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting);
 			if (!store.getBoolean(enabledPreferenceKey))
 				store.setValue(enabledPreferenceKey, true);
+			
+			// Choose a unique color for the highlighting, and save the mapping
+			// from the color to the highlighting's preference key .
+			String colorPreferenceKey = SemanticHighlightings.getColorPreferenceKey(semanticHighlighting);
+			RGB color = new RGB(0, 0, blue++);  // every highlighting gets a different shade of blue
+			PreferenceConverter.setValue(store, colorPreferenceKey, color);
+			fColorToPreferenceKeyMap.put(color, semanticHighlighting.getPreferenceKey());
 		}
 	}
 	
-	private static void restoreAllSemanticHighlightingToDefaults() {
+	private void restorePreferencesToDefaults() {
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setToDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED);
 		SemanticHighlighting[] semanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
@@ -101,16 +121,17 @@ public class SemanticHighlightingTest extends TestCase {
 			String enabledPreferenceKey= SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting);
 			if (!store.isDefault(enabledPreferenceKey))
 				store.setToDefault(enabledPreferenceKey);
+			String colorPreferenceKey = SemanticHighlightings.getColorPreferenceKey(semanticHighlighting);
+			store.setToDefault(colorPreferenceKey);
 		}
+		fColorToPreferenceKeyMap.clear();
 	}
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		enableAllSemanticHighlightings();
-		
-		SemanticHighlightingPresenter.sIsForTest = true;
+		enableHighlightingsAndAssignColors();
 		
 		StringBuilder[] testData = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), 0);
 		
@@ -152,9 +173,8 @@ public class SemanticHighlightingTest extends TestCase {
 		}
 		
 		TestScannerProvider.sIncludeFiles= null;
-		SemanticHighlightingPresenter.sIsForTest = false;
 		
-		restoreAllSemanticHighlightingToDefaults();
+		restorePreferencesToDefaults();
 
 		super.tearDown();
 	}
@@ -190,9 +210,11 @@ public class SemanticHighlightingTest extends TestCase {
 			actual[i] = new ArrayList<String>();
 		}
 		for (Position p : getSemanticHighlightingPositions()) {
-			assertTrue(p instanceof TestHighlightedPosition);
+			assertTrue(p instanceof HighlightedPosition);
+			RGB color = ((HighlightedPosition) p).getHighlighting().getTextAttribute().getForeground().getRGB();
+			assertTrue(fColorToPreferenceKeyMap.containsKey(color));
 			int line = document.getLineOfOffset(p.getOffset());
-			actual[line].add(((TestHighlightedPosition) p).getPreferenceKey());
+			actual[line].add(fColorToPreferenceKeyMap.get(color));
 		}
 		
 		assertEqualMaps(actual, expected);

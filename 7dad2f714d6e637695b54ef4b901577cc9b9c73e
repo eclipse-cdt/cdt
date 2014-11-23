@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_f2a2a1ac",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 11073,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Please add a similar test to IndexCPPBindingResolutionTest where the first two lines are in the header file and the third line is in the source file.\n\nThe same for the tests below.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f2474170",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IScanner.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "eg. -\u003e e.g.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b29ca977",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3071,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "PDOMNode -\u003e IIndexBinding",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d29fa566",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3082,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Better: trim(funcs, i);",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_32909954",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3083,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Better: trim(tplFunctions, j)",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_72869123",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3127,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Add a constant for new CPPBasicType(Kind.eChar, 0) at the top of CPPBasicType and use it here.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_52b435ea",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3135,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Use a constant defined in CPPBasicType.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_32a9b998",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3140,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "A space is missing after cast.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_72afb19b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Extract a variable for exp.getValue().\n\nWhat does it return in this context?",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_12ae3da0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3144,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Should it be PRVALUE instead of LVALUE?",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d244c56e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3145,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Please remove commented out code.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_528b9529",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3173,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "A space is missing after cast.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b283090f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "Use CPPBasicType.UNSIGNED_INT",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_92808d03",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3189,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-23T05:43:42Z",
+      "side": 1,
+      "message": "A space is missing after cast.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

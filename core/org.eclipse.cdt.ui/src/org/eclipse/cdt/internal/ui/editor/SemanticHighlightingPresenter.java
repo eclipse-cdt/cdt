@@ -240,32 +240,6 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	private boolean fIsCanceled= false;
 
 	/**
-	 * A subclass of HighlightedPosition that records which semantic highlighting
-	 * the position is for. Used for testing.
-	 *
-	 */
-	public static class TestHighlightedPosition extends HighlightedPosition {
-		private String fPreferenceKey;
-		
-		public String getPreferenceKey() {
-			return fPreferenceKey;
-		}
-		
-		public TestHighlightedPosition(int offset, int length, HighlightingStyle highlighting,
-				Object lock, String preferenceKey) {
-			super(offset, length, highlighting, lock);
-			fPreferenceKey = preferenceKey;
-		}
-	}
-
-	/**
-	 * A flag that is set when this class is exercised by a test.
-	 * When the flag is set, the positions added to the document are of type
-	 * TestHighlightedPosition rather than HighlightedPosition.
-	 */
-	public static boolean sIsForTest = false;
-	
-	/**
 	 * Creates and returns a new highlighted position with the given offset, length and highlighting.
 	 * <p>
 	 * NOTE: Also called from background thread.
@@ -278,17 +252,9 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	 */
 	public HighlightedPosition createHighlightedPosition(int offset, int length, HighlightingStyle style) {
 		// TODO: reuse deleted positions
-		return createHighlightedPosition(offset, length, style, null);
-	}
-	
-	public HighlightedPosition createHighlightedPosition(int offset, int length, HighlightingStyle style,
-			String preferenceKey) {
-		if (sIsForTest) {
-			return new TestHighlightedPosition(offset, length, style, fPositionUpdater, preferenceKey);
-		}
 		return new HighlightedPosition(offset, length, style, fPositionUpdater);
 	}
-
+	
 	/**
 	 * Adds all current positions to the given list.
 	 * <p>

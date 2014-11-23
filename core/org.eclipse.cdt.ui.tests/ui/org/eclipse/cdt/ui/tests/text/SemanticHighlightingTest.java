@@ -420,4 +420,10 @@ public class SemanticHighlightingTest extends TestCase {
     public void testDependentMethodCall_379626() throws Exception {
         makeAssertions();
     }
+
+    //	struct S {};                                     //$class
+    //	struct S waldo;                                  //$class,globalVariable
+    public void testCStructureName_451772() throws Exception {
+    	makeAssertions(false /* parse as C file */);
+    }
 }

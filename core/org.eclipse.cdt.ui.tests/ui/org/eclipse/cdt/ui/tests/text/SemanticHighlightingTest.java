@@ -127,10 +127,9 @@ public class SemanticHighlightingTest extends TestCase {
 		fColorToPreferenceKeyMap.clear();
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	// Note: This is not an override of the TestCase.setUp(), but a method called directly
+	// by the tests, so that they can specify a value for 'isCpp' on a per-test basis.
+	private void setup(boolean isCpp) throws Exception {
 		enableHighlightingsAndAssignColors();
 		
 		StringBuilder[] testData = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), 0);
@@ -143,24 +142,24 @@ public class SemanticHighlightingTest extends TestCase {
 		}
 		
 		fCProject= CProjectHelper.createCCProject("SHTest", "bin", IPDOMManager.ID_FAST_INDEXER);
-		IFile cppfile = TestSourceReader.createFile(fCProject.getProject(), new Path("SHTest.cpp"), 
+		String sourceFileName = isCpp ? "SHTest.cpp" : "SHTest.c";
+		IFile sourceFile = TestSourceReader.createFile(fCProject.getProject(), new Path(sourceFileName), 
 				testData.length == 2 ? testData[1].toString() : testData[0].toString());
 		IIndexManager indexManager= CCorePlugin.getIndexManager();
 		indexManager.joinIndexer(5000, new NullProgressMonitor());
 		
 		BaseTestCase.waitForIndexer(fCProject);
-		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile("/SHTest/SHTest.cpp"), true);
+		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile("/SHTest/" + sourceFileName), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
 		EditorTestHelper.joinBackgroundActivities();
 		
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 		fIndex.acquireReadLock();
-		fAST = TestSourceReader.createIndexBasedAST(fIndex, fCProject, cppfile);
+		fAST = TestSourceReader.createIndexBasedAST(fIndex, fCProject, sourceFile);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	private void teardown() throws Exception {
 		fIndex.releaseReadLock();
 		
 		EditorTestHelper.closeEditor(fEditor);
@@ -175,8 +174,6 @@ public class SemanticHighlightingTest extends TestCase {
 		TestScannerProvider.sIncludeFiles= null;
 		
 		restorePreferencesToDefaults();
-
-		super.tearDown();
 	}
 
 	private Position[] getSemanticHighlightingPositions() throws BadPositionCategoryException {
@@ -187,7 +184,9 @@ public class SemanticHighlightingTest extends TestCase {
 		return document.getPositions(positionCategory);
 	}
 
-	private void makeAssertions() throws Exception {
+	private void makeAssertions(boolean isCpp) throws Exception {
+		setup(isCpp);
+		
 		IDocument document = fSourceViewer.getDocument();
 		int lines = document.getNumberOfLines();
 		
@@ -218,6 +217,12 @@ public class SemanticHighlightingTest extends TestCase {
 		}
 		
 		assertEqualMaps(actual, expected);
+		
+		teardown();
+	}
+	
+	private void makeAssertions() throws Exception {
+		makeAssertions(true);  // default to C++
 	}
 
 	private void assertEqualMaps(List<String>[] actual, List<String>[] expected) {

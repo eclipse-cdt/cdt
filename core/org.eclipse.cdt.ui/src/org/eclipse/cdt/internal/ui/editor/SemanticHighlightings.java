@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -946,7 +947,7 @@ public class SemanticHighlightings {
 			}
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPClassType && !(binding instanceof ICPPTemplateParameter)) {
+				if (binding instanceof ICompositeType && !(binding instanceof ICPPTemplateParameter)) {
 					return true;
 				}
 			}

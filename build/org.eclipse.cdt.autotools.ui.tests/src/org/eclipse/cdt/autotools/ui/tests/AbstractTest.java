@@ -20,6 +20,8 @@ import static org.eclipse.swtbot.swt.finder.waits.Conditions.widgetIsEnabled;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,6 +40,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.finders.ContextMenuHelper;
 import org.eclipse.swtbot.swt.finder.finders.UIThreadRunnable;
@@ -46,6 +49,7 @@ import org.eclipse.swtbot.swt.finder.results.VoidResult;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.waits.ICondition;
 import org.eclipse.swtbot.swt.finder.widgets.AbstractSWTBot;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCheckBox;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -396,5 +400,38 @@ public abstract class AbstractTest {
 		}
 		bot.closeAllEditors();
 		mainShell.activate();
+	}
+
+	protected ICondition consoleTextMatches(SWTBotView consoleView, Pattern pattern) {
+		return new ConsoleTextMatches(consoleView, pattern);
+	}
+
+	protected class ConsoleTextMatches implements ICondition {
+		private final SWTBotView view;
+		private Pattern pattern;
+
+		public ConsoleTextMatches(SWTBotView view, Pattern pattern) {
+			this.view = view;
+			this.pattern = pattern;
+		}
+
+		@Override
+		public boolean test() throws Exception {
+			if (view.isActive()) {
+				String output = view.bot().styledText().getText();
+				java.util.regex.Matcher m = pattern.matcher(output);
+				return m.matches();
+			}
+			return false;
+		}
+
+		@Override
+		public void init(SWTBot bot) {
+		}
+
+		@Override
+		public String getFailureMessage() {
+			return null;
+		}
 	}
 }

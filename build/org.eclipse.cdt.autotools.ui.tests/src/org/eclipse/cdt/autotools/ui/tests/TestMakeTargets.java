@@ -13,7 +13,6 @@ package org.eclipse.cdt.autotools.ui.tests;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
@@ -63,13 +62,10 @@ public class TestMakeTargets extends AbstractTest {
 		shell.activate();
 		bot.table().getTableItem("info").select();
 		bot.button("Build").click();
-		bot.sleep(3000);
 
 		SWTBotView consoleView = viewConsole("CDT Build Console");
-		String output = consoleView.bot().styledText().getText();
 		Pattern p = Pattern.compile(".*make info.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		// Make Targets using right-click on project.
 		clickProjectContextMenu("Make Targets", "Build...");
@@ -77,14 +73,11 @@ public class TestMakeTargets extends AbstractTest {
 		shell.activate();
 		bot.table().getTableItem("check").select();
 		bot.button("Build").click();
-		bot.sleep(3000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		p = Pattern.compile(".*make check.*Making check in src.*",
 				Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue(m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
 }

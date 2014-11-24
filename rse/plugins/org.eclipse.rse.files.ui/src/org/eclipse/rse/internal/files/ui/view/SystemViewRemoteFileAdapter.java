@@ -85,7 +85,7 @@
  * David McKnight   (IBM)        - [430900] RSE table enhancement to populate full column when clicking column for sorting purposes
  * David McKnight   (IBM)        - [434388] A file name filter for the first filter string affected all other filter strings in an RSE filter
  *******************************************************************************/
-
+ 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
 import java.lang.reflect.Method;

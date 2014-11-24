@@ -107,14 +107,10 @@ public class TestEnvironmentVars extends AbstractTest {
 			}
 		}
 		assertTrue(f.exists());
-		bot.sleep(1000);
 		SWTBotView consoleView = viewConsole("Configure");
-		String output = consoleView.bot().styledText().getText();
 		Pattern p = Pattern.compile(".*--enable-somevar.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
 		// We should see the expanded some_var variable in the console
-		assertTrue(m.matches());
-
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		setEnvVarOnCommandLine();
 	}
 
@@ -157,15 +153,12 @@ public class TestEnvironmentVars extends AbstractTest {
 		clickContextMenu(projectExplorer.bot().tree().select(projectName),
 				"Reconfigure Project");
 		focusMainShell();
-		bot.sleep(3000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		Pattern p = Pattern.compile(
 				".*a boat.*a train.*car.*a wagon.*a plane.*skates.*",
 				Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue(m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
 }

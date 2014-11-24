@@ -89,7 +89,7 @@
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
+import java.text.MessageFormat; 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

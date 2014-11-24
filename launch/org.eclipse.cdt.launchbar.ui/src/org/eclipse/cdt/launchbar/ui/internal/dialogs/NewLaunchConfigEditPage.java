@@ -240,14 +240,13 @@ public class NewLaunchConfigEditPage extends WizardPage {
 
 		@Override
 		public ILaunchConfigurationTab[] getTabs() {
-			// TODO Auto-generated method stub
-			return null;
+			return tabGroup.getTabs();
 		}
 
 		@Override
 		public ILaunchConfigurationTab getActiveTab() {
-			// TODO Auto-generated method stub
-			return null;
+			int i = tabFolder.getSelectionIndex();
+			return tabGroup.getTabs()[i];
 		}
 
 		@Override
@@ -257,12 +256,20 @@ public class NewLaunchConfigEditPage extends WizardPage {
 
 		@Override
 		public void setActiveTab(ILaunchConfigurationTab tab) {
-			// TODO Auto-generated method stub
+			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+			int tLen = tabs.length;
+			for (int i = 0; i < tLen; i++) {
+				ILaunchConfigurationTab tabi = tabs[i];
+				if (tabi.equals(tab)) {
+					setActiveTab(i);
+					break;
+				}
+			}
 		}
 
 		@Override
 		public void setActiveTab(int index) {
-			// TODO Auto-generated method stub
+			tabFolder.setSelection(index);
 		}
 	}
 }

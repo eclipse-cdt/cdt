@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_72017110",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3071,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_b29ca977",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_d29fa566",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 3
@@ -64,6 +82,24 @@
       "writtenOn": "2014-11-23T05:43:42Z",
       "side": 1,
       "message": "Better: trim(funcs, i);",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_5206f529",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3082,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_d29fa566",
       "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_b20e693f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3083,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_32909954",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_72869123",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 3
@@ -98,6 +152,24 @@
       "writtenOn": "2014-11-23T05:43:42Z",
       "side": 1,
       "message": "Add a constant for new CPPBasicType(Kind.eChar, 0) at the top of CPPBasicType and use it here.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f214614d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3127,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_72869123",
       "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_d211655b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3135,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_52b435ea",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_32a9b998",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 3
@@ -132,6 +222,24 @@
       "writtenOn": "2014-11-23T05:43:42Z",
       "side": 1,
       "message": "A space is missing after cast.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_322259ac",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3140,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_32a9b998",
       "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_92324df3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3141,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_72afb19b",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_12ae3da0",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 3
@@ -166,6 +292,24 @@
       "writtenOn": "2014-11-23T05:43:42Z",
       "side": 1,
       "message": "Should it be PRVALUE instead of LVALUE?",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b235c9df",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3144,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_12ae3da0",
       "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_521d556a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3145,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_d244c56e",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_528b9529",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 3
@@ -200,6 +362,24 @@
       "writtenOn": "2014-11-23T05:43:42Z",
       "side": 1,
       "message": "A space is missing after cast.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_7218517c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3173,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_528b9529",
       "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +403,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_12275dbc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3174,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_b283090f",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_92808d03",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 3
@@ -234,6 +432,24 @@
       "writtenOn": "2014-11-23T05:43:42Z",
       "side": 1,
       "message": "A space is missing after cast.",
+      "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f22bc180",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3189,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-24T04:18:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_92808d03",
       "revId": "7dad2f714d6e637695b54ef4b901577cc9b9c73e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

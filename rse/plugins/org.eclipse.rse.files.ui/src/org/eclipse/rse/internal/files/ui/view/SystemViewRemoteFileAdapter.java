@@ -83,6 +83,7 @@
  * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  * David McKnight   (IBM)        - [420798] Slow performances in RDz 9.0 with opening 7000 files located on a network driver.
  * David McKnight   (IBM)        - [430900] RSE table enhancement to populate full column when clicking column for sorting purposes
+ * David McKnight   (IBM)        - [434388] A file name filter for the first filter string affected all other filter strings in an RSE filter
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -786,38 +787,15 @@ public class SystemViewRemoteFileAdapter
 		}
 
 
-		/*
-		RemoteFileFilterString orgRffs = file.getFilterString();
-
-
-		if (orgRffs != null)
-		{
-			if (foldersOnly)
-			{
-				RemoteFileFilterString rffs = (RemoteFileFilterString) orgRffs.clone();
-				rffs.setPath(null);
-				rffs.setShowFiles(false);
-				rffs.setShowSubDirs(true);
-				filter = rffs.toString();
-			}
-			else if (filesOnly)
-			{
-				RemoteFileFilterString rffs = (RemoteFileFilterString) orgRffs.clone();
-				rffs.setPath(null);
-				rffs.setShowSubDirs(false);
-				rffs.setShowFiles(true);
-				filter = rffs.toString();
-			}
-		}
-		else
-		*/
 		String filter = null;
+		String[] filters = null;
 		if (filterReference != null)
 		{
 			ISystemFilter filterObject = filterReference.getReferencedFilter();
-			if (filterObject.getFilterStringCount() > 0)
-			{
-				String filterString = filterObject.getFilterStrings()[0];
+			int count = filterObject.getFilterStringCount();
+			filters = new String[count]; 
+			for (int i = 0; i < count; i++){
+				String filterString = filterObject.getFilterStrings()[i];
 				String separator = PathUtility.getSeparator(filterString);
 
 				int sepIndex = filterString.lastIndexOf(separator);
@@ -830,34 +808,38 @@ public class SystemViewRemoteFileAdapter
 					// fix for 197089
 					filter = filterString;
 				}
+				filters[i] = filter;
 			}
 		}
 		else
 		{
+			String filterString = getFilterString();
+			if (foldersOnly)
+			{
+				if (filterString == null)
+					filter = "* /nf"; //$NON-NLS-1$
+				else
+					filter = filterString;
+			}
+			else if (filesOnly)
+			{
+				if (filterString == null)
+					filter = "* /ns"; //$NON-NLS-1$
+				else
+					filter = filterString;
+			}
+			else
+			{
+				if (filterString == null)
+					filter = "*"; //$NON-NLS-1$
+				else
+					filter = filterString;
+			}
+			filters = new String[1];
+			filters[0] = filter;
+		}
 
-		String filterString = getFilterString();
-		if (foldersOnly)
-		{
-			if (filterString == null)
-				filter = "* /nf"; //$NON-NLS-1$
-			else
-				filter = filterString;
-		}
-		else if (filesOnly)
-		{
-			if (filterString == null)
-				filter = "* /ns"; //$NON-NLS-1$
-			else
-				filter = filterString;
-		}
-		else
-		{
-			if (filterString == null)
-				filter = "*"; //$NON-NLS-1$
-			else
-				filter = filterString;
-		}
-		}
+
 
 		Object[] children = null;
 
@@ -887,12 +869,15 @@ public class SystemViewRemoteFileAdapter
 		// TODO next release, find a risk-free way to avoid duplicate queries
 		// synchronized (file)
 		
+		List allChildren = new ArrayList();
+		for (int i = 0; i < filters.length; i++)
 		{
-			boolean hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
+			String theFilter = filters[i];
+			boolean hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), theFilter);
 	
 			if (hasChildren && !file.isStale())
 			{
-				children = file.getContents(RemoteChildrenContentsType.getInstance(), filter);
+				children = file.getContents(RemoteChildrenContentsType.getInstance(), theFilter);
 				children = filterChildren(children);
 			}
 			else
@@ -902,11 +887,11 @@ public class SystemViewRemoteFileAdapter
 				    if (monitor != null)
 				    {
 	
-				        children = ss.resolveFilterString(file, filter, monitor);
+				        children = ss.resolveFilterString(file, theFilter, monitor);
 				    }
 				    else
 				    {
-				        children = ss.resolveFilterString(file, filter, new NullProgressMonitor());
+				        children = ss.resolveFilterString(file, theFilter, new NullProgressMonitor());
 				    }
 	
 					if ((children == null) || (children.length == 0))
@@ -950,10 +935,20 @@ public class SystemViewRemoteFileAdapter
 			if (originalFile != null && originalFile != file){
 				originalFile.markStale(false);
 			}
+			addToList(allChildren, children);
 		}
-		return children;
+		return allChildren.toArray();
 	}
 
+	private void addToList(List list, Object[] children){
+		for (int i = 0; i < children.length; i++){
+			Object child = children[i];
+			if (child != null && !list.contains(child)){
+				list.add(child);
+			}
+		}
+	}
+	
 	private Object[] filterChildren(Object[] children) {
 
 		boolean showHidden = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.SHOWHIDDEN);

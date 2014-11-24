@@ -109,12 +109,9 @@ public class TestEnvironmentVars extends AbstractTest {
 		assertTrue(f.exists());
 		bot.sleep(1000);
 		SWTBotView consoleView = viewConsole("Configure");
-		String output = consoleView.bot().styledText().getText();
 		Pattern p = Pattern.compile(".*--enable-somevar.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
 		// We should see the expanded some_var variable in the console
-		assertTrue(m.matches());
-
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		setEnvVarOnCommandLine();
 	}
 

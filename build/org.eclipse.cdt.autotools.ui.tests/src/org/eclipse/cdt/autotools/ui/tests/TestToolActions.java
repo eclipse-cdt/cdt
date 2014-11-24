@@ -13,7 +13,6 @@ package org.eclipse.cdt.autotools.ui.tests;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
@@ -67,12 +66,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName
 				+ ".*aclocal --help.*Usage: aclocal.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have an aclocal.m4 file yet
 		f = new File(path.toOSString());
 		assertTrue(!f.exists());
@@ -85,11 +82,9 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		p = Pattern.compile(".*Invoking aclocal in.*" + projectName
 				+ ".*aclocal.*", Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the aclocal.m4 file is created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -117,12 +112,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking autoconf in.*" + projectName
 				+ ".*autoconf.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the configure file is created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -145,11 +138,9 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		p = Pattern.compile(".*Invoking autoconf in.*" + projectName
 				+ ".*autoconf.*", Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the configure file is created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -189,12 +180,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking automake in.*" + projectName
 				+ ".*automake --help.*Usage:.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have Makefile.in files yet
 		f = new File(path.toOSString());
 		assertTrue(!f.exists());
@@ -213,12 +202,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(2000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		p = Pattern.compile(".*Invoking automake in.*" + projectName
 				+ ".*automake --add-missing Makefile src/Makefile.*",
 				Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// We need to wait until the Makefile.in files are created so
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
@@ -248,12 +235,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
 				+ ".*libtoolize --help.*Usage: libtoolize.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
 	// Verify we can access the libtoolize tool
@@ -267,12 +252,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(2000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking autoheader in.*" + projectName
 				+ ".*autoheader --help.*Usage:.*autoheader.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
 	// Verify we can access the autoreconf tool
@@ -308,12 +291,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		SWTBotView consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking autoreconf in.*" + projectName
 				+ ".*autoreconf --help.*Usage: .*autoreconf.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoreconf");
 		shell = bot.shell("Autoreconf Options");
 		shell.activate();
@@ -457,12 +438,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		SWTBotView consoleView = viewConsole("Autotools");
 		consoleView.setFocus();
-		String output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		Pattern p = Pattern.compile(".*Invoking aclocal in.*" + projectName
 				+ ".*automake --help.*Usage:.*automake.*", Pattern.DOTALL);
-		Matcher m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Automake");
 		shell = bot.shell("Automake Options");
@@ -472,12 +451,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		p = Pattern.compile(".*Invoking automake in.*" + projectName
 				+ ".*autoconf --help.*Usage:.*autoconf.*", Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoheader");
 		shell = bot.shell("Autoheader Options");
@@ -487,12 +464,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		p = Pattern.compile(".*Invoking autoheader in.*" + projectName
 				+ ".*autoreconf --help.*Usage:.*autoreconf.*", Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Autoreconf");
 		shell = bot.shell("Autoreconf Options");
@@ -502,12 +477,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		p = Pattern.compile(".*Invoking autoreconf in.*" + projectName
 				+ ".*libtoolize --help.*Usage:.*libtoolize.*", Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 
 		clickProjectContextMenu("Invoke Autotools", "Invoke Libtoolize");
 		shell = bot.shell("Libtoolize Options");
@@ -517,12 +490,10 @@ public class TestToolActions extends AbstractTest {
 		bot.sleep(1000);
 		consoleView = bot.viewByPartName("Console");
 		consoleView.setFocus();
-		output = consoleView.bot().styledText().getText();
 		// Verify we got some help output to the console
 		p = Pattern.compile(".*Invoking libtoolize in.*" + projectName
 				+ ".*aclocal --help.*Usage:.*aclocal.*", Pattern.DOTALL);
-		m = p.matcher(output);
-		assertTrue("Got: " + output, m.matches());
+		bot.waitUntil(consoleTextMatches(consoleView, p));
 	}
 
 }

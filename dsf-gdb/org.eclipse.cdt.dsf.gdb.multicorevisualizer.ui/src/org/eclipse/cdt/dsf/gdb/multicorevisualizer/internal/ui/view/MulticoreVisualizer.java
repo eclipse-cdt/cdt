@@ -20,6 +20,7 @@
  *     Marc Dumais (Ericsson) - Bug 441713
  *     Marc Dumais (Ericsson) - Bug 442312
  *     Marc Dumais (Ericsson) - Bug 451392
+ *     Marc Dumais (Ericsson) - Bug 453206
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -165,58 +166,58 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	// --- UI members ---
 
 	/** Whether actions have been initialized. */
-	boolean m_actionsInitialized = false;
+	protected boolean m_actionsInitialized = false;
 	
 	/** Toolbar / menu action */
-	Separator m_separatorAction = null;	
+	protected Separator m_separatorAction = null;	
 
 	/** Toolbar / menu action */
-	ResumeCommandAction m_resumeAction = null;
+	protected ResumeCommandAction m_resumeAction = null;
 	
 	/** Toolbar / menu action */
-	SuspendCommandAction m_suspendAction = null;
+	protected SuspendCommandAction m_suspendAction = null;
 	
 	/** Toolbar / menu action */
-	TerminateCommandAction m_terminateAction = null;
+	protected TerminateCommandAction m_terminateAction = null;
 	
 	/** Toolbar / menu action */
-	StepReturnCommandAction m_stepReturnAction = null;
+	protected StepReturnCommandAction m_stepReturnAction = null;
 	
 	/** Toolbar / menu action */
-	StepOverCommandAction m_stepOverAction = null;
+	protected StepOverCommandAction m_stepOverAction = null;
 	
 	/** Toolbar / menu action */
-	StepIntoCommandAction m_stepIntoAction = null;
+	protected StepIntoCommandAction m_stepIntoAction = null;
 	
 	/** Toolbar / menu action */
-	DropToFrameCommandAction m_dropToFrameAction = null;
+	protected DropToFrameCommandAction m_dropToFrameAction = null;
 	
 	/** Toolbar / menu action */
-	SelectAllAction m_selectAllAction = null;
+	protected SelectAllAction m_selectAllAction = null;
 	
 	/** Toolbar / menu action */
-	RefreshAction m_refreshAction = null;
+	protected RefreshAction m_refreshAction = null;
 	
 	/** Sub-menu */
-	IMenuManager m_loadMetersSubMenu = null;
+	protected IMenuManager m_loadMetersSubMenu = null;
 	
 	/** Sub-sub menu */
-	IMenuManager m_loadMetersRefreshSubSubmenu = null;
+	protected IMenuManager m_loadMetersRefreshSubSubmenu = null;
 	
 	/** Menu action */
-	EnableLoadMetersAction m_enableLoadMetersAction = null;
+	protected EnableLoadMetersAction m_enableLoadMetersAction = null;
 	
 	/** Menu action */
-	List<SetLoadMeterPeriodAction> m_setLoadMeterPeriodActions = null;
+	protected List<SetLoadMeterPeriodAction> m_setLoadMeterPeriodActions = null;
 	
 	/** Menu action */
-	FilterCanvasAction m_setFilterAction = null;
+	protected FilterCanvasAction m_setFilterAction = null;
 
 	/** Menu action */
-	FilterCanvasAction m_clearFilterAction = null;	
+	protected FilterCanvasAction m_clearFilterAction = null;	
 	
 	/** Menu action */
-	PinToDebugSessionAction m_pinToDbgSessionAction = null;
+	protected PinToDebugSessionAction m_pinToDbgSessionAction = null;
 
 	// --- constructors/destructors ---
 	

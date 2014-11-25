@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -52,12 +50,10 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		public CPPTemplateProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}
+
 		@Override
 		public ICPPTemplateParameter[] getTemplateParameters() {
 			return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
-		}
-		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
-			throw new DOMException(this);
 		}
 	}
 

@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -94,10 +93,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter
 	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
 		return templateParameter;
-	}
-
-	public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
-		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
 	@Override

@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_74faf9e9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-25T18:56:46Z",
+      "side": 1,
+      "message": "This is a new problem right? This version of your patch does not handle that either, I believe.  And the implementation on master does not handle that either, right?\n\nSo, if we\u0027re not making things worse, I say don\u0027t bother, unless you actually care to fix that scenario.",
+      "parentUuid": "a766b734_b9b2cccb",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_9c7d748f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 7

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -49,7 +49,6 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * scopes that can be reopened, i.e. namespaces.
  */
 public class CPPScopeMapper {
-
 	/**
 	 * Used for implicit inline directives for inline namespaces found in the index.
 	 */
@@ -141,7 +140,7 @@ public class CPPScopeMapper {
 
 		private void initUsingDirectives() {
 			if (fUsingDirectives == null) {
-				fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
+				fUsingDirectives= new ArrayList<>(1);
 				// Insert a using directive for every inline namespace
 				for (ICPPInternalNamespaceScope inline: getInlineNamespaces()) {
 					fUsingDirectives.add(new InlineNamespaceDirective(this, inline));
@@ -248,12 +247,11 @@ public class CPPScopeMapper {
 		}
 	}
 	
-	private final HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<IIndexScope, IScope>();
-	private final HashMap<String, NamespaceScopeWrapper> fNamespaceWrappers= new HashMap<String, NamespaceScopeWrapper>();
-	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<String, List<UsingDirectiveWrapper>>();
+	private final HashMap<IIndexScope, IScope> fMappedScopes= new HashMap<>();
+	private final HashMap<String, NamespaceScopeWrapper> fNamespaceWrappers= new HashMap<>();
+	private final Map<String, List<UsingDirectiveWrapper>> fPerName= new HashMap<>();
 	private final CPPASTTranslationUnit fTu;
 	protected CharArrayMap<IASTName[]> fClasses;
-
 
 	public CPPScopeMapper(CPPASTTranslationUnit tu) {
 		fTu= tu;
@@ -386,7 +384,7 @@ public class CPPScopeMapper {
 		}
 		
 		if (fClasses == null) {
-			fClasses= new CharArrayMap<IASTName[]>();
+			fClasses= new CharArrayMap<>();
 			fTu.accept(new Visitor());
 		}
 		IASTName[] names= fClasses.get(type.getNameCharArray());

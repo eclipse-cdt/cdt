@@ -484,15 +484,12 @@ public class LookupData extends ScopeLookupData {
 	}
 
 	public IType[] getFunctionArgumentTypes() {
-		if (functionArgTypes == null) {
-			if (functionArgs != null) {
-				ICPPEvaluation[] exprs= functionArgs;
-				functionArgTypes= new IType[exprs.length];
-				for (int i = 0; i < exprs.length; i++) {
-					ICPPEvaluation e = exprs[i];
-					functionArgTypes[i]= getSimplifiedType(e.getTypeOrFunctionSet(getLookupPoint()));
-				}
-			}  
+		if (functionArgTypes == null && functionArgs != null) {
+			functionArgTypes= new IType[functionArgs.length];
+			for (int i = 0; i < functionArgs.length; i++) {
+				ICPPEvaluation e = functionArgs[i];
+				functionArgTypes[i]= getSimplifiedType(e.getTypeOrFunctionSet(getLookupPoint()));
+			}
 		}
 		return functionArgTypes;
 	}

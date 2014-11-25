@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	
 	private void initUsingDirectives() {
 		if (fUsingDirectives == null) {
-			fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
+			fUsingDirectives= new ArrayList<>(1);
 			// Insert a using directive for every inline namespace found in the index.
 			for (ICPPInternalNamespaceScope inline : getIndexInlineNamespaces()) {
 				if (!(inline instanceof CPPNamespaceScope)) {
@@ -107,7 +107,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     }
 
     public IScope findNamespaceScope(IIndexScope scope) {
-    	final ArrayList<IBinding> parentChain = new ArrayList<IBinding>();
+    	final ArrayList<IBinding> parentChain = new ArrayList<>();
 	    for (IBinding binding= scope.getScopeBinding(); binding != null; binding= binding.getOwner()) {
 	    	parentChain.add(binding);
 	    }
@@ -260,7 +260,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		populateCache();
 		Set<ICPPInternalNamespaceScope> result= null;
 		if (fInlineNamespaceDefinitions != null) {
-			result= new HashSet<ICPPInternalNamespaceScope>(fInlineNamespaceDefinitions.size());
+			result= new HashSet<>(fInlineNamespaceDefinitions.size());
 			for (ICPPASTNamespaceDefinition nsdef : fInlineNamespaceDefinitions) {
 				final IScope scope = nsdef.getScope();
 				if (scope instanceof ICPPInternalNamespaceScope) {
@@ -271,7 +271,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		
 		for (ICPPInternalNamespaceScope inline : getIndexInlineNamespaces()) {
 			if (result == null)
-				result = new HashSet<ICPPInternalNamespaceScope>();
+				result = new HashSet<>();
 			result.add(inline);
 		}
 		
@@ -284,7 +284,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	private ICPPInternalNamespaceScope[] getIndexInlineNamespaces() {
 		IASTTranslationUnit tu= getPhysicalNode().getTranslationUnit();
 		if (tu instanceof CPPASTTranslationUnit) { 
-			CPPASTTranslationUnit cpptu= (CPPASTTranslationUnit) tu;
+			CPPASTTranslationUnit ast= (CPPASTTranslationUnit) tu;
 			IIndex index= tu.getIndex();
 			if (index != null) {
 				IScope[] inlineScopes= null;
@@ -301,12 +301,10 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 				if (inlineScopes != null) {
 					List<ICPPInternalNamespaceScope> result= null;
 					for (IScope scope : inlineScopes) {
-						if (scope instanceof IIndexScope) {
-							scope= cpptu.mapToASTScope((IIndexScope) scope);
-						}
+						scope= ast.mapToASTScope(scope);
 						if (scope instanceof ICPPInternalNamespaceScope) {
 							if (result == null) {
-								result= new ArrayList<ICPPInternalNamespaceScope>();
+								result= new ArrayList<>();
 							}
 							result.add((ICPPInternalNamespaceScope) scope);
 						}
@@ -325,7 +323,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	 */
 	public void addInlineNamespace(ICPPASTNamespaceDefinition nsDef) {
 		if (fInlineNamespaceDefinitions == null) {
-			fInlineNamespaceDefinitions= new ArrayList<ICPPASTNamespaceDefinition>();
+			fInlineNamespaceDefinitions= new ArrayList<>();
 		}
 		fInlineNamespaceDefinitions.add(nsDef);
 	}
@@ -342,7 +340,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 			}
 		}
 		
-		Set<ICPPInternalNamespaceScope> result= new HashSet<ICPPInternalNamespaceScope>();
+		Set<ICPPInternalNamespaceScope> result= new HashSet<>();
 		result.add(nsScope);
 		addInlineNamespaces(nsScope, result);
 		return result.toArray(new ICPPNamespaceScope[result.size()]);

@@ -244,7 +244,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 
 		// Need a class template.
-		if (type instanceof ICPPClassTemplate == false || type instanceof ProblemBinding) 
+		if (!(type instanceof ICPPClassTemplate) || type instanceof ProblemBinding) 
 			return false;
 		
 		// Exclude other kinds of class templates.

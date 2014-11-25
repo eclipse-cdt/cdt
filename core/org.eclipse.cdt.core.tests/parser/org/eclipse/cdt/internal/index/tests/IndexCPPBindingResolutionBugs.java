@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -55,6 +56,9 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -1344,5 +1348,35 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	class D::B {};
 	public void testInvalidOwner_412766() throws Exception {
 		getProblemFromFirstIdentifier("B {}");
+	}
+
+	//	template <class T>
+	//	struct A {
+	//	};
+	//
+	//	template <class U>
+	//	struct B : public A<typename U::t> {
+	//	};
+	//
+	//	template <typename T>
+	//	struct C {
+	//	  typedef T t;
+	//	  void waldo(A<t>* p);
+	//	};
+
+	//	struct E {
+	//	  void test() {
+	//	    waldo(new B<E>());
+	//	  }
+	//	};
+	public void _testTemplateArgumentResolution_450888() throws Exception {
+		getProblemFromFirstIdentifier("waldo"); // waldo is not resolved because E doesn't extend C.
+		IASTTranslationUnit ast = strategy.getAst(0);
+		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+		IWorkingCopy workingCopy = tu.getWorkingCopy();
+		IBuffer buffer = workingCopy.getBuffer();
+		buffer.setContents(buffer.getContents().replace("E {", "E : public C<int> {"));
+		ast = workingCopy.getAST(strategy.getIndex(), ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+		checkBindings(ast); // E now extends C, there should be no unresolved symbols.
 	}
 }

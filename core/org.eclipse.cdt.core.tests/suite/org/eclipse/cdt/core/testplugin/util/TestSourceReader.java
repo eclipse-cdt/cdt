@@ -23,8 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -52,6 +50,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.junit.Assert;
 import org.osgi.framework.Bundle;
 
 /**

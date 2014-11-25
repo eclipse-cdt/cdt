@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_b9b2cccb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-25T14:28:09Z",
+      "side": 1,
+      "message": "I changed the code to call IGDBControl.terminate() when there is no IProcessDMContexts and it works for the case you described but not sure if this is enough in general. If an extension of GdbLaunch has \"ITerminate\" elements that are not controlled by GDB they need to be terminated separately by calling ITerminate.terminate(). Extra processes, for instance. Unfortunately, we can\u0027t differentiate between the processes that are controlled by the IProcesses service or GDB and others. At the moment I have no idea how to handle this. What do you think?",
+      "parentUuid": "a766b734_dcfa4c82",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_9c7d748f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 7
@@ -47,6 +65,24 @@
       "writtenOn": "2014-11-04T21:39:13Z",
       "side": 1,
       "message": "Similar to terminate case, this breaks when there are no processes.\nHowever, if we can fix this, it is a bit different for disconnect, when there are no processes.  Should we kill GDB in that case (that is what we do on master), should we have GDB call \u0027disconnect\u0027 for remote sessions (only), should we keep this button disabled if there are no processes?\n\nAlthough I like the idea of supporting the GDB \u0027disconnect\u0027 command, we could open a new bug for that.  I\u0027d be fine in this patch, to simply have the disconnect button disabled when the launch is selected and there are no processes.",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d9b508b4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-25T14:28:09Z",
+      "side": 1,
+      "message": "I agree, keeping the \"Disconnect\" button disabled for this patch is the better option.",
+      "parentUuid": "a766b734_fcd90820",
       "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

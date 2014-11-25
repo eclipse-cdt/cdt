@@ -256,10 +256,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  CDT 8.6 development (versions not supported on the 8.5.x branch)
 	 *  180.0 - Internal types of enumerators, bug 446711.
 	 *  180.1 - Storing types of unknown members, bug 447728.
+	 *  180.2 - Do not apply significant macros to source files, bug 450888.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(180, 1);
+	private static final int MIN_SUPPORTED_VERSION= version(180, 2);
 	private static final int MAX_SUPPORTED_VERSION= version(180, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(180, 1);
+	private static final int DEFAULT_VERSION = version(180, 2);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

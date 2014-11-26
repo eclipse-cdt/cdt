@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
  *     Marc Dumais (Ericsson) - bug 436095
+ *     Marc Dumais (Ericsson) - bug 453227
  *******************************************************************************/
 
 // Package declaration
@@ -163,6 +164,9 @@ public class VisualizerView
 
 		// set up context menu support
 		initializeContextMenu();
+		
+		// setup the view menu
+		initializeMenu();
 		
 		// set up selection handling
 		initializeSelectionHandling();
@@ -355,20 +359,52 @@ public class VisualizerView
 			toolBarManager.add(m_openNewViewAction);
 			toolBarManager.update(true);
 			
-			// Allow presentation to set the toolbar's menu content, if any
-			IMenuManager menuManager = actionBars.getMenuManager();
-			menuManager.removeAll();
-			m_viewer.populateMenu(menuManager);
-			menuManager.update(true);
-			
 			// Note: when context menu is invoked,
 			// the poplateContextMenu() method is called by the view,
 			// which in turn delegates to the current visualizer
 			// to populate the context menu.
 			
+			// Note2: when view menu is invoked,
+			// the poplateMenu() method is called by the view,
+			// which in turn delegates to the current visualizer
+			// to populate the view menu.
+			
 			// Propagate the changes
 			actionBars.updateActionBars();
 		}
+	}
+	
+	
+	// --- view menu support ---
+	
+	/** Initialize the view menu 
+	 * @since 1.2*/
+	protected void initializeMenu() {
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager menuManager = actionBars.getMenuManager();
+		menuManager.addMenuListener(new IMenuListener2() {
+			public void menuAboutToShow(IMenuManager m) {
+				viewMenuShow(m);
+			}
+			public void menuAboutToHide(IMenuManager m) {
+				viewMenuHide(m);
+			}
+		});
+	}
+	
+	/** Invoked when view menu is about to be shown. 
+	 * @since 1.2*/
+	protected void viewMenuShow(IMenuManager m)
+	{
+		m.removeAll();
+		m_viewer.populateMenu(m);
+		m.update();
+	}
+	
+	/** Invoked when view menu is about to be hidden. 
+	 * @since 1.2*/
+	protected void viewMenuHide(IMenuManager m)
+	{
 	}
 	
 	

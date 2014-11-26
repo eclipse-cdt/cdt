@@ -27,15 +27,9 @@ public class MIDataEvaluateExpressionInfo extends MIInfo {
             MIOutput out = getMIOutput();
             MIResultRecord outr = out.getMIResultRecord();
             if (outr != null) {
-                MIResult[] results =  outr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    if (var.equals("value")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIConst) {
-                            fValue = ((MIConst)value).getString();
-                        }
-                    }
+                MIValue value = outr.getMIValue("value"); //$NON-NLS-1$
+                if (value instanceof MIConst) {
+                    fValue = ((MIConst)value).getString();
                 }
             }
         }

@@ -34,14 +34,32 @@ public class MITuple extends MIValue {
         return values;
     }
 
+    /**
+	 * @since 4.6
+	 */
+    public MIValue getMIValue(String name) {
+        for (MIResult r : results) {
+            if (r.getVariable().equals(name)) {
+                return r.getMIValue();
+            }
+        }
+        return null;
+    }
+
     public void setMIValues(MIValue[] vals) {
         values = vals;
     }
 
     @Override
     public String toString() {
+        return toString("{", "}"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    // Return comma-separated values, with start and end prepended and appended
+    String toString(String start, String end)
+    {
         StringBuffer buffer = new StringBuffer();
-        buffer.append('{');
+        buffer.append(start);
         for (int i = 0; i < results.length; i++) {
             if (i != 0) {
                 buffer.append(',');
@@ -54,7 +72,7 @@ public class MITuple extends MIValue {
             }
             buffer.append(values[i].toString());
         }
-        buffer.append('}');
+        buffer.append(end);
         return buffer.toString();
     }
 }

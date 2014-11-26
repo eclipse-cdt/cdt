@@ -12,6 +12,9 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * GDB/MI tuple value.
  */
@@ -21,6 +24,7 @@ public class MITuple extends MIValue {
     final static MIValue[] nullValues = new MIValue[0];
                  MIResult[] results = nullResults;
                  MIValue[] values = nullValues;
+                 Map<String, MIValue> name2value;
 
     public MIResult[] getMIResults() {
         return results;
@@ -28,10 +32,23 @@ public class MITuple extends MIValue {
 
     public void setMIResults(MIResult[] res) {
         results = res;
+        name2value = null;
     }
 
     public MIValue[] getMIValues() {
         return values;
+    }
+
+    /**
+	 * @since 4.6
+	 */
+    public MIValue getMIValue(String name) {
+        if (name2value == null) {
+            name2value = new HashMap<String, MIValue>();
+            for (MIResult r : results)
+                name2value.put(r.getVariable(), r.getMIValue());
+            }
+        return name2value.get(name);
     }
 
     public void setMIValues(MIValue[] vals) {
@@ -40,8 +57,14 @@ public class MITuple extends MIValue {
 
     @Override
     public String toString() {
+        return toString("{", "}"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    // Return comma-separated values, with start and end prepended and appended
+    String toString(String start, String end)
+    {
         StringBuffer buffer = new StringBuffer();
-        buffer.append('{');
+        buffer.append(start);
         for (int i = 0; i < results.length; i++) {
             if (i != 0) {
                 buffer.append(',');
@@ -54,7 +77,7 @@ public class MITuple extends MIValue {
             }
             buffer.append(values[i].toString());
         }
-        buffer.append('}');
+        buffer.append(end);
         return buffer.toString();
     }
 }

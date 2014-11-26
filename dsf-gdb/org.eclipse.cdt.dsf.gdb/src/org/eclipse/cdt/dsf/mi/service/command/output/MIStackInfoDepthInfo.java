@@ -27,19 +27,12 @@ public class MIStackInfoDepthInfo extends MIInfo {
             MIOutput out = getMIOutput();
             MIResultRecord rr = out.getMIResultRecord();
             if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-
-                    if (var.equals("depth")) { //$NON-NLS-1$
-                        MIValue value = results[i].getMIValue();
-                        if (value instanceof MIConst) {
-                            String str = ((MIConst)value).getString();
-                            try {
-                                depth = Integer.parseInt(str.trim());
-                            } catch (NumberFormatException e) {
-                            }
-                        }
+                MIValue value = rr.getMIValue("depth"); //$NON-NLS-1$
+                if (value instanceof MIConst) {
+                    String str = ((MIConst)value).getString();
+                    try {
+                        depth = Integer.parseInt(str.trim());
+                    } catch (NumberFormatException e) {
                     }
                 }
             }

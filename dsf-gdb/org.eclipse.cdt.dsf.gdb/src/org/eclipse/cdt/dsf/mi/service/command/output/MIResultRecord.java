@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Vladimir Prus (Mentor Graphics) - Add getMIValue.
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -23,10 +24,9 @@ public class MIResultRecord {
     public final static String ERROR ="error"; //$NON-NLS-1$
     public final static String EXIT ="exit"; //$NON-NLS-1$
 
-    static final MIResult[] nullResults = new MIResult[0];
-    MIResult[] results = nullResults;
     String resultClass = ""; //$NON-NLS-1$
     int token = -1;
+    MITuple value = new MITuple();
 
     public int getToken() {
         return token;
@@ -46,24 +46,38 @@ public class MIResultRecord {
         resultClass = type;
     }
 
+    /**
+	 * @since 4.6
+	 */
+    public MITuple getValue() {
+        return value;
+    }
+
     public MIResult[] getMIResults() {
-        return results;
+        return value.getMIResults();
     }
 
     public void setMIResults(MIResult[] res) {
-        results = res;
+        value.setMIResults(res);
+    }
+
+    /**
+	 * @since 4.6
+	 */
+    public MIValue getMIValue(String name) {
+        return value.getMIValue(name);
     }
 
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         if (token > 0) {
-        	buffer.append(token);
+            buffer.append(token);
         }
         buffer.append('^').append(resultClass);
-        for (int i = 0; i < results.length; i++) {
-            buffer.append(',').append(results[i].toString());
-        }
+
+        if (value.getMIResults().length != 0)
+            buffer.append(value.toString(",", "")); //$NON-NLS-1$ //$NON-NLS-2$
         return buffer.toString();
     }
 }

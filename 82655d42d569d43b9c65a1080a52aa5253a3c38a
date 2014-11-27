@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_69869f6c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-11-27T14:56:05Z",
+      "side": 1,
+      "message": "This is a problem since Teodor changed the \"Terminate\"\u0027 behavior for GdbLaunch. We have cases when we use debugger to start a session and then detach debugger from the program. In this case we don\u0027t have DSF services available and terminating the session when it\u0027s launch element is selected doesn\u0027t work. I want to make sure that this patch works in this scenario. It\u0027s doable but I need access to the GdbLaunch.super.terminate() method. The other option is to copy it\u0027s code into DsfTerminateCommand but I would prefer not to do it.\nWhat do you think about adding a new method to GdbLaunch that would simply call super.terminate()? I know it\u0027s not pretty but I can\u0027t come up with a better idea.\nThe third option is to register our own ITerminateHandler but it\u0027s very tricky with the current CDT code and would probably require patching CDT or copying large amount of code.\nAt the same it\u0027s not the CDT problem, so I am not sure what to do.",
+      "parentUuid": "a766b734_74faf9e9",
+      "revId": "82655d42d569d43b9c65a1080a52aa5253a3c38a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_9c7d748f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 7

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_d4af8699",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-27T17:00:20Z",
+      "side": 1,
+      "message": "This loop will be triggered for every field requested, instead of being run only once as before.\n\nI wonder if it would be worth it to build a Map of all present variables the first time this is called to optimize things.\n\nWhat do you think?",
+      "revId": "48a341001ca277403b3f2471624c324c708ec577",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

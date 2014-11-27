@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -1234,4 +1235,53 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEquals(3,vt100.getCursorColumn());
 	}
 
+	public void testVT100LineWrappingOn() {
+		ITerminalTextData term=makeITerminalTextData();
+		IVT100EmulatorBackend vt100=makeBakend(term);
+		term.setMaxHeight(10);
+		vt100.setDimensions(6, 4);
+		vt100.setVT100LineWrapping(true);
+		vt100.appendString("abcd");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("1234");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		assertEquals(2, vt100.getCursorLine());
+	}
+
+	public void testVT100LineWrappingOff() {
+		ITerminalTextData term=makeITerminalTextData();
+		IVT100EmulatorBackend vt100=makeBakend(term);
+		term.setMaxHeight(10);
+		vt100.setDimensions(6, 4);
+		vt100.setVT100LineWrapping(false);
+		vt100.appendString("abcd");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("1234");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		assertEquals(4, vt100.getCursorLine());
+	}
+
+	public void testWrappedLines() {
+		ITerminalTextData term=makeITerminalTextData();
+		IVT100EmulatorBackend vt100=makeBakend(term);
+		term.setMaxHeight(10);
+		vt100.setDimensions(6, 4);
+		vt100.setVT100LineWrapping(true);
+		vt100.appendString("abcd123");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("abc");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("1234abcd");
+		assertEquals(4, vt100.getCursorLine());
+		assertTrue(term.isWrappedLine(0));
+		assertFalse(term.isWrappedLine(1));
+		assertFalse(term.isWrappedLine(2));
+		assertTrue(term.isWrappedLine(3));
+	}
 }

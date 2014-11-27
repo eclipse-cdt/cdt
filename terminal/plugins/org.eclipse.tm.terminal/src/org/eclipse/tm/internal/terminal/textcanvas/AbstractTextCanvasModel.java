@@ -309,7 +309,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 				text=""; //$NON-NLS-1$
 			}
 			buffer.append(text);
-			if(line < fSeletionEndLine)
+			if(line < fSeletionEndLine && !fSelectionSnapshot.getTerminalTextData().isWrappedLine(line))
 				buffer.append('\n');
 		}
 		return buffer.toString();

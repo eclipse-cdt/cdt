@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,11 +7,13 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
@@ -31,6 +33,8 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	private int fMaxHeight;
 	private int fCursorColumn;
 	private int fCursorLine;
+	final private BitSet fWrappedLines = new BitSet();
+
 	public TerminalTextDataStore() {
 		fChars=new char[0][];
 		fStyle=new Style[0][];
@@ -75,8 +79,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		// clean the new lines
 		if(height>fHeight) {
 			for (int i = fHeight; i < height; i++) {
-				fStyle[i]=null;
-				fChars[i]=null;
+				cleanLine(i);
 			}
 		}
 		// set dimensions after successful resize!
@@ -209,6 +212,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			for (int i = startLine; i < startLine+size+shift; i++) {
 				fChars[i]=fChars[i-shift];
 				fStyle[i]=fStyle[i-shift];
+				fWrappedLines.set(i, fWrappedLines.get(i-shift));
 			}
 			// then clean the opened lines
 			cleanLines(Math.max(startLine, startLine+size+shift),Math.min(-shift, getHeight()-startLine));
@@ -217,6 +221,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			for (int i = startLine+size-1; i >=startLine && i-shift>=0; i--) {
 				fChars[i]=fChars[i-shift];
 				fStyle[i]=fStyle[i-shift];
+				fWrappedLines.set(i, fWrappedLines.get(i-shift));
 			}
 			cleanLines(startLine, Math.min(shift, getHeight()-startLine));
 		}
@@ -228,8 +233,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	 */
 	private void cleanLines(int line, int len) {
 		for (int i = line; i < line+len; i++) {
-			fChars[i]=null;
-			fStyle[i]=null;
+			cleanLine(i);
 		}
 	}
 	
@@ -270,8 +274,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 			fStyle=new Style[n][];
 		}
 		for (int i = 0; i < n; i++) {
-			fChars[i]=source.getChars(i);
-			fStyle[i]=source.getStyles(i);
+			copyLine(source, i, i);
 		}
 		fHeight=n;
 		fCursorLine=source.getCursorLine();
@@ -279,14 +282,14 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	}
 	public void copyRange(ITerminalTextData source, int sourceStartLine, int destStartLine,int length) {
 		for (int i = 0; i < length; i++) {
-			fChars[i+destStartLine]=source.getChars(i+sourceStartLine);
-			fStyle[i+destStartLine]=source.getStyles(i+sourceStartLine);
+			copyLine(source, i+sourceStartLine, i+destStartLine);
 		}
 	}
 
 	public void copyLine(ITerminalTextData source, int sourceLine, int destLine) {
 		fChars[destLine]=source.getChars(sourceLine);
 		fStyle[destLine]=source.getStyles(sourceLine);
+		fWrappedLines.set(destLine, source.isWrappedLine(sourceLine));
 	}
 
 	public char[] getChars(int line) {
@@ -304,6 +307,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	public void setLine(int line, char[] chars, Style[] styles) {
 		fChars[line]=(char[]) chars.clone();
 		fStyle[line]=(Style[]) styles.clone();
+		fWrappedLines.clear(line);
 	}
 
 	public void setMaxHeight(int height) {
@@ -317,6 +321,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	public void cleanLine(int line) {
 		fChars[line]=null;
 		fStyle[line]=null;
+		fWrappedLines.clear(line);
 	}
 	public int getCursorColumn() {
 		return fCursorColumn;
@@ -329,5 +334,11 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	}
 	public void setCursorLine(int line) {
 		fCursorLine=line;
+	}
+	public boolean isWrappedLine(int line) {
+		return fWrappedLines.get(line);
+	}
+	public void setWrappedLine(int line) {
+		fWrappedLines.set(line);
 	}
 }

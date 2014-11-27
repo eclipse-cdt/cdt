@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 
@@ -293,6 +294,9 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	}
 	public ITerminalTextData getTerminalTextData() {
 		return fTerminal;
+	}
+	public boolean isWrappedLine(int line) {
+		return fSnapshot.isWrappedLine(line);
 	}
 }
 

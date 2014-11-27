@@ -475,7 +475,20 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		ITerminalTextData data=new TerminalTextData();
 		fillSimple(data,"abcd");
 		term.copy(data);
+	}
 
-
+	public void testWrappedLines() {
+		ITerminalTextData term=makeITerminalTextData();
+		term.setDimensions(4, 4);
+		for (int i=0; i<term.getHeight(); ++i)
+			assertFalse(term.isWrappedLine(i));
+		term.setWrappedLine(0); // outside window
+		term.setWrappedLine(3);
+		assertFalse(term.isWrappedLine(0));
+		assertFalse(term.isWrappedLine(1));
+		assertFalse(term.isWrappedLine(2));
+		assertTrue(term.isWrappedLine(3));
+		term.cleanLine(3);
+		assertFalse(term.isWrappedLine(3));
 	}
 }

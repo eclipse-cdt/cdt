@@ -293,9 +293,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			int i=0;
 			while (i < chars.length) {
 				if(fWrapPending) {
-					doNewline();
-					line=toAbsoluteLine(fCursorLine);
-					setCursorColumn(0);
+					line = doLineWrap();
 				}
 				int n=Math.min(fColumns-fCursorColumn,chars.length-i);
 				fTerminal.setChars(line, fCursorColumn, chars, i, n, fStyle);
@@ -308,16 +306,23 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 						setCursorColumn(col - 1);
 						fWrapPending = true;
 					} else {
-						// immediate line wrapping
-						doNewline();
-						line=toAbsoluteLine(fCursorLine);
-						setCursorColumn(0);
+						line = doLineWrap();
 					}
 				} else {
 					setCursorColumn(col);
 				}
 			}
 		}
+	}
+
+	private int doLineWrap() {
+		int line;
+		line=toAbsoluteLine(fCursorLine);
+		fTerminal.setWrappedLine(line);
+		doNewline();
+		line=toAbsoluteLine(fCursorLine);
+		setCursorColumn(0);
+		return line;
 	}
 
 	/**

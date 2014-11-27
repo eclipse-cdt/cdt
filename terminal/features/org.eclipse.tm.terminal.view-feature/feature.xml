@@ -39,7 +39,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.2.2" match="equivalent"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.3.0" match="equivalent"/>
    </requires>
 
    <plugin

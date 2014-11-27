@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * Michael Scharf (Wind River) - 240420: [terminal][ssh]Channel is not closed when the connection is closed with the close button
  * Martin Oberhuber (Wind River) - [206919] Improve SSH Terminal Error Reporting
  * Andrei Sobolev (Xored) - [250456] Ssh banner message causes IllegalArgumentException popup
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -137,7 +138,9 @@ class SshConnection extends Thread {
 			if(!isSessionConnected())
 				return;
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
-			channel.setPtyType("ansi"); //$NON-NLS-1$
+			channel.setPtyType("xterm"); //$NON-NLS-1$
+			// TERM=xterm implies VT100 line wrapping mode
+			fControl.setVT100LineWrapping(true);
 			channel.connect();
 
 			// maybe the terminal was disconnected while we were connecting

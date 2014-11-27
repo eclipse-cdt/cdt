@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_a991d7a7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-27T14:50:49Z",
+      "side": 1,
+      "message": "Replace second \u0027and\u0027 with \u0027end\u0027",
+      "revId": "73729d38993d186ee0da116a9de7e25a4461d9eb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

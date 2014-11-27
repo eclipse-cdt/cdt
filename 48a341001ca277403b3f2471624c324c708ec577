@@ -16,6 +16,24 @@
       "revId": "48a341001ca277403b3f2471624c324c708ec577",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_f43282f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-11-27T17:47:01Z",
+      "side": 1,
+      "message": "It can be done, certainly, though so far, I was mostly trying to optimize cases where we do a loop just to access a single field - with the expectation that with many fields, it\u0027s more convenient to do a loop rather then call getMIValue for all possible field names, anyway.\n\nI can certainly create a map on the first invocation, possibly if the results.length is 3 or great. Just let me know.",
+      "parentUuid": "a766b734_d4af8699",
+      "revId": "48a341001ca277403b3f2471624c324c708ec577",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

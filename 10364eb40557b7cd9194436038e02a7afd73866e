@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_d41b062f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-27T19:05:18Z",
+      "side": 1,
+      "message": "This replaces an empty string with a potentially null value.  Unless we are sure it is safe, I recommend replacing\n  name\nwith\nname \u003d\u003d null ? \"\" : name",
+      "revId": "10364eb40557b7cd9194436038e02a7afd73866e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

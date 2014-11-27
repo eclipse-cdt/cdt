@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  * Sean Adams (Cisco) - [231959][terminal][telnet] NPE in TelnetConnector.java
  * David Sciamma (Anyware-Tech)  - [288254][telnet] local echo is always disabled
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -50,6 +51,8 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		super.connect(control);
 		fWidth=-1;
 		fHeight=-1;
+		// TERM=xterm implies VT100 line wrapping mode
+		control.setVT100LineWrapping(true);
 		TelnetConnectWorker worker = new TelnetConnectWorker(this,control);
 		worker.start();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
@@ -71,20 +72,6 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 	 * @param line
 	 */
 	void cleanLine(int line);
-	//	/**
-	//	 * @param line
-	//	 * @return true if this line belongs to the previous line but is simply
-	//	 * wrapped.
-	//	 */
-	//	boolean isWrappedLine(int line);
-	//
-	//	/**
-	//	 * Makes this line an extension to the previous line. Wrapped lines get folded back
-	//	 * when the width of the terminal changes
-	//	 * @param line
-	//	 * @param extendsPreviousLine
-	//	 */
-	//	void setWrappedLine(int line, boolean extendsPreviousLine);
 
 	/**
 	 * Shifts some lines up or down. The "empty" space is filled with <code>'\000'</code> chars
@@ -151,4 +138,13 @@ public interface ITerminalTextData extends ITerminalTextDataReadOnly {
 
 	void setCursorLine(int line);
 	void setCursorColumn(int column);
+
+	/**
+	 * Makes this line a wrapped line which logically continues on next line. 
+	 *
+	 * @param line
+	 * @since 3.3
+	 */
+	void setWrappedLine(int line);
+
 }

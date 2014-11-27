@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [261486][api][cleanup] Mark @noimplement interfaces as @noextend
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.terminal.model;
 
@@ -73,4 +74,12 @@ public interface ITerminalTextDataReadOnly {
 	 * @return the column at which the cursor is at the moment
 	 */
 	int getCursorColumn();
+
+	/**
+	 * @param line
+	 * @return true if this line got wrapped, ie. logically continues on next line
+	 * @since 3.3
+	 */
+	boolean isWrappedLine(int line);
+
 }

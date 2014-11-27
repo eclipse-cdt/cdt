@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
 import junit.framework.TestCase;
@@ -812,6 +813,20 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 		fillSimple(term,start);
 		term.scroll(line, n, shift);
 		assertEqualsSimple(result, toSimple(term));
-		
+	}
+	
+	public void testWrappedLines() {
+		ITerminalTextData term=makeITerminalTextData();
+		term.setDimensions(4, 4);
+		for (int i=0; i<term.getHeight(); ++i)
+			assertFalse(term.isWrappedLine(i));
+		term.setWrappedLine(0);
+		term.setWrappedLine(3);
+		assertTrue(term.isWrappedLine(0));
+		assertFalse(term.isWrappedLine(1));
+		assertFalse(term.isWrappedLine(2));
+		assertTrue(term.isWrappedLine(3));
+		term.cleanLine(0);
+		assertFalse(term.isWrappedLine(0));
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [267181] Fix telnet option negotiation loop
+ * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
@@ -504,7 +505,7 @@ class TelnetOption implements TelnetCodes
 	/**
 	 * This method handles a subnegotiation command received from the remote endpoint.
 	 * Currently, the only subnegotiation we handle is when the remote endpoint
-	 * commands us to send our terminal type (which is "ansi").
+	 * commands us to send our terminal type (which is "xterm").
 	 *
 	 * @param subnegotiationData        An array of bytes containing a TELNET
 	 *                                  subnegotiation command received from the
@@ -526,11 +527,11 @@ class TelnetOption implements TelnetCodes
 			// Tell the remote endpoint our terminal type is "ansi" using this sequence
 			// of TELNET protocol bytes:
 			//
-			//    IAC SB TERMINAL-TYPE IS a n s i IAC SE
+			//    IAC SB TERMINAL-TYPE IS x t e r m IAC SE
 
 			byte[] terminalTypeData = { TELNET_IAC, TELNET_SB,
-					TELNET_OPTION_TERMINAL_TYPE, TELNET_IS, (byte) 'a',
-					(byte) 'n', (byte) 's', (byte) 'i', TELNET_IAC, TELNET_SE };
+					TELNET_OPTION_TERMINAL_TYPE, TELNET_IS, (byte) 'x',
+					(byte) 't', (byte) 'e', (byte) 'r', (byte) 'm', TELNET_IAC, TELNET_SE };
 
 			try {
 				outputStream.write(terminalTypeData);

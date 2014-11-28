@@ -93,7 +93,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		if (d == null)
 			return null;
 		
-		IValue val= Value.create(d, Value.MAX_RECURSION_DEPTH);
+		IValue val= Value.create(d);
 		IType t= getType();
 		return new CPPTemplateNonTypeArgument(val, t);
 	}

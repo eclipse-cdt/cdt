@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
@@ -246,7 +245,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	public IValue getDefaultValue() {
 		IASTInitializer init = getInitializer();
 		if (init != null) {
-			return SemanticUtil.getValueOfInitializer(init, getType(), Value.MAX_RECURSION_DEPTH);
+			return SemanticUtil.getValueOfInitializer(init, getType());
 		}
 		return null;
 	}

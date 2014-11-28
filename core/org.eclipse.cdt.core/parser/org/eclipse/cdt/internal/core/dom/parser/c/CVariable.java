@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -26,19 +29,30 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Binding for a global or a local variable, serves as base class for fields.
  */
-public class CVariable extends PlatformObject implements IInternalVariable, ICInternalBinding {
+public class CVariable extends PlatformObject implements ICInternalBinding, IVariable {
 	private IASTName[] declarations = null;
 	private IType type = null;
+	
+	/**
+	 * The set of CVariable objects for which initial value computation is in progress on each thread.
+	 * This is used to guard against recursion during initial value computation.
+	 */
+	private static final ThreadLocal<Set<CVariable>> fInitialValueInProgress = new ThreadLocal<Set<CVariable>>() {
+		@Override
+		protected Set<CVariable> initialValue() {
+			return new HashSet<>();
+		}	
+	};
 
 	public CVariable(IASTName name) {
 		declarations = new IASTName[] { name };
@@ -144,24 +158,27 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 
 	@Override
 	public IValue getInitialValue() {
-		return getInitialValue(Value.MAX_RECURSION_DEPTH);
-	}
-
-	@Override
-	public IValue getInitialValue(int maxDepth) {
-		if (declarations != null) {
-			for (IASTName decl : declarations) {
-				if (decl == null)
-					break;
-				final IValue val = getInitialValue(decl, maxDepth);
-				if (val != null)
-					return val;
+		Set<CVariable> recursionProtectionSet = fInitialValueInProgress.get();
+		if (!recursionProtectionSet.add(this)) {
+			return Value.UNKNOWN;
+		}
+		try {
+			if (declarations != null) {
+				for (IASTName decl : declarations) {
+					if (decl == null)
+						break;
+					final IValue val = getInitialValue(decl);
+					if (val != null)
+						return val;
+				}
 			}
+		} finally {
+			recursionProtectionSet.remove(this);
 		}
 		return null;
 	}
 
-	private IValue getInitialValue(IASTName name, int maxDepth) {
+	private IValue getInitialValue(IASTName name) {
 		IASTDeclarator dtor = findDeclarator(name);
 		if (dtor != null) {
 			IASTInitializer init = dtor.getInitializer();
@@ -169,7 +186,7 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init)
 						.getInitializerClause();
 				if (initClause instanceof IASTExpression) {
-					return Value.create((IASTExpression) initClause, maxDepth);
+					return Value.create((IASTExpression) initClause);
 				}
 			}
 			if (init != null)

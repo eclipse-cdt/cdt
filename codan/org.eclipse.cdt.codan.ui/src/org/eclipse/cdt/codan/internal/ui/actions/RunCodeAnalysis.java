@@ -42,26 +42,28 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 			@SuppressWarnings("unchecked")
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				IStructuredSelection ss = (IStructuredSelection) sel;
-				int count = ss.size();
-				monitor.beginTask(getName(), count * 100);
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
-					Object o = iterator.next();
-					if (o instanceof IAdaptable) {
-						o = ((IAdaptable) o).getAdapter(IResource.class);
-					}
-					if (o instanceof IResource) {
-						IResource res = (IResource) o;
-						SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
-						CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
-						if (subMon.isCanceled())
-							return Status.CANCEL_STATUS;
-					}
+				if (sel instanceof IStructuredSelection) {
+					IStructuredSelection ss = (IStructuredSelection) sel;
+					int count = ss.size();
+					monitor.beginTask(getName(), count * 100);
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
-				}
+					for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
+						Object o = iterator.next();
+						if (o instanceof IAdaptable) {
+							o = ((IAdaptable) o).getAdapter(IResource.class);
+						}
+						if (o instanceof IResource) {
+							IResource res = (IResource) o;
+							SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
+							CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
+							if (subMon.isCanceled())
+								return Status.CANCEL_STATUS;
+						}
+						if (monitor.isCanceled())
+							return Status.CANCEL_STATUS;
+					}
+				} 
 				return Status.OK_STATUS;
 			}
 		};

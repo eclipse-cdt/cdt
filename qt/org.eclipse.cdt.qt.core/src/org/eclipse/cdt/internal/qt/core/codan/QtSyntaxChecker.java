@@ -24,6 +24,8 @@ import org.eclipse.cdt.internal.qt.core.QtMethodReference;
 import org.eclipse.cdt.qt.core.QtNature;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.cdt.qt.core.index.IQMethod;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -46,6 +48,13 @@ public class QtSyntaxChecker extends AbstractIndexAstChecker implements IChecker
 				CheckerLaunchMode.RUN_ON_FILE_OPEN,
         		CheckerLaunchMode.RUN_AS_YOU_TYPE,
                 CheckerLaunchMode.RUN_ON_DEMAND );
+	}
+
+	@Override
+	public synchronized boolean processResource(IResource resource) throws OperationCanceledException {
+		if (QtNature.hasNature(resource.getProject()))
+			return super.processResource(resource);
+		return false;
 	}
 
 	@Override

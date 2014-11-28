@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Generalize thread filtering logic (Bug 431986)
  *     Marc Khouzam (Ericsson) - Accept multiple calls to startTrackingBreakpoints (Bug 389945)
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
+ *     Alvaro Sanchez-Leon (Ericcson) - Sometimes breakpoints set and immediately deleted when debugging with GDB (Bug 442394)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -355,28 +356,19 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      *                     must have the proper IBreakpointsTargetDMContext in its hierarchy.
      * 
 	 * @since 4.6
-	 */
-    public void startTrackingBpForProcess(final IContainerDMContext containerDmc, final RequestMonitor rm) {
-    	final IBreakpointsTargetDMContext targetBpDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
-    	
-    	startTrackingBreakpoints(targetBpDmc, new ImmediateRequestMonitor(rm) {
-    		@Override
-    		protected void handleSuccess() {
-    	        final Map<ICBreakpoint,Map<String, Object>> platformBPs = fPlatformBPs.get(targetBpDmc);
-    	        if (platformBPs == null) {
-    	        	assert false;
-    	            rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Missing bp target context", null)); //$NON-NLS-1$
-    	            return;
-    	        }
+	 */    
+	public void startTrackingBpForProcess(final IContainerDMContext containerDmc, final RequestMonitor rm) {
+		final IBreakpointsTargetDMContext targetBpDmc = DMContexts.getAncestorOfType(containerDmc,
+				IBreakpointsTargetDMContext.class);
 
-    	        for (final ICBreakpoint breakpoint : platformBPs.keySet()) {
-    	        	setTargetFilter(breakpoint, containerDmc);
-    	        }
-    	        
-    	        rm.done();
-    		}
-    	});
-    }
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
+		for (IBreakpoint breakpoint : breakpoints) {
+			if (supportsBreakpoint(breakpoint) && breakpoint instanceof ICBreakpoint) {
+				setTargetFilter((ICBreakpoint) breakpoint, containerDmc);
+			}
+		}
+		startTrackingBreakpoints(targetBpDmc, rm);
+	}
     
     //-------------------------------------------------------------------------
     // startTrackingBreakpoints

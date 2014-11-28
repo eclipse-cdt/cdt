@@ -421,8 +421,8 @@ public class Value implements IValue {
 	/**
 	 * Creates the value for an expression.
 	 */
-	public static IValue create(IASTExpression expr, int maxRecursionDepth) {
-		Number val= evaluate(expr, maxRecursionDepth);
+	public static IValue create(IASTExpression expr) {
+		Number val= evaluate(expr);
 		if (val == VALUE_CANNOT_BE_DETERMINED)
 			return UNKNOWN;
 		if (val != null)
@@ -457,38 +457,38 @@ public class Value implements IValue {
 	 * Returns a {@code Number} for numerical values or {@code null}, otherwise.
 	 * @throws UnknownValueException
 	 */
-	private static Number evaluate(IASTExpression exp, int maxdepth) {
-		if (maxdepth < 0 || exp == null)
+	private static Number evaluate(IASTExpression exp) {
+		if (exp == null)
 			return VALUE_CANNOT_BE_DETERMINED;
 
 		if (exp instanceof IASTArraySubscriptExpression) {
 			return VALUE_CANNOT_BE_DETERMINED;
 		}
 		if (exp instanceof IASTBinaryExpression) {
-			return evaluateBinaryExpression((IASTBinaryExpression) exp, maxdepth);
+			return evaluateBinaryExpression((IASTBinaryExpression) exp);
 		}
 		if (exp instanceof IASTCastExpression) { // must be ahead of unary
-			return evaluate(((IASTCastExpression) exp).getOperand(), maxdepth);
+			return evaluate(((IASTCastExpression) exp).getOperand());
 		}
 		if (exp instanceof IASTUnaryExpression) {
-			return evaluateUnaryExpression((IASTUnaryExpression) exp, maxdepth);
+			return evaluateUnaryExpression((IASTUnaryExpression) exp);
 		}
 		if (exp instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) exp;
-			Number v= evaluate(cexpr.getLogicalConditionExpression(), maxdepth);
+			Number v= evaluate(cexpr.getLogicalConditionExpression());
 			if (v == null || v == VALUE_CANNOT_BE_DETERMINED)
 				return v;
 			if (v.longValue() == 0) {
-				return evaluate(cexpr.getNegativeResultExpression(), maxdepth);
+				return evaluate(cexpr.getNegativeResultExpression());
 			}
 			final IASTExpression pe = cexpr.getPositiveResultExpression();
 			if (pe == null) // gnu-extension allows to omit the positive expression.
 				return v;
-			return evaluate(pe, maxdepth);
+			return evaluate(pe);
 		}
 		if (exp instanceof IASTIdExpression) {
 			IBinding b= ((IASTIdExpression) exp).getName().resolvePreBinding();
-			return evaluateBinding(b, maxdepth);
+			return evaluateBinding(b);
 		}
 		if (exp instanceof IASTLiteralExpression) {
 			IASTLiteralExpression litEx= (IASTLiteralExpression) exp;
@@ -541,7 +541,7 @@ public class Value implements IValue {
 	/**
 	 * Extract a value off a binding.
 	 */
-	private static Number evaluateBinding(IBinding b, int maxdepth) {
+	private static Number evaluateBinding(IBinding b) {
 		if (b instanceof IType) {
 			return VALUE_CANNOT_BE_DETERMINED;
 		}
@@ -554,9 +554,7 @@ public class Value implements IValue {
 		}
 
 		IValue value= null;
-		if (b instanceof IInternalVariable) {
-			value= ((IInternalVariable) b).getInitialValue(maxdepth - 1);
-		} else if (b instanceof IVariable) {
+		if (b instanceof IVariable) {
 			value= ((IVariable) b).getInitialValue();
 		} else if (b instanceof IEnumerator) {
 			value= ((IEnumerator) b).getValue();
@@ -568,7 +566,7 @@ public class Value implements IValue {
 		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
-	private static Number evaluateUnaryExpression(IASTUnaryExpression exp, int maxdepth) {
+	private static Number evaluateUnaryExpression(IASTUnaryExpression exp) {
 		final int unaryOp= exp.getOperator();
 
 		if (unaryOp == IASTUnaryExpression.op_sizeof) {
@@ -591,7 +589,7 @@ public class Value implements IValue {
 			return VALUE_CANNOT_BE_DETERMINED;
 		}
 
-		final Number value= evaluate(exp.getOperand(), maxdepth);
+		final Number value= evaluate(exp.getOperand());
 		if (value == null || value == VALUE_CANNOT_BE_DETERMINED)
 			return value;
 		return applyUnaryOperator(unaryOp, value.longValue());
@@ -621,7 +619,7 @@ public class Value implements IValue {
 		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
-	private static Number evaluateBinaryExpression(IASTBinaryExpression exp, int maxdepth) {
+	private static Number evaluateBinaryExpression(IASTBinaryExpression exp) {
 		final int op= exp.getOperator();
 		switch (op) {
 		case IASTBinaryExpression.op_equals:
@@ -634,10 +632,10 @@ public class Value implements IValue {
 			break;
 		}
 
-		final Number o1= evaluate(exp.getOperand1(), maxdepth);
+		final Number o1= evaluate(exp.getOperand1());
 		if (o1 == null || o1 == VALUE_CANNOT_BE_DETERMINED)
 			return o1;
-		final Number o2= evaluate(exp.getOperand2(), maxdepth);
+		final Number o2= evaluate(exp.getOperand2());
 		if (o2 == null || o2 == VALUE_CANNOT_BE_DETERMINED)
 			return o2;
 

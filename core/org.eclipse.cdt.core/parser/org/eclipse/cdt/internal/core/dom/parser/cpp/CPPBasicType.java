@@ -69,7 +69,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		}
 		fModifiers= qualifiers;
 		if (expression instanceof ICPPASTInitializerClause) {
-			fAssociatedValue = Value.create(expression, Value.MAX_RECURSION_DEPTH).numericalValue();
+			fAssociatedValue = Value.create(expression).numericalValue();
 		}
 	}
 

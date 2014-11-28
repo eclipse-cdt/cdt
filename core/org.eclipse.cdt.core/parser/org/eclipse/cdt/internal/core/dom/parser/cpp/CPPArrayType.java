@@ -84,7 +84,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
     	if (sizeExpression == null)
     		return value= null;
 
-    	return value= Value.create(sizeExpression, Value.MAX_RECURSION_DEPTH);
+    	return value= Value.create(sizeExpression);
     }
 
     @Override

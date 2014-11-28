@@ -151,7 +151,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 				IValue val;
 				IASTExpression expr= etor.getValue();
 				if (expr != null) {
-					val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
+					val= Value.create(expr);
 					previousExplicitValue = val;
 					delta = 1;
 					if (fixedType == null) {

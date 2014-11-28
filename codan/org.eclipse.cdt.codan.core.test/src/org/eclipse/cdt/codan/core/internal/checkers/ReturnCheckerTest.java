@@ -406,4 +406,13 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+	//	int foo() {
+	//	    int waldo = waldo();
+	//	    if (waldo);
+	//	}
+	public void testSelfReferencingVariable_452325() throws Exception {
+		// Just check that codan runs without any exceptions being thrown.
+		loadCodeAndRunCpp(getAboveComment());
+	}
 }

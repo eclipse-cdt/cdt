@@ -791,9 +791,8 @@ public class SemanticUtil {
 	 *
 	 * @param init the initializer's AST node
 	 * @param type the type of the variable
-	 * @param maxDepth maximum recursion depth
 	 */
-	public static IValue getValueOfInitializer(IASTInitializer init, IType type, int maxDepth) {
+	public static IValue getValueOfInitializer(IASTInitializer init, IType type) {
 		IASTInitializerClause clause= null;
 		if (init instanceof IASTEqualsInitializer) {
 			clause= ((IASTEqualsInitializer) init).getInitializerClause();
@@ -815,7 +814,7 @@ public class SemanticUtil {
 			}
 		}
 		if (clause instanceof IASTExpression) {
-			return Value.create((IASTExpression) clause, maxDepth);
+			return Value.create((IASTExpression) clause);
 		}
 		return Value.UNKNOWN;
 	}

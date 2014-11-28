@@ -533,7 +533,7 @@ public class ControlFlowGraphBuilder {
 		if (node instanceof ICfgData) {
 			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
 			if (ast instanceof IASTExpression) {
-				IValue dvalue = Value.create((IASTExpression) ast, 5);
+				IValue dvalue = Value.create((IASTExpression) ast);
 				Long numericalValue = dvalue.numericalValue();
 				if (numericalValue == null)
 					return false;

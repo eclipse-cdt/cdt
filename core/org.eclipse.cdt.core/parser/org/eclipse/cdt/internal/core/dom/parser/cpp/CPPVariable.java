@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -34,17 +37,27 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
-public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding, IInternalVariable {
+public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding {
 	private IASTName fDefinition;
 	private IASTName fDeclarations[];
 	private IType fType;
 	private boolean fAllResolved;
+	
+	/**
+	 * The set of CPPVariable objects for which initial value computation is in progress on each thread.
+	 * This is used to guard against recursion during initial value computation.
+	 */
+	private static final ThreadLocal<Set<CPPVariable>> fInitialValueInProgress = new ThreadLocal<Set<CPPVariable>>() {
+		@Override
+		protected Set<CPPVariable> initialValue() {
+			return new HashSet<>();
+		}	
+	};
 	
 	public CPPVariable(IASTName name) {
 	    boolean isDef = name != null && name.isDefinition();
@@ -306,34 +319,37 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	
 	@Override
 	public IValue getInitialValue() {
-		return getInitialValue(Value.MAX_RECURSION_DEPTH);
-	}
-	
-	@Override
-	public IValue getInitialValue(int maxDepth) {
-		if (fDefinition != null) {
-			final IValue val= getInitialValue(fDefinition, maxDepth);
-			if (val != null)
-				return val;
+		Set<CPPVariable> recursionProtectionSet = fInitialValueInProgress.get();
+		if (!recursionProtectionSet.add(this)) {
+			return Value.UNKNOWN;
 		}
-		if (fDeclarations != null) {
-			for (IASTName decl : fDeclarations) {
-				if (decl == null)
-					break;
-				final IValue val= getInitialValue(decl, maxDepth);
+		try {
+			if (fDefinition != null) {
+				final IValue val= getInitialValue(fDefinition);
 				if (val != null)
 					return val;
 			}
-		}		
+			if (fDeclarations != null) {
+				for (IASTName decl : fDeclarations) {
+					if (decl == null)
+						break;
+					final IValue val= getInitialValue(decl);
+					if (val != null)
+						return val;
+				}
+			}		
+		} finally {
+			recursionProtectionSet.remove(this);
+		}
 		return null;
 	}
 	
-	private IValue getInitialValue(IASTName name, int maxDepth) {
+	private IValue getInitialValue(IASTName name) {
 		IASTDeclarator dtor= findDeclarator(name);
 		if (dtor != null) {
 			IASTInitializer init= dtor.getInitializer();
 			if (init != null) {
-				return SemanticUtil.getValueOfInitializer(init, getType(), maxDepth);
+				return SemanticUtil.getValueOfInitializer(init, getType());
 			}
 		}
 		return null;

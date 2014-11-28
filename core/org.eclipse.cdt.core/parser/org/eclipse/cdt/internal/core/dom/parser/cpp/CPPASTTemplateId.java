@@ -143,7 +143,7 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     			buf.append(arg.getRawSignature());
     			cleanupWhitespace= true;
     		} else if (arg instanceof IASTExpression) {
-    			IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
+    			IValue value= Value.create((IASTExpression) arg);
     			if (value != Value.UNKNOWN && !Value.isDependentValue(value)) {
         			buf.append(value.getSignature());
     			} else {

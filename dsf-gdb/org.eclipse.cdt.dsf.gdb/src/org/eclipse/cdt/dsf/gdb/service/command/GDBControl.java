@@ -346,8 +346,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                 public void handleCompleted() {
                     if (isSuccess()) {
                         // Cancel the time out runnable (if it hasn't run yet).
-                        forceQuitTask.cancel(false);
-                        rm.done();
+                        if (forceQuitTask.cancel(false)) {
+                        	rm.done();
+                        }
                     }
                     // else: the forceQuitTask has or will handle it.
                     // It is good to wait for the forceQuitTask to trigger

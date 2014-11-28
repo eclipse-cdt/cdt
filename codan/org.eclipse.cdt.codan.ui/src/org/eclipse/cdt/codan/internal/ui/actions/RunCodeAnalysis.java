@@ -71,6 +71,7 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		this.sel = selection;
+		if (selection instanceof IStructuredSelection)
+			this.sel = selection;	
 	}
 }

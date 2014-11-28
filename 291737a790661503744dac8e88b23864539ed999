@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_d742e5c1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/Messages.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-11-28T22:39:54Z",
+      "side": 1,
+      "message": "You can get rid of this line and replace BUNDLE_NAME below with \n\nMessages.class.getName()\n\nthis is how the rest of the plugin does it and allows to \u0027survive\u0027 moving the files.",
+      "revId": "291737a790661503744dac8e88b23864539ed999",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

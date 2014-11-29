@@ -87,6 +87,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_5aa55c31",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2174,
+      "author": {
+        "id": 684
+      },
+      "writtenOn": "2014-11-29T22:00:11Z",
+      "side": 1,
+      "message": "Yes, it should be. Do these tests still need to be in IndexCPPBindingResolutionTest?",
+      "parentUuid": "a766b734_7a67789c",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_5a271cbb",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 4

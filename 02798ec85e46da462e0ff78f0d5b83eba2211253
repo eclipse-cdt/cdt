@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_ba18f07c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-29T03:59:33Z",
+      "side": 1,
+      "message": "Method name has to be based on a verb, not a noun.",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_9a1d346e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-29T03:59:33Z",
+      "side": 1,
+      "message": "Ditto.",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_fa3548de",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-29T03:59:33Z",
+      "side": 1,
+      "message": "Simpler:\nICPPVariable v \u003d getBindingOnFirstIdentifier(\"test \u003d\");\nassertEquals(retName, ASTTypeUtil.getType(v.getType));",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_da320cf4",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-29T03:59:33Z",
+      "side": 1,
+      "message": "Simpler: \"assertEquals(retName, ASTTypeUtil.getType(b1.getType));",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_5a271cbb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-29T03:59:33Z",
+      "side": 1,
+      "message": "This condition prevents index tests from working. IndexCPPBindingResolutionTest.testUserDefinedLiteralResolution1 passes after removing lines 3072-3074 and replacing CPPFunction in line 3075 with ICPPFunction.",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

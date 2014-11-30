@@ -1248,7 +1248,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		ArrayList<FileInAST> orderedFileKeys= new ArrayList<>();
 
 		final IIndexFileLocation topIfl = fResolver.resolveASTPath(ast.getFilePath());
-		FileContentKey topKey = new FileContentKey(linkageID, topIfl, ast.getSignificantMacros());
+		ISignificantMacros significantMacros = ast.isHeaderUnit() ?
+				ast.getSignificantMacros() : ISignificantMacros.NONE;
+		FileContentKey topKey = new FileContentKey(linkageID, topIfl, significantMacros);
 		enteredFiles.add(topKey);
 		IDependencyTree tree= ast.getDependencyTree();
 		IASTInclusionNode[] inclusions= tree.getInclusions();
@@ -1256,7 +1258,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			collectOrderedFileKeys(linkageID, inclusion, enteredFiles, orderedFileKeys);
 		}
 
-		IIndexFragmentFile newFile= selectIndexFile(linkageID, topIfl, ast.getSignificantMacros());
+		IIndexFragmentFile newFile= selectIndexFile(linkageID, topIfl, significantMacros);
 		if (ctx != null) {
 			orderedFileKeys.add(new FileInAST(topKey, codeReader));
 			// File can be reused

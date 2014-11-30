@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Eugene Ostroukhov (NVIDIA) - new done(IStatus) method
+ *     Alvaro Sanchez-Leon (Ericsson) - Trace unsuccessful DSF Request Monitor at done() (Bug 453618)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
@@ -295,6 +296,15 @@ public class RequestMonitor extends DsfExecutable {
         if (fParentRequestMonitor != null) {
             fParentRequestMonitor.removeCancelListener(fCanceledListener);
         }
+        
+		if (DEBUG_MONITORS && !isSuccess()) {
+			IStatus status = getStatus();
+			try {
+				throw new Exception();
+			} catch (Exception e) {
+				DsfPlugin.getDefault().getLog().log(new Status(status.getSeverity(), DsfPlugin.PLUGIN_ID, status.getCode(), status.getMessage() + "\n\nMonitor Back Trace:\n" + fMonitorBacktrace.toString(), e)); //$NON-NLS-1$
+			}
+		}
         
         try {
             fExecutor.execute(new DsfRunnable() {

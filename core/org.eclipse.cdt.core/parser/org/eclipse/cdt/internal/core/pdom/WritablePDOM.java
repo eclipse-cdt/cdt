@@ -267,7 +267,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 	/**
 	 * Returns the best file for the given location, linkage, and translation unit.
-	 * May return <code>null</code>, if no such file exists.
+	 * May return {@code null}, if no such file exists.
 	 *
 	 * The "best" file (variant) is the one with the most content, as measured
 	 * by the total number of macros defined in the file. The rationale is that
@@ -280,7 +280,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 * @param linkageID the id of the linkage in which the file has been parsed.
 	 * @param location the IIndexFileLocation representing the location of the file
 	 * @param tu the translation unit from which 'location' originates
-	 * @return the best file for the location, or <code>null</code> if the file is not
+	 * @return the best file for the location, or {@code null} if the file is not
 	 *     present in the index
 	 * @throws CoreException
 	 */
@@ -304,7 +304,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		if (fPathResolver != null && node != null) {
 			IASTFileLocation loc= node.getFileLocation();
 			if (loc != null) {
-				ISignificantMacros sigMacros= getSignificantMacros(node, loc);
+				IASTPreprocessorIncludeStatement owner= loc.getContextInclusionStatement();
+				ISignificantMacros sigMacros= owner != null ? owner.getSignificantMacros() : ISignificantMacros.NONE;
 				if (sigMacros != null) {
 					IIndexFileLocation location = fPathResolver.resolveASTPath(loc.getFileName());
 					if (uncommittedKey != null && uncommittedKey.equals(new FileContentKey(linkageID, location, sigMacros)))
@@ -314,14 +315,6 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 			}
 		}
 		return null;
-	}
-
-	private ISignificantMacros getSignificantMacros(IASTNode node, IASTFileLocation loc) throws CoreException {
-		IASTPreprocessorIncludeStatement owner= loc.getContextInclusionStatement();
-		if (owner != null)
-			return owner.getSignificantMacros();
-
-		return ISignificantMacros.NONE;
 	}
 
 	@Override

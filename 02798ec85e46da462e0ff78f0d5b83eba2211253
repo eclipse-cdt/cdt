@@ -105,6 +105,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_9a16d4d5",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-30T00:53:19Z",
+      "side": 1,
+      "message": "This test is not needed since the similar test in AST2CPPTests is sufficient.",
+      "parentUuid": "a766b734_5aa55c31",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_5a271cbb",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
         "patchSetId": 4
@@ -134,6 +152,24 @@
       "side": 1,
       "message": "Making this change causes a ClassCastException on line 3150 for 3 tests cases for resolving template functions.",
       "parentUuid": "a766b734_5a271cbb",
+      "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ba1110e1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-11-30T00:53:19Z",
+      "side": 1,
+      "message": "I didn\u0027t mean that this change by itself is sufficient, only that the condition is wrong. You may consider using resolveAmbiguities or resolveFunction methods to select the right binding.",
+      "parentUuid": "a766b734_3a8a20a3",
       "revId": "02798ec85e46da462e0ff78f0d5b83eba2211253",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

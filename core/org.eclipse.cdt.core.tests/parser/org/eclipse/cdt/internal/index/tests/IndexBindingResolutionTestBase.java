@@ -323,7 +323,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-	protected final void checkBindings() throws Exception {
+	protected final void checkBindings() {
 		for (int i = 0; i < strategy.getAstCount(); i++) {
 			checkBindings(strategy.getAst(i));
 		}

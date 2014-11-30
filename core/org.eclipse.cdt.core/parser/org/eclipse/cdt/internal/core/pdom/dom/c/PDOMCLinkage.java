@@ -128,8 +128,16 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 
 		PDOMNode insertIntoIndex= null;
 		if (binding instanceof IField) { // must be before IVariable
-			if (parent instanceof IPDOMMemberOwner)
+			if (parent instanceof IPDOMMemberOwner) {
 				pdomBinding = new PDOMCField(this, (IPDOMMemberOwner)parent, (IField) binding);
+				// If the field is inside an anonymous struct or union, add it to the parent node as well.
+				if (parent instanceof ICompositeType && ((ICompositeType) parent).isAnonymous()) {
+					insertIntoIndex = parent.getParentNode();
+					if (insertIntoIndex == null) {
+						insertIntoIndex = this;
+					}
+				}
+			}
 		} else if (binding instanceof IVariable) {
 			IVariable var= (IVariable) binding;
 			pdomBinding = new PDOMCVariable(this, parent, var);

@@ -412,4 +412,14 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	public void testNameLookupFromArrayModifier_435075() throws Exception {
 		checkBindings();
 	}
+	
+	//	static union {
+	//	    int a;
+	//	    int b;
+	//	};
+
+	//	int waldo = a;
+	public void testAnonymousUnion_377409() {
+		checkBindings();
+	}
 }

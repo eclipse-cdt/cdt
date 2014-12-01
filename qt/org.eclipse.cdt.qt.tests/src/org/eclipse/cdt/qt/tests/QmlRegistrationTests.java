@@ -100,7 +100,6 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 	// }
 	public void testQmlRegisterFwdDecl() throws Exception {
 		loadComment("qmlregistertype.hh");
-		waitForIndexer(fCProject);
 
 		QtIndex qtIndex = QtIndex.getIndex(fProject);
 		assertNotNull(qtIndex);

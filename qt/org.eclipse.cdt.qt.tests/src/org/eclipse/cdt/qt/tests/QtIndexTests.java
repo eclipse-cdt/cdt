@@ -18,6 +18,16 @@ public class QtIndexTests extends BaseQtTestCase {
 	// class B : public QObject
 	// {
 	// Q_OBJECT
+	// Q_PROPERTY(bool allowed READ isAllowed)
+	// };
+	public void changeBDecl() throws Exception {
+		loadComment(Filename_testCache);
+	}
+
+	// #include "junit-QObject.hh"
+	// class B : public QObject
+	// {
+	// Q_OBJECT
 	// };
 	public void testLookup() throws Exception {
 		loadComment(Filename_testCache);
@@ -35,15 +45,5 @@ public class QtIndexTests extends BaseQtTestCase {
 		IQObject qobj2 = qtIndex.findQObject(new String[]{ "B" });
 		assertNotNull(qobj2);
 		assertEquals("B", qobj2.getName());
-	}
-
-	// #include "junit-QObject.hh"
-	// class B : public QObject
-	// {
-	// Q_OBJECT
-	// Q_PROPERTY(bool allowed READ isAllowed())
-	// };
-	public void changeBDecl() throws Exception {
-		loadComment(Filename_testCache);
 	}
 }

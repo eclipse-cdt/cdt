@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_2cfcabe3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-01T21:04:45Z",
+      "side": 1,
+      "message": "Did you mean to leave this check here.  I don\u0027t believe this can happen anymore since we check for GdbLaunch and if we find one we don\u0027t call this method.",
+      "revId": "b53ed348f35e0e307b3dbb343f77a6313da92972",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4cf487f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-01T21:04:45Z",
+      "side": 1,
+      "message": "From what I understand, we don\u0027t do the below anymore, right?  If the launch is selected, we kill GDB, and we will never get to this code.\n\nI\u0027m not sure if that was your intention or not, but if it was, we should remove the code below.",
+      "revId": "b53ed348f35e0e307b3dbb343f77a6313da92972",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4ca6470c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-01T21:04:45Z",
+      "side": 1,
+      "message": "Two ;;",
+      "revId": "b53ed348f35e0e307b3dbb343f77a6313da92972",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ac3d5b46",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-01T21:04:45Z",
+      "side": 1,
+      "message": "I think you need\n  request.done()\nhere",
+      "revId": "b53ed348f35e0e307b3dbb343f77a6313da92972",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_0c8c4f88",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/GdbDisconnectCommand.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-01T21:04:45Z",
+      "side": 1,
+      "message": "canExecute() does not check for this case but relies on canDisconnect(getData()...) to make the decision.  It would be consistent to do the same here and delegate that case to disconnect().\n\nAnd actually, disconnect() already checks for an empty array, so we only need to remove the above if check",
+      "revId": "b53ed348f35e0e307b3dbb343f77a6313da92972",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4caf6768",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/Messages.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-01T21:04:45Z",
+      "side": 1,
+      "message": "You can get rid of this line and replace BUNDLE_NAME below with\nMessages.class.getName()\nthis is how the rest of the plugin does it and allows to \u0027survive\u0027 moving the files.",
+      "revId": "b53ed348f35e0e307b3dbb343f77a6313da92972",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -7,6 +7,7 @@
  */
 package org.eclipse.cdt.qt.tests;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
@@ -18,6 +19,11 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.qt.core.QtNature;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BaseQtTestCase extends BaseTestCase {
@@ -39,15 +45,31 @@ public class BaseQtTestCase extends BaseTestCase {
 	protected ICProject fCProject;
 	protected IIndex fIndex;
 
+	public static ICProject createQtProject(final String projectName, final String binFolderName) throws CoreException {
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final ICProject newProject[] = new ICProject[1];
+		ws.run(new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				ICProject cproject = CProjectHelper.createCProject(projectName, binFolderName, IPDOMManager.ID_FAST_INDEXER);
+				if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
+					CProjectHelper.addNatureToProject(cproject.getProject(), CCProjectNature.CC_NATURE_ID, null);
+					QtNature.addNature(cproject.getProject(), new NullProgressMonitor());
+				}
+				newProject[0] = cproject;
+			}
+		}, null);
+		return newProject[0];
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		String projectName = "__" + getClass().getSimpleName() + "__";
 
-		fCProject = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_FAST_INDEXER);
+		fCProject = createQtProject(projectName, "bin");
 		fProject = fCProject.getProject();
-		QtNature.addNature(fProject, new NullProgressMonitor());
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 
 		indexQObject_h();
@@ -150,15 +172,17 @@ public class BaseQtTestCase extends BaseTestCase {
 		// add the new content
 		fFile = TestSourceReader.createFile(fProject, filename, contents[0]);
 
+		CCorePlugin.getIndexManager().reindex(fCProject);// just make sure we re-indexing here
 		// wait for the index to change
 		Thread.yield();
+		waitForIndexer(fCProject);
 		for(long stopAt = System.currentTimeMillis() + 3000;
 			System.currentTimeMillis() < stopAt && timestamp == indexManager.getIndex(fCProject).getLastWriteAccess();
 			Thread.sleep(100)) {
-			/* intentionally empty*/
+			waitForIndexer(fCProject);
 		}
-
 		assertNotSame(timestamp, indexManager.getIndex(fCProject).getLastWriteAccess());
+
     }
 
     /**

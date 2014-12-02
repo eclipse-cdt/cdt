@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_750ae2dd",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/actions/RunCodeAnalysis.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-02T15:22:18Z",
+      "side": 1,
+      "message": "Accessing the selection inside a job is dangerous since it may change during iteration.",
+      "revId": "cfded841d148fdb32ffba440707074f220774c85",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

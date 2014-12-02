@@ -16,6 +16,24 @@
       "revId": "fd8f3179af899f816cddf68050cf66da155ee09d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b5a47aba",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/actions/RunCodeAnalysis.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-02T14:18:50Z",
+      "side": 1,
+      "message": "doh...",
+      "parentUuid": "a766b734_f206085b",
+      "revId": "fd8f3179af899f816cddf68050cf66da155ee09d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

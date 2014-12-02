@@ -25,56 +25,21 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  */
 public class MIVarCreateInfo extends MIInfo {
 
-    String name = ""; //$NON-NLS-1$
-    int numChild;
-    String type = ""; //$NON-NLS-1$
-    MIVar child;
-    String value = null;
-	private boolean isDynamic = false;
-	private boolean hasMore = false;
-	private MIDisplayHint displayHint = MIDisplayHint.NONE;
+    private MIVar child;
 	
     public MIVarCreateInfo(MIOutput record) {
         super(record);
         if (isDone()) {
-            MIOutput out = getMIOutput();
-            MIResultRecord rr = out.getMIResultRecord();
+            MIResultRecord rr = getMIOutput().getMIResultRecord();
             if (rr != null) {
-                MIResult[] results =  rr.getMIResults();
-                for (int i = 0; i < results.length; i++) {
-                    String var = results[i].getVariable();
-                    MIValue resultVal = results[i].getMIValue();
-                    String str = ""; //$NON-NLS-1$
-                    if (resultVal instanceof MIConst) {
-                        str = ((MIConst)resultVal).getString();
-                    }
-
-                    if (var.equals("name")) { //$NON-NLS-1$
-                        name = str;
-                    } else if (var.equals("numchild")) { //$NON-NLS-1$
-                        try {
-                            numChild = Integer.parseInt(str.trim());
-                        } catch (NumberFormatException e) {
-                        }
-                    } else if (var.equals("type")) { //$NON-NLS-1$
-                        type = str;
-                    } else if (var.equals("value")) { //$NON-NLS-1$
-                        value = str;
-					} else if (var.equals("dynamic") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$
-						isDynamic = true;
-					} else if (var.equals("has_more") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$
-						hasMore = true;
-                    } else if (var.equals("displayhint")) { //$NON-NLS-1$
-                    	displayHint = new MIDisplayHint(str);
-                    }
-                }
+                child = new MIVar(rr.getFields());
             }
         }
     }
     
     public String getType()
     {
-    	return type;
+        return child.getType();
     }
     
 	/**
@@ -84,7 +49,7 @@ public class MIVarCreateInfo extends MIInfo {
 	 * @since 4.0
 	 */
 	public boolean isDynamic() {
-		return isDynamic;
+		return child.isDynamic();
 	}
 
 	/**
@@ -95,7 +60,7 @@ public class MIVarCreateInfo extends MIInfo {
 	 */
     public int getNumChildren()
     {
-    	return numChild;
+        return child.getNumChild();
     }
     
 	/**
@@ -107,17 +72,17 @@ public class MIVarCreateInfo extends MIInfo {
 	 * @since 4.0
 	 */
 	public boolean hasMore() {
-		return hasMore;
+		return child.hasMore();
 	}
 
     public String getName()
     {
-    	return name;
+        return child.getVarName();
     }
     
     public String getValue()
     {
-    	return value;
+        return child.getValue();
     }
     
 	/**
@@ -127,13 +92,10 @@ public class MIVarCreateInfo extends MIInfo {
 	 * @since 4.0
 	 */
     public MIDisplayHint getDisplayHint() {
-    	return displayHint;
+        return child.getDisplayHint();
     }
 
     public MIVar getMIVar() {
-        if (child == null) {
-			child = new MIVar(name, isDynamic, numChild, hasMore, type, displayHint);
-        }
         return child;
     }
 }

@@ -28,6 +28,7 @@ public class MIVar {
 
     String name = ""; //$NON-NLS-1$
     String type = ""; //$NON-NLS-1$
+    String value = ""; //$NON-NLS-1$
     String exp = ""; //$NON-NLS-1$
 	private boolean isDynamic = false;
     int numchild;
@@ -89,6 +90,13 @@ public class MIVar {
         return type;
     }
 
+    /**
+     * @since 4.6
+     */
+    public String getValue() {
+        return value;
+    }
+
 	/**
 	 * @return Whether the value and children of this variable are provided
 	 *         by a pretty printer.
@@ -142,7 +150,7 @@ public class MIVar {
             MIValue value = results[i].getMIValue();
             String str = ""; //$NON-NLS-1$
             if (value != null && value instanceof MIConst) {
-                str = ((MIConst)value).getCString();
+                str = ((MIConst)value).getString();
             }
 
             if (var.equals("numchild")) { //$NON-NLS-1$
@@ -154,6 +162,8 @@ public class MIVar {
                 name = str;
             } else if (var.equals("type")) { //$NON-NLS-1$
                 type = str;
+            } else if (var.equals("value")) { //$NON-NLS-1$
+                this.value = str;
             } else if (var.equals("exp")) { //$NON-NLS-1$
                 exp = str;
 			} else if (var.equals("dynamic") && str.trim().equals("1")) { //$NON-NLS-1$ //$NON-NLS-2$

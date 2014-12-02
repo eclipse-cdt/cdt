@@ -8,13 +8,16 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
- *     Vladimir Prus (Mentor Graphics) - Add getMIValue.
+ *     Vladimir Prus (Mentor Graphics) - Add getMIFields/getMIField.
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI ResultRecord.
+ *
+ * Effectively, it's an result class (a string), plus token (also a string),
+ * plus MI tuple with actual response.
  */
 public class MIResultRecord {
 
@@ -44,6 +47,13 @@ public class MIResultRecord {
 
     public void setResultClass(String type) {
         resultClass = type;
+    }
+
+    /** Return all data fields of this record as MITuple
+     * @since 4.6
+	 */
+    public MITuple getFields() {
+        return value;
     }
 
     public MIResult[] getMIResults() {

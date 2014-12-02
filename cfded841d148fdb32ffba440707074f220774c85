@@ -34,6 +34,24 @@
       "revId": "cfded841d148fdb32ffba440707074f220774c85",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4098c6fb",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/actions/RunCodeAnalysis.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-02T20:17:52Z",
+      "side": 1,
+      "message": "Yes, it should be sufficient since StructuredSelection object is immutable.",
+      "parentUuid": "a766b734_0069ae6f",
+      "revId": "cfded841d148fdb32ffba440707074f220774c85",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

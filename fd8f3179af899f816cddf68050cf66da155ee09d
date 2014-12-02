@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_f206085b",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/actions/RunCodeAnalysis.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-02T04:44:43Z",
+      "side": 1,
+      "message": "It\u0027s better to bail out before starting the job.",
+      "revId": "fd8f3179af899f816cddf68050cf66da155ee09d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

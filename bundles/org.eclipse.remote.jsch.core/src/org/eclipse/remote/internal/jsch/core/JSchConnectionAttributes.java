@@ -132,7 +132,7 @@ public class JSchConnectionAttributes {
 		loadSecureAttributes();
 		return fSecureAttributes;
 	}
-	
+
 	void setSecureAttributes(Map<String, String> secureAttributes) {
 		fSecureAttributes.clear();
 		fSecureAttributes.putAll(secureAttributes);
@@ -165,9 +165,10 @@ public class JSchConnectionAttributes {
 	}
 
 	private void loadSecureAttributes() {
-		if (fSecureAttributesLoaded)
+		if (fSecureAttributesLoaded) {
 			return;
-		
+		}
+
 		ISecurePreferences secNode = getSecurePreferences();
 		try {
 			fSecureAttributes.clear();
@@ -199,7 +200,11 @@ public class JSchConnectionAttributes {
 		Preferences node = getPreferences();
 		synchronized (fAttributes) {
 			for (Entry<String, String> entry : fAttributes.entrySet()) {
-				node.put(entry.getKey(), entry.getValue());
+				if (entry.getValue() != null) {
+					node.put(entry.getKey(), entry.getValue());
+				} else {
+					node.remove(entry.getKey());
+				}
 			}
 		}
 		if (fSecureAttributesLoaded) {

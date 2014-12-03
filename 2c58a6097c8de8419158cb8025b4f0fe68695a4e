@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_619064d0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/MultiThreadRunControl.cc",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-03T21:20:52Z",
+      "side": 1,
+      "message": "The error handling is missing, \nLets keep the previous behavior",
+      "revId": "2c58a6097c8de8419158cb8025b4f0fe68695a4e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

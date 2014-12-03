@@ -95,6 +95,8 @@ public class CodanCorePlugin extends Plugin {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static void log(Throwable e) {
+		if (Boolean.valueOf(System.getProperty("codan.rethrow"))) //$NON-NLS-1$
+			throw new RuntimeException(e);
 		log("Internal Error", e); //$NON-NLS-1$
 	}
 

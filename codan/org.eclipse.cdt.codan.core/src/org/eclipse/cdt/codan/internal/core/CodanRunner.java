@@ -76,31 +76,29 @@ public class CodanRunner {
 			ICheckerInvocationContext context = new CheckerInvocationContext(resource);
 			try {
 				for (IChecker checker : chegistry) {
-					try {
-						if (monitor.isCanceled())
-							return;
-						if (chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
-							synchronized (checker) {
-								try {
-									checker.before(resource);
-									CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
-									if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
-										((IRunnableInEditorChecker) checker).processModel(model, context);
-									} else {
-										checker.processResource(resource, context);
-									}
-								} finally {
-									CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
-									checker.after(resource);
+					if (monitor.isCanceled())
+						return;
+					if (chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
+						synchronized (checker) {
+							try {
+								checker.before(resource);
+								CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
+								if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
+									((IRunnableInEditorChecker) checker).processModel(model, context);
+								} else {
+									checker.processResource(resource, context);
 								}
+							} catch (OperationCanceledException e) {
+								return;
+							} catch (Throwable e) {
+								CodanCorePlugin.log(e);
+							} finally {
+								CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
+								checker.after(resource);
 							}
 						}
-						monitor.worked(1);
-					} catch (OperationCanceledException e) {
-						return;
-					} catch (Throwable e) {
-						CodanCorePlugin.log(e);
 					}
+					monitor.worked(1);
 				}
 			} finally {
 				context.dispose();

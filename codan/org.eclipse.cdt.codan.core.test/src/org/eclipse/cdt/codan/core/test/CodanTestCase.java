@@ -78,6 +78,8 @@ public class CodanTestCase extends BaseTestCase {
 		removeLeftOverProjects();
 		cproject = createProject(isCpp());
 		tmpDir = cproject.getProject().getLocation().makeAbsolute().toFile();
+		// this make CodanRunner to propagate all exceptions it normally just logs
+		System.setProperty("codan.rethrow", "true"); // test can override setUp and unset this
 	}
 
 	@Override

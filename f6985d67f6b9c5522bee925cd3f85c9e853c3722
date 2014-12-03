@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_2172ec56",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 750,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-03T21:17:00Z",
+      "side": 1,
+      "message": "is this the right bug ?\nDoes not seem related to interrupting execution after thread exit.",
+      "revId": "f6985d67f6b9c5522bee925cd3f85c9e853c3722",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_41d568e2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/MultiThread.cc",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-03T21:15:15Z",
+      "side": 1,
+      "message": "In the original code we had a 1 sec delay between thread creations, \nwhy do we need 30 secs ?  probably 3 secs ?",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e1de3451",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Thread.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-03T21:15:15Z",
+      "side": 1,
+      "message": "suggestion, to change to \"platform compatibility layer\" to be clear from the start",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_81ef80f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Thread.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-03T21:15:15Z",
+      "side": 1,
+      "message": "suggestion:\n\t \"return THREAD_DEFAULT_RET instead\"",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c1e5f816",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadPthreadTypes.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-03T21:15:15Z",
+      "side": 1,
+      "message": "suggestion: \nI think of it as more of an Id rather than a handle to e.g. an object.     What about ThreadId ?",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

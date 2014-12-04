@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_49462efb",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/MultiThread.cc",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-04T16:24:36Z",
+      "side": 1,
+      "message": "The delay between the thread creation is useless. The sleep is only necessary for the \"interruptRunningTarget\" test, where we let the program run free for 1 seconds, and then try to interrupt it. Previously, it would work because of the delay between the thread creations. Without any delay, the program just finishes very quickly and the test does not work (since you can\u0027t interrupt a program that has finished).\n\nThe behaviour I want to achieve is to let the program run, all the threads are created and then execution is caught in the SLEEP(30). Then the test interrupts execution. The value of the SLEEP is irrelevant, all tests except interruptRunningTarget don\u0027t even reach that point, and interruptRunningTarget doesn\u0027t wait the whole duration of the SLEEP. An infinite loop could work also, but then if the debugger crashes, you risk leaving processes that will never end on the build machine.",
+      "parentUuid": "a766b734_41d568e2",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_e1de3451",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Thread.h",
         "patchSetId": 9
@@ -30,6 +48,24 @@
       "writtenOn": "2014-12-03T21:15:15Z",
       "side": 1,
       "message": "suggestion, to change to \"platform compatibility layer\" to be clear from the start",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a954229b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Thread.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-04T16:24:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_e1de3451",
       "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_09bb965f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Thread.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-04T16:24:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_81ef80f8",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_c1e5f816",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadPthreadTypes.h",
         "patchSetId": 9
@@ -64,6 +118,24 @@
       "writtenOn": "2014-12-03T21:15:15Z",
       "side": 1,
       "message": "suggestion: \nI think of it as more of an Id rather than a handle to e.g. an object.     What about ThreadId ?",
+      "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a9af0215",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadPthreadTypes.h",
+        "patchSetId": 9
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-04T16:24:36Z",
+      "side": 1,
+      "message": "Well, the vocabulary changes from platform to platform. Windows calls it a HANDLE [1]. Also, I wanted to avoid the confusion with the operating system thread id (tid)/process id (pid). I think handle is a quite common name for this kind of stuff where you are returned an opaque value to refer to a particular resource.\n\n[1] http://msdn.microsoft.com/en-us/library/windows/desktop/ms682453%28v\u003dvs.85%29.aspx",
+      "parentUuid": "a766b734_c1e5f816",
       "revId": "83412425e3c76d8813629c9e056a1ccefbab4944",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

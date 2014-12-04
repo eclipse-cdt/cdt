@@ -16,6 +16,41 @@
       "revId": "2fe70c3ed2c4faf67af7ac154e750282836068cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ac9f1067",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-12-04T18:00:10Z",
+      "side": 1,
+      "message": "You\u0027re right and this call is nolonger need to be asynchronous.",
+      "parentUuid": "a766b734_3b505bda",
+      "revId": "2fe70c3ed2c4faf67af7ac154e750282836068cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_6c805802",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-12-04T18:00:10Z",
+      "side": 1,
+      "message": "This code should be run in a separate job instead of the executor thread. There is a small possibility of race condition because the SessionEnded event is fired before the inferior process is marked as terminated. Adding a delay to the job scheduling should be enough to avoid it.",
+      "revId": "2fe70c3ed2c4faf67af7ac154e750282836068cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

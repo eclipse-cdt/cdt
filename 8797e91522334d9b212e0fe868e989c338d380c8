@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_53a7fb91",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-04T02:03:32Z",
+      "side": 1,
+      "message": "Its a heavy read that bug! \nWhen you check if breakpoint\napplicable probably better reverse instanceof check\nand call. Instanceof is cheaper",
+      "revId": "8797e91522334d9b212e0fe868e989c338d380c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

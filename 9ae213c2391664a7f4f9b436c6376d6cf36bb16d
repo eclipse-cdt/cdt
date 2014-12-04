@@ -87,6 +87,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_f35c47fb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIResultRecord.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-04T07:49:20Z",
+      "side": 1,
+      "message": "I actually make use of it in https://git.eclipse.org/r/#/c/37475/ already, would you like me to move this method to the next patch? \n\nAnyway, it might be a bit confusing to have getValue and getMIValue methods. Maybe either getValue + getFieldValue or getTuple + getMIValue?",
+      "parentUuid": "a766b734_815dc074",
+      "revId": "9ae213c2391664a7f4f9b436c6376d6cf36bb16d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_f3de0751",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIStackInfoDepthInfo.java",
         "patchSetId": 3
@@ -138,6 +156,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_73d317cd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-04T07:49:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_817660f8",
+      "revId": "9ae213c2391664a7f4f9b436c6376d6cf36bb16d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_218cac88",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
         "patchSetId": 3
@@ -149,6 +185,24 @@
       "writtenOn": "2014-12-03T21:22:07Z",
       "side": 1,
       "message": "If I am to commit it, you have to put your name and company here.  If you want to wait and commit it yourself, you can but don\u0027t need to do that.",
+      "revId": "9ae213c2391664a7f4f9b436c6376d6cf36bb16d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_93d873eb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-04T07:49:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_218cac88",
       "revId": "9ae213c2391664a7f4f9b436c6376d6cf36bb16d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

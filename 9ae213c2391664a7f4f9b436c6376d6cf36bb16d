@@ -105,6 +105,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_01608627",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIResultRecord.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-08T15:54:38Z",
+      "side": 1,
+      "message": "Yes, it is because of the naming that I thought it would be best not to add an API we don\u0027t need yet.\n\nSince this patch effectively puts a short cut to the getMIValue() method of MIResult, I think it is ok to keep the name getMIValue() even though it is not very descriptive.\n\ngetValue() I find pretty confusing.  I believe this returns a name/value pair, which is not indicated by getValue().  But either way, please move to the next patch, so that things are located properly and lets address the name then.",
+      "parentUuid": "a766b734_f35c47fb",
+      "revId": "9ae213c2391664a7f4f9b436c6376d6cf36bb16d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_f3de0751",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIStackInfoDepthInfo.java",
         "patchSetId": 3

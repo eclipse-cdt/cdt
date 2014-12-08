@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_87ce66a5",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/AbstractTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-08T19:38:38Z",
+      "side": 1,
+      "message": "I\u0027m assuming this printout is because you had to figure out if this was being called when it was \"overridden\" in SetConfigurationParameter.\n\nAs you probably know, or figured out, although you cannot override static methods in Java, in this case, the method does get \"overridden\" somehow.  I believe it is because the way JUnit4 deals with the annotation, it probably is not prepared for having two methods of the same name with the same annotation is only keeps one of them.\n\nI suggest we avoid this whole confusion by allowing each class to let its own @BeforeClass run.  So, I suggest naming this method something less likely to collide and to not call this method from SetConfigurationParameter.@BeforeClass\n\nAnd to remove the printout :)",
+      "revId": "8f7c747d5d400cf107928c0dea6a9e6c58008a20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a7de0250",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-08T19:38:38Z",
+      "side": 1,
+      "message": "Name this method something less likely to collide, and don\u0027t call the \"base\" class.\n\nNote that from what I can see, the \"base\" @BeforeClass is called first.",
+      "revId": "8f7c747d5d400cf107928c0dea6a9e6c58008a20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

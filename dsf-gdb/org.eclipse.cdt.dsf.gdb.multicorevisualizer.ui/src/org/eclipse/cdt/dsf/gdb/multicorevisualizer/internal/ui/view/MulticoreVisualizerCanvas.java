@@ -18,6 +18,7 @@
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 407321
  *     Xavier Raynaud (Kalray) - Bug 431935
+ *     Marc Khouzam (Ericsson) - Bug 454293
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -412,6 +413,13 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		return max_edge;
 	}
 	
+	/**
+	 * Allows overriding classes to change this behavior.
+	 */
+	protected boolean getCPULoadEnabled() {
+		return m_model == null ? false : m_model.getLoadMetersEnabled();
+	}
+	
 	/** Recache persistent objects (tiles, etc.) for new monitor */
 	// synchronized so we don't change recache flags while doing a recache
 	public synchronized void recache() {
@@ -466,7 +474,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 					if (visualizerCpu != null) {
 						// update CPUs load meter 
 						MulticoreVisualizerLoadMeter meter = visualizerCpu.getLoadMeter();
-						meter.setEnabled(m_model.getLoadMetersEnabled());
+						meter.setEnabled(getCPULoadEnabled());
 						meter.setLoad(modelCpu.getLoad());
 						meter.setHighLoadWatermark(modelCpu.getHighLoadWatermark());
 
@@ -510,7 +518,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			}
 			
 			// make room when load meters are present, else use a more compact layout
-			int core_margin = m_model.getLoadMetersEnabled() ? 20 : 12;      // margin around cores in a CPU 
+			int core_margin = getCPULoadEnabled() ? 20 : 12;      // margin around cores in a CPU 
 			int core_separation = 4;  // spacing between cores
 
 			int loadMeterWidth = core_margin*3/5;

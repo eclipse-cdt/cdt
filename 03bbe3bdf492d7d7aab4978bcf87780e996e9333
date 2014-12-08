@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_041374e8",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/RegisterGroupsPersistance.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-08T18:47:13Z",
+      "side": 1,
+      "message": "Remove //$NON.....",
+      "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_041a5474",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-08T18:47:13Z",
+      "side": 1,
+      "message": "What do the above two lines do? Looks like they don\u0027t do anything.  I believe the name of the group will automatically be in the map since we modify the element that is already in the map.",
+      "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_64218827",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AbstractDsfRegisterGroupActions.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-08T18:47:13Z",
+      "side": 1,
+      "message": "Variable e is not used",
+      "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

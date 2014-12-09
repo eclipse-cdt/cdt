@@ -183,7 +183,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
@@ -517,7 +516,7 @@ public class CPPVisitor extends ASTQueries {
 	    	binding = CPPSemantics.resolveBinding(elabType.getName());
 	    }
 	    if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
-	    	binding= ((CPPASTTranslationUnit) elabType.getTranslationUnit()).mapToAST((ICPPClassType) binding, elabType);
+	    	binding= (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding, elabType);
 	    	ASTInternal.addDeclaration(binding, elabType);
 	    }
 
@@ -1270,9 +1269,7 @@ public class CPPVisitor extends ASTQueries {
 					boolean done= true;
 					IScope scope= null;
 					if (binding instanceof ICPPClassType) {
-						if (binding instanceof IIndexBinding && tu != null) {
-							binding= (((CPPASTTranslationUnit) tu)).mapToAST((ICPPClassType) binding, name);
-						}
+						binding= (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding, name);
 						scope= ((ICPPClassType) binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace) binding).getNamespaceScope();
@@ -2556,7 +2553,7 @@ public class CPPVisitor extends ASTQueries {
 					break;
 				IBinding binding = segments[i].resolveBinding();
 				if (binding instanceof IIndexBinding && binding instanceof ICPPClassType) {
-					binding = ((CPPASTTranslationUnit) name.getTranslationUnit()).mapToAST((ICPPClassType) binding, name);
+					binding = (ICPPClassType) SemanticUtil.mapToAST((ICPPClassType) binding, name);
 				}
 				return bindingToOwner(binding);
 			}

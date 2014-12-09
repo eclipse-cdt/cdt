@@ -813,8 +813,8 @@ public class CPPSemantics {
 		if (binding == null)
 			return null;
         IScope scope = binding.getScope();
-        if (scope instanceof IIndexScope && tu != null) {
-        	scope= tu.mapToASTScope((IIndexScope) scope);
+        if (tu != null) {
+        	scope= tu.mapToASTScope(scope);
         }
         while (scope != null && !(scope instanceof ICPPNamespaceScope)) {
             scope = getParentScope(scope, tu);
@@ -982,7 +982,7 @@ public class CPPSemantics {
 		}
 
 		while (nextScope != null || nextTmplScope != null) {
-			// when the non-template scope is no longer contained within the first template scope,
+			// When the non-template scope is no longer contained within the first template scope,
 			// we use the template scope for the next iteration.
 			boolean useTemplScope= false;
 			if (nextTmplScope != null) {
@@ -996,8 +996,8 @@ public class CPPSemantics {
 			}
 			ICPPScope scope= useTemplScope ? nextTmplScope : nextScope;
 			CPPASTTranslationUnit tu = data.getTranslationUnit();
-			if (scope instanceof IIndexScope && tu != null) {
-				scope= (ICPPScope) tu.mapToASTScope(((IIndexScope) scope));
+			if (tu != null) {
+				scope= (ICPPScope) tu.mapToASTScope((scope));
 			}
 
 			if (!data.usingDirectivesOnly && !(data.ignoreMembers && scope instanceof ICPPClassScope)) {
@@ -1355,13 +1355,13 @@ public class CPPSemantics {
 
 	static ICPPScope getParentScope(IScope scope, ICPPASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
-		// the index cannot return the translation unit as parent scope
+		// The index cannot return the translation unit as parent scope.
 		if (unit instanceof CPPASTTranslationUnit) {
 			if (parentScope == null
 					&& (scope instanceof IIndexScope || scope instanceof ICPPClassSpecializationScope)) {
 				parentScope = unit.getScope();
-			} else if (parentScope instanceof IIndexScope) {
-				parentScope = ((CPPASTTranslationUnit) unit).mapToASTScope((IIndexScope) parentScope);
+			} else {
+				parentScope = ((CPPASTTranslationUnit) unit).mapToASTScope(parentScope);
 			}
 		}
 		return (ICPPScope) parentScope;
@@ -1377,8 +1377,8 @@ public class CPPSemantics {
 			ICPPUsingDirective directive, Set<ICPPNamespaceScope> handled) throws DOMException {
 		ICPPNamespaceScope nominated= directive.getNominatedScope();
 		CPPASTTranslationUnit tu= data.getTranslationUnit();
-		if (nominated instanceof IIndexScope && tu != null) {
-			nominated= (ICPPNamespaceScope) tu.mapToASTScope((IIndexScope) nominated);
+		if (tu != null) {
+			nominated= (ICPPNamespaceScope) tu.mapToASTScope(nominated);
 		}
 		if (nominated == null || data.visited.containsKey(nominated) || (handled != null && !handled.add(nominated))) {
 			return;

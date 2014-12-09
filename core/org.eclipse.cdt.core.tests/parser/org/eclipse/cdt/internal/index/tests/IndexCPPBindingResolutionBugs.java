@@ -63,7 +63,6 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * For testing PDOM binding resolution
@@ -71,13 +70,13 @@ import org.eclipse.core.runtime.CoreException;
 public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBase {
 
 	public static class SingleProject extends IndexCPPBindingResolutionBugs {
-		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
-		public static TestSuite suite() {return suite(SingleProject.class);}
+		public SingleProject() { setStrategy(new SinglePDOMTestStrategy(true)); }
+		public static TestSuite suite() { return suite(SingleProject.class); }
 	}
 
 	public static class ProjectWithDepProj extends IndexCPPBindingResolutionBugs {
-		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
-		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
+		public ProjectWithDepProj() { setStrategy(new ReferencedProject(true)); }
+		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
 	}
 
 	public static void addTests(TestSuite suite) {
@@ -103,7 +102,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// OBJ {}
 	// FUNC() {}
 	// FUNC2(1) {}
-	public void testBug208558() throws CoreException {
+	public void testBug208558() throws Exception {
 		IIndex index= getIndex();
 
 		IIndexMacro[] macrosA= index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, npm());
@@ -1153,13 +1152,13 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//  class Base {};
 	//  void useBase(Base* b);
 
-	//  class Derived: Base {};
+	//  class Derived : Base {};
 	//	void test() {
 	//      X x;
 	//      useBase(x.d);
 	//	}
 	public void testLateDefinitionOfInheritance_Bug292749() throws Exception {
-    	getBindingFromASTName("useBase(x.d", 7, ICPPFunction.class);
+    	getBindingFromFirstIdentifier("useBase(x.d)", ICPPFunction.class);
 	}
 
 	// namespace one {
@@ -1369,14 +1368,17 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	    waldo(new B<E>());
 	//	  }
 	//	};
-	public void _testTemplateArgumentResolution_450888() throws Exception {
-		getProblemFromFirstIdentifier("waldo"); // waldo is not resolved because E doesn't extend C.
+	public void testTemplateArgumentResolution_450888() throws Exception {
+		getProblemFromFirstIdentifier("waldo"); // waldo is unresolved because E doesn't extend C.
 		IASTTranslationUnit ast = strategy.getAst(0);
 		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
 		IWorkingCopy workingCopy = tu.getWorkingCopy();
 		IBuffer buffer = workingCopy.getBuffer();
 		buffer.setContents(buffer.getContents().replace("E {", "E : public C<int> {"));
+		// Release and re-acquire the index lock to clear the caches. 
+		getIndex().releaseReadLock();
+		getIndex().acquireReadLock();
 		ast = workingCopy.getAST(strategy.getIndex(), ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-		checkBindings(ast); // E now extends C, there should be no unresolved symbols.
+		checkBindings(ast);
 	}
 }

@@ -973,7 +973,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	@Override
 	public void releaseReadLock() {
-		boolean clearCache= false;
 		synchronized (mutex) {
 			assert lockCount > 0: "No lock to release"; //$NON-NLS-1$
 			if (sDEBUG_LOCKS) {
@@ -984,12 +983,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 			if (lockCount > 0)
 				--lockCount;
 			mutex.notifyAll();
-			clearCache= lockCount == 0;
 			db.setLocked(lockCount != 0);
 		}
-		if (clearCache) {
-			clearResultCache();
-		}
+		// A lock release probably means that some AST is going away. The result cache has to be
+		// cleared since it may contain objects belonging to the AST that is going away. A failure
+		// to release an AST object would cause a memory leak since the whole AST would remain
+		// pinned to memory.
+		// TODO(sprigogin): It would be more efficient to replace the global result cache with
+		// separate caches for each AST.
+		clearResultCache();
 	}
 
 	/**

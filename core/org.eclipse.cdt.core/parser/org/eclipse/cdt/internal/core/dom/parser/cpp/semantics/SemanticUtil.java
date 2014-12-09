@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -406,7 +407,7 @@ public class SemanticUtil {
 		if (newNestedType == null)
 			return type;
 
-		// Bug 249085 make sure not to add unnecessary qualifications
+		// Do not to add unnecessary qualifications (bug 24908). 
 		if (type instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) type;
 			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile(), false);
@@ -489,38 +490,62 @@ public class SemanticUtil {
 		}
 	}
 
-	public static IType mapToAST(IType type, IASTNode node) {
-		if (node == null)
-			return type;
-
-		if (type instanceof IFunctionType) {
-			final ICPPFunctionType ft = (ICPPFunctionType) type;
-			final IType r = ft.getReturnType();
-			final IType ret = mapToAST(r, node);
-			if (ret == r) {
-				return type;
-			}
-			return new CPPFunctionType(ret, ft.getParameterTypes(), ft.isConst(), ft.isVolatile(),
-					ft.hasRefQualifier(), ft.isRValueReference(), ft.takesVarArgs());
-		}
-		if (type instanceof ITypeContainer) {
-			final ITypeContainer tc = (ITypeContainer) type;
-			final IType nestedType= tc.getType();
-			if (nestedType == null)
-				return type;
-
-			IType newType= mapToAST(nestedType, node);
-			if (newType != nestedType) {
-				return replaceNestedType(tc, newType);
-			}
-			return type;
-		} else if (type instanceof ICPPClassType && type instanceof IIndexBinding) {
-			IASTTranslationUnit tu = node.getTranslationUnit();
-			if (tu instanceof CPPASTTranslationUnit) {
-				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type, node);
+	public static IType mapToAST(IType type, IASTNode point) {
+		if (point != null && type instanceof IIndexBinding && type instanceof ICPPClassType) {
+			IASTTranslationUnit ast = point.getTranslationUnit();
+			if (ast instanceof CPPASTTranslationUnit) {
+				return ((CPPASTTranslationUnit) ast).mapToAST((ICPPClassType) type, point);
 			}
 		}
 		return type;
+	}
+
+	public static ICPPTemplateArgument[] mapToAST(ICPPTemplateArgument[] args, IASTNode point) {
+		if (point == null)
+			return args;
+
+		// Don't create a new array until it's really needed.
+		ICPPTemplateArgument[] result = args;
+		for (int i = 0; i < args.length; i++) {
+			final ICPPTemplateArgument arg = args[i];
+			ICPPTemplateArgument newArg = arg;
+			if (arg != null) {
+				newArg = mapToAST(arg, point);
+				if (result != args) {
+					result[i] = newArg;
+				} else if (arg != newArg) {
+					result = new ICPPTemplateArgument[args.length];
+					if (i > 0) {
+						System.arraycopy(args, 0, result, 0, i);
+					}
+					result[i] = newArg;
+				}
+			}
+		}
+		return result;
+	}
+
+	public static ICPPTemplateArgument mapToAST(ICPPTemplateArgument arg, IASTNode point) {
+		IType type = arg.getTypeValue();
+		if (type != null) {
+			IType mappedType = mapToAST(type, point);
+			IType originalType = arg.getOriginalTypeValue();
+			IType mappedOriginalType = originalType == type ? mappedType : mapToAST(originalType, point);
+			if (mappedType != type || mappedOriginalType != originalType) {
+				return new CPPTemplateTypeArgument(mappedType, mappedOriginalType);
+			}
+		}
+		return arg;
+	}
+
+	public static IScope mapToAST(IScope scope, IASTNode point) {
+		if (point != null) {
+			IASTTranslationUnit ast = point.getTranslationUnit();
+			if (ast instanceof CPPASTTranslationUnit) {
+				return ((CPPASTTranslationUnit) ast).mapToASTScope(scope);
+			}
+		}
+		return scope;
 	}
 
 	public static IType[] getSimplifiedTypes(IType[] types) {
@@ -713,13 +738,16 @@ public class SemanticUtil {
 				clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
 			}
 
+			// The base classes may have changed since the definition of clazz was indexed.
+			clazz = (ICPPClassType) mapToAST(clazz, point);
+
 			for (ICPPBase cppBase : ClassTypeHelper.getBases(clazz, point)) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;
 					if (tbase.isSameType(baseClass) ||
-							(baseClass instanceof ICPPSpecialization &&  // allow some flexibility with templates
-							((IType)((ICPPSpecialization) baseClass).getSpecializedBinding()).isSameType(tbase))) {
+							(baseClass instanceof ICPPSpecialization && // Allow some flexibility with templates.  
+							((IType) ((ICPPSpecialization) baseClass).getSpecializedBinding()).isSameType(tbase))) {
 						return 1;
 					}
 

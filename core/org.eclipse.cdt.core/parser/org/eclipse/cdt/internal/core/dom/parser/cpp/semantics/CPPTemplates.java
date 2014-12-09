@@ -170,6 +170,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstan
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * Collection of static methods to perform template instantiation, member specialization and
@@ -420,6 +421,17 @@ public class CPPTemplates {
 			ICPPTemplateInstance result = ((ICPPInstanceCache) template).getInstance(args);
 			if (forDefinition && result instanceof IIndexBinding)
 				return null;
+			if (result != null) {
+				// Don't use the cached instance if its argument is an index type and the requested
+				// argument is an AST type. Despite identical signatures the types may be different.  
+				ICPPTemplateArgument[] instanceArgs = result.getTemplateArguments();
+				for (int i = 0; i < args.length; i++) {
+					if (!(args[i].getTypeValue() instanceof IIndexType) &&
+							(instanceArgs[i].getTypeValue() instanceof IIndexType)) {
+						return null; 
+					}
+				}
+			}
 			return result;
 		}
 		return null;

@@ -534,7 +534,7 @@ public class Dwarf {
 	}
 
 	Map<Long, AbbreviationEntry> parseDebugAbbreviation(CompilationUnitHeader header) throws IOException {
-		Integer key = new Integer(header.abbreviationOffset);
+		Integer key = Integer.valueOf(header.abbreviationOffset);
 		Map<Long, AbbreviationEntry> abbrevs = abbreviationMaps.get(key);
 		if (abbrevs == null) {
 			abbrevs = new HashMap<Long, AbbreviationEntry>();
@@ -644,27 +644,27 @@ public class Dwarf {
 				break;
 
 			case DwarfConstants.DW_FORM_data1 :
-				obj = new Byte(in.get());
+				obj = Byte.valueOf(in.get());
 				break;
 
 			case DwarfConstants.DW_FORM_data2 :
-				obj = new Short(read_2_bytes(in));
+				obj = Short.valueOf(read_2_bytes(in));
 				break;
 
 			case DwarfConstants.DW_FORM_data4 :
-				obj = new Integer(read_4_bytes(in));
+				obj = Integer.valueOf(read_4_bytes(in));
 				break;
 
 			case DwarfConstants.DW_FORM_data8 :
-				obj = new Long(read_8_bytes(in));
+				obj = Long.valueOf(read_8_bytes(in));
 				break;
 
 			case DwarfConstants.DW_FORM_sdata :
-				obj = new Long(read_signed_leb128(in));
+				obj = Long.valueOf(read_signed_leb128(in));
 				break;
 
 			case DwarfConstants.DW_FORM_udata :
-				obj = new Long(read_unsigned_leb128(in));
+				obj = Long.valueOf(read_unsigned_leb128(in));
 				break;
 
 			case DwarfConstants.DW_FORM_string :
@@ -682,7 +682,7 @@ public class Dwarf {
 				break;
 
 			case DwarfConstants.DW_FORM_flag :
-				obj = new Byte(in.get());
+				obj = Byte.valueOf(in.get());
 				break;
 
 			case DwarfConstants.DW_FORM_strp :
@@ -742,23 +742,23 @@ public class Dwarf {
 			break;
 
 			case DwarfConstants.DW_FORM_ref1 :
-				obj = new Byte(in.get());
+				obj = Byte.valueOf(in.get());
 				break;
 
 			case DwarfConstants.DW_FORM_ref2 :
-				obj = new Short(read_2_bytes(in));
+				obj = Short.valueOf(read_2_bytes(in));
 				break;
 
 			case DwarfConstants.DW_FORM_ref4 :
-				obj = new Integer(read_4_bytes(in));
+				obj = Integer.valueOf(read_4_bytes(in));
 				break;
 
 			case DwarfConstants.DW_FORM_ref8 :
-				obj = new Long(read_8_bytes(in));
+				obj = Long.valueOf(read_8_bytes(in));
 				break;
 
 			case DwarfConstants.DW_FORM_ref_udata :
-				obj = new Long(read_unsigned_leb128(in));
+				obj = Long.valueOf(read_unsigned_leb128(in));
 				break;
 
 			case DwarfConstants.DW_FORM_indirect :

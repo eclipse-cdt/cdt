@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_52224a55",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/AbstractTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-09T04:12:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_87ce66a5",
+      "revId": "8f7c747d5d400cf107928c0dea6a9e6c58008a20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_a7de0250",
         "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-12-08T19:38:38Z",
       "side": 1,
       "message": "Name this method something less likely to collide, and don\u0027t call the \"base\" class.\n\nNote that from what I can see, the \"base\" @BeforeClass is called first.",
+      "revId": "8f7c747d5d400cf107928c0dea6a9e6c58008a20",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b268fe6c",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-09T04:12:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_a7de0250",
       "revId": "8f7c747d5d400cf107928c0dea6a9e6c58008a20",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -10978,12 +10978,4 @@ public class AST2CPPTests extends AST2TestBase {
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 		isParameterSignatureEqual(sd.getDeclarators()[0], "(int&&)");
 	}
-	
-	//	constexpr int waldo = 42;
-	public void testConstexprVariableIsConst_451091() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPVariable waldo = helper.assertNonProblem("waldo");
-		assertInstance(waldo.getType(), IQualifierType.class);
-		assertTrue(((IQualifierType) waldo.getType()).isConst());
-	}
 }

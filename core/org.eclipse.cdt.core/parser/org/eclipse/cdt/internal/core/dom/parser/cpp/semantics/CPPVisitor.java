@@ -2240,10 +2240,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType qualifyType(IType type, IASTDeclSpecifier declSpec) {
-		boolean isConst = declSpec.isConst() 
-				       || (declSpec instanceof ICPPASTDeclSpecifier 
-						   && ((ICPPASTDeclSpecifier) declSpec).isConstexpr());
-		return SemanticUtil.addQualifiers(type, isConst, declSpec.isVolatile(), declSpec.isRestrict());
+		return SemanticUtil.addQualifiers(type, declSpec.isConst(), declSpec.isVolatile(), declSpec.isRestrict());
 	}
 
 	private static IType createType(IType baseType, IASTDeclarator declarator) {

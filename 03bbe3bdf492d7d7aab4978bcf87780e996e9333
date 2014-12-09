@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_d87b1b62",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/RegisterGroupsPersistance.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-09T15:02:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_041374e8",
+      "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_041a5474",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
         "patchSetId": 20
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_38632f85",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRegisters.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-09T15:02:09Z",
+      "side": 1,
+      "message": "It is not clear indeed although there is a purpose with this.   This map encapsulates a convenience map that provides a group name to group context map from a Container context.   Editing the group can modify a group name and this name map needs to be re-built. otherwise the group name will be trapped and the user would not be able to re-use this name. \n\n   The \"put\" method clears the group name map and therefore triggers a re-built in the next get.\n\nHowever since this is confusing we can add a method to this class and use it here instead.  e.g.  \nfContextToGroupsMap.resetGroupNameMap(contDmc);\n\nThis will be reflected in the next patch set,",
+      "parentUuid": "a766b734_041a5474",
+      "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_64218827",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AbstractDsfRegisterGroupActions.java",
         "patchSetId": 20
@@ -47,6 +83,24 @@
       "writtenOn": "2014-12-08T18:47:13Z",
       "side": 1,
       "message": "Variable e is not used",
+      "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_73002839",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AbstractDsfRegisterGroupActions.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-09T15:02:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_64218827",
       "revId": "03bbe3bdf492d7d7aab4978bcf87780e996e9333",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

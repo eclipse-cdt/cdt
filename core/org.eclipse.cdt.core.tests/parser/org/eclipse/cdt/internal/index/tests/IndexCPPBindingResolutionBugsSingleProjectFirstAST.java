@@ -21,8 +21,8 @@ public class IndexCPPBindingResolutionBugsSingleProjectFirstAST extends IndexCPP
 	}
 	
 	// Invalid tests for this strategy, they assume that the second file is already indexed.
-	@Override public void testBug208558() {}
-	@Override public void testBug176708_CCE() {}
-	@Override public void testIsSameAnonymousType_Bug193962() {}
-	@Override public void testIsSameNestedAnonymousType_Bug193962() {}
+	@Override public void test_208558() {}
+	@Override public void test_176708_CCE() {}
+	@Override public void testIsSameAnonymousType_193962() {}
+	@Override public void testIsSameNestedAnonymousType_193962() {}
 }

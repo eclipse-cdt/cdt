@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -59,7 +60,6 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
@@ -97,12 +97,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// #define FUNC() void bar()
 	// #define FUNC2(A) void baz()
 
-	// #include "header.h"
-	//
 	// OBJ {}
 	// FUNC() {}
 	// FUNC2(1) {}
-	public void testBug208558() throws Exception {
+	public void test_208558() throws Exception {
 		IIndex index= getIndex();
 
 		IIndexMacro[] macrosA= index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, npm());
@@ -159,7 +157,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	    Temp testFile;
 	//	    testTemplate(testFile);
 	//	}
-	public void testBug207320() {
+	public void test_207320() {
 		IBinding b0= getBindingFromASTName("testTemplate(", 12);
 		assertInstance(b0, ICPPFunction.class);
 		assertInstance(b0, ICPPTemplateInstance.class);
@@ -178,9 +176,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//  testdef*  global_cBase;
 	//  testdef*& global_cBaseRef = global_cBase;
 
-	//	#include "typedefHeader.h"
-	//
-	//
 	//	int main(void)
 	//		{
 	//			testdef*  local_cBase;
@@ -198,7 +193,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//			testCall( /*7*/ (void *)global_cBaseRef);
 	//          testCall( /*8*/ global_cBaseRef);
 	//		}
-	public void testBug206187() throws Exception {
+	public void test_206187() throws Exception {
 		IBinding b1= getBindingFromASTName("testCall( /*1*/", 8);
 		IBinding b2= getBindingFromASTName("testCall( /*2*/", 8);
 		IBinding b3= getBindingFromASTName("testCall( /*3*/", 8);
@@ -220,7 +215,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // B<C> b;
 
     // void foo() {C c; B<int> b;}
-    public void testBug188274() throws Exception {
+    public void test_188274() throws Exception {
         IBinding b0= getBindingFromASTName("C", 1);
         IBinding b1= getBindingFromASTName("B", 1);
         assertInstance(b0, ICPPClassType.class);
@@ -241,7 +236,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	// ns::A a;
 	// class B {};
-	public void testBug188324() throws Exception {
+	public void test_188324() throws Exception {
 		IASTName name= findName("B", 1);
 		IBinding b0= getBindingFromASTName("ns::A", 2);
 		assertInstance(b0, ICPPNamespace.class);
@@ -255,7 +250,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// 	 void foo() {
 	//      C<int>::unresolvable();
 	//   };
-	public void testBug185828() throws Exception {
+	public void test_185828() throws Exception {
 		// Bug 185828 reports a StackOverflowException is thrown before we get here.
 		// That the SOE is thrown is detected in BaseTestCase via an Error IStatus
 
@@ -286,7 +281,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	int main() {
 	//		MyClass* cls= new MyClass();
 	//	}
-	public void testBug184216() throws Exception {
+	public void test_184216() throws Exception {
 		IBinding b0= getBindingFromASTName("MyClass*", 7);
 		assertInstance(b0, ICPPClassType.class);
 		ICPPClassType ct= (ICPPClassType) b0;
@@ -296,23 +291,20 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertInstance(ms[1], ICPPTemplateDefinition.class);
 	}
 
-	// // header file
 	//  class cl;
 	//	typedef cl* t1;
 	//  typedef t1 t2;
 
-	//// referencing content
 	//  void func(t2 a);
 	//  void func(int b);
 	//  void ref() {
 	//     cl* a;
 	//     func(a);
 	//  }
-	public void testBug166954() {
+	public void test_166954() {
 		IBinding b0 = getBindingFromASTName("func(a)", 4);
 	}
 
-	// // header
 	//	class Base {
 	//  public:
 	//     void foo(int i);
@@ -322,8 +314,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//     char* fooovr(char x);
 	//  };
 
-	// // references
-	// #include "header.h"
 	// void Base::foo(int i) {}
 	// int Base::fooint() {return 0;}
 	// char* Base::fooovr() {return 0;}
@@ -338,7 +328,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//   b.fooovr(1);
 	//   b.fooovr('a');
 	// }
-	public void testBug168020() {
+	public void test_168020() {
 		getBindingFromASTName("foo(int i)", 3);
 		getBindingFromASTName("fooint()", 6);
 		getBindingFromASTName("fooovr()", 6);
@@ -352,7 +342,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		getBindingFromASTName("fooovr('", 6);
 	}
 
-	// // header
 	//	class Base {
 	//  public:
 	//     void foo(int i);
@@ -362,8 +351,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//  void func(int k);
 	//  void func2(int i);
 
-	// // references
-	// #include "header.h"
 	// void Base::foo(int i) {
 	//   i=2;
 	// }
@@ -376,7 +363,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// void func2(int l) {
 	//  l=2;
 	// }
-	public void testBug168054() {
+	public void test_168054() {
 		getBindingFromASTName("i=2", 1);
 		getBindingFromASTName("j=2", 1);
 		getBindingFromASTName("k=2", 1);
@@ -392,7 +379,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//       Ambiguity problem;
 	//    }
 	// }
-	public void testBug176708_CCE() throws Exception {
+	public void test_176708_CCE() throws Exception {
 		IBinding binding= getBindingFromASTName("Y {", 1);
 		assertTrue(binding instanceof ICPPNamespace);
 		ICPPNamespace adapted= (ICPPNamespace) strategy.getIndex().adaptBinding(binding);
@@ -403,10 +390,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	// namespace X {int i;}
 
-	// // references
-	// #include "header.h"
 	// int a= X::i;
-	public void testBug176708_NPE() throws Exception {
+	public void test_176708_NPE() throws Exception {
 		IBinding binding= getBindingFromASTName("i;", 1);
 		assertTrue(binding instanceof ICPPVariable);
 		IScope scope= binding.getScope();
@@ -417,20 +402,20 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	//	template<>
 	//	class A<int, bool, double> {};
-	public void testBug180784() throws Exception {
+	public void test_180784() throws Exception {
 		IBinding b0= getBindingFromASTName("A<int, bool, double> {};", 20);
 		assertInstance(b0, ICPPSpecialization.class);
 		ICPPSpecialization s= (ICPPSpecialization) b0;
-		ObjectMap map= s.getArgumentMap();
 		IBinding b1= s.getSpecializedBinding();
 		assertInstance(b1, ICPPClassTemplate.class);
 		ICPPClassTemplate t= (ICPPClassTemplate) b1;
 		ICPPTemplateParameter[] ps = t.getTemplateParameters();
 		assertNotNull(ps);
 		assertEquals(3, ps.length);
-		assertNotNull(map.get(ps[0]));
-		assertNotNull(map.get(ps[1]));
-		assertNotNull(map.get(ps[2]));
+		ICPPTemplateParameterMap map = s.getTemplateParameterMap();
+		assertNotNull(map.getArgument(ps[0]));
+		assertNotNull(map.getArgument(ps[1]));
+		assertNotNull(map.getArgument(ps[2]));
 	}
 
 	//	class A{};
@@ -447,7 +432,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//		id(*new A());
 	//		id(6);
 	//	}
-	public void testBug180948() throws Exception {
+	public void test_180948() throws Exception {
 		// Main check occurs in BaseTestCase - that no ClassCastException
 		// is thrown during indexing
 		IBinding b0= getBindingFromASTName("id(*", 2);
@@ -456,13 +441,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	// void func1(void);
 
-	//  #include "header.h"
-	//
-	//	int main(void)
-	//	{
+	//	int main(void) {
 	//      void* v= func1;
 	//	}
-	public void testBug181735() throws DOMException {
+	public void test_181735() throws DOMException {
 		IBinding b0 = getBindingFromASTName("func1;", 5);
 		assertTrue(b0 instanceof IFunction);
 	}
@@ -477,13 +459,11 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//
 	//	class A : public B::BB {};
 
-	//  #include "header.h"
-	//
 	//  void foo() {
 	//		A c;
 	//		c.field;//comment
 	//	}
-	public void testBug183843() throws DOMException {
+	public void test_183843() throws DOMException {
 		IBinding b0 = getBindingFromASTName("field;//", 5);
 		assertTrue(b0 instanceof ICPPField);
 	}
@@ -493,7 +473,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // } usertype;
     // void func(usertype t);
 
-	// #include "header.h"
     // void test() {
 	//    usertype ut;
 	//    func(ut);
@@ -515,7 +494,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // } userEnum;
     // void func(userEnum t);
 
-	// #include "header.h"
     // void test() {
 	//    userEnum ut;
 	//    func(ut);
@@ -546,7 +524,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // typedef enum {
     //    ei
     // } t_enum;
-	public void testIsSameAnonymousType_Bug193962() throws DOMException {
+	public void testIsSameAnonymousType_193962() throws DOMException {
 		// class
 		IBinding tdAST = getBindingFromASTName("t_class;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
@@ -624,7 +602,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     //    ei
     // } t_enum;
 	// };
-	public void testIsSameNestedAnonymousType_Bug193962() throws DOMException {
+	public void testIsSameNestedAnonymousType_193962() throws DOMException {
 		// class
 		IBinding tdAST = getBindingFromASTName("t_class;", 7);
 		assertFalse(tdAST instanceof IIndexBinding);
@@ -695,7 +673,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//		};
 	//	}
 
-	//	#include "header.h"
 	//	namespace FOO {
 	//	    using BAR::Bar;
 	//
@@ -703,7 +680,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	       return pBar;
 	//	    }
 	//	}
-	public void testAdvanceUsingDeclaration_Bug217102() throws Exception {
+	public void testAdvanceUsingDeclaration_217102() throws Exception {
 		IBinding cl = getBindingFromASTName("Bar* Foo", 3);
 
 		assertEquals("Bar", cl.getName());
@@ -722,12 +699,11 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//    };
 	// };
 
-	// #include "header.h"
 	// void test() {
 	//    struct outer x;
 	//    x.var1=1;
 	// }
-	public void testAnonymousUnion_Bug216791() throws DOMException {
+	public void testAnonymousUnion_216791() throws DOMException {
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
 		assertTrue(b instanceof IField);
@@ -746,13 +722,12 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//    } hide;
 	// };
 
-	// #include "header.h"
 	// void test() {
 	//    union outer x;
 	//    x.var1=1;
 	//    x.var2= 2; // must be a problem
 	// }
-	public void testAnonymousStruct_Bug216791() throws DOMException {
+	public void testAnonymousStruct_216791() throws DOMException {
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
 		assertTrue(b instanceof IField);
@@ -769,11 +744,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// };
 	// using namespace ns;
 
-	// #include "header.h"
 	// void test() {
 	//    v=1;
 	// }
-	public void testUsingDirective_Bug216527() throws Exception {
+	public void testUsingDirective_216527() throws Exception {
 		IBinding b = getBindingFromASTName("v=", 1);
 		assertTrue(b instanceof IVariable);
 		IVariable v= (IVariable) b;
@@ -793,11 +767,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//    using namespace NSB;
 	// }
 
-	// #include "header.h"
 	// void f() {
 	//   NSAB::a= NSAB::b;
 	// }
-	public void testNamespaceComposition_Bug200673() throws Exception {
+	public void testNamespaceComposition_200673() throws Exception {
 		IBinding a = getBindingFromASTName("a=", 1);
 		assertTrue(a instanceof IVariable);
 		IVariable v= (IVariable) a;
@@ -818,7 +791,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// namespace N {using namespace N::M;}
 	// using namespace N;
     // void test() {x;}
-	public void testEndlessLoopWithUsingDeclaration_Bug209813() throws DOMException {
+	public void testEndlessLoopWithUsingDeclaration_209813() throws DOMException {
 		getProblemFromASTName("x;", 1);
 	}
 
@@ -826,7 +799,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 
 	// void test(MyClass* ptr);
 	// class MyClass;
-	public void testClassRedeclarationAfterReference_Bug229571() throws Exception {
+	public void testClassRedeclarationAfterReference_229571() throws Exception {
 		IBinding cl= getBindingFromASTName("MyClass;", 7);
 		IFunction fn= getBindingFromASTName("test(", 4, IFunction.class);
 		IType type= fn.getType().getParameterTypes()[0];
@@ -903,7 +876,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	   test2(x); // problem binding here
 	//	   test3(x); // problem binding here
 	//	}
-	public void testAdjustmentOfParameterTypes_Bug239975() throws Exception {
+	public void testAdjustmentOfParameterTypes_239975() throws Exception {
     	getBindingFromASTName("test1(x)", 5, ICPPFunction.class);
     	getBindingFromASTName("test2(x)", 5, ICPPFunction.class);
     	getBindingFromASTName("test3(x)", 5, ICPPFunction.class);
@@ -973,7 +946,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// Container<int>::CT<int> spect;
 	// Container<char>::C espec;
 	// Container<char>::CT<int> espect;
-	public void testClassTypes_Bug98171() throws Exception {
+	public void testClassTypes_98171() throws Exception {
 		// regular class
 		ICPPClassType ct= getBindingFromASTName("C", 1);
 		assertBindings(new String[] {"B"}, ct.getBases());
@@ -1076,7 +1049,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//      const int* q = p;
 	//		func(q);
 	//	}
-	public void testOverloadedFunctionFromIndex_Bug256240() throws Exception {
+	public void testOverloadedFunctionFromIndex_256240() throws Exception {
     	getBindingFromASTName("func(q", 4, ICPPFunction.class);
 	}
 
@@ -1088,7 +1061,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	};
 
 	//	void A::B::m() {}
-	public void testNestedClasses_Bug259683() throws Exception {
+	public void testNestedClasses_259683() throws Exception {
     	getBindingFromASTName("A::B::m", 7, ICPPMethod.class);
 	}
 
@@ -1157,7 +1130,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//      X x;
 	//      useBase(x.d);
 	//	}
-	public void testLateDefinitionOfInheritance_Bug292749() throws Exception {
+	public void testLateDefinitionOfInheritance_292749() throws Exception {
     	getBindingFromFirstIdentifier("useBase(x.d)", ICPPFunction.class);
 	}
 
@@ -1170,13 +1143,12 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//   using one::fx;
     // }
 
-	// #include "header.h"
 	// void test() {
 	//    two::fx();
 	//    two::fx(1);
 	//    two::fx(1,1);
 	// }
-	public void testUsingDeclaration_Bug300019() throws Exception {
+	public void testUsingDeclaration_300019() throws Exception {
     	getBindingFromASTName("fx();", 2, ICPPFunction.class);
     	getBindingFromASTName("fx(1);", 2, ICPPFunction.class);
     	getBindingFromASTName("fx(1,1);", 2, ICPPFunction.class);
@@ -1194,11 +1166,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	  InnerClass3 arr[32];
 	//	};
 
-	//	#include "a.h"
 	//	void YetAnotherTest::test() {
 	//	  arr[0].member=0;
 	//	}
-	public void testElaboratedTypeSpecifier_Bug303739() throws Exception {
+	public void testElaboratedTypeSpecifier_303739() throws Exception {
     	getBindingFromASTName("member=0", -2, ICPPField.class);
 	}
 
@@ -1207,7 +1178,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	void test() {
 	//		MBR_PTR x;
 	//	}
-	public void testProblemInIndexBinding_Bug317146() throws Exception {
+	public void testProblemInIndexBinding_317146() throws Exception {
     	ITypedef td= getBindingFromASTName("MBR_PTR", 0, ITypedef.class);
     	ICPPPointerToMemberType ptrMbr= (ICPPPointerToMemberType) td.getType();
     	IType t= ptrMbr.getMemberOfClass();
@@ -1269,7 +1240,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	//	}
-	public void testFunctionsWithManyParameters_Bug319186() throws Exception {
+	public void testFunctionsWithManyParameters_319186() throws Exception {
 		getBindingFromASTName("f255", 0);
 		getBindingFromASTName("f256", 0);
 	}
@@ -1282,7 +1253,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//     char32_t c32;
 	//     f(c16); f(c32);
 	// }
-	public void testChar16_Bug319186() throws Exception {
+	public void testChar16_319186() throws Exception {
 		IFunction f= getBindingFromASTName("f(c16)", 1);
 		assertEquals("char16_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
 
@@ -1299,27 +1270,25 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	using ns::fun;
 	//	using ns::Type;
 
-	//	#include "header.h"
 	//	using namespace ::ns;
 	//	void sabel() {
 	//	  var = 0;
 	//	  fun();
 	//	  Type x;
 	//	}
-	public void test_Bug326778() throws Exception {
+	public void test_326778() throws Exception {
 		IVariable v= getBindingFromASTName("var", 0);
 		IFunction f= getBindingFromASTName("fun", 0);
 		ITypedef t= getBindingFromASTName("Type", 0);
 	}
 
 	//	struct base {
-	//		virtual void operator+(base const &) { }
-	//		virtual void operator-(base const &) { }
+	//	  virtual void operator+(base const &) {}
+	//	  virtual void operator-(base const &) {}
 	//	};
 
-	//	#include "header.h"
 	//	struct inter : public base {
-	//	  virtual void operator+(base const &){}
+	//	  virtual void operator+(base const &) {}
 	//	};
 	//	struct sub : public inter {
 	//	  void doSomething() {
@@ -1329,7 +1298,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	    *left - *right;
 	//	  }
 	//	};
-	public void test_Bug356982() throws Exception {
+	public void test_356982() throws Exception {
 		IASTName name= findName("+ ", 1);
 		assertTrue(name instanceof IASTImplicitName);
 		assertEquals("base", name.resolveBinding().getOwner().getName());

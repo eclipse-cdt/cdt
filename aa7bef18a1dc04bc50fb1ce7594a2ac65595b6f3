@@ -16,6 +16,24 @@
       "revId": "aa7bef18a1dc04bc50fb1ce7594a2ac65595b6f3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_859f7b67",
+        "filename": "build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/TestEnvironmentVars.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-09T17:48:46Z",
+      "side": 1,
+      "message": "No, SWTBot has a default timeout of 5 secs.",
+      "parentUuid": "a766b734_587d4b22",
+      "revId": "aa7bef18a1dc04bc50fb1ce7594a2ac65595b6f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

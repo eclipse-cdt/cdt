@@ -34,6 +34,24 @@
       "revId": "a1ba5d0628c1f70f56d40fc2738703338dc1d58a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_650a1fde",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2014-12-09T19:37:35Z",
+      "side": 1,
+      "message": "in fact, that\u0027s why I used the name trim in the commit message. ;)",
+      "parentUuid": "a766b734_85677bc4",
+      "revId": "a1ba5d0628c1f70f56d40fc2738703338dc1d58a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

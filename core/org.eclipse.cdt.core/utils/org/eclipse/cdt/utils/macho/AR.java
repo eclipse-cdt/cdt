@@ -72,9 +72,10 @@ public class AR {
 		 * Remove the padding from the archive header strings.
 		 */
 		private String removeBlanks(String str) {
-			while (str.charAt(str.length() - 1) == ' ')
-				str = str.substring(0, str.length() - 1);
-			return str;
+			int len = str.length();
+			while( (0 <= len) && (' ' == str.charAt(len)))
+				len -- ;
+			return str.substring(0, len);
 		}
 
 		/**

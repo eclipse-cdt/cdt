@@ -69,15 +69,6 @@ public class AR {
 		private long macho_offset;
 
 		/**
-		 * Remove the padding from the archive header strings.
-		 */
-		private String removeBlanks(String str) {
-			while (str.charAt(str.length() - 1) == ' ')
-				str = str.substring(0, str.length() - 1);
-			return str;
-		}
-
-		/**
 		 * Look up the name stored in the archive's string table based
 		 * on the offset given. 
 		 *
@@ -142,12 +133,12 @@ public class AR {
 			//
 			// Convert the raw bytes into strings and numbers.
 			//
-			this.object_name = removeBlanks(new String(object_name));
+			this.object_name = new String(object_name).trim();
 //			this.modification_time = new String(modification_time);
 //			this.uid = new String(uid);
 //			this.gid = new String(gid);
 //			this.mode = new String(mode);
-			this.size = Long.parseLong(removeBlanks(new String(size)));
+			this.size = Long.parseLong(new String(size).trim());
 
 			//
 			// If the name is of the format "#1/<number>", real name directly follows the

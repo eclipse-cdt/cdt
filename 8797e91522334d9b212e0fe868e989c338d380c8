@@ -16,6 +16,24 @@
       "revId": "8797e91522334d9b212e0fe868e989c338d380c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b272be87",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2014-12-09T03:05:46Z",
+      "side": 1,
+      "message": "Done (see patch set 2)\nA long read indeed, we are near to 100 comments in the Bug !\n\nThanks Elena !",
+      "parentUuid": "a766b734_53a7fb91",
+      "revId": "8797e91522334d9b212e0fe868e989c338d380c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -22,26 +22,26 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
  */
 public interface IGdbDebugConstants {
 	
-    public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+    String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
 	/**
 	 * Status code for which a UI handler is registered.
 	 * @since 4.1
 	 */
-	public static final int STATUS_HANDLER_CODE = 20001;
+	int STATUS_HANDLER_CODE = 20001;
 
     /**
      * Attribute key to be added to the IProcess associated with an IMIContainerDMContext.
      * The value should be the groupId as returned by {@link IMIContainerDMContext#getGroupId()}
      */
-    public static final String INFERIOR_GROUPID_ATTR = PREFIX + "inferiorGroupId"; //$NON-NLS-1$
+    String INFERIOR_GROUPID_ATTR = PREFIX + "inferiorGroupId"; //$NON-NLS-1$
 
     /**
      * Attribute key to be passed to DebugPlugin.newProcess to specify the type of process
      * that should be created by our IProcessFactory.
      * @since 4.1
      */
-    public static final String PROCESS_TYPE_CREATION_ATTR = PREFIX + "createProcessType"; //$NON-NLS-1$
+    String PROCESS_TYPE_CREATION_ATTR = PREFIX + "createProcessType"; //$NON-NLS-1$
 
     /**
      * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to 
@@ -49,7 +49,7 @@ public interface IGdbDebugConstants {
      * (which is used by default).
      * @since 4.1
      */
-    public static final String INFERIOR_PROCESS_CREATION_VALUE = PREFIX + "inferiorProcess"; //$NON-NLS-1$
+    String INFERIOR_PROCESS_CREATION_VALUE = PREFIX + "inferiorProcess"; //$NON-NLS-1$
     
     /**
      * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to 
@@ -57,14 +57,14 @@ public interface IGdbDebugConstants {
      * (which is used by default).
      * @since 4.1
      */
-    public static final String GDB_PROCESS_CREATION_VALUE = PREFIX + "gdbProcess"; //$NON-NLS-1$
+    String GDB_PROCESS_CREATION_VALUE = PREFIX + "gdbProcess"; //$NON-NLS-1$
 
     /**
      * Attribute key that when set, indicates that the inferior process has properly exited,
      * and its exit value can be used.
 	 * @since 4.2
 	 */
-    public static final String INFERIOR_EXITED_ATTR = PREFIX + "inferiorExited"; //$NON-NLS-1$
+    String INFERIOR_EXITED_ATTR = PREFIX + "inferiorExited"; //$NON-NLS-1$
 
 }
 

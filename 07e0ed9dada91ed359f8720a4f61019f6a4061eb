@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_39a68e0b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T16:37:18Z",
+      "side": 1,
+      "message": "This is not an interface so the below breaks the compilation and the API.",
+      "revId": "07e0ed9dada91ed359f8720a4f61019f6a4061eb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

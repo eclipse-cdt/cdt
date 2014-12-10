@@ -141,7 +141,9 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -10977,5 +10979,32 @@ public class AST2CPPTests extends AST2TestBase {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 		isParameterSignatureEqual(sd.getDeclarators()[0], "(int&&)");
+	}
+	
+	//	constexpr int waldo1 = 42;
+	//	constexpr auto waldo2 = 43;
+	public void testConstexprVariableIsConst_451091() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPVariable waldo1 = helper.assertNonProblem("waldo1");
+		ICPPVariable waldo2 = helper.assertNonProblem("waldo2");
+		// constexpr on a variable *should* make it const
+		assertSameType(waldo1.getType(), CommonTypes.constInt);
+		assertSameType(waldo2.getType(), CommonTypes.constInt);
+	}
+	
+	//	constexpr int waldo1();
+	//	constexpr int (*waldo2())(int);
+	//	struct S { constexpr int waldo3(); };
+	public void testTypeOfConstexprFunction_451090() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPFunction waldo1 = helper.assertNonProblem("waldo1");
+		ICPPFunction waldo2 = helper.assertNonProblem("waldo2");
+		ICPPFunction waldo3 = helper.assertNonProblem("waldo3");
+		// constexpr on a function *should not* make its return type const
+		assertSameType(waldo1.getType().getReturnType(), CommonTypes.int_);
+		assertSameType(waldo2.getType().getReturnType(),
+				new CPPPointerType(new CPPFunctionType(CommonTypes.int_, new IType[]{ CommonTypes.int_ })));
+		// constexpr on a method *should not* make the method const
+		assertSameType(waldo3.getType(), new CPPFunctionType(CommonTypes.int_, new IType[]{}));
 	}
 }

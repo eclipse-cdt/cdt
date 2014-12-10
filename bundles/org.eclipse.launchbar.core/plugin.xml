@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="launchBarContributions" name="Launch Bar Contributions" schema="schema/launchBarContributions.exsd"/>
+   <extension
+         point="org.eclipse.launchbar.core.launchBarContributions">
+      <targetType
+            class="org.eclipse.launchbar.core.internal.LocalTargetType"
+            id="org.eclipse.launchbar.core.targetType.local">
+      </targetType>
+      <objectProvider
+            class="org.eclipse.launchbar.core.internal.ProjectLaunchObjectProvider"
+            id="org.eclipse.launchbar.core.objectProvider.project">
+      </objectProvider>
+   </extension>
+
+</plugin>

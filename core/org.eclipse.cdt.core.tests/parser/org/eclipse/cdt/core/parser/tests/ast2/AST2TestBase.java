@@ -91,6 +91,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -108,6 +109,7 @@ public class AST2TestBase extends BaseTestCase {
     protected static class CommonTypes {
     	public static IType int_ = new CPPBasicType(Kind.eInt, 0);
     	public static IType pointerToInt = new CPPPointerType(int_);
+    	public static IType constInt = new CPPQualifierType(int_, true, false);
     }
 
     private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());

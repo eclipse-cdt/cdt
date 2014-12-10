@@ -2032,8 +2032,9 @@ public class CPPVisitor extends ASTQueries {
 		}
 
 		IType type = createType(declSpec);
+		type = makeConstIfConstexpr(type, declSpec, declarator);
 		type = createType(type, declarator);
-
+		
 		// C++ specification 8.3.4.3 and 8.5.1.4
 		IASTNode initClause= declarator.getInitializer();
 		if (initClause instanceof IASTEqualsInitializer) {
@@ -2236,9 +2237,22 @@ public class CPPVisitor extends ASTQueries {
 
 	private static IType decorateType(IType type, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		type = qualifyType(type, declSpec);
+		type = makeConstIfConstexpr(type, declSpec, declarator);
 		return createType(type, declarator);
 	}
 
+	private static IType makeConstIfConstexpr(IType type, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+		// [dcl.constexpr] p9: constexpr on a variable makes it const
+		if (!(declarator instanceof IASTFunctionDeclarator)) {
+			if (declSpec instanceof ICPPASTDeclSpecifier) {
+				if (((ICPPASTDeclSpecifier) declSpec).isConstexpr()) {
+					return SemanticUtil.constQualify(type);
+				}
+			}
+		}
+		return type;
+	}
+	
 	private static IType qualifyType(IType type, IASTDeclSpecifier declSpec) {
 		return SemanticUtil.addQualifiers(type, declSpec.isConst(), declSpec.isVolatile(), declSpec.isRestrict());
 	}

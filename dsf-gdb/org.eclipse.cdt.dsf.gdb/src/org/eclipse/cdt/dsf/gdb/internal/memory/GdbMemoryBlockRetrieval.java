@@ -70,7 +70,15 @@ import com.ibm.icu.text.MessageFormat;
 public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		IMemorySpaceAwareMemoryBlockRetrieval {
 
-    private final class MemorySpacesDsfRunnable extends DsfRunnable {
+    private static final int DEC_BASE = 10;
+	private static final int OCT_BASE = 8;
+	private static final int BIN_BASE = 2;
+	private static final int HEX_BASE = 16;
+	private static final String HEX_HEADER = "0X"; //$NON-NLS-1$
+	private static final String OCT_HEADER = "0"; //$NON-NLS-1$
+	private static final String BIN_HEADER = "0b"; //$NON-NLS-1$
+
+	private final class MemorySpacesDsfRunnable extends DsfRunnable {
 		private final Object context;
 		private final GetMemorySpacesRequest request;
 
@@ -231,23 +239,23 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		 */
 		try {
 			// First, assume a decimal address
-			int base = 10;
+			int base = DEC_BASE;
 			int offset = 0;
 
 			// Check for "hexadecimality"
-			if (expression.startsWith("0x") || expression.startsWith("0X")) { //$NON-NLS-1$//$NON-NLS-2$
-				base = 16;
-				offset = 2;
+			if (expression.startsWith(HEX_HEADER) || expression.startsWith(HEX_HEADER.toLowerCase())) {
+				base = HEX_BASE;
+				offset = HEX_HEADER.length();
 			}
 			// Check for "binarity"
-			else if (expression.startsWith("0b")) { //$NON-NLS-1$
-				base = 2;
-				offset = 2;
+			else if (expression.startsWith(BIN_HEADER)) {
+				base = BIN_BASE;
+				offset = BIN_HEADER.length();
 			}
 			// Check for "octality"
-			else if (expression.startsWith("0")) { //$NON-NLS-1$
-				base = 8;
-				offset = 1;
+			else if (expression.startsWith(OCT_HEADER)) {
+				base = OCT_BASE;
+				offset = OCT_HEADER.length();
 			}
 			// Now, try to parse the expression. If a NumberFormatException is
 			// thrown, then it wasn't a simple numerical expression and we go 

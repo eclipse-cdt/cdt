@@ -992,7 +992,7 @@ public class PreferenceConstants {
 	/**
 	 * Style format code on save
 	 *
-	 * @since 5.10
+	 * @since 5.9
 	 */
 	public final static String FORMAT_SOURCE_CODE = "formatSourceCode"; //$NON-NLS-1$
 

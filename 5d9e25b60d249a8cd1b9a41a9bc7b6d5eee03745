@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_68631684",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "You need to mention that sourceName is relative to SOURCE_PATH macro",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e84f260f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "Better to declare fbreakpointtags as varargs. And don\u0027t start with f\nString ... breakpointTags",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_286f5e74",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "reader should be closed somewhere in this method, prefferably in finally block",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_28463efa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "Should have javadoc comment since it is API used by subtests, need to mention that method only can be called if resolveBreakpointLocations called prior",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e868c66d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "That weird that one test depends on other test constant",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a859aed5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "refactor this path into  EXEC_PATH + \"bla\" (or whatever it is called)\n?",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_8854b29b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:22:46Z",
+      "side": 1,
+      "message": "why line number constant are still there? something uses them?",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

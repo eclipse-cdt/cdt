@@ -18,6 +18,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
@@ -68,7 +70,63 @@ import com.ibm.icu.text.MessageFormat;
 public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		IMemorySpaceAwareMemoryBlockRetrieval {
 
-    private final ServiceTracker<IMemorySpaces, IMemorySpaces>  fMemorySpaceServiceTracker;
+    private final class MemorySpacesDsfRunnable extends DsfRunnable {
+		private final Object context;
+		private final GetMemorySpacesRequest request;
+
+		private MemorySpacesDsfRunnable(Object context,
+				GetMemorySpacesRequest request) {
+			this.context = context;
+			this.request = request;
+		}
+
+		@Override
+		public void run() {
+		    IDMContext dmc = null;
+		    if (context instanceof IAdaptable) {
+		    	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+		        if (dmc != null) {
+		    		IMemorySpaces service = fMemorySpaceServiceTracker.getService();
+		            if (service != null) {
+		    			service.getMemorySpaces(
+		    				dmc, 
+		    				new MemoryServiceDataRequestMonitor(getExecutor(), null, request));
+		    			return;
+		            }
+		        }
+		    }
+		    
+		    // If we get here, something didn't work as expected
+		    request.setStatus(new Status(IStatus.ERROR,	GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Unable to get memory spaces", null)); //$NON-NLS-1$
+		    request.done();
+		}
+	}
+
+	private final class MemoryServiceDataRequestMonitor extends
+			DataRequestMonitor<String[]> {
+		private final GetMemorySpacesRequest request;
+
+		private MemoryServiceDataRequestMonitor(Executor executor,
+				RequestMonitor parentRequestMonitor,
+				GetMemorySpacesRequest request) {
+			super(executor, parentRequestMonitor);
+			this.request = request;
+		}
+
+		@Override
+		protected void handleCompleted() {
+			// Store the result
+			if (isSuccess()) {
+				request.setMemorySpaces(getData());
+			}
+			else {
+				request.setStatus(getStatus());
+			}
+			request.done();
+		}
+	}
+
+	private final ServiceTracker<IMemorySpaces, IMemorySpaces>  fMemorySpaceServiceTracker;
 
 	// No need to use the constants in our base class. Serializing and
 	// recreating the blocks is done entirely by us
@@ -238,40 +296,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	@Override
 	public void getMemorySpaces(final Object context, final GetMemorySpacesRequest request) {
         try {
-        	getExecutor().execute(new DsfRunnable() {
-			@Override
-			public void run() {
-		        IDMContext dmc = null;
-		        if (context instanceof IAdaptable) {
-		        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
-		            if (dmc != null) {
-		        		IMemorySpaces service = fMemorySpaceServiceTracker.getService();
-		                if (service != null) {
-		        			service.getMemorySpaces(
-		        				dmc, 
-		        				new DataRequestMonitor<String[]>(getExecutor(), null) {
-			            			@Override
-			            			protected void handleCompleted() {
-			            				// Store the result
-			            				if (isSuccess()) {
-			            					request.setMemorySpaces(getData());
-			            				}
-			            				else {
-			            					request.setStatus(getStatus());
-			            				}
-		            					request.done();
-			            			}
-		        				});
-		        			return;
-		                }
-		            }
-		        }
-		        
-		        // If we get here, something didn't work as expected
-		        request.setStatus(new Status(IStatus.ERROR,	GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Unable to get memory spaces", null)); //$NON-NLS-1$
-                request.done();
-			}
-		});
+        	getExecutor().execute(new MemorySpacesDsfRunnable(context, request));
         } catch (RejectedExecutionException e) {
 	        request.setStatus(new Status(IStatus.ERROR,	GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Unable to get memory spaces", null)); //$NON-NLS-1$
         	request.done();
@@ -413,32 +438,37 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		for (IMemoryBlock block : blocks) {
 			if (block instanceof IMemoryBlockExtension) {
 				IMemoryBlockExtension memoryBlock = (IMemoryBlockExtension) block;
-				Element expression = document.createElement(MEMORY_BLOCK_EXPRESSION);
-				expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS, memoryBlock.getBigBaseAddress().toString());
-				if (block instanceof IMemorySpaceAwareMemoryBlock) {
-					String memorySpaceID = ((IMemorySpaceAwareMemoryBlock)memoryBlock).getMemorySpaceID();
-					if (memorySpaceID != null) {
-						expression.setAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID, memorySpaceID);
-						
-						// What we return from GdbMemoryBlock#getExpression()
-						// is the encoded representation. We need to decode it
-						// to get the original expression used to create the block
-						DecodeResult result = ((IMemorySpaceAwareMemoryBlockRetrieval)memoryBlock.getMemoryBlockRetrieval()).decodeAddress(memoryBlock.getExpression());
-						expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, result.getExpression());
-					}
-					else {
-						expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
-					}
-				}
-				else {
-					assert false; // should never happen (see getExtendedMemoryBlock()), but we can handle it. 
-					expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
-				}
-				expressionList.appendChild(expression);
+				expressionList.appendChild(createMemoryBlackExpression(document, block, memoryBlock));
 			}
 		}
 		document.appendChild(expressionList);
 		return DebugPlugin.serializeDocument(document);
+	}
+
+	private Element createMemoryBlackExpression(Document document, IMemoryBlock block, IMemoryBlockExtension memoryBlock)
+			throws DebugException, CoreException {
+		Element expression = document.createElement(MEMORY_BLOCK_EXPRESSION);
+		expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS, memoryBlock.getBigBaseAddress().toString());
+		if (block instanceof IMemorySpaceAwareMemoryBlock) {
+			String memorySpaceID = ((IMemorySpaceAwareMemoryBlock)memoryBlock).getMemorySpaceID();
+			if (memorySpaceID != null) {
+				expression.setAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID, memorySpaceID);
+				
+				// What we return from GdbMemoryBlock#getExpression()
+				// is the encoded representation. We need to decode it
+				// to get the original expression used to create the block
+				DecodeResult result = ((IMemorySpaceAwareMemoryBlockRetrieval)memoryBlock.getMemoryBlockRetrieval()).decodeAddress(memoryBlock.getExpression());
+				expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, result.getExpression());
+			}
+			else {
+				expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
+			}
+		}
+		else {
+			assert false; // should never happen (see getExtendedMemoryBlock()), but we can handle it. 
+			expression.setAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL, memoryBlock.getExpression());
+		}
+		return expression;
 	}
 	
 	/* (non-Javadoc)
@@ -466,34 +496,39 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element entry = (Element) node;
                     if (entry.getNodeName().equalsIgnoreCase(MEMORY_BLOCK_EXPRESSION)) {
-                        String label   = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL);
-                        String address = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS);
-
-                        String memorySpaceID = null;
-                        if (entry.hasAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID)) {
-                        	memorySpaceID = entry.getAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID);
-                        	if (memorySpaceID.length() == 0) {
-                        		memorySpaceID = null; 
-                        		assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
-                        	} else {
-                        		if (memoryCtx instanceof IMemorySpaceDMContext) {
-                        			//The context is already a memory space context, make sure the ids are consistent
-                        			assert(((IMemorySpaceDMContext) memoryCtx).getMemorySpaceId().equals(memorySpaceID));
-                        		} else {
-                                    //Use a memory space context if the memory space id is valid
-                            		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
-                        		}
-                        	}
-                        }
-
-                        BigInteger blockAddress = new BigInteger(address);
-                        DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(memoryCtx), 0, memorySpaceID);
+                        DsfMemoryBlock block = createMemoryBlock(memoryCtx, entry);
                         blocks.add(block);
                     }
                 }
             }
             DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks( blocks.toArray(new IMemoryBlock[blocks.size()]));
 	    }
+	}
+
+	private DsfMemoryBlock createMemoryBlock(IMemoryDMContext memoryCtx, Element entry) {
+		String label   = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL);
+		String address = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS);
+
+		String memorySpaceID = null;
+		if (entry.hasAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID)) {
+			memorySpaceID = entry.getAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID);
+			if (memorySpaceID.length() == 0) {
+				memorySpaceID = null;
+				assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
+			} else {
+				if (memoryCtx instanceof IMemorySpaceDMContext) {
+					//The context is already a memory space context, make sure the ids are consistent
+					assert(((IMemorySpaceDMContext) memoryCtx).getMemorySpaceId().equals(memorySpaceID));
+				} else {
+		            //Use a memory space context if the memory space id is valid
+		    		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
+				}
+			}
+		}
+
+		BigInteger blockAddress = new BigInteger(address);
+		DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(memoryCtx), 0, memorySpaceID);
+		return block;
 	}
 
 	/* (non-Javadoc)

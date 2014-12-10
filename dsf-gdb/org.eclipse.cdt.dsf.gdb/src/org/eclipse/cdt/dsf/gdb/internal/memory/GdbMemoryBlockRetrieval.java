@@ -466,34 +466,40 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element entry = (Element) node;
                     if (entry.getNodeName().equalsIgnoreCase(MEMORY_BLOCK_EXPRESSION)) {
-                        String label   = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL);
-                        String address = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS);
-
-                        String memorySpaceID = null;
-                        if (entry.hasAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID)) {
-                        	memorySpaceID = entry.getAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID);
-                        	if (memorySpaceID.length() == 0) {
-                        		memorySpaceID = null; 
-                        		assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
-                        	} else {
-                        		if (memoryCtx instanceof IMemorySpaceDMContext) {
-                        			//The context is already a memory space context, make sure the ids are consistent
-                        			assert(((IMemorySpaceDMContext) memoryCtx).getMemorySpaceId().equals(memorySpaceID));
-                        		} else {
-                                    //Use a memory space context if the memory space id is valid
-                            		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
-                        		}
-                        	}
-                        }
-
-                        BigInteger blockAddress = new BigInteger(address);
-                        DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(memoryCtx), 0, memorySpaceID);
+                        DsfMemoryBlock block = createMemoryBlock(memoryCtx, entry);
                         blocks.add(block);
                     }
                 }
             }
             DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks( blocks.toArray(new IMemoryBlock[blocks.size()]));
 	    }
+	}
+
+	private DsfMemoryBlock createMemoryBlock(IMemoryDMContext memoryCtx,
+			Element entry) {
+		String label   = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_LABEL);
+		String address = entry.getAttribute(ATTR_MEMORY_BLOCK_EXPR_ADDRESS);
+
+		String memorySpaceID = null;
+		if (entry.hasAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID)) {
+			memorySpaceID = entry.getAttribute(ATTR_MEMORY_BLOCK_MEMORY_SPACE_ID);
+			if (memorySpaceID.length() == 0) {
+				memorySpaceID = null; 
+				assert false : "should have either no memory space or a valid (non-empty) ID"; //$NON-NLS-1$	
+			} else {
+				if (memoryCtx instanceof IMemorySpaceDMContext) {
+					//The context is already a memory space context, make sure the ids are consistent
+					assert(((IMemorySpaceDMContext) memoryCtx).getMemorySpaceId().equals(memorySpaceID));
+				} else {
+		            //Use a memory space context if the memory space id is valid
+		    		memoryCtx = new MemorySpaceDMContext(getSession().getId(), memorySpaceID, memoryCtx);
+				}
+			}
+		}
+
+		BigInteger blockAddress = new BigInteger(address);
+		DsfMemoryBlock block = new GdbMemoryBlock(this, memoryCtx, getModelId(), label, blockAddress, getAddressableSize(memoryCtx), 0, memorySpaceID);
+		return block;
 	}
 
 	/* (non-Javadoc)

@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_a826ce3f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpoints/BreakpointUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:55:49Z",
+      "side": 1,
+      "message": "Why there is new class? Can\u0027t you put this somewhere else like in ICBreakpoint descendants?",
+      "revId": "7b6f32fdbf768e87e4c61a12e11a3d9f28d849e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_48429ac3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/breakpoints/GdbBreakpointUpdater.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:55:49Z",
+      "side": 1,
+      "message": "Any sort of comment of what this class for?",
+      "revId": "7b6f32fdbf768e87e4c61a12e11a3d9f28d849e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_684796d4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/breakpoints/GdbBreakpointUpdater.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:55:49Z",
+      "side": 1,
+      "message": "Job name is translatable, so please remove NON-NLS comment",
+      "revId": "7b6f32fdbf768e87e4c61a12e11a3d9f28d849e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_282abe02",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/breakpoints/GdbBreakpointUpdater.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:55:49Z",
+      "side": 1,
+      "message": "It only works with selection of size 1? What if you remove this if?",
+      "revId": "7b6f32fdbf768e87e4c61a12e11a3d9f28d849e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c836aa6c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/breakpoints/GdbBreakpointUpdater.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:55:49Z",
+      "side": 1,
+      "message": "Why do you need dmc local variable here? Just return the value?",
+      "revId": "7b6f32fdbf768e87e4c61a12e11a3d9f28d849e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_e833a67b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/breakpoints/GdbBreakpointUpdater.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:55:49Z",
+      "side": 1,
+      "message": "So getter for this state is in Util class but setter not?",
+      "revId": "7b6f32fdbf768e87e4c61a12e11a3d9f28d849e0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

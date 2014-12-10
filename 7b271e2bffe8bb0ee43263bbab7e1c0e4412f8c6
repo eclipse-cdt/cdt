@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_3b804601",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-10T05:50:02Z",
+      "side": 1,
+      "message": "You\u0027re right, will fix.",
+      "parentUuid": "a766b734_a88b6ea5",
+      "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_6895d6c0",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_5b854212",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-10T05:50:02Z",
+      "side": 1,
+      "message": "I\u0027m worried about pessimisation that syncrhonized method will involve. Almost all of DSF logic runs in a single thread, the DSF executor thread, with exception of parsing GDB output (and than one never accesses the values). One would need to try very hard to access MITuple from two different threads at the same time.",
+      "parentUuid": "a766b734_6895d6c0",
+      "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_4890dacf",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2014-12-10T01:36:47Z",
       "side": 1,
       "message": "Is this intended to be package private?",
+      "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_dbfcb280",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-10T05:50:02Z",
+      "side": 1,
+      "message": "Yes, it\u0027s only used here and in MIResultRecord, so I did not though it necessary to introduce new API.",
+      "parentUuid": "a766b734_4890dacf",
       "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

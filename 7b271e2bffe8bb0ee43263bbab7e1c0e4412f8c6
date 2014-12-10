@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_a88b6ea5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:36:47Z",
+      "side": 1,
+      "message": "this should be private, since it has lazy getter\nAnd come to think about it results and values should be private too, if somebody\nresets it directly you will have issue since name2value will be out of sync",
+      "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_6895d6c0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:36:47Z",
+      "side": 1,
+      "message": "lazy getter should be syncronized (as well as setMIResults since it resets it)",
+      "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4890dacf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-10T01:36:47Z",
+      "side": 1,
+      "message": "Is this intended to be package private?",
+      "revId": "7b271e2bffe8bb0ee43263bbab7e1c0e4412f8c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

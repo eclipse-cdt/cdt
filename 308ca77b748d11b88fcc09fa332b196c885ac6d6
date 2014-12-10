@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_d4aabf8b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "You have to put your name as a contributor to every file you change",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_749f6b68",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "This sounds like a generic class but it does something specific.  I find this more confusing then having the code in-line.\n\nIf the code is not used more than once, I would argue there is little value in factoring it out.",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d4911f5a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "Same comment as above.",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b4946349",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "Along the same line as the above comments, although this looks visually better, it is harder to follow compared to before.",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_54850f12",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "What is a \"BlackExpression\"? :)",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_74448b6c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "Don\u0027t actually need \u0027block\u0027, you can use \u0027memoryBlock\u0027 directly.  This could have been done in the original code also.",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_d4fc7f80",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:04:24Z",
+      "side": 1,
+      "message": "This one is good",
+      "revId": "308ca77b748d11b88fcc09fa332b196c885ac6d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

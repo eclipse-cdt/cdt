@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_34bdf3ad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:59:20Z",
+      "side": 1,
+      "message": "I\u0027d make this one \"0x\" and use toUpperCase()",
+      "revId": "600f39f19c5c2708462afc1782154485197b27eb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_54c22f2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-10T18:59:20Z",
+      "side": 1,
+      "message": "You reversed the order of the check and made the less likely one come first.  However with the suggested change above, this will resolve itself.",
+      "revId": "600f39f19c5c2708462afc1782154485197b27eb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

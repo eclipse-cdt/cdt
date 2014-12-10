@@ -33,19 +33,19 @@ public class GDBTypeParser {
 	// name: ([a-zA-z][0-9])+
 	// integer ([0-9)+ 
 
-	final static int EOF = -1;
-	final static int NAME = 0;
-	final static int PARENS = 1;
-	final static int BRACKETS = 2;
+	private static final int EOF = -1;
+	private static final int NAME = 0;
+	private static final int PARENS = 1;
+	private static final int BRACKETS = 2;
 
-	String line;
-	int index;
-	int tokenType;
-	String token;
-	String dataType;
-	String name;
-	GDBDerivedType gdbDerivedType;
-	GDBType genericType;
+	private String line;
+	private int index;
+	private int tokenType;
+	private String token;
+	private String dataType;
+	private String name;
+	private GDBDerivedType gdbDerivedType;
+	private GDBType genericType;
 
 	public GDBType getGDBType() {
 		if (gdbDerivedType != null) {
@@ -58,11 +58,10 @@ public class GDBTypeParser {
 		return name;
 	}
 
-	public GDBType parse(String s) {
+	public GDBType parse(String gdbTypeString) {
 		// Sanity.
-		if (s == null) {
-			s = new String();
-		}
+		String s = (gdbTypeString == null) ? "" : gdbTypeString; //$NON-NLS-1$
+
 		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
 		s = Pattern.compile("\\bvolatile\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
 		s = s.trim();
@@ -102,56 +101,76 @@ public class GDBTypeParser {
 		return getGDBType();
 	}
 
-	public static String unParse (GDBType gdbType) {
-
+	public static String unParse (GDBType gdbParentType) {
 		StringBuffer sb = new StringBuffer();
+		GDBType gdbType = gdbParentType;
 		// Fetch the datatype.
 		while (gdbType != null) {
-			GDBDerivedType derived = null;
-			int type = gdbType.getType();
 			if (gdbType instanceof GDBDerivedType) {
-				derived = (GDBDerivedType)gdbType;
+				GDBDerivedType derived = (GDBDerivedType)gdbType;
+				int type = derived.getType();
 				gdbType = derived.getChild();
-				// respect the precedence of operators.
-				if (type == GDBType.FUNCTION) {
+				switch (type) {
+				case GDBType.FUNCTION:
 					sb.append("()"); //$NON-NLS-1$
-				} else if (type == GDBType.ARRAY) {
+					break;
+				case GDBType.ARRAY:
 					sb.append('[').append(derived.getDimension()).append(']');
-				} else if (type == GDBType.POINTER) {
-					int childType = (gdbType != null) ? gdbType.getType() : GDBType.GENERIC; 
-					if (childType == GDBType.POINTER || childType == GDBType.REFERENCE) {
-						sb.append('*');
-					} else if (childType == GDBType.GENERIC) {
-						sb.insert(0, '*');
-					} else {
-						sb.insert(0, "(*").append(')'); //$NON-NLS-1$
-					}
-				} else if (type == GDBType.REFERENCE) {
-					int childType = (gdbType != null) ? gdbType.getType() : GDBType.GENERIC; 
-					if (childType == GDBType.POINTER || childType == GDBType.REFERENCE) {
-						sb.append("&"); //$NON-NLS-1$
-					} else if (childType == GDBType.GENERIC) {
-						sb.insert(0, '&');
-					} else {
-						sb.insert(0, "(&").append(')'); //$NON-NLS-1$
-					}
+					break;
+				case GDBType.POINTER:
+					handlePointer(gdbType, sb);
+					break;
+				case GDBType.REFERENCE:
+					handleReference(gdbType, sb);
+					break;
 				}
 			} else {
 				sb.insert(0, ' ');
 				sb.insert(0, gdbType.getTypeName());
-				gdbType = null;
+				break;
 			}
 		}
 		return sb.toString().trim();
 
 	}
 
+	
+	
+	private static void handleReference(GDBType gdbType, StringBuffer sb) {
+		handleReferenceOrPointer(gdbType, sb, '&');
+	}
+	
+	private static void handlePointer(GDBType gdbType, StringBuffer sb) {
+		handleReferenceOrPointer(gdbType, sb, '*');
+	}
+	
+	private static void handleReferenceOrPointer(GDBType gdbType, StringBuffer sb, char prefix) {
+		switch (getChildType(gdbType)) {
+		case GDBType.POINTER:
+		case GDBType.REFERENCE:
+			sb.append(prefix); 
+			break;
+		case GDBType.GENERIC:
+			sb.insert(0, prefix);
+			break;
+		default:
+			sb.insert(0, "("+prefix).append(')'); //$NON-NLS-1$
+			break;
+		}
+	}
+
+	
+
+	private static int getChildType(GDBType gdbType) {
+		return (gdbType != null) ? gdbType.getType() : GDBType.GENERIC;
+	}
+
 	public class GDBType {
-		public final static int GENERIC = 0;
-		public final static int POINTER = 1;
-		public final static int REFERENCE = 2;
-		public final static int ARRAY = 3;
-		public final static int FUNCTION = 4;
+		public static final int GENERIC = 0;
+		public static final int POINTER = 1;
+		public static final int REFERENCE = 2;
+		public static final int ARRAY = 3;
+		public static final int FUNCTION = 4;
 
 		String nameType;
 		int type;

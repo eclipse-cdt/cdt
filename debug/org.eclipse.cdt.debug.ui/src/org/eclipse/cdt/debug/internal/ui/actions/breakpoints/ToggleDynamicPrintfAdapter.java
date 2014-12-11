@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
@@ -51,12 +52,12 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
             // Although the user will be given the opportunity to provide the printf string 
             // in the properties dialog, we pre-fill it with the default string to be nice
             attributes.put(ICDynamicPrintf.PRINTF_STRING, 
-            		       NLS.bind(Messages.Default_LineDynamicPrintf_String, sourceHandle, lineNumber));
+            		       NLS.bind(Messages.Default_LineDynamicPrintf_String, escapeBackslashes(sourceHandle), lineNumber));
 
             openBreakpointPropertiesDialog(dprintf, part, resource, attributes);
         } else {
         	// We provide a default printf string to make the dynamic printf useful automatically
-        	String printfStr = NLS.bind(Messages.Default_LineDynamicPrintf_String, sourceHandle, lineNumber);
+        	String printfStr = NLS.bind(Messages.Default_LineDynamicPrintf_String, escapeBackslashes(sourceHandle), lineNumber);
         	
         	CDIDebugModel.createLineDynamicPrintf( 
         			sourceHandle, resource, getBreakpointType(), lineNumber, true, 0, "", printfStr, true );//$NON-NLS-1$
@@ -83,13 +84,13 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
         	dprintf.setPrintfString(NLS.bind(Messages.Default_FunctionDynamicPrintf_String, sourceHandle, functionName));
 
         	openBreakpointPropertiesDialog(dprintf, part, resource, attributes);
-        } else {        
+        } else {
         	// We provide a default printf string to make the dynamic printf useful automatically
         	String printfStr = NLS.bind(Messages.Default_FunctionDynamicPrintf_String, sourceHandle, functionName);
         	
         	CDIDebugModel.createFunctionDynamicPrintf(sourceHandle, resource, getBreakpointType(), functionName, charStart,
                 charEnd, lineNumber, true, 0, "", printfStr, true); //$NON-NLS-1$
-        }            
+        }
     }
 
 	@Override
@@ -102,7 +103,8 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 	    return false;
 	}
 	
-    protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
+    @Override
+	protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
         int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range) throws CoreException 
     {
     }
@@ -121,4 +123,12 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
 	}
+
+	/**
+	 * Escape embedded backslashes for inclusion in C string.
+	 */
+	private static String escapeBackslashes(String str) {
+		return str.replaceAll(Pattern.quote("\\"), "\\\\\\\\");  //$NON-NLS-1$//$NON-NLS-2$
+	}
+
 }

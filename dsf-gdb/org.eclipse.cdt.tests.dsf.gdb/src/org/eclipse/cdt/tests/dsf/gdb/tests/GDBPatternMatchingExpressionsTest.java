@@ -59,6 +59,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
+	private static final String EXEC_NAME = "PatternMatchingExpressionsTestApp.exe";
 
 	private DsfSession fSession;
 
@@ -71,7 +72,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
 
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/PatternMatchingExpressionsTestApp.exe");
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
 	@Override

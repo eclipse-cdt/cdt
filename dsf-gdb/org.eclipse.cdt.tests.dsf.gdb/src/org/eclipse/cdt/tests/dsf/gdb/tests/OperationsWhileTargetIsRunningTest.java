@@ -61,7 +61,6 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 	private IMIContainerDMContext fContainerDmc;
 	private IGDBControl fControl;
 
-	private static final String EXEC_PATH = "data/launch/bin/";
 	private static final String EXEC_NAME = "TargetAvail.exe";
 
 	private static boolean fgAutoTerminate;

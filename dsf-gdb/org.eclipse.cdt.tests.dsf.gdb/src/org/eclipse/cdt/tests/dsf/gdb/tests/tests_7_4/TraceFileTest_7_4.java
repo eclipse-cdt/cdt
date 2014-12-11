@@ -64,15 +64,15 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TraceFileTest_7_4 extends BaseTestCase {
 
-	private final static String FILE_NAME = "TracepointTestApp.cc";
-	private final static String EXECUTABLE_PATH = "data/launch/bin/TracepointTestApp.exe";
+	private final static String SOURCE_NAME = "TracepointTestApp.cc";
+	private final static String EXEC_NAME = "TracepointTestApp.exe";
+	private final static String TRACE_NAME = "trace";
 	private final static int LINE_NUMBER_1 = 17;
 	private final static int LINE_NUMBER_2 = 24;
 	private final static String END_FUNCTION = "lastCall";
 	private final static String TEVAL_STRING = "a";
 	private final static String COLLECT_STRING1 = "x";
 	private final static String COLLECT_STRING2 = "$regs";
-	private final static String TRACE_FILE = "data/launch/bin/trace";
 
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
@@ -184,7 +184,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 		// especially in the case of a relative path
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "${workspace_loc}");
 		// Because we just set a different working directory, we must use an absolute path for the program
-    	String absoluteProgram = new Path("data/launch/bin/TracepointTestApp.exe").toFile().getAbsolutePath();
+    	String absoluteProgram = new Path(EXEC_PATH + EXEC_NAME).toFile().getAbsolutePath();
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, absoluteProgram);
 
         // Set post-mortem launch
@@ -194,7 +194,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
 		                   IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
 		// Set core file path
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, TRACE_FILE);
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EXEC_PATH + TRACE_NAME);
 
 		doLaunch();
 
@@ -242,7 +242,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 
     private void checkTracepoint(ICTracepoint tracepoint) throws Throwable {
     	TracepointActionManager tam = TracepointActionManager.getInstance();
-		assertTrue(FILE_NAME.equals(new Path(tracepoint.getFileName()).lastSegment()));
+		assertTrue(SOURCE_NAME.equals(new Path(tracepoint.getFileName()).lastSegment()));
 		assertTrue(LINE_NUMBER_1 == tracepoint.getLineNumber() || LINE_NUMBER_2 == tracepoint.getLineNumber());
 		String[] actionNames = 
 			((String)tracepoint.getMarker().getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE)).split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
@@ -262,7 +262,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
     private void startRemoteSession() throws Throwable {
     	// Set launch attributes
 		super.setLaunchAttributes();		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXECUTABLE_PATH);
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);		
@@ -347,7 +347,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 	private MIBreakpointDMContext setBreakpointAtEndLine() throws Throwable {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, FILE_NAME);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, END_FUNCTION);
 		IBreakpointDMContext bptDMC = insertBreakpoint(fBreakpointsDmc, attributes);
 		assertTrue(bptDMC instanceof MIBreakpointDMContext);
@@ -375,7 +375,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, FILE_NAME);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.COMMANDS, evalAction.getName());
 		insertBreakpoint(fBreakpointsDmc, attributes);
@@ -414,7 +414,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 	}
 
 	private void saveTraceData() throws Throwable {
-    	final File traceFile = new Path(TRACE_FILE).toFile();
+    	final File traceFile = new Path(EXEC_PATH + TRACE_NAME).toFile();
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fSession.getExecutor().submit(new Runnable() {
@@ -440,7 +440,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 	}
 
 	private void deleteOldTraceFile() throws Throwable {
-    	File traceFile = new Path(TRACE_FILE).toFile();
+    	File traceFile = new Path(EXEC_PATH + TRACE_NAME).toFile();
 		traceFile.delete();
 		assertFalse(traceFile.exists());
 	}

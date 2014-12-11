@@ -58,15 +58,10 @@ public class MIRunControlTargetAvailableTest extends BaseTestCase {
 	private IContainerDMContext fContainerDmc;
 
 	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
-	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "TargetAvail.exe";
-	private static final String SOURCE_NAME = "TargetAvail.cc";
-	
+
 	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();

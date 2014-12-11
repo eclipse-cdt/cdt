@@ -45,7 +45,7 @@ public class MIBreakpointsTest_7_4 extends MIBreakpointsTest_7_3 {
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
-		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(LINE_NUMBER_TAG, 0);
 
 		// Perform the test

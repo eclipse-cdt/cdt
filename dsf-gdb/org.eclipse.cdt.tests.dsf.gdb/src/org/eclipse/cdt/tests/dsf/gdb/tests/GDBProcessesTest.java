@@ -1,13 +1,22 @@
 /*******************************************************************************
+<<<<<<< HEAD
  * Copyright (c) 2009, 2014 Ericsson and others.
+=======
+ * Copyright (c) 2009, 2015 Ericsson and others.
+>>>>>>> debug tests: Add thread compatibility layer and use it
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
+<<<<<<< HEAD
  *     Ericsson	AB		  - Initial implementation of Test cases
  *     Simon Marchi (Ericsson) - Check for thread name support.
+=======
+ *     Ericsson AB - Initial implementation of Test cases
+ *     Simon Marchi (Ericsson) - Fix thread name test for Windows.
+>>>>>>> debug tests: Add thread compatibility layer and use it
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 

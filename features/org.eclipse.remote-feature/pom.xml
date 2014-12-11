@@ -10,6 +10,38 @@
     <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
   </parent>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-source-feature-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>source-feature</id>
+            <phase>package</phase>
+            <goals>
+              <goal>source-feature</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>attached-p2-metadata</id>
+            <phase>package</phase>
+            <goals>
+              <goal>p2-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <artifactId>org.eclipse.remote</artifactId>
   <version>1.1.1-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>

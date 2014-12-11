@@ -70,6 +70,24 @@
       "revId": "a1ba5d0628c1f70f56d40fc2738703338dc1d58a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_4fc8dc9b",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-11T01:10:52Z",
+      "side": 1,
+      "message": "Is this method really exists for perfomance reasons only? Is this is a bottleneck for some reason? where this utility even used?",
+      "parentUuid": "a766b734_a8536e62",
+      "revId": "a1ba5d0628c1f70f56d40fc2738703338dc1d58a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -778,6 +778,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		if(operations != null)
 			for (IRunnableWithProgress op: operations)
 				try {
+					// Notify the operation about the created project if it supports it.
+					if(op instanceof MBSCustomPageData.convertedRunnable)
+						((MBSCustomPageData.convertedRunnable)op).setProject(newProject);
 					wizard.getContainer().run(false, true, op);
 				} catch (InvocationTargetException e) {
 					ManagedBuilderUIPlugin.log(e);

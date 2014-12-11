@@ -45,6 +45,14 @@
             pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage">
          <toolchain toolchainID="F"/>
       </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectStorageInterfacePage"
+            operationClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.TestRunnableWithProject"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.PageForRunnableWithProject">
+         <toolchain
+               toolchainID="projectInterfaceOnly">
+         </toolchain>
+      </wizardPage>
    </extension>
 
 

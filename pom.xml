@@ -40,7 +40,12 @@
 	<repositories>
 		<repository>
 			<id>eclipse</id>
-			<url>http://download.eclipse.org/releases/luna</url>
+			<url>http://download.eclipse.org/releases/luna/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>license</id>
+			<url>http://download.eclipse.org/cbi/updates/license/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -48,6 +53,8 @@
 	<modules>
 		<module>bundles/org.eclipse.launchbar.core</module>
 		<module>bundles/org.eclipse.launchbar.ui</module>
+		<module>features/org.eclipse.launchbar</module>
+		<module>repo</module>
 	</modules>
 
 	<pluginRepositories>

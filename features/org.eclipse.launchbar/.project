@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.pde.FeatureNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>parent-pom.xml</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/pom.xml</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

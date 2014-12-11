@@ -359,6 +359,8 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	// Update the UI according to actual content of fSessionData,
 	// which must be not null.
 	private void updateSessionDataContents() {
+		if (fSessionData == null)
+			return;
 		
 		if (fViewer == null || fViewer.getControl() == null)
 			return;

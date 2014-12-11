@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_107c4029",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-12-11T18:10:32Z",
+      "side": 1,
+      "message": "In the current flows, a check is made to insure the model is not null. But it might be prudent to check again here, in case it\u0027s eventually called from elsewhere.",
+      "revId": "2a61ec71536faac15bdd5134c8e608663bd1f614",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

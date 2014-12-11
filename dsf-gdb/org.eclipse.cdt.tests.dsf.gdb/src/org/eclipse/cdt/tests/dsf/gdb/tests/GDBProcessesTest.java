@@ -32,6 +32,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -175,8 +176,13 @@ public class GDBProcessesTest extends BaseTestCase {
     	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher(threadData.getId());
 		assertTrue("Thread ID is a series of number", matcher.find());
+
 		// Check thread name
-		assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			assertEquals("maint thread's name should be empty", "", threadData.getName());
+		} else {
+			assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
+		}
     	
     	fWait.waitReset(); 
 	}

@@ -57,7 +57,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		// Create an invalid line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
-		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE + "_bad");
+		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME + "_bad");
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
 
 		// Perform the test, which we still expect to succeed
@@ -108,7 +108,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		// Create an invalid function breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
-		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME);
 		breakpoint.put(FUNCTION_TAG, "invalid-function-name");
 
 		// Perform the test, which we still expect to succeed

@@ -87,7 +87,7 @@ public class BaseTestCase {
 	@Rule public TestRule timeout = new Timeout(TEST_TIMEOUT);
 	
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
-	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp.exe";
+	private static final String DEFAULT_EXEC_NAME = "GDBMIGenericTestApp.exe";
 	
     private static GdbLaunch fLaunch;
 
@@ -215,7 +215,7 @@ public class BaseTestCase {
     	// Clear all launch attributes before starting a new test
     	launchAttributes = new HashMap<String, Object>();
     	
-   		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, DEFAULT_TEST_APP);
+   		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + DEFAULT_EXEC_NAME);
 
 		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
 		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);

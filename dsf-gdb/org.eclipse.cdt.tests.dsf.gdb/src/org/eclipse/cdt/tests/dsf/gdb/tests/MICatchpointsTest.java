@@ -82,9 +82,8 @@ import org.junit.runner.RunWith;
 @RunWith(BackgroundRunner.class)
 public class MICatchpointsTest extends BaseTestCase {
 
-    private static final String TEST_APPL   = "data/launch/bin/CatchpointTestApp.exe"; //$NON-NLS-1$
-
-    public static final String SOURCE_FILE    = "CatchpointTestApp.cc"; //$NON-NLS-1$
+    private static final String EXEC_NAME  = "CatchpointTestApp.exe"; //$NON-NLS-1$
+    private static final String SOURCE_NAME = "CatchpointTestApp.cc"; //$NON-NLS-1$
     
     public static final int LINE_NUMBER_SLEEP_CALL = 17;
 
@@ -185,7 +184,7 @@ public class MICatchpointsTest extends BaseTestCase {
     	super.setLaunchAttributes();
     	
     	// Select the binary to run the tests against
-    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, TEST_APPL);
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
     
 	@Override
@@ -1277,7 +1276,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Set the breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-		breakpoint.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		breakpoint.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		breakpoint.put(MIBreakpoints.LINE_NUMBER, lineNumber);
 		IBreakpointDMContext refLineBkpt = insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());

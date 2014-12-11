@@ -66,7 +66,8 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 
 	//	private int fTotalTracingBufferSize = 0;
 
-	protected static final String SOURCE_FILE     = "TracepointTestApp.cc";
+	protected static final String EXEC_NAME       = "TracepointTestApp.exe";
+	protected static final String SOURCE_NAME     = "TracepointTestApp.cc";
 	protected static final int    LINE_NUMBER_1_BYTE_INSTR   = 28;
 	protected static final int    LINE_NUMBER_2_BYTE_INSTR   = 15;
 	protected static final int    LINE_NUMBER_3_BYTE_INSTR   = 17;
@@ -185,7 +186,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
 		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 		
 		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
@@ -588,7 +589,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		boolean isFastTp;
 
 		public TracepointData(int line, String cond, int pass, boolean isEnabled, String cmds, boolean fast) {
-			this(SOURCE_FILE, line, cond, pass, isEnabled, cmds, fast);
+			this(SOURCE_NAME, line, cond, pass, isEnabled, cmds, fast);
 		}
 
 		public TracepointData(String file, int line, String cond, int pass, boolean isEnabled, String cmds, boolean fast) {
@@ -669,7 +670,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		for (int i = 0; i < lineNumbers.length; i++) {
 			attributes = new HashMap<String, Object>();
 			attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 			attributes.put(MIBreakpoints.LINE_NUMBER, lineNumbers[i]);
 			if (!enabled) attributes.put(MIBreakpoints.IS_ENABLED, enabled);
 			if (useCount) attributes.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[i]);
@@ -860,7 +861,6 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	 */
 	@Test
 	public void createTracepointWithMultipleCommands() throws Throwable {
-		
 		String commandsNames1 = COLLECT_ACTIONS[0].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
 				COLLECT_ACTIONS[1].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
 				COLLECT_ACTIONS[3].getName();
@@ -897,7 +897,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		for (int i = 0; i < lineNumbers.length; i++) {
 			attributes = new HashMap<String, Object>();
 			attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+			attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 			attributes.put(MIBreakpoints.LINE_NUMBER, lineNumbers[i]);
 			attributes.put(MIBreakpoints.COMMANDS, cmdNames[i]);
 			

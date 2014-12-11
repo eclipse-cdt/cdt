@@ -1,66 +1,104 @@
-#ifdef __MINGW32__
- #include <process.h>	// MinGW has no POSIX support; use MSVC runtime
-#else
- #include <pthread.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "Sleep.h"
-#define NUM_THREADS	5
+#include "Thread.h"
 
-#ifdef __MINGW32__
-typedef unsigned int TID;
-#else
-typedef pthread_t TID;
-#endif
+static const int NUM_THREADS = 5;
 
+struct PrintHelloArgs {
+	int thread_id;
+	ThreadBarrier *barrier_start;
+	ThreadBarrier *barrier_finish;
+	ThreadSemaphore *sem_start;
+};
 
-#ifdef __MINGW32__
-unsigned int __stdcall PrintHello(void *threadid)
-#else
-void *PrintHello(void *threadid)
-#endif
+static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg)
 {
-   long tid = (long)threadid;
-   printf("Hello World! It's me, thread #%ld!\n", tid);
-   SLEEP(2); // keep this thread around for a bit; the tests will check for its existence while the main thread is stopped at a breakpoint
+	struct PrintHelloArgs *args = (struct PrintHelloArgs *) void_arg;
+	int thread_id = args->thread_id;
+	ThreadBarrier *barrier_start = args->barrier_start;
+	ThreadBarrier *barrier_finish = args->barrier_finish;
+	ThreadSemaphore *sem_start = args->sem_start;
 
-#ifdef __MINGW32__
-   return 0;
-#else
-   pthread_exit(NULL);
-#endif
+	/* Indicate to main thread that the thread is started. */
+	ThreadSemaphorePut(sem_start);
+
+	printf("Hello World! It's me, thread #%d!\n", thread_id);
+
+	/* Make sure that all threads are started before the breakpoint in main hits. */
+	ThreadBarrierWait(barrier_start);
+
+	printf("Thread %d in the middle\n", thread_id);
+
+	/* Make sure that the thread does not finish before the breakpoint in main hits. */
+	ThreadBarrierWait(barrier_finish);
+
+	printf("Goodbye World! From thread #%d\n", thread_id);
+
+	return THREAD_DEFAULT_RET;
 }
 
 int main(int argc, char *argv[])
 {
-	TID threads[NUM_THREADS];
-	int t;
-	for(t=0; t < NUM_THREADS; t++)
+	ThreadHandle threads[NUM_THREADS];
+	struct PrintHelloArgs args[NUM_THREADS];
+
+	/* Used to make rendez-vous points between all threads. */
+	ThreadBarrier barrier_start;
+	ThreadBarrier barrier_finish;
+
+	/* Used to tell when a thread is started for real. */
+	ThreadSemaphore sem_start;
+
+	/* + 1 for main thread */
+	ThreadBarrierInit(&barrier_start, NUM_THREADS + 1);
+	ThreadBarrierInit(&barrier_finish, NUM_THREADS + 1);
+
+	ThreadSemaphoreInit(&sem_start, 0);
+
+	for (int t = 0; t < NUM_THREADS; t++)
 	{
-		printf("In main: creating thread %d\n", t);
-#ifdef __MINGW32__
+		printf("In main: creating thread #%d\n", t);
+
+		args[t].thread_id = t;
+		args[t].barrier_start = &barrier_start;
+		args[t].barrier_finish = &barrier_finish;
+		args[t].sem_start = &sem_start;
+
+		int ret = StartThread(PrintHello, &args[t], &threads[t]);
+
+		if (!ret)
 		{
-			uintptr_t rc = _beginthreadex(NULL, 0, PrintHello, (void*)t, 0, &threads[t]);
-	    	SLEEP(1); // debugger should for sure receive thread creation event after stepping over this sleep; not guaranteed to happen simply stepping over the thread creation call   
-		    if (rc == 0)
-		    {
-				printf("ERROR; _beginthreadex() failed. errno = %d\n", errno);
+				printf("Error: StartThread failed.\n");
 				exit(-1);
-		    }
-		}  
-#else
-		{
-	        int rc = pthread_create(&threads[t], NULL, PrintHello, (void *)t);
-	    	SLEEP(1); // debugger should for sure receive thread creation event after stepping over this sleep; not guaranteed to happen simply stepping over the thread creation call	        
-		    if (rc)
-		    {
-				printf("ERROR; return code from pthread_create() is %d\n", rc);
-				exit(-1);
-		    }
 		}
-#endif
+
+		/* Wait until the thread has really started. */
+		ThreadSemaphoreTake(&sem_start);
+
+		printf("In main: thread #%d has started\n", t); /* Breakpoint LINE_MAIN_AFTER_THREAD_START */
 	}
-	
+
+	/* Let the threads continue to the 'critical' section> */
+	ThreadBarrierWait(&barrier_start);
+
+	printf("In main thread, all threads created.\n"); /* main breakpoint here */
+
+	SLEEP(30);
+
+	/* Unlock the threads and let the program finish. */
+	ThreadBarrierWait(&barrier_finish);
+
+	for (int t = 0; t < NUM_THREADS; t++)
+	{
+		printf("In main, joining thread #%d\n", t);
+		JoinThread(threads[t], NULL);
+	}
+
+	ThreadBarrierDestroy(&barrier_start);
+	ThreadBarrierDestroy(&barrier_finish);
+	ThreadSemaphoreDestroy(&sem_start);
+
 	return 0;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
+ *     Simon Marchi (Ericsson) - Adapt test code to thread platform compatibility layer.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -55,7 +56,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.gdb.service.GDBRegisters;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
-import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
@@ -368,19 +368,7 @@ public class MIRegistersTest extends BaseTestCase {
 
 	@Test
 	public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-		// Run past the line that creates a thread and past the sleep that
-		// follows it. This is a bit tricky because the code that creates the
-		// thread is conditional depending on environment. Run to the printf
-		// before it (which is common), then do step operations over the
-		// non-common code (but same number of lines)
-		SyncUtil.runToLine(SRC_NAME, MIRunControlTest.LINE_MAIN_PRINTF);
-
-		// Because the program is about to go multi-threaded, we have to select the thread we want to keep stepping. If we don't, we will ask GDB to step
-		// the entire process which is not what we want. We can fetch the thread from the stopped event but we should do that before the second thread is
-		// created, to be sure the stopped event is for the main thread.
-		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER); // over the printf
-		SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER); // over the create-thread call
-		stoppedEvent = SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER, TestsPlugin.massageTimeout(2000)); // over the one second sleep
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SRC_NAME, MIRunControlTest.LINE_MAIN_ALL_THREADS_STARTED);
 
 		// Get the thread IDs
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);
@@ -399,12 +387,8 @@ public class MIRegistersTest extends BaseTestCase {
 		assertNotNull(ctxts);
 		assertTrue(ctxts.length > 1);
 
-		int tid1 = ((IMIExecutionDMContext) ctxts[0]).getThreadId();
-		int tid2 = ((IMIExecutionDMContext) ctxts[1]).getThreadId();
-
-		// Get execution context to thread 2
-		IExecutionDMContext execDmc = SyncUtil.createExecutionContext(containerDmc, tid2);
-		IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(execDmc, 0);
+		// Get stack frame for thread 2
+		IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(ctxts[1], 0);
 
 		String thread2RegVal0 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 0);
 		String thread2RegVal1 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 1);
@@ -413,9 +397,8 @@ public class MIRegistersTest extends BaseTestCase {
 		String thread2RegVal4 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 4);
 		String thread2RegVal5 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 5);
 
-		// Get execution context to thread 1
-		execDmc = SyncUtil.createExecutionContext(containerDmc, tid1);
-		IFrameDMContext frameDmc1 = SyncUtil.getStackFrame(execDmc, 0);
+		// Get stack frame for thread 1
+		IFrameDMContext frameDmc1 = SyncUtil.getStackFrame(ctxts[0], 0);
 
 		getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 0);
 

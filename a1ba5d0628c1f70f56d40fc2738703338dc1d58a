@@ -88,6 +88,24 @@
       "revId": "a1ba5d0628c1f70f56d40fc2738703338dc1d58a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_afded04f",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-11T01:42:15Z",
+      "side": 1,
+      "message": "I looked up trim implementation and it would be almost identical to this,\nexcept it will be few more instruction to check on first char, which will never be a space in this case, so I also think this method should be removed completely  and replaced with call to trim",
+      "parentUuid": "a766b734_4fc8dc9b",
+      "revId": "a1ba5d0628c1f70f56d40fc2738703338dc1d58a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

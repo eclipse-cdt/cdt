@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_eae4369e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_68631684",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_e84f260f",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
         "patchSetId": 14
@@ -30,6 +48,24 @@
       "writtenOn": "2014-12-10T01:22:46Z",
       "side": 1,
       "message": "Better to declare fbreakpointtags as varargs. And don\u0027t start with f\nString ... breakpointTags",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_8af5c245",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "a766b734_e84f260f",
       "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_ca3dfa7b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "Is a try-with-resources (Java 7) ok?",
+      "parentUuid": "a766b734_286f5e74",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_28463efa",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
         "patchSetId": 14
@@ -64,6 +118,24 @@
       "writtenOn": "2014-12-10T01:22:46Z",
       "side": 1,
       "message": "Should have javadoc comment since it is API used by subtests, need to mention that method only can be called if resolveBreakpointLocations called prior",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_b0bd8c01",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_28463efa",
       "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_0a6ff273",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "Yes, it was already like that. It uses the same source file as MIRunControlTest, so it avoids re-defining the line numbers. MIRegistersTest does that as well.\n\nIs it something that would be worth changing in a subsequent patch?",
+      "parentUuid": "a766b734_e868c66d",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_a859aed5",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
         "patchSetId": 14
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_2a774e46",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "Ok, I will do that and a few other related cleanups in another patch.",
+      "parentUuid": "a766b734_a859aed5",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_8854b29b",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
         "patchSetId": 14
@@ -115,6 +223,24 @@
       "writtenOn": "2014-12-10T01:22:46Z",
       "side": 1,
       "message": "why line number constant are still there? something uses them?",
+      "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_ea71d652",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2014-12-11T15:34:23Z",
+      "side": 1,
+      "message": "No, they should be deleted.\n\nDone.",
+      "parentUuid": "a766b734_8854b29b",
       "revId": "5d9e25b60d249a8cd1b9a41a9bc7b6d5eee03745",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

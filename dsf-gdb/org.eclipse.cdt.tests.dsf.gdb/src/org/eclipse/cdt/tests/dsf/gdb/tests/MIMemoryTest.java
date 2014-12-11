@@ -57,6 +57,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class MIMemoryTest extends BaseTestCase {
+	private static final String EXEC_NAME = "MemoryTestApp.exe";
 
 	private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession          fSession;
@@ -115,7 +116,7 @@ public class MIMemoryTest extends BaseTestCase {
 		super.setLaunchAttributes();
 		
 		// Select the binary to run the tests against
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/MemoryTestApp.exe");
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
 
 	@Override

@@ -86,7 +86,7 @@ public class BaseTestCase {
 	@Rule public TestRule timeout = new Timeout(TEST_TIMEOUT);
 	
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
-	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp.exe";
+	private static final String DEFAULT_TEST_APP = EXEC_PATH + "GDBMIGenericTestApp.exe";
 	
     private static GdbLaunch fLaunch;
 

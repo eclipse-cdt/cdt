@@ -55,11 +55,7 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	private DsfServicesTracker fServicesTracker;    
 
 	private IMultiRunControl fMultiRun;
-		
-	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
+
 	/*
 	 * Name of the executable
 	 */

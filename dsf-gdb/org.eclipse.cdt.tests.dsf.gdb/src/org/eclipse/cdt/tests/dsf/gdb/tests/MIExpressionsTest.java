@@ -63,6 +63,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class MIExpressionsTest extends BaseTestCase {
+	private static final String EXEC_NAME = "ExpressionTestApp.exe";
 
     private DsfSession fSession;
 
@@ -81,7 +82,7 @@ public class MIExpressionsTest extends BaseTestCase {
     protected void setLaunchAttributes() {
     	super.setLaunchAttributes();
     	    	
-    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/ExpressionTestApp.exe");
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
 
     @Override

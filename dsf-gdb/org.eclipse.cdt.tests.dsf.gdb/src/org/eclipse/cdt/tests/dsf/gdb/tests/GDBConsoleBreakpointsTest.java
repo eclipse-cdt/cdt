@@ -70,9 +70,9 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
 	final static private int DEFAULT_TIMEOUT = 20000;
 	final static private TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
 
-	final static private String FILE_NAME_VALID = new Path("data/launch/src/GDBMIGenericTestApp.cc").toFile().getAbsolutePath();
+	final static private String SOURCE_NAME_VALID = new Path("data/launch/src/GDBMIGenericTestApp.cc").toFile().getAbsolutePath();
 	final static private int LINE_NUMBER_VALID = 8;
-	final static private String FILE_NAME_INVALID = new Path("x.c").toFile().getAbsolutePath();
+	final static private String SOURCE_NAME_INVALID = new Path("x.c").toFile().getAbsolutePath();
 	final static private int LINE_NUMBER_INVALID = 2;
 
 	final static private String FUNCTION_VALID = "main()";
@@ -542,7 +542,7 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
   	private Map<String, Object> getLocationBreakpointAttributes(Class<? extends ICBreakpoint> type, boolean valid) {
   		Map<String, Object> map = new HashMap<String, Object>();
   		if (ICFunctionBreakpoint.class.equals(type)) {
-  			map.put(ATTR_FILE_NAME, (valid) ? FILE_NAME_VALID : FILE_NAME_INVALID);
+  			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
   			map.put(ATTR_FUNCTION, (valid) ? FUNCTION_VALID : FUNCTION_INVALID);
   		}
   		else if (ICAddressBreakpoint.class.equals(type)) {
@@ -552,7 +552,7 @@ public class GDBConsoleBreakpointsTest extends BaseTestCase {
   					new Addr64("0x0").toHexAddressString());
   		}
   		else if (ICLineBreakpoint.class.equals(type)) {
-  			map.put(ATTR_FILE_NAME, (valid) ? FILE_NAME_VALID : FILE_NAME_INVALID);
+  			map.put(ATTR_FILE_NAME, (valid) ? SOURCE_NAME_VALID : SOURCE_NAME_INVALID);
   			map.put(ATTR_LINE_NUMBER, (valid) ? LINE_NUMBER_VALID : LINE_NUMBER_INVALID);
   		}
   		return map;

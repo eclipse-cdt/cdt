@@ -1542,12 +1542,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				if (!isLineStart) {
 					continue;
 				}
-				if (!singleLine) {
-					singleLine = lineRegion.getOffset() + lineRegion.getLength() >= partition.getOffset() + partition.getLength();
-					if (!singleLine) {
-						continue;
-					}
-				}
+
 				if (startLine < 0 || lineNr - endLine > 1) {
 					if (startLine >= 0 && endLine - startLine >= fMinCommentLines) {
 						Position projection = createCommentPosition(alignRegion(commentRange, ctx, true));

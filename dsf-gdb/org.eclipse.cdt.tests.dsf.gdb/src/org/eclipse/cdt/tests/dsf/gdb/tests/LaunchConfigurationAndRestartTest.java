@@ -53,11 +53,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class LaunchConfigurationAndRestartTest extends BaseTestCase {
+	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
 
-	protected static final String PROGRAM_DIR = "data/launch/bin/";
-	protected static final String PROGRAM_NAME = "LaunchConfigurationAndRestartTestApp.exe";
-	protected static final String PROGRAM = PROGRAM_DIR + PROGRAM_NAME;
-	
 	protected static final int FIRST_LINE_IN_MAIN = 27;
 	protected static final int LAST_LINE_IN_MAIN = 30;
 
@@ -82,7 +79,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     	super.setLaunchAttributes();
 
     	// Set the binary
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, PROGRAM);
+        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
     
     // This method cannot be tagged as @Before, because the launch is not
@@ -144,10 +141,12 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      */
     @Test
     public void testSettingWorkingDirectory() throws Throwable {
-    	IPath path = new Path(fFullProgramPath);
-    	String dir = path.removeLastSegments(4).toPortableString() + "/" + PROGRAM_DIR;
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, dir);
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, dir + PROGRAM_NAME);
+		IPath path = new Path(fFullProgramPath);
+		// TODO: do not hardcode this 4. It could probably use Path(EXEC_PATH/SOURCE_PATH).segmentsCount()
+		// Also, it doesn't seem to agree with the comment (cd to source dir or exec dir?).
+		String dir = path.removeLastSegments(4).toPortableString() + "/" + EXEC_PATH;
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, dir);
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, dir + EXEC_NAME);
 
        	doLaunch();
         
@@ -156,7 +155,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     		protected void execute(DataRequestMonitor<MIInfo> rm) {
     			fGdbControl.queueCommand(
     					fGdbControl.getCommandFactory().createMIFileExecFile(
-    							fGdbControl.getContext(), PROGRAM_NAME),
+    							fGdbControl.getContext(), EXEC_NAME),
     				    rm);
     		}
     	};
@@ -685,7 +684,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     	// the JUnit tests.
     	
     	IFile fakeFile = null;
-        CDIDebugModel.createLineBreakpoint(PROGRAM, fakeFile, ICBreakpointType.REGULAR, LAST_LINE_IN_MAIN + 1, true, 0, "", true); //$NON-NLS-1$
+        CDIDebugModel.createLineBreakpoint(EXEC_PATH + EXEC_NAME, fakeFile, ICBreakpointType.REGULAR, LAST_LINE_IN_MAIN + 1, true, 0, "", true); //$NON-NLS-1$
     	doLaunch();
 
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();

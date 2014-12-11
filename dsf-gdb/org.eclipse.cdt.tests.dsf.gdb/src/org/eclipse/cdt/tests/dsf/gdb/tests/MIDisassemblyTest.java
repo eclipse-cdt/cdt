@@ -58,10 +58,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class MIDisassemblyTest extends BaseTestCase {
-
-    private static final String FILE_NAME = "MemoryTestApp.cc";
+    private static final String EXEC_NAME = "MemoryTestApp.exe";
+    private static final String SOURCE_NAME = "MemoryTestApp.cc";
     private static final int LINE_NUMBER = 35;
-    private static final String INVALID_FILE_NAME = "invalid_filename";
+    private static final String INVALID_SOURCE_NAME = "invalid_filename";
     
     private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
     private DsfSession          fSession;
@@ -106,7 +106,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     	super.setLaunchAttributes();
     	
     	// Select the binary to run the tests against
-    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/MemoryTestApp.exe");
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
     
 	@Override
@@ -465,7 +465,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     public void readWithValidFunction() throws Throwable {
 
         // Setup call parameters
-        String filename = INVALID_FILE_NAME;
+        String filename = INVALID_SOURCE_NAME;
         int linenum = 1;
         int count = -1;
         
@@ -488,7 +488,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     public void readWithInvalidLineNumber() throws Throwable {
 
         // Setup call parameters
-        String filename = FILE_NAME;
+        String filename = SOURCE_NAME;
         int linenum = -1;
         int count = -1;
 
@@ -511,7 +511,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     public void readWithValidFilename() throws Throwable {
 
         // Setup call parameters
-        String filename = FILE_NAME;
+        String filename = SOURCE_NAME;
         int linenum = LINE_NUMBER;
         int count = -1;
 
@@ -533,7 +533,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     public void readWithLineCount() throws Throwable {
 
         // Setup call parameters
-        String filename = FILE_NAME;
+        String filename = SOURCE_NAME;
         int linenum = LINE_NUMBER;
         int count = 5;
       
@@ -578,7 +578,7 @@ public class MIDisassemblyTest extends BaseTestCase {
     public void readMixedWithLineCount() throws Throwable {
 
         // Setup call parameters
-        String filename = FILE_NAME;
+        String filename = SOURCE_NAME;
         int linenum = LINE_NUMBER;
         int count = 5;
       

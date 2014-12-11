@@ -57,6 +57,9 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class PostMortemCoreTest extends BaseTestCase {
+	private static final String EXEC_NAME = "ExpressionTestApp.exe";
+	private static final String WRONG_EXEC_NAME = "MultiThread.exe";
+	private static final String CORE_NAME = "core";
 
     private DsfSession fSession;
 
@@ -83,7 +86,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		// especially in the case of a relative path
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "${workspace_loc}");
 		// Because we just set a different working directory, we must use an absolute path for the program
-    	String absoluteProgram = new Path("data/launch/bin/ExpressionTestApp.exe").toFile().getAbsolutePath();
+    	String absoluteProgram = new Path(EXEC_PATH + EXEC_NAME).toFile().getAbsolutePath();
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, absoluteProgram);
         
         // Set post-mortem launch
@@ -93,7 +96,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
 		                   IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE);
 		// Set default core file path
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, "data/launch/bin/core");
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EXEC_PATH + CORE_NAME);
     }
     
     // This method cannot be tagged as @Before, because the launch is not
@@ -144,7 +147,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testAbsoluteCoreFilePath() throws Throwable {
-    	File file = new File("data/launch/bin/core");
+    	File file = new File(EXEC_PATH + "core");
     	assertTrue("Cannot find test file; " + file.toString(), file.exists());
 
     	String absoluteCoreFile = file.getAbsolutePath();
@@ -161,7 +164,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testRelativeCoreFilePath() throws Throwable {
-    	File file = new File("data/launch/bin/core");
+    	File file = new File(EXEC_PATH + "core");
     	assertTrue("Cannot find test file; " + file.toString(), file.exists());
 
     	String relativeCoreFile = file.toString();
@@ -178,7 +181,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testAbsoluteCoreFilePathInvalid() throws Throwable {
-    	File file = new File("data/launch/bin/MultiThread.exe");
+    	File file = new File(EXEC_PATH + WRONG_EXEC_NAME);
     	assertTrue("Cannot find test file: " + file.toString(), file.exists());
     	
     	String absoluteCoreFile = file.getAbsolutePath();
@@ -200,7 +203,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testRelativeCoreFilePathInvalid() throws Throwable {
-    	File file = new File("data/launch/bin/MultiThread.exe");
+    	File file = new File(EXEC_PATH + WRONG_EXEC_NAME);
     	assertTrue("Cannot find test file: " + file.toString(), file.exists());
     	
     	String relativeCoreFile = file.toString();
@@ -222,7 +225,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testAbsoluteCoreFilePathMissing() throws Throwable {
-    	File file = new File("data/launch/bin/MissingFile");
+    	File file = new File(EXEC_PATH + "MissingFile");
     	assertTrue("Should not have found test file: " + file.toString(), !file.exists());
     	
     	String absoluteCoreFile = file.getAbsolutePath();
@@ -244,7 +247,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testRelativeCoreFilePathMissing() throws Throwable {
-    	File file = new File("data/launch/bin/MissingFile");
+    	File file = new File(EXEC_PATH + "MissingFile");
     	assertTrue("Should not have found test file: " + file.toString(), !file.exists());
     	
     	String relativeCoreFile = file.toString();
@@ -278,7 +281,7 @@ public class PostMortemCoreTest extends BaseTestCase {
     	//   properly.
     	
     	// Absolute path of the core file
-       	File file = new File("data/launch/bin/core");
+       	File file = new File(EXEC_PATH + "core");
     	String absoluteCoreFile = file.getAbsolutePath();
 
     	// Variable for workspace location

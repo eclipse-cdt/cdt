@@ -59,6 +59,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(BackgroundRunner.class)
 public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
+	final static private String EXEC_NAME = "ConsoleSyncTestApp.exe";
 
 	final static private int DEFAULT_TIMEOUT = 1000;
 	final static private TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
@@ -83,8 +84,8 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
     @Override
     protected void setLaunchAttributes() {
     	super.setLaunchAttributes();
-    	    	
-    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/ConsoleSyncTestApp.exe");
+
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
     }
 
     @Override

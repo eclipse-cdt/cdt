@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Ericsson	AB		  - Initial implementation of Test cases
+ *     Ericsson AB - Initial implementation of Test cases
+ *     Simon Marchi (Ericsson) - Fix thread name test for Windows.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -175,8 +177,13 @@ public class GDBProcessesTest extends BaseTestCase {
     	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher(threadData.getId());
 		assertTrue("Thread ID is a series of number", matcher.find());
+
 		// Check thread name
-		assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			assertEquals("main thread's name should be empty", "", threadData.getName());
+		} else {
+			assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
+		}
     	
     	fWait.waitReset(); 
 	}

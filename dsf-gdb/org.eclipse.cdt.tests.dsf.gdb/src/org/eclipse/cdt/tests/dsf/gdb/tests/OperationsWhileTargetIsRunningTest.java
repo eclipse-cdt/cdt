@@ -59,10 +59,6 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 	private IGDBControl fControl;
 
 	/*
-	 * Path to executable
-	 */
-	private static final String EXEC_PATH = "data/launch/bin/";
-	/*
 	 * Name of the executable
 	 */
 	private static final String EXEC_NAME = "TargetAvail.exe";

@@ -64,7 +64,8 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 
 	//	private int fTotalTracingBufferSize = 0;
 
-	protected static final String SOURCE_FILE     = "TracepointTestApp.cc";
+	protected static final String EXEC_NAME       = "TracepointTestApp.exe";
+	protected static final String SOURCE_NAME     = "TracepointTestApp.cc";
 	protected static final String METHOD_NAME     = "testTracepoints";
 	protected static final int    LINE_NUMBER_1   = 97;
 	protected static final int    LINE_NUMBER_2   = 75;
@@ -183,7 +184,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
 		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 		
 		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
@@ -699,7 +700,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
 
@@ -713,7 +714,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a fast tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_4);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
 
@@ -727,7 +728,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Forth tracepoint (will be a fast tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
 
@@ -741,7 +742,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Fifth tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
 
@@ -753,11 +754,11 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();		
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, NO_CONDITION, 0, true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, NO_CONDITION, 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_2, NO_CONDITION, 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_4, NO_CONDITION, 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -796,11 +797,11 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		}
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, NO_CONDITION, 0, false, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, false, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, NO_CONDITION, 0, false, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, false, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, false, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_2, NO_CONDITION, 0, false, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, false, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_4, NO_CONDITION, 0, false, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, false, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, false, NO_COMMANDS, acceptsFastTpOnFourBytes()));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -821,11 +822,11 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		}
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, NO_CONDITION, 0, true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, NO_CONDITION, 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_2, NO_CONDITION, 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_4, NO_CONDITION, 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -847,11 +848,11 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		}
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, NO_CONDITION, PASS_COUNTS[0], true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, PASS_COUNTS[1], true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, NO_CONDITION, PASS_COUNTS[2], true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, PASS_COUNTS[3], true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, PASS_COUNTS[4], true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_2, NO_CONDITION, PASS_COUNTS[0], true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, PASS_COUNTS[1], true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_4, NO_CONDITION, PASS_COUNTS[2], true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, PASS_COUNTS[3], true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, PASS_COUNTS[4], true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -873,11 +874,11 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		}
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, CONDITIONS[0], 0, true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, CONDITIONS[1], 0, true, NO_COMMANDS, false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, CONDITIONS[2], 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, CONDITIONS[3], 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, CONDITIONS[4], 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_2, CONDITIONS[0], 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, CONDITIONS[1], 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_4, CONDITIONS[2], 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, CONDITIONS[3], 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, CONDITIONS[4], 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 
@@ -900,11 +901,11 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		}
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, NO_CONDITION, 0, true, COLLECT_ACTIONS[0].toString(), false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, true, COLLECT_ACTIONS[1].toString(), false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, NO_CONDITION, 0, true, COLLECT_ACTIONS[2].toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, true, COLLECT_ACTIONS[3].toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, true, COLLECT_ACTIONS[4].toString(), acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_2, NO_CONDITION, 0, true, COLLECT_ACTIONS[0].toString(), false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, true, COLLECT_ACTIONS[1].toString(), false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_4, NO_CONDITION, 0, true, COLLECT_ACTIONS[2].toString(), true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, COLLECT_ACTIONS[3].toString(), true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, true, COLLECT_ACTIONS[4].toString(), acceptsFastTpOnFourBytes()));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 
@@ -921,7 +922,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		attributes.put(MIBreakpoints.IS_ENABLED, false);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -936,7 +937,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.IS_ENABLED, false);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -951,7 +952,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		attributes.put(MIBreakpoints.IS_ENABLED, false);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -964,9 +965,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, false, NO_COMMANDS, acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, false, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, false, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, false, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, false, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, false, NO_COMMANDS, false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -982,7 +983,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		attributes.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[0]);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -997,7 +998,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[1]);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1012,7 +1013,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		attributes.put(MIBreakpoints.PASS_COUNT, PASS_COUNTS[2]);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1025,9 +1026,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 		
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, PASS_COUNTS[0], true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, PASS_COUNTS[1], true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, PASS_COUNTS[2], true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, PASS_COUNTS[0], true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, PASS_COUNTS[1], true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, PASS_COUNTS[2], true, NO_COMMANDS, false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -1043,7 +1044,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[0]);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1058,7 +1059,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[1]);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1073,7 +1074,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[2]);
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1086,9 +1087,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 		
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, CONDITIONS[0], 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, CONDITIONS[1], 0, true, NO_COMMANDS, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, CONDITIONS[2], 0, true, NO_COMMANDS, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, CONDITIONS[0], 0, true, NO_COMMANDS, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, CONDITIONS[1], 0, true, NO_COMMANDS, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, CONDITIONS[2], 0, true, NO_COMMANDS, false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -1104,7 +1105,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[0].getName());
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1119,7 +1120,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[1].getName());
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1134,7 +1135,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[2].getName());
 		fTracepoints[index++] = insertBreakpoint(fBreakpointsDmc, attributes);
@@ -1147,9 +1148,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, true, COLLECT_ACTIONS[0].toString(), acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, true, COLLECT_ACTIONS[1].toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, true, COLLECT_ACTIONS[2].toString(), false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, true, COLLECT_ACTIONS[0].toString(), acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, COLLECT_ACTIONS[1].toString(), true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, true, COLLECT_ACTIONS[2].toString(), false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -1165,7 +1166,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		String commandsNames1 = COLLECT_ACTIONS[0].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
 				COLLECT_ACTIONS[1].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
@@ -1186,7 +1187,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		String commandsNames2 = COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
 				COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
@@ -1207,7 +1208,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		String commandsNames3 = COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
 				COLLECT_ACTIONS[2].getName() + TracepointActionManager.TRACEPOINT_ACTION_DELIMITER +
@@ -1226,9 +1227,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, true, commandsResult1, acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, true, commandsResult2, true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, true, commandsResult3, false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, NO_CONDITION, 0, true, commandsResult1, acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, NO_CONDITION, 0, true, commandsResult2, true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, NO_CONDITION, 0, true, commandsResult3, false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -1244,7 +1245,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[0].getName());
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[0]);
@@ -1262,7 +1263,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[1].getName());
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[1]);
@@ -1280,7 +1281,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[2].getName());
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[2]);
@@ -1296,9 +1297,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, CONDITIONS[0], PASS_COUNTS[0], true, COLLECT_ACTIONS[0].toString(), acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, CONDITIONS[1], PASS_COUNTS[1], true, COLLECT_ACTIONS[1].toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, CONDITIONS[2], PASS_COUNTS[2], true, COLLECT_ACTIONS[2].toString(), false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, CONDITIONS[0], PASS_COUNTS[0], true, COLLECT_ACTIONS[0].toString(), acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, CONDITIONS[1], PASS_COUNTS[1], true, COLLECT_ACTIONS[1].toString(), true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, CONDITIONS[2], PASS_COUNTS[2], true, COLLECT_ACTIONS[2].toString(), false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}
@@ -1314,7 +1315,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_2);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[0].getName());
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[0]);
@@ -1332,7 +1333,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Second tracepoint will be a fast tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, LINE_NUMBER_1);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[1].getName());
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[1]);
@@ -1350,7 +1351,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
-		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
+		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, METHOD_NAME);
 		attributes.put(MIBreakpoints.COMMANDS, COLLECT_ACTIONS[2].getName());
 		attributes.put(MIBreakpoints.CONDITION, CONDITIONS[2]);
@@ -1366,9 +1367,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		clearEventCounters();
 
 		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, CONDITIONS[0], PASS_COUNTS[0], false, COLLECT_ACTIONS[0].toString(), acceptsFastTpOnFourBytes()));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, CONDITIONS[1], PASS_COUNTS[1], false, COLLECT_ACTIONS[1].toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, CONDITIONS[2], PASS_COUNTS[2], false, COLLECT_ACTIONS[2].toString(), false));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_LOOP_2, CONDITIONS[0], PASS_COUNTS[0], false, COLLECT_ACTIONS[0].toString(), acceptsFastTpOnFourBytes()));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_1, CONDITIONS[1], PASS_COUNTS[1], false, COLLECT_ACTIONS[1].toString(), true));
+		dataArray.add(new TracepointData(SOURCE_NAME, LINE_NUMBER_3, CONDITIONS[2], PASS_COUNTS[2], false, COLLECT_ACTIONS[2].toString(), false));
 
 		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
 	}

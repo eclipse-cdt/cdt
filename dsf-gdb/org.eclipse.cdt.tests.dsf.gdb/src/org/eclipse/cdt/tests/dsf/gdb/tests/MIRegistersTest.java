@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
+ *     Simon Marchi (Ericsson)- Adapt test code to thread platform compatibility layer.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -393,7 +394,7 @@ public class MIRegistersTest extends BaseTestCase {
 		// thread is conditional depending on environment. Run to the printf
 		// before it (which is common), then do step operations over the
 		// non-common code (but same number of lines)
-		SyncUtil.runToLine(SRC_NAME, MIRunControlTest.LINE_MAIN_PRINTF);
+		SyncUtil.runToLine(SRC_NAME, MIRunControlTest.LINE_MAIN_ALL_THREADS_STARTED);
 
 		// Because the program is about to go multi-threaded, we have to select the thread we want to keep stepping. If we don't, we will ask GDB to step
 		// the entire process which is not what we want. We can fetch the thread from the stopped event but we should do that before the second thread is

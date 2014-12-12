@@ -70,7 +70,7 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public static final int lk_nullptr = 7;
 
 	/**
-	 * Get the literal expression kind.
+	 * Returns the literal expression kind.
 	 */
 	public int getKind();
 
@@ -88,12 +88,12 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public String toString();
 	
 	/**
-	 * Set the literal expression kind.
+	 * Sets the literal expression kind.
 	 */
 	public void setKind(int value);
 
 	/**
-	 * Provide the value for the expression.
+	 * Provides the value for the expression.
 	 * @since 5.1
 	 */
 	public void setValue(char[] value);

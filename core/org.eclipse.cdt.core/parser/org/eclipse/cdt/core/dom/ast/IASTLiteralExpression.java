@@ -19,22 +19,22 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTLiteralExpression extends IASTExpression {
 	/**
-	 * An integer literal e.g. 5
+	 * An integer literal e.g. {@code 5}
 	 */
 	public static final int lk_integer_constant = 0;
 
 	/**
-	 * A floating point literal e.g. 6.0
+	 * A floating point literal e.g. {@code 6.0}
 	 */
 	public static final int lk_float_constant = 1;
 
 	/**
-	 * A char literal e.g. 'a'
+	 * A character literal e.g. {@code 'a'}
 	 */
 	public static final int lk_char_constant = 2;
 
 	/**
-	 * A string literal e.g. "a literal"
+	 * A string literal e.g. {@code "a literal"}
 	 */
 	public static final int lk_string_literal = 3;
 
@@ -46,31 +46,32 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public static final int lk_last = lk_string_literal;
 
 	/**
-	 * <code>lk_this</code> represents the 'this' keyword for  c++ only.
+	 * {@code lk_this} represents the '{@code this}' keyword for C++ only.
 	 * @since 5.1
 	 */
 	public static final int lk_this = 4;
 
 	/**
-	 * <code>lk_true</code> represents the 'true' keyword.
+	 * {@code lk_true} represents the '{@code true}' keyword.
 	 * @since 5.1
 	 */
 	public static final int lk_true = 5;
 
 	/**
-	 * <code>lk_false</code> represents the 'false' keyword.
+	 * {@code lk_false} represents the '{@code false}' keyword.
 	 * @since 5.1
 	 */
 	public static final int lk_false = 6;
 
 	/**
-	 * <code>lk_nullptr</code> represents the 'nullptr' keyword.
+	 * {@code lk_nullptr} represents the '{@code nullptr}' keyword.
 	 * @since 5.4
 	 */
 	public static final int lk_nullptr = 7;
 
 	/**
-	 * Returns the literal expression kind.
+	 * Returns the kind of the literal expression kind, which can be one of the {@code lk_*}
+	 * constants defined above.
 	 */
 	public int getKind();
 
@@ -88,12 +89,12 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public String toString();
 	
 	/**
-	 * Sets the literal expression kind.
+	 * Sets the kind of the literal expression.
 	 */
 	public void setKind(int value);
 
 	/**
-	 * Provides the value for the expression.
+	 * Sets the value for the expression.
 	 * @since 5.1
 	 */
 	public void setValue(char[] value);

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_e4b0e6f8",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-12-12T18:05:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_b99a97f1",
+      "revId": "d0509c0b0f11b2cb5219a6ff9f8dcbdf594373d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a766b734_f98fefb1",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/VisualizerView.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-12-12T17:58:29Z",
       "side": 1,
       "message": "Please add 2014",
+      "revId": "d0509c0b0f11b2cb5219a6ff9f8dcbdf594373d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_c4b32a01",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/VisualizerView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2014-12-12T18:05:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a766b734_f98fefb1",
       "revId": "d0509c0b0f11b2cb5219a6ff9f8dcbdf594373d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

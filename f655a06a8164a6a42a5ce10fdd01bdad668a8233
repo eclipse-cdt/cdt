@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a766b734_93169a08",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-12T02:56:20Z",
+      "side": 1,
+      "message": "It\u0027s a good idea to run your tests before submitting them to Gerrit.",
+      "revId": "f655a06a8164a6a42a5ce10fdd01bdad668a8233",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

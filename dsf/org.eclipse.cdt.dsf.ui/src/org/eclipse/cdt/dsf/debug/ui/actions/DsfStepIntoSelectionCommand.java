@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson AB and others.
+ * Copyright (c) 2013, 2014 Ericsson AB and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,11 @@ import org.eclipse.swt.widgets.Display;
  * @since 2.4
  */
 public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements IStepIntoSelectionHandler, IDsfStepIntoSelection {
+	private final DsfSession fSession;
 	private final DsfServicesTracker fTracker;
+	
 	public DsfStepIntoSelectionCommand(DsfSession session) {
+		fSession = session;
 		fTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
 	}
 	
@@ -84,40 +87,7 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 		}
 
 		final IExecutionDMContext dmc = DMContexts.getAncestorOfType(((IDMVMContext) targets[0]).getDMContext(), IExecutionDMContext.class);
-		if (dmc == null) {
-			return false;
-		}
-
-		return isExecutable(dmc, fTracker);
-	}
-
-	private boolean isExecutable(final IExecutionDMContext dmc, final DsfServicesTracker tracker) {
-		final DsfSession session = DsfSession.getSession(dmc.getSessionId());
-		if (session != null && session.isActive()) {
-			try {
-				Query<Boolean> query = new Query<Boolean>() {
-					@Override
-					protected void execute(DataRequestMonitor<Boolean> rm) {
-						IRunControl3 runControl = tracker.getService(IRunControl3.class);
-						if (runControl != null) {
-							// The selection may not be up to date, this is indicated with
-							// the selectedFunction being set to null
-							runControl.canStepIntoSelection(dmc, null, 0, null, rm);
-						} else {
-							rm.setData(false);
-							rm.done();
-						}
-					}
-				};
-
-				session.getExecutor().execute(query);
-				return query.get();
-			} catch (InterruptedException e) {
-			} catch (ExecutionException e) {
-			}
-		}
-
-		return false;
+		return isExecutable(dmc);
 	}
 
 	@Override
@@ -138,43 +108,54 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand implements
 		if (dmc == null) {
 			return false;
 		}
-		
-		DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), dmc.getSessionId());
-		boolean result = isExecutable(dmc, tracker);
-		tracker.dispose();
-		return result;
+
+		if (fSession != null && fSession.isActive()) {
+			try {
+				Query<Boolean> query = new Query<Boolean>() {
+					@Override
+					protected void execute(DataRequestMonitor<Boolean> rm) {
+						IRunControl3 runControl = fTracker.getService(IRunControl3.class);
+						if (runControl == null) {
+							rm.done(false);
+							return;
+						}
+
+						// The selection may not be up to date, this is indicated with
+						// the selectedFunction being set to null
+						runControl.canStepIntoSelection(dmc, null, 0, null, rm);
+					}
+				};
+
+				fSession.getExecutor().execute(query);
+				return query.get();
+			} catch (InterruptedException e) {
+			} catch (ExecutionException e) {
+			}
+		}
+
+		return false;
 	}
 
 	@Override
 	public void runToSelection(final String fileName, final int lineLocation, final IFunctionDeclaration selectedFunction, final IExecutionDMContext dmc) {
-		final DsfSession session = DsfSession.getSession(dmc.getSessionId());
-		if (session != null && session.isActive()) {
+		if (fSession != null && fSession.isActive()) {
 			Throwable exception = null;
 			try {
 				Query<Object> query = new Query<Object>() {
 					@Override
 					protected void execute(final DataRequestMonitor<Object> rm) {
-						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
-
-						boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
-
-						IRunControl3 runControl = tracker.getService(IRunControl3.class);
-						tracker.dispose();
-						StringBuilder eMessage = null;
-						if (runControl != null) {
-							runControl.stepIntoSelection(dmc, fileName, lineLocation, skipBreakpoints, selectedFunction, rm);
+						IRunControl3 runControl = fTracker.getService(IRunControl3.class);
+						if (runControl == null) {
+							rm.done(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl3 service not available", null)); //$NON-NLS-1$
 							return;
-						} else {
-							eMessage = new StringBuilder("IRunControl3 service not available"); //$NON-NLS-1$
 						}
 
-						// Either runControl is null or an Exception has occurred
-						rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, eMessage.toString(), null));
-						rm.done();
+						boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
+						runControl.stepIntoSelection(dmc, fileName, lineLocation, skipBreakpoints, selectedFunction, rm);
 					}
 				};
 
-				session.getExecutor().execute(query);
+				fSession.getExecutor().execute(query);
 				query.get();
 			} catch (RejectedExecutionException e) {
 				exception = e;

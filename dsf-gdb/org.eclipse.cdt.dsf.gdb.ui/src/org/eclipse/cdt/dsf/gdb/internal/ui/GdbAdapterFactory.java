@@ -41,7 +41,6 @@ import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepOverCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepReturnCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfSuspendCommand;
-import org.eclipse.cdt.dsf.debug.ui.actions.IDsfStepIntoSelection;
 import org.eclipse.cdt.dsf.debug.ui.sourcelookup.DsfSourceDisplayAdapter;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.DefaultRefreshAllTarget;
@@ -211,7 +210,6 @@ public class GdbAdapterFactory
             session.registerModelAdapter(ISelectNextTraceRecordHandler.class, fSelectNextRecordTarget);
             session.registerModelAdapter(ISelectPrevTraceRecordHandler.class, fSelectPrevRecordTarget);
             session.registerModelAdapter(IPinProvider.class, fPinProvider);
-            session.registerModelAdapter(IDsfStepIntoSelection.class, fStepIntoSelectionCommand);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()

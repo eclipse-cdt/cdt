@@ -321,7 +321,7 @@ public class TestToolActions extends AbstractTest {
 		bot.button("OK").click();
 		// We need to wait until the Makefile.in file is created so
 		// sleep a bit and look for it
-		bot.sleep(3000);
+		bot.sleep(5000);
 		
 		// Verify a number of generated files now exist
 		String[] fileList = { "Makefile.in", "src/Makefile.in", "configure", "config.sub" };

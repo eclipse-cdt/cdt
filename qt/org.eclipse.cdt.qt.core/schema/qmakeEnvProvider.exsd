@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.qt.core" xmlns="http://www.w3.org/2001/XMLSchema">
-<include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
-
 <annotation>
       <appinfo>
          <meta.schema plugin="org.eclipse.cdt.qt.core" id="qmakeEnvProvider" name="QMake Environment Provider"/>
@@ -66,7 +64,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="priority" type="integer" default="0">
+         <attribute name="priority" type="integer">
             <annotation>
                <documentation>
                   Priority of QMake environment provider. Less number means higher priority. Default priority is 0.
@@ -121,6 +119,7 @@
          The contributed class must implement &lt;code&gt;org.eclipse.cdt.qt.core.index.IQMakeEnvProvider&lt;/code&gt;.
       </documentation>
    </annotation>
+
 
    <annotation>
       <appinfo>

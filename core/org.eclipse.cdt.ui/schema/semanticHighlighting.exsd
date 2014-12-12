@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
-<include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
-
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="semanticHighligher" name="Semantic Highlighting"/>
@@ -24,7 +22,9 @@ Contributed highlightings will be visible in the Code tree of the &apos;C/C++ - 
 &lt;/p&gt;
       </documentation>
    </annotation>
+
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
    <element name="extension">
       <annotation>
          <appInfo>
@@ -61,6 +61,7 @@ Contributed highlightings will be visible in the Code tree of the &apos;C/C++ - 
          </attribute>
       </complexType>
    </element>
+
    <element name="semanticHighlighting">
       <complexType>
          <sequence>
@@ -168,14 +169,7 @@ The priorities of the built-in highlightings are available in &lt;code&gt;org.ec
          </attribute>
       </complexType>
    </element>
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.ISemanticHighlighter&lt;/code&gt;
-      </documentation>
-   </annotation>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -184,6 +178,7 @@ The priorities of the built-in highlightings are available in &lt;code&gt;org.ec
          8.2
       </documentation>
    </annotation>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -224,6 +219,17 @@ The priorities of the built-in highlightings are available in &lt;code&gt;org.ec
 &lt;/p&gt;
       </documentation>
    </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.ISemanticHighlighter&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
@@ -236,4 +242,5 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
+
 </schema>

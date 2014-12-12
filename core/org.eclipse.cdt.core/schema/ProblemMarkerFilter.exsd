@@ -1,8 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
-<include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
-
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="ProblemMarkerFilter" name="Problem Marker Filter"/>
@@ -11,9 +9,9 @@
          This extension point allows to filter out unneeded problem markers. 
          For example during building of Qt base project with QML files tool Qt Linguist
          could report syntax errors in some qml file. These errors are presented as 
-         "C/C++ Problems" in qml files because they match format CDT expects for errors.
+         &quot;C/C++ Problems&quot; in qml files because they match format CDT expects for errors.
          If there is already installed plug-in that handles QML files it is a wise to ignore such
-         errors because they are already reported as "QML Problems" with more meaningful descriptions.
+         errors because they are already reported as &quot;QML Problems&quot; with more meaningful descriptions.
       </documentation>
    </annotation>
 
@@ -55,7 +53,7 @@
          </attribute>
       </complexType>
    </element>
-   
+
    <element name="problemMarkerFilter">
       <complexType>
          <sequence>
@@ -66,9 +64,9 @@
                <documentation>
                   Implementation of Problem Marker Filter that allows to filter out unneded or duplicit problem markers.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.IProblemMarkerFilter"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -88,7 +86,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-	          The following is an example of a qmakeEnvProvider contribution:
+         The following is an example of a qmakeEnvProvider contribution:
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
@@ -116,7 +114,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-        The contributed class must implement &lt;code&gt;org.eclipse.cdt.core.IProblemMarkerFilter&lt;/code&gt;.
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.core.IProblemMarkerFilter&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -125,7 +123,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-          Copyright (c) 2014 BlackBerry Limited and others.
+         Copyright (c) 2014 BlackBerry Limited and others.
           All rights reserved. This program and the accompanying materials
           are made available under the terms of the Eclipse Public License v1.0
           which accompanies this distribution, and is available at

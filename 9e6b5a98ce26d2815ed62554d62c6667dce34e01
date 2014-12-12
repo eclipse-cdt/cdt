@@ -104,6 +104,23 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//tn8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbAdapterFactory.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "Don\u0027t register this. Use IStepIntoSelectionHandler in the code and do an instanceof and a cast instead, like we did for IConnect. I find it is always better to be consistent in our coding choices.\nRegistering two IStepIntoSelection* interfaces here makes me worried that someone will remove one by mistake.\n(Note also that you didn\u0027t unregister that new interface)",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//ssg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
         "patchSetId": 10
@@ -172,6 +189,142 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//tmU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1857,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "Also, this code doesn\u0027t look right for multi-process. Multi-process only starts with GDB 7.2 so this code is ok in this file, but we may want to override it in the 7.2 version of this file. Since this looks broken for runToLine, I suggest opening a different bug for it.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tl4\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "In patchset 7, you had added a global fSession.  I don\u0027t know you removed it again",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tn0\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "the tracker is global, no need to pass it in.\nBut anyway, you can move the code of this method to within the other isExecutable(), I don\u0027t see the value if having three different isExecutable() methods",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tnw\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "fSession should now be available",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tlg\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "use ftracker",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tns\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "fSession is now available",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tno\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "fTracker is global",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tnk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "If there is no try/catch, there won\u0027t be an exception here. Remove eMessage above and move the error code below to the else statement above. Then you can remove the \u0027return\u0027 in the if statement",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//stA\u003d",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionHyperlinkDetector.java",
         "patchSetId": 10
@@ -234,6 +387,91 @@
       "writtenOn": "2013-04-29T23:54:06Z",
       "side": 1,
       "message": "Not sure if I see the problem on this method, as this resolved to a selected text within the editor.  but agress that the feature could be improved to provide a more specific selection validating the argument types, good for a second phase.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a4c42e0c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/IDsfStepIntoSelection.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "These comments were not published by mistake and it is now too late to apply them as they would break the API.  We\u0027ll just leave things as is in this file.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tng\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/IDsfStepIntoSelection.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "We should move this to the o.e.cdt.dsf package, not the ui package, so it can be used by code outside the ui package.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tnc\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/IDsfStepIntoSelection.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "I think we can call this IStepIntoSelection.\nThis interface should probably look identical to IRunControl3",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tnY\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/IDsfStepIntoSelection.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "This should be named \"canStepIntoSelection\" and have all the  parameters of the below method.  Basically, it should look like IRunControl3",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//tnU\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/IDsfStepIntoSelection.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:14:41Z",
+      "side": 1,
+      "message": "context should be first.\nmethod should be named \"stepIntoSelection\"\nno \u0027final\u0027 keyworkds",
       "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

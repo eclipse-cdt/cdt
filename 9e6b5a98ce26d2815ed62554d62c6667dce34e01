@@ -121,6 +121,24 @@
     },
     {
       "key": {
+        "uuid": "a766b734_44d9dae9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbAdapterFactory.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:19:42Z",
+      "side": 1,
+      "message": "This is being addressed by: http://eclip.se/455094",
+      "parentUuid": "AABOPX//tn8\u003d",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//ssg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
         "patchSetId": 10
@@ -200,6 +218,41 @@
       "writtenOn": "2014-12-12T21:14:41Z",
       "side": 1,
       "message": "Also, this code doesn\u0027t look right for multi-process. Multi-process only starts with GDB 7.2 so this code is ok in this file, but we may want to override it in the 7.2 version of this file. Since this looks broken for runToLine, I suggest opening a different bug for it.",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_a4eb8e6f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1857,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:19:42Z",
+      "side": 1,
+      "message": "This is being addressed by: http://eclip.se/455094",
+      "parentUuid": "AABOPX//tmU\u003d",
+      "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_84ee527e",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/actions/DsfStepIntoSelectionCommand.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-12T21:19:42Z",
+      "side": 1,
+      "message": "All comments in this file are being addressed by: http://eclip.se/455094",
       "revId": "9e6b5a98ce26d2815ed62554d62c6667dce34e01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

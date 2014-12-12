@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.debug.ui.actions;
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.debug.core.model.IStepIntoSelectionHandler;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.ui.Messages;
@@ -138,8 +139,11 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 			return null;
 		}
 
-		IDsfStepIntoSelection stepIntoSelectionCommand = (IDsfStepIntoSelection) session.getModelAdapter(IDsfStepIntoSelection.class);
-		if (stepIntoSelectionCommand == null) {
+		IDsfStepIntoSelection stepIntoSelectionCommand = null;
+		IStepIntoSelectionHandler stepIntoSelectionHandler = (IStepIntoSelectionHandler) session.getModelAdapter(IStepIntoSelectionHandler.class);
+		if (stepIntoSelectionHandler instanceof IDsfStepIntoSelection) {
+			stepIntoSelectionCommand = (IDsfStepIntoSelection)stepIntoSelectionHandler;
+		} else {
 			return null;
 		}
 
@@ -191,7 +195,6 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 	 * Returns the identifier at the given offset, or {@code null} if the there is no identifier at the offset.
 	 */
 	private static IRegion getIdentifier(IDocument document, int offset, ILanguage language) throws BadLocationException {
-		@SuppressWarnings("restriction")
 		IRegion wordRegion = CWordFinder.findWord(document, offset);
 		if (wordRegion != null && wordRegion.getLength() > 0) {
 			String word = document.get(wordRegion.getOffset(), wordRegion.getLength());

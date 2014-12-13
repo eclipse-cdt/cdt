@@ -15,7 +15,7 @@ import org.eclipse.cdt.codan.core.model.cfg.ISingleIncoming;
 
 /**
  * Abstract node with one incoming arc (node)
- * 
+ *
  */
 public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock implements ISingleIncoming {
 	private IBasicBlock prev;
@@ -34,7 +34,7 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock impl
 
 	@Override
 	public int getIncomingSize() {
-		return 1;
+		return prev!=null?1:0;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock impl
 
 	/**
 	 * Sets the incoming node
-	 * 
+	 *
 	 * @param prev
 	 */
 	public void setIncoming(IBasicBlock prev) {

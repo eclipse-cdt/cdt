@@ -85,6 +85,8 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		nodes: for (int i = 0; i < incomingNodes.length; i++) {
 			IBasicBlock b = incomingNodes[i];
 			if (b == null) {
+				if (node instanceof IBranchNode)
+					continue nodes;
 				// check if dead node
 				Iterator<IBasicBlock> iterator = graph.getUnconnectedNodeIterator();
 				boolean dead = false;
@@ -507,5 +509,45 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		assertNotNull(m1);
 		assertSame(conn, jumpEnd(bThen));
 		assertEquals("", data(((IConnectorNode) m2).getOutgoing())); // increment
+	}
+
+//		 int main() {
+//		   goto b;
+//	     a:
+//	      return 2;
+//	     b:
+//	      goto a;
+//		 }
+	public void test_bad_labels() {
+		buildAndCheck(getAboveComment());
+		assertEquals(0, graph.getUnconnectedNodeSize());
+		IStartNode startNode = graph.getStartNode();
+		IJumpNode gotoB =  (IJumpNode) startNode.getOutgoing();
+		IConnectorNode bConn = gotoB.getJumpNode();
+		IJumpNode gotoA =  (IJumpNode) bConn.getOutgoing();
+		IConnectorNode aConn = gotoA.getJumpNode();
+		IExitNode ret =  (IExitNode) aConn.getOutgoing();
+		assertEquals("return 2;", data(ret));
+
+	}
+
+	//	 int main(int a) {
+	//	   goto b;
+	//     if (a)   return 2;
+	//  b:
+	//   return 1;
+	//	 }
+	public void test_labels_if() {
+		buildAndCheck(getAboveComment());
+		assertEquals(1, graph.getUnconnectedNodeSize()); // if is dead code
+	}
+
+	//	 int main(int a) {
+	//	   goto b;
+	//     b:;
+	//	 }
+	public void test_goto() {
+		buildAndCheck(getAboveComment());
+		assertEquals(0, graph.getUnconnectedNodeSize());
 	}
 }

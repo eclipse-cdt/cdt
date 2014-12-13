@@ -508,4 +508,15 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		assertSame(conn, jumpEnd(bThen));
 		assertEquals("", data(((IConnectorNode) m2).getOutgoing())); // increment
 	}
+
+//		 int main() {
+//		   goto b;
+//	     a:
+//	      return 2;
+//	     b:
+//	      return 1;
+//		 }
+	public void test_bad_labels() {
+		buildAndCheck(getAboveComment());
+	}
 }

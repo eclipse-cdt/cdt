@@ -13,7 +13,9 @@ package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
@@ -27,6 +29,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
+import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
 import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -71,7 +74,7 @@ public class ControlFlowGraphBuilder {
 	CxxNodeFactory factory = new CxxNodeFactory();
 	IConnectorNode outerBreak;
 	IConnectorNode outerContinue;
-	HashMap<String, IBasicBlock> labels = new HashMap<>();
+	Map<String, IBranchNode> labels = new LinkedHashMap<>();
 
 	/**
 	 * Builds the graph.
@@ -80,8 +83,17 @@ public class ControlFlowGraphBuilder {
 		IASTStatement body = def.getBody();
 		start = new CxxStartNode();
 		exits = new ArrayList<>();
-		dead = new ArrayList<>();
+		dead = new LinkedHashSet<>();
 		IBasicBlock last = createSubGraph(start, body);
+		for (IBranchNode label : labels.values()) {
+			IConnectorNode conn = (IConnectorNode) label.getOutgoing();
+			if (conn.getIncomingSize()<=1 && label.getIncoming()==null)
+				dead.add(label);
+			else {
+				dead.remove(label);
+				dead.remove(conn);
+			}
+		}
 		if (!(last instanceof IExitNode) && !deadConnector(last)) {
 			returnExit = factory.createExitNode(null);
 			returnExit.setStartNode(start);
@@ -177,14 +189,12 @@ public class ControlFlowGraphBuilder {
 		} else if (body instanceof IASTLabelStatement) {
 			IASTLabelStatement ast = (IASTLabelStatement) body;
 			String labelName = ast.getName().toString();
-			IBranchNode labNode = (IBranchNode) labels.get(labelName);
+			IBranchNode labNode = labels.get(labelName);
 			IConnectorNode conn;
 			if (labNode != null) {
 				conn = (IConnectorNode) labNode.getOutgoing();
 				addOutgoing(prev, labNode);
 			} else {
-				// labeled statement consists of connectors for jumps, branch for
-				// label and nested statement
 				conn = createLabelNodes(prev, labelName);
 			}
 			return createSubGraph(conn, ast.getNestedStatement());
@@ -192,7 +202,7 @@ public class ControlFlowGraphBuilder {
 			IASTGotoStatement ast = (IASTGotoStatement) body;
 			String labelName = ast.getName().toString();
 			IConnectorNode conn;
-			IBranchNode labNode = (IBranchNode) labels.get(labelName);
+			IBranchNode labNode = labels.get(labelName);
 			if (labNode != null) {
 				conn = (IConnectorNode) labNode.getOutgoing();
 			} else {
@@ -200,6 +210,7 @@ public class ControlFlowGraphBuilder {
 			}
 			IJumpNode gotoNode = factory.createJumpNode();
 			((JumpNode) gotoNode).setJump(conn, labNode != null);
+			((ConnectorNode)conn).addIncoming(gotoNode);
 			addOutgoing(prev, gotoNode);
 			return gotoNode;
 		} else if (body instanceof IASTProblemStatement) {
@@ -270,9 +281,19 @@ public class ControlFlowGraphBuilder {
 		return node;
 	}
 
+	/**
+	 * labeled statement consists of connector for jumps,
+	 * branch for label and statement
+	 * 
+	 * @param prev
+	 * @param labelName
+	 * @return
+	 */
 	protected IConnectorNode createLabelNodes(IBasicBlock prev, String labelName) {
 		IBranchNode branch = factory.createBranchNode(labelName);
-		if (prev != null)
+		if (prev == null || prev instanceof IJumpNode || prev instanceof IExitNode)
+			;// don't do anything, leave dangling branch node
+		else
 			addOutgoing(prev, branch);
 		labels.put(labelName, branch);
 		IConnectorNode conn = factory.createConnectorNode();

@@ -142,10 +142,14 @@ public class ControlFlowGraph implements IControlFlowGraph {
 		if (result.contains(start))
 			return;
 		result.add(start);
-		IBasicBlock[] outgoingNodes = start.getOutgoingNodes();
-		for (int i = 0; i < outgoingNodes.length; i++) {
-			IBasicBlock b = outgoingNodes[i];
-			getNodes(b, result);
+		for (IBasicBlock bb : start.getOutgoingNodes()) {
+			getNodes(bb, result);
+		}
+		if (start instanceof IConnectorNode) {
+			// special case where connect can have some incoming branch nodes not in the graph
+			for (IBasicBlock bb : start.getIncomingNodes()) {
+				getNodes(bb, result);
+			}
 		}
 	}
 }

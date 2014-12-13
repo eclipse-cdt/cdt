@@ -86,6 +86,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * are presented in the same way everywhere.
  * <p>
  */
+@SuppressWarnings("restriction")
 public class ControlFlowGraphView extends ViewPart {
 	/**
 	 * The ID of the view as specified by the extension.
@@ -123,20 +124,26 @@ public class ControlFlowGraphView extends ViewPart {
 			if (parent instanceof Collection) {
 				return ((Collection) parent).toArray();
 			} else if (parent instanceof IControlFlowGraph) {
-				Collection<IBasicBlock> blocks = getFlat(((IControlFlowGraph) parent).getStartNode(), new ArrayList<IBasicBlock>());
+				IControlFlowGraph cfg = (IControlFlowGraph) parent;
+				Collection<IBasicBlock> blocks = getFlat(cfg.getStartNode(), new ArrayList<IBasicBlock>());
 				DeadNodes dead = new DeadNodes();
-				Iterator<IBasicBlock> iter = ((IControlFlowGraph) parent).getUnconnectedNodeIterator();
+				Iterator<IBasicBlock> iter = cfg.getUnconnectedNodeIterator();
 				for (; iter.hasNext();) {
 					IBasicBlock iBasicBlock = iter.next();
 					dead.add(iBasicBlock);
 				}
-				ArrayList all = new ArrayList();
+				ArrayList<Object> all = new ArrayList<Object>();
 				all.addAll(blocks);
+				// labeled statements disjoined from the rest
+				for (IBasicBlock node : cfg.getNodes()) {
+					if (node instanceof IBranchNode && node.getIncomingSize() == 0 && !dead.contains(node))
+						all.add(node);
+				}
 				if (dead.size() > 0)
 					all.add(dead);
 				return all.toArray();
 			} else if (parent instanceof IDecisionNode) {
-				ArrayList blocks = new ArrayList();
+				ArrayList<IBasicBlock> blocks = new ArrayList<IBasicBlock>();
 				IBasicBlock[] outgoingNodes = ((IDecisionNode) parent).getOutgoingNodes();
 				for (int i = 0; i < outgoingNodes.length; i++) {
 					IBasicBlock arc = outgoingNodes[i];

@@ -342,7 +342,8 @@ public class AdditionalInput implements IAdditionalInput {
 				|| fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY
 				|| isLibrariesInput()) {
 			IToolChain toolChain = getToolChain();
-			if (!toolChain.isExtensionElement()) {
+			/* toolChain can be null e.g. in tools for custom build steps */
+			if (toolChain != null && !toolChain.isExtensionElement()) {
 				long artifactTimeStamp = getArtifactTimeStamp(toolChain);
 				if (0 != artifactTimeStamp) {
 					String[] paths = getPaths();

@@ -2368,6 +2368,30 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 	}
 
+	public void testDesRebuildStateWithCustomBuildStep() {
+		/* This test captures Bug 389536 */
+		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
+		try {
+			CCProjectNature.addCCNature(project, null);
+		} catch (CoreException e1) {
+			fail("fail to add CC nature");
+		}
+
+		IFile testYFile = ManagedBuildTestHelper.createFile(project, "test.y");
+
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		IManagedProject mProj = info.getManagedProject();
+		IConfiguration cfg = mProj.getConfigurations()[0];
+
+		IResourceConfiguration testYCfg = cfg.createResourceConfiguration(testYFile);
+		ITool bisonTool = testYCfg.createTool(null, "tool.bison", "Bison", false);
+		bisonTool.setCustomBuildStep(true);
+		IInputType bisonInputType = bisonTool.createInputType(null, "inputtype.bison", "Bison Inputfiles", false);
+		bisonInputType.createAdditionalInput("");
+		cfg.setRebuildState(false);
+		assertFalse(cfg.needsRebuild());
+	}
+
 	private void doTestTool(ITool tool){
 		IBuildObject obj = tool.getParent();
 		IConfiguration cfg;

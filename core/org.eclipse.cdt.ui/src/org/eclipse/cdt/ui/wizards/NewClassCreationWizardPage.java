@@ -1380,7 +1380,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             sourceName = NewSourceFileGenerator.generateSourceFileNameFromClass(className);
             testName = NewSourceFileGenerator.generateTestFileNameFromClass(className);
         } else {
-            // make sure the file names are unique
+            // Make sure the file names are unique.
             String currName = className;
             int count = 0;
             String separator = ""; //$NON-NLS-1$
@@ -1399,7 +1399,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	                        headerName = header;
 	                        sourceName = source;
 	                        testName = test;
-	                        // we're done
+	                        // We're done.
 	                        break;
                         }
                     }

@@ -1,13 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2008 Wind River Systems, Inc.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- * 
- * Contributors: 
- *     Markus Schorn - initial API and implementation 
- ******************************************************************************/ 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Markus Schorn - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -63,15 +63,15 @@ public class RefactoringTests extends BaseTestFramework {
         assertTotalChanges(numChanges, 0, 0, changes);
     }
 
-    protected void assertTotalChanges(int numChanges, int potChanges, int commentCh, 
+    protected void assertTotalChanges(int numChanges, int potChanges, int commentCh,
             Change changes) throws Exception {
         int count[]= { 0, 0, 0 };
         if (changes != null) {
             countChanges(changes, count);
         }
         assertEquals(numChanges, count[0]);
-        assertEquals("potential changes: ", potChanges, count[1]); //$NON-NLS-1$
-        assertEquals("comment changes: ", commentCh, count[2]); //$NON-NLS-1$
+        assertEquals("potential changes: ", potChanges, count[1]);
+        assertEquals("comment changes: ", commentCh, count[2]);
     }
 
     private void countChanges(Change change, int[] count) {
@@ -92,9 +92,9 @@ public class RefactoringTests extends BaseTestFramework {
 
     private void countChanges(TextEditChangeGroup edit, int[] count) {
         String name= edit.getName();
-        if (name.indexOf("potential") != -1) { //$NON-NLS-1$
+        if (name.indexOf("potential") != -1) {
             count[1]++;
-        } else if (name.indexOf("comment") != -1) { //$NON-NLS-1$
+        } else if (name.indexOf("comment") != -1) {
             count[2]++;
         } else {
             count[0]++;
@@ -110,9 +110,9 @@ public class RefactoringTests extends BaseTestFramework {
         if (changes != null && changes instanceof CompositeChange) {
             found = checkCompositeChange((CompositeChange) changes, file, startOffset, numChars, newText, potential);
         }
-        
+
         if (!found) {
-            fail ("Rename at offset " + startOffset + " in \"" + file.getLocation() + "\" not found.");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+            fail ("Rename at offset " + startOffset + " in \"" + file.getLocation() + "\" not found.");
             assertFalse(true);
         }
     }
@@ -139,7 +139,7 @@ public class RefactoringTests extends BaseTestFramework {
         TextEditChangeGroup[] groups= change.getTextEditChangeGroups();
         for (int i = 0; i < groups.length; i++) {
             TextEditGroup group = groups[i].getTextEditGroup();
-            if ((group.getName().indexOf("potential") != -1) == potential) {  //$NON-NLS-1$
+            if ((group.getName().indexOf("potential") != -1) == potential) {
                 TextEdit[] edits= group.getTextEdits();
                 if (checkTextEdits(edits, startOffset, numChars, newText)) {
                     return true;
@@ -151,7 +151,7 @@ public class RefactoringTests extends BaseTestFramework {
 
     private boolean checkTextEdit(TextEdit edit, int startOffset, int numChars, String newText) {
         if (edit instanceof MultiTextEdit) {
-            if (checkTextEdits(((MultiTextEdit) edit).getChildren(), 
+            if (checkTextEdits(((MultiTextEdit) edit).getChildren(),
                     startOffset, numChars, newText)) {
                 return true;
             }
@@ -176,94 +176,94 @@ public class RefactoringTests extends BaseTestFramework {
     private boolean checkReplaceEdit(ReplaceEdit edit, int startOffset, int numChars, String newText) {
         return (edit.getOffset() == startOffset && edit.getLength() == numChars && edit.getText().equals(newText ) );
     }
-    
+
     protected IFile createCppFwdDecls(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write("class class_fwd;         \n"); //$NON-NLS-1$
-        writer.write("struct struct_fwd;       \n"); //$NON-NLS-1$
-        writer.write("union union_fwd;         \n"); //$NON-NLS-1$
-        writer.write("int func_proto();        \n"); //$NON-NLS-1$
-        writer.write("int func_proto_ov();     \n"); //$NON-NLS-1$
-        writer.write("int func_proto_ov(int);  \n"); //$NON-NLS-1$
-        writer.write("int func_proto_ov(int*); \n"); //$NON-NLS-1$
-        writer.write("extern int extern_var;   \n"); //$NON-NLS-1$
+        writer.write("class class_fwd;         \n");
+        writer.write("struct struct_fwd;       \n");
+        writer.write("union union_fwd;         \n");
+        writer.write("int func_proto();        \n");
+        writer.write("int func_proto_ov();     \n");
+        writer.write("int func_proto_ov(int);  \n");
+        writer.write("int func_proto_ov(int*); \n");
+        writer.write("extern int extern_var;   \n");
         String contents = writer.toString();
-        return importFile(fileName, contents ); 
+        return importFile(fileName, contents );
     }
 
     protected IFile createCFwdDecls(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write("struct struct_fwd;       \n"); //$NON-NLS-1$
-        writer.write("union union_fwd;         \n"); //$NON-NLS-1$
-        writer.write("int func_proto();        \n"); //$NON-NLS-1$
-        writer.write("extern int extern_var;   \n"); //$NON-NLS-1$
+        writer.write("struct struct_fwd;       \n");
+        writer.write("union union_fwd;         \n");
+        writer.write("int func_proto();        \n");
+        writer.write("extern int extern_var;   \n");
         String contents = writer.toString();
-        return importFile(fileName, contents ); 
+        return importFile(fileName, contents );
     }
 
     protected IFile createCppDefs(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write("class class_def {               \n"); //$NON-NLS-1$
-        writer.write("public:                         \n"); //$NON-NLS-1$
-        writer.write("   int member;                  \n"); //$NON-NLS-1$
-        writer.write("   static int static_member;    \n"); //$NON-NLS-1$
-        writer.write("   void method(int par);        \n"); //$NON-NLS-1$
-        writer.write("   void static_method(int par); \n"); //$NON-NLS-1$
-        writer.write("   int method_ov();             \n"); //$NON-NLS-1$
-        writer.write("   int method_ov(int);          \n"); //$NON-NLS-1$
-        writer.write("   int method_ov(int*);         \n"); //$NON-NLS-1$
-        writer.write("};                              \n"); //$NON-NLS-1$
-        writer.write("struct struct_def {        \n"); //$NON-NLS-1$
-        writer.write("   int st_member;          \n"); //$NON-NLS-1$
-        writer.write("};                         \n"); //$NON-NLS-1$
-        writer.write("union union_def {          \n"); //$NON-NLS-1$
-        writer.write("   int un_member;          \n"); //$NON-NLS-1$
-        writer.write("};                         \n"); //$NON-NLS-1$
-        writer.write("typedef int typedef_def;   \n"); //$NON-NLS-1$
-        writer.write("namespace namespace_def{}; \n"); //$NON-NLS-1$
-        writer.write("enum enum_def {            \n"); //$NON-NLS-1$
-        writer.write("   enum_item };            \n"); //$NON-NLS-1$
-        writer.write("int func_def() {}          \n"); //$NON-NLS-1$
-        writer.write("int func_def_ov() {}       \n"); //$NON-NLS-1$
-        writer.write("int func_def_ov(int){}     \n"); //$NON-NLS-1$
-        writer.write("int func_def_ov(int*){}    \n"); //$NON-NLS-1$
-        writer.write("int var_def;               \n"); //$NON-NLS-1$
+        writer.write("class class_def {               \n");
+        writer.write("public:                         \n");
+        writer.write("   int member;                  \n");
+        writer.write("   static int static_member;    \n");
+        writer.write("   void method(int par);        \n");
+        writer.write("   void static_method(int par); \n");
+        writer.write("   int method_ov();             \n");
+        writer.write("   int method_ov(int);          \n");
+        writer.write("   int method_ov(int*);         \n");
+        writer.write("};                              \n");
+        writer.write("struct struct_def {        \n");
+        writer.write("   int st_member;          \n");
+        writer.write("};                         \n");
+        writer.write("union union_def {          \n");
+        writer.write("   int un_member;          \n");
+        writer.write("};                         \n");
+        writer.write("typedef int typedef_def;   \n");
+        writer.write("namespace namespace_def{}; \n");
+        writer.write("enum enum_def {            \n");
+        writer.write("   enum_item };            \n");
+        writer.write("int func_def() {}          \n");
+        writer.write("int func_def_ov() {}       \n");
+        writer.write("int func_def_ov(int){}     \n");
+        writer.write("int func_def_ov(int*){}    \n");
+        writer.write("int var_def;               \n");
         String contents = writer.toString();
-        return importFile(fileName, contents ); 
+        return importFile(fileName, contents );
     }
 
     protected IFile createCDefs(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write("struct struct_def {        \n"); //$NON-NLS-1$
-        writer.write("   int st_member;          \n"); //$NON-NLS-1$
-        writer.write("};                         \n"); //$NON-NLS-1$
-        writer.write("union union_def {          \n"); //$NON-NLS-1$
-        writer.write("   int un_member;          \n"); //$NON-NLS-1$
-        writer.write("};                         \n"); //$NON-NLS-1$
-        writer.write("typedef int typedef_def;   \n"); //$NON-NLS-1$
-        writer.write("enum enum_def {            \n"); //$NON-NLS-1$
-        writer.write("   enum_item };            \n"); //$NON-NLS-1$
-        writer.write("int func_def() {}          \n"); //$NON-NLS-1$
-        writer.write("int var_def;               \n"); //$NON-NLS-1$
+        writer.write("struct struct_def {        \n");
+        writer.write("   int st_member;          \n");
+        writer.write("};                         \n");
+        writer.write("union union_def {          \n");
+        writer.write("   int un_member;          \n");
+        writer.write("};                         \n");
+        writer.write("typedef int typedef_def;   \n");
+        writer.write("enum enum_def {            \n");
+        writer.write("   enum_item };            \n");
+        writer.write("int func_def() {}          \n");
+        writer.write("int var_def;               \n");
         String contents = writer.toString();
-        return importFile(fileName, contents ); 
+        return importFile(fileName, contents );
     }
 
     protected void assertRefactoringError(RefactoringStatus status, String msg) {
         RefactoringStatusEntry e= status.getEntryMatchingSeverity(RefactoringStatus.ERROR);
-        assertNotNull("Expected refactoring error!", e); //$NON-NLS-1$
+        assertNotNull("Expected refactoring error!", e);
         assertEquals(msg, e.getMessage());
     }
 
     protected void assertRefactoringWarning(RefactoringStatus status, String msg) {
         RefactoringStatusEntry e= status.getEntryMatchingSeverity(RefactoringStatus.WARNING);
-        assertNotNull("Expected refactoring warning!", e); //$NON-NLS-1$
+        assertNotNull("Expected refactoring warning!", e);
         assertEquals(msg, e.getMessage());
     }
 
     protected void assertRefactoringOk(RefactoringStatus status) {
-        assertTrue("Expected refactoring status ok: " + //$NON-NLS-1$
-                status.getMessageMatchingSeverity(status.getSeverity()), 
-                status.getSeverity()==RefactoringStatus.OK); 
+        assertTrue("Expected refactoring status ok: " +
+                status.getMessageMatchingSeverity(status.getSeverity()),
+                status.getSeverity() == RefactoringStatus.OK);
     }
 }

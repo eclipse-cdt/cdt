@@ -100,7 +100,7 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
     	
         CRefactoringArgument argument= getArgument();
         IBinding binding= argument.getBinding();
-        ArrayList<IBinding> bindings= new ArrayList<IBinding>();
+        ArrayList<IBinding> bindings= new ArrayList<>();
         if (binding != null) {
             bindings.add(binding);
         }

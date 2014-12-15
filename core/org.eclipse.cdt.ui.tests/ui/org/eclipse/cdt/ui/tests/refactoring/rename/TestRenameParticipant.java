@@ -56,11 +56,12 @@ public class TestRenameParticipant extends RenameParticipant {
 
     @Override
 	public String getName() {
-        return "TestRenameParticipant"; //$NON-NLS-1$
+        return "TestRenameParticipant";
     }
 
     @Override
-	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
+			throws OperationCanceledException {
         sConditionCheck++;
         sArguments= getArguments();
         return new RefactoringStatus();

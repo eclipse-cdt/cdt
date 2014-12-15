@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  */
 public class CRenameLocalProcessor extends CRenameProcessorDelegate {
     private IScope fScope;
+
     public CRenameLocalProcessor(CRenameProcessor input, String kind, IScope scope) {
         super(input, kind);
         fScope= scope;

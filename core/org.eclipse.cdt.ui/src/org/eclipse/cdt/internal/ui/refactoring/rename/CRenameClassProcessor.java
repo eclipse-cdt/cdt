@@ -33,7 +33,7 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 	protected IBinding[] getBindingsToBeRenamed(RefactoringStatus status) {
         CRefactoringArgument argument= getArgument();
         IBinding binding= argument.getBinding();
-        ArrayList<IBinding> bindings= new ArrayList<IBinding>();
+        ArrayList<IBinding> bindings= new ArrayList<>();
         if (binding != null) {
             bindings.add(binding);
         }

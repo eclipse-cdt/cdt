@@ -27,6 +27,7 @@ public interface ITestConstants {
 	public static final String SUFFIX_GDB_7_6 = "7.6";
 	public static final String SUFFIX_GDB_7_7 = "7.7";
 	public static final String SUFFIX_GDB_7_8 = "7.8";
+	public static final String SUFFIX_GDB_7_9 = "7.9";
 	
 	// Attribute that allows a test to request not to start gdbserver even if the session is a remote one
 	public static final String LAUNCH_GDB_SERVER = TestsPlugin.PLUGIN_ID + ".launchGdbServer";

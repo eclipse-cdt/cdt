@@ -8,11 +8,13 @@
  *
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation
+ *     Marc Khouzam (Ericsson) - Move to o.e.cdt.dsf.gdb.tests (bug 455237)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests;
+package org.eclipse.cdt.dsf.gdb.tests;
 
-import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
+
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.cdt.visualizer.ui.canvas.VirtualBoundsGraphicObject;
 import org.junit.Test;
 
 public class VisualizerVirtualBoundsGraphicObjectTest {

@@ -27,11 +27,13 @@ public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposals
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedPrefix = ""; 
+	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
 		"aClass",
 		"anotherClass",
-		"xOtherClass"
+		"xOtherClass",
+		"AStruct",
+		"XStruct"
 	};
 	
 	public CompletionTest_ClassReference_NoPrefix(String name) {

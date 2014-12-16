@@ -194,6 +194,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	template<>
 	//	struct Specialization<int, int> {
 	//	};
+	//
+	//	template<typename T1, typename T2>
+	//	using AliasForSpecialization = Specialization<T1, T2>;
+	//
+	//	template<typename T1, typename T2>
+	//	using AliasForTemplateAlias = AliasForSpecialization<T1, T2>;
 
 	public CompletionTests(String name) {
 		super(name, true);
@@ -694,15 +700,36 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
-	//void f(){T1::~/*cursor*/
+	// void f(){T1::~/*cursor*/
 	public void testTypedefSyntheticMembers_415495() throws Exception {
-		final String[] expected= {};
+		final String[] expected = {};
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
-	//void f(){A1::~/*cursor*/
+	// void f(){A1::~/*cursor*/
 	public void testAliasSyntheticMembers_415495() throws Exception {
-		final String[] expected= {};
+		final String[] expected = {};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+
+	// class BaseTest : Spec/*cursor*/
+	public void testBaseClassIsStruct_434446() throws Exception {
+		final String[] expected = { "Specialization<>" };
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
+	}
+
+	// class BaseTest : Alias/*cursor*/
+	public void testBaseClassIsTemplateAlias_434446() throws Exception {
+		// TODO Bug 455797, proposals are currently not presented as templates.
+		final String[] expected = { "AliasForSpecialization",
+				"AliasForTemplateAlias" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+
+	// template<typename TP_Param>
+	// class BaseTest : TP/*cursor*/
+	public void testBaseClassIsTemplateParameter() throws Exception {
+		final String[] expected = { "TP_Param" };
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 

@@ -23,15 +23,17 @@ import junit.framework.TestSuite;
  */
 public class CompletionTest_ClassReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart21.h";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
-	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedPrefix = ""; 
+	private final String fileName = "CompletionTestStart21.h"; //$NON-NLS-1$
+	private final String fileFullPath ="resources/contentassist/" + fileName; //$NON-NLS-1$
+	private final String headerFileName = "CompletionTestStart.h"; //$NON-NLS-1$
+	private final String headerFileFullPath ="resources/contentassist/" + headerFileName; //$NON-NLS-1$
+	private final String expectedPrefix = "";  //$NON-NLS-1$
 	private final String[] expectedResults = {
-		"aClass",
-		"anotherClass",
-		"xOtherClass"
+		"aClass", //$NON-NLS-1$
+		"anotherClass", //$NON-NLS-1$
+		"xOtherClass", //$NON-NLS-1$
+		"AStruct", //$NON-NLS-1$
+		"XStruct" //$NON-NLS-1$
 	};
 	
 	public CompletionTest_ClassReference_NoPrefix(String name) {

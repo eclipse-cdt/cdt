@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -268,6 +269,9 @@ public class SemanticUtil {
 
 		while (true) {
 			IType t= null;
+			while (type instanceof ICPPAliasTemplate) {
+				type = ((ICPPAliasTemplate) type).getType();
+			}
 			if (type instanceof ITypedef) {
 				if (tdef || cond_tdef) {
 					if (beforeTypedefs == null && cond_tdef) {

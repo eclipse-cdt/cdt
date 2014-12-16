@@ -30,7 +30,8 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	private final String expectedPrefix = "a";  //$NON-NLS-1$
 	private final String[] expectedResults = {
 			"aClass", //$NON-NLS-1$
-			"anotherClass" //$NON-NLS-1$
+			"anotherClass", //$NON-NLS-1$
+			"AStruct" //$NON-NLS-1$
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {

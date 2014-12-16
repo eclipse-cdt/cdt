@@ -25,6 +25,7 @@
  *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods (Bug 390827)
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
+ *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -137,6 +138,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceNotes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceUser;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowLanguage;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBVersion;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
@@ -205,6 +207,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBVersionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
@@ -823,6 +826,11 @@ public class CommandFactory {
 		return new MIGDBShowLanguage(ctx);
 	}
 
+	/** @since 4.6 */
+	public ICommand<MIGDBVersionInfo> createMIGDBVersion(ICommandControlDMContext ctx) {
+		return new MIGDBVersion(ctx);
+	}
+	
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIInferiorTTYSet(IMIContainerDMContext dmc, String tty) {
 		return new MIInferiorTTYSet(dmc, tty);

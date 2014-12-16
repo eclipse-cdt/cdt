@@ -194,6 +194,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	template<>
 	//	struct Specialization<int, int> {
 	//	};
+	//
+	//	template<typename T1, typename T2>
+	//  using AliasForSpecialization = Specialization<T1, T2>;
+	//
+	//	template<typename T1, typename T2>
+	//  using AliasForTemplateAlias = AliasForSpecialization<T1, T2>;
 
 	public CompletionTests(String name) {
 		super(name, true);
@@ -705,7 +711,27 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {};
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
-
+	
+	//class BaseTest : Spec/*cursor*/
+	public void testBaseClassIsStruct_434446() throws Exception {
+		final String[] expected= {"Specialization<>"};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);		
+	}
+	
+	// class BaseTest : Alias/*cursor*/
+	public void testBaseClassIsAlias_434446() throws Exception {
+		// TODO There's another bug in generating the proposals (it doesn't show the template nature)
+		final String[] expected= {"AliasForSpecialization", "AliasForTemplateAlias"};
+		assertCompletionResults(fCursorOffset, expected, ID);		
+	}
+	
+	// template<typename TP_Param>
+	// class BaseTest : TP/*cursor*/
+	public void testBaseClassIsTemplateParameter() throws Exception {
+		final String[] expected= {"TP_Param"};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);		
+	}
+	
 	//	struct A {};
 	//
 	//	template<typename T>

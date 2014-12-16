@@ -23,14 +23,15 @@ import junit.framework.TestSuite;
  */
 public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart20.h"; //$NON-NLS-1$
-	private final String fileFullPath ="resources/contentassist/" + fileName; //$NON-NLS-1$
-	private final String headerFileName = "CompletionTestStart.h"; //$NON-NLS-1$
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName; //$NON-NLS-1$
-	private final String expectedPrefix = "a";  //$NON-NLS-1$
+	private final String fileName = "CompletionTestStart20.h";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String headerFileName = "CompletionTestStart.h";
+	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"aClass", //$NON-NLS-1$
-			"anotherClass" //$NON-NLS-1$
+			"aClass",
+			"anotherClass",
+			"AStruct"
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {
@@ -40,7 +41,7 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 
 	public static Test suite() {
 		TestSuite suite= new TestSuite(CompletionTest_ClassReference_Prefix.class.getName());
-		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals")); //$NON-NLS-1$
+		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	
@@ -49,7 +50,7 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	 */
 	@Override
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2; //$NON-NLS-1$
+		return getBuffer().indexOf(" a ") + 2;
 	}
 
 	/* (non-Javadoc)

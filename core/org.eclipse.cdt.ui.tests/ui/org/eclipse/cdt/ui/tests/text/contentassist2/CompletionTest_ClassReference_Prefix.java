@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,86 +17,64 @@ import junit.framework.TestSuite;
 /**
  * @author hamer
  * 
- * Testing Class_Reference, with prefix
- * Bug#50621 :Wrong completion kind in a class declaration
- *
+ * Testing class reference, with prefix
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=50621
+ * https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
  */
 public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBaseTest{
-	
-	private final String fileName = "CompletionTestStart20.h"; //$NON-NLS-1$
-	private final String fileFullPath ="resources/contentassist/" + fileName; //$NON-NLS-1$
-	private final String headerFileName = "CompletionTestStart.h"; //$NON-NLS-1$
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName; //$NON-NLS-1$
-	private final String expectedPrefix = "a";  //$NON-NLS-1$
+	private final String fileName = "CompletionTestStart20.h";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String headerFileName = "CompletionTestStart.h";
+	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
+	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"aClass", //$NON-NLS-1$
-			"anotherClass" //$NON-NLS-1$
+			"aClass",
+			"anotherClass",
+			"AStruct"
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {
 		super(name);
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=169860
 	}
 
 	public static Test suite() {
 		TestSuite suite= new TestSuite(CompletionTest_ClassReference_Prefix.class.getName());
-		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals")); //$NON-NLS-1$
+		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
-	 */
 	@Override
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2; //$NON-NLS-1$
+		return getBuffer().indexOf(" a ") + 2;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedPrefix()
-	 */
 	@Override
 	protected String getExpectedPrefix() {
 		return expectedPrefix;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedResultsValues()
-	 */
 	@Override
 	protected String[] getExpectedResultsValues() {
 		return expectedResults;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileName()
-	 */
 	@Override
 	protected String getFileName() {
 		return fileName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileFullPath()
-	 */
 	@Override
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
-	 */
+
 	@Override
 	protected String getHeaderFileFullPath() {
 		return headerFileFullPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileName()
-	 */
 	@Override
 	protected String getHeaderFileName() {
 		return headerFileName;
 	}
-
 }

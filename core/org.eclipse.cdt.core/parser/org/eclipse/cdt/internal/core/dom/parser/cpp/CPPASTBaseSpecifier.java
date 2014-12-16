@@ -19,12 +19,17 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Base class specifier
@@ -142,6 +147,15 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		return r_unclear;
 	}
 
+	private boolean isBaseClassCandidate(ICPPClassType parent, ICPPClassType binding) {
+		int key = binding.getKey();
+		if ((key == ICPPClassType.k_class || key == ICPPClassType.k_struct)
+				&& (parent == null || !binding.isSameType(parent))) {
+			return true;
+		}
+		return false;
+ 	}
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
@@ -157,14 +171,21 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		}
 
 		for (IBinding binding : bindings) {
-			if (binding instanceof ICPPClassType) {
-				ICPPClassType base = (ICPPClassType) binding;
-				int key = base.getKey();
-				if (key == ICPPClassType.k_class &&
-						(classType == null || !base.isSameType(classType))) {
-					filtered.add(base);
-				}
-			}
+			if (binding instanceof ITypedef || binding instanceof ICPPAliasTemplate) {
+				IType type = SemanticUtil.getNestedType((IType) binding, SemanticUtil.TDEF);
+				// TODO this is the same as for binding below. how can I combine these two IType and IBinding?
+				if (type instanceof ICPPClassType) {
+					if (isBaseClassCandidate(classType, (ICPPClassType) type))
+							filtered.add(binding);
+				} else if (type instanceof ICPPTemplateTypeParameter) {
+					filtered.add(binding);
+	 			}
+			} else if (binding instanceof ICPPClassType) {
+				if (isBaseClassCandidate(classType, (ICPPClassType) binding))
+						filtered.add(binding);
+			} else if (binding instanceof ICPPTemplateTypeParameter) {
+				filtered.add(binding);
+ 			}
 		}
 
 		return filtered.toArray(new IBinding[filtered.size()]);

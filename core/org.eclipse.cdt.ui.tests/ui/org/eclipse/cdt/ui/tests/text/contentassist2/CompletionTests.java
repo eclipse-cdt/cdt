@@ -705,7 +705,20 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= {};
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
+	
+	//class BaseTest : Spec/*cursor*/
+	public void testBaseClassIsStruct_434446() throws Exception {
+		final String[] expected= {"Specialization<>"};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);		
+	}
 
+	// template<typename TP_Param>
+	// class BaseTest : TP/*cursor*/
+	public void testBaseClassIsTemplateParameter() throws Exception {
+		final String[] expected= {"TP_Param"};
+		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);		
+	}
+	
 	//	struct A {};
 	//
 	//	template<typename T>

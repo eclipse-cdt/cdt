@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Mathias Kunter - Support for different charsets (bug 370462)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
+ *     Marc Khouzam (Ericsson) - Output the version of GDB at startup (Bug 455408)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBVersionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -100,6 +102,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			return new String[] {
 					"stepInitializeFinalLaunchSequence",   //$NON-NLS-1$
 					// Global GDB settings
+					"stepGDBVersion",   //$NON-NLS-1$
 					"stepSetEnvironmentDirectory",   //$NON-NLS-1$
 					"stepSetBreakpointPending",    //$NON-NLS-1$
 					"stepEnablePrettyPrinting",    //$NON-NLS-1$
@@ -174,6 +177,23 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		if (fTracker != null) fTracker.dispose();
 		fTracker = null;
 		requestMonitor.done();
+	}
+
+	/**
+	 * Print the version of GDB. 
+	 * @since 4.6 
+	 */
+	@Execute
+	public void stepGDBVersion(final RequestMonitor requestMonitor) {
+		fCommandControl.queueCommand(
+				fCommandFactory.createMIGDBVersion(fCommandControl.getContext()), 
+				new DataRequestMonitor<MIGDBVersionInfo>(getExecutor(), requestMonitor) {
+					@Override
+					protected void handleCompleted() {
+						// Accept failures
+						requestMonitor.done();
+					}
+				});
 	}
 
 	/**

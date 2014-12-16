@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *    John Camelon (IBM) - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
+ *    Michael Woski
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,10 +20,14 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
@@ -30,12 +35,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * Base class specifier
  */
 public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier, ICPPASTCompletionContext {
-
     private boolean isVirtual;
     private int visibility;
     private ICPPASTNameSpecifier nameSpecifier;
 	private boolean fIsPackExpansion;
-
     
     public CPPASTBaseSpecifier() {
 	}
@@ -121,9 +124,9 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitBaseSpecifiers) {
 		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 
@@ -157,12 +160,23 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		}
 
 		for (IBinding binding : bindings) {
-			if (binding instanceof ICPPClassType) {
-				ICPPClassType base = (ICPPClassType) binding;
-				int key = base.getKey();
-				if (key == ICPPClassType.k_class &&
-						(classType == null || !base.isSameType(classType))) {
-					filtered.add(base);
+			if (binding instanceof IType) {
+				IType type = (IType) binding;
+
+				while (type instanceof ITypedef || type instanceof ICPPAliasTemplate) {
+					type = type instanceof ITypedef ?
+							((ITypedef) type).getType()	: ((ICPPAliasTemplate) type).getType();
+				}
+
+				if (type instanceof ICPPClassType) {
+					int key = ((ICPPClassType) type).getKey();
+					if ((key == ICPPClassType.k_class || key == ICPPClassType.k_struct
+							|| type instanceof ICPPDeferredClassInstance || type instanceof ICPPUnknownMemberClass)
+							&& (classType == null || !type.isSameType(classType))) {
+						filtered.add(binding);
+					}
+				} else if (type instanceof ICPPTemplateTypeParameter) {
+					filtered.add(binding);
 				}
 			}
 		}

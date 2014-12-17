@@ -142,7 +142,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		            scanner.setSource(document.get().toCharArray());
 		            scanner.setCurrentPosition(findPreprocessorDirectiveStart(document, region.getOffset()));
 		            Token token = scanner.nextToken();
-		            if (token.getType() == Token.tPREPROCESSOR_INCLUDE) {
+		            if (token != null && token.getType() == Token.tPREPROCESSOR_INCLUDE) {
 		            	int endPos = token.getOffset() + token.getLength();
 		            	// Trim trailing whitespace.
 		            	while (Character.isWhitespace(document.getChar(--endPos))) {

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_e256f8a2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTBaseSpecifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-17T18:59:55Z",
+      "side": 1,
+      "message": "Rewrite to avoid repeated code.",
+      "revId": "2987d8f28f0202f1e30e48105000751a22f1bd0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_225110b1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-17T18:59:55Z",
+      "side": 1,
+      "message": "Please use proper capitalization and punctuation in comments (template -\u003e Templates, terminate with a dot).",
+      "revId": "2987d8f28f0202f1e30e48105000751a22f1bd0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_424c0c1d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-17T18:59:55Z",
+      "side": 1,
+      "message": "Unconditional expansion of ICPPAliasTemplate is wrong. Please remove these three lines and create a separate bug including the use case that requires ICPPAliasTemplate to be resolved. Resolution itself should probably be done in CPPASTBaseSpecifier.findBindings, not here.",
+      "revId": "2987d8f28f0202f1e30e48105000751a22f1bd0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_e27f181b",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTest_ClassReference_NoPrefix.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-17T18:59:55Z",
+      "side": 1,
+      "message": "$NON-NLS are not needed in tests.",
+      "revId": "2987d8f28f0202f1e30e48105000751a22f1bd0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

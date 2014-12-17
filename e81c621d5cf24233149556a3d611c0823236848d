@@ -16,6 +16,24 @@
       "revId": "e81c621d5cf24233149556a3d611c0823236848d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_02f05402",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/LaunchVMProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-17T20:16:27Z",
+      "side": 1,
+      "message": "We haven\u0027t been paying attention to whitespace \u0027issues\u0027 before.  I think that since we all code in Eclipse, those whitespaces don\u0027t bother anyone.  However, I know other eclipse projects are very strict about that.  I personally hope we don\u0027t go there, but this could always be discussed between the different committers.\n\nIn this case, I believe I just pressed \u003center\u003e in eclipse, and it added those whitespaces automatically.\n\nPersonally, I\u0027ve turned off the notification about whitespace in Gerrit.",
+      "parentUuid": "8761b321_e2b1d877",
+      "revId": "e81c621d5cf24233149556a3d611c0823236848d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

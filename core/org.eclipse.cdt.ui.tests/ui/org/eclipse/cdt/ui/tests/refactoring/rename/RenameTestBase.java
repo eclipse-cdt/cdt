@@ -31,27 +31,27 @@ import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
 public class RenameTestBase extends RefactoringTests {
     private static final IProgressMonitor NPM = new NullProgressMonitor();
 
-	public RenameTestBase(String name) {
+	protected RenameTestBase(String name) {
         super(name);
     }
 
-    public RenameTestBase() {
+    protected RenameTestBase() {
     }
 
     /**
      * @param element the CElement to rename
      * @param newName the new name for the element
-     * @return
+     * @return the change produced by refactoring
      * @throws Exception
      */
-    public Change getRefactorChanges(IFile file, int offset, String newName) throws Exception {
-        CRenameRefactoring proc = createRefactoring(file, offset, newName);
+    protected Change getRefactorChanges(IFile file, int offset, String newName) throws Exception {
+        CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
         
-        ((CRenameProcessor) proc.getProcessor()).lockIndex();
+        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
         try {
-        	RefactoringStatus rs = checkConditions(proc);
+        	RefactoringStatus rs = checkConditions(refactoring);
         	if (!rs.hasError()) {
-        		Change change = proc.createChange(new NullProgressMonitor());
+        		Change change = refactoring.createChange(new NullProgressMonitor());
         		return change;
         	} 
 
@@ -62,27 +62,27 @@ public class RenameTestBase extends RefactoringTests {
         	// is shown. 
         	return null;
         } finally {
-            ((CRenameProcessor) proc.getProcessor()).unlockIndex();
+            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
         }
     }
 
-    private CRenameRefactoring createRefactoring(IFile file, int offset, String newName) {
+    protected CRenameRefactoring createRefactoring(IFile file, int offset, String newName) {
     	CRefactoringArgument arg= new CRefactoringArgument(file, offset, 0);
-        CRenameProcessor proc= new CRenameProcessor(CRefactory.getInstance(), arg);
-        proc.setReplacementText(newName);
-        proc.setSelectedOptions(0xFFFF & ~CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
-        proc.setExhaustiveSearchScope(TextSearchWrapper.SCOPE_WORKSPACE);
-        return new CRenameRefactoring(proc);
+        CRenameProcessor processor= new CRenameProcessor(CRefactory.getInstance(), arg);
+        processor.setReplacementText(newName);
+        processor.setSelectedOptions(0xFFFF & ~CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
+        processor.setExhaustiveSearchScope(TextSearchWrapper.SCOPE_WORKSPACE);
+        return new CRenameRefactoring(processor);
     }
 
-    public String[] getRefactorMessages(IFile file, int offset, String newName) throws Exception {
+    protected String[] getRefactorMessages(IFile file, int offset, String newName) throws Exception {
         String[] result;
-        CRenameRefactoring proc = createRefactoring(file, offset, newName);
-        ((CRenameProcessor) proc.getProcessor()).lockIndex();
+        CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
+        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
         try {
-        	RefactoringStatus rs = checkConditions(proc);
+        	RefactoringStatus rs = checkConditions(refactoring);
         	if (!rs.hasWarning()) {
-        		fail("Input check on "+ newName + " passed. There should have been warnings or errors.");
+        		fail("Input check on " + newName + " passed. There should have been warnings or errors.");
         		return null;
         	}
         	RefactoringStatusEntry[] rse = rs.getEntries();
@@ -94,36 +94,36 @@ public class RenameTestBase extends RefactoringTests {
         	} 
         	return result;
         } finally {
-            ((CRenameProcessor) proc.getProcessor()).unlockIndex();
+            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
         }
     }
 
-    public RefactoringStatus checkConditions(IFile file, int offset, String newName) throws Exception {
-        CRenameRefactoring proc = createRefactoring(file, offset, newName);
-        ((CRenameProcessor) proc.getProcessor()).lockIndex();
+    protected RefactoringStatus checkConditions(IFile file, int offset, String newName) throws Exception {
+        CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
+        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
         try {
-        	return checkConditions(proc);
+        	return checkConditions(refactoring);
         } finally {
-            ((CRenameProcessor) proc.getProcessor()).unlockIndex();
+            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
         }
     }
     
-    private RefactoringStatus checkConditions(CRenameRefactoring proc) throws CoreException {
-        RefactoringStatus rs = proc.checkInitialConditions(new NullProgressMonitor());
+    private RefactoringStatus checkConditions(CRenameRefactoring refactoring) throws CoreException {
+        RefactoringStatus rs = refactoring.checkInitialConditions(new NullProgressMonitor());
         if (!rs.hasError()) {
-            rs= proc.checkFinalConditions(new NullProgressMonitor());
+            rs= refactoring.checkFinalConditions(new NullProgressMonitor());
         }
         return rs;
     }
 
-    public int getRefactorSeverity(IFile file, int offset, String newName) throws Exception {
-        CRenameRefactoring proc = createRefactoring(file, offset, newName);
-        ((CRenameProcessor) proc.getProcessor()).lockIndex();
+    protected int getRefactorSeverity(IFile file, int offset, String newName) throws Exception {
+        CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
+        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
         try {
-        	RefactoringStatus rs = checkConditions(proc);
+        	RefactoringStatus rs = checkConditions(refactoring);
         	return rs.getSeverity();
         } finally {
-            ((CRenameProcessor) proc.getProcessor()).unlockIndex();
+            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
         }
     }
 

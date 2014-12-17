@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_42308c71",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIGDBVersionInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-12-17T20:02:25Z",
+      "side": 1,
+      "message": "Should we make it easier to overwrite version parsing for custom GDBs by adding a new method: parseVersion(String text), for instance?\nI think it\u0027s quite common for vendors to have their own version formats. What do you think?",
+      "revId": "2bd0f554b17bedf5cf4e9fd76473c899133617d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

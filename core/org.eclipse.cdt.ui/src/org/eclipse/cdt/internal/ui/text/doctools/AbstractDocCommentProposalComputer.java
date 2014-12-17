@@ -65,6 +65,9 @@ abstract class AbstractDocCommentProposalComputer implements ICompletionProposal
 	
 	private static IResource getResource() {
 		ITranslationUnit tu= getTranslationUnit();
+		if (tu == null)
+			return null;
+		
 		return tu.getResource();
 	}
 	

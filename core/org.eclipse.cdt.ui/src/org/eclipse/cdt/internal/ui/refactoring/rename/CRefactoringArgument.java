@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
- * Represents the input to a refactoring. Important is file and offset the rest
+ * Represents the input to a refactoring. Important are file and offset, the rest
  * can be calculated from the AST.
  */
 public class CRefactoringArgument {

@@ -133,8 +133,8 @@ public class ASTManager implements IDisposable {
     public final static int UNKNOWN= -1;
     
 	private IASTTranslationUnit fSharedAST;
-    private Map<IFile, IASTTranslationUnit> fTranslationUnits= new HashMap<IFile, IASTTranslationUnit>();
-    private HashSet<String> fProblemUnits= new HashSet<String>();
+    private Map<IFile, IASTTranslationUnit> fTranslationUnits= new HashMap<>();
+    private HashSet<String> fProblemUnits= new HashSet<>();
     private CRefactoringArgument fArgument;
     private IBinding[] fValidBindings;
     private String fRenameTo;
@@ -1008,9 +1008,9 @@ public class ASTManager implements IDisposable {
 
     private void analyzeTextMatchesOfTranslationUnit(IASTTranslationUnit tu, 
             final CRefactoringMatchStore store, final RefactoringStatus status) {
-        fKnownBindings= new HashMap<IBinding, Integer>();
-        fConflictingBinding= new HashSet<IBinding>();
-        final Set<IPath> paths= new HashSet<IPath>();
+        fKnownBindings= new HashMap<>();
+        fConflictingBinding= new HashSet<>();
+        final Set<IPath> paths= new HashSet<>();
         boolean renamesMacro= fArgument.getArgumentKind() == CRefactory.ARGUMENT_MACRO;
         
         analyzeMacroMatches(tu, store, paths, status);
@@ -1186,7 +1186,7 @@ public class ASTManager implements IDisposable {
             cmp= UNKNOWN;
             handleProblemBinding(name.getTranslationUnit(), (IProblemBinding) binding, status);
         } else {
-        	// check whether a qualifier has a problem binding
+        	// Check whether a qualifier has a problem binding.
         	boolean problemInQualifier= false;
         	IASTNode parent= name.getParent();
         	if (parent instanceof ICPPASTQualifiedName) {
@@ -1231,7 +1231,7 @@ public class ASTManager implements IDisposable {
         			}
         		}
         	}
-            fKnownBindings.put(binding, new Integer(cmp));
+            fKnownBindings.put(binding, Integer.valueOf(cmp));
         }
         switch (cmp) {
         case TRUE:
@@ -1496,12 +1496,12 @@ public class ASTManager implements IDisposable {
                 }
             }            
 
-            if (newBindingsAboverOrEqual != null && newBindingsAboverOrEqual.length>0) {
+            if (newBindingsAboverOrEqual != null && newBindingsAboverOrEqual.length > 0) {
                 break;
             }
         }
         if (newBindingsAboverOrEqual == null) {
-            newBindingsAboverOrEqual= new IBinding[0];
+            newBindingsAboverOrEqual= IBinding.EMPTY_BINDING_ARRAY;
         }
         
         // check conflicting bindings for being from above or equal level.

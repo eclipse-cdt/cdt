@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_28b60f26",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-18T13:15:10Z",
+      "side": 1,
+      "message": "while you at it these should be private too then, or somebody using them? And capitalized since they are constants",
+      "revId": "54b49f80b05f20a6eeb4a864c4d284562db59fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_48b1cb2c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-18T13:15:10Z",
+      "side": 1,
+      "message": "It was like that before but it seems weird that last result and first value\nwould be jammed together without a separator.",
+      "revId": "54b49f80b05f20a6eeb4a864c4d284562db59fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

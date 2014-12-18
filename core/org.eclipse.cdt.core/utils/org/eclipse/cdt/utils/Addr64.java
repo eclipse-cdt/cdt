@@ -14,6 +14,7 @@ package org.eclipse.cdt.utils;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.internal.core.Messages;
@@ -49,6 +50,19 @@ public class Addr64 implements IAddress, Serializable {
 
 	public Addr64(String addr) {
 		this(addr, true);
+	}
+
+	/**
+	 * Create an address represented by long bits. 
+	 * Signed bit will be used as unsigned extension, if you don't want it mask it before passing here.
+	 * 
+	 * @since 5.9
+	 */
+	public Addr64(long addr) {
+		if (addr < 0)
+			address = new BigInteger(1, ByteBuffer.allocate(8).putLong(addr).array());
+		else
+			address = BigInteger.valueOf(addr);
 	}
 
 	public Addr64(String addr, boolean truncate) {

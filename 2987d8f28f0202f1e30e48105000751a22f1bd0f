@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_3ca2d083",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2014-12-18T21:48:18Z",
+      "side": 1,
+      "message": "so should I introduce a new option then, or do you favour the solution from your first comment?",
+      "parentUuid": "8761b321_5ca7ccc4",
+      "revId": "2987d8f28f0202f1e30e48105000751a22f1bd0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_e27f181b",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTest_ClassReference_NoPrefix.java",
         "patchSetId": 2

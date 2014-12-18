@@ -17,13 +17,13 @@
          point="org.eclipse.debug.ui.launchConfigurationTabs">
       <!-- Local application launch tabs-->
       <tab
-            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.mainTab"
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.mainTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.main.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
         <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
       </tab>
-      <tab id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.argumentsTab"
+      <tab id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.argumentsTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.arguments.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
@@ -31,7 +31,7 @@
         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
       </tab>
       <tab 
-            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.environmentTab"
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.environmentTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.environment.name"
             class="org.eclipse.debug.ui.EnvironmentTab">
@@ -39,7 +39,7 @@
          <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
       </tab>
       <tab
-            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.debuggerTab"
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.debuggerTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.debugger.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
@@ -47,7 +47,7 @@
         <placement after="org.eclipse.debug.ui.environmentTab"/>
       </tab>
       <tab
-            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.sourceLookupTab"
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.sourceLookupTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.sourceLookup.name"
             class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
@@ -55,7 +55,7 @@
         <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
       </tab>
       <tab
-            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.commonTab"
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.commonTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.common.name"
             class="org.eclipse.debug.ui.CommonTab">

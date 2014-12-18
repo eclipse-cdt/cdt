@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_08cb53b8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIResultRecord.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-18T17:45:38Z",
+      "side": 1,
+      "message": "Incomplete description",
+      "revId": "a8463b89c62443a96230bd2ff3f7517b4a4210bc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

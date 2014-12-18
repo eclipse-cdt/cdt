@@ -80,4 +80,11 @@ public class Addr64Factory implements IAddressFactory2 {
 	public IAddress createAddress(BigInteger addr, boolean truncate) {
 		return new Addr64(addr, truncate);
 	}
+
+	/**
+	 * @since 5.9
+	 */
+	public IAddress createAddress(long addr) {
+		return new Addr64(addr);
+	}
 }

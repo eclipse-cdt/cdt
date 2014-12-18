@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_5ca7ccc4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/SemanticUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-18T20:05:36Z",
+      "side": 1,
+      "message": "Please notice that the method has the second argument, options, which controls what types get resolved and what not.\n\nTypedefs are resolved only when TDEF or COND_TDEF is specified. ICPPAliasTemplate is not a typedef, so it should not be resolved even when TDEF flag is specified.",
+      "parentUuid": "8761b321_dc4f5c8c",
+      "revId": "2987d8f28f0202f1e30e48105000751a22f1bd0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_e27f181b",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTest_ClassReference_NoPrefix.java",
         "patchSetId": 2

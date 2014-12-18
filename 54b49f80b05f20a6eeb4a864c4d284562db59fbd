@@ -33,6 +33,24 @@
       "revId": "54b49f80b05f20a6eeb4a864c4d284562db59fbd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_48f9cb8d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITuple.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2014-12-18T17:37:26Z",
+      "side": 1,
+      "message": "It\u0027s actually because there would be either list of results (99% of cases) or list of values. I don\u0027t think GDB will ever output a mixture, and if it does, everything will break. We possibly can enforce that, but a better way would be to use MIList for output consisting of just values - and that\u0027s tangential to what I\u0027m trying to do here.",
+      "parentUuid": "8761b321_48b1cb2c",
+      "revId": "54b49f80b05f20a6eeb4a864c4d284562db59fbd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

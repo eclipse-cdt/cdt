@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_156d27a7",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTBaseSpecifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Since the method is called only once and the semantics of it is not very clear, the code would be easier to read if the method is inlined.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_55567fdb",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Correct indentation.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_355b0304",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Correct indentation.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_d549ef39",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Trailing whitespace.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_d5628fb7",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Please create that bug and refer to it here.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_b546f325",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Trailing whitespace.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_1544071d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-19T18:26:34Z",
+      "side": 1,
+      "message": "Trailing whitespace.",
+      "revId": "285722277ead09a7a9ccf556ed3cb0bae9c310cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

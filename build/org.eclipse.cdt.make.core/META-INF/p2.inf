@@ -1,2 +1,0 @@
-instructions.install=\
-  org.eclipse.equinox.p2.touchpoint.natives.checkAndPromptNativePackage(distro:debian,package:make);

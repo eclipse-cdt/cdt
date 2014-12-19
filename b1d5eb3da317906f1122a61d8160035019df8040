@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "8761b321_bc0380c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/MultiThread.cc",
+        "patchSetId": 17
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-19T15:46:29Z",
+      "side": 1,
+      "message": "join the variable declaration?",
+      "revId": "b1d5eb3da317906f1122a61d8160035019df8040",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_dc063cd8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/MultiThreadRunControl.cc",
+        "patchSetId": 17
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-19T15:46:29Z",
+      "side": 1,
+      "message": "join the variable declaration?",
+      "revId": "b1d5eb3da317906f1122a61d8160035019df8040",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_7c228862",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadPthread.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-19T15:46:29Z",
+      "side": 1,
+      "message": "could you join the variable declaration with the line below? Or is it more a C-like coding style to do it this way? This is minor anyway..",
+      "revId": "b1d5eb3da317906f1122a61d8160035019df8040",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_1c11d40b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadPthreadTypes.h",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-19T15:46:29Z",
+      "side": 1,
+      "message": "I\u0027m not sure \"THREADFUNC\" is a clear name.THREAD_CALL_CONV? Maybe you have a better idea.",
+      "revId": "b1d5eb3da317906f1122a61d8160035019df8040",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_7c5568ca",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadWindows.h",
         "patchSetId": 17
@@ -13,6 +81,23 @@
       "writtenOn": "2014-12-18T23:11:04Z",
       "side": 1,
       "message": "is this a valid join implementation? ;)",
+      "revId": "b1d5eb3da317906f1122a61d8160035019df8040",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_fc0df8f2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-19T15:46:29Z",
+      "side": 1,
+      "message": "year could be updated",
       "revId": "b1d5eb3da317906f1122a61d8160035019df8040",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -66,7 +66,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -267,7 +266,7 @@ public class MIRegistersTest extends BaseTestCase {
 		final IRegisterGroupDMContext regGroupsDMC = getTargetRegisterGroup();
 		IRegisterGroupDMData data = getRegisterGroupData(regGroupsDMC);
 
-		assertTrue("The name of the main group should be: General Registers instead of: " + data.getName(), data.getName().equals("General Registers"));
+		assertEquals("Main register group's name", "General Registers", data.getName());
 	}
 
 	@Test
@@ -289,7 +288,7 @@ public class MIRegistersTest extends BaseTestCase {
         
     	for(IRegisterDMData data: datas){
     		String regName = data.getName();
-   			Assert.assertFalse("GDB does not support register name: " + regName, !regNames.contains(regName));
+   			assertTrue("GDB does not support register name: " + regName, regNames.contains(regName));
     	}
     }
     
@@ -348,42 +347,23 @@ public class MIRegistersTest extends BaseTestCase {
 	public void getModelDataForRegisterDataValueInDifferentNumberFormats() throws Throwable {
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
 		String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
-		try {
-			Long.parseLong(val);
-		} catch (NumberFormatException e) {
-			assertTrue("Register Value is not in NATURAL_FORMAT: " + val, false);
-		}
+		Long.parseLong(val);
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.HEX_FORMAT, 0);
 		assertTrue("Register Value is not in HEX_FORMAT: " + val, val.startsWith("0x"));
-		try {
-			Long.parseLong(val.substring(2), 16);
-		} catch (NumberFormatException e) {
-			assertTrue("Register Value is not in HEX_FORMAT: " + val, false);
-		}
+		Long.parseLong(val.substring(2), 16);
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, 0);
-		try {
-			Long.parseLong(val, 2);
-		} catch (NumberFormatException e) {
-			assertTrue("Register Value is not in BINARY_FORMAT: " + val, false);
-		}
+		Long.parseLong(val, 2);
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.DECIMAL_FORMAT, 0);
-		try {
-			Long.parseLong(val);
-		} catch (NumberFormatException e) {
-			assertTrue("Register Value is not in DECIMAL_FORMAT: " + val, false);
-		}
+		Long.parseLong(val);
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, 0);
 		assertTrue("Register Value is not in OCTAL_FORMAT: " + val, val.startsWith("0"));
-		try {
-			Long.parseLong(val.substring(1), 8);
-		} catch (NumberFormatException e) {
-			assertTrue("Register Value is not in OCTAL_FORMAT: " + val, false);
-		}
+		Long.parseLong(val.substring(1), 8);
 	}
 
 	@Test
@@ -416,8 +396,8 @@ public class MIRegistersTest extends BaseTestCase {
 
 		IExecutionDMContext[] ctxts = queryExecutionContexts.get(500, TimeUnit.MILLISECONDS);
 
-		Assert.assertNotNull(ctxts);
-		Assert.assertTrue(ctxts.length > 1);
+		assertNotNull(ctxts);
+		assertTrue(ctxts.length > 1);
 
 		int tid1 = ((IMIExecutionDMContext) ctxts[0]).getThreadId();
 		int tid2 = ((IMIExecutionDMContext) ctxts[1]).getThreadId();
@@ -448,12 +428,12 @@ public class MIRegistersTest extends BaseTestCase {
 		String dupliThread2RegVal5 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 5);
 
 		// If Values not equal , then context haven't been re-set properly
-		assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal0.equals(dupliThread2RegVal0));
-		assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal1.equals(dupliThread2RegVal1));
-		assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal2.equals(dupliThread2RegVal2));
-		assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal3.equals(dupliThread2RegVal3));
-		assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal4.equals(dupliThread2RegVal4));
-		assertTrue("Multiple context not working. Execution Context is not reset to 2", thread2RegVal5.equals(dupliThread2RegVal5));
+		assertEquals("Multiple context not working. Execution Context is not reset to 2", thread2RegVal0, dupliThread2RegVal0);
+		assertEquals("Multiple context not working. Execution Context is not reset to 2", thread2RegVal1, dupliThread2RegVal1);
+		assertEquals("Multiple context not working. Execution Context is not reset to 2", thread2RegVal2, dupliThread2RegVal2);
+		assertEquals("Multiple context not working. Execution Context is not reset to 2", thread2RegVal3, dupliThread2RegVal3);
+		assertEquals("Multiple context not working. Execution Context is not reset to 2", thread2RegVal4, dupliThread2RegVal4);
+		assertEquals("Multiple context not working. Execution Context is not reset to 2", thread2RegVal5, dupliThread2RegVal5);
 
 	}
 
@@ -497,7 +477,7 @@ public class MIRegistersTest extends BaseTestCase {
 		int regIndex = 3;
 		writeRegister(frameDmc, 3, regValue, IFormattedValues.NATURAL_FORMAT);
 		String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, regIndex);
-		assertTrue("Failed writing register. New value should have been " + regValue, regValue.equals(val));
+		assertEquals("Failed writing register", regValue, val);
 	}
 
 	@Test
@@ -508,7 +488,7 @@ public class MIRegistersTest extends BaseTestCase {
 		int regIndex = 3;
 		writeRegister(frameDmc, 3, regValue, IFormattedValues.HEX_FORMAT);
 		String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.HEX_FORMAT, regIndex);
-		assertTrue("Failed writing register. New value should have been " + regValue, regValue.equals(val));
+		assertEquals("Failed writing register", regValue, val);
 	}
 
 	@Test
@@ -519,7 +499,7 @@ public class MIRegistersTest extends BaseTestCase {
 		int regIndex = 3;
 		writeRegister(frameDmc, 3, regValue, IFormattedValues.BINARY_FORMAT);
 		String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, regIndex);
-		assertTrue("Failed writing register. New value should have been " + regValue + " instead of " + val, regValue.equals(val));
+		assertEquals("Failed writing register", regValue, val);
 	}
 
 	@Test
@@ -531,7 +511,7 @@ public class MIRegistersTest extends BaseTestCase {
 		int regIndex = 3;
 		writeRegister(frameDmc, 3, regValue, IFormattedValues.OCTAL_FORMAT);
 		String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, regIndex);
-		assertTrue("Failed writing register. New value should have been " + regValue + "instead of " + val, regValue.equals(val));
+		assertEquals("Failed writing register", regValue, val);
 	}
 
     /**
@@ -625,7 +605,7 @@ public class MIRegistersTest extends BaseTestCase {
 		
 		IRegisterGroupDMData[] groupsData = getRegisterGroupsData(regInGroup[0]);
 		//increment + root
-		assertTrue(groupsData.length == grpsIncrement + 1);
+		assertEquals(grpsIncrement + 1, groupsData.length);
 		for (IRegisterGroupDMData grpData: groupsData) {
 			// Validate group name
 			assertTrue(groupNameToDescMap.containsKey(grpData.getName()));
@@ -633,19 +613,19 @@ public class MIRegistersTest extends BaseTestCase {
 			String expectedName = groupNameToDescMap.get(grpData.getName());
 			
 			//Validate group description
-			assertTrue(grpDataDesc.equals(expectedName));
+			assertEquals(expectedName, grpDataDesc);
 			groupsFound.add(grpData.getName());
 		}
 		
 		//Make sure all expected groups were found
-		assertTrue(groupsFound.size() == groupNameToDescMap.size());
+		assertEquals(groupNameToDescMap.size(), groupsFound.size());
 	}
 	
 	@Test
 	public void canAddRegisterGroup() throws Throwable {
 		// only root group expected
 		final IRegisterGroupDMContext[] groups = getRegisterGroups(1);
-		assertTrue("Unexpected groups present, only root was expected", groups.length == 1);
+		assertEquals("Unexpected groups present, only root was expected", 1, groups.length);
 		assertTrue("Can not Add register groups", canAddRegisterGroup(groups[0]));
 	}
 	
@@ -653,7 +633,7 @@ public class MIRegistersTest extends BaseTestCase {
 	public void canNotEditRootRegisterGroup() throws Throwable {
 		// only root group expected
 		final IRegisterGroupDMContext[] groups = getRegisterGroups(1);
-		assertTrue("Unexpected groups present, only root was expected", groups.length == 1);
+		assertEquals("Unexpected groups present, only root was expected", 1, groups.length);
 
 		assertFalse("Not expected to allow the editing of the root register group", canEditRegisterGroup(groups[0]));
 	}
@@ -686,7 +666,7 @@ public class MIRegistersTest extends BaseTestCase {
 	public void canEditRegisterGroup() throws Throwable {
 		// only root group expected
 		final IRegisterGroupDMContext[] groups = getRegisterGroups(1);
-		assertTrue("Unexpected groups present, only root was expected", groups.length == 1);
+		assertEquals("Unexpected groups present, only root was expected", 1, groups.length);
 
 		IRegisterGroupDMContext group = addDefaultUserGroup();
 		assertTrue("Was not allowed to edit register group", canEditRegisterGroup(group));
@@ -989,10 +969,10 @@ public class MIRegistersTest extends BaseTestCase {
 	 */
 	private IRegisterGroupDMContext[] getRegisterGroups(int expectedCount) throws Throwable {
 		IRegisterGroupDMContext[] regGroupsDMCs = getRegisterGroups();
-		assertTrue("Number of groups present (" + regGroupsDMCs.length + ")" + ", and expected (" + expectedCount + ")", //$NON-NLS-1$
-				regGroupsDMCs.length == expectedCount);
+		assertEquals("Number of groups present", //$NON-NLS-1$
+				expectedCount, regGroupsDMCs.length);
 
-		return (regGroupsDMCs);
+		return regGroupsDMCs;
 	}
 
 	private String proposeGroupName() throws Throwable {
@@ -1356,7 +1336,7 @@ public class MIRegistersTest extends BaseTestCase {
 	private int resolveGroupNameSequence(String groupName) {
 		int sequence = 0;
 		String[] strSequence = groupName.split("_");
-		assertTrue(strSequence.length == 2);
+		assertEquals(2, strSequence.length);
 		sequence = Integer.parseInt(strSequence[1]);
 		return sequence;
 	}

@@ -2612,4 +2612,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IVariable var2 = getBindingFromASTName("var2", 4);
 		assertSameType(var1.getType(), var2.getType());
 	}
+	
+	//	struct Cat { void meow(); };
+	//	struct Dog { void woof(); };
+	
+	//	template <typename T>
+	//	Dog bar(T);
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	Cat bar(int);
+	//
+	//	int main() {
+	//		auto x = foo(0);
+	//		x.woof();
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
+		checkBindings();
+	}
 }

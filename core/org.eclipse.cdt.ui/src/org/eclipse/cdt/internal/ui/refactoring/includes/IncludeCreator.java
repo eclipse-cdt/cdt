@@ -40,6 +40,8 @@ import org.eclipse.text.edits.MultiTextEdit;
 import com.ibm.icu.text.Collator;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -51,15 +53,20 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -76,6 +83,7 @@ import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
+import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
@@ -182,7 +190,13 @@ public class IncludeCreator {
 	
 			final ArrayList<IncludeCandidate> candidates = new ArrayList<>(candidatesMap.values());
 			if (candidates.size() > 1) {
-				IncludeCandidate candidate = fAmbiguityResolver.selectElement(candidates);
+				// First, try to resolve the ambiguity by comparing the namespaces of the
+				// candidate bindings to the namespace in which the source name occurs.
+				IncludeCandidate candidate = selectCandidateByNamespace(name, candidates);
+				// If that doesn't disambiguate, fall back to the ambiguity resolver
+				// provided by the user of this class.
+				if (candidate == null)
+					candidate = fAmbiguityResolver.selectElement(candidates);
 				if (candidate == null)
 					return rootEdit;
 				candidates.clear();
@@ -224,6 +238,69 @@ public class IncludeCreator {
 		}
 
 		return createEdit(requiredIncludes, usingDeclarations, ast, selection);
+	}
+
+	private ICPPNamespaceScope getContainingNamespaceScope(IASTNode node) {
+		IScope scope = CPPVisitor.getContainingScope(node);
+		while (scope != null) {
+			if (scope instanceof ICPPNamespaceScope && !(scope instanceof ICPPBlockScope)) {
+				return (ICPPNamespaceScope) scope;
+			}
+			try {
+				scope = scope.getParent();
+			} catch (DOMException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	private ICPPNamespace getContainingNamespace(IASTName name) {
+		ICPPNamespaceScope scope = getContainingNamespaceScope(name);
+		// TODO(nathanridge): Move this ICPPNamespaceScope -> ICPPNamespace
+		// mapping code to a utility class.
+		if (scope instanceof ICPPNamespace) {
+			return (ICPPNamespace) scope;
+		}
+		if (scope instanceof IASTInternalScope) {
+			IASTNode node = ((IASTInternalScope) scope).getPhysicalNode();
+			if (node instanceof ICPPASTNamespaceDefinition) {
+				IBinding namespace = ((ICPPASTNamespaceDefinition) node).getName().resolveBinding();
+				if (namespace instanceof ICPPNamespace) {
+					return (ICPPNamespace) namespace;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private ICPPNamespace getContainingNamespace(IBinding binding) {
+		while (binding != null) {
+			if (binding instanceof ICPPNamespace) {
+				return (ICPPNamespace) binding;
+			}
+			binding = binding.getOwner();
+		}
+		return null;
+	}
+	
+	private IncludeCandidate selectCandidateByNamespace(IASTName sourceName, ArrayList<IncludeCandidate> candidates) {
+		// If one of the candidates is in the same namespace as the source name,
+		// and the others aren't, prefer that candidate.
+		ICPPNamespace sourceNamespace = getContainingNamespace(sourceName);
+		if (sourceNamespace == null) {
+			return null;
+		}
+		IncludeCandidate winner = null;
+		for (IncludeCandidate candidate : candidates) {
+			if (SemanticUtil.isSameNamespace(sourceNamespace, getContainingNamespace(candidate.binding))) {
+				if (winner != null) {
+					return null;  // ambiguous between 'winner' and 'candidate'
+				}
+				winner = candidate;
+			}
+		}
+		return winner;
 	}
 
 	private MultiTextEdit createEdit(List<IncludeInfo> includes,
@@ -497,11 +574,63 @@ public class IncludeCreator {
 		return name.getLastName().toString().equals(usingChain.get(usingChain.size() - 1 - qualifiers.length));
 	}
 
+	private ArrayList<String> getUsingChainForProblemBinding(IProblemBinding binding) {
+		ArrayList<String> chain = new ArrayList<>(4);
+		chain.add(binding.getName());
+		IASTNode node = binding.getASTNode();
+		if (node.getParent() instanceof ICPPASTQualifiedName) {
+			// If the ProblemBinding is for a name inside the qualified name,
+			// use the chain of preceding segments in the qualifier as the
+			// using chain.
+			ICPPASTQualifiedName qualifiedName = (ICPPASTQualifiedName) node.getParent();
+			ICPPASTNameSpecifier[] qualifier = qualifiedName.getQualifier();
+			int i = qualifier.length;
+			if (node != qualifiedName.getLastName()) {
+				while (--i >= 0) {
+					if (qualifier[i] == node) {
+						break;
+					}
+				}
+			}
+			while (--i >= 0) {
+				chain.add(qualifier[i].resolveBinding().getName());
+			}
+		} else {
+			// Otherwise, fall back to the chain of namespaces that physically
+			// contain the name.
+			ICPPNamespaceScope namespace = getContainingNamespaceScope(node);
+			while (namespace != null) {
+				IName namespaceName = namespace.getScopeName();
+				if (namespaceName != null) {
+					chain.add(new String(namespaceName.getSimpleID()));
+				}
+				try {
+					IScope parent = namespace.getParent();
+					if (parent instanceof ICPPNamespaceScope) {
+						namespace = (ICPPNamespaceScope) parent;
+					} else {
+						break;
+					}
+					
+				} catch (DOMException e) {
+					break;
+				}
+			}
+		}
+		return chain;
+	}
+	
 	/**
 	 * Returns components of the qualified name in reverse order.
 	 * For ns1::ns2::Name, e.g., it returns [Name, ns2, ns1].
 	 */
 	private ArrayList<String> getUsingChain(IBinding binding) {
+		// For ProblemBindings, getOwner() is very heuristic and doesn't
+		// produce the chain of owner bindings we want here, so we
+		// handle it specially.
+		if (binding instanceof IProblemBinding) {
+			return getUsingChainForProblemBinding((IProblemBinding) binding);
+		}
 		ArrayList<String> chain = new ArrayList<>(4);
 		for (; binding != null; binding = binding.getOwner()) {
 			String name = binding.getName();

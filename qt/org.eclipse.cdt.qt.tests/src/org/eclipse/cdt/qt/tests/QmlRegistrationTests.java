@@ -92,6 +92,7 @@ public class QmlRegistrationTests extends BaseQtTestCase {
 		}
 	}
 
+	// #include "junit-QObject.hh"
 	// class T;
 	//
 	// static void func()

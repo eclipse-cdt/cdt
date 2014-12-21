@@ -176,6 +176,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//   public: void assign(const T* s) {}
 	// };
 
+	// #include "test.h"
 	// void main() {
 	//   C<char> a;
 	//   a.assign("aaa");
@@ -1167,6 +1168,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//    T operator+(int);
 	// };
 
+    // #include "test.h"
 	// void main() {
 	//   C<char> a;
 	//   a + 2;

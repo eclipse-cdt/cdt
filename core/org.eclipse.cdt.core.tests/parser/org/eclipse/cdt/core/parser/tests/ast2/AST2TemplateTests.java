@@ -8308,6 +8308,29 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	struct Cat { void meow(); };
+	//	struct Dog { void woof(); };
+	//
+	//	template <typename T>
+	//	Dog bar(T);
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	namespace N {
+	//		class A {};
+	//	}
+	//
+	//	Cat bar(N::A);
+	//
+	//	int main() {
+	//		auto x = foo(N::A());
+	//		x.woof();
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_402498d() throws Exception {
+	        parseAndCheckBindings();
+	}
+	
 	//	template <typename>
 	//	struct no_type {};
 	//

@@ -1893,55 +1893,69 @@ public class CPPSemantics {
 	    	}
 	    }
 
-	    if (pointOfDecl < 0 && nd != null) {
-            ASTNodeProperty prop = nd.getPropertyInParent();
-            if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
-                // Point of declaration for a name is immediately after its complete declarator
-            	// and before its initializer.
-                IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
-                while (dtor.getParent() instanceof IASTDeclarator)
-                    dtor = (IASTDeclarator) dtor.getParent();
-                IASTInitializer init = dtor.getInitializer();
-            	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
-            	// is immediately after its complete template-parameter.
-                // Note: can't just check "dtor.getParent() instanceof ICPPASTTemplateParameter"
-                // because function parameter declarations implement ICPPASTTemplateParameter too.
-                boolean isTemplateParameter = dtor.getParent() instanceof ICPPASTTemplateParameter
-                	&& dtor.getParent().getPropertyInParent() == ICPPASTTemplateDeclaration.PARAMETER;
-                if (init != null && !isTemplateParameter)
-                    pointOfDecl = ((ASTNode) init).getOffset() - 1;
-                else
-                    pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
-            } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
-                // Point of declaration for an enumerator is immediately after it
-            	// enumerator-definition
-                IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
-                if (enumtor.getValue() != null) {
-                    ASTNode exp = (ASTNode) enumtor.getValue();
-                    pointOfDecl = exp.getOffset() + exp.getLength();
-                } else {
-                    pointOfDecl = nd.getOffset() + nd.getLength();
-                }
-            } else if (prop == ICPPASTUsingDeclaration.NAME) {
-                nd = (ASTNode) nd.getParent();
-            	pointOfDecl = nd.getOffset();
-            } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
-            	nd = (ASTNode) nd.getParent();
-            	pointOfDecl = nd.getOffset() + nd.getLength();
-            } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
-            		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
-            	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
-            	// is immediately after its complete template-parameter.
-            	// Type and template template parameters are handled here;
-            	// non-type template parameters are handled in the DECLARATOR_NAME
-            	// case above.
-            	nd = (ASTNode) nd.getParent();
-            	pointOfDecl = nd.getOffset() + nd.getLength();
-            } else {
-                pointOfDecl = nd.getOffset() + nd.getLength();
-            }
+	    if (pointOfDecl < 0) {
+	    	if (nd != null) {
+	    		pointOfDecl = getPointOfDeclaration(nd);
+	    	} else if (obj instanceof IIndexBinding) {
+	    		IIndexBinding indexBinding = ((IIndexBinding) obj);
+	    		if (indexBinding instanceof ICPPMethod && ((ICPPMethod) indexBinding).isImplicit()) {
+	    			return true;
+	    		}
+	    		IASTTranslationUnit tu = node.getTranslationUnit();
+	    		IIndexFileSet indexFileSet = tu.getIndexFileSet();
+	    		return (indexFileSet != null && indexFileSet.containsDeclaration(indexBinding));
+	    	}
 	    }
 	    return (pointOfDecl < pointOfRef);
+	}
+
+	private static int getPointOfDeclaration(ASTNode nd) {
+        ASTNodeProperty prop = nd.getPropertyInParent();
+        if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
+            // Point of declaration for a name is immediately after its complete declarator
+        	// and before its initializer.
+            IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
+            while (dtor.getParent() instanceof IASTDeclarator)
+                dtor = (IASTDeclarator) dtor.getParent();
+            IASTInitializer init = dtor.getInitializer();
+        	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
+        	// is immediately after its complete template-parameter.
+            // Note: can't just check "dtor.getParent() instanceof ICPPASTTemplateParameter"
+            // because function parameter declarations implement ICPPASTTemplateParameter too.
+            boolean isTemplateParameter = dtor.getParent() instanceof ICPPASTTemplateParameter
+            	&& dtor.getParent().getPropertyInParent() == ICPPASTTemplateDeclaration.PARAMETER;
+            if (init != null && !isTemplateParameter)
+                return ((ASTNode) init).getOffset() - 1;
+            else
+                return ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
+        } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
+            // Point of declaration for an enumerator is immediately after it
+        	// enumerator-definition
+            IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
+            if (enumtor.getValue() != null) {
+                ASTNode exp = (ASTNode) enumtor.getValue();
+                return exp.getOffset() + exp.getLength();
+            } else {
+                return nd.getOffset() + nd.getLength();
+            }
+        } else if (prop == ICPPASTUsingDeclaration.NAME) {
+            nd = (ASTNode) nd.getParent();
+        	return nd.getOffset();
+        } else if (prop == ICPPASTNamespaceAlias.ALIAS_NAME) {
+        	nd = (ASTNode) nd.getParent();
+        	return nd.getOffset() + nd.getLength();
+        } else if (prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME
+        		|| prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME) {
+        	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
+        	// is immediately after its complete template-parameter.
+        	// Type and template template parameters are handled here;
+        	// non-type template parameters are handled in the DECLARATOR_NAME
+        	// case above.
+        	nd = (ASTNode) nd.getParent();
+        	return nd.getOffset() + nd.getLength();
+        } else {
+            return nd.getOffset() + nd.getLength();
+        }
 	}
 
 	private static boolean acceptDeclaredAfter(ICPPInternalBinding cpp) {

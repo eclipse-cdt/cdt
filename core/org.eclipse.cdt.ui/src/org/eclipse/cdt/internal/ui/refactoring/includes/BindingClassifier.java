@@ -958,7 +958,15 @@ public class BindingClassifier {
 		if (fAst == null) {
 			fAst = node.getTranslationUnit();
 		}
-		node.accept(fBindingCollector);
+		try {
+			// Enable promiscuous binding resolution for this AST traversal,
+			// to allow names to be resolved even if the declarations of their
+			// target bindings are in a header not reachable via includes.
+			CPPSemantics.enablePromiscuousBindingResolution();
+			node.accept(fBindingCollector);
+		} finally {
+			CPPSemantics.disablePromiscuousBindingResolution();
+		}
 	}
 
 	/**

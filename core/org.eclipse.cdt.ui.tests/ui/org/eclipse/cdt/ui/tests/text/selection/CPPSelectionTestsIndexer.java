@@ -184,6 +184,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	//   public: void assign(const T* s) {}
 	// };
 
+	// #include "test.h"
 	// void main() {
 	//   C<char> a;
 	//   a.assign("aaa");
@@ -1175,6 +1176,7 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	//    T operator+(int);
 	// };
 
+    // #include "test.h"
 	// void main() {
 	//   C<char> a;
 	//   a + 2;

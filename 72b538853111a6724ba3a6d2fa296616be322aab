@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_f02d194a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/ThreadWindows.h",
+        "patchSetId": 20
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2014-12-21T03:57:25Z",
+      "side": 1,
+      "message": "Would it makes sense to use attributes to align this instead of implementing aligned_malloc? With:\n__attribute__ ((aligned (4)))\n\nwith MS CL it would be with a declspec but we don\u0027t support that compiler so that\u0027s OK.",
+      "revId": "72b538853111a6724ba3a6d2fa296616be322aab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

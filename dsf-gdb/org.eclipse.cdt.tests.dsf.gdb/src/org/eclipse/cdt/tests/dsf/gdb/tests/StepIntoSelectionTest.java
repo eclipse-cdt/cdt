@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Ericsson and others.
+ * Copyright (c) 2013, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
+ *     Simon Marchi (Ericsson) - Fix atDoubleMethod* tests for older gdb (<= 7.3)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -36,6 +37,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -427,51 +429,87 @@ public class StepIntoSelectionTest extends BaseTestCase {
 
         validateLocation(suspendedEvent, targetFunction.getElementName(), SRC_FILE, FOO_LINE, originalDepth + 1);
 	}
-	
+
+	private void atDoubleMethodStopAtBreakpointCommon(int foo_line) throws Throwable {
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+
+		// Set a breakpoint inside foo, which will hit before our
+		// StepInto is finished
+		SyncUtil.addBreakpoint(Integer.toString(foo_line));
+
+		FunctionDeclaration targetFunction = funcBar;
+		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SRC_FILE,
+																	line, targetFunction, false);  // Set not to skip breakpoints, but it should have no effect
+
+			validateLocation(suspendedEvent, targetFunction.getElementName(), SRC_FILE, BAR_LINE, originalDepth + 1);
+	}
+
 	/**
 	 * This test verifies that we will not stop at a breakpoint if it is in the middle
 	 * of the step-in operations when the run-to-line skip breakpoint option is not selected.
+	 *
+	 * It is only enabled for gdb > 7.3. gdb <= 7.3 generates a stopped event with two
+	 * reasons, resulting in two MIStoppedEvent in the step-into-selection machinery. Later
+	 * gdbs generate a stopped event with only one reason, as they should.
+	 */
+	@Ignore
+	@Test
+	public void atDoubleMethodStopAtBreakpointFunctionEntry() throws Throwable {
+		atDoubleMethodStopAtBreakpointCommon(FOO_LINE);
+	}
+
+	/**
+	 * This test is just like atDoubleMethodStopAtBreakpointFunctionEntry, but avoids placing
+	 * the breakpoint at the beginning of foo().
 	 */
 	@Test
 	public void atDoubleMethodStopAtBreakpoint() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
-
-        // Set a breakpoint inside foo, which will hit before our
-        // StepInto is finished
-        SyncUtil.addBreakpoint(Integer.toString(FOO_LINE));
-
-        FunctionDeclaration targetFunction = funcBar;
-        int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SRC_FILE, 
-        															line, targetFunction, false);  // Set not to skip breakpoints, but it should have no effect
-
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SRC_FILE, BAR_LINE, originalDepth + 1);
+		atDoubleMethodStopAtBreakpointCommon(FOO_LINE + 1);
 	}
-	
+
+	private void atDoubleMethodSkipBreakpointCommon(int foo_line) throws Throwable {
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
+		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
+
+		// Set a breakpoint inside foo, which will hit before our
+		// StepInto is finished
+		SyncUtil.addBreakpoint(Integer.toString(foo_line));
+
+		FunctionDeclaration targetFunction = funcBar;
+		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
+		// StepInto the method
+		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SRC_FILE,
+																	line, targetFunction, true);  // Set skip breakpoints, which should have non impact
+
+		validateLocation(suspendedEvent, targetFunction.getElementName(), SRC_FILE, BAR_LINE, originalDepth + 1);
+	}
+
 	/**
 	 * This test verifies that we will not stop at a breakpoint if it is in the middle
-	 * of the step-in operations even if the run-to-line skip breakpoint option is selected. 
+	 * of the step-in operations even if the run-to-line skip breakpoint option is selected.
+	 *
+	 * It is only enabled for gdb > 7.3. gdb <= 7.3 generates a stopped event with two
+	 * reasons, resulting in two MIStoppedEvent in the step-into-selection machinery. Later
+	 * gdbs generate a stopped event with only one reason, as they should.
+	 */
+	@Test
+	@Ignore
+	public void atDoubleMethodSkipBreakpointFunctionEntry() throws Throwable {
+		atDoubleMethodSkipBreakpointCommon(FOO_LINE);
+	}
+
+	/**
+	 * This test is just like atDoubleMethodSkipBreakpointFunctionEntry, but avoids placing
+	 * the breakpoint at the beginning of foo().
 	 */
 	@Test
 	public void atDoubleMethodSkipBreakpoint() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("doubleMethodTest");
-        int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
-
-        // Set a breakpoint inside foo, which will hit before our
-        // StepInto is finished
-        SyncUtil.addBreakpoint(Integer.toString(FOO_LINE));
-
-        FunctionDeclaration targetFunction = funcBar;
-        int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-        // StepInto the method     
-        ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SRC_FILE, 
-        															line, targetFunction, true);  // Set skip breakpoints, which should have non impact
-
-        validateLocation(suspendedEvent, targetFunction.getElementName(), SRC_FILE, BAR_LINE, originalDepth + 1);
+		atDoubleMethodSkipBreakpointCommon(FOO_LINE + 1);
 	}
-	
+
 	/**
 	 * This test verifies that if we have two methods with the same name on the same line,
 	 * we properly choose the method with the correct number of arguments based on the

@@ -18,8 +18,18 @@ import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class StepIntoSelectionTest_7_4 extends StepIntoSelectionTest_7_3 {
-    @Override
+	@Override
 	protected void setGdbVersion() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_4);		
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_4);
+	}
+
+	@Override
+	public void atDoubleMethodStopAtBreakpointFunctionEntry() throws Throwable {
+		super.atDoubleMethodStopAtBreakpointFunctionEntry();
+	}
+
+	@Override
+	public void atDoubleMethodSkipBreakpointFunctionEntry() throws Throwable {
+		super.atDoubleMethodSkipBreakpointFunctionEntry();
 	}
 }

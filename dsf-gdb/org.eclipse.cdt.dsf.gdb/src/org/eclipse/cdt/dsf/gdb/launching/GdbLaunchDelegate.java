@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Anton Gorenkov         - Need to use a process factory (Bug 210366)
  * Marc Khouzam (Ericsson) - Cleanup the launch if it is cancelled (Bug 374374)
  * Marc-Andre Laperle      - Bug 382462
+ * Marc Khouzam (Ericsson - Show GDB version in debug view node label (Bug 455408)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -201,7 +202,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         launch.initializeControl();
 
         // Add the GDB process object to the launch.
-        launch.addCLIProcess("gdb"); //$NON-NLS-1$
+        launch.addCLIProcess(getCLILabel(config, gdbVersion));
 
         monitor.worked(1);
         
@@ -249,6 +250,14 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         }
 	}
 
+	/**
+	 * Return the label to be used for the CLI node 
+	 * @since 4.6
+	 */
+	protected String getCLILabel(ILaunchConfiguration config, String gdbVersion) throws CoreException {
+        return LaunchUtils.getGDBPath(config).toString().trim() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 	/** 
 	 * This method takes care of cleaning up any resources allocated by the launch, as early as
 	 * the call to getLaunch(), whenever the launch is cancelled or does not complete properly.

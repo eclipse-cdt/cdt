@@ -284,12 +284,7 @@ public class MIRunControlTest extends BaseTestCase {
         MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);	// over the printf
         SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER);	// over the create-thread call
         SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER, TestsPlugin.massageTimeout(2000));	// over the one second sleep
-        
-		// Make sure thread started event was received 
-        IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
-
-        Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
-        
+                
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
         /*
@@ -304,6 +299,13 @@ public class MIRunControlTest extends BaseTestCase {
         wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
+        
+		// Make sure thread started event was received
+        // We check this _after_ we ask for the execution contexts because when running remote (i.e., with gdbserver),
+        // thread events are not sent by gdb until a request for a thread list is given (Bug 455992)
+        IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
+        Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
+
         /*
          * Get data
          */

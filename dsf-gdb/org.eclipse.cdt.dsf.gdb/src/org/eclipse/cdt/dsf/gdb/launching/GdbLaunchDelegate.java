@@ -201,7 +201,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         launch.initializeControl();
 
         // Add the GDB process object to the launch.
-        launch.addCLIProcess("gdb"); //$NON-NLS-1$
+        launch.addCLIProcess(getCLILabel(config, gdbVersion));
 
         monitor.worked(1);
         
@@ -249,6 +249,14 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         }
 	}
 
+	/**
+	 * Return the label to be used for the CLI node 
+	 * @since 4.6
+	 */
+	protected String getCLILabel(ILaunchConfiguration config, String version) {
+        return LaunchUtils.getGDBPath(config).toString() + " (" + version +")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 	/** 
 	 * This method takes care of cleaning up any resources allocated by the launch, as early as
 	 * the call to getLaunch(), whenever the launch is cancelled or does not complete properly.

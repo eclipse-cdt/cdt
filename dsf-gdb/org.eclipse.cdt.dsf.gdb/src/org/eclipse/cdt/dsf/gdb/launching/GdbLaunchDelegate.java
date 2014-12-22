@@ -201,7 +201,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         launch.initializeControl();
 
         // Add the GDB process object to the launch.
-        launch.addCLIProcess("gdb"); //$NON-NLS-1$
+        String cliLabel = LaunchUtils.getGDBPath(config).toString() + " (" + gdbVersion +")"; //$NON-NLS-1$ //$NON-NLS-2$
+        launch.addCLIProcess(cliLabel);
 
         monitor.worked(1);
         

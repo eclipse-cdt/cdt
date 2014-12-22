@@ -72,6 +72,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
 	
     private GdbLaunch fGdbLaunch;
+    private String fGdbVersion;
     
 	public GdbLaunchDelegate() {
 		// We now fully support project-less debugging
@@ -201,7 +202,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         launch.initializeControl();
 
         // Add the GDB process object to the launch.
-        launch.addCLIProcess("gdb"); //$NON-NLS-1$
+        launch.addCLIProcess(getCLILabel(config));
 
         monitor.worked(1);
         
@@ -249,6 +250,14 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         }
 	}
 
+	/**
+	 * Return the label to be used for the CLI node 
+	 * @since 4.6
+	 */
+	protected String getCLILabel(ILaunchConfiguration config) throws CoreException {
+        return LaunchUtils.getGDBPath(config).toString().trim() + " (" + getGDBVersion(config) +")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 	/** 
 	 * This method takes care of cleaning up any resources allocated by the launch, as early as
 	 * the call to getLaunch(), whenever the launch is cancelled or does not complete properly.
@@ -300,7 +309,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 * @since 2.0
 	 */
 	protected String getGDBVersion(ILaunchConfiguration config) throws CoreException {
-		return LaunchUtils.getGDBVersion(config);
+		if (fGdbVersion == null) {
+			fGdbVersion = LaunchUtils.getGDBVersion(config);
+		}
+		return fGdbVersion;
 	}
 
 	@Override

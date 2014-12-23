@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - Initial Implementation
+ *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -61,7 +62,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -754,7 +754,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// target in a suspended state. Unfortunately, there is nothing
 		// practical CDT can do to address this issue except wait for the gdb
 		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    if (runningOnWindows()) {
 	    	return;
 	    }
 		
@@ -951,7 +951,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// target in a suspended state. Unfortunately, there is nothing
 		// practical CDT can do to address this issue except wait for the gdb
 		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    if (runningOnWindows()) {
 	    	return;
 	    }
 		
@@ -1106,7 +1106,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// target in a suspended state. Unfortunately, there is nothing
 		// practical CDT can do to address this issue except wait for the gdb
 		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    if (runningOnWindows()) {
 	    	return;
 	    }
 		

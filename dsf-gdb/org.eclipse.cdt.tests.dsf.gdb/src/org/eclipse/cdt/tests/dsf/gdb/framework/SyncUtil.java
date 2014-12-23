@@ -344,6 +344,25 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(timeout);			
 	}
 
+	public static boolean canResume(final IExecutionDMContext execDmc) throws Throwable {	
+        Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				fRunControl.canResume(execDmc,
+            			new ImmediateDataRequestMonitor<Boolean>(rm) {
+            				@Override
+            				protected void handleSuccess() {
+            					rm.done(getData());
+            				}
+            			});
+			}
+        };
+
+        fRunControl.getExecutor().execute(query);
+        boolean canResume = query.get(500, TimeUnit.MILLISECONDS);
+        return canResume;
+	}
+
 	public static MIRunningEvent resume() throws Throwable {
 		return resume(DefaultTimeouts.get(ETimeout.resume));
 	}
@@ -351,6 +370,19 @@ public class SyncUtil {
 	public static MIRunningEvent resume(int timeout) throws Throwable {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		return resume(containerDmc, timeout);
+	}
+
+	public static void resumeAll() throws Throwable {
+		resumeAll(DefaultTimeouts.get(ETimeout.resume));
+	}
+
+	public static void resumeAll(int timeout) throws Throwable {
+        IMIExecutionDMContext[] threadDmcs = SyncUtil.getExecutionContexts();
+        for (IMIExecutionDMContext thread : threadDmcs) {
+        	if (canResume(thread)) {
+        		resume(thread, timeout);
+        	}
+        }
 	}
 
 	public static MIStoppedEvent waitForStop() throws Throwable {

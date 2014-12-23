@@ -22,7 +22,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7.MIBreakpointsTest_6_7;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -159,7 +158,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		// target in a suspended state. Unfortunately, there is nothing
 		// practical CDT can do to address this issue except wait for the gdb
 		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    if (runningOnWindows()) {
 	    	return;
 	    }
 	    

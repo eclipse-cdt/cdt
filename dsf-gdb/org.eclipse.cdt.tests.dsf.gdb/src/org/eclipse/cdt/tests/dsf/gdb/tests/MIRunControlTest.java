@@ -51,7 +51,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -141,7 +140,7 @@ public class MIRunControlTest extends BaseTestCase {
 		// for 'cygwin1.dll'. In the real world, this wouldn't cut mustard, but
 		// since this is just testing code, and we control the programs, it's a
 		// no brainer.
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    if (runningOnWindows()) {
 
 	    	// This is interesting. Our tests rely on the working directory.
 			// That is, we specify a program path in the launch configuration

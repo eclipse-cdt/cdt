@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ericsson and others.
+ * Copyright (c) 2011, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Simon Marchi (Ericsson) - Disable some reverse tests for gdb 7.0 and 7.1.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
 
@@ -109,8 +110,13 @@ public class LaunchConfigurationAndRestartTest_7_0 extends LaunchConfigurationAn
      * This test will tell the launch to "stop on main" at method main() with reverse
      * debugging enabled.  We will verify that the launch stops at main() and that
      * reverse debugging is enabled.
+     *
+     * In this test, the execution crosses getenv() while recording is enabled. gdb 7.0
+     * and 7.1 have trouble with that. We disable the test for those, and enable it for
+     * 7.2 and upwards.
      */
     @Test
+    @Ignore
     public void testStopAtMainWithReverse() throws Throwable {
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
@@ -175,6 +181,7 @@ public class LaunchConfigurationAndRestartTest_7_0 extends LaunchConfigurationAn
      * Repeat the test testStopAtMainWithReverse, but after a restart.
      */
     @Test
+    @Ignore
     public void testStopAtMainWithReverseRestart() throws Throwable {
     	fRestart = true;
     	testStopAtMainWithReverse();
@@ -185,8 +192,13 @@ public class LaunchConfigurationAndRestartTest_7_0 extends LaunchConfigurationAn
      * with reverse debugging enabled.  We will then verify that the launch is properly
      * stopped at stopAtOther() and that it can go backwards until main() (this will
      * confirm that reverse debugging was enabled at the very start).
+     *
+     * In this test, the execution crosses getenv() while recording is enabled. gdb 7.0
+     * and 7.1 have trouble with that. We disable the test for those, and enable it for
+     * 7.2 and upwards.
      */
 	@Test
+	@Ignore
     public void testStopAtOtherWithReverse() throws Throwable {
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "stopAtOther");
@@ -252,6 +264,7 @@ public class LaunchConfigurationAndRestartTest_7_0 extends LaunchConfigurationAn
      * Repeat the test testStopAtOtherWithReverse, but after a restart.
      */
     @Test
+    @Ignore
     public void testStopAtOtherWithReverseRestart() throws Throwable {
     	fRestart = true;
     	testStopAtOtherWithReverse();

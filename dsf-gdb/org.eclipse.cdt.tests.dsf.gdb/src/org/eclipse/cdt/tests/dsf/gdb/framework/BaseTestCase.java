@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -368,7 +369,7 @@ public class BaseTestCase {
 	 */
  	public static void setGdbProgramNamesLaunchAttributes(String version) {
 		// See bugzilla 303811 for why we have to append ".exe" on Windows
- 		boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
+ 		boolean isWindows = runningOnWindows();
  		String gdbPath = System.getProperty("cdt.tests.dsf.gdb.path");
  		String debugName = "gdb." + version + (isWindows ? ".exe" : "");
  		String debugServerName = "gdbserver." + version + (isWindows ? ".exe" : "");
@@ -398,6 +399,10 @@ public class BaseTestCase {
         	// If we cannot run GDB, just ignore the test case.
         	Assume.assumeNoException(e);
         }
+ 	}
+
+ 	protected static boolean runningOnWindows() {
+ 		return Platform.getOS().equals(Platform.OS_WIN32);
  	}
 
 	@BeforeClass

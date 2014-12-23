@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
+ *     Simon Marchi (Ericsson) - Add and use runningOnWindows().
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -51,7 +52,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -141,7 +141,7 @@ public class MIRunControlTest extends BaseTestCase {
 		// for 'cygwin1.dll'. In the real world, this wouldn't cut mustard, but
 		// since this is just testing code, and we control the programs, it's a
 		// no brainer.
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    if (runningOnWindows()) {
 
 	    	// This is interesting. Our tests rely on the working directory.
 			// That is, we specify a program path in the launch configuration

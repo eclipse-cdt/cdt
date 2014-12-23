@@ -135,7 +135,16 @@ public class GDBProcessesTest extends BaseTestCase {
         Assert.assertTrue("Process data should be executable name " + EXEC_NAME + "but we got " + processData.getName(),
         		 processData.getName().contains(EXEC_NAME));
 	}
-	
+
+	/*
+	 * Return whether thread names are reported by the debugger.
+	 *
+	 * This defaults to false, and is overridden for specific versions of gdb.
+	 */
+	protected boolean threadNamesSupported() {
+		return false;
+	}
+
 	/* 
 	 * getThreadData() for multiple threads
 	 */
@@ -175,9 +184,11 @@ public class GDBProcessesTest extends BaseTestCase {
     	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher(threadData.getId());
 		assertTrue("Thread ID is a series of number", matcher.find());
+
 		// Check thread name
-		assertEquals("main thread's name is the name of the executable", EXEC_NAME, threadData.getName());
-    	
+		String expectedThreadName = threadNamesSupported() ? EXEC_NAME : "";
+		assertEquals("main thread's name is the name of the executable", expectedThreadName, threadData.getName());
+
     	fWait.waitReset(); 
 	}
 }

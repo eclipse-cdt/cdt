@@ -21,4 +21,12 @@ public class GDBProcessesTest_7_3 extends GDBProcessesTest_7_2 {
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_3);		
 	}
+
+	/*
+	 * Thread names are reported starting with gdb 7.3, except on Windows.
+	 */
+	@Override
+	protected boolean threadNamesSupported() {
+		return !runningOnWindows();
+	}
 }

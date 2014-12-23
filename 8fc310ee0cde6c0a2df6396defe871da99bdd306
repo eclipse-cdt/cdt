@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_c8c151cb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPClassTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-23T22:01:21Z",
+      "side": 1,
+      "message": "Extraneous space after (",
+      "revId": "8fc310ee0cde6c0a2df6396defe871da99bdd306",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_a8c695df",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPDeferredClassInstance.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-23T22:01:21Z",
+      "side": 1,
+      "message": "This condition means that any two deferred instances of the same template represent the same type. This doesn\u0027t look right.\n\nChanges in isSameType methods have to be tested separately from content assist tests.",
+      "revId": "8fc310ee0cde6c0a2df6396defe871da99bdd306",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_482ee194",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-23T18:54:11Z",
+      "side": 1,
+      "message": "Only the first and last years, so:\n\n2009, 2014",
+      "revId": "5d87c23a49d1d7acd90700393eeedc63b01b61b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_e8308dee",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-23T18:54:11Z",
+      "side": 1,
+      "message": "Please update the error message, or do an if (threadNamesSupported()) and use two different asserts with their corresponding error message",
+      "revId": "5d87c23a49d1d7acd90700393eeedc63b01b61b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

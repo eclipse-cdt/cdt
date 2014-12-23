@@ -34,6 +34,24 @@
       "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_88659996",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2014-12-23T21:05:39Z",
+      "side": 1,
+      "message": "Then we cannot have fGdbLaunch member there either",
+      "parentUuid": "8761b321_c8a79191",
+      "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

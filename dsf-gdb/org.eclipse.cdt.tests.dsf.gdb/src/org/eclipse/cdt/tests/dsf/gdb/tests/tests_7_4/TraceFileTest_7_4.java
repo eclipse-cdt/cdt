@@ -65,10 +65,12 @@ import org.junit.runners.MethodSorters;
 public class TraceFileTest_7_4 extends BaseTestCase {
 
 	private final static String FILE_NAME = "TracepointTestApp.cc";
-	private final static int LINE_NUMBER_1 = 97;
-	private final static int LINE_NUMBER_2 = 102;
-	private final static String TEVAL_STRING = "lBoolPtr2";
-	private final static String COLLECT_STRING1 = "counter";
+	private final static String EXECUTABLE_PATH = "data/launch/bin/TracepointTestApp.exe";
+	private final static int LINE_NUMBER_1 = 17;
+	private final static int LINE_NUMBER_2 = 24;
+	private final static String END_FUNCTION = "lastCall";
+	private final static String TEVAL_STRING = "a";
+	private final static String COLLECT_STRING1 = "x";
 	private final static String COLLECT_STRING2 = "$regs";
 	private final static String TRACE_FILE = "data/launch/bin/trace";
 
@@ -119,9 +121,8 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 	/**
 	 * This test implements the following steps.
 	 * 1. Starts a remote session
-	 * 2. Sets two tracepoints at data/launch/src/TracepointTestApp.cc:97 
-	 *    and data/launch/src/TracepointTestApp.cc:102.
-     *    The first tracepoint's command is "teval lBoolPtr2".
+	 * 2. Sets two tracepoints in data/launch/src/TracepointTestApp.cc
+     *    The first tracepoint's command is "teval a".
      *    The second tracepoint's commands are "collect counter" and "collect $regs".
      * 3. Sets a regular breakpoint at the end of the source file.
 	 * 4. Starts tracing
@@ -261,7 +262,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
     private void startRemoteSession() throws Throwable {
     	// Set launch attributes
 		super.setLaunchAttributes();		
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXECUTABLE_PATH);
 		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);		
@@ -347,7 +348,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, FILE_NAME);
-		attributes.put(MIBreakpoints.LINE_NUMBER, 152);
+		attributes.put(MIBreakpoints.FUNCTION, END_FUNCTION);
 		IBreakpointDMContext bptDMC = insertBreakpoint(fBreakpointsDmc, attributes);
 		assertTrue(bptDMC instanceof MIBreakpointDMContext);
 		return (MIBreakpointDMContext)bptDMC;

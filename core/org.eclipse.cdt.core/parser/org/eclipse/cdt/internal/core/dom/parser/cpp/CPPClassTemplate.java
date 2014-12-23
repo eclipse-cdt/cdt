@@ -151,6 +151,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 			return true;
 		if (type instanceof ITypedef || type instanceof IIndexBinding)
 			return type.isSameType(this);
+		if ( fDeferredInstance != null && type instanceof ICPPDeferredClassInstance) {
+			return type.isSameType(fDeferredInstance);
+		}
 		return false;
 	}
 	

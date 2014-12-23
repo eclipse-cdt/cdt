@@ -232,10 +232,10 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 
 	@Override
 	public boolean isSameType(IType type) {
-		if (type instanceof ITypedef) {
+		if (type instanceof ITypedef || type instanceof ICPPDeferredClassInstance) {
 			return type.isSameType(this);
 		}
-		
+
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;
 			if (node.getPDOM() == getPDOM()) {

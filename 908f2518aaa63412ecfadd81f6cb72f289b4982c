@@ -16,6 +16,24 @@
       "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_c8a79191",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-23T19:27:29Z",
+      "side": 1,
+      "message": "Darn, that is pretty bad.  And yes, you\u0027re right, I only see the constructor called once.  Surprisingly, the abstract base classes which are really old also use globals.  We should open a bug to clean that up.\n\nI\u0027ll fix this gGdbVersion at least, since it is new.\n\nThanks for pointing this out.",
+      "parentUuid": "8761b321_e897ed4f",
+      "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

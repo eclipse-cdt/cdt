@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -378,19 +379,21 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return false;
 	}
 
-	private List<IBinding> filterClassScopeBindings(ICPPClassType classType,
-			IBinding[] bindings, final boolean isDeclaration) {
+	private List<IBinding> filterClassScopeBindings(ICPPClassType classType, IBinding[] bindings,
+			final boolean isDeclaration) {
 		List<IBinding> filtered = new ArrayList<IBinding>();
-		final boolean canBeFieldAccess= canBeFieldAccess(classType);
+		final boolean canBeFieldAccess = canBeFieldAccess(classType);
+		final IBinding templateInstance = (classType instanceof ICPPTemplateInstance)
+				? ((ICPPTemplateInstance) classType).getTemplateDefinition() : null;
 
 		for (final IBinding binding : bindings) {
 			if (binding instanceof IField) {
 				IField field = (IField) binding;
-				if (!canBeFieldAccess && !field.isStatic()) 
+				if (!canBeFieldAccess && !field.isStatic())
 					continue;
 			} else if (binding instanceof ICPPMethod) {
 				ICPPMethod method = (ICPPMethod) binding;
-				if (method.isImplicit()) 
+				if (method.isImplicit())
 					continue;
 				if (!isDeclaration) {
 					if (method.isDestructor() || method instanceof ICPPConstructor
@@ -400,14 +403,15 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			} else if (binding instanceof IEnumerator || binding instanceof IEnumeration) {
 				if (isDeclaration)
 					continue;
-			} else if (binding instanceof IType) {
-				IType type = (IType) binding;
-				if (type.isSameType(classType)) 
+			} else if (templateInstance == binding) {
 					continue;
-			} 
+			} else if (binding instanceof IType) {
+				if (classType.isSameType((IType) binding))
+					continue;
+			}
 			filtered.add(binding);
 		}
-		
+
 		return filtered;
 	}
 	

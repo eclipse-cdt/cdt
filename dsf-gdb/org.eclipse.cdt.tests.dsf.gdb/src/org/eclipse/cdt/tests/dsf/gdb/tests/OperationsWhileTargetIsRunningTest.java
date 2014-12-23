@@ -108,7 +108,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 
     /**
      * Test that the restart operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminate enabled.  
+     * with the option to kill GDB after the process terminates, enabled.  
      */
     @Test
     public void restartWhileTargetRunningKillGDB() throws Throwable {
@@ -138,7 +138,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
  
     /**
      * Test that the restart operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminate disabled.  
+     * with the option to kill GDB after the process terminates, disabled.  
      */
     @Test
     public void restartWhileTargetRunningGDBAlive() throws Throwable {
@@ -168,7 +168,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     
     /**
      * Test that the terminate operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminate enabled. 
+     * with the option to kill GDB after the process terminates, enabled. 
      */
     @Test
     public void terminateWhileTargetRunningKillGDB() throws Throwable {
@@ -185,7 +185,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
         		ICommandControlShutdownDMEvent.class);
 
         // Don't use a query here.  The terminate, because it kills GDB, may not return right away
-        // But that is ok because we wait for a shutdown event right after
+        // but that is ok because we wait for a shutdown event right after
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
@@ -206,7 +206,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
 
     /**
      * Test that the terminate operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminate disabled. 
+     * with the option to kill GDB after the process terminates, disabled. 
      */
     @Test
     public void terminateWhileTargetRunningKeepGDBAlive() throws Throwable {
@@ -258,7 +258,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     
     /**
      * Test that the detach operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminate enabled.  
+     * with the option to kill GDB after the process terminates, enabled.  
      */
     @Test
     public void detachWhileTargetRunningKillGDB() throws Throwable {
@@ -275,7 +275,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
         		ICommandControlShutdownDMEvent.class);
 
         // Don't use a query here.  Because GDB will be killed, the call to detach may not return right away
-        // But that is ok because we wait for a shutdown event right after
+        // but that is ok because we wait for a shutdown event right after
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
@@ -295,7 +295,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
     
     /**
      * Test that the detach operation works properly while the target is running, and
-     * with the option to kill GDB after the process terminate disabled.  
+     * with the option to kill GDB after the process terminates, disabled.  
      */
     @Test
     public void detachWhileTargetRunningGDBAlive() throws Throwable {

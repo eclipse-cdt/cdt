@@ -262,7 +262,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testSingleReg() throws Throwable {
-		final String regName = "esp";
+		final String regName = "cs";
 		final String exprString = "$" + regName;
 
 		SyncUtil.runToLocation("foo");
@@ -300,8 +300,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchSingleReg() throws Throwable {
-		final String exprString = "=$esp";
-		final String[] children = new String[] { "$esp" };
+		final String exprString = "=$xmm0";
+		final String[] children = new String[] { "$xmm0" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -405,10 +405,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithStar() throws Throwable {
-		// Add the $eip register first as it is present for 32bit but not 64bit machines.
-		// When we put it first like that, we force it to be included in the list all the time.
-		final String exprString = "$eip;=$e*";
-		final String[] children = new String[] { "$eip","$eax","$ebp","$ebx","$ecx","$edi","$edx","$eflags","$es", "$esi","$esp" };
+		final String exprString = "=$f*";
+		final String[] children = new String[] { "$fctrl", "$fioff", "$fiseg", "$fooff", "$fop", "$foseg", "$fs", "$fstat", "$ftag" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -427,7 +425,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMultiplyReg() throws Throwable {
-		final String exprString = "$eax*0";
+		final String exprString = "$fctrl*0";
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -523,10 +521,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithQuestionMark() throws Throwable {
-		// Add the $eip register first as it is present for 32bit but not 64bit machines.
-		// When we put it first like that, we force it to be included in the list all the time.
-		final String exprString = "$eip;=$e??";
-		final String[] children = new String[] { "$eip","$eax","$ebp","$ebx","$ecx","$edi","$edx", "$esi","$esp" };
+		final String exprString = "=$f????";
+		final String[] children = new String[] { "$fctrl", "$fioff", "$fiseg", "$fooff", "$foseg", "$fstat" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -544,7 +540,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testRegWithConditionalOperator() throws Throwable {
-		final String exprString = "$eax?0x16:0x11";
+		final String exprString = "$es?0x16:0x11";
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -554,7 +550,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
 		checkChildrenCount(exprDmc, 0);
 
-		assertEquals(getExpressionValue(exprDmc), "0x16");
+		assertEquals(getExpressionValue(exprDmc), "0x11");
 	}
 	/**
 	 * Test that variables can be matched using '?'
@@ -619,8 +615,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithOneLetterRange() throws Throwable {
-		final String exprString = "=$ea[x]";
-		final String[] children = new String[] { "$eax" };
+		final String exprString = "=$xmm[0]";
+		final String[] children = new String[] { "$xmm0" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -659,8 +655,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithLetterRange() throws Throwable {
-		final String exprString = "=$eb[a-z]";
-		final String[] children = new String[] { "$ebp", "$ebx" };
+		final String exprString = "=$fo[a-z]";
+		final String[] children = new String[] { "$fop" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -679,8 +675,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testMatchRegWithComplexLetterRange() throws Throwable {
-		final String exprString = "=$e[b-c]*";
-		final String[] children = new String[] { "$ebp", "$ebx", "$ecx" };
+		final String exprString = "=$fo[o-p]*";
+		final String[] children = new String[] { "$fooff", "$fop" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1157,8 +1153,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testUniqueWhenOverlapReg() throws Throwable {
-		final String exprString = "=$eax; =$e?x; =$eb?";
-		final String[] children = new String[] { "$eax","$ebx","$ecx","$edx", "$ebp" };
+		final String exprString = "=$fioff; =$f?off; =$fo*";
+		final String[] children = new String[] { "$fioff","$fooff","$fop","$foseg" };
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
@@ -1640,8 +1636,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testGroupExpressionValue() throws Throwable {
 		final String noMatchExpr = "=$zzz*";
-		final String singleMatchExpr = "=$eax;";
-		final String doubleMatchExpr = "=$eax;=$ebx";
+		final String singleMatchExpr = "=$ds;";
+		final String doubleMatchExpr = "=$ds;=$es";
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);

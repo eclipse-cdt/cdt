@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassTemplate;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPDeferredClassInstance;
 import org.eclipse.core.runtime.CoreException;
 
@@ -96,6 +97,8 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 				return false;
 			
 			return CPPTemplates.haveSameArguments(this, rhs);
+		} else if (type instanceof PDOMCPPClassTemplate) {
+			return classTemplate == type;
 		}
 		return false;
 	}

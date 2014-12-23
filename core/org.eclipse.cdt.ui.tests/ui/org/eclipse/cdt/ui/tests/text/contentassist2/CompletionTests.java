@@ -154,6 +154,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//			T add(T tOther) {
 	//				return fTField + tOther;
 	//			}
+	//		class NestedClass{};
 	//	};
 	//	// bug 109480
 	//	class Printer
@@ -1440,6 +1441,24 @@ public class CompletionTests extends AbstractContentAssistTest {
 		setCommaAfterFunctionParameter(CCorePlugin.INSERT);
 		final String[] expected = { "Specialization<typename T1, typename T2>" };
 		assertContentAssistResults(fCursorOffset, expected, true, DISPLAY);
+	}
+
+	//	template<typename T>
+	//	struct Local {
+	//		class NestedClass {};
+	//	};
+	//	template<typename T>
+	//	class TestSameType : Local<T>::/*cursor*/
+	public void testTemplateSameTypeDetection() throws Exception {
+		final String[] expected = { "NestedClass" };
+		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
+	}
+
+	//	template<typename T>
+	//	class TestSameType : TClass<T>::/*cursor*/
+	public void testTemplateSameTypeDetectionPDOM() throws Exception {
+		final String[] expected = { "NestedClass" };
+		assertContentAssistResults(fCursorOffset, expected, true, REPLACEMENT);
 	}
 
 	//	namespace N {

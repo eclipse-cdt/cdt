@@ -12,8 +12,10 @@ package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor;
@@ -23,6 +25,10 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
 
 /**
  * Tests for
@@ -55,6 +61,27 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 		throw new UnsupportedOperationException();
 	}
 
+
+	protected CRenameRefactoring createRenameRefactoring(String newName) {
+		IFile file = getSelectedFile();
+		TextSelection selection = getSelection();
+    	CRefactoringArgument arg = new CRefactoringArgument(file, selection.getOffset(), selection.getLength());
+        CRenameProcessor processor = new CRenameProcessor(CRefactory.getInstance(), arg);
+        processor.setReplacementText(newName);
+        processor.setSelectedOptions(0xFFFF & ~CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
+		return new CRenameRefactoring(processor);
+	}
+
+	protected void executeRenameRefactoring(String newName, boolean expectedSuccess) throws Exception {
+		CRenameRefactoring refactoring = createRenameRefactoring(newName);
+        refactoring.getProcessor().lockIndex();
+        try {
+        	executeRefactoring(refactoring, expectedSuccess);
+        } finally {
+            refactoring.getProcessor().unlockIndex();
+        }
+	}
+    
 	// test1.h
 	//#ifndef TEST1_H_
 	//#define TEST1_H_
@@ -247,6 +274,46 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 		processor.setDestination(destination);
 		MoveRefactoring refactoring = new MoveRefactoring(processor);
 		executeRefactoring(refactoring, true);
+		compareFiles();
+	}
+
+	// OriginalClass.h
+	//#ifndef ORIGINALCLASS_H_
+	//#define ORIGINALCLASS_H_
+	//
+	//class OriginalClass {};
+	//
+	//#endif // ORIGINALCLASS_H_
+	//====================
+	// RenamedClass.h
+	//#ifndef RENAMEDCLASS_H_
+	//#define RENAMEDCLASS_H_
+	//
+	//class RenamedClass {};
+	//
+	//#endif // RENAMEDCLASS_H_
+
+	// OriginalClass.cpp
+	//#include "OriginalClass.h"
+	//====================
+	// RenamedClass.cpp
+	//#include "RenamedClass.h"
+
+	// OriginalClass_test.cpp
+	//#include "OriginalClass.h"
+	//====================
+	// RenamedClass_test.cpp
+	//#include "RenamedClass.h"
+
+	// SomeOtherFile.cpp
+	//#include "OriginalClass.h"
+	///*$*/OriginalClass/*$$*/ a;
+	//====================
+	// SomeOtherFile.cpp
+	//#include "RenamedClass.h"
+	//RenamedClass a;
+	public void testClassRename() throws Exception {
+		executeRenameRefactoring("RenamedClass", true);
 		compareFiles();
 	}
 }

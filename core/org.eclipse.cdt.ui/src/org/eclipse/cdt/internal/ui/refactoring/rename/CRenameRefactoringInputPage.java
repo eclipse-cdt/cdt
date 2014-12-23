@@ -493,8 +493,8 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 	        }
     	}
     }
-    
+
     private CRenameProcessor getRenameProcessor() {
-        return (CRenameProcessor) ((CRenameRefactoring) getRefactoring()).getProcessor();
+        return ((CRenameRefactoring) getRefactoring()).getProcessor();
     }
 }

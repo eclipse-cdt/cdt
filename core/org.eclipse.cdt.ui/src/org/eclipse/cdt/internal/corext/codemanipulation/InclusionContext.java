@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Google, Inc and others.
+ * Copyright (c) 2013, 2014 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPathElement;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
+import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
@@ -244,24 +245,8 @@ public class InclusionContext {
 	 * used for test files.
 	 */
 	public boolean isPartnerFile(IPath path) {
-		String headerName = path.removeFileExtension().lastSegment();
-		String sourceName = getTranslationUnit().getLocation().removeFileExtension().lastSegment();
-		if (headerName.equals(sourceName))
-			return true;
-		if (sourceName.startsWith(headerName)) {
-			int pos = headerName.length();
-			while (pos < sourceName.length() && !Character.isLetterOrDigit(sourceName.charAt(pos))) {
-				pos++;
-			}
-			if (pos == sourceName.length())
-				return true;
-			String suffix = sourceName.substring(pos);
-			for (String s : fPreferences.partnerFileSuffixes) {
-				if (suffix.equalsIgnoreCase(s))
-					return true;
-			}
-		}
-		return false;
+		return SourceHeaderPartnerFinder.isPartnerFile(getTranslationUnit().getLocation(), path,
+				fPreferences.partnerFileSuffixes);
 	}
 
 	public IncludeInfo createIncludeInfo(IPath header, IncludeGroupStyle style) {

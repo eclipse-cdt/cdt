@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,10 +20,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.ParticipantManager;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
-import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
-import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.osgi.util.NLS;
@@ -37,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -48,7 +40,10 @@ import org.eclipse.cdt.core.model.ICProject;
  * use and forwards further calls to the delegate.
  */
 public class CRenameProcessor extends RenameProcessor {
-    public static final String IDENTIFIER= "org.eclips.cdt.refactoring.RenameProcessor"; //$NON-NLS-1$
+	public static final String IDENTIFIER= "org.eclips.cdt.refactoring.RenameProcessor"; //$NON-NLS-1$
+
+	private static final String[] AFFECTED_PROJECT_NATURES =
+    	{ CCProjectNature.CC_NATURE_ID, CProjectNature.C_NATURE_ID };
 
     private final CRefactoringArgument fArgument;
     private CRenameProcessorDelegate fDelegate;
@@ -61,8 +56,6 @@ public class CRenameProcessor extends RenameProcessor {
 	private IIndex fIndex;
 	private int fIndexLockCount;
 	private RefactoringStatus fInitialConditionsStatus;
-
-	private Change fChange;
     
     public CRenameProcessor(CRefactory refactoringManager, CRefactoringArgument arg) {
         fManager= refactoringManager;
@@ -186,38 +179,22 @@ public class CRenameProcessor extends RenameProcessor {
     @Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
     		throws CoreException, OperationCanceledException {
-        return fDelegate.checkFinalConditions(pm, context);
+		return fDelegate.checkFinalConditions(pm, context);
     }
 
     @Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-        fChange = fDelegate.createChange(pm);
-        return fChange;
-    }
-
-    /**
-     * @return the change if it has been created, or <code>null</code> otherwise.
-     */
-	Change getChange() {
-        return fChange;
+        return fDelegate.createChange(pm);
     }
 
 	@Override
-	public RefactoringParticipant[] loadParticipants(RefactoringStatus status,
-            SharableParticipants sharedParticipants) throws CoreException {
-        RenameArguments arguments= new RenameArguments(getReplacementText(), true);
-        final String[] natures= {CCProjectNature.CC_NATURE_ID, CProjectNature.C_NATURE_ID};
-        List<RenameParticipant> result= new ArrayList<RenameParticipant>();
-        IBinding binding= getArgument().getBinding();
-        if (binding != null) {
-            result.addAll(Arrays.asList(ParticipantManager.loadRenameParticipants(status, 
-                    this,  binding, arguments, natures, sharedParticipants)));
-        }
-        return result.toArray(new RefactoringParticipant[result.size()]);
-    }
+	public final RefactoringParticipant[] loadParticipants(RefactoringStatus status,
+			SharableParticipants shared) throws CoreException {
+		return fDelegate.getRenameModifications().loadParticipants(status, this, AFFECTED_PROJECT_NATURES, shared);
+	}
 
     /**
-     * Options for the input page in the refactoring wizard
+     * Options for the input page in the refactoring wizard.
      */
     public int getAvailableOptions() {
         if (fDelegate == null) {
@@ -227,7 +204,7 @@ public class CRenameProcessor extends RenameProcessor {
     }
 
     /**
-     * Options for the input page that trigger the preview
+     * Options for the input page that trigger the preview.
      */
     public int getOptionsForcingPreview() {
         if (fDelegate == null) {

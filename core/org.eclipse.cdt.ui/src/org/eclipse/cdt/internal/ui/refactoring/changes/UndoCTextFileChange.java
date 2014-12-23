@@ -1,15 +1,15 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    IBM Corporation - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * Contributors:
+ *     IBM Corporation - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring;
+package org.eclipse.cdt.internal.ui.refactoring.changes;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +31,8 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
+
+import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
 
 /**
  * UndoCTextFileChange that uses a working copy in order to generate CModel events. 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -34,7 +34,8 @@ public class IndexToASTNameHelper {
 		return visitor.getMatches();
 	}
 
-	public static IASTName findMatchingASTName(IASTTranslationUnit tu, IName name, IIndex index) throws CoreException {
+	public static IASTName findMatchingASTName(IASTTranslationUnit tu, IName name, IIndex index)
+			throws CoreException {
 		if (name instanceof IASTName) {
 			return (IASTName) name;
 		} else if (!(name instanceof IIndexName)) {
@@ -65,85 +66,86 @@ public class IndexToASTNameHelper {
 	private static boolean isQualifiedName(IASTName name) {
 		return name instanceof ICPPASTQualifiedName;
 	}
-}
 
-class IndexNameToAstNameMatcher extends ASTVisitor {
-	private IASTName result;
-	private IBinding bindingToFind;
-	private char[] charNameToFind;
-	private IIndex index;
-	private IASTFileLocation locationToFind;
+	private static class BindingToAstNameMatcher extends ASTVisitor {
+		private List<IASTName> results = new ArrayList<>();
+		private IBinding bindingToFind;
+		private char[] toFindName;
+		private IIndex index;
 
-	public IndexNameToAstNameMatcher(IASTTranslationUnit tu, IIndexName indexName, IIndex index) throws CoreException {
-		super(true);
-		locationToFind = indexName.getFileLocation();
-		bindingToFind = index.findBinding(indexName);
-		this.index = index;
-		charNameToFind = bindingToFind.getNameCharArray();
-		shouldVisitImplicitNames = true;
-		shouldVisitImplicitNameAlternates = true;
-	}
+		public BindingToAstNameMatcher(IBinding binding, IIndex index) {
+			super(true);
+			bindingToFind = index.adaptBinding(binding);
+			this.index = index;
+			toFindName = binding.getNameCharArray();
+			shouldVisitImplicitNames = true;
+			shouldVisitImplicitNameAlternates = true;
+		}
 
-	@Override
-	public int visit(IASTName candidate) {
-		if (!IndexToASTNameHelper.shouldConsiderName(candidate)) {
+		@Override
+		public int visit(IASTName candidate) {
+			if (!IndexToASTNameHelper.shouldConsiderName(candidate)) {
+				return PROCESS_CONTINUE;
+			}
+			if (isEquivalent(candidate)) {
+				results.add(candidate);
+			}
 			return PROCESS_CONTINUE;
 		}
-		if (isEquivalent(candidate)) {
-			result = candidate;
-			return PROCESS_ABORT;
+
+		private boolean isEquivalent(IASTName candidate) {
+			return CharArrayUtils.equals(candidate.getSimpleID(), toFindName) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
 		}
-		return PROCESS_CONTINUE;
+
+		public List<IASTName> getMatches() {
+			return results;
+		}
 	}
 
-	private boolean isEquivalent(IASTName candidate) {
-		return matchesIndexName(candidate) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
-	}
+	private static class IndexNameToAstNameMatcher extends ASTVisitor {
+		private IASTName result;
+		private IBinding bindingToFind;
+		private char[] charNameToFind;
+		private IIndex index;
+		private IASTFileLocation locationToFind;
 
-	private boolean matchesIndexName(IASTName candidate) {
-		IASTFileLocation candidateLocation = candidate.getFileLocation();
-		return locationToFind.getNodeOffset() == candidateLocation.getNodeOffset() &&
-				locationToFind.getNodeLength() == candidateLocation.getNodeLength() &&
-				locationToFind.getFileName().equals(candidateLocation.getFileName()) &&
-				CharArrayUtils.equals(candidate.getLookupKey(), charNameToFind);
-	}
+		public IndexNameToAstNameMatcher(IASTTranslationUnit tu, IIndexName indexName, IIndex index)
+				throws CoreException {
+			super(true);
+			locationToFind = indexName.getFileLocation();
+			bindingToFind = index.findBinding(indexName);
+			this.index = index;
+			charNameToFind = bindingToFind.getNameCharArray();
+			shouldVisitImplicitNames = true;
+			shouldVisitImplicitNameAlternates = true;
+		}
 
-	public IASTName getMatch() {
-		return result;
-	}
-}
-
-class BindingToAstNameMatcher extends ASTVisitor {
-	private List<IASTName> results = new ArrayList<>();
-	private IBinding bindingToFind;
-	private char[] toFindName;
-	private IIndex index;
-
-	public BindingToAstNameMatcher(IBinding binding, IIndex index) {
-		super(true);
-		bindingToFind = index.adaptBinding(binding);
-		this.index = index;
-		toFindName = binding.getNameCharArray();
-		shouldVisitImplicitNames = true;
-		shouldVisitImplicitNameAlternates = true;
-	}
-
-	@Override
-	public int visit(IASTName candidate) {
-		if (!IndexToASTNameHelper.shouldConsiderName(candidate)) {
+		@Override
+		public int visit(IASTName candidate) {
+			if (!IndexToASTNameHelper.shouldConsiderName(candidate)) {
+				return PROCESS_CONTINUE;
+			}
+			if (isEquivalent(candidate)) {
+				result = candidate;
+				return PROCESS_ABORT;
+			}
 			return PROCESS_CONTINUE;
 		}
-		if (isEquivalent(candidate)) {
-			results.add(candidate);
+
+		private boolean isEquivalent(IASTName candidate) {
+			return matchesIndexName(candidate) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
 		}
-		return PROCESS_CONTINUE;
-	}
 
-	private boolean isEquivalent(IASTName candidate) {
-		return CharArrayUtils.equals(candidate.getSimpleID(), toFindName) && bindingToFind.equals(index.adaptBinding(candidate.resolveBinding()));
-	}
+		private boolean matchesIndexName(IASTName candidate) {
+			IASTFileLocation candidateLocation = candidate.getFileLocation();
+			return locationToFind.getNodeOffset() == candidateLocation.getNodeOffset() &&
+					locationToFind.getNodeLength() == candidateLocation.getNodeLength() &&
+					locationToFind.getFileName().equals(candidateLocation.getFileName()) &&
+					CharArrayUtils.equals(candidate.getSimpleID(), charNameToFind);
+		}
 
-	public List<IASTName> getMatches() {
-		return results;
+		public IASTName getMatch() {
+			return result;
+		}
 	}
 }

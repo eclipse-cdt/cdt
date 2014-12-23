@@ -25,6 +25,9 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
+import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
+
 /**
  * A ModificationCollector can be passed through a refactoring and manages the rewriters
  * and additional changes a refactoring can create.

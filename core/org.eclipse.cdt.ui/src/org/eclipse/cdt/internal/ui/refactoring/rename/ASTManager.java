@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2005, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -132,9 +132,10 @@ public class ASTManager implements IDisposable {
     public final static int FALSE= 0;
     public final static int UNKNOWN= -1;
     
+    // TODO(sprigogin): Replace fSharedAST and fTranslationUnits with CRefactoringContext.
 	private IASTTranslationUnit fSharedAST;
     private Map<IFile, IASTTranslationUnit> fTranslationUnits= new HashMap<>();
-    private HashSet<String> fProblemUnits= new HashSet<>();
+    private Set<String> fProblemUnits= new HashSet<>();
     private CRefactoringArgument fArgument;
     private IBinding[] fValidBindings;
     private String fRenameTo;
@@ -836,7 +837,7 @@ public class ASTManager implements IDisposable {
             return;
 
         pm.beginTask(RenameMessages.ASTManager_task_analyze, 2);
-        IASTTranslationUnit tu= getTranslationUnit(index, fArgument.getSourceFile(), true, status);
+        IASTTranslationUnit tu= getAST(index, fArgument.getSourceFile(), true, status);
         pm.worked(1);
         if (tu != null) {
         	final IASTNodeSelector nodeSelector = tu.getNodeSelector(tu.getFilePath());
@@ -912,8 +913,20 @@ public class ASTManager implements IDisposable {
 		return rawSignature.substring(offset, end);
 	}
 
-	private IASTTranslationUnit getTranslationUnit(IIndex index, IFile sourceFile, boolean cacheit,
-			RefactoringStatus status) {
+	/**
+	 * Returns an AST for the given file.
+	 *
+	 * @param index the index to use for the AST
+	 * @param sourceFile the source file to obtain an AST for
+	 * @param astStyle the style to pass to {@link ITranslationUnit#getAST(IIndex, int)} method.
+	 *     If a previously cached AST is returned, the style is not guaranteed to match
+	 *     the requested one.
+	 * @param cacheIt if {@code true}, the AST will be cached for later reuse 
+	 * @return the requested AST or {@code null}
+	 * @throws CoreException
+	 */
+	public synchronized IASTTranslationUnit getAST(IIndex index, IFile sourceFile, int astStyle,
+			boolean cacheIt) throws CoreException {
         IASTTranslationUnit ast=  fTranslationUnits.get(sourceFile);
         if (ast == null) {
             ICElement celem= CoreModel.getDefault().create(sourceFile);
@@ -925,20 +938,16 @@ public class ASTManager implements IDisposable {
                 	// Try to get a shared AST before creating our own.
     	        	ast = ASTProvider.getASTProvider().acquireSharedAST(tu, index,
     	        			ASTProvider.WAIT_ACTIVE_ONLY, null);
-    	        	if (ast == null) {
-    					try {
-							ast= tu.getAST(index, PARSE_MODE);
-						} catch (CoreException e) {
-		            		status.addError(e.getMessage());
-						}
-    	            	if (cacheit) {
-    	            		fTranslationUnits.put(sourceFile, ast);
-    	            	}
-    	        	} else {
+    	        	if (ast != null) {
     	        		if (fSharedAST != null) {
     	        			ASTProvider.getASTProvider().releaseSharedAST(fSharedAST);
     	        		}
     	        		fSharedAST = ast;
+    	        	} else {
+						ast= tu.getAST(index, astStyle);
+    	            	if (cacheIt) {
+    	            		fTranslationUnits.put(sourceFile, ast);
+    	            	}
     	        	}
         		}
             }
@@ -946,7 +955,17 @@ public class ASTManager implements IDisposable {
         return ast;
     }
 
-    public void analyzeTextMatches(IIndex index, Collection<CRefactoringMatch> matches,
+	private IASTTranslationUnit getAST(IIndex index, IFile sourceFile, boolean cacheIt,
+			RefactoringStatus status) {
+		try {
+			return getAST(index, sourceFile, PARSE_MODE, cacheIt);
+		} catch (CoreException e) {
+			status.addError(e.getMessage());
+			return null;
+		}
+    }
+
+	public void analyzeTextMatches(IIndex index, Collection<CRefactoringMatch> matches,
     		IProgressMonitor monitor, RefactoringStatus status) {
         CRefactoringMatchStore store= new CRefactoringMatchStore();
         for (CRefactoringMatch match : matches) {
@@ -986,7 +1005,7 @@ public class ASTManager implements IDisposable {
                 }
 
                 if (doParse) {
-                    IASTTranslationUnit tu= getTranslationUnit(index, file, false, status);
+                    IASTTranslationUnit tu= getAST(index, file, false, status);
                     monitor.worked(1);
                     analyzeTextMatchesOfTranslationUnit(tu, store, status);
                     if (status.hasFatalError()) {

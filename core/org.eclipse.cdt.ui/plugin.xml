@@ -4225,7 +4225,7 @@
             class="org.eclipse.cdt.internal.ui.refactoring.dialogs.CreateFileChangePreview"
     		id="org.eclipse.cdt.internal.ui.refactoring.createFileChangePreviewhangePreview">
          <enablement>
-            <instanceof value="org.eclipse.cdt.internal.ui.refactoring.CreateFileChange"/>
+            <instanceof value="org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange"/>
          </enablement>
       </changePreviewViewer>
          <changePreviewViewer

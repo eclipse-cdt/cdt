@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
-import org.eclipse.cdt.internal.ui.refactoring.UndoCTextFileChange;
+import org.eclipse.cdt.internal.ui.refactoring.changes.UndoCTextFileChange;
 
 /**
  * A TextFileChange that uses a working copy in order to generate CModel events.
@@ -57,7 +57,7 @@ public class CTextFileChange extends TextFileChange {
 	 * @since 5.1
 	 */
     public CTextFileChange(String name, ITranslationUnit tu) {
-        super(name, getFile(tu));
+        super(name, tu.getFile());
         fTranslationUnit = tu;
         if (tu instanceof IWorkingCopy)
         	fWorkingCopy = (IWorkingCopy) tu;
@@ -102,8 +102,4 @@ public class CTextFileChange extends TextFileChange {
 	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) {
         return new UndoCTextFileChange(getName(), getFile(), edit, stampToRestore, getSaveMode());
     }
-
-	private static IFile getFile(ITranslationUnit tu) {
-		return (IFile) tu.getResource();
-	}
 }

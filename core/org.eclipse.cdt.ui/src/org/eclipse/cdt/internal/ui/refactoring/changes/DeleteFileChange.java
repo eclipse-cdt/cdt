@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,9 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring;
+package org.eclipse.cdt.internal.ui.refactoring.changes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,15 +25,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.osgi.util.NLS;
 
 /**
- * The counterpart to the CreateFileChange, a change to delete a file. 
+ * The counterpart to the {@link CreateFileChange}, a change to delete a file. 
  * 
  * @author Emanuel Graf
- *
  */
 public class DeleteFileChange extends Change {
-	
 	private final IPath path;
 	private String source;
 
@@ -45,12 +45,10 @@ public class DeleteFileChange extends Change {
 		return path;
 	}
 
-
 	@Override
 	public String getName() {
-		return Messages.DeleteFileChange_0 + path.toOSString(); 
+		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toOSString()); 
 	}
-
 
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
@@ -58,12 +56,11 @@ public class DeleteFileChange extends Change {
 	}
 
 	@Override
-	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {
+	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		if(!file.exists()) {
-			status.addFatalError(Messages.DeleteFileChange_1 + path.toString()); 
+		if (!file.exists()) {
+			status.addFatalError(NLS.bind(Messages.DeleteFileChange_file_does_not_exist, path.toString())); 
 		}
 		return status;
 	}
@@ -72,7 +69,7 @@ public class DeleteFileChange extends Change {
 		String encoding= null;
 		try {
 			encoding= file.getCharset();
-		} catch (CoreException ex) {
+		} catch (CoreException e) {
 			// fall through. Take default encoding.
 		}
 		StringBuffer sb= new StringBuffer();
@@ -80,10 +77,11 @@ public class DeleteFileChange extends Change {
 		InputStream in= null;
 		try {
 			in= file.getContents();
-		    if (encoding != null)
+		    if (encoding != null) {
 		        br= new BufferedReader(new InputStreamReader(in, encoding));	
-		    else
-		        br= new BufferedReader(new InputStreamReader(in));	
+		    } else {
+		        br= new BufferedReader(new InputStreamReader(in));
+		    }
 			int read= 0;
 			while ((read= br.read()) != -1) {
 				sb.append((char) read);
@@ -100,8 +98,7 @@ public class DeleteFileChange extends Change {
 		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		source = getSource(file);
 		Change undo = new CreateFileChange(file.getFullPath(), source, file.getCharset());
-		file.delete(true,true, pm);
+		file.delete(true, true, pm);
 		return undo;
 	}
-
 }

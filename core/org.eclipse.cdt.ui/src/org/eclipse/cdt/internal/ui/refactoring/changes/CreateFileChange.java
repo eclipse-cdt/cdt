@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,7 +10,7 @@
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring;
+package org.eclipse.cdt.internal.ui.refactoring.changes;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -30,7 +30,8 @@ import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * A Change for creating a new file with the given name, content and encoding at the specified path.
+ * A {@link Change} for creating a new file with the given name, content and encoding at
+ * the specified path.
  *
  * @author Emanuel Graf
  */
@@ -60,7 +61,7 @@ public class CreateFileChange extends ResourceChange {
 	@Override
 	public String getName() {
 		if (name == null) {
-			return NLS.bind(Messages.CreateFileChange_CreateFile, path.toOSString());
+			return NLS.bind(Messages.CreateFileChange_create_file, path.toOSString());
 		}
 		return name;
 	}
@@ -70,19 +71,18 @@ public class CreateFileChange extends ResourceChange {
 	}
 
 	@Override
-	public RefactoringStatus isValid(IProgressMonitor pm)
-			throws CoreException, OperationCanceledException {
+	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		RefactoringStatus result= new RefactoringStatus();
 		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 
 		URI location= file.getLocationURI();
 		if (location == null) {
-			result.addFatalError(NLS.bind(Messages.CreateFileChange_UnknownLoc, file.getFullPath().toString()));
+			result.addFatalError(NLS.bind(Messages.CreateFileChange_unknown_location, file.getFullPath().toString()));
 			return result;
 		}
 
 		if (file.exists()) {
-			result.addFatalError(NLS.bind(Messages.CreateFileChange_FileExists, file.getFullPath().toString()));
+			result.addFatalError(NLS.bind(Messages.CreateFileChange_file_exists, file.getFullPath().toString()));
 			return result;
 		}
 		return result;
@@ -94,7 +94,7 @@ public class CreateFileChange extends ResourceChange {
 		InputStream is = new ByteArrayInputStream(source.getBytes());
 		file.create(is, false, new SubProgressMonitor(pm, 1));
 		if (encoding != null) {
-			file.setCharset(encoding, new SubProgressMonitor(pm,1));
+			file.setCharset(encoding, new SubProgressMonitor(pm, 1));
 		}
 		return new DeleteFileChange(file.getFullPath());
 	}

@@ -2326,11 +2326,11 @@ public class PreferenceConstants {
      *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
      * @return Returns the node matching the given context.
      */
-	private static IEclipsePreferences getPreferenceNode(String key, ICProject project) {
+	private static IEclipsePreferences getPreferenceNode(String key, IProject project) {
 		IEclipsePreferences node = null;
 
 		if (project != null) {
-			node = new ProjectScope(project.getProject()).getNode(CUIPlugin.PLUGIN_ID);
+			node = new ProjectScope(project).getNode(CUIPlugin.PLUGIN_ID);
 			if (node.get(key, null) != null) {
 				return node;
 			}
@@ -2355,10 +2355,37 @@ public class PreferenceConstants {
 	 * @param project The current context or {@code null} if no context is available and
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
 	 * @return Returns the current value for the string.
+	 * @since 5.9
+	 */
+	public static String getPreference(String key, IProject project) {
+		return getPreference(key, project, null);
+	}
+
+	/**
+	 * Returns the string value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @return Returns the current value for the string.
 	 * @since 5.0
 	 */
 	public static String getPreference(String key, ICProject project) {
-		return getPreference(key, project, null);
+		return getPreference(key, project.getProject());
+	}
+
+	/**
+	 * Returns the string value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.9
+	 */
+	public static String getPreference(String key, IProject project, String defaultValue) {
+		return getPreferenceNode(key, project).get(key, defaultValue);
 	}
 
 	/**
@@ -2372,7 +2399,22 @@ public class PreferenceConstants {
 	 * @since 5.6
 	 */
 	public static String getPreference(String key, ICProject project, String defaultValue) {
-		return getPreferenceNode(key, project).get(key, defaultValue);
+		return getPreference(key, project.getProject(), defaultValue);
+	}
+
+	/**
+	 * Returns the integer value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should
+	 *     be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.9
+	 */
+	public static int getPreference(String key, IProject project, int defaultValue) {
+		return getPreferenceNode(key, project).getInt(key, defaultValue);
 	}
 
 	/**
@@ -2387,7 +2429,21 @@ public class PreferenceConstants {
 	 * @since 5.1
 	 */
 	public static int getPreference(String key, ICProject project, int defaultValue) {
-		return getPreferenceNode(key, project).getInt(key, defaultValue);
+		return getPreference(key, project.getProject(), defaultValue);
+	}
+
+	/**
+	 * Returns the boolean value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.9
+	 */
+	public static boolean getPreference(String key, IProject project, boolean defaultValue) {
+		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
 	}
 
 	/**
@@ -2401,7 +2457,7 @@ public class PreferenceConstants {
 	 * @since 5.1
 	 */
 	public static boolean getPreference(String key, ICProject project, boolean defaultValue) {
-		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
+		return getPreference(key, project.getProject(), defaultValue);
 	}
 
 	/**

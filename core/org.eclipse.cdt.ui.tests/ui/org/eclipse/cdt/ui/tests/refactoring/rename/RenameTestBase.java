@@ -47,7 +47,7 @@ public class RenameTestBase extends RefactoringTests {
     protected Change getRefactorChanges(IFile file, int offset, String newName) throws Exception {
         CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
         
-        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
+        refactoring.getProcessor().lockIndex();
         try {
         	RefactoringStatus rs = checkConditions(refactoring);
         	if (!rs.hasError()) {
@@ -62,7 +62,7 @@ public class RenameTestBase extends RefactoringTests {
         	// is shown. 
         	return null;
         } finally {
-            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
+            refactoring.getProcessor().unlockIndex();
         }
     }
 
@@ -78,7 +78,7 @@ public class RenameTestBase extends RefactoringTests {
     protected String[] getRefactorMessages(IFile file, int offset, String newName) throws Exception {
         String[] result;
         CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
-        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
+        refactoring.getProcessor().lockIndex();
         try {
         	RefactoringStatus rs = checkConditions(refactoring);
         	if (!rs.hasWarning()) {
@@ -94,17 +94,17 @@ public class RenameTestBase extends RefactoringTests {
         	} 
         	return result;
         } finally {
-            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
+            refactoring.getProcessor().unlockIndex();
         }
     }
 
     protected RefactoringStatus checkConditions(IFile file, int offset, String newName) throws Exception {
         CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
-        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
+        refactoring.getProcessor().lockIndex();
         try {
         	return checkConditions(refactoring);
         } finally {
-            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
+            refactoring.getProcessor().unlockIndex();
         }
     }
     
@@ -118,12 +118,12 @@ public class RenameTestBase extends RefactoringTests {
 
     protected int getRefactorSeverity(IFile file, int offset, String newName) throws Exception {
         CRenameRefactoring refactoring = createRefactoring(file, offset, newName);
-        ((CRenameProcessor) refactoring.getProcessor()).lockIndex();
+        refactoring.getProcessor().lockIndex();
         try {
         	RefactoringStatus rs = checkConditions(refactoring);
         	return rs.getSeverity();
         } finally {
-            ((CRenameProcessor) refactoring.getProcessor()).unlockIndex();
+            refactoring.getProcessor().unlockIndex();
         }
     }
 

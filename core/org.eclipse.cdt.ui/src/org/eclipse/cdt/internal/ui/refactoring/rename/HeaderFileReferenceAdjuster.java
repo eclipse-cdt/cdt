@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import static org.eclipse.cdt.internal.ui.editor.ASTProvider.WAIT_ACTIVE_ONLY;
-import static org.eclipse.cdt.internal.ui.editor.ASTProvider.getASTProvider;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +39,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
@@ -94,18 +92,21 @@ public class HeaderFileReferenceAdjuster {
 
 	private final Map<IFile, IFile> movedFiles;
 	private final Map<String, IPath> movedFilesByLocation;
+	private ASTManager astManager;
 	private IIndex index;
 	private int indexLockCount;
 
 	/**
 	 * @param movedFiles keys are moved files, values are new, not yet existing, files
+	 * @param processor the refactoring processor
 	 */
-	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles) {
+	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles, RefactoringProcessor processor) {
 		this.movedFiles = movedFiles;
 		this.movedFilesByLocation = new HashMap<>();
 		for (Entry<IFile, IFile> entry : movedFiles.entrySet()) {
 			this.movedFilesByLocation.put(entry.getKey().getLocation().toOSString(), entry.getValue().getLocation());
 		}
+		this.astManager = getASTManager(processor);
 	}
 
 	public Change createChange(CheckConditionsContext context, IProgressMonitor pm)
@@ -116,6 +117,11 @@ public class HeaderFileReferenceAdjuster {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		lockIndex();
+
+		ASTManager sharedASTManager = astManager;
+		if (astManager == null)
+			astManager = new ASTManager(null);
+
 		try {
 			for (Entry<IFile, IFile> entry : movedFiles.entrySet()) {
 				IFile oldFile = entry.getKey();
@@ -156,7 +162,7 @@ public class HeaderFileReferenceAdjuster {
 			for (IFile file : affectedFiles) {
 				ITranslationUnit tu = (ITranslationUnit) coreModel.create(file);
 				if (workingCopyManager.findSharedWorkingCopy(tu) != null)
-					continue;
+					continue;  // Shared working copies have already been processed.
 				addFileChange(tu, changes, checker, progress.newChild(1));
 			}
 
@@ -165,6 +171,10 @@ public class HeaderFileReferenceAdjuster {
 				change.markAsSynthetic();
 			}
 		} finally {
+			if (astManager != sharedASTManager) {
+				astManager.dispose();
+				astManager = null;
+			}
 			unlockIndex();
 			pm.done();
 		}
@@ -186,25 +196,11 @@ public class HeaderFileReferenceAdjuster {
 			throws CoreException, OperationCanceledException {
 		checkCanceled(pm);
 
-		IASTTranslationUnit sharedAst = null;
-
 		SubMonitor progress = SubMonitor.convert(pm, 2);
 		try {
-			IASTTranslationUnit ast =
-					getASTProvider().acquireSharedAST(tu, index, WAIT_ACTIVE_ONLY, progress.newChild(1));
-	    	if (ast == null) {
-	    		checkCanceled(pm);
-				ast= tu.getAST(index, PARSE_MODE);
-		    	if (ast == null)
-		    		return null;
-	    	} else {
-	    		sharedAst = ast;
-	    	}
+			IASTTranslationUnit ast = astManager.getAST(index, tu.getFile(), PARSE_MODE, false);
 	       	return createEdit(ast, tu, progress.newChild(1));
 		} finally {
-			if (sharedAst != null) {
-    			getASTProvider().releaseSharedAST(sharedAst);
-			}
 			pm.done();
 		}
     }
@@ -463,6 +459,13 @@ public class HeaderFileReferenceAdjuster {
 		}
 	}
 
+	private static ASTManager getASTManager(RefactoringProcessor processor) {
+		if (processor instanceof CRenameProcessor) {
+			return ((CRenameProcessor) processor).getAstManager();
+		}
+		return null;
+	}
+
 	private static void checkCanceled(IProgressMonitor pm) throws OperationCanceledException {
 		if (pm != null && pm.isCanceled())
 			throw new OperationCanceledException();
@@ -474,10 +477,10 @@ public class HeaderFileReferenceAdjuster {
 			return false;
 		IPreferencesService preferences = Platform.getPreferencesService();
 		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(oldfile.getProject());
-		int schema = preferences.getInt(CUIPlugin.PLUGIN_ID,
+		int scheme = preferences.getInt(CUIPlugin.PLUGIN_ID,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME, scopes);
-		switch (schema) {
+		switch (scheme) {
 		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH:
 			return true;
 

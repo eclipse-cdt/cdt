@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,7 +188,7 @@ public class RenameSupport {
     			wizard.setForcePreviewReview(mode != DialogMode.ALL_PAGES);
     		}
     		RefactoringStarter starter = new RefactoringStarter();
-			CRenameProcessor processor = (CRenameProcessor) refactoring.getProcessor();
+			CRenameProcessor processor = refactoring.getProcessor();
         	processor.lockIndex();
         	try {
         		RefactoringStatus status = processor.checkInitialConditions(new NullProgressMonitor());
@@ -244,7 +244,7 @@ public class RenameSupport {
 				return false;
 			}
 
-			CRenameProcessor renameProcessor = getRenameProcessor();
+			CRenameProcessor renameProcessor = fRefactoring.getProcessor();
 			renameProcessor.lockIndex();
 			try {
 				fPreCheckStatus = renameProcessor.checkInitialConditions(new NullProgressMonitor());
@@ -261,7 +261,7 @@ public class RenameSupport {
 					RefactoringExecutionHelper helper= new RefactoringExecutionHelper(fRefactoring,
 							RefactoringCore.getConditionCheckingFailedSeverity(),
 							renameProcessor.getSaveMode(), parent, context);
-					Change change = renameProcessor.getChange();
+					Change change = fRefactoring.getChange();
 					Assert.isNotNull(change);
 					helper.performChange(change, true);
 					return true;
@@ -278,10 +278,6 @@ public class RenameSupport {
 
 	private RenameSupport(CRenameProcessor processor) {
 		fRefactoring= new CRenameRefactoring(processor);
-	}
-
-	private CRenameProcessor getRenameProcessor() {
-		return (CRenameProcessor) fRefactoring.getProcessor();
 	}
 
 	/**

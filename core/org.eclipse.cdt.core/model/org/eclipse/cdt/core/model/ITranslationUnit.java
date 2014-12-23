@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -418,6 +420,15 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @since 4.0
 	 */
 	public IPath getLocation();
+
+	/**
+	 * Returns the corresponding file for this translation unit, or {@code null} if this translation
+	 * unit does not have a corresponding file.
+	 *
+	 * @return the corresponding file, or {@code null} if none
+	 * @since 5.9
+	 */
+	IFile getFile();
 
 	/**
 	 * Returns the scanner info associated with this translation unit. May return {@code null}

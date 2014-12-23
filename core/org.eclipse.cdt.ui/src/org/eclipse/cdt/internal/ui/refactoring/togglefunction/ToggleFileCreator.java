@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.refactoring.CreateFileChange;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
 
 public class ToggleFileCreator {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$

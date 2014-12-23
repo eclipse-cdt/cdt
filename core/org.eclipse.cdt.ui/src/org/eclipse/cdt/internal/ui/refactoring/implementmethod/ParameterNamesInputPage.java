@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -28,6 +28,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -36,18 +39,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 import org.eclipse.cdt.internal.ui.preferences.formatter.TranslationUnitPreview;
-import org.eclipse.cdt.internal.ui.refactoring.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ValidatingLabeledTextField;
 
 /**
  * InputPage used by the ImplementMethod refactoring if its necessary to enter additional parameter names.
  * 
  * @author Mirko Stocker
- *
  */
 public class ParameterNamesInputPage extends UserInputWizardPage {
-
 	private static final int PREVIEW_UPDATE_DELAY = 500;
 	private MethodToImplementConfig config;
 	private TranslationUnitPreview translationUnitPreview;
@@ -62,7 +63,6 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 
 	@Override
 	public void createControl(Composite parent) {
-		
 		Composite superComposite = new Composite(parent, SWT.NONE);
 		
 	    superComposite.setLayout(new GridLayout());
@@ -74,13 +74,11 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		validatingLabeledTextField.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		
 		for (final ParameterInfo actParameterInfo : config.getParaHandler().getParameterInfos()) {
-
 			String type = actParameterInfo.getTypeName();
 			String content = actParameterInfo.getParameterName();
 			boolean readOnly = !actParameterInfo.hasNewName();
 			
 			validatingLabeledTextField.addElement(type, content, readOnly, new ValidatingLabeledTextField.Validator(){
-
 				@Override
 				public void hasErrors() {
 					setPageComplete(false);
@@ -100,7 +98,6 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		}
 
 		createPreview(superComposite);
-		
 		setControl(superComposite);
 	}
 	
@@ -141,7 +138,6 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 			if (insertEdit == null) {
 				return Messages.ImplementMethodRefactoringPage_PreviewGenerationNotPossible;
 			}
-			
 			return insertEdit.getText().trim();
 		} catch (OperationCanceledException e) {
 			return Messages.ImplementMethodRefactoringPage_PreviewCanceled;
@@ -165,15 +161,22 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 				setPreviewText(functionDefinitionSignature);
 				return Status.OK_STATUS;
 			}
+
 			private void setPreviewText(final String text) {
-				if (getShell() != null && getShell().getDisplay() != null) {
-					getShell().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (translationUnitPreview.getControl() != null && !translationUnitPreview.getControl().isDisposed()) {
-								translationUnitPreview.setPreviewText(text);
+				Shell shell = getShell();
+				if (shell != null) {
+					Display display = shell.getDisplay();
+					if (display != null) {
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								Control control = translationUnitPreview.getControl();
+								if (control != null && !control.isDisposed()) {
+									translationUnitPreview.setPreviewText(text);
+								}
 							}
-						}});
+						});
+					}
 				}
 			}
 		};
@@ -214,21 +217,20 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	}
 	
 	protected void joinPreviewJob() {
-		if (delayedPreviewUpdater == null) {
+		if (delayedPreviewUpdater == null)
 			return;
-		}
 		
 		try {
 			delayedPreviewUpdater.join();
-		} catch (InterruptedException e1) {
-			CUIPlugin.log(e1);
+		} catch (InterruptedException e) {
+			CUIPlugin.log(e);
 		}
 	}
 
 	private void updatePreview() {
-		if (translationUnitPreview == null) {
+		if (translationUnitPreview == null)
 			return;
-		}
+
 		delayedPreviewUpdater.schedule(PREVIEW_UPDATE_DELAY);
 	}
 	

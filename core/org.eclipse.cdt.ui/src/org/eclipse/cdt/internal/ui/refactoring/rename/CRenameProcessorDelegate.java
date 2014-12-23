@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,6 +36,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
+import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -53,6 +56,7 @@ import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 public abstract class CRenameProcessorDelegate {
     private CRenameProcessor fTopProcessor;
     private ArrayList<CRefactoringMatch> fMatches;
+	private final RenameModifications fRenameModifications = new RenameModifications();
     protected String fProcessorBaseName;
     private int fAvailableOptions=
     		CRefactory.OPTION_IN_CODE_REFERENCES |
@@ -88,7 +92,7 @@ public abstract class CRenameProcessorDelegate {
     }
 
     final public int getSelectedOptions() {
-        return fTopProcessor.getSelectedOptions();
+        return fTopProcessor.getSelectedOptions() & fAvailableOptions;
     }
 
     final public String getSelectedWorkingSet() {
@@ -181,9 +185,7 @@ public abstract class CRenameProcessorDelegate {
 					locations.add(name.getFile().getLocation());
 				}
         	}
-		} catch (InterruptedException e) {
-			return files;
-		} catch (CoreException e) {
+		} catch (CoreException | InterruptedException e) {
 			return files;
 		} finally {
     		index.releaseReadLock();
@@ -283,11 +285,17 @@ public abstract class CRenameProcessorDelegate {
             }
             result.addWarning(msg);
         }
-        IFile[] files= fileset.toArray(new IFile[fileset.size()]);
         if (context != null) {
+			ResourceChangeChecker checker = (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+			IResourceChangeDescriptionFactory deltaFactory = checker.getDeltaFactory();
             ValidateEditChecker editChecker=
             		(ValidateEditChecker) context.getChecker(ValidateEditChecker.class);
-            editChecker.addFiles(files);
+			for (IFile changedFile : fileset) {
+				deltaFactory.change(changedFile);
+				editChecker.addFile(changedFile);
+			}
+    		fRenameModifications.buildDelta(deltaFactory);
+    		fRenameModifications.buildValidateEdits(editChecker);
         }
         monitor.done();
         return result;
@@ -373,15 +381,38 @@ public abstract class CRenameProcessorDelegate {
         return overallChange;
     }
 
-    /**
+	/**
      * Returns the array of bindings that must be renamed.
      */
     protected IBinding[] getBindingsToBeRenamed(RefactoringStatus status) {
-        return new IBinding[] { getArgument().getBinding() };
+        IBinding binding = getArgument().getBinding();
+        recordRename(binding);
+		return new IBinding[] { binding };
     }
 
+    /**
+     * Returns the modifications associated with the refactoring.
+     */
+	public RenameModifications getRenameModifications() {
+		return fRenameModifications;
+	}
+
+	protected void recordRename(IBinding binding) {
+		RenameArguments args = new RenameArguments(getReplacementText(), true);
+		RenameModifications renameModifications = getRenameModifications();
+		renameModifications.rename(binding, args);
+	}
+
+	protected void recordRename(IBinding[] bindings) {
+		RenameArguments args = new RenameArguments(getReplacementText(), true);
+		RenameModifications renameModifications = getRenameModifications();
+		for (IBinding binding : bindings) {
+			renameModifications.rename(binding, args);
+		}
+	}
+
 	/**
-	 * @return a save mode from {@link org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper}
+	 * Returns a save mode from {@link org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper}
 	 */
 	public abstract int getSaveMode();
 }

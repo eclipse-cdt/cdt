@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -102,6 +102,7 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
         IBinding binding= argument.getBinding();
         ArrayList<IBinding> bindings= new ArrayList<>();
         if (binding != null) {
+        	recordRename(binding);
             bindings.add(binding);
         }
         if (binding instanceof ICPPMethod) {

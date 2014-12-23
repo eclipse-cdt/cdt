@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Marc-Andre Laperle - Extracted Util class from ToggleSourceHeaderAction
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -354,5 +355,37 @@ public final class SourceHeaderPartnerFinder {
 			}
 		}
 		return partnerUnit;
+	}
+
+	/**
+	 * Checks if the given path points to a partner source of the given header file. A source file
+	 * is considered a partner if its name without extension is the same as the name of the header,
+	 * or its name differs by one of the suffixes used for partner, e.g. test, files.
+	 *
+	 * @param partnerCandidate the file system path of the file to check
+	 * @param header the file system path of the header file
+	 * @param partnerFileSuffixes name suffixes allowed for partner files
+	 * @return {@code true} if {@code partnerCandidate} is a partner of {@code header}
+	 */
+	public static boolean isPartnerFile(IPath partnerCandidate, IPath header, String[] partnerFileSuffixes) {
+		String headerName = header.removeFileExtension().lastSegment();
+		String sourceName = partnerCandidate.removeFileExtension().lastSegment();
+		if (headerName.equals(sourceName))
+			return true;
+		if (sourceName.startsWith(headerName)) {
+			int pos = headerName.length();
+			// Skip a delimiter before the suffix, e.g. an underscore or a dash.
+			while (pos < sourceName.length() && !Character.isLetterOrDigit(sourceName.charAt(pos))) {
+				pos++;
+			}
+			if (pos == sourceName.length())
+				return true;
+			String suffix = sourceName.substring(pos);
+			for (String s : partnerFileSuffixes) {
+				if (suffix.equalsIgnoreCase(s))
+					return true;
+			}
+		}
+		return false;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
@@ -27,26 +27,19 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.refactoring.CreateFileChange;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.util.ViewerPane;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class CreateFileChangePreview implements IChangePreviewViewer {
 	
-	private static class CreateFileChangePane extends ViewerPane{
-
-		/**
-		 * @param parent
-		 * @param style
-		 */
+	private static class CreateFileChangePane extends ViewerPane {
 		public CreateFileChangePane(Composite parent, int style) {
 			super(parent, style);
 		}
-		
 	}
 	
 	private CreateFileChangePane control;
@@ -57,11 +50,14 @@ public class CreateFileChangePreview implements IChangePreviewViewer {
 	public void createControl(Composite parent) {
 		control =  new CreateFileChangePane(parent, SWT.BORDER | SWT.FLAT);
 		Dialog.applyDialogFont(control);
-		srcViewer= new CSourceViewer(control, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION, CUIPlugin.getDefault().getPreferenceStore());
+		srcViewer= new CSourceViewer(control, null, null, false,
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.FULL_SELECTION,
+				CUIPlugin.getDefault().getPreferenceStore());
 		textTools = CUIPlugin.getDefault().getTextTools();
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		CSourceViewerConfiguration sourceViewerConfiguration = new CSourceViewerConfiguration(textTools.getColorManager(), store, null, textTools.getDocumentPartitioning());
-		srcViewer.configure(sourceViewerConfiguration);
+		CSourceViewerConfiguration configuration =
+				new CSourceViewerConfiguration(textTools.getColorManager(), store, null, textTools.getDocumentPartitioning());
+		srcViewer.configure(configuration);
 		srcViewer.setEditable(false);
 		control.setContent(srcViewer.getControl());
 	}
@@ -85,5 +81,4 @@ public class CreateFileChangePreview implements IChangePreviewViewer {
 			}
 		}
 	}
-
 }

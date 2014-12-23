@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_e897ed4f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-12-23T18:06:36Z",
+      "side": 1,
+      "message": "There is a problem with storing launch related data in the launch delegate. There is only one instance of a launch delegate is created for an Eclipse session. If two launches start in parallel their data will be mixed up. The only reason we haven\u0027t seen this issue yet is because we never start two launchers in parallel. I think sooner or later we will have to fix this issue. Maybe it is better to store the GDB version in GdbLaunch instead?",
+      "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

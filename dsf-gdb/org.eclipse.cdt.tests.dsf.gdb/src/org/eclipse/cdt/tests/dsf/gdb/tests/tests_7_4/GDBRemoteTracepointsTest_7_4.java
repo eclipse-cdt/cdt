@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3.GDBRemoteTracepointsTest_7_3;
+import org.eclipse.core.runtime.Platform;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,8 +34,11 @@ public class GDBRemoteTracepointsTest_7_4 extends GDBRemoteTracepointsTest_7_3 {
 	@Override
 	protected boolean acceptsFastTpOnFourBytes() {
 		// With GDB 7.4, fast tracepoints only need an
-		// instruction of 4 bytes or more, instead of 5.
-		return true;
+		// instruction of 4 bytes or more when on a 32bit architecture, instead of 5.
+	    if (Platform.getOS().equals(Platform.ARCH_X86)) {
+	    	return true;
+	    }
+	    return false;
 	}
 	
 	/**
@@ -70,13 +73,14 @@ public class GDBRemoteTracepointsTest_7_4 extends GDBRemoteTracepointsTest_7_3 {
 		delta.put(MIBreakpoints.COMMANDS, action2.getName());
 		updateBreakpoint(fTracepoints[4], delta);
 
-		ArrayList<TracepointData> dataArray = new ArrayList<TracepointData>();
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_2, NO_CONDITION, 0, true, action1.toString(), false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_3, NO_CONDITION, 0, true, action2.toString(), false));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_4, NO_CONDITION, 0, true, action1.toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_NUMBER_1, NO_CONDITION, 0, true, action1.toString(), true));
-		dataArray.add(new TracepointData(SOURCE_FILE, LINE_LOOP_2, NO_CONDITION, 0, true, action2.toString(), acceptsFastTpOnFourBytes()));
+		TracepointData[] dataArray = new TracepointData[] {
+			new TracepointData(LINE_NUMBER_1_BYTE_INSTR, NO_CONDITION, 0, true, action1.toString(), false),
+			new TracepointData(LINE_NUMBER_2_BYTE_INSTR, NO_CONDITION, 0, true, action2.toString(), false),
+			new TracepointData(LINE_NUMBER_3_BYTE_INSTR, NO_CONDITION, 0, true, action1.toString(), false),
+			new TracepointData(LINE_NUMBER_4_BYTE_INSTR, NO_CONDITION, 0, true, action1.toString(), acceptsFastTpOnFourBytes()),
+			new TracepointData(LINE_NUMBER_5_BYTE_INSTR, NO_CONDITION, 0, true, action2.toString(), true),
+		};
 
-		checkTracepoints(dataArray.toArray(new TracepointData[dataArray.size()]));
+		checkTracepoints(dataArray);
 	}
 }

@@ -17,7 +17,7 @@
 	
 	<properties>
 		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/shared/common/gdb</gdbPathOption>
-		<gdbTestSuite>AutomatedSuite.java</gdbTestSuite>
+		<gdbTestSuite>AllSuitesRemote.java</gdbTestSuite>
 	</properties>
 	
 	<build>

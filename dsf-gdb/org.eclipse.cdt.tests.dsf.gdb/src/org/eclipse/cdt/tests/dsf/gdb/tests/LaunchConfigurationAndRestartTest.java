@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
- *     Simon Marchi (Ericsson) - Remove a catch that just fails a test.
+ *     Simon Marchi (Ericsson) - Remove a catch that just fails a test, disable tests
+ *                               for gdb < 7.2.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -209,8 +210,17 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      * as the gdbinit file.  We then verify the that the content was properly read.
      * launchConfigTestGdbinit will simply set some arguments for the program to read;
      * the arguments are "1 2 3 4 5 6".
-     */    
+     *
+     * This test is disabled for gdb.7.1 because it inserts an extraneous \n that messes up
+     * the launch sequence (more particularly, the byte length detection):
+     *
+     *     17-interpreter-exec console "p/x (char)-1"
+     *     ~"\n"
+     *     ~"$1 = 0xff\n"
+     *     17^done
+     */
     @Test
+    @Ignore
     public void testSourceGdbInit() throws Throwable {
         setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
                            "data/launch/src/launchConfigTestGdbinit");
@@ -269,6 +279,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      * Repeat the test testSourceGdbInit, but after a restart.
      */
     @Test
+    @Ignore
     public void testSourceGdbInitRestart() throws Throwable {
     	fRestart = true;
     	testSourceGdbInit();

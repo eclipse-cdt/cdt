@@ -52,6 +52,24 @@
       "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_cbbb0b0c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-24T01:32:19Z",
+      "side": 1,
+      "message": "And we cannot have the globals of the base AbstractCLaunchDelegate2.\n\nAll these things could be a problem if we launch two launches exactly at the same time.  Maybe using a LaunchGroup, we could trigger a bug.\n\nI\u0027ll open a bug about this.",
+      "parentUuid": "8761b321_88659996",
+      "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

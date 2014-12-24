@@ -48,9 +48,11 @@ public class InclusionContext {
 	private final IncludePreferences fPreferences;
 	private String fSourceContents;
 	private String fLineDelimiter;
+	private IPath fTuLocation;
 
 	public InclusionContext(ITranslationUnit tu) {
 		fTu = tu;
+		fTuLocation = fTu.getLocation();
 		ICProject cProject = fTu.getCProject();
 		fProject = cProject.getProject();
 		fCurrentDirectory = fTu.getResource().getParent().getLocation();
@@ -245,7 +247,7 @@ public class InclusionContext {
 	 * used for test files.
 	 */
 	public boolean isPartnerFile(IPath path) {
-		return SourceHeaderPartnerFinder.isPartnerFile(getTranslationUnit().getLocation(), path,
+		return SourceHeaderPartnerFinder.isPartnerFile(getTranslationUnitLocation(), path,
 				fPreferences.partnerFileSuffixes);
 	}
 
@@ -291,5 +293,22 @@ public class InclusionContext {
 			}
 		}
 		return fLineDelimiter;
+	}
+
+	/**
+	 * Sets the effective translation unit location that overrides the default value obtained by
+	 * calling {@code getTranslationUnit().getLocation()}.
+	 *
+	 * @param location the file system location to set 
+	 */
+	public void setTranslationUnitLocation(IPath location) {
+		this.fTuLocation = location;
+	}
+
+	/**
+	 * Returns the effective translation unit location.
+	 */
+	public IPath getTranslationUnitLocation() {
+		return fTuLocation;
 	}
 }

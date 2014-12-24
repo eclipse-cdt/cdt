@@ -208,6 +208,11 @@ public class HeaderFileReferenceAdjuster {
 	private TextEdit createEdit(IASTTranslationUnit ast, ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		IncludeCreationContext context = new IncludeCreationContext(tu, index);
+		// Adjust the translation unit location in the inclusion context.
+		IFile movedFile = movedFiles.get(tu.getFile());
+		if (movedFile != null)
+			context.setTranslationUnitLocation(movedFile.getLocation());
+
 		String contents = context.getSourceContents();
 
 		MultiTextEdit rootEdit = createIncludeGuardEdit(ast, tu, contents);
@@ -353,7 +358,7 @@ public class HeaderFileReferenceAdjuster {
 				} else {
 					if (previousInclude != null && affectedIncludes.containsKey(previousInclude.getExistingInclude()) &&
 							isBlankLineNeededBetween(previousInclude, include, preferences) &&
-							TextUtil.findBlankLine(contents, offset, ASTNodes.offset(existingInclude)) < 0) {
+							TextUtil.findBlankLine(contents, skipDeletedRegion(offset, deletes), ASTNodes.offset(existingInclude)) < 0) {
 						text.append(context.getLineDelimiter());
 					}
 					flushEditBuffer(offset, text, deletes, rootEdit);
@@ -432,6 +437,15 @@ public class HeaderFileReferenceAdjuster {
 			deletes.remove();
 			rootEdit.addChild(edit);
 		}
+	}
+
+	private int skipDeletedRegion(int offset, Deque<DeleteEdit> deletes) {
+		for (DeleteEdit edit : deletes) {
+			if (edit.getOffset() > offset)
+				break;
+			offset = edit.getExclusiveEnd();
+		}
+		return offset;
 	}
 
 	private void lockIndex() throws CoreException, OperationCanceledException {

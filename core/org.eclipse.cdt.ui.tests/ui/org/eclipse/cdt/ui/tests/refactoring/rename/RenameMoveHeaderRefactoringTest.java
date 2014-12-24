@@ -295,9 +295,13 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 
 	// OriginalClass.cpp
 	//#include "OriginalClass.h"
+	//
+	//#include <cstdio>
 	//====================
 	// RenamedClass.cpp
 	//#include "RenamedClass.h"
+	//
+	//#include <cstdio>
 
 	// OriginalClass_test.cpp
 	//#include "OriginalClass.h"

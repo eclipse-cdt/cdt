@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
- *     Simon Marchi (Ericsson) - Disable some reverse tests for gdb 7.0 and 7.1.
+ *     Simon Marchi (Ericsson) - Disable some tests for gdb < 7.2.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;
 
@@ -58,5 +58,23 @@ public class LaunchConfigurationAndRestartTest_7_2 extends LaunchConfigurationAn
 	@Override
 	public void testStopAtOtherWithReverseRestart() throws Throwable {
 		super.testStopAtOtherWithReverseRestart();
+	}
+
+	/**
+	 * Enable the test for gdb 7.2 and upwards.
+	 */
+	@Test
+	@Override
+	public void testSourceGdbInit() throws Throwable {
+		super.testSourceGdbInit();
+	}
+
+	/**
+	 * Enable the test for gdb 7.2 and upwards.
+	 */
+	@Test
+	@Override
+	public void testSourceGdbInitRestart() throws Throwable {
+		super.testSourceGdbInitRestart();
 	}
 }

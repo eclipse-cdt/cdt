@@ -12,8 +12,8 @@ COREFILE = $(BINDIR)/core
 CC = gcc
 CXX = g++
 
-CFLAGS = -gdwarf-2
-CXXFLAGS = -gdwarf-2
+CFLAGS = -g
+CXXFLAGS = -g
 
 # Don't try to use pthread on Windows
 # The OS environment variable exists on Windows

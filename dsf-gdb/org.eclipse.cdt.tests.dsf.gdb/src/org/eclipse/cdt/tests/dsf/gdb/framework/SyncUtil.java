@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
+ *     Simon Marchi (Ericsson) - Make canRestart and restart throw Exception instead of Throwable.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -720,7 +721,7 @@ public class SyncUtil {
 	/** 
 	 * Check if the restart operation is supported 
 	 */
-	public static boolean canRestart() throws Throwable {	
+	public static boolean canRestart() throws Exception {
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// Check if restart is allowed
@@ -748,7 +749,7 @@ public class SyncUtil {
     /**
      * Restart the program.
      */
-	public static MIStoppedEvent restart(final GdbLaunch launch) throws Throwable {	
+	public static MIStoppedEvent restart(final GdbLaunch launch) throws Exception {
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// If we are calling this method, the restart operation should be allowed
@@ -764,7 +765,6 @@ public class SyncUtil {
 			
         // Perform the restart
         Query<IContainerDMContext> query2 = new Query<IContainerDMContext>() {
-			@SuppressWarnings("unchecked")
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
 				Map<String, Object> attributes = null;

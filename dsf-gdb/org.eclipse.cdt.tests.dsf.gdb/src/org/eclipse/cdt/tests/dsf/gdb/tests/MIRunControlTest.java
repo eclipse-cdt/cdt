@@ -20,6 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -187,7 +189,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 * For Multi-threaded application - In case of one thread, Thread id should start with 1. 
 	 */
 	@Test
-	public void getExecutionContext() throws InterruptedException{
+	public void getExecutionContext() throws InterruptedException, ExecutionException, TimeoutException {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Create a request monitor 
@@ -334,7 +336,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 * Testing getModelData() for ExecutionDMC
 	 */
 	@Test
-	public void getModelDataForThread() throws InterruptedException{
+	public void getModelDataForThread() throws InterruptedException, ExecutionException, TimeoutException {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Create a request monitor
@@ -572,7 +574,7 @@ public class MIRunControlTest extends BaseTestCase {
     
      //Also test Cache after ContainerResumeEvent 
     @Test
-    public void resume() throws InterruptedException{
+    public void resume() throws InterruptedException, ExecutionException, TimeoutException {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 	    
         final DataRequestMonitor<MIInfo> rm = 
@@ -624,7 +626,7 @@ public class MIRunControlTest extends BaseTestCase {
     }
 
     @Test
-    public void resumeContainerContext() throws InterruptedException{
+    public void resumeContainerContext() throws InterruptedException, ExecutionException, TimeoutException {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 	    final DataRequestMonitor<MIInfo> rm = 

@@ -70,6 +70,24 @@
       "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_4b289b36",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2014-12-24T18:10:46Z",
+      "side": 1,
+      "message": "As a first step I would move all global variables into the corresponding Launch object (create AbstractCLaunch for AbstractCLaunchDelegate2), so we don\u0027t need to think of how to store them individually.\nIn case of the GDB version, do we really need to show it in the label?",
+      "parentUuid": "8761b321_cbbb0b0c",
+      "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

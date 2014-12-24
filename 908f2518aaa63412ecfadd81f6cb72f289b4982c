@@ -88,6 +88,24 @@
       "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_8b4c731e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2014-12-24T18:43:27Z",
+      "side": 1,
+      "message": "I don\u0027t actually need to store the GDB version globally.  I was just doing that to avoid passing it as a parameter to the new API.\n\nThe question is more if you prefer not showing the version.  I think it can be useful, but I\u0027m willing to discuss :)",
+      "parentUuid": "8761b321_4b289b36",
+      "revId": "908f2518aaa63412ecfadd81f6cb72f289b4982c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

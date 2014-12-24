@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ericsson and others.
+ * Copyright (c) 2011, 2014 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Simon Marchi (Ericsson) - Remove a catch that just fails a test.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -109,11 +110,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
 				wait(1000);
 			}
     		fRestart = false;
-        	try {
-				SyncUtil.restart(getGDBLaunch());
-			} catch (Throwable e) {
-				fail("Restart failed: " + e.getMessage());
-			}
+			SyncUtil.restart(getGDBLaunch());
         }
     }
 

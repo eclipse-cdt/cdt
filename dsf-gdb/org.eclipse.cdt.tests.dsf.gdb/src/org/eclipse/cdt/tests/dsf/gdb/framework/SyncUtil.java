@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -632,9 +634,11 @@ public class SyncUtil {
 	 * 
 	 * @return the process context
 	 * @throws InterruptedException
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IContainerDMContext getContainerContext() throws InterruptedException {
+	public static IContainerDMContext getContainerContext() throws InterruptedException, ExecutionException, TimeoutException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
 		Query<IContainerDMContext> query = new Query<IContainerDMContext>() {
@@ -661,19 +665,16 @@ public class SyncUtil {
 		};
 		
 		fGdbControl.getExecutor().execute(query);
-		try {
-			return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		return null;
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * Utility method to return all thread execution contexts.
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IMIExecutionDMContext[] getExecutionContexts() throws InterruptedException {
+	public static IMIExecutionDMContext[] getExecutionContexts() throws InterruptedException, ExecutionException, TimeoutException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -700,18 +701,16 @@ public class SyncUtil {
 		};
 		
 		fGdbControl.getExecutor().execute(query);
-		try {
-			return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		return null;
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
 	}
+
 	/**
 	 * Utility method to return a specific execution DM context.
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IMIExecutionDMContext getExecutionContext(int threadIndex) throws InterruptedException {
+	public static IMIExecutionDMContext getExecutionContext(int threadIndex) throws InterruptedException, ExecutionException, TimeoutException {
 		IMIExecutionDMContext[] threads = getExecutionContexts();
 		assertTrue("unexpected number of threads", threadIndex < threads.length);
 		assertNotNull("unexpected thread context type ", threads[threadIndex]);

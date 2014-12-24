@@ -16,6 +16,8 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,7 +97,7 @@ public class GDBProcessesTest extends BaseTestCase {
     /*
      *  Get the process data for the current program. Process is executable name in case of GDB back end
      */
-	public void getProcessData() throws InterruptedException{
+	public void getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
 		
 		/*
 		 * Create a request monitor 
@@ -150,7 +152,7 @@ public class GDBProcessesTest extends BaseTestCase {
 	 * getThreadData() for multiple threads
 	 */
 	@Test
-	public void getThreadData() throws InterruptedException{
+	public void getThreadData() throws InterruptedException, ExecutionException, TimeoutException {
 		
 		final String THREAD_ID = "1";
         final DataRequestMonitor<IThreadDMData> rm = 

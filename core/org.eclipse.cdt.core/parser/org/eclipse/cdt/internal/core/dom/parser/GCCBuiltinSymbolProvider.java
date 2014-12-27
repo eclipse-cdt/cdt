@@ -153,7 +153,6 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 			function("bool", 	"__atomic_compare_exchange", typePtr, typePtr, typePtr, "int", "int", "int");
 			function(type, 		"__atomic_add_fetch", typePtr, type, "int");
 			function(type, 		"__atomic_sub_fetch", typePtr, type, "int");
-			function(type, 		"__atomic_add_fetch", typePtr, type, "int");
 			function(type, 		"__atomic_and_fetch", typePtr, type, "int");
 			function(type, 		"__atomic_xor_fetch", typePtr, type, "int");
 			function(type, 		"__atomic_or_fetch", typePtr, type, "int");

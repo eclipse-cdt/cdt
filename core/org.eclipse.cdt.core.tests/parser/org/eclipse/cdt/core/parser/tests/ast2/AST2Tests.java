@@ -158,7 +158,6 @@ public class AST2Tests extends AST2TestBase {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, C, useGnuExtensions);
 		parseAndCheckBindings(code, CPP, useGnuExtensions);
-		
 	}
 
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
@@ -7567,4 +7566,12 @@ public class AST2Tests extends AST2TestBase {
 	public void testExpressionLabelReference_84144() throws Exception {
 		parseAndCheckBindings(true);
 	}
+	
+	//	int version = 0;
+	//	int NextVersion() {
+	//		return __atomic_add_fetch(&version, 1, 5);
+	//	}
+    public void testAtomicBuiltin_bug456131() throws Exception {
+    	parseAndCheckBindings(true);
+    }
 }

@@ -61,7 +61,12 @@ public class ASTComparer extends Assert {
 		"isAssociatedWithLastName",
 		"getNestingLevel",
 		"getImplicitNames",
-		"isLValue"
+		"isLValue",
+		
+		// These methods can return a special constant value, such as
+		// ICPPASTFunctionDecalarator.NOEXCEPT_DEFAULT, which does not 
+		// get cloned when the node is copied.
+		"getNoexceptExpression"
 	));
 
 	public static void assertCopy(IASTNode node1, IASTNode node2) {

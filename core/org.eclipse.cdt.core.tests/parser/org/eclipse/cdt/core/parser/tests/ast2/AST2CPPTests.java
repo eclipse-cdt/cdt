@@ -11007,4 +11007,9 @@ public class AST2CPPTests extends AST2TestBase {
 		// constexpr on a method *should not* make the method const
 		assertSameType(waldo3.getType(), new CPPFunctionType(CommonTypes.int_, new IType[]{}));
 	}
+	
+	//	void waldo() noexcept;
+	public void testASTCopyForNoexceptDefault_bug456207() throws Exception {
+		parseAndCheckBindings();
+	}
 }

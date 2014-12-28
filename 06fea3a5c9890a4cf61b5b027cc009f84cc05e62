@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_39281536",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-28T17:28:28Z",
+      "side": 1,
+      "message": "Please add a comment explaining this condition.",
+      "revId": "06fea3a5c9890a4cf61b5b027cc009f84cc05e62",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

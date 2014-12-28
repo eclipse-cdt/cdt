@@ -16,6 +16,24 @@
       "revId": "06fea3a5c9890a4cf61b5b027cc009f84cc05e62",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_395ad5c9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 1578
+      },
+      "writtenOn": "2014-12-28T19:59:27Z",
+      "side": 1,
+      "message": "If the QualifiedName is some sort of template instance I can\u0027t think of any case where after the colons a reference to its template definition would make sense, apart from maybe a template alias inside the template instance. But then the binding wouldn\u0027t be the same as templateDefinition anyway.\n\nIf binding is itself a template instance this will fall through and can be covered by the isSameType check afterwards.\n\nAfter your initial intervention (thanks you did) I didn\u0027t find a solution inside the isSameType method that would do the job so I changed tactics.\n\nThe statement above should work for implicit, partial and explicit template instance, for template definitions from the AST and from the PDOM.\n\nFinally, if the QualifiedName does not refer to a template instance then the comparison is against null.\n\nDoes this sound reasonable?",
+      "parentUuid": "8761b321_39281536",
+      "revId": "06fea3a5c9890a4cf61b5b027cc009f84cc05e62",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

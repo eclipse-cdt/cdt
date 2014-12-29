@@ -34,6 +34,24 @@
       "revId": "06fea3a5c9890a4cf61b5b027cc009f84cc05e62",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_19243938",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2014-12-29T03:43:24Z",
+      "side": 1,
+      "message": "What you said above does sound reasonable but it\u0027s probably too much for a comment explaining the condition. If you have trouble explaining the condition in a 1-2 sentence comment, you can simply refer to the bug.",
+      "parentUuid": "8761b321_395ad5c9",
+      "revId": "06fea3a5c9890a4cf61b5b027cc009f84cc05e62",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

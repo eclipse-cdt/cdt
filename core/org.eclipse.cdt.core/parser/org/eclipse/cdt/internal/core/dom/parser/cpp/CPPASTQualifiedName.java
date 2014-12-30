@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -331,9 +332,15 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		if (fQualifierPos >= 0) {
 			IBinding binding = fQualifier[fQualifierPos].resolveBinding();
 
+			IType type;
 			while (binding instanceof ITypedef) {
 				ITypedef typedef = (ITypedef) binding;
-				binding = (IBinding) typedef.getType();
+				type = typedef.getType();
+				if (type instanceof IBinding) {
+					binding = (IBinding) type;
+				} else {
+					binding = null;
+				}
 			}
 
 			if (binding instanceof ICPPClassType) {

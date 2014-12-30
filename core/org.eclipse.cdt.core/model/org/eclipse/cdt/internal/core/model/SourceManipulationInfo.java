@@ -24,9 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /** 
  * Element info for ISourceReference elements. 
  */
-/* package */
 class SourceManipulationInfo extends CElementInfo {
-
 	protected int fStartPos;
 	protected int fLength;
 	protected int fIdStartPos;
@@ -79,16 +77,11 @@ class SourceManipulationInfo extends CElementInfo {
 	}
 
 	protected ISourceRange getSourceRange() {
-		return new SourceRange(fStartPos,
-						fLength,
-						fIdStartPos,
-						fIdLength, 
-						fStartLine,
-						fEndLine);
+		return new SourceRange(fStartPos, fLength, fIdStartPos, fIdLength, fStartLine, fEndLine);
 	}
 
 	/**
-	 * @see ISourceReference
+	 * @see ISourceReference#getSource()
 	 */
 	public String getSource() throws CModelException {
 		ITranslationUnit unit = getTranslationUnit();
@@ -103,7 +96,7 @@ class SourceManipulationInfo extends CElementInfo {
 		}
 		try {
 			return buffer.getText(offset, length);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return null;
 		}
 
@@ -127,93 +120,90 @@ class SourceManipulationInfo extends CElementInfo {
 	}
 
 	/**
-	 * @see IMember
+	 * @see IMember#getTranslationUnit()
 	 */
 	public ITranslationUnit getTranslationUnit() {
-		ICElement celem = getElement();
-		for (; celem != null; celem = celem.getParent()) {
+		for (ICElement celem = getElement(); celem != null; celem = celem.getParent()) {
 			if (celem instanceof ITranslationUnit)
-				return (ITranslationUnit)celem;
+				return (ITranslationUnit) celem;
 		}
 		return null;
 	}
 
 	/**
-	 * @see ISourceManipulation
+	 * @see ISourceManipulation#copy(ICElement, ICElement, String, boolean, IProgressMonitor)
 	 */
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] {getElement()};
-		ICElement[] containers= new ICElement[] {container};
+		ICElement[] elements= new ICElement[] { getElement() };
+		ICElement[] containers= new ICElement[] { container };
 		ICElement[] siblings= null;
 		if (sibling != null) {
-			siblings= new ICElement[] {sibling};
+			siblings= new ICElement[] { sibling };
 		}
 		String[] renamings= null;
 		if (rename != null) {
-			renamings= new String[] {rename};
+			renamings= new String[] { rename };
 		}
 		getElement().getCModel().copy(elements, containers, siblings, renamings, force, monitor);
 	}
 
 	/**
-	 * @see ISourceManipulation
+	 * @see ISourceManipulation#delete(boolean, IProgressMonitor)
 	 */
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
-		ICElement[] elements = new ICElement[] {getElement()};
+		ICElement[] elements = new ICElement[] { getElement() };
 		getElement().getCModel().delete(elements, force, monitor);
 	}
 
 	/**
-	 * @see ISourceManipulation
+	 * @see ISourceManipulation#move(ICElement, ICElement, String, boolean, IProgressMonitor)
 	 */
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
-		IProgressMonitor monitor) throws CModelException {
+			IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
 			throw new IllegalArgumentException(CoreModelMessages.getString("operation.nullContainer")); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] {getElement()};
-		ICElement[] containers= new ICElement[] {container};
+		ICElement[] elements= new ICElement[] { getElement() };
+		ICElement[] containers= new ICElement[] { container };
 		ICElement[] siblings= null;
 		if (sibling != null) {
-			siblings= new ICElement[] {sibling};
+			siblings= new ICElement[] { sibling };
 		}
 		String[] renamings= null;
 		if (rename != null) {
-			renamings= new String[] {rename};
+			renamings= new String[] { rename };
 		}
 		getElement().getCModel().move(elements, containers, siblings, renamings, force, monitor);
 	}
 
 	/**
-	 * @see ISourceManipulation
+	 * @see ISourceManipulation#rename(String, boolean, IProgressMonitor)
 	 */
 	public void rename(String name, boolean force, IProgressMonitor monitor) throws CModelException {
 		if (name == null) {
 			throw new IllegalArgumentException("element.nullName"); //$NON-NLS-1$
 		}
-		ICElement[] elements= new ICElement[] {getElement()};
-		ICElement[] dests= new ICElement[] {getElement().getParent()};
-		String[] renamings= new String[] {name};
+		ICElement[] elements= new ICElement[] { getElement() };
+		ICElement[] dests= new ICElement[] { getElement().getParent() };
+		String[] renamings= new String[] { name };
 		getElement().getCModel().rename(elements, dests, renamings, force, monitor);
 	}
 	
 	/**
-	 * return the element modifiers
-	 * @return int
+	 * Returns the element modifiers.
 	 */
-	public int getModifiers(){
+	public int getModifiers() {
 		return 0;
 	}
 	
 	/**
-	 *  subclasses  should override
+	 * Subclasses should override
 	 */
-	public boolean hasSameContentsAs( SourceManipulationInfo otherInfo){
-		return (this.element.fType == otherInfo.element.fType);
+	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
+		return element.fType == otherInfo.element.fType;
 	}
-	
 }

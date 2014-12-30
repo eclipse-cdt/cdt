@@ -106,12 +106,12 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 			    }
 			}
 
-			renameCompilationUnits(ctype);
+			renameTranslationUnits(ctype);
         }
         return bindings.toArray(new IBinding[bindings.size()]);
     }
 
-	private void renameCompilationUnits(ICPPBinding binding) {
+	private void renameTranslationUnits(ICPPBinding binding) {
     	IIndex index = getIndex();
     	if (index == null) {
     		return;

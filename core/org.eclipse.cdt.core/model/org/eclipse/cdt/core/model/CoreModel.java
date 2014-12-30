@@ -167,7 +167,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is a shared library, i.e. libxx.so
+	 * Returns true if IFile is a shared library, i.e. libxx.so
 	 */
 	public boolean isSharedLib(IFile file) {
 		ICElement celement = create(file);
@@ -178,7 +178,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is a an object(ELF), i.e. *.o
+	 * Returns true if IFile is a an object(ELF), i.e. *.o
 	 */
 	public boolean isObject(IFile file) {
 		ICElement celement = create(file);
@@ -189,7 +189,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is an ELF executable
+	 * Returns true if IFile is an ELF executable
 	 */
 	public boolean isExecutable(IFile file) {
 		ICElement celement = create(file);
@@ -200,7 +200,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is an ELF.
+	 * Returns true if IFile is an ELF.
 	 */
 	public boolean isBinary(IFile file) {
 		ICElement celement = create(file);
@@ -208,7 +208,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is an Achive, *.a
+	 * Returns true if IFile is an Achive, *.a
 	 */
 	public boolean isArchive(IFile file) {
 		ICElement celement = create(file);
@@ -216,7 +216,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is a possible TranslationUnit.
+	 * Returns true if IFile is a possible TranslationUnit.
 	 */
 	public static boolean isTranslationUnit(IFile file) {
 		if (file != null) {
@@ -229,7 +229,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return an array of the register contentTypes.
+	 * Returns an array of the register contentTypes.
 	 * @return String[] ids
 	 */
 	public static String[] getRegistedContentTypeIds() {
@@ -237,7 +237,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidTranslationUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -254,7 +254,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidHeaderUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -269,7 +269,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidSourceUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -289,7 +289,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidCSourceUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -303,7 +303,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidCXXSourceUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -317,7 +317,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidASMSourceUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -331,7 +331,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidCXXHeaderUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -345,7 +345,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if name is a valid name for a translation unit.
+	 * Returns true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidCHeaderUnitName(IProject project, String name) {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -379,7 +379,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if project has C nature.
+	 * Returns true if project has C nature.
 	 */
 	public static boolean hasCNature(IProject project) {
 		try {
@@ -390,7 +390,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if project has C++ nature.
+	 * Returns true if project has C++ nature.
 	 */
 	public static boolean hasCCNature(IProject project) {
 		try {
@@ -1036,7 +1036,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return the IPathEntryStore of the project.
+	 * Returns the IPathEntryStore of the project.
 	 * @throws CoreException
 	 */
 	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
@@ -1113,7 +1113,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return the singleton.
+	 * Returns the singleton.
 	 */
 	public static CoreModel getDefault() {
 		if (cmodel == null) {

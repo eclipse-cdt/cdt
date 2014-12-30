@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_ff595d87",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-12-30T20:28:49Z",
+      "side": 1,
+      "message": "It doesn\u0027t look like you use this import.",
+      "revId": "748b4ac61428496a0fa76c852c198c3cfe115e4a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_df562155",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPASTQualifiedName.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2014-12-30T20:28:49Z",
+      "side": 1,
+      "message": "It\u0027s probably better to declare this inside the loop where it\u0027s actually used.",
+      "revId": "748b4ac61428496a0fa76c852c198c3cfe115e4a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

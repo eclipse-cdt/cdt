@@ -84,12 +84,14 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @see ITranslationUnit
@@ -371,17 +373,20 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
+		Assert.isTrue(!isReadOnly(), NLS.bind("Translation unit {0} must not be read-only", getElementName())); //$NON-NLS-1$
 		getSourceManipulationInfo().delete(force, monitor);
 	}
 
 	@Override
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
 			IProgressMonitor monitor) throws CModelException {
+		Assert.isTrue(!isReadOnly(), NLS.bind("Translation unit {0} must not be read-only", getElementName())); //$NON-NLS-1$
 		getSourceManipulationInfo().move(container, sibling, rename, force, monitor);
 	}
 
 	@Override
 	public void rename(String name, boolean force, IProgressMonitor monitor) throws CModelException {
+		Assert.isTrue(!isReadOnly(), NLS.bind("Translation unit {0} must not be read-only", getElementName())); //$NON-NLS-1$
 		getSourceManipulationInfo().rename(name, force, monitor);
 	}
 

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.changes;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +27,6 @@ public final class RenameTranslationUnitChange extends AbstractCElementRenameCha
 
 	public RenameTranslationUnitChange(ITranslationUnit tu, String newName) {
 		this(tu.getResource().getFullPath(), tu.getElementName(), newName, IResource.NULL_STAMP);
-		Assert.isTrue(!tu.isReadOnly(), "Translation unit must not be read-only"); //$NON-NLS-1$
 	}
 
 	private RenameTranslationUnitChange(IPath resourcePath, String oldName, String newName, long stampToRestore) {

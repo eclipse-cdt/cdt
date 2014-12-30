@@ -333,7 +333,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 
 			while (binding instanceof ITypedef) {
 				ITypedef typedef = (ITypedef) binding;
-				binding = (IBinding) typedef.getType();
+				IType type = typedef.getType();
+				if (type instanceof IBinding) {
+					binding = (IBinding) type;
+				} else {
+					binding = null;
+				}
 			}
 
 			if (binding instanceof ICPPClassType) {

@@ -46,6 +46,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -183,16 +184,25 @@ public class HeaderFileReferenceAdjuster {
 
 	private void addFileChange(ITranslationUnit tu, List<Change> changes, ValidateEditChecker checker,
 			IProgressMonitor pm) throws CoreException {
-		TextEdit edit = createEdit(tu, pm);
-		if (edit != null) {
+		TextEditGroup editGroup = createEdit(tu, pm);
+		if (editGroup != null) {
 			CTextFileChange fileChange = new CTextFileChange(tu.getElementName(), tu);
-			fileChange.setEdit(edit);
+			TextEdit[] edits = editGroup.getTextEdits();
+			if (edits.length == 1) {
+				fileChange.setEdit(edits[0]);
+			} else {
+				fileChange.setEdit(new MultiTextEdit());
+				for (TextEdit edit : edits) {
+					fileChange.addEdit(edit);
+				}
+			}
+            fileChange.addTextEditGroup(editGroup);
 			changes.add(fileChange);
 			checker.addFile(fileChange.getFile());
 		}
 	}
 
-	private TextEdit createEdit(ITranslationUnit tu, IProgressMonitor pm)
+	private TextEditGroup createEdit(ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		checkCanceled(pm);
 
@@ -205,7 +215,7 @@ public class HeaderFileReferenceAdjuster {
 		}
     }
 
-	private TextEdit createEdit(IASTTranslationUnit ast, ITranslationUnit tu, IProgressMonitor pm)
+	private TextEditGroup createEdit(IASTTranslationUnit ast, ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		IncludeCreationContext context = new IncludeCreationContext(tu, index);
 		// Adjust the translation unit location in the inclusion context.
@@ -216,6 +226,7 @@ public class HeaderFileReferenceAdjuster {
 		String contents = context.getSourceContents();
 
 		MultiTextEdit rootEdit = createIncludeGuardEdit(ast, tu, contents);
+		int numIncludeGuardEdits = rootEdit == null ? 0 : rootEdit.getChildrenSize();
 
 		Map<IASTPreprocessorIncludeStatement, IPath> affectedIncludes = new IdentityHashMap<>();
 		IASTPreprocessorIncludeStatement[] existingIncludes = ast.getIncludeDirectives();
@@ -240,152 +251,163 @@ public class HeaderFileReferenceAdjuster {
 				}
 			}
 		}
-		if (affectedIncludes.isEmpty())
-			return rootEdit;
-
-		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
-		IRegion includeRegion =
-				IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
-
-		IncludePreferences preferences = context.getPreferences();
-
-		if (rootEdit == null)
-			rootEdit = new MultiTextEdit();
-
-		context.addHeadersIncludedPreviously(existingIncludes);
-
-		if (preferences.allowReordering) {
-			List<StyledInclude> modifiedIncludes = new ArrayList<>();
-			// Put the changed includes into modifiedIncludes.
-			for (Entry<IASTPreprocessorIncludeStatement, IPath> entry : affectedIncludes.entrySet()) {
-				IASTPreprocessorIncludeStatement existingInclude = entry.getKey();
-				if (IncludeUtil.isContainedInRegion(existingInclude, includeRegion)) {
-					IPath header = entry.getValue();
-					IncludeGroupStyle style = context.getIncludeStyle(header);
-					IncludeInfo includeInfo = context.createIncludeInfo(header, style);
-					StyledInclude include = new StyledInclude(header, includeInfo, style, existingInclude);
-					modifiedIncludes.add(include);
-				}
-			}
-
-			Collections.sort(modifiedIncludes, preferences);
-
-			// Populate a list of the existing unchanged includes in the include insertion region.
-			List<StyledInclude> mergedIncludes =
-					IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion, context);
-			Deque<DeleteEdit> deletes = new ArrayDeque<>();
-			// Create text deletes for old locations of the includes that will be changed.
-			int deleteOffset = -1;
-			boolean emptyLineEncountered = false;
-			int j = 0;
-			for (int i = 0; i < mergedIncludes.size(); i++) {
-				StyledInclude include = mergedIncludes.get(i);
-				IASTPreprocessorIncludeStatement existingInclude = include.getExistingInclude();
-				int offset = ASTNodes.offset(existingInclude);
-				boolean previousLineBlank = TextUtil.isPreviousLineBlank(contents, offset);
-				if (affectedIncludes.containsKey(existingInclude)) {
-					if (deleteOffset < 0) {
-						deleteOffset = offset;
-					} else if (!emptyLineEncountered && previousLineBlank) {
-						// Preserve the first encountered blank line.
-						deletes.add(new DeleteEdit(deleteOffset, offset - deleteOffset));
-						deleteOffset = -1;
+		if (!affectedIncludes.isEmpty()) {
+			NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
+			IRegion includeRegion =
+					IncludeUtil.getSafeIncludeReplacementRegion(contents, ast, commentedNodeMap);
+	
+			IncludePreferences preferences = context.getPreferences();
+	
+			if (rootEdit == null)
+				rootEdit = new MultiTextEdit();
+	
+			context.addHeadersIncludedPreviously(existingIncludes);
+	
+			if (preferences.allowReordering) {
+				List<StyledInclude> modifiedIncludes = new ArrayList<>();
+				// Put the changed includes into modifiedIncludes.
+				for (Entry<IASTPreprocessorIncludeStatement, IPath> entry : affectedIncludes.entrySet()) {
+					IASTPreprocessorIncludeStatement existingInclude = entry.getKey();
+					if (IncludeUtil.isContainedInRegion(existingInclude, includeRegion)) {
+						IPath header = entry.getValue();
+						IncludeGroupStyle style = context.getIncludeStyle(header);
+						IncludeInfo includeInfo = context.createIncludeInfo(header, style);
+						StyledInclude include = new StyledInclude(header, includeInfo, style, existingInclude);
+						modifiedIncludes.add(include);
 					}
-					emptyLineEncountered |= previousLineBlank;
-				} else {
-					if (deleteOffset >= 0) {
-						if (!emptyLineEncountered && previousLineBlank) {
-							offset = TextUtil.getPreviousLineStart(contents, offset);
+				}
+	
+				Collections.sort(modifiedIncludes, preferences);
+	
+				// Populate a list of the existing unchanged includes in the include insertion region.
+				List<StyledInclude> mergedIncludes =
+						IncludeUtil.getIncludesInRegion(existingIncludes, includeRegion, context);
+				Deque<DeleteEdit> deletes = new ArrayDeque<>();
+				// Create text deletes for old locations of the includes that will be changed.
+				int deleteOffset = -1;
+				boolean emptyLineEncountered = false;
+				int j = 0;
+				for (int i = 0; i < mergedIncludes.size(); i++) {
+					StyledInclude include = mergedIncludes.get(i);
+					IASTPreprocessorIncludeStatement existingInclude = include.getExistingInclude();
+					int offset = ASTNodes.offset(existingInclude);
+					boolean previousLineBlank = TextUtil.isPreviousLineBlank(contents, offset);
+					if (affectedIncludes.containsKey(existingInclude)) {
+						if (deleteOffset < 0) {
+							deleteOffset = offset;
+						} else if (!emptyLineEncountered && previousLineBlank) {
+							// Preserve the first encountered blank line.
+							deletes.add(new DeleteEdit(deleteOffset, offset - deleteOffset));
+							deleteOffset = -1;
 						}
-						deletes.add(new DeleteEdit(deleteOffset, offset - deleteOffset));
-						deleteOffset = -1;
+						emptyLineEncountered |= previousLineBlank;
+					} else {
+						if (deleteOffset >= 0) {
+							if (!emptyLineEncountered && previousLineBlank) {
+								offset = TextUtil.getPreviousLineStart(contents, offset);
+							}
+							deletes.add(new DeleteEdit(deleteOffset, offset - deleteOffset));
+							deleteOffset = -1;
+						}
+						emptyLineEncountered = false;
+						if (j < i)
+							mergedIncludes.set(j, include);
+						j++;
 					}
-					emptyLineEncountered = false;
-					if (j < i)
-						mergedIncludes.set(j, include);
-					j++;
 				}
-			}
-			while (j < mergedIncludes.size()) {
-				mergedIncludes.remove(mergedIncludes.size() - 1);
-			}
-			if (deleteOffset >= 0)
-				deletes.add(new DeleteEdit(deleteOffset, includeRegion.getOffset() + includeRegion.getLength() - deleteOffset));
-
-			// Since the order of existing include statements may not match the include order
-			// preferences, we find positions for the new include statements by pushing them up
-			// from the bottom of the include insertion region.
-			for (StyledInclude include : modifiedIncludes) {
-				if (IncludeUtil.isContainedInRegion(include.getExistingInclude(), includeRegion)) {
-					int i = mergedIncludes.size();
-					while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {}
-					mergedIncludes.add(i + 1, include);
+				while (j < mergedIncludes.size()) {
+					mergedIncludes.remove(mergedIncludes.size() - 1);
 				}
-			}
-
-			int offset = includeRegion.getOffset();
-			StringBuilder text = new StringBuilder();
-			StyledInclude previousInclude = null;
-			for (StyledInclude include : mergedIncludes) {
-				IASTPreprocessorIncludeStatement existingInclude = include.getExistingInclude();
-				if (affectedIncludes.containsKey(existingInclude)) {
-					if (previousInclude != null) {
-						IASTNode previousNode = previousInclude.getExistingInclude();
-						if (!affectedIncludes.containsKey(previousNode)) {
-							offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
-							flushEditBuffer(offset, text, deletes, rootEdit);
-							if (contents.charAt(offset - 1) != '\n')
-								text.append(context.getLineDelimiter());
-						}
-						if (isBlankLineNeededBetween(previousInclude, include, preferences)) {
-							if (TextUtil.isLineBlank(contents, offset)) {
-								int oldOffset = offset;
-								offset = TextUtil.skipToNextLine(contents, offset);
-								if (offset == oldOffset || contents.charAt(offset - 1) != '\n')
+				if (deleteOffset >= 0)
+					deletes.add(new DeleteEdit(deleteOffset, includeRegion.getOffset() + includeRegion.getLength() - deleteOffset));
+	
+				// Since the order of existing include statements may not match the include order
+				// preferences, we find positions for the new include statements by pushing them up
+				// from the bottom of the include insertion region.
+				for (StyledInclude include : modifiedIncludes) {
+					if (IncludeUtil.isContainedInRegion(include.getExistingInclude(), includeRegion)) {
+						int i = mergedIncludes.size();
+						while (--i >= 0 && preferences.compare(include, mergedIncludes.get(i)) < 0) {}
+						mergedIncludes.add(i + 1, include);
+					}
+				}
+	
+				int offset = includeRegion.getOffset();
+				StringBuilder text = new StringBuilder();
+				StyledInclude previousInclude = null;
+				for (StyledInclude include : mergedIncludes) {
+					IASTPreprocessorIncludeStatement existingInclude = include.getExistingInclude();
+					if (affectedIncludes.containsKey(existingInclude)) {
+						if (previousInclude != null) {
+							IASTNode previousNode = previousInclude.getExistingInclude();
+							if (!affectedIncludes.containsKey(previousNode)) {
+								offset = ASTNodes.skipToNextLineAfterNode(contents, previousNode);
+								flushEditBuffer(offset, text, deletes, rootEdit);
+								if (contents.charAt(offset - 1) != '\n')
 									text.append(context.getLineDelimiter());
-							} else {
-								text.append(context.getLineDelimiter());
+							}
+							if (isBlankLineNeededBetween(previousInclude, include, preferences)) {
+								if (TextUtil.isLineBlank(contents, offset)) {
+									int oldOffset = offset;
+									offset = TextUtil.skipToNextLine(contents, offset);
+									if (offset == oldOffset || contents.charAt(offset - 1) != '\n')
+										text.append(context.getLineDelimiter());
+								} else {
+									text.append(context.getLineDelimiter());
+								}
 							}
 						}
-					}
-					text.append(include.getIncludeInfo().composeIncludeStatement());
-					List<IASTComment> comments = commentedNodeMap.getTrailingCommentsForNode(existingInclude);
-					for (IASTComment comment : comments) {
-						text.append(ASTNodes.getPrecedingWhitespaceInLine(contents, comment));
-						text.append(comment.getRawSignature());
-					}
-					text.append(context.getLineDelimiter());
-				} else {
-					if (previousInclude != null && affectedIncludes.containsKey(previousInclude.getExistingInclude()) &&
-							isBlankLineNeededBetween(previousInclude, include, preferences) &&
-							TextUtil.findBlankLine(contents, skipDeletedRegion(offset, deletes), ASTNodes.offset(existingInclude)) < 0) {
+						text.append(include.getIncludeInfo().composeIncludeStatement());
+						List<IASTComment> comments = commentedNodeMap.getTrailingCommentsForNode(existingInclude);
+						for (IASTComment comment : comments) {
+							text.append(ASTNodes.getPrecedingWhitespaceInLine(contents, comment));
+							text.append(comment.getRawSignature());
+						}
 						text.append(context.getLineDelimiter());
+					} else {
+						if (previousInclude != null && affectedIncludes.containsKey(previousInclude.getExistingInclude()) &&
+								isBlankLineNeededBetween(previousInclude, include, preferences) &&
+								TextUtil.findBlankLine(contents, skipDeletedRegion(offset, deletes), ASTNodes.offset(existingInclude)) < 0) {
+							text.append(context.getLineDelimiter());
+						}
+						flushEditBuffer(offset, text, deletes, rootEdit);
 					}
-					flushEditBuffer(offset, text, deletes, rootEdit);
+					previousInclude = include;
 				}
-				previousInclude = include;
+				if (includeRegion.getLength() == 0 && !TextUtil.isLineBlank(contents, includeRegion.getOffset())) {
+					text.append(context.getLineDelimiter());
+				}
+				offset = includeRegion.getOffset() + includeRegion.getLength();
+				flushEditBuffer(offset, text, deletes, rootEdit);
 			}
-			if (includeRegion.getLength() == 0 && !TextUtil.isLineBlank(contents, includeRegion.getOffset())) {
-				text.append(context.getLineDelimiter());
+	
+			for (IASTPreprocessorIncludeStatement existingInclude : existingIncludes) {
+				IPath header = affectedIncludes.get(existingInclude);
+				if (header != null &&
+						(!preferences.allowReordering || !IncludeUtil.isContainedInRegion(existingInclude, includeRegion))) {
+					IncludeGroupStyle style = context.getIncludeStyle(header);
+					IncludeInfo includeInfo = context.createIncludeInfo(header, style);
+					IASTName name = existingInclude.getName();
+					int offset = ASTNodes.offset(name) - 1;
+					int length = ASTNodes.endOffset(name) + 1 - offset;
+					rootEdit.addChild(new ReplaceEdit(offset, length, includeInfo.toString()));
+				}
 			}
-			offset = includeRegion.getOffset() + includeRegion.getLength();
-			flushEditBuffer(offset, text, deletes, rootEdit);
 		}
 
-		for (IASTPreprocessorIncludeStatement existingInclude : existingIncludes) {
-			IPath header = affectedIncludes.get(existingInclude);
-			if (header != null &&
-					(!preferences.allowReordering || !IncludeUtil.isContainedInRegion(existingInclude, includeRegion))) {
-				IncludeGroupStyle style = context.getIncludeStyle(header);
-				IncludeInfo includeInfo = context.createIncludeInfo(header, style);
-				IASTName name = existingInclude.getName();
-				int offset = ASTNodes.offset(name) - 1;
-				int length = ASTNodes.endOffset(name) + 1 - offset;
-				rootEdit.addChild(new ReplaceEdit(offset, length, includeInfo.toString()));
-			}
-		}
+		if (rootEdit == null)
+			return null;
 
-		return rootEdit;
+		int numEdits = rootEdit.getChildrenSize();
+		String message =
+				numEdits == numIncludeGuardEdits ?
+						RenameMessages.HeaderReferenceAdjuster_update_include_guards :
+				numIncludeGuardEdits == 0 ?
+						RenameMessages.HeaderReferenceAdjuster_update_includes :
+						RenameMessages.HeaderReferenceAdjuster_update_include_guards_and_includes;
+        TextEditGroup editGroup= new TextEditGroup(message, rootEdit);
+
+		return editGroup;
 	}
 
 	private static boolean isBlankLineNeededBetween(StyledInclude include1, StyledInclude include2,

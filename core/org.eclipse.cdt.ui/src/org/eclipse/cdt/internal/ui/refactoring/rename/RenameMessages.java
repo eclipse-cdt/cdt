@@ -22,9 +22,9 @@ class RenameMessages extends NLS {
 	public static String ASTManager_warning_parsingError_withFile;
 	public static String ASTManager_warning_parsingError_withFileAndLine;
 	public static String ASTManager_warning_parsingError;
-	public static String CRefactoringMatch_label_comment;
-	public static String CRefactoringMatch_label_occurrence;
-	public static String CRefactoringMatch_label_potentialOccurrence;
+	public static String CRefactoringMatch_label_inComment;
+	public static String CRefactoringMatch_label_occurrences;
+	public static String CRefactoringMatch_label_potentialOccurrences;
 	public static String CRefactory_title_rename;
 	public static String CRenameIncludeProcessor_includeDirective;
 	public static String CRenameLocalProcessor_constructor;
@@ -99,6 +99,9 @@ class RenameMessages extends NLS {
 	public static String CRenameTopProcessor_wizard_title;
 	public static String HeaderFileMoveParticipant_name;
 	public static String HeaderFileRenameParticipant_name;
+	public static String HeaderReferenceAdjuster_update_include_guards;
+	public static String HeaderReferenceAdjuster_update_includes;
+	public static String HeaderReferenceAdjuster_update_include_guards_and_includes;
 	public static String RenameCSourceFolderChange_ErrorMsg;
 	public static String RenameCSourceFolderChange_Name0;
 	public static String SourceFolderRenameParticipant_name;
@@ -124,7 +127,7 @@ class RenameMessages extends NLS {
 		NLS.initializeMessages(RenameMessages.class.getName(), RenameMessages.class);
 	}
 
-	// Do not instantiate
+	// Do not instantiate.
 	private RenameMessages() {
 	}
 }

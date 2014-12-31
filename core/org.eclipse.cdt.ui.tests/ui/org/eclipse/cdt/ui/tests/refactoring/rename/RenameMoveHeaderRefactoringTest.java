@@ -277,47 +277,47 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 		compareFiles();
 	}
 
-	// original-class.h
-	//#ifndef ORIGINAL_CLASS_H_
-	//#define ORIGINAL_CLASS_H_
+	// my-class.h
+	//#ifndef MY_CLASS_H_
+	//#define MY_CLASS_H_
 	//
-	//class OriginalClass {};
+	//class MyClass {};
 	//
-	//#endif // ORIGINAL_CLASS_H_
+	//#endif // MY_CLASS_H_
 	//====================
-	// renamed-class.h
-	//#ifndef RENAMED_CLASS_H_
-	//#define RENAMED_CLASS_H_
+	// my-new-class.h
+	//#ifndef MY_NEW_CLASS_H_
+	//#define MY_NEW_CLASS_H_
 	//
-	//class RenamedClass {};
+	//class MyNewClass {};
 	//
-	//#endif // RENAMED_CLASS_H_
+	//#endif // MY_NEW_CLASS_H_
 
-	// original-class.cpp
-	//#include "original-class.h"
+	// my-class.cpp
+	//#include "my-class.h"
 	//
 	//#include <cstdio>
 	//====================
-	// renamed-class.cpp
-	//#include "renamed-class.h"
+	// my-new-class.cpp
+	//#include "my-new-class.h"
 	//
 	//#include <cstdio>
 
-	// original-class_test.cpp
-	//#include "original-class.h"
+	// my-class_test.cpp
+	//#include "my-class.h"
 	//====================
-	// renamed-class_test.cpp
-	//#include "renamed-class.h"
+	// my-new-class_test.cpp
+	//#include "my-new-class.h"
 
 	// some-other-file.cpp
-	//#include "original-class.h"
-	///*$*/OriginalClass/*$$*/ a;
+	//#include "my-class.h"
+	///*$*/MyClass/*$$*/ a;
 	//====================
 	// some-other-file.cpp
-	//#include "renamed-class.h"
-	//RenamedClass a;
+	//#include "my-new-class.h"
+	//MyNewClass a;
 	public void testClassRename() throws Exception {
-		executeRenameRefactoring("RenamedClass", true);
+		executeRenameRefactoring("MyNewClass", true);
 		compareFiles();
 	}
 }

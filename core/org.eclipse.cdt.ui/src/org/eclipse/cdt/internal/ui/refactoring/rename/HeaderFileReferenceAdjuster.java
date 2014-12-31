@@ -486,11 +486,12 @@ public class HeaderFileReferenceAdjuster {
 	}
 
 	private static boolean areIncludeGuardsAffected(IFile oldfile, IFile newFile) {
+		IProject project = oldfile.getProject();
 		String filename = oldfile.getLocation().lastSegment();
-		if (!CoreModel.isValidHeaderUnitName(null, filename))
+		if (!CoreModel.isValidHeaderUnitName(project, filename))
 			return false;
 		IPreferencesService preferences = Platform.getPreferencesService();
-		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(oldfile.getProject());
+		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(project);
 		int scheme = preferences.getInt(CUIPlugin.PLUGIN_ID,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME, scopes);

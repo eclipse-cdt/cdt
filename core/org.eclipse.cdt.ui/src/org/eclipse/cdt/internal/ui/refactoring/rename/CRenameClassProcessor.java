@@ -46,10 +46,9 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
-import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
 import org.eclipse.cdt.internal.ui.refactoring.changes.RenameTranslationUnitChange;
-import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
+import org.eclipse.cdt.internal.ui.util.NameComposer;
 
 /**
  * Processor adding constructor and destructor to the bindings to be renamed.
@@ -130,51 +129,57 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 			if (fullPath == null)
 				return;
 			IPath headerPath = new Path(fullPath);
-			String className = binding.getName();
-            String headerName = NewSourceFileGenerator.generateHeaderFileNameFromClass(className);
-            if (!headerPath.lastSegment().equals(headerName))
-            	return;
             IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(headerPath);
             if (file == null || file.getType() != IResource.FILE)
             	return;
-            String newClassName = getReplacementText();
-			String newHeaderName = NewSourceFileGenerator.generateHeaderFileNameFromClass(newClassName);
+
+	    	IProject project = getProject();
+	    	int headerCapitalization = PreferenceConstants.getPreference(
+	    			PreferenceConstants.NAME_STYLE_CPP_HEADER_CAPITALIZATION, project,
+	    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL);
+	    	String headerWordDelimiter = PreferenceConstants.getPreference(
+	    			PreferenceConstants.NAME_STYLE_CPP_HEADER_WORD_DELIMITER, project, ""); //$NON-NLS-1$
+	    	int sourceCapitalization = PreferenceConstants.getPreference(
+	    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_CAPITALIZATION, project,
+	    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL);
+	    	String sourceWordDelimiter = PreferenceConstants.getPreference(
+	    			PreferenceConstants.NAME_STYLE_CPP_SOURCE_WORD_DELIMITER, project, ""); //$NON-NLS-1$
+
+			String headerName = headerPath.lastSegment();
+			String className = binding.getName();
+			NameComposer nameComposer = NameComposer.createByExample(className, headerName,
+					headerCapitalization, headerWordDelimiter);
+			if (nameComposer == null)
+				return;
+
+			String newClassName = getReplacementText();
+			String newHeaderName = nameComposer.compose(newClassName);
             if (!newHeaderName.equals(headerName)) {
             	renameTranslationUnit((IFile) file, newHeaderName);
             }
-            String sourceName = NewSourceFileGenerator.generateSourceFileNameFromClass(className);
-            String testName = NewSourceFileGenerator.generateTestFileNameFromClass(className);
-            String[] partnerFileSuffixes = getPartnerFileSuffixes();
+
             IIndexInclude[] includedBy = index.findIncludedBy(names[0].getFile());
             for (IIndexInclude include : includedBy) {
 				location = include.getIncludedByLocation();
 				fullPath = location.getFullPath();
 				if (fullPath == null)
 					continue;
-				IPath sourcePath = new Path(fullPath);
-                file = ResourcesPlugin.getWorkspace().getRoot().findMember(sourcePath);
+				IPath filePath = new Path(fullPath);
+                file = ResourcesPlugin.getWorkspace().getRoot().findMember(filePath);
                 if (file != null && file.getType() == IResource.FILE) {
-		            if (sourcePath.lastSegment().equals(sourceName)) {
-		    			String newName = NewSourceFileGenerator.generateSourceFileNameFromClass(newClassName);
-		                if (!newName.equals(sourceName)) {
+                	String fileName = filePath.lastSegment();
+					if (CoreModel.isValidHeaderUnitName(project, fileName)) {
+            			nameComposer = NameComposer.createByExample(className, fileName,
+            					headerCapitalization, headerWordDelimiter);
+                	} else {
+            			nameComposer = NameComposer.createByExample(className, fileName,
+            					sourceCapitalization, sourceWordDelimiter);
+                	}
+					if (nameComposer != null) {
+						String newName = nameComposer.compose(newClassName);
+		                if (!newName.equals(fileName)) {
 		                	renameTranslationUnit((IFile) file, newName);
 		                }
-		            } else if (sourcePath.lastSegment().equals(testName)) {
-		    			String newName = NewSourceFileGenerator.generateTestFileNameFromClass(newClassName);
-		                file = ResourcesPlugin.getWorkspace().getRoot().findMember(sourcePath);
-		                if (!newName.equals(testName)) {
-		                	renameTranslationUnit((IFile) file, newName);
-		                }
-		            } else if (SourceHeaderPartnerFinder.isPartnerFile(sourcePath, headerPath, partnerFileSuffixes)) {
-		            	String name = sourcePath.lastSegment();
-		            	String baseName = headerPath.removeFileExtension().lastSegment();
-		            	if (name.startsWith(baseName)) {
-		            		String newBaseName = new Path(headerName).removeFileExtension().lastSegment();
-							String newName = newBaseName + name.substring(baseName.length());
-			                if (!newName.equals(name)) {
-			                	renameTranslationUnit((IFile) file, newName);
-			                }
-		            	}
 		            }
                 }
 			}
@@ -196,11 +201,10 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 		}
 	}
 
-	private String[] getPartnerFileSuffixes() {
-        IFile file= getArgument().getSourceFile();
-        IProject project = file == null ? null : file.getProject();
-		String value = PreferenceConstants.getPreference(
-				PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, project, ""); //$NON-NLS-1$
-		return value.split(","); //$NON-NLS-1$
+	protected IProject getProject() {
+		IFile file= getArgument().getSourceFile();
+		if (file == null)
+			return null;
+        return file.getProject();
 	}
 }

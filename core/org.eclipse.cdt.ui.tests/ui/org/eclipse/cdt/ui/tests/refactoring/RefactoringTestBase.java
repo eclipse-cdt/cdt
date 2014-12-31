@@ -58,7 +58,7 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
  * Common base for refactoring tests.
  */
 public abstract class RefactoringTestBase extends BaseTestCase {
-	private static final Pattern FILENAME_PATTERN = Pattern.compile("^(\\w+/)*\\w+\\.\\w+$");
+	private static final Pattern FILENAME_PATTERN = Pattern.compile("((\\w|_|-)+/)*(\\w|_|-)+\\.\\w+");
 	/** Allows empty files to be created during test setup. */
 	protected boolean createEmptyFiles = true;
 	/** See {@link PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER} */

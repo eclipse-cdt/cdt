@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -187,6 +188,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					} else {
 						IASTName name= nodeSelector.findEnclosingName(fTextRegion.getOffset(), fTextRegion.getLength());
 						if (name != null) {
+							IASTNode parent = name.getParent();
+							if (parent instanceof ICPPASTTemplateId) {
+								name = (IASTName) parent;
+							}
 							IBinding binding= name.resolveBinding();
 							if (binding != null) {
 								// Check for implicit names first, could be an implicit constructor call.

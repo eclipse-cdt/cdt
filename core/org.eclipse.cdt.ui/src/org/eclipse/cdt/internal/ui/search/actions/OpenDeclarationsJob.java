@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
@@ -176,6 +177,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			if (parent instanceof IASTPreprocessorIncludeStatement) {
 				openInclude(((IASTPreprocessorIncludeStatement) parent));
 				return Status.OK_STATUS;
+			} else if (parent instanceof ICPPASTTemplateId) {
+				sourceName = (IASTName) parent;
 			}
 			NameKind kind = getNameKind(sourceName);
 			IBinding b = sourceName.resolveBinding();

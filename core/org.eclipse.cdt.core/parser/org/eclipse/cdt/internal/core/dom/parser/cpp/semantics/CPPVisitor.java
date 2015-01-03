@@ -143,6 +143,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -1476,7 +1477,7 @@ public class CPPVisitor extends ASTQueries {
 			shouldVisitNames = true;
 			this.decls = new IASTName[DEFAULT_LIST_SIZE];
 
-			final String bname= binding.getName();
+			final String bname = binding.getName();
 			if (bname.length() > 0 && !bname.startsWith("operator")) { //$NON-NLS-1$
 				requiredName= bname.toCharArray();
 			}
@@ -1489,6 +1490,7 @@ public class CPPVisitor extends ASTQueries {
 			} else if (binding instanceof ICPPTemplateParameter) {
 				kind = KIND_TEMPLATE_PARAMETER;
 			} else if (binding instanceof ICompositeType ||
+					 binding instanceof ICPPAliasTemplate ||
 					 binding instanceof ITypedef ||
 					 binding instanceof IEnumeration) {
 				kind = KIND_TYPE;
@@ -1542,7 +1544,8 @@ public class CPPVisitor extends ASTQueries {
 				case KIND_TYPE:
 				case KIND_COMPOSITE:
 				    if (prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
-					        prop == IASTEnumerationSpecifier.ENUMERATION_NAME ||
+							prop == ICPPASTAliasDeclaration.ALIAS_NAME ||
+							prop == IASTEnumerationSpecifier.ENUMERATION_NAME ||
 							prop == ICPPASTUsingDeclaration.NAME) {
 				        break;
 				    } else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {

@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -661,6 +662,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @throws CoreException
 		 */
 		private IName[] findDefinitions(IASTTranslationUnit ast, IBinding binding) throws CoreException {
+			if (binding instanceof ICPPAliasTemplateInstance) {
+				binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
+			}
 			IName[] declNames= ast.getDefinitionsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search definitions in index

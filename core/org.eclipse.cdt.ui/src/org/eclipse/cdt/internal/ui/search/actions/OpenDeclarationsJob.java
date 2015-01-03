@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -254,6 +255,9 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private IName[] findDeclNames(IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
+		if (binding instanceof ICPPAliasTemplateInstance) {
+			binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
+		}
 		IName[] declNames = findNames(fIndex, ast, kind, binding);
 		// Bug 207320, handle template instances.
 		while (declNames.length == 0 && binding instanceof ICPPSpecialization) {

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_a48eb93b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2134,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-04T07:33:52Z",
+      "side": 1,
+      "message": "Why not use the same assertion as in AST2CPPTests.testUserDefinedLiteralBadConcat1()?",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

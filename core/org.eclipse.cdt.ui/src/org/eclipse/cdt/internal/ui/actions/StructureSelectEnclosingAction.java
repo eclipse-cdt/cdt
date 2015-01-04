@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.model.ext.SourceRange;
 import org.eclipse.cdt.internal.ui.editor.SelectionHistory;
 
 public class StructureSelectEnclosingAction extends StructureSelectionAction {
-
 	public static final String PREFIX = "StructureSelectEnclosing."; //$NON-NLS-1$
 
 	public StructureSelectEnclosingAction(ResourceBundle bundle, ITextEditor editor, SelectionHistory history) {
@@ -34,7 +33,6 @@ public class StructureSelectEnclosingAction extends StructureSelectionAction {
 
 	@Override
 	public ISourceRange doExpand(IASTTranslationUnit ast, SourceRange current) {
-
 		ISourceRange newSourceRange = expandToEnclosing(ast, current);
 		if (newSourceRange != null) {
 			history.remember(current);

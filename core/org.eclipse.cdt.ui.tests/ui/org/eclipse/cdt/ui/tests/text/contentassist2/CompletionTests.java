@@ -735,6 +735,25 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, REPLACEMENT);
 	}
 
+	//	template<typename T>
+	//	struct Parent {
+	//	protected:
+	//		struct Nested {
+	//		protected:
+	//			using TParam = T;
+	//		};
+	//	};
+	//	
+	//	struct NestingTest: Parent<int> {
+	//		struct A : Nested {
+	//			TP/*cursor*/
+	//		};
+	//	};
+	public void testNestedBaseTemplateMembers_422401() throws Exception {
+		final String[] expected = { "TParam" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+
 	//	struct A {};
 	//
 	//	template<typename T>

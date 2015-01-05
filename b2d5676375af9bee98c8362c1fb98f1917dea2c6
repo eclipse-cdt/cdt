@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "8761b321_64282137",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-05T01:28:14Z",
+      "side": 1,
+      "message": "Hardcoding semantically important string in helper methods make code hard to understand. Pass explicitly as a parameter instead.",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_4425255c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-05T01:28:14Z",
+      "side": 1,
+      "message": "Ditto.",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_042b2d35",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-05T01:28:14Z",
+      "side": 1,
+      "message": "Lines 184-185 are redundant.",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_a48eb93b",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
         "patchSetId": 5
@@ -13,6 +64,58 @@
       "writtenOn": "2015-01-04T07:33:52Z",
       "side": 1,
       "message": "Why not use the same assertion as in AST2CPPTests.testUserDefinedLiteralBadConcat1()?",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_0404cdcd",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2134,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-05T01:28:14Z",
+      "side": 1,
+      "message": "The body of the test can be replaced by:\nIASTProblem[] problems \u003d strategy.getAst(0).getPreprocessorProblems();\nassertEquals(1, problems.length);\nassertEquals(IProblem.PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION, problems[0].getID());",
+      "parentUuid": "8761b321_a48eb93b",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_c439358d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2164,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-05T01:28:14Z",
+      "side": 1,
+      "message": "The assertion can be written as:\nICPPVariable v\u003d getBindingFromFirstIdentifier(\"test\");\nassertTrue(v.getType() instanceof IProblemType);",
+      "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_e4343196",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3139,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-05T01:28:14Z",
+      "side": 1,
+      "message": "Please clean up the code.",
       "revId": "b2d5676375af9bee98c8362c1fb98f1917dea2c6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -743,7 +743,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//			using TParam = T;
 	//		};
 	//	};
-	//	
+	//
 	//	struct NestingTest: Parent<int> {
 	//		struct A : Nested {
 	//			TP/*cursor*/
@@ -751,6 +751,24 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	};
 	public void testNestedBaseTemplateMembers_422401() throws Exception {
 		final String[] expected = { "TParam" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+
+	//	template<typename T>
+	//	class Parent {
+	//		struct NestedHidden {};
+	//	protected:
+	//		struct NestedProtected {};
+	//	public:
+	//		struct NestedPublic {};
+	//	};
+	//
+	//	template<typename T>
+	//	class NestingTest: Parent<T> {
+	//		Parent<T>::/*cursor*/
+	//	};
+	public void testNestedBaseTemplateMembersFromUnknownScope_422401() throws Exception {
+		final String[] expected = { "NestedProtected", "NestedPublic" };
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 

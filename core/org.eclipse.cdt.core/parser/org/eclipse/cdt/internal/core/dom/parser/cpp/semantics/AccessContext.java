@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 
 /**
  * The context that determines access to private and protected class members.
@@ -236,6 +238,9 @@ public class AccessContext {
 		if (bases != null) {
 			for (ICPPBase base : bases) {
 				IBinding baseClass = base.getBaseClass();
+				if (baseClass instanceof ICPPDeferredClassInstance) {
+					baseClass = ((ICPPDeferredClassInstance) baseClass).getTemplateDefinition();
+				}
 				if (!(baseClass instanceof ICPPClassType)) {
 					continue;
 				}
@@ -254,9 +259,17 @@ public class AccessContext {
 		LookupData data = new LookupData(name);
 		isUnqualifiedLookup= !data.qualified;
 		
-		ICPPScope scope= CPPSemantics.getLookupScope(name);
+		ICPPScope scope = CPPSemantics.getLookupScope(name);
 		while (scope != null && !(scope instanceof ICPPClassScope)) {
-			scope = CPPSemantics.getParentScope(scope, data.getTranslationUnit());
+			if (scope instanceof ICPPInternalUnknownScope) {
+				IType scopeType = ((ICPPInternalUnknownScope) scope).getScopeType();
+				if (scopeType instanceof ICPPDeferredClassInstance) {
+					scope = (ICPPScope) ((ICPPDeferredClassInstance) scopeType).getClassTemplate()
+							.getCompositeScope();
+				}
+			} else {
+				scope = CPPSemantics.getParentScope(scope, data.getTranslationUnit());
+			}
 		}
 		if (scope instanceof ICPPClassScope) {
 			return ((ICPPClassScope) scope).getClassType();

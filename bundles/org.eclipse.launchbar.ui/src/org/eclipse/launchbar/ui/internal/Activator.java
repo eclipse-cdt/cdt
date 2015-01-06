@@ -52,6 +52,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// Preference ids
 	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar";
+	public static final String PREF_LAUNCH_HISTORY_SIZE = "launchHistorySize";
 
 	// The shared instance
 	private static Activator plugin;

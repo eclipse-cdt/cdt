@@ -13,6 +13,8 @@ package org.eclipse.launchbar.ui.internal.controls;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.launchbar.ui.IHoverProvider;
@@ -42,42 +44,35 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class CSelector extends Composite {
-
 	private IStructuredContentProvider contentProvider;
 	private ILabelProvider labelProvider;
 	private IHoverProvider hoverProvider;
 	private Comparator<Object> sorter;
-
 	private Object input;
-
 	private Composite buttonComposite;
 	private String toolTipText;
 	private boolean toolTipWasModified; // Used for the hover provider
-
 	private static final int arrowMax = 2;
 	private Transition arrowTransition;
-
 	private Object selection;
-
 	protected final Color backgroundColor;
 	protected final Color outlineColor;
 	protected final Color highlightColor;
 	protected final Color white;
-
 	private boolean mouseOver;
-
 	private Image editImage;
 	private boolean inEditButton;
 	private Image buttonImage;
 	private Label currentIcon;
 	private Label currentLabel;
-
 	private Shell popup;
 	private ListItem listItems[];
 	private int selIndex;
@@ -86,8 +81,6 @@ public abstract class CSelector extends Composite {
 	private int scrollBucket;
 	private final int maxScrollBucket = 7;
 	private int separatorIndex = -1;
-
-
 	private MouseTrackListener mouseTrackListener = new MouseTrackListener() {
 		@Override
 		public void mouseEnter(MouseEvent e) {
@@ -133,7 +126,6 @@ public abstract class CSelector extends Composite {
 			}
 		}
 	};
-
 	private MouseListener mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent event) {
@@ -144,7 +136,6 @@ public abstract class CSelector extends Composite {
 			}
 		}
 	};
-
 	private Listener focusOutListener = new Listener() {
 		@Override
 		public void handleEvent(Event event) {
@@ -159,7 +150,6 @@ public abstract class CSelector extends Composite {
 					}
 				}
 				break;
-
 			case SWT.MouseUp:
 				if (popup != null && !popup.isDisposed()) {
 					Point loc = getDisplay().getCursorLocation();
@@ -170,21 +160,16 @@ public abstract class CSelector extends Composite {
 				break;
 			}
 		}
-		
 	};
-
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
-
 		backgroundColor = new Color(getDisplay(), new RGB(249, 249, 249));
 		outlineColor = new Color(getDisplay(), new RGB(189, 195, 200));
 		highlightColor = new Color(getDisplay(), new RGB(223, 239, 241));
 		white = getDisplay().getSystemColor(SWT.COLOR_WHITE);
-
 		GridLayout mainButtonLayout = new GridLayout();
 		setLayout(mainButtonLayout);
-
 		addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -197,7 +182,6 @@ public abstract class CSelector extends Composite {
 				gc.drawRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
 			}
 		});
-
 		addMouseListener(mouseListener);
 		addMouseTrackListener(mouseTrackListener);
 	}
@@ -218,23 +202,17 @@ public abstract class CSelector extends Composite {
 
 	public void setSelection(Object element) {
 		this.selection = element;
-
 		if (buttonComposite != null)
 			buttonComposite.dispose();
-
 		toolTipText = getToolTipText();
-
 		boolean editable = false;
 		int columns = 2;
-
 		Image image = labelProvider.getImage(element);
 		if (image != null)
 			columns++;
-
 		editable = isEditable(element);
 		if (editable)
 			columns++;
-
 		buttonComposite = new Composite(this, SWT.NONE);
 		GridLayout buttonLayout = new GridLayout(columns, false);
 		buttonLayout.marginHeight = buttonLayout.marginWidth = 0;
@@ -244,7 +222,6 @@ public abstract class CSelector extends Composite {
 		buttonComposite.addMouseListener(mouseListener);
 		buttonComposite.addMouseTrackListener(mouseTrackListener);
 		buttonComposite.setToolTipText(toolTipText);
-
 		if (element != null) {
 			if (image != null) {
 				Label icon = createImage(buttonComposite, image);
@@ -253,7 +230,6 @@ public abstract class CSelector extends Composite {
 				currentIcon = icon;
 				currentIcon.setToolTipText(toolTipText);
 			}
-
 			Label label = createLabel(buttonComposite, element);
 			label.addMouseListener(mouseListener);
 			label.addMouseTrackListener(mouseTrackListener);
@@ -265,7 +241,6 @@ public abstract class CSelector extends Composite {
 			currentIcon = null;
 			currentLabel = null;
 		}
-
 		final Canvas arrow = new Canvas(buttonComposite, SWT.NONE) {
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -275,19 +250,15 @@ public abstract class CSelector extends Composite {
 		arrow.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		arrow.setBackground(backgroundColor);
 		arrowTransition = new Transition(arrow, arrowMax, 80);
-
 		arrow.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
 				final int hPadding = 2;
-
 				GC gc = e.gc;
 				LineAttributes attributes = new LineAttributes(2);
 				attributes.cap = SWT.CAP_ROUND;
 				gc.setLineAttributes(attributes);
-
 				gc.setAlpha(mouseOver ? 255 : 100);
-
 				Rectangle bounds = arrow.getBounds();
 				int arrowWidth = bounds.width - hPadding * 2;
 				int current = arrowTransition.getCurrent();
@@ -298,14 +269,11 @@ public abstract class CSelector extends Composite {
 						bounds.height / 2 - current });
 			}
 		});
-
 		arrow.addMouseListener(mouseListener);
 		arrow.addMouseTrackListener(mouseTrackListener);
-
 		if (editable) {
 			Control editButton = createEditButton(buttonComposite, element);
 			editButton.setBackground(backgroundColor);
-
 			editButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
@@ -321,7 +289,6 @@ public abstract class CSelector extends Composite {
 				}
 			});
 		}
-
 		layout();
 	}
 
@@ -343,77 +310,53 @@ public abstract class CSelector extends Composite {
 		Object[] elements = contentProvider.getElements(input);
 		if (elements.length == 0 && !hasActionArea())
 			return;
-
 		arrowTransition.to(-arrowMax);
-
 		if (popup != null && !popup.isDisposed()) {
 			popup.dispose();
 		}
-
 		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-		popup.setLayout(layout);
-
+		popup.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
 		listScrolled = new ScrolledComposite(popup, SWT.V_SCROLL | SWT.NO_BACKGROUND);
 		listScrolled.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		listScrolled.setExpandHorizontal(true);
-		Composite listComp = new Composite(listScrolled, SWT.NONE);
+		final Composite listComp = new Composite(listScrolled, SWT.NONE);
 		listScrolled.setContent(listComp);
-		layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-		listComp.setLayout(layout);
-
-		for (Control child : listComp.getChildren())
-			child.dispose();
-
+		listComp.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
 		if (sorter != null)
 			Arrays.sort(elements, sorter);
-
 		listItems = new ListItem[elements.length];
-
-		int heightHint = 0;
-		for (int i = 0; i < elements.length; ++i) {
-			if (i == separatorIndex) {
-				Label label = new Label(listComp, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.BORDER);
-				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-			}
-			listItems[i] = new ListItem(listComp, SWT.NONE, elements[i], i);
-			if (i < maxScrollBucket) { // this is how many visible by default
-				listItems[i].lazyInit();
-				if (i == 0) {
-					heightHint = listItems[0].computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		if (elements.length > 0) {
+			listItems[0] = new ListItem(listComp, SWT.NONE, elements[0], 0);
+			listItems[0].lazyInit();
+			final int hHint = Math.max(listItems[0].computeSize(SWT.DEFAULT, SWT.DEFAULT).y, 16);
+			for (int i = 1; i < elements.length; ++i) {
+				ListItem item = new ListItem(listComp, SWT.NONE, elements[i], i);
+				if (i < maxScrollBucket) { // this is how many visible by default
+					item.lazyInit();
+				} else {
+					((GridData) item.getLayoutData()).heightHint = hHint;
 				}
-			} else {
-				GridData gd = (GridData) listItems[i].getLayoutData();
-				gd.heightHint = heightHint;
+				listItems[i] = item;
 			}
+			createSash(listComp, hHint);
 		}
-
 		Point listCompSize = listComp.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		listComp.setSize(listCompSize);
-
 		if (hasActionArea())
 			createActionArea(popup);
-
 		Rectangle buttonBounds = getBounds();
 		Point popupLocation = popup.getDisplay().map(this, null, 0,
 				buttonBounds.height);
 		popup.setLocation(popupLocation.x, popupLocation.y + 5);
-
 		Point size = popup.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point buttonSize = getSize();
 		size.x = Math.min(size.x + 16, buttonSize.x * 4 / 3);
 		size.y = Math.min(size.y, 250);
 		popup.setSize(size);
-
 		popup.setVisible(true);
 		popup.setFocus();
 		getDisplay().addFilter(SWT.FocusOut, focusOutListener);
 		getDisplay().addFilter(SWT.MouseUp, focusOutListener);
-
 		popup.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
@@ -428,6 +371,51 @@ public abstract class CSelector extends Composite {
 		}
 	}
 
+	private void createSash(final Composite listComp, final int hHint) {
+		if (separatorIndex<0) return;
+
+		final Sash sash = new Sash(listComp, SWT.BORDER | SWT.HORIZONTAL);
+		sash.setLayoutData(GridDataFactory.fillDefaults().create());
+		
+		if (separatorIndex < listItems.length)
+			sash.moveAbove(listItems[separatorIndex]);
+		else
+			sash.moveBelow(null);
+
+		sash.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				separatorIndex = (e.y + hHint/2) / hHint;
+			}
+		});
+		
+		sash.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				setSeparatorIndex(separatorIndex); // call setter if it was overriden
+				if (separatorIndex >= 0) {
+					if (separatorIndex < listItems.length)
+						sash.moveAbove(listItems[separatorIndex]);
+					else
+						sash.moveBelow(null);
+					listComp.layout();
+				}
+			}
+			
+			@Override
+			public void mouseDown(MouseEvent e) {
+				sash.moveAbove(null); // keep on top so user see it when moving
+			}
+			
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				// ignore
+			}
+		});
+		
+		sash.setToolTipText("Increase/Decrease size of recently used elements pane");
+	}
+
 	private void closePopup() {
 		arrowTransition.to(arrowMax);
 		popup.setVisible(false);
@@ -438,17 +426,16 @@ public abstract class CSelector extends Composite {
 			}
 		});
 	}
-
 	TraverseListener listItemTraverseListener = new TraverseListener() {
 		@Override
 		public void keyTraversed(TraverseEvent e) {
-			final ListItem currItem = selIndex >=0 ? listItems[selIndex] : null;
+			final ListItem currItem = selIndex >= 0 ? listItems[selIndex] : null;
 			if (currItem == null && e.keyCode != SWT.ARROW_DOWN) {
 				return;
 			}
 			if (e.detail == SWT.TRAVERSE_ARROW_NEXT || e.detail == SWT.TRAVERSE_TAB_NEXT) {
 				if (inEditButton || e.keyCode == SWT.ARROW_DOWN) {
-					int maxIdx = listItems.length -1;
+					int maxIdx = listItems.length - 1;
 					if (selIndex < maxIdx) {
 						inEditButton = false;
 						if (currItem != null)
@@ -465,7 +452,7 @@ public abstract class CSelector extends Composite {
 						listItems[selIndex].setBackground(highlightColor);
 					} else if (selIndex == maxIdx && maxIdx > maxScrollBucket) {
 						// level the scroll for any offset at the bottom of the list
-						listScrolled.setOrigin(0, itemH * (maxIdx - maxScrollBucket +1));
+						listScrolled.setOrigin(0, itemH * (maxIdx - maxScrollBucket + 1));
 					}
 				} else if (currItem.editButton != null) {
 					// move focus on edit button
@@ -530,12 +517,10 @@ public abstract class CSelector extends Composite {
 			super(parent, style);
 			this.element = _element;
 			this.index = index;
-
 			setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			addPaintListener(new PaintListener() {
 				@Override
 				public void paintControl(PaintEvent e) {
-
 					Point size = getSize();
 					GC gc = e.gc;
 					gc.setForeground(outlineColor);
@@ -544,24 +529,20 @@ public abstract class CSelector extends Composite {
 						lazyInit();
 				}
 			});
-
 			// lazyInit();
-		}	// end ListItem(..)
+		} // end ListItem(..)
 
 		protected void lazyInit() {
-	        Image image = labelProvider.getImage(element);
+			Image image = labelProvider.getImage(element);
 			boolean editable = isEditable(element);
-
 			int columns = 1;
 			if (image != null)
 				columns++;
 			if (editable)
 				columns++;
-
 			GridLayout layout = new GridLayout(columns, false);
 			layout.marginWidth = layout.marginHeight = 7;
 			setLayout(layout);
-
 			MouseListener listItemMouseListener = new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
@@ -570,7 +551,6 @@ public abstract class CSelector extends Composite {
 					fireSelectionChanged();
 				}
 			};
-
 			MouseTrackListener listItemMouseTrackListener = new MouseTrackAdapter() {
 				@Override
 				public void mouseEnter(MouseEvent e) {
@@ -581,7 +561,7 @@ public abstract class CSelector extends Composite {
 							listItems[selIndex].setBackground(white);
 							scrollBucket = Math.max(Math.min(scrollBucket + idx - selIndex, maxScrollBucket), 0);
 						} else { // initially
-							scrollBucket = Math.min(idx,  maxScrollBucket);
+							scrollBucket = Math.min(idx, maxScrollBucket);
 						}
 					}
 					selIndex = idx;
@@ -592,25 +572,20 @@ public abstract class CSelector extends Composite {
 					setBackground(white);
 				}
 			};
-
 			addMouseListener(listItemMouseListener);
-			addMouseTrackListener(listItemMouseTrackListener);
-
+			// addMouseTrackListener(listItemMouseTrackListener);
 			if (image != null) {
 				icon = createImage(this, image);
 				icon.addMouseListener(listItemMouseListener);
 				icon.addMouseTrackListener(listItemMouseTrackListener);
 			}
-
 			label = createLabel(this, element);
 			label.addMouseListener(listItemMouseListener);
 			label.addMouseTrackListener(listItemMouseTrackListener);
-
 			if (editable) {
 				editButton = createEditButton(this, element);
 				editButton.setBackground(white);
 				editButton.addMouseTrackListener(listItemMouseTrackListener);
-
 				editButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseUp(MouseEvent e) {
@@ -625,27 +600,21 @@ public abstract class CSelector extends Composite {
 						});
 					}
 				});
-
 				editButton.addTraverseListener(listItemTraverseListener);
 			} else {
 				addTraverseListener(listItemTraverseListener);
 			}
-
 			setBackground(white);
-
 			layout(true);
-        }
+		}
 
 		@Override
 		public void setBackground(Color color) {
 			super.setBackground(color);
-
 			if (icon != null && !icon.isDisposed())
 				icon.setBackground(color);
-
-			if (!label.isDisposed())
+			if (label != null && !label.isDisposed())
 				label.setBackground(color);
-
 			if (editButton != null && !editButton.isDisposed())
 				editButton.setBackground(color);
 		}
@@ -663,7 +632,7 @@ public abstract class CSelector extends Composite {
 		protected int getIndex() {
 			return index;
 		}
-	}  // end ListItem class
+	} // end ListItem class
 
 	private Label createImage(Composite parent, Image image) {
 		Rectangle bounds = image.getBounds();
@@ -705,18 +674,15 @@ public abstract class CSelector extends Composite {
 		if (editImage == null) {
 			editImage = Activator.getImageDescriptor("icons/config_config.png").createImage();
 		}
-
 		final Canvas editButton = new Canvas(parent, SWT.NONE) {
 			@Override
-            public Point computeSize(int wHint, int hHint, boolean changed) {
+			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Rectangle bounds = editImage.getBounds();
 				return new Point(bounds.width, bounds.height);
 			};
 		};
-
 		editButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 		editButton.setToolTipText("Edit");
-
 		editButton.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -725,7 +691,6 @@ public abstract class CSelector extends Composite {
 				gc.drawImage(editImage, 0, 0);
 			}
 		});
-
 		editButton.addMouseTrackListener(new MouseTrackAdapter() {
 			@Override
 			public void mouseEnter(MouseEvent e) {
@@ -739,7 +704,6 @@ public abstract class CSelector extends Composite {
 				editButton.redraw();
 			}
 		});
-
 		return editButton;
 	}
 
@@ -788,19 +752,16 @@ public abstract class CSelector extends Composite {
 			if (currentIcon != null && !currentIcon.isDisposed()) {
 				currentIcon.setImage(labelProvider.getImage(element));
 			}
-
 			if (currentLabel != null && !currentLabel.isDisposed()) {
 				currentLabel.setText(labelProvider.getText(element));
 			}
 		}
-
 		if (popup != null && !popup.isDisposed()) {
 			Object[] elements = contentProvider.getElements(input);
 			int i;
 			for (i = 0; i < elements.length; ++i)
 				if (element == elements[i])
 					break;
-
 			if (i != elements.length) {
 				listItems[i].setImage(labelProvider.getImage(element));
 				listItems[i].setText(labelProvider.getText(element));
@@ -811,7 +772,7 @@ public abstract class CSelector extends Composite {
 	protected boolean hasActionArea() {
 		return false;
 	}
-	
+
 	protected void createActionArea(Composite parent) {
 		// empty
 	}
@@ -819,7 +780,7 @@ public abstract class CSelector extends Composite {
 	protected boolean isEditable(Object element) {
 		return false;
 	}
-	
+
 	protected void handleEdit(Object element) {
 		// nothing to do here
 	}

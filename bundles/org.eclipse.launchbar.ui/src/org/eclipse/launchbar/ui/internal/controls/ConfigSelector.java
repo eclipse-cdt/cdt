@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -60,12 +61,10 @@ import org.eclipse.ui.PlatformUI;
 
 @SuppressWarnings("restriction")
 public class ConfigSelector extends CSelector {
-
 	private LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
 	private DefaultDescriptorLabelProvider defaultProvider;
 	
 	private static final String[] noConfigs = new String[] { "No Launch Configurations" };
-	private static final int SEPARATOR_INDEX = 3;
 	
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
@@ -84,12 +83,13 @@ public class ConfigSelector extends CSelector {
 			public Object[] getElements(Object inputElement) {
 				ILaunchDescriptor[] descs = uiManager.getManager().getLaunchDescriptors();
 				if (descs.length > 0) {
-					if (descs.length > SEPARATOR_INDEX + 1) {
-						ILaunchDescriptor[] descsCopy = new ILaunchDescriptor[SEPARATOR_INDEX + descs.length];
-						System.arraycopy(descs, 0, descsCopy, 0, SEPARATOR_INDEX); // copy first 3 elements
-						System.arraycopy(descs, 0, descsCopy, SEPARATOR_INDEX, descs.length); // copy all into rest
+					int separatorIndex = getSeparatorIndex();
+					if (descs.length > separatorIndex + 1) {
+						ILaunchDescriptor[] descsCopy = new ILaunchDescriptor[separatorIndex + descs.length];
+						System.arraycopy(descs, 0, descsCopy, 0, separatorIndex); // copy first 3 elements
+						System.arraycopy(descs, 0, descsCopy, separatorIndex, descs.length); // copy all into rest
 						// sort rest
-						Arrays.sort(descsCopy, SEPARATOR_INDEX, descsCopy.length, new Comparator<ILaunchDescriptor>() {
+						Arrays.sort(descsCopy, separatorIndex, descsCopy.length, new Comparator<ILaunchDescriptor>() {
 							@Override
 							public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
 								return o1.getName().compareTo(o2.getName());
@@ -143,7 +143,11 @@ public class ConfigSelector extends CSelector {
 		});
 		// no sorter on view, data is sorted by provider
 		setSorter(null);
-		setSeparatorIndex(SEPARATOR_INDEX);
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		int separator = store.getInt(Activator.PREF_LAUNCH_HISTORY_SIZE);
+		if (separator <= 0)
+			separator = 1;
+		setSeparatorIndex(separator);
 	}
 
 	@Override
@@ -156,6 +160,16 @@ public class ConfigSelector extends CSelector {
 			} catch (CoreException e) {
 				Activator.log(e.getStatus());
 			}
+		}
+	}
+	
+	@Override
+	public void setSeparatorIndex(int separatorIndex) {
+		super.setSeparatorIndex(separatorIndex);
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		int separator = store.getInt(Activator.PREF_LAUNCH_HISTORY_SIZE);
+		if (separator != getSeparatorIndex()) {
+			store.setValue(Activator.PREF_LAUNCH_HISTORY_SIZE, getSeparatorIndex());
 		}
 	}
 	

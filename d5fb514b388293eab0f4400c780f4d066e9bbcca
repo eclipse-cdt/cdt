@@ -34,6 +34,24 @@
       "revId": "d5fb514b388293eab0f4400c780f4d066e9bbcca",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_371ad4fa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-06T20:55:47Z",
+      "side": 1,
+      "message": "I personally don\u0027t see a difference for the purpose of this test, so I think you could leave it as is.",
+      "parentUuid": "8761b321_77572ca0",
+      "revId": "d5fb514b388293eab0f4400c780f4d066e9bbcca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

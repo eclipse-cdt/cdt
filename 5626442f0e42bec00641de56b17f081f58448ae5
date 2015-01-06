@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_d709e0bd",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-06T20:55:47Z",
+      "side": 0,
+      "message": "With the re-base you don\u0027t seem to have any changes left on this class. So needs to be removed from the patch set.",
+      "revId": "5626442f0e42bec00641de56b17f081f58448ae5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_5d11740a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-01-06T00:08:01Z",
+      "side": 1,
+      "message": "I\u0027m not sure this still does what it used to. I think before, it was getting the thread context now it will get the process context? Maybe Alvaro can answer that.",
+      "revId": "6c12dedbd04cda75a22664b1ba13e44612b0f310",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

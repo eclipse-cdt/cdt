@@ -52,6 +52,23 @@
       "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_da8e253d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-01-06T22:56:48Z",
+      "side": 1,
+      "message": "do we want users to be able to add their own cflags? if so, I think we need to add ${CFLAGS} here",
+      "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

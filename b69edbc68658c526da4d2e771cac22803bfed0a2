@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_97bbe8a8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-06T19:53:59Z",
+      "side": 1,
+      "message": "I didn\u0027t mean removing the (scopeType instanceof ICPPDeferredClassInstance) condition.",
+      "parentUuid": "8761b321_77c60c3f",
+      "revId": "b69edbc68658c526da4d2e771cac22803bfed0a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_7d843063",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
         "patchSetId": 1

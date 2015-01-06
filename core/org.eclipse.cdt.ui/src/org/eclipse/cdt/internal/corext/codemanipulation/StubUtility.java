@@ -679,6 +679,8 @@ public class StubUtility {
 			ISourceRoot root = cproject.findSourceRoot(file);
 			if (root != null) {
 				path = PathUtil.makeRelativePath(path, root.getPath());
+			} else {
+				path = PathUtil.makeRelativePath(path, cproject.getPath());
 			}
 			return generateIncludeGuardSymbolFromFilePath(path.toString());
 			

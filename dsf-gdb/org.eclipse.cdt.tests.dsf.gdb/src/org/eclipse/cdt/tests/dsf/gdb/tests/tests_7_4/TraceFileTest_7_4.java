@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Mentor Graphics and others.
+ * Copyright (c) 2012, 2014 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Run tests in alphabetical order since they are dependent on each other.
  *******************************************************************************/
 
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,8 +56,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TraceFileTest_7_4 extends BaseTestCase {
 
 	private final static String FILE_NAME = "TracepointTestApp.cc";
@@ -85,6 +90,18 @@ public class TraceFileTest_7_4 extends BaseTestCase {
     	// Each test sets its own launch attributes
 	}
 
+    @AfterClass
+    public static void doAfterClassTraceFileTest_7_4() {
+    	try {
+    		// Make sure we don't have any tracepoint actions
+    		// or any kind of breakpoints in the workspace
+    		// so that tests run after this class are not affected
+			deleteActionsAndBreakpoints();
+		} catch (Throwable e) {
+			System.out.println("ERROR: Failed to delete all breakpoints");
+		}
+    }
+    
 	@Override
 	@After
 	public void doAfterTest() throws Exception {
@@ -113,8 +130,11 @@ public class TraceFileTest_7_4 extends BaseTestCase {
 	 * 7. Saves the trace data into a file (data/launch/bin/trace).
 	 */
 	@Test
-	public void createTraceFile() throws Throwable {
+	public void a_createTraceFile() throws Throwable {
+    	// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
+    	deleteActionsAndBreakpoints();
 		deleteOldTraceFile();
+
 		startRemoteSession();
 		setTracepoints();
 		MIBreakpointDMContext bptDMC = setBreakpointAtEndLine();
@@ -132,10 +152,10 @@ public class TraceFileTest_7_4 extends BaseTestCase {
      * actions are created.
      */
     @Test
-    public void testTraceFile() throws Throwable {
-    	// Make sure that there is no tracepoint actions and platform breakpoints 
-    	// are in the workspace.
+    public void b_testTraceFile() throws Throwable {
+    	// Make sure that there are no tracepoint actions and no platform breakpoints in the workspace.
     	deleteActionsAndBreakpoints();
+    	
     	startTraceFileSession();
     	// Verify that required tracepoints and new tracepoint actions are created.
     	checkActionsAndTracepoints();
@@ -144,10 +164,10 @@ public class TraceFileTest_7_4 extends BaseTestCase {
     /**
      * This test verifies that the tracepoint actions and platform tracepoints 
      * created by 'testTraceFile()' are associated with the corresponding target 
-     * tracepoints.
+     * tracepoints and are not created a second time.
      */
     @Test
-    public void testTraceFileWithExistingTracepoints() throws Throwable {
+    public void c_testTraceFileWithExistingTracepoints() throws Throwable {
     	// Verify that actions and tracepoints required for this test are in place.
     	checkActionsAndTracepoints();
     	startTraceFileSession();
@@ -184,7 +204,7 @@ public class TraceFileTest_7_4 extends BaseTestCase {
     /**
      * Deletes all tracepoint actions and all existing platform breakpoints.
      */
-    private void deleteActionsAndBreakpoints() throws Throwable {
+    private static void deleteActionsAndBreakpoints() throws Throwable {
     	TracepointActionManager tam = TracepointActionManager.getInstance();
     	IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
     	

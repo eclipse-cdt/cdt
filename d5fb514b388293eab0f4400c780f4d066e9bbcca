@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_77572ca0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-06T20:32:53Z",
+      "side": 1,
+      "message": "Previously, the test did start just one thread (it stepped over pthread_create once). Now, it runs to LINE_MAIN_ALL_THREADS_STARTED, which mean all 5 \"worker\" threads will be started.\n\nI don\u0027t think it changes anything, by would you prefer to keep the old behaviour? The test would simply have to run to LINE_MAIN_AFTER_THREAD_START instead.",
+      "revId": "d5fb514b388293eab0f4400c780f4d066e9bbcca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

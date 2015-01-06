@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "8761b321_37bc94b1",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-06T19:45:18Z",
+      "side": 1,
+      "message": "Would it be simpler to just return ((ICPPDeferredClassInstance) scopeType).getClassTemplate() here?",
+      "revId": "b69edbc68658c526da4d2e771cac22803bfed0a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_7d843063",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
         "patchSetId": 1
@@ -13,6 +30,24 @@
       "writtenOn": "2015-01-06T08:42:20Z",
       "side": 1,
       "message": "the bug reference is wrong, should be 456752",
+      "revId": "b69edbc68658c526da4d2e771cac22803bfed0a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_f7da1c13",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-06T19:45:18Z",
+      "side": 1,
+      "message": "Please fix that. Thanks.",
+      "parentUuid": "8761b321_7d843063",
       "revId": "b69edbc68658c526da4d2e771cac22803bfed0a2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

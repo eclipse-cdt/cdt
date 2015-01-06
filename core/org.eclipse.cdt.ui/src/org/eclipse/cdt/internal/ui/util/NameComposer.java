@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.ui.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.ibm.icu.text.BreakIterator;
@@ -173,14 +174,19 @@ public class NameComposer {
 		if (seedWords.isEmpty())
 			return null;
 		List<CharSequence> composedWords = splitIntoWords(composedName);
-		int numPrefixWords = indexOfSublistIgnoreCase(composedWords, seedWords);
-		if (numPrefixWords < 0)
-			return null;
-		String prefix = deducePrefix(composedName, numPrefixWords);
 		String delimiter = defaultWordDelimiter;
+		int numPrefixWords = indexOfSublistIgnoreCase(composedWords, seedWords);
+		if (numPrefixWords < 0) {
+			delimiter = ""; //$NON-NLS-1$
+			seedWords = Collections.<CharSequence>singletonList(seedName);
+			numPrefixWords = indexOfSublistIgnoreCase(composedWords, seedWords);
+			if (numPrefixWords < 0)
+				return null;
+		}
+		String prefix = deducePrefix(composedName, numPrefixWords);
 		if (seedWords.size() > 1) {
 			delimiter = ""; //$NON-NLS-1$
-			int start = prefix.length() + composedWords.get(0).length();
+			int start = prefix.length() + composedWords.get(numPrefixWords).length();
 			for (int i = start; i < composedName.length(); i++) {
 				if (Character.isLetterOrDigit(composedName.charAt(i))) {
 					delimiter = composedName.substring(start, i);

@@ -16,6 +16,24 @@
       "revId": "6c12dedbd04cda75a22664b1ba13e44612b0f310",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_b8bc1625",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-06T13:44:02Z",
+      "side": 1,
+      "message": "In the version before it was resolving the container context from the thread context, in this version it\u0027s resolving the container context directly.  This does not seem to affect the intention of the test case.\n\nI did not actually create this test case and I am a bit uncertain of the value of it as each thread has its own register context, so we can not normally rely on having the same register values unless they are executing in sync.\n \nShouldn\u0027t this validate that we do have a different register context per thread instead ?\nAny ideas ?",
+      "parentUuid": "8761b321_5d11740a",
+      "revId": "6c12dedbd04cda75a22664b1ba13e44612b0f310",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -34,6 +34,41 @@
       "revId": "6c12dedbd04cda75a22664b1ba13e44612b0f310",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_5317a550",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-06T15:16:35Z",
+      "side": 1,
+      "message": "Notice that the comparison of register values is for the same thread.  I believe the test is making sure the caching mechanism is not broken.\n\nIt fetches the first 5 registers of thread 2 frame 0, then fetches one register from thread 1, apparently to point the service to a different execution context, then refetches the first 5 regs for thread 2 frame 0 and compares the first results with the second ones to make sure the service did return the same thing.\n\nLooking at the caching in MIRegisters, I don\u0027t really see what the value of this test is.  Maybe when the test was written the caching was done differently and the test was exercising the old logic.\n\nIn any case, the change above is fine although less efficient since it has to go to the service to fetch the container synchronously.  We could instead get the StoppedEvent from the above runToLine call and use it to get the container like before, which does not need the service.",
+      "parentUuid": "8761b321_b8bc1625",
+      "revId": "6c12dedbd04cda75a22664b1ba13e44612b0f310",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_3314a94a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-06T15:16:35Z",
+      "side": 1,
+      "message": "This seems redundant.  No need to create an IMIExecutionDMC for tid2, when ctxts[1] is that context.\n\nSame thing below for tid1.",
+      "revId": "6c12dedbd04cda75a22664b1ba13e44612b0f310",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

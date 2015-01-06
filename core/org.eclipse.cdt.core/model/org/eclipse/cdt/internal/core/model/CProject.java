@@ -65,7 +65,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class CProject extends Openable implements ICProject {
-
 	private static final String CUSTOM_DEFAULT_OPTION_VALUE = "#\r\n\r#custom-non-empty-default-value#\r\n\r#"; //$NON-NLS-1$
 
 	public CProject(ICElement parent, IProject project) {
@@ -593,9 +592,9 @@ public class CProject extends Openable implements ICProject {
 			ArrayList<ISourceRoot> list = new ArrayList<>(entries.length);
 			for (ICSourceEntry sourceEntry : entries) {
 				ISourceRoot root = getSourceRoot(sourceEntry);
-					if (root != null) {
-						list.add(root);
-					}
+				if (root != null) {
+					list.add(root);
+				}
 			}
 			return list;
 		}
@@ -746,7 +745,8 @@ public class CProject extends Openable implements ICProject {
 			}
 			break;
 		case CEM_TRANSLATIONUNIT:
-			if (!memento.hasMoreTokens()) return this;
+			if (!memento.hasMoreTokens())
+				return this;
 			String tuName = memento.nextToken();
 			final IPath path= Path.fromPortableString(tuName);
 			CElement tu= null;

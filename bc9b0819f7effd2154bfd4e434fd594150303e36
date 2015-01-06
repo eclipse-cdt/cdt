@@ -16,6 +16,24 @@
       "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_779f2cb1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-06T21:26:18Z",
+      "side": 1,
+      "message": "Those versions have the tarball named like that, see http://ftp.gnu.org/gnu/gdb/.\n\nMy guess is that there was a problem with the release (e.g. forgot some files), so they did an \"a\" version. I don\u0027t know, I wasn\u0027t there at the time :).",
+      "parentUuid": "8761b321_f7933cad",
+      "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_f7933cad",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-01-06T21:22:18Z",
+      "side": 1,
+      "message": "what is the \"a\" for?",
+      "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

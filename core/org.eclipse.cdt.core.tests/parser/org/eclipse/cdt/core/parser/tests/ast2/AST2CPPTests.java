@@ -7845,6 +7845,15 @@ public class AST2CPPTests extends AST2TestBase {
 		checkDeclDef(declNames, defNames, cls.getMembers());
 	}
 
+	//	#define MACRO "macro"
+	//	void f(const char* s);
+	//	void test() {
+	//	  f("aaa"MACRO);
+	//	}
+	public void testStringConcatenationWithMacro() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	class X {
 	//	    struct S* m1;
 	//	    struct T;

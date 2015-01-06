@@ -34,6 +34,24 @@
       "revId": "e72ac5cb571ac37e3bdc0262a978cb34d07f8d53",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_9a014d40",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/CdtVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-06T22:09:23Z",
+      "side": 1,
+      "message": "It is safer to throw an NPE or IAE if the argument is invalid. Handling invalid arguments gracefully may lead to hard to detect bugs.",
+      "parentUuid": "8761b321_17b8782f",
+      "revId": "e72ac5cb571ac37e3bdc0262a978cb34d07f8d53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

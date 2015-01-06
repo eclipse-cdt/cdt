@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -20,43 +20,11 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
-
 	/**
-	 * Is the export keyword used?
-	 * 
-	 * @return boolean
-	 */
-	public boolean isExported();
-
-	/**
-	 * Should the export keyword be used?
-	 * 
-	 * @param value
-	 *            boolean
-	 */
-	public void setExported(boolean value);
-
-	/**
-	 * <code>OWNED_DECLARATION</code> is the subdeclaration that we maintain
-	 * grammatically.
+	 * <code>OWNED_DECLARATION</code> is the subdeclaration that we maintain grammatically.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
 			"ICPPASTTemplateDeclaration.OWNED_DECLARATION - Subdeclaration maintained grammatically"); //$NON-NLS-1$
-
-	/**
-	 * Get template declaration.
-	 * 
-	 * @return <code>IASTDeclaration</code>
-	 */
-	public IASTDeclaration getDeclaration();
-
-	/**
-	 * Set the template declaration.
-	 * 
-	 * @param declaration
-	 *            <code>IASTDeclaration</code>
-	 */
-	public void setDeclaration(IASTDeclaration declaration);
 
 	/**
 	 * <code>PARAMETER</code> is used for template parameters.
@@ -65,29 +33,48 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 			"ICPPASTTemplateDeclaration.PARAMETER - Template Parameter"); //$NON-NLS-1$
 
 	/**
-	 * Get template parameters.
-	 * 
-	 * @return <code>ICPPASTTemplateParameter[]</code>
+	 * Is the export keyword used?
+	 */
+	public boolean isExported();
+
+	/**
+	 * Should the export keyword be used?
+	 */
+	public void setExported(boolean value);
+
+	/**
+	 * Returns the template declaration.
+	 */
+	public IASTDeclaration getDeclaration();
+
+	/**
+	 * Sets the template declaration.
+	 *
+	 * @param declaration the declaration to set
+	 */
+	public void setDeclaration(IASTDeclaration declaration);
+
+	/**
+	 * Returns the template parameters.
 	 */
 	public ICPPASTTemplateParameter[] getTemplateParameters();
 
 	/**
-	 * Add a template parameter.
+	 * Adds a template parameter.
 	 * 
-	 * @param parm <code>ICPPASTTemplateParameter</code>
+	 * @param paramm the parameter to add
 	 * @since 5.2
 	 */
-	public void addTemplateParameter(ICPPASTTemplateParameter parm);
+	public void addTemplateParameter(ICPPASTTemplateParameter paramm);
 
 	/**
 	 * @deprecated Use addTemplateParameter.
 	 */
 	@Deprecated
-	public void addTemplateParamter(ICPPASTTemplateParameter parm);
+	public void addTemplateParamter(ICPPASTTemplateParameter paramm);
 
 	/**
-	 * get the template scope representing this declaration in the logical tree
-	 * @return <code>ICPPTemplateScope</code>
+	 * Returns the template scope representing this declaration in the logical tree.
 	 */
 	public ICPPTemplateScope getScope();
 	

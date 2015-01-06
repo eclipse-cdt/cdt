@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ISourceRange;
 
@@ -23,17 +24,14 @@ import org.eclipse.cdt.internal.core.model.ext.SourceRange;
 import org.eclipse.cdt.internal.ui.editor.SelectionHistory;
 
 public class StructureSelectPreviousAction extends StructureSelectionAction {
-
 	public static final String PREFIX = "StructureSelectPrevious."; //$NON-NLS-1$
 
-	public StructureSelectPreviousAction(ResourceBundle bundle, ITextEditor editor,
-			SelectionHistory history) {
+	public StructureSelectPreviousAction(ResourceBundle bundle, ITextEditor editor, SelectionHistory history) {
 		super(bundle, PREFIX, editor, history);
 	}
-	
+
 	@Override
 	public ISourceRange doExpand(IASTTranslationUnit ast, SourceRange current) {
-		
 		ISourceRange newSourceRange = expandToPrevious(ast, current);
 		if (newSourceRange == null) {
 			newSourceRange = StructureSelectEnclosingAction.expandToEnclosing(ast, current); 
@@ -45,20 +43,19 @@ public class StructureSelectPreviousAction extends StructureSelectionAction {
 	}
 
 	private ISourceRange expandToPrevious(IASTTranslationUnit ast, SourceRange current) {
-		
-		IASTNode enclosingNode = ast.getNodeSelector(null).findEnclosingNode(current.getStartPos(),
-				current.getLength());
+		IASTNodeSelector selector = ast.getNodeSelector(null);
+		IASTNode enclosingNode = selector.findEnclosingNode(current.getStartPos(), current.getLength());
 		if (samePosition(enclosingNode, current)) {
 			enclosingNode = enclosingNode.getParent();
 		}
 		if (enclosingNode == null) {
 			return null;
 		}
-		
-		// find the first child of enclosingNode containing selection end
-		
+
+		// Find the first child of enclosingNode containing selection end.
+
 		int selectionStart = current.getStartPos();
-		
+
 		int firstSelectedChildIndex = -1;
 		IASTNode[] children = enclosingNode.getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -68,13 +65,12 @@ public class StructureSelectPreviousAction extends StructureSelectionAction {
 				break;
 			}
 		}
-		
-		if (firstSelectedChildIndex != -1 && firstSelectedChildIndex-1 >= 0) {
-			IASTNode prevNode = children[firstSelectedChildIndex-1];
+
+		if (firstSelectedChildIndex > 0) {
+			IASTNode prevNode = children[firstSelectedChildIndex - 1];
 			int endingOffset = current.getStartPos() + current.getLength();
 			return new SourceRange(prevNode.getFileLocation().getNodeOffset(), endingOffset - prevNode.getFileLocation().getNodeOffset());
 		}
 		return null;
 	}
-
 }

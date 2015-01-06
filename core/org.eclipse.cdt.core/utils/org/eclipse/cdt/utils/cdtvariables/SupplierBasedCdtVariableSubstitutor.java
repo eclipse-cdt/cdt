@@ -285,7 +285,11 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 	}
 
 	protected ResolvedMacro resolveMacro(String macroName) throws CdtVariableException{
-		return resolveMacro(SupplierBasedCdtVariableManager.getVariable(macroName,fContextInfo,true));
+		ICdtVariable variable = SupplierBasedCdtVariableManager.getVariable(macroName,fContextInfo,true);
+		if (variable == null)
+			return null;
+
+		return resolveMacro(variable);
 	}
 
 	protected ResolvedMacro resolveParentMacro(MacroDescriptor macroDes) throws CdtVariableException{

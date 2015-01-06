@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_b708a468",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/cdtvariables/CdtVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-06T18:46:42Z",
+      "side": 1,
+      "message": "It\u0027s probably better to check variable for null before calling this method.",
+      "revId": "e72ac5cb571ac37e3bdc0262a978cb34d07f8d53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

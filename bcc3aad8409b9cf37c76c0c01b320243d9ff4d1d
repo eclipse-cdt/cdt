@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_b38ef980",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/GDBTypeParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-06T18:10:46Z",
+      "side": 0,
+      "message": "Please add a line entry to the copy right, \nplus need to update the year to 2015.",
+      "revId": "bcc3aad8409b9cf37c76c0c01b320243d9ff4d1d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

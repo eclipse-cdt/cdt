@@ -16,6 +16,24 @@
       "revId": "d5fb514b388293eab0f4400c780f4d066e9bbcca",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_5744b0cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRegistersTest.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-01-06T20:55:17Z",
+      "side": 1,
+      "message": "Yeah, I don\u0027t think it matters. As long as there are \u003e\u003d2 threads it\u0027s OK.",
+      "parentUuid": "8761b321_77572ca0",
+      "revId": "d5fb514b388293eab0f4400c780f4d066e9bbcca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -203,6 +203,9 @@ public class CdtVariableManager implements ICdtVariableManager {
 		if(variable instanceof EnvironmentVariableSupplier.EnvVarMacro)
 			return true;
 
+		if (variable == null)
+			return false;
+
 		IVariableContextInfo info = getVariableContextInfo(cfg);
 		ICdtVariable var = fEnvironmentMacroSupplier.getVariable(variable.getName(), info);
 		if(var != null && variablesEqual(var, variable))

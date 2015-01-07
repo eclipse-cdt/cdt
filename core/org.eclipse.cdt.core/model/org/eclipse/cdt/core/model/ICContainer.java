@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.core.resources.IContainer;
+
 /**
- * A C Folder Resource.
+ * A C folder resource.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -22,12 +25,12 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	 * It does not transitively answer non-C resources contained in folders;
 	 * these would have to be explicitly iterated over.
 	 * <p>
-	 * Non-C resources includes files, folders, projects  not accounted for.
+	 * Non-C resources includes files, folders, projects not accounted for.
 	 * </p>
 	 * 
 	 * @return an array of non-C resources directly contained in this project
 	 * @exception CModelException if this element does not exist or if an
-	 *              exception occurs while accessing its corresponding resource
+	 *            exception occurs while accessing its corresponding resource
 	 */
 	Object[] getNonCResources() throws CModelException;
 
@@ -41,11 +44,9 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	ITranslationUnit[] getTranslationUnits() throws CModelException;
 
 	/**
-	 * Returns the translation unit with the specified name
-	 * in this container (for example, <code>"foobar.c"</code>).
-	 * The name has to be a valid translation unit name.
-	 * This is a handle-only operation.  The celement
-	 * may or may not exist.
+	 * Returns the translation unit with the specified name in this container
+	 * (for example, {@code "foobar.c"}). The name has to be a valid translation unit name.
+	 * This is a handle-only operation. The celement may or may not exist.
 	 * 
 	 * @param name the given name
 	 * @return the translation unit with the specified name in this container
@@ -54,46 +55,43 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 
 	/**
 	 * Returns the all the binaries of this container.
-	 * 
-	 * @throws CModelException
 	 */
 	IBinary[] getBinaries() throws CModelException;
 
 	/**
-	 * Return the binary for this name, it must be a
-	 * valid binary
+	 * Returns the binary for this name, it must be a valid binary.
 	 * This is a handle-only operation.  The container may or may not exist.
 	 */
 	IBinary getBinary(String name);
 
 	/**
-	 * Returns all the archive of this container
-	 * 
-	 * @throws CModelException
+	 * Returns all the archives of this container.
 	 */
 	IArchive[] getArchives() throws CModelException;
 
 	/**
-	 * This is a handle-only operation.  The container
-	 * may or may not exist.
+	 * This is a handle-only operation.  The container may or may not exist.
 	 */
 	IArchive getArchive(String name);
 
 	/**
-	 * Return al the child containers of this container.
-	 * 
-	 * @throws CModelException
+	 * Returns all the child containers of this container.
 	 */
 	ICContainer[] getCContainers() throws CModelException;
 
 	/**
-	 * Returns the container with the given name.
-	 * An empty string indicates the default package.
-	 * This is a handle-only operation.  The celement
-	 * may or may not exist.
+	 * Returns the container with the given name. An empty string indicates the default package.
+	 * This is a handle-only operation.  The celement may or may not exist.
 	 * 
-	 * @param name the given container
+	 * @param name the name of a nested container
 	 * @return the container with the given name
 	 */
 	ICContainer getCContainer(String name);
+
+	/**
+	 * Returns the corresponding IContainer.
+	 * @since 5.9
+	 */
+	@Override
+	IContainer getResource();
 }

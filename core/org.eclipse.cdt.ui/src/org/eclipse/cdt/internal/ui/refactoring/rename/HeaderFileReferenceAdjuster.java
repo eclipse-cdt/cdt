@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Google, Inc and others.
+ * Copyright (c) 2014, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
+import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -62,12 +65,14 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -93,20 +98,25 @@ public class HeaderFileReferenceAdjuster {
 
 	private final Map<IFile, IFile> movedFiles;
 	private final Map<String, IPath> movedFilesByLocation;
+	private final Map<IContainer, IContainer> renamedContainers;
 	private ASTManager astManager;
 	private IIndex index;
 	private int indexLockCount;
 
 	/**
 	 * @param movedFiles keys are moved files, values are new, not yet existing, files
+	 * @param renamedContainers keys are folders and projects being renamed, values are new,
+	 *     not yet existing folders and projects. May be {@code null}. 
 	 * @param processor the refactoring processor
 	 */
-	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles, RefactoringProcessor processor) {
+	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles,
+			Map<IContainer, IContainer> renamedContainers, RefactoringProcessor processor) {
 		this.movedFiles = movedFiles;
 		this.movedFilesByLocation = new HashMap<>();
 		for (Entry<IFile, IFile> entry : movedFiles.entrySet()) {
 			this.movedFilesByLocation.put(entry.getKey().getLocation().toOSString(), entry.getValue().getLocation());
 		}
+		this.renamedContainers = renamedContainers;
 		this.astManager = getASTManager(processor);
 	}
 
@@ -237,6 +247,10 @@ public class HeaderFileReferenceAdjuster {
 					location = include.getPath();
 					if (location.isEmpty())
 						continue;	// Unresolved include.
+					if (File.separatorChar == '\\') {
+						// Normalize path separators on Windows.
+						location = new Path(location).toString();
+					}
 				} else {
 					String name = new String(include.getName().getSimpleID());
 					IncludeInfo includeInfo = new IncludeInfo(name, include.isSystemInclude());
@@ -429,18 +443,36 @@ public class HeaderFileReferenceAdjuster {
 			return null;
 		if (!oldGuard.equals(StubUtility.generateIncludeGuardSymbol(resource, tu.getCProject())))
 			return null;
-		IProject newProject = newFile.getProject();
-		ICProject newCProject = CoreModel.getDefault().create(newProject);
-		if (newCProject == null)
-			return null;
-		String guard = StubUtility.generateIncludeGuardSymbol(newFile, newCProject);
-		if (guard.equals(oldGuard))
+		String guard = generateNewIncludeGuardSymbol(resource, newFile, tu.getCProject());
+		if (guard == null || guard.equals(oldGuard))
 			return null;
 		MultiTextEdit rootEdit = new MultiTextEdit();
 		for (IRegion region : includeGuardPositions) {
 			rootEdit.addChild(new ReplaceEdit(region.getOffset(), region.getLength(), guard));
 		}
 		return rootEdit;
+	}
+
+	private String generateNewIncludeGuardSymbol(IResource resource, IFile newFile, ICProject cProject) {
+		switch (getIncludeGuardScheme(cProject.getProject())) {
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH:
+			ISourceRoot root = cProject.findSourceRoot(resource);
+			IContainer base = root == null ? cProject.getProject() : root.getResource();
+			IContainer renamedBase = renamedContainers.get(base);
+			if (renamedBase != null)
+				base = renamedBase;
+			IPath path = PathUtil.makeRelativePath(newFile.getFullPath(), base.getFullPath());
+			if (path == null)
+				break;
+			return StubUtility.generateIncludeGuardSymbolFromFilePath(path.toString());
+
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME:
+			return StubUtility.generateIncludeGuardSymbolFromFilePath(newFile.getName());
+
+		default:
+			break;
+		}
+		return null;
 	}
 
 	private void flushEditBuffer(int offset, StringBuilder text, Deque<DeleteEdit> deletes, MultiTextEdit edit) {
@@ -512,12 +544,7 @@ public class HeaderFileReferenceAdjuster {
 		String filename = oldfile.getLocation().lastSegment();
 		if (!CoreModel.isValidHeaderUnitName(project, filename))
 			return false;
-		IPreferencesService preferences = Platform.getPreferencesService();
-		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(project);
-		int scheme = preferences.getInt(CUIPlugin.PLUGIN_ID,
-				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
-				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME, scopes);
-		switch (scheme) {
+		switch (getIncludeGuardScheme(project)) {
 		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH:
 			return true;
 
@@ -527,5 +554,14 @@ public class HeaderFileReferenceAdjuster {
 		default:
 			return false;
 		}
+	}
+
+	private static int getIncludeGuardScheme(IProject project) {
+		IPreferencesService preferences = Platform.getPreferencesService();
+		IScopeContext[] scopes = PreferenceConstants.getPreferenceScopes(project);
+		int scheme = preferences.getInt(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
+				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME, scopes);
+		return scheme;
 	}
 }

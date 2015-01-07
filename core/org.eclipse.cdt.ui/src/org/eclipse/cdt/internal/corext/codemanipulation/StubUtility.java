@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2011 IBM Corporation and others.
+ * Copyright (c) 2001, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -677,11 +677,8 @@ public class StubUtility {
 				return null;
 			IPath path = file.getFullPath();
 			ISourceRoot root = cproject.findSourceRoot(file);
-			if (root != null) {
-				path = PathUtil.makeRelativePath(path, root.getPath());
-			} else {
-				path = PathUtil.makeRelativePath(path, cproject.getPath());
-			}
+			IPath basePath = root == null ? cproject.getPath() : root.getPath();
+			path = PathUtil.makeRelativePath(path, basePath);
 			return generateIncludeGuardSymbolFromFilePath(path.toString());
 			
 		default:
@@ -697,7 +694,7 @@ public class StubUtility {
 		}
     }
 
-	private static String generateIncludeGuardSymbolFromFilePath(String filename) {
+	public static String generateIncludeGuardSymbolFromFilePath(String filename) {
 		// Convert to upper case and replace invalid characters with underscores,
 		// e.g. convert some/directory/foo-bar.h to SOME_DIRECTORY_FOO_BAR_H_
 		StringBuilder buf = new StringBuilder(filename.length() + 1);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Google, Inc and others.
+ * Copyright (c) 2014, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class HeaderFileRenameParticipant extends RenameParticipant implements IS
 
 			// Maps the affected files to new, not yet existing, files.
 			final Map<IFile, IFile> movedFiles = new HashMap<>();
+			final Map<IContainer, IContainer> renamedContainers = new HashMap<>();
 
 			for (Map.Entry<IResource, RenameArguments> entry : renamedResources.entrySet()) {
 				IResource renamedResource = entry.getKey();
@@ -78,10 +79,14 @@ public class HeaderFileRenameParticipant extends RenameParticipant implements IS
 				String newName = args.getNewName();
 		
 				if (renamedResource instanceof IContainer) {
-					final IPath oldPath = renamedResource.getFullPath();
+					IContainer container = (IContainer) renamedResource;
+					final IPath oldPath = container.getFullPath();
 					final IPath newPath = oldPath.removeLastSegments(1).append(newName);
-					final IWorkspaceRoot workspaceRoot = renamedResource.getWorkspace().getRoot();
-					((IContainer) renamedResource).accept(new IResourceProxyVisitor() {
+					final IWorkspaceRoot workspaceRoot = container.getWorkspace().getRoot();
+					IContainer newContainer = container.getType() == IResource.FOLDER ?
+							workspaceRoot.getFolder(newPath) : workspaceRoot.getProject(newName);
+					renamedContainers.put(container, newContainer);
+					container.accept(new IResourceProxyVisitor() {
 						@Override
 						public boolean visit(IResourceProxy proxy) throws CoreException {
 							if (proxy.isLinked())
@@ -101,7 +106,7 @@ public class HeaderFileRenameParticipant extends RenameParticipant implements IS
 				}
 			}
 			HeaderFileReferenceAdjuster includeAdjuster =
-					new HeaderFileReferenceAdjuster(movedFiles, getProcessor());
+					new HeaderFileReferenceAdjuster(movedFiles, renamedContainers, getProcessor());
 			change = includeAdjuster.createChange(context, pm);
 		} catch (CoreException e) {
 			return RefactoringStatus.create(e.getStatus());

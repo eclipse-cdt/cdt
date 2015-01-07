@@ -258,7 +258,7 @@ public class CContainer extends Openable implements ICContainer {
 				name = ""; //$NON-NLS-1$
 				token = null;
 			}
-			CElement folder = (CElement)getCContainer(name);
+			CElement folder = (CElement) getCContainer(name);
 			if (folder != null) {
 				if (token == null) {
 					return folder.getHandleFromMemento(memento);
@@ -268,7 +268,8 @@ public class CContainer extends Openable implements ICContainer {
 			}
 			break;
 		case CEM_TRANSLATIONUNIT:
-			if (!memento.hasMoreTokens()) return this;
+			if (!memento.hasMoreTokens())
+				return this;
 			String tuName = memento.nextToken();
 			CElement tu = (CElement) getTranslationUnit(tuName);
 			if (tu != null) {

@@ -6,21 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
- * James Blackburn (Broadcom Corp.)
+ *     Intel Corporation - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
- *
  * This interface represents an generic element in a storage tree.  These trees are rooted at 
- * {@link ICSettingsStorage} Elements.
+ * {@link ICSettingsStorage} elements.
  * 
- * This abstract storage mechanism is used, e.g. with the {@link ICProjectDescription} and {@link ICConfigurationDescription}
- * for storing custom data in the settings file (.cproject) or in a database
+ * This abstract storage mechanism is used, e.g. with the {@link ICProjectDescription} and
+ * {@link ICConfigurationDescription} for storing custom data in the settings file (.cproject)
+ * or in a database.
  *
  * @see ICSettingsStorage
  * @see ICProjectDescription
@@ -29,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICStorageElement {
-
 	/**
 	 * Return the String of attribute value for name.
 	 * If attribute is not found (hasAttribute(name) is false)
@@ -50,7 +48,6 @@ public interface ICStorageElement {
 
 	/**
 	 * Returns a string array of attribute names
-	 * @return String[]
 	 */
 	String[] getAttributeNames();
 
@@ -104,25 +101,23 @@ public interface ICStorageElement {
 	boolean hasChildren();
 
 	/**
-	 * Erase all children, attributes and any value set on this ICStorageElement
+	 * Erases all children, attributes and any value set on this ICStorageElement
 	 */
 	void clear();
 
 	/**
-	 * Get the name of this ICStorageElement
-	 * @return String name
+	 * Returns the name of this ICStorageElement
 	 */
 	String getName();
 
 	/**
-	 * Remove the ICStorageElement from the set of child ICSotrageElements
+	 * Removes the ICStorageElement from the set of child ICSotrageElements
 	 * @param el
 	 */
 	void removeChild(ICStorageElement el);
 
 	/**
-	 * Get the String value of this element or null if there is
-	 * no String value set. 
+	 * Returns the String value of this element or null if there is no String value set. 
 	 * 
 	 * NB a pure whitespace value is considered to be null
 	 * @return String or null
@@ -130,18 +125,17 @@ public interface ICStorageElement {
 	String getValue();
 
 	/**
-	 * Set a String value on the ICStorageElement
+	 * Sets a String value on the ICStorageElement
 	 * @param value
 	 */
 	void setValue(String value);
 
 	/**
-	 * Import an existing ICStorageElemtn as a child of this ICStorageElement
-	 * @param el
-	 * @return ICStorageElement a Handle on the newly imported ICStorageElement
-	 * @throws UnsupportedOperationException
+	 * Imports an existing ICStorageElemtn as a child of this ICStorageElement
+	 * @param element
+	 * @return ICStorageElement a handle on the newly imported ICStorageElement
 	 */
-	ICStorageElement importChild(ICStorageElement el) throws UnsupportedOperationException;
+	ICStorageElement importChild(ICStorageElement element) throws UnsupportedOperationException;
 
 	/**
 	 * Create a deep copy of the current ICStorageElement such that name, children, attributes and value
@@ -158,20 +152,6 @@ public interface ICStorageElement {
 	 */
 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException;
 	
-	/**
-	 * Returns an ICSettingsStorage from this storage element.
-	 * 
-	 * A setting storage is like a storage element except it represents the root of a tree.
-	 * As such it can't contain a value or any children which are not storageModule 
-	 * ICStorageElements (otherwise they would not be accessible via the ICSettingsStorage interface)
-	 * 
-	 * @param readOnly indicates whether the returned settings storage tree should be readonly
-	 * @return ICSettingStorage which is this ICStorageElement as a storageModule root
-	 * @throws CoreException if this ICStorageElement isn't a suitable root
-	 * @throws UnsupportedOperationException if this hierarchy doesn't support ICSettingsStorage
-	 */
-//	ICSettingsStorage createSettingStorage(boolean readOnly) throws CoreException, UnsupportedOperationException;
-
 	/**
 	 * Tests whether this storage element is exactly equal to other
 	 * To be equal all name, children attributes and value must be

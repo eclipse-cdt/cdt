@@ -1209,7 +1209,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * this method is a full equivalent to <code>createProjectDescription(IProject, boolean, false)</code>.
+	 * Equivalent to <code>createProjectDescription(IProject, boolean, false)</code>.
 	 *
 	 * @see #createProjectDescription(IProject, boolean, boolean)
 	 */
@@ -1218,17 +1218,21 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * the method creates and returns a writable project description
+	 * Creates and returns a writable project description.
 	 *
 	 * @param project project for which the project description is requested
 	 * @param loadIfExists if true the method first tries to load and return the project description
-	 * from the settings file (.cproject)
-	 * if false, the stored settings are ignored and the new (empty) project description is created
-	 * @param creating if true the created project description will be contain the true "isCdtProjectCreating" state.
-	 * NOTE: in case the project already contains the project description AND its "isCdtProjectCreating" is false
-	 * the resulting description will be created with the false "isCdtProjectCreating" state
+	 *     from the settings file (.cproject),
+	 *     if false, the stored settings are ignored and the new (empty) project description is
+	 *     created
+	 * @param creating if true the created project description will be contain the true
+	 *     "isCdtProjectCreating" state.
+	 * <br>NOTE: in case the project already contains the project description AND its
+	 * "isCdtProjectCreating" is false the resulting description will be created with the false
+	 * "isCdtProjectCreating" state.
 	 *
-	 * NOTE: changes made to the returned project description will not be applied until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * <br>NOTE: changes made to the returned project description will not be applied until
+	 * the {@link #setProjectDescription(IProject, ICProjectDescription)} is called.
 	 * @return {@link ICProjectDescription}
 	 * @throws CoreException
 	 */
@@ -1237,16 +1241,17 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * returns the project description associated with this project or null if the project does not contain the
-	 * CDT data associated with it.
+	 * Returns the project description associated with this project or null if the project does not
+	 * contain the CDT data associated with it.
 	 *
-	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
-	 * see {@link #getProjectDescription(IProject, boolean)} for more detail
+	 * This is a convenience method fully equivalent to getProjectDescription(project, true)
+	 * see {@link #getProjectDescription(IProject, boolean)} for more detail.
+	 *
 	 * @param project
-	 * @return a writable copy of the ICProjectDescription or null if the project does not contain the
-	 * CDT data associated with it.
-	 * Note: changes to the project description will not be reflected/used by the core
-	 * until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * @return a writable copy of the ICProjectDescription or null if the project does not contain
+	 *     the CDT data associated with it.
+	 * <br>Note: changes to the project description will not be reflected/used by the core
+	 * until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called.
 	 *
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
@@ -1255,9 +1260,10 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * this method is called to save/apply the project description
-	 * the method should be called to apply changes made to the project description
-	 * returned by the {@link #getProjectDescription(IProject, boolean)} or {@link #createProjectDescription(IProject, boolean)}
+	 * Called to save/apply the project description.
+	 * The method should be called to apply changes made to the project description
+	 * returned by the {@link #getProjectDescription(IProject, boolean)} or
+	 * {@link #createProjectDescription(IProject, boolean)}
 	 *
 	 * @param project
 	 * @param des
@@ -1275,28 +1281,29 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * returns the project description associated with this project or null if the project does not contain the
-	 * CDT data associated with it.
+	 * Returns the project description associated with this project or null if the project
+	 * does not contain the CDT data associated with it.
 	 *
 	 * @param project project for which the description is requested
 	 * @param write if true, the writable description copy is returned.
-	 * If false the cached read-only description is returned.
+	 *     If false the cached read-only description is returned.
 	 *
-	 * CDT core maintains the cached project description settings. If only read access is needed to description,
-	 * then the read-only project description should be obtained.
-	 * This description always operates with cached data and thus it is better to use it for performance reasons
-	 * All set* calls to the read-only description result in the {@link WriteAccessException}
+	 * <br>CDT core maintains the cached project description settings. If only read access is needed
+	 * to description, then the read-only project description should be obtained.
+	 * This description always operates with cached data and thus it is better to use it for
+	 * performance reasons. All set* calls to the read-only description result in
+	 * the {@link WriteAccessException}.
 	 *
-	 * When the writable description is requested, the description copy is created.
-	 * Changes to this description will not be reflected/used by the core and Build System untill the
-	 * {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * When the writable description is requested, the description copy is created. Changes to this
+	 * description will not be reflected/used by the core and the Build System until the
+	 * {@link #setProjectDescription(IProject, ICProjectDescription)} is called.
 	 *
-	 * Each getProjectDescription(project, true) returns a new copy of the project description
+	 * Each getProjectDescription(project, true) returns a new copy of the project description.
 	 *
-	 * The writable description uses the cached data untill the first set call
+	 * The writable description uses the cached data until the first set call
 	 * after that the description communicates directly to the Build System
 	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
-	 * This ensures the Core<->Build System settings integrity
+	 * This ensures the Core<->Build System settings integrity.
 	 *
 	 * @return {@link ICProjectDescription} or null if the project does not contain the
 	 * CDT data associated with it.
@@ -1306,11 +1313,9 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * forces the cached data of the specified projects to be re-calculated.
-	 * if the <code>projects</code> argument is <code>null</code> al projects
-	 * within the workspace are updated
+	 * Forces the cached data of the specified projects to be re-calculated.
 	 *
-	 * @param projects
+	 * @param projects if <code>null</code>, all projects within the workspace are updated
 	 * @param monitor
 	 * @throws CoreException
 	 */
@@ -1319,7 +1324,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * Answers whether the given project is a new-style project, i.e.
+	 * CConfigurationDataProvider-driven.
 	 */
 	public boolean isNewStyleProject(IProject project) {
 		return fNewCProjectDescriptionManager.isNewStyleProject(project);
@@ -1361,7 +1367,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Print a message in the log
+	 * Prints a message in the log
 	 * 
 	 * @param severity - desired severity of the message in the log,
 	 *    one of {@link IStatus#INFO}, {@link IStatus#WARNING} or {@link IStatus#ERROR}
@@ -1375,7 +1381,7 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * Print a message in the log accompanied by stack trace
+	 * Prints a message in the log accompanied by stack trace
 	 * 
 	 * @param severity - desired severity of the message in the log,
 	 *    one of {@link IStatus#INFO}, {@link IStatus#WARNING} or {@link IStatus#ERROR}
@@ -1406,7 +1412,7 @@ public class CCorePlugin extends Plugin {
 	public static void log(String message, Throwable e) {
 		Throwable nestedException;
 		if (e instanceof CModelException
-				&& (nestedException = ((CModelException)e).getException()) != null) {
+				&& (nestedException = ((CModelException) e).getException()) != null) {
 			e = nestedException;
 		}
 		log(createStatus(message, e));
@@ -1443,7 +1449,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Returns preference controlling whether source roots are shown at the top of projects
+	 * Returns the preference controlling whether source roots are shown at the top of projects
 	 * or embedded within the resource tree of projects when they are not top level folders.
 	 *
 	 * @return boolean preference value

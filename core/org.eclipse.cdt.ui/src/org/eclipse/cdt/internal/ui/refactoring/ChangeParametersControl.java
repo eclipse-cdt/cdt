@@ -264,7 +264,7 @@ public class ChangeParametersControl extends Composite {
 	private final int indexName;
 	private final int indexDefault;
 
-	private static final int ROW_COUNT= 7;
+	private static final int ROW_COUNT = 7;
 
 	static final Integer INDEX_OUTPUT = 0;
     static final Integer INDEX_RETURN = 1;

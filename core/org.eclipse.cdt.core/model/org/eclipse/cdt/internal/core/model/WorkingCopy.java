@@ -43,23 +43,23 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	protected IBufferFactory bufferFactory;
 	/**
-	 * A counter of the number of time clients have asked for this
-	 * working copy. It is set to 1, if the working
-	 * copy is not managed. When destroyed, this counter is
-	 * set to 0. Once destroyed, this working copy cannot be opened
-	 * and non-handle info can not be accessed. This is
-	 * never true if this translation unit is not a working copy.
+	 * A counter of the number of time clients have asked for this working copy.
+	 * It is set to 1, if the working copy is not managed. When destroyed, this
+	 * counter is set to 0. Once destroyed, this working copy cannot be opened
+	 * and non-handle info can not be accessed. This is never true if this
+	 * translation unit is not a working copy.
 	 */
 	protected int useCount = 1;
 
 	/**
-	 * Creates a working copy of this element
+	 * Creates a working copy of this element.
 	 */
 	public WorkingCopy(ICElement parent, IFile file, String id, IBufferFactory bufferFactory) {
 		this(parent, file, id, bufferFactory, null);
 	}
 
-	public WorkingCopy(ICElement parent, IFile file, String id, IBufferFactory bufferFactory, IProblemRequestor requestor) {
+	public WorkingCopy(ICElement parent, IFile file, String id, IBufferFactory bufferFactory,
+			IProblemRequestor requestor) {
 		super(parent, file, id);
 		this.bufferFactory = bufferFactory == null ? getBufferManager() : bufferFactory;
 		problemRequestor = requestor;
@@ -156,7 +156,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public ICElement getOriginal(ICElement workingCopyElement) {
 		// It has to come from the same workingCopy, meaning ours.
 		if (workingCopyElement instanceof ISourceReference) {
-			ITranslationUnit wunit = ((ISourceReference)workingCopyElement).getTranslationUnit();
+			ITranslationUnit wunit = ((ISourceReference) workingCopyElement).getTranslationUnit();
 			if (!wunit.equals(this)) {
 				return null;
 			}
@@ -170,7 +170,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 
 		// Look for it.
 		ICElement element = workingCopyElement;
-		ArrayList<ICElement> children = new ArrayList<ICElement>();
+		ArrayList<ICElement> children = new ArrayList<>();
 		while (element != null && element.getElementType() != ICElement.C_UNIT) {
 			children.add(element);
 			element = element.getParent();
@@ -180,7 +180,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			ICElement child = children.get(i);
 			if (current instanceof IParent) {
 				try {
-					ICElement[] celems = ((IParent)current).getChildren();
+					ICElement[] celems = ((IParent) current).getChildren();
 					current = null;
 					for (int j = 0; j < celems.length; ++j) {
 						if (celems[j].getElementName().equals(child.getElementName()) &&
@@ -232,7 +232,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return false;
 		}
 		try {
-			// If resource got deleted, then #getModificationStamp() will answer
+			// If resource got deleted, then getModificationStamp() will answer
 			// IResource.NULL_STAMP, which is always different from the cached timestamp.
 			return ((TranslationUnitInfo) getElementInfo()).fTimestamp == ((IFile) resource).getModificationStamp();
 		} catch (CModelException e) {
@@ -250,8 +250,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * @see IWorkingCopy
 	 *
 	 * @exception CModelException attempting to open a read only element for
-	 * something other than navigation, or if this is a working copy being
-	 * opened after it has been destroyed.
+	 *     something other than navigation, or if this is a working copy being
+	 *     opened after it has been destroyed.
 	 */
 	@Override
 	public void open(IProgressMonitor monitor) throws CModelException {
@@ -272,19 +272,19 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (this.useCount == 0)
 			throw newNotPresentException();
 
-		// Create buffer - working copies may use custom buffer factory
+		// Create buffer - working copies may use custom buffer factory.
 		IBuffer buffer = getBufferFactory().createBuffer(this);
 		if (buffer == null)
 			return null;
 
-		// Set the buffer source if needed
+		// Set the buffer source if needed.
 		if (buffer.getContents() == null) {
 			ITranslationUnit original= this.getOriginalElement();
 			IBuffer originalBuffer = null;
 			try {
 				originalBuffer = original.getBuffer();
 			} catch (CModelException e) {
-				// Original element does not exist: create an empty working copy
+				// Original element does not exist: create an empty working copy.
 				if (!e.getCModelStatus().doesNotExist()) {
 					throw e;
 				}
@@ -295,15 +295,15 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 					buffer.setContents(originalContents.clone());
 				}
 			} else {
-				// Initialize buffer
+				// Initialize buffer.
 				buffer.setContents(new char[0]);
 			}
 		}
 
-		// Add buffer to buffer cache
+		// Add buffer to buffer cache.
 		this.getBufferManager().addBuffer(buffer);
 
-		// Listen to buffer changes
+		// Listen to buffer changes.
 		buffer.addBufferChangedListener(this);
 
 		return buffer;
@@ -323,7 +323,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	@Override
 	public void restore() throws CModelException{
 		if (this.useCount == 0)
-			throw newNotPresentException(); // Was destroyed
+			throw newNotPresentException(); // Was destroyed.
 
 		TranslationUnit original = (TranslationUnit) getOriginalElement();
 		IBuffer buffer = this.getBuffer();
@@ -338,15 +338,11 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (isReadOnly()) {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 		}
-		// Computes fine-grain deltas in case the working copy is being reconciled already
+		// Compute fine-grain deltas in case the working copy is being reconciled already
 		// (if not it would miss one iteration of deltas).
 		this.reconcile();
 	}
 
-	/**
-	 * @param original
-	 * @throws CModelException
-	 */
 	protected void updateTimeStamp(TranslationUnit original) throws CModelException {
 		long timeStamp = ((IFile) original.getResource()).getModificationStamp();
 		if (timeStamp == IResource.NULL_STAMP) {
@@ -356,12 +352,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	}
 
 	@Override
-	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
-			throws CModelException {
+	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection,
+			IProgressMonitor monitor) throws CModelException {
 		if (this.useCount == 0)
-			throw newNotPresentException(); // was destroyed
+			throw newNotPresentException(); // Was destroyed.
 
-        ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, computeAST, forceProblemDetection);
+        ReconcileWorkingCopyOperation op =
+        		new ReconcileWorkingCopyOperation(this, computeAST, forceProblemDetection);
         op.runOperation(monitor);
 		return op.fAST;
 	}

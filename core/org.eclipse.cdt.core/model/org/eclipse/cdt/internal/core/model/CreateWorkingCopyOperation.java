@@ -46,11 +46,11 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 		WorkingCopy workingCopy;
 		
 		if (tu.getResource() != null) {
-			workingCopy= new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), tu.getContentTypeId(), this.factory, this.problemRequestor);
+			workingCopy= new WorkingCopy(tu.getParent(), (IFile) tu.getResource(), tu.getContentTypeId(), this.factory, this.problemRequestor);
 		} else {
 			workingCopy= new WorkingCopy(tu.getParent(), tu.getLocationURI(), tu.getContentTypeId(), this.factory);
 		}
-		// open the working copy now to ensure contents are that of the current state of this element
+		// Open the working copy now to ensure contents are that of the current state of this element.
 		// Alain: Actually no, delay the parsing 'till it is really needed.  Doing the parsing here
 		// really slows down the opening of the CEditor.
 		//workingCopy.open(this.fMonitor);
@@ -62,7 +62,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 			//}
 		}
 
-		// report added java delta
+		// Report added C delta.
 		CElementDelta delta = new CElementDelta(this.getCModel());
 		delta.added(workingCopy);
 		addDelta(delta);

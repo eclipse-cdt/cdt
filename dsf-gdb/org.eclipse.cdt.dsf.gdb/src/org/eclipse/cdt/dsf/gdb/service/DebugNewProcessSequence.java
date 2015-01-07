@@ -107,7 +107,6 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 					"stepSpecifyCoreFile",   //$NON-NLS-1$
 					
 					"stepInitializeMemory", //$NON-NLS-1$
-					"stepStartTrackingBreakpoints", //$NON-NLS-1$
 					"stepStartExecution",   //$NON-NLS-1$
 					"stepCleanupBaseSequence",   //$NON-NLS-1$
 			};
@@ -434,6 +433,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 * we should first connect to the target.
 	 */
 	@Execute
+	@Deprecated
 	public void stepStartTrackingBreakpoints(RequestMonitor rm) {
 		if (fBackend.getSessionType() != SessionType.CORE) {
 			MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);

@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
@@ -129,18 +130,35 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			return new String[] {
 					"stepInitializeBaseSequence",  //$NON-NLS-1$
-					"stepInsertStopOnMainBreakpoint",  //$NON-NLS-1$
-					"stepSetBreakpointForReverse",   //$NON-NLS-1$
-					"stepInitializeInputOutput",   //$NON-NLS-1$
-					"stepCreateConsole",    //$NON-NLS-1$
-					"stepRunProgram",   //$NON-NLS-1$
-					"stepSetReverseOff",   //$NON-NLS-1$
-					"stepEnableReverse",   //$NON-NLS-1$
-					"stepContinue",   //$NON-NLS-1$
-					"stepCleanupBaseSequence",   //$NON-NLS-1$
+					"stepInsertStopOnMainBreakpoint", //$NON-NLS-1$
+					"stepSetBreakpointForReverse", //$NON-NLS-1$
+					"stepInitializeInputOutput", //$NON-NLS-1$
+					"stepCreateConsole", //$NON-NLS-1$
+					"stepRunProgram", //$NON-NLS-1$
+					"stepSetReverseOff", //$NON-NLS-1$
+					"stepEnableReverse", //$NON-NLS-1$
+					"stepStartTrackingBreakpoints", //$NON-NLS-1$
+					"stepContinue", //$NON-NLS-1$
+					"stepCleanupBaseSequence", //$NON-NLS-1$
 			};
 		}
+
 		return null;
+	}
+	
+	/**
+	 * Start tracking the breakpoints.  Note that for remote debugging
+	 * we should first connect to the target.
+	 * @since 4.6
+	 */
+	@Execute
+	public void stepStartTrackingBreakpoints(RequestMonitor rm) {
+		if (fBackend.getSessionType() != SessionType.CORE) {
+			MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
+			bpmService.startTrackingBpForProcess(getContainerContext(), rm);
+		} else {
+			rm.done();
+		}
 	}
 	
 	/** 

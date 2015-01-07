@@ -32,9 +32,7 @@ import org.eclipse.core.runtime.Path;
  * 
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class LlvmEnvironmentVariableSupplier implements
-		IConfigurationEnvironmentVariableSupplier {
-
+public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
 	//toggle for preference changes
 	private static boolean preferencesChanged = true;
 	//LLVM environment variable data structure
@@ -257,7 +255,7 @@ public class LlvmEnvironmentVariableSupplier implements
 	}
 
 	/**
-	 * Get LLVM executable path.
+	 * Returns LLVM executable path.
 	 * 
 	 * @param candidatePath Suggestion for LLVM executable path
 	 * @param subPath Additional sub-path for LLVM executable path
@@ -269,12 +267,14 @@ public class LlvmEnvironmentVariableSupplier implements
 		if (candidatePath.endsWith(Separators.getFileSeparator()) && candidatePath.length() > 1) {
 			llvmPath = candidatePath.substring(0, candidatePath.length() - 1);
 		}
-		//if subPath exists and is not empty -> append it to candidatePath
-		if ((null != subPath) && (subPath.length()!=0)) {
-			//form full path
+		// If subPath exists and is not empty -> append it to candidatePath.
+		if (null != subPath && !subPath.isEmpty()) {
+			// Form full path.
 			llvmPath = candidatePath + Separators.getFileSeparator() + subPath;
 		}
-		//return a full path for LLVM executable if it's valid, otherwise null
+		if (llvmPath == null)
+			return null;
+		// Return a full path for LLVM executable if it's valid, otherwise null.
 		return getBinDirIfLlvm_ar(llvmPath);
 	}
 
@@ -290,16 +290,15 @@ public class LlvmEnvironmentVariableSupplier implements
 		if (new Path(binPathTemp).toFile().isDirectory()) {
 			String llvm_executable = "llvm-ar"; //$NON-NLS-1$
 			File arFileFullPath = null;
-			//if OS is Windows -> add .exe to the executable name
+			// If OS is Windows -> add .exe to the executable name.
 			if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {  //$NON-NLS-1$//$NON-NLS-2$
 				llvm_executable = llvm_executable + ".exe"; //$NON-NLS-1$
 			}
-			//form full executable path
-			arFileFullPath = new File(binPathTemp + Separators.getFileSeparator()
-					+ llvm_executable);
-			//check if file exists -> proper LLVM installation exists
+			// Form full executable path
+			arFileFullPath = new File(binPathTemp, llvm_executable);
+			// Check if file exists -> proper LLVM installation exists.
 			if (arFileFullPath.isFile()) {
-				//return path where llvm-ar exists
+				// Return path where llvm-ar exists
 				return binPathTemp;
 			}
 		}			
@@ -307,7 +306,7 @@ public class LlvmEnvironmentVariableSupplier implements
 	}
 	
 	/**
-	 * Get stdc++ library path located in MinGW installation.
+	 * Returns stdc++ library path located in MinGW installation.
 	 * 
 	 * @return stdc++ library path for MinGW
 	 */

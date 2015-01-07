@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Ericsson and others.
+ * Copyright (c) 2011, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,10 @@ public class GDBProcessesTest_7_3 extends GDBProcessesTest_7_2 {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_3);		
 	}
 
-	/*
-	 * Thread names are reported starting with gdb 7.3, except on Windows.
-	 */
 	@Override
 	protected boolean threadNamesSupported() {
-		return !runningOnWindows();
+		// Thread names are reported starting with gdb 7.3, except on Windows
+		// and not for remote sessions.
+		return !runningOnWindows() && !isRemoteSession();
 	}
 }

@@ -24,9 +24,6 @@ final class Messages extends NLS {
 	public static String Refactoring_CanceledByUser;
 	public static String Refactoring_CompileErrorInTU;
 	public static String AddDeclarationNodeToClassChange_AddDeclaration;
-	public static String CreateFileChange_CreateFile;
-	public static String CreateFileChange_UnknownLoc;
-	public static String CreateFileChange_FileExists;
 	public static String CRefactoring_FileNotFound;
 	public static String CRefactoring_checking_final_conditions;
 	public static String CRefactoringDescriptor_unknown_project;

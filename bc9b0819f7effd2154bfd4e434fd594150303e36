@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "8761b321_0bd85162",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-07T18:36:08Z",
+      "side": 1,
+      "message": "Maybe we should not do this.  Say the user wants to download GDB 7.9 but the script was not updated, then it won\u0027t work.  If we don\u0027t check, it will probably work anyway and avoid having to update the script as often.\n\nMaybe we could just print a warning message that the script was not tested with the specified version.",
+      "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_f7933cad",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 5

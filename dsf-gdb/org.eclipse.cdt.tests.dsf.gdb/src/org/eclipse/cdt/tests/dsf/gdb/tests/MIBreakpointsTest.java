@@ -18,9 +18,12 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -40,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
@@ -48,6 +52,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -56,6 +61,9 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,6 +102,7 @@ public class MIBreakpointsTest extends BaseTestCase {
     protected MIRunControl        fRunControl;
     protected IBreakpoints        fBreakpointService;
     protected IExpressions        fExpressionService;
+    protected IGDBControl fCommandControl;
 
     // Event Management
     protected static Boolean lock = true;
@@ -192,6 +201,9 @@ public class MIBreakpointsTest extends BaseTestCase {
                 fExpressionService = fServicesTracker.getService(IExpressions.class);
                 assert(fExpressionService != null);
 
+                fCommandControl = fServicesTracker.getService(IGDBControl.class);
+                assert(fCommandControl != null);
+                
                 // Register to breakpoint events
                 fRunControl.getSession().addServiceEventListener(MIBreakpointsTest.this, null);
 
@@ -2799,6 +2811,118 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
 				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint1.getReference());	
 	}
+
+  	private void queueConsoleCommand(final String command) throws Throwable {
+		Query<MIInfo> query = new Query<MIInfo>() {
+			@Override
+			protected void execute(DataRequestMonitor<MIInfo> rm) {
+				fCommandControl.queueCommand(
+					fCommandControl.getCommandFactory().createMIInterpreterExecConsole(
+						fCommandControl.getContext(), 
+						command),
+					rm);
+			}
+		};
+		fSession.getExecutor().execute(query);
+		query.get(20000, TimeUnit.MILLISECONDS);
+  	}
+
+  	private void deleteAllPlatformBreakpoints() throws Exception {
+  		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+  		for (IBreakpoint b : bm.getBreakpoints()) {
+  			bm.removeBreakpoint(b, true);
+  		}
+  	}
+
+	// ------------------------------------------------------------------------
+  	// Bug 456959
+	// updateBreakpoint_AfterRestart
+	// Create a platform breakpoint and see that it gets hit.
+  	// Then restart the execution, do some modification to the breakpoint
+  	// to force an update, and verify it still hits.
+	// ------------------------------------------------------------------------
+	@Test
+	public void updateBreakpoint_AfterRestart() throws Throwable {
+		try {
+			// Create a line breakpoint in the platform.  To do that, create a bp from
+			// the gdb console and let CDT create the corresponding platform bp.
+			queueConsoleCommand(String.format("break %s:%d", SOURCE_NAME, LINE_NUMBER_5));
+
+			IBreakpointDMContext[] bps = getBreakpoints(fBreakpointsDmc);
+			assertEquals(1, bps.length);
+
+			// Ensure that right BreakpointEvents were received
+			waitForBreakpointEvent(2);
+			assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+					+ fBreakpointEventCount, fBreakpointEventCount == 2);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+					+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
+					+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
+			clearEventCounters();
+
+			// Run the program
+			SyncUtil.resume();
+
+			// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+			MIStoppedEvent event = SyncUtil.waitForStop(3000);
+			assertTrue("Did not stop on our enabled breakpoint!",
+					event instanceof MIBreakpointHitEvent);
+			MIBreakpointDMData bpData = (MIBreakpointDMData)getBreakpoint(bps[0]);
+			assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+					((MIBreakpointHitEvent)event).getNumber() == bpData.getReference());	
+
+			// Ensure that right BreakpointEvents were received
+			waitForBreakpointEvent(1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+					+ fBreakpointEventCount, fBreakpointEventCount == 1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+					+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+			clearEventCounters();		
+
+			// Restart the program
+			SyncUtil.restart(getGDBLaunch());
+			clearEventCounters();// Clear after restart to ignore the bp hit at main
+
+			bps = getBreakpoints(fBreakpointsDmc);
+			assertEquals(1, bps.length);
+
+			IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+			IBreakpoint[] breakpoints = bm.getBreakpoints();
+			assertEquals(1, breakpoints.length);
+			breakpoints[0].getMarker().setAttribute(ICBreakpoint.CONDITION, "1==1");
+
+			// Ensure that right BreakpointEvents were received
+			waitForBreakpointEvent(1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+					+ fBreakpointEventCount, fBreakpointEventCount == 1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
+					+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
+			clearEventCounters();		
+
+			// Run the program
+			SyncUtil.resume();
+
+			// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+			event = SyncUtil.waitForStop(3000);
+			assertTrue("Did not stop on our enabled breakpoint!",
+					event instanceof MIBreakpointHitEvent);
+			bpData = (MIBreakpointDMData) getBreakpoint(bps[0]);
+			assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+					((MIBreakpointHitEvent)event).getNumber() == bpData.getReference());	
+
+			// Ensure that right BreakpointEvents were received
+			waitForBreakpointEvent(1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+					+ fBreakpointEventCount, fBreakpointEventCount == 1);
+			assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+					+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+			clearEventCounters();
+		} finally {
+			deleteAllPlatformBreakpoints();
+		}
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// Breakpoint Hit tests
 	///////////////////////////////////////////////////////////////////////////

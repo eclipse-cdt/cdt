@@ -25,10 +25,6 @@ import org.eclipse.core.runtime.Path;
 public class SourceRoot extends CContainer implements ISourceRoot {
 	ICSourceEntry sourceEntry;
 
-	/**
-	 * @param parent
-	 * @param res
-	 */
 	public SourceRoot(ICElement parent, IResource res, ICSourceEntry entry) {
 		super(parent, res);
 		sourceEntry = entry;
@@ -78,7 +74,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		} else {
 			path= Path.EMPTY;
 		}
-		((CElement)getParent()).getHandleMemento(buff);
+		((CElement) getParent()).getHandleMemento(buff);
 		buff.append(getHandleMementoDelimiter());
 		escapeMementoName(buff, path.toString());
 	}
@@ -90,5 +86,4 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 	protected char getHandleMementoDelimiter() {
 		return CElement.CEM_SOURCEROOT;
 	}
-
 }

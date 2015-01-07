@@ -48,11 +48,6 @@ public class CContainer extends Openable implements ICContainer {
 		super(parent, res, type);
 	}
 
-	/**
-	 * Returns a the collection of binary files in this ccontainer
-	 *
-	 * @see ICContainer#getBinaries()
-	 */
 	@Override
 	public IBinary[] getBinaries() throws CModelException {
 		List<?> list = getChildrenOfType(C_BINARY);
@@ -61,9 +56,6 @@ public class CContainer extends Openable implements ICContainer {
 		return array;
 	}
 
-	/**
-	 * @see ICContainer#getBinary(String)
-	 */
 	@Override
 	public IBinary getBinary(String name) {
 		IFile file = getContainer().getFile(new Path(name));
@@ -78,11 +70,6 @@ public class CContainer extends Openable implements ICContainer {
 		return new Binary(this, file, null);
 	}
 
-	/**
-	 * Returns a the collection of archive files in this ccontainer
-	 *
-	 * @see ICContainer#getArchives()
-	 */
 	@Override
 	public IArchive[] getArchives() throws CModelException {
 		List<?> list = getChildrenOfType(C_ARCHIVE);
@@ -91,9 +78,6 @@ public class CContainer extends Openable implements ICContainer {
 		return array;
 	}
 
-	/**
-	 * @see ICContainer#getArchive(String)
-	 */
 	@Override
 	public IArchive getArchive(String name) {
 		IFile file = getContainer().getFile(new Path(name));
@@ -108,9 +92,6 @@ public class CContainer extends Openable implements ICContainer {
 		return new Archive(this, file, null);
 	}
 
-	/**
-	 * @see ICContainer#getTranslationUnits()
-	 */
 	@Override
 	public ITranslationUnit[] getTranslationUnits() throws CModelException {
 		List<?> list = getChildrenOfType(C_UNIT);
@@ -119,11 +100,6 @@ public class CContainer extends Openable implements ICContainer {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.model.ICContainer#getTranslationUnit(java.lang.String)
-	 */
 	@Override
 	public ITranslationUnit getTranslationUnit(String name) {
 		IFile file = getContainer().getFile(new Path(name));
@@ -135,11 +111,6 @@ public class CContainer extends Openable implements ICContainer {
 		return new TranslationUnit(this, file, id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainers()
-	 */
 	@Override
 	public ICContainer[] getCContainers() throws CModelException {
 		List<?> list = getChildrenOfType(C_CCONTAINER);
@@ -148,11 +119,6 @@ public class CContainer extends Openable implements ICContainer {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainer(java.lang.String)
-	 */
 	@Override
 	public ICContainer getCContainer(String name) {
 		IFolder folder = getContainer().getFolder(new Path(name));
@@ -164,7 +130,7 @@ public class CContainer extends Openable implements ICContainer {
 	}
 
 	public IContainer getContainer() {
-		return (IContainer) getResource();
+		return getResource();
 	}
 
 	@Override
@@ -178,9 +144,6 @@ public class CContainer extends Openable implements ICContainer {
 		return getPath().hashCode();
 	}
 
-	/**
-	 * @see Openable
-	 */
 	@Override
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map<ICElement, CElementInfo> newElements, IResource underlyingResource)
 			throws CModelException {
@@ -200,19 +163,13 @@ public class CContainer extends Openable implements ICContainer {
 		return validInfo;
 	}
 
-	/*
-	 * (non-Javadoc) Returns an array of non-c resources contained in the
-	 * receiver.
-	 *
-	 * @see org.eclipse.cdt.core.model.ICContainer#getNonCResources()
-	 */
 	@Override
 	public Object[] getNonCResources() throws CModelException {
 		return ((CContainerInfo) getElementInfo()).getNonCResources(getResource());
 	}
 
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-		ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
+		ArrayList<ICElement> vChildren = new ArrayList<>();
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
@@ -221,8 +178,8 @@ public class CContainer extends Openable implements ICContainer {
 			}
 			if (resources != null) {
 				ICProject cproject = getCProject();
-				for (IResource resource2 : resources) {
-					ICElement celement = computeChild(resource2, cproject);
+				for (IResource resource : resources) {
+					ICElement celement = computeChild(resource, cproject);
 					if (celement != null) {
 						vChildren.add(celement);
 					}
@@ -325,5 +282,4 @@ public class CContainer extends Openable implements ICContainer {
 	protected char getHandleMementoDelimiter() {
 		return CElement.CEM_SOURCEFOLDER;
 	}
-
 }

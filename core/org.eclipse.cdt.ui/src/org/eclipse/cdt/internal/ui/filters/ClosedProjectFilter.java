@@ -10,28 +10,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
-
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.core.resources.IResource;
-
 
 /**
  * Filters closed projects
  */
 public class ClosedProjectFilter extends ViewerFilter {
-
-	/*
-	 * @see ViewerFilter
-	 */
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof ICElement) 
-			return ((ICElement)element).getCProject().getProject().isOpen();
+			return ((ICElement) element).getCProject().getProject().isOpen();
 		if (element instanceof IResource)
-			return ((IResource)element).getProject().isOpen();
+			return ((IResource) element).getProject().isOpen();
 		return true;
 	}
 }

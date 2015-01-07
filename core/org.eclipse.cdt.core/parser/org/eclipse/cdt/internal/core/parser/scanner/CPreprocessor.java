@@ -1165,12 +1165,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     public static String getAbsoluteInclusionPath(String includeDirective, String currentFile) {
-		// Filename is an absolute path
+		// Filename is an absolute path.
 		if (new File(includeDirective).isAbsolute()) {
 		    return includeDirective;
 		}
-		// Filename is a Linux absolute path on a Windows machine
-		if (File.separatorChar == '\\' && includeDirective.length() > 0) {
+		// Filename is a Linux absolute path on a Windows machine.
+		if (File.separatorChar == '\\' && !includeDirective.isEmpty()) {
 			final char firstChar = includeDirective.charAt(0);
 			if (firstChar == '\\' || firstChar == '/') {
 				if (currentFile != null && currentFile.length() > 1 && currentFile.charAt(1) == ':') {

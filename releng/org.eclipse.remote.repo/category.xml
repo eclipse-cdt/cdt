@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.remote_0.0.0.qualifier.jar" id="org.eclipse.remote" version="0.0.0"/>
-   <feature url="features/org.eclipse.remote.source_0.0.0.qualifier.jar" id="org.eclipse.remote.source" version="0.0.0"/>
+   <feature url="features/org.eclipse.remote_0.0.0.jar" id="org.eclipse.remote" version="0.0.0">
+      <category name="Remote Services"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.source_0.0.0.jar" id="org.eclipse.remote.source" version="0.0.0">
+      <category name="Remote Services SDK"/>
+   </feature>
 </site>

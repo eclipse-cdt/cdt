@@ -172,9 +172,11 @@ public class HeaderFileReferenceAdjuster {
 			CoreModel coreModel = CoreModel.getDefault();
 			for (IFile file : affectedFiles) {
 				ITranslationUnit tu = (ITranslationUnit) coreModel.create(file);
-				if (workingCopyManager.findSharedWorkingCopy(tu) != null)
-					continue;  // Shared working copies have already been processed.
-				addFileChange(tu, changes, checker, progress.newChild(1));
+				if (tu != null) {
+					if (workingCopyManager.findSharedWorkingCopy(tu) != null)
+						continue;  // Shared working copies have already been processed.
+					addFileChange(tu, changes, checker, progress.newChild(1));
+				}
 			}
 
 			if (!changes.isEmpty()) {

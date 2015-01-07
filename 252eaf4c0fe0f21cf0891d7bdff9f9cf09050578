@@ -16,6 +16,24 @@
       "revId": "252eaf4c0fe0f21cf0891d7bdff9f9cf09050578",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_00667045",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/corext/codemanipulation/StubUtility.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-07T18:09:44Z",
+      "side": 1,
+      "message": "My bad, this is from a rebase of the patchset.",
+      "parentUuid": "8761b321_601da4f2",
+      "revId": "252eaf4c0fe0f21cf0891d7bdff9f9cf09050578",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

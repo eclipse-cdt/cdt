@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_31cc9c32",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-08T15:03:41Z",
+      "side": 1,
+      "message": "Since this is a new method you can use a much simpler way than using the waitor.  \n  You can use a Query instead, this is safe on this context as we don\u0027t have to worry about hanging the UI thread on these tests.\n\nYou can use the method above as an example: \ni.e. getFrameData",
+      "revId": "4ba5789fe77268f3d1b648f2339edd737a2037a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_712e1447",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-08T15:03:41Z",
+      "side": 1,
+      "message": "\"i\" should be initialized to 1 in order to validate the name for the main thread as well.",
+      "revId": "4ba5789fe77268f3d1b648f2339edd737a2037a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_9125b05f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-08T15:03:41Z",
+      "side": 1,
+      "message": "Since \"name\" is not used any where else, shall we inline it with the assertEquals ?",
+      "revId": "4ba5789fe77268f3d1b648f2339edd737a2037a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

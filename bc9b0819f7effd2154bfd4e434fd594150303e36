@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_cc6b0f0f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-08T21:14:25Z",
+      "side": 1,
+      "message": "Ah, ok, leave it as is.  When the script will fail for a newer version, we\u0027ll now to update it.",
+      "parentUuid": "8761b321_2c8a836f",
+      "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_f7933cad",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 5

@@ -361,8 +361,8 @@ public class CModelTests extends TestCase {
     // bug 179474
     public void testSourceExclusionFilters_179474() throws Exception {
         ICProject testProject;
-        testProject=CProjectHelper.createCProject("bug179474", "none", IPDOMManager.ID_NO_INDEXER);
-        if (testProject==null)
+        testProject= CProjectHelper.createCProject("bug179474", "none", IPDOMManager.ID_NO_INDEXER);
+        if (testProject == null)
             fail("Unable to create project");
 
         IFolder subFolder = testProject.getProject().getFolder("sub");

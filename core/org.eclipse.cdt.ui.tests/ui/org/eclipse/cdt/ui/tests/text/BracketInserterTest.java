@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -104,7 +103,7 @@ public class BracketInserterTest extends TestCase {
 	private void setUpProject() throws CoreException {
 		fProject= CProjectHelper.createCProject(getName(), "bin", IPDOMManager.ID_NO_INDEXER);
 		ICContainer cContainer= CProjectHelper.addCContainer(fProject, SRC);
-		IFile file= EditorTestHelper.createFile((IContainer)cContainer.getResource(), TU_NAME, TU_CONTENTS, new NullProgressMonitor());
+		IFile file= EditorTestHelper.createFile(cContainer.getResource(), TU_NAME, TU_CONTENTS, new NullProgressMonitor());
 		assertNotNull(file);
 		assertTrue(file.exists());
 	}

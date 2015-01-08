@@ -23,7 +23,7 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 	@Override
 	public boolean equals (Object obj) {
 		if (obj instanceof ISourceEntry) {
-			ISourceEntry otherEntry = (ISourceEntry)obj;
+			ISourceEntry otherEntry = (ISourceEntry) obj;
 			if (!super.equals(otherEntry)) {
 				return false;
 			}
@@ -40,5 +40,4 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 		}
 		return super.equals(obj);
 	}
-
 }

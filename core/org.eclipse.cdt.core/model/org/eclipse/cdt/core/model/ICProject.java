@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICProject extends IParent, IOpenable, ICElement {
-
 	/**
 	 * Returns the <code>ICElement</code> corresponding to the given
 	 * path, or <code>null</code> if no such 
@@ -67,8 +66,7 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 * Returns all of the existing source roots that exist
 	 * on the project, in the order they are defined by the ".cdtproject".
 	 *
-	 * @return all of the existing package fragment roots that exist
-	 * on the classpath
+	 * @return all of the existing source roots
 	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
 	 */
@@ -243,5 +241,4 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 *              exception occurs while accessing its corresponding resource
 	 */
 	Object[] getNonCResources() throws CModelException;
-
 }

@@ -24,7 +24,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
 
 public class CPerspectiveFactory implements IPerspectiveFactory {
-
 	/**
 	 * Constructs a new Default layout engine.
 	 */
@@ -96,6 +95,5 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		for (int i = 0; i < wizIDs.length; ++i) {
 			layout.addNewWizardShortcut(wizIDs[i]);
 		}
-
 	}
 }

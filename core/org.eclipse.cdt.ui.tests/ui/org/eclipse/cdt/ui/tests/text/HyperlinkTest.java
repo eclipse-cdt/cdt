@@ -14,7 +14,6 @@ package org.eclipse.cdt.ui.tests.text;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -102,7 +101,7 @@ public class HyperlinkTest extends TestCase {
 		super.setUp();
 		project= CProjectHelper.createCCProject(super.getName(), "unused", IPDOMManager.ID_NO_INDEXER);
 		ICContainer cContainer= CProjectHelper.addCContainer(project, "src");
-		IFile file= EditorTestHelper.createFile((IContainer) cContainer.getResource(), fileName, code, new NullProgressMonitor());
+		IFile file= EditorTestHelper.createFile(cContainer.getResource(), fileName, code, new NullProgressMonitor());
 		
 		assertNotNull(file);
 		assertTrue(file.exists());

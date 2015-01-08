@@ -84,10 +84,6 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 		super.dispose();
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return true;
@@ -95,16 +91,11 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 
 	/**
 	 * Returns whether referenced projects are considered.
-	 * 
-	 * @return whether referenced projects are considered
 	 */
 	public boolean isSearchReferencedProjects() {
 		return fSearchReferencedProjects;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
-	 */
 	@Override
 	public String getName() {
 		return fProject == null ?
@@ -112,17 +103,11 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 				NLS.bind(InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_1, fProject.getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
-	 */
 	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof SourceFoldersRelativePathSourceContainer) {
@@ -132,17 +117,11 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 		return false;
 	}	
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return TYPE_ID.hashCode() * 31 + (fProject == null ? 0 : fProject.hashCode());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer#getCompilationPath(java.lang.String)
-	 */
 	@Override
 	public IPath getCompilationPath(String sourceName) {
 		if (fProject == null)
@@ -192,7 +171,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 		ISourceRoot[] roots = cProject.getAllSourceRoots();
 		List<ISourceContainer> list = new ArrayList<ISourceContainer>(roots.length);
 		for (ISourceRoot root : roots) {
-			IContainer folder = (IContainer) root.getResource();
+			IContainer folder = root.getResource();
 			ISourceContainer container = new CompilationDirectorySourceContainer(folder.getLocation(), false);
 			container.init(getDirector());
 			list.add(container);

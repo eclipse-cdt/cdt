@@ -604,7 +604,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		List<ICElement> missingElements = new ArrayList<ICElement>();
 		try {
 			List<IResource> missingContainers = new ArrayList<IResource>();
-			IResource[] allChildren = ((IContainer) container.getResource()).members();
+			IResource[] allChildren = container.getResource().members();
 			for (IResource child : allChildren) {
 				if (!(child instanceof IContainer))
 					continue;

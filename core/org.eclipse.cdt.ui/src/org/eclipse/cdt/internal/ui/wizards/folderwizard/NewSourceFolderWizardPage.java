@@ -147,12 +147,12 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		String projPath= null;
 		
 		if (selectedElement instanceof IResource) {
-			IProject proj= ((IResource)selectedElement).getProject();
+			IProject proj= ((IResource) selectedElement).getProject();
 			if (proj != null) {
 				projPath= proj.getFullPath().makeRelative().toString();
 			}	
 		} else if (selectedElement instanceof ICElement) {
-			ICProject jproject= ((ICElement)selectedElement).getCProject();
+			ICProject jproject= ((ICElement) selectedElement).getCProject();
 			if (jproject != null) {
 				projPath= jproject.getProject().getFullPath().makeRelative().toString();
 			}
@@ -336,7 +336,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 						return;
 					}
 				}
-				ArrayList<IPathEntry> newEntries= new ArrayList<IPathEntry>(fEntries.length + 1);
+				ArrayList<IPathEntry> newEntries= new ArrayList<>(fEntries.length + 1);
 				int projectEntryIndex= -1;
 				
 				for (int i= 0; i < fEntries.length; i++) {
@@ -355,7 +355,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				
 				IPathEntry newEntry= CoreModel.newSourceEntry(path);
 				
-				Set<IPathEntry> modified= new HashSet<IPathEntry>();				
+				Set<IPathEntry> modified= new HashSet<>();				
 				if (fExcludeInOthersFields.isSelected()) {
 					addExclusionPatterns(newEntry, newEntries, modified);
 					newEntries.add(CoreModel.newSourceEntry(path));
@@ -390,13 +390,13 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 	}
 	
-	private void addExclusionPatterns(IPathEntry newEntry, List<IPathEntry> existing, Set<IPathEntry> modifiedEntries) {
+	private static void addExclusionPatterns(IPathEntry newEntry, List<IPathEntry> existing, Set<IPathEntry> modifiedEntries) {
 		IPath entryPath= newEntry.getPath();
 		for (int i= 0; i < existing.size(); i++) {
 			IPathEntry curr= existing.get(i);
 			IPath currPath= curr.getPath();
 			if (curr.getEntryKind() == IPathEntry.CDT_SOURCE && currPath.isPrefixOf(entryPath)) {
-				IPath[] exclusionFilters= ((ISourceEntry)curr).getExclusionPatterns();
+				IPath[] exclusionFilters= ((ISourceEntry) curr).getExclusionPatterns();
 				if (!CoreModelUtil.isExcludedPath(entryPath, exclusionFilters)) {
 					IPath pathToExclude= entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
 					IPath[] newExclusionFilters= new IPath[exclusionFilters.length + 1];
@@ -427,7 +427,6 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 		monitor.beginTask(NewFolderWizardMessages.NewSourceFolderWizardPage_operation, 3); 
 		try {
-//			IPath projPath= fCurrCProject.getProject().getFullPath();
 			String relPath= fRootDialogField.getText();
 				
 			IFolder folder= fCurrCProject.getProject().getFolder(relPath);
@@ -438,7 +437,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				throw new InterruptedException();
 			}
 			
-			if(CCorePlugin.getDefault().isNewStyleProject(fCurrCProject.getProject())){
+			if (CCorePlugin.getDefault().isNewStyleProject(fCurrCProject.getProject())) {
 				ICSourceEntry newEntry = new CSourceEntry(folder, null, 0); 
 				ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(fCurrCProject.getProject(), true);
 				addEntryToAllCfgs(des, newEntry, fIsProjectAsSourceFolder);
@@ -453,23 +452,24 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 	}
 	
-	private void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry, boolean removeProj) throws WriteAccessException, CoreException{
+	private void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry, boolean removeProj)
+			throws WriteAccessException, CoreException{
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(ICConfigurationDescription cfg : cfgs){
+		for (ICConfigurationDescription cfg : cfgs) {
 			ICSourceEntry[] entries = cfg.getSourceEntries();
 			entries = addEntry(entries, entry, removeProj);
 			cfg.setSourceEntries(entries);
 		}
 	}
 	
-	private ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry entry, boolean removeProj){
-		Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
-		for(ICSourceEntry se : entries){
-			if(removeProj && new Path(se.getValue()).segmentCount() == 1)
+	private ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry sourceEntry, boolean removeProj) {
+		Set<ICSourceEntry> set = new HashSet<>();
+		for (ICSourceEntry entry : entries) {
+			if (removeProj && new Path(entry.getValue()).segmentCount() == 1)
 				continue;
-			set.add(se);
+			set.add(entry);
 		}
-		set.add(entry);
+		set.add(sourceEntry);
 		return set.toArray(new ICSourceEntry[set.size()]);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.testplugin;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +18,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
-
-import junit.framework.Assert;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -70,6 +66,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.junit.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -83,14 +80,13 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.ui.text.CReconcilingStrategy;
 import org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy;
 
-
 /**
  * Copied from org.eclipse.jdt.text.tests.performance.
  * 
  * @since 4.0
  */
 public class EditorTestHelper {
-	
+
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
 		@Override
 		public String queryOverwrite(String file) {
@@ -257,8 +253,6 @@ public class EditorTestHelper {
 	
 	public static void joinBackgroundActivities() throws CoreException {
 		// Join Building
-		Logger.global.entering("EditorTestHelper", "joinBackgroundActivities");
-		Logger.global.finer("join builder");
 		boolean interrupted= true;
 		while (interrupted) {
 			try {
@@ -269,16 +263,13 @@ public class EditorTestHelper {
 			}
 		}
 		// Join indexing
-		Logger.global.finer("join indexer");
 		IIndexManager indexManager= CCorePlugin.getIndexManager();
 		indexManager.joinIndexer(1000, new NullProgressMonitor());
 		// Join jobs
 		joinJobs(0, 1000, 500);
-		Logger.global.exiting("EditorTestHelper", "joinBackgroundActivities");
 	}
 	
 	public static boolean joinJobs(long minTime, long maxTime, long intervalTime) {
-		Logger.global.entering("EditorTestHelper", "joinJobs");
 		runEventQueue(minTime);
 		
 		DisplayHelper helper= new DisplayHelper() {
@@ -287,9 +278,7 @@ public class EditorTestHelper {
 				return allJobsQuiet();
 			}
 		};
-		boolean quiet= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : MAX_WAIT_TIME, intervalTime);
-		Logger.global.exiting("EditorTestHelper", "joinJobs", new Boolean(quiet));
-		return quiet;
+		return helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : MAX_WAIT_TIME, intervalTime);
 	}
 	
 	public static void sleep(int intervalTime) {
@@ -307,7 +296,6 @@ public class EditorTestHelper {
 			Job job= jobs[i];
 			int state= job.getState();
 			if (state == Job.RUNNING || state == Job.WAITING) {
-				Logger.global.finest(job.toString());
 				return false;
 			}
 		}
@@ -323,10 +311,11 @@ public class EditorTestHelper {
 		IViewReference view= activePage.findViewReference(viewId);
 		boolean shown= view != null;
 		if (shown != show)
-			if (show)
+			if (show) {
 				activePage.showView(viewId);
-			else
+			} else {
 				activePage.hideView(view);
+			}
 		return shown;
 	}
 	
@@ -340,7 +329,6 @@ public class EditorTestHelper {
 	}
 	
 	public static boolean joinReconciler(SourceViewer sourceViewer, long minTime, long maxTime, long intervalTime) {
-		Logger.global.entering("EditorTestHelper", "joinReconciler");
 		runEventQueue(minTime);
 		
 		AbstractReconciler reconciler= getReconciler(sourceViewer);
@@ -369,9 +357,7 @@ public class EditorTestHelper {
 				return !isRunning(cReconcilerAccessor, backgroundThreadAccessor);
 			}
 		};
-		boolean finished= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : MAX_WAIT_TIME, intervalTime);
-		Logger.global.exiting("EditorTestHelper", "joinReconciler", new Boolean(finished));
-		return finished;
+		return helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : MAX_WAIT_TIME, intervalTime);
 	}
 	
 	public static AbstractReconciler getReconciler(SourceViewer sourceViewer) {
@@ -502,10 +488,10 @@ public class EditorTestHelper {
 	}
 	
     public static IFile createFile(IContainer container, String fileName, String contents, IProgressMonitor monitor) throws CoreException {
-        //Obtain file handle
+        // Obtain file handle.
         IFile file = container.getFile(new Path(fileName));
         InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
-        //Create file input stream
+        // Create file input stream.
         if(file.exists())
             file.setContents(stream, false, false, monitor);
         else
@@ -514,7 +500,7 @@ public class EditorTestHelper {
     }
     
 	public static IFile[] findFiles(IResource resource) throws CoreException {
-		List<IResource> files= new ArrayList<IResource>();
+		List<IResource> files= new ArrayList<>();
 		findFiles(resource, files);
 		return files.toArray(new IFile[files.size()]);
 	}
@@ -542,7 +528,7 @@ public class EditorTestHelper {
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws CoreException {		
 		try {
 			IImportStructureProvider structureProvider= FileSystemStructureProvider.INSTANCE;
-			List<File> files= new ArrayList<File>(100);
+			List<File> files= new ArrayList<>(100);
 			addFiles(rootDir, files);
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
 			op.setCreateContainerStructure(false);
@@ -558,7 +544,7 @@ public class EditorTestHelper {
 
 	private static void addFiles(File dir, List<File> collection) throws IOException {
 		File[] files= dir.listFiles();
-		List<File> subDirs= new ArrayList<File>(2);
+		List<File> subDirs= new ArrayList<>(2);
 		for (int i= 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);

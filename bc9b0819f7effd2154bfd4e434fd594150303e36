@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_2c8a836f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-08T21:08:10Z",
+      "side": 1,
+      "message": "We could indeed display a warning, but it will be lost in the sea of output, so we might as well not display it.\n\nThe goal of the warning is so that people avoid downloading 7.2 when there is a 7.2.1 for example.\n\nI agree that having to change it every gdb version is not very convenient (although the gdb releases are not very frequent).",
+      "parentUuid": "8761b321_0bd85162",
+      "revId": "bc9b0819f7effd2154bfd4e434fd594150303e36",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_f7933cad",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 5

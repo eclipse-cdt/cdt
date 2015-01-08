@@ -14,23 +14,31 @@
 <p>Comments are lines in a source file that have been marked to be ignored by the compiler.
 Two styles of comments are supported by current C/C++ compilers:</p>
 <ul>
-<li><samp>/* text */</samp></li>
-<li><samp>// text</samp></li>
+<li><samp>/* C style comment (block comment) */</samp></li>
+<li><samp>// C++ style comment (line comment)</samp></li>
 </ul>
 
-<h2>Comment</h2>
+<h2>Line Comment</h2>
 <p>You can quickly comment out one or more lines of code by inserting the leading 
 characters <samp>//</samp> at the beginning of the line.  To do so, select the line 
 (or lines) of code you want to comment out and press <strong>CTRL+/</strong> (slash).</p>
 
-<h2>Uncomment</h2>
-<p>To uncomment  select the line (or lines) of code, and press <strong>CTRL+\</strong> 
-(backslash).
+<h2>Line Uncomment</h2>
+<p>To uncomment  select the line (or lines) of code, and press <strong>CTRL+/</strong> 
+(slash) again.
 
 <p><strong>Tip:</strong> The characters <samp>/* */</samp> on lines that are 
-already commented out, are not affected when you comment and uncomment code.</p>
+already commented out, are not affected when you comment and uncomment code using line comment.</p>
 
-<h2>Multiline comment</h2>
+<h2>Block Comment</h2>
+<p>You can comment out selected block of code with C style comment <samp>/* */</samp>.  To do so, select
+the block of code you want to comment out and press <strong>CTRL+Shift+/</strong> (slash).</p>
+
+<h2>Block Uncomment</h2>
+<p>To uncomment  select the code inside commented out block, and press <strong>CTRL+SHIFT+\</strong> (backslash).
+
+
+<h2>Multiline comment template</h2>
 <p>You can use the Content Assist feature to insert a multi-line comment before a function.
 In the C++ editor, type <span class="typewriter">com</span> then press <strong>Ctrl+Space</strong>.
 Select <span class="typewriter">default multiline comment</span> template and press <strong>Enter</strong>.

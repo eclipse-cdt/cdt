@@ -137,28 +137,28 @@ public class CProjectHelper {
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStileCProject(final String projectName, final String indexerID) throws CoreException {
-		return createNewStileCProject(projectName, indexerID, false);
+	public static ICProject createNewStyleCProject(final String projectName, final String indexerID) throws CoreException {
+		return createNewStyleCProject(projectName, indexerID, false);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStileCProject(final String projectName, String providerId, final String indexerID) throws CoreException {
-		return createNewStileCProject(projectName, providerId, indexerID, false);
+	public static ICProject createNewStyleCProject(final String projectName, String providerId, final String indexerID) throws CoreException {
+		return createNewStyleCProject(projectName, providerId, indexerID, false);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStileCProject(final String projectName, final String indexerID, boolean markCreating) throws CoreException {
-		return createNewStileCProject(projectName, null, indexerID, markCreating);
+	public static ICProject createNewStyleCProject(final String projectName, final String indexerID, boolean markCreating) throws CoreException {
+		return createNewStyleCProject(projectName, null, indexerID, markCreating);
 	}
 
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createNewStileCProject(final String projectName, String cfgProviderId, final String indexerID, final boolean markCreating) throws CoreException {
+	public static ICProject createNewStyleCProject(final String projectName, String cfgProviderId, final String indexerID, final boolean markCreating) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
 		if(cfgProviderId == null)
@@ -260,7 +260,7 @@ public class CProjectHelper {
 	public static ICContainer addCContainer(ICProject cproject, String containerName) throws CoreException {
 		IProject project = cproject.getProject();
 		ICContainer container = null;
-		if (containerName == null || containerName.length() == 0) {
+		if (containerName == null || containerName.isEmpty()) {
 			ICContainer[] conts = cproject.getSourceRoots();
 			if (conts.length > 0) {
 				container = conts[0];

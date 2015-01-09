@@ -63,7 +63,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 	}
 
 	public void testPathEntriesForNewStyle() throws Exception {
-		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", TestUserAndDiscoveredEntriesCfgDataProvider.PROVIDER_ID, IPDOMManager.ID_NO_INDEXER);
+		p1 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "a", TestUserAndDiscoveredEntriesCfgDataProvider.PROVIDER_ID, IPDOMManager.ID_NO_INDEXER);
 		IProject project = p1.getProject();
 		
 		IPathEntry[] entries = CoreModel.getRawPathEntries(p1);

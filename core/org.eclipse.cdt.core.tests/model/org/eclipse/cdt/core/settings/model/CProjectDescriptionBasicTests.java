@@ -65,7 +65,7 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 	}
 	
 	public void testModulesCopiedOnCreateNewConfig() throws Exception {
-		ICProject p = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
+		ICProject p = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
 		p3 = p.getProject();
 		
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -186,7 +186,7 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 	}
 	
 	public void testSetDescriptionWithRootIncompatibleRuleAquired() throws Exception {
-		ICProject p = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "4", IPDOMManager.ID_NO_INDEXER);
+		ICProject p = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "4", IPDOMManager.ID_NO_INDEXER);
 		p4 = p.getProject();
 		
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -225,7 +225,7 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		// Emulate entering Eclipse first time
 		{
 			// Create model project and accompanied descriptions
-			ICProject cproject = CProjectHelper.createNewStileCProject(projectName, IPDOMManager.ID_NO_INDEXER);
+			ICProject cproject = CProjectHelper.createNewStyleCProject(projectName, IPDOMManager.ID_NO_INDEXER);
 			IProject project = cproject.getProject();
 
 			// Initial project description after opening a project

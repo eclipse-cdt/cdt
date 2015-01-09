@@ -73,7 +73,7 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 	//#endif
 	public void testRepeatedlyChangeConfig_bug375226() throws Exception {
 		ModelJoiner mj = new ModelJoiner();
-		ICProject cProject = CProjectHelper.createNewStileCProject("testChangeConfiguration", IPDOMManager.ID_FAST_INDEXER);
+		ICProject cProject = CProjectHelper.createNewStyleCProject("testChangeConfiguration", IPDOMManager.ID_FAST_INDEXER);
 		IProject project = cProject.getProject();
 		StringBuilder[] contents= TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1);
 		IFile file= TestSourceReader.createFile(cProject.getProject(), new Path("test.c"), contents[0].toString());

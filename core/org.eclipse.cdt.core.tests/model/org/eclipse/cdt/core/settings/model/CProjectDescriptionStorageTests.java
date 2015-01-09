@@ -62,7 +62,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		cProj = CProjectHelper.createNewStileCProject("CProjDescStorage", IPDOMManager.ID_FAST_INDEXER);
+		cProj = CProjectHelper.createNewStyleCProject("CProjDescStorage", IPDOMManager.ID_FAST_INDEXER);
 		resListener = new OurResourceChangeListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resListener);
 	}

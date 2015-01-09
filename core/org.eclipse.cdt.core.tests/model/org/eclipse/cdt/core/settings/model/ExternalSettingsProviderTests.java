@@ -41,12 +41,12 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 
 	@Override
 	protected void setUp() throws Exception {
-		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
-		p2 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "b", IPDOMManager.ID_NO_INDEXER);
-		p3 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
-		p4 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "d", IPDOMManager.ID_NO_INDEXER);
-		p5 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "e", IPDOMManager.ID_NO_INDEXER);
-		p6 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "f", IPDOMManager.ID_NO_INDEXER);
+		p1 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
+		p2 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "b", IPDOMManager.ID_NO_INDEXER);
+		p3 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
+		p4 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "d", IPDOMManager.ID_NO_INDEXER);
+		p5 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "e", IPDOMManager.ID_NO_INDEXER);
+		p6 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "f", IPDOMManager.ID_NO_INDEXER);
 	}
 
 	/**

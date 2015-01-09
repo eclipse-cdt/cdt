@@ -72,7 +72,7 @@ public class RefreshScopeTests extends TestCase {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				ICProject cProject = CProjectHelper.createNewStileCProject("testRefreshScope", IPDOMManager.ID_NO_INDEXER, false);
+				ICProject cProject = CProjectHelper.createNewStyleCProject("testRefreshScope", IPDOMManager.ID_NO_INDEXER, false);
 				fProject = cProject.getProject();
 				
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

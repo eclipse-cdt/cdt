@@ -39,7 +39,7 @@ public class CfgSettingsTests extends BaseTestCase {
 		
 		int wspRel = prefs.getConfigurationRelations();
 		CoreModel model = CoreModel.getDefault();
-		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
+		p1 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
 		IProject project = p1.getProject();
 		ICProjectDescription des = model.getProjectDescription(project, false);
 		assertEquals(wspRel, des.getConfigurationRelations());

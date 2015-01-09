@@ -115,7 +115,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		initListener(projName);
 		
 		
-		ICProject cp1 = CProjectHelper.createNewStileCProject(projName, IPDOMManager.ID_NO_INDEXER, true);
+		ICProject cp1 = CProjectHelper.createNewStyleCProject(projName, IPDOMManager.ID_NO_INDEXER, true);
 		IProject project = cp1.getProject();
 		p1 = project;
 		assertTrue(listener.isNotified());
@@ -246,7 +246,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		initListener(projName);
 		
 		
-		ICProject cp3 = CProjectHelper.createNewStileCProject(projName, IPDOMManager.ID_NO_INDEXER, true);
+		ICProject cp3 = CProjectHelper.createNewStyleCProject(projName, IPDOMManager.ID_NO_INDEXER, true);
 		IProject project = cp3.getProject();
 		p3 = project;
 
@@ -308,7 +308,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		initListener(projName);
 		
 		
-		ICProject cp4 = CProjectHelper.createNewStileCProject(projName, IPDOMManager.ID_NO_INDEXER, false);
+		ICProject cp4 = CProjectHelper.createNewStyleCProject(projName, IPDOMManager.ID_NO_INDEXER, false);
 		IProject project = cp4.getProject();
 		p4 = project;
 

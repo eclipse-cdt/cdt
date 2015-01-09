@@ -102,8 +102,8 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	
 	
 	public void testNormalExportImport() throws Exception {
-		ICProject exportProject = CProjectHelper.createNewStileCProject("TempProject1", IPDOMManager.ID_NO_INDEXER);
-		ICProject importProject = CProjectHelper.createNewStileCProject("TempProject2", IPDOMManager.ID_NO_INDEXER);
+		ICProject exportProject = CProjectHelper.createNewStyleCProject("TempProject1", IPDOMManager.ID_NO_INDEXER);
+		ICProject importProject = CProjectHelper.createNewStyleCProject("TempProject2", IPDOMManager.ID_NO_INDEXER);
 		setUpProjectSettings(exportProject);
 		
 		ProjectSettingsWizardPageMock page = new ProjectSettingsWizardPageMock() {
@@ -165,7 +165,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 		String filePath = getFilePath("test.txt");
 		createFile(xmlContent, filePath);
 		
-		ICProject project = CProjectHelper.createNewStileCProject("VaidateProject", IPDOMManager.ID_NO_INDEXER);
+		ICProject project = CProjectHelper.createNewStyleCProject("VaidateProject", IPDOMManager.ID_NO_INDEXER);
 		
 		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project.getProject(), false);
 		ICConfigurationDescription config = desc.getActiveConfiguration();

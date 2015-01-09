@@ -1,0 +1,10 @@
+Code-Review+1: Doug Schaefer <dschaefer@qnx.com>
+Verified+1: Hudson CI
+Code-Review+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Code-Review+2: Andrew Gvozdev <angvoz.dev@gmail.com>
+Verified+1: Andrew Gvozdev <angvoz.dev@gmail.com>
+Submitted-by: Andrew Gvozdev <angvoz.dev@gmail.com>
+Submitted-at: Fri, 09 Jan 2015 16:53:29 -0500
+Reviewed-on: https://git.eclipse.org/r/39047
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

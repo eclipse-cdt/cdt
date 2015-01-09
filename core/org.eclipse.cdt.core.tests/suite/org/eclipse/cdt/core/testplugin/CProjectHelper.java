@@ -282,7 +282,7 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Adds a folder container to a ICProject and imports all files contained in the given Zip file.
+	 * Adds a folder container to a ICProject and imports all files contained in the given zip file.
 	 */
 	public static ICContainer addCContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile)
 			throws InvocationTargetException, CoreException {
@@ -320,10 +320,8 @@ public class CProjectHelper {
 			ArrayList<IPathEntry> newEntries= new ArrayList<>(entries.length + 1);
 			
 			for (IPathEntry entry : entries) {
-				if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
-					if (rootPath.equals(entry.getPath())) {
-						return; // The source root exists already.
-					}
+				if (entry.getEntryKind() == IPathEntry.CDT_SOURCE && rootPath.equals(entry.getPath())) {
+					return; // The source root exists already.
 				}
 				newEntries.add(entry);
 			}
@@ -342,20 +340,14 @@ public class CProjectHelper {
 	 * Attempts to find an archive with the given name in the workspace
 	 */
 	public static IArchive findArchive(ICProject testProject, String name) throws CModelException {
-		int x;
-		IArchive[] myArchives;
-		IArchiveContainer archCont;
-		/***************************************************************************************************************************
-		 * Since ArchiveContainer.getArchives does not wait until all the archives in the project have been parsed before returning
-		 * the list, we have to do a sync ArchiveContainer.getChildren first to make sure we find all the archives.
-		 */
-		archCont = testProject.getArchiveContainer();
-		myArchives = archCont.getArchives();
-		if (myArchives.length < 1)
-			return null;
-		for (x = 0; x < myArchives.length; x++) {
-			if (myArchives[x].getElementName().equals(name))
-				return (myArchives[x]);
+		// Since ArchiveContainer.getArchives does not wait until all the archives in the project
+		// have been parsed before returning the list, we have to do a sync
+		// ArchiveContainer.getChildren first to make sure we find all the archives.
+		IArchiveContainer archCont = testProject.getArchiveContainer();
+		IArchive[] myArchives = archCont.getArchives();
+		for (IArchive archive : myArchives) {
+			if (archive.getElementName().equals(name))
+				return archive;
 		}
 		return null;
 	}
@@ -364,16 +356,10 @@ public class CProjectHelper {
 	 * Attempts to find a binary with the given name in the workspace
 	 */
 	public static IBinary findBinary(ICProject testProject, String name) throws CModelException {
-		IBinaryContainer binCont;
-		int x;
-		IBinary[] myBinaries;
-		binCont = testProject.getBinaryContainer();
-		myBinaries = binCont.getBinaries();
-		if (myBinaries.length < 1)
-			return null;
-		for (x = 0; x < myBinaries.length; x++) {
-			if (myBinaries[x].getElementName().equals(name))
-				return (myBinaries[x]);
+		IBinaryContainer binCont = testProject.getBinaryContainer();
+		for (IBinary binary : binCont.getBinaries()) {
+			if (binary.getElementName().equals(name))
+				return binary;
 		}
 		return null;
 	}
@@ -383,14 +369,10 @@ public class CProjectHelper {
 	 */
 	public static IBinary findObject(ICProject testProject, String name) throws CModelException {
 		ICElement[] sourceRoots = testProject.getChildren();
-		for (int i = 0; i < sourceRoots.length; i++) {
-			ISourceRoot root = (ISourceRoot) sourceRoots[i];
-			ICElement[] myElements = root.getChildren();
-			for (int x = 0; x < myElements.length; x++) {
-				if (myElements[x].getElementName().equals(name)) {
-					if (myElements[x] instanceof IBinary) {
-						return ((IBinary) myElements[x]);
-					}
+		for (ICElement root : sourceRoots) {
+			for (ICElement element : ((ISourceRoot) root).getChildren()) {
+				if (element.getElementName().equals(name) && element instanceof IBinary) {
+					return ((IBinary) element);
 				}
 			}
 		}
@@ -400,17 +382,14 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find a TranslationUnit with the given name in the workspace.
 	 */
-	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) throws CModelException, InterruptedException {
+	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name)
+			throws CModelException, InterruptedException {
 		for (int j = 0; j < 20; j++) {
 			ICElement[] sourceRoots = testProject.getChildren();
-			for (int i = 0; i < sourceRoots.length; i++) {
-				ISourceRoot root = (ISourceRoot) sourceRoots[i];
-				ICElement[] myElements = root.getChildren();
-				for (int x = 0; x < myElements.length; x++) {
-					if (myElements[x].getElementName().equals(name)) {
-						if (myElements[x] instanceof ITranslationUnit) {
-							return ((ITranslationUnit) myElements[x]);
-						}
+			for (ICElement root : sourceRoots) {
+				for (ICElement element : ((ISourceRoot) root).getChildren()) {
+					if (element.getElementName().equals(name) && element instanceof ITranslationUnit) {
+						return ((ITranslationUnit) element);
 					}
 				}
 			}
@@ -424,12 +403,10 @@ public class CProjectHelper {
 	 */
 	public static ICElement findElement(ICProject testProject, String name) throws CModelException {
 		ICElement[] sourceRoots = testProject.getChildren();
-		for (int i = 0; i < sourceRoots.length; i++) {
-			ISourceRoot root = (ISourceRoot) sourceRoots[i];
-			ICElement[] myElements = root.getChildren();
-			for (int x = 0; x < myElements.length; x++) {
-				if (myElements[x].getElementName().equals(name)) {
-					return myElements[x];
+		for (ICElement root : sourceRoots) {
+			for (ICElement element : ((ISourceRoot) root).getChildren()) {
+				if (element.getElementName().equals(name)) {
+					return element;
 				}
 			}
 		}
@@ -454,7 +431,7 @@ public class CProjectHelper {
 					OVERWRITE_QUERY);
 			op.run(monitor);
 		} catch (InterruptedException e) {
-			// should not happen
+			// Should not happen.
 		}
 	}
 

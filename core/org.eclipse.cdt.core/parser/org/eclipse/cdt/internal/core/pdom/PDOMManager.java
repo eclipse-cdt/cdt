@@ -413,8 +413,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return LanguageManager.getInstance().getPDOMLinkageFactoryMappings();
 	}
 
-	private void storeDatabaseName(IProject rproject, String dbName)
-			throws CoreException {
+	private void storeDatabaseName(IProject rproject, String dbName) throws CoreException {
 		rproject.setPersistentProperty(dbNameProperty, dbName);
 	}
 
@@ -838,7 +837,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		IPDOMIndexer indexer;
 		synchronized (fUpdatePolicies) {
-			// Prevent recreating the indexer
+			// Prevent recreating the indexer.
 			fClosingProjects.add(name);
 			indexer= getIndexer(cproject);
 		}
@@ -850,7 +849,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	Object pdom= null;
     	synchronized (fProjectToPDOM) {
     		pdom = fProjectToPDOM.remove(rproject);
-    		// if the project is closed allow to reuse the pdom.
+    		// If the project is closed allow to reuse the pdom.
     		if (pdom instanceof WritablePDOM && !delete) {
     			fFileToProject.remove(((WritablePDOM) pdom).getDB().getLocation());
     		}
@@ -1264,7 +1263,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 
 			// Overwrite internal location representations.
-			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter(), getLinkageFactories());
+			final WritablePDOM newPDOM =
+					new WritablePDOM(targetLocation, pdom.getLocationConverter(), getLinkageFactories());
 			newPDOM.acquireWriteLock(null);
 			try {
 				newPDOM.rewriteLocations(newConverter);
@@ -1290,24 +1290,27 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws OperationCanceledException in case the thread was interrupted
 	 * @since 4.0
 	 */
-	public void importProjectPDOM(ICProject project, InputStream stream, IProgressMonitor monitor) throws CoreException, IOException {
+	public void importProjectPDOM(ICProject project, InputStream stream, IProgressMonitor monitor)
+			throws CoreException, IOException {
 		// make a copy of the database
 		String newName= createNewDatabaseName(project);
 		File newFile= fileFromDatabaseName(newName);
 		OutputStream out= new FileOutputStream(newFile);
 		try {
 			int version= 0;
-			for (int i=0; i<4; i++) {
+			for (int i= 0; i < 4; i++) {
 				byte b= (byte) stream.read();
 				version= (version << 8) + (b & 0xff);
 				out.write(b);
 			}
 			if (version > PDOM.getMaxSupportedVersion()) {
-				final IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, 0, CCorePlugin.getResourceString("PDOMManager.unsupportedHigherVersion"), null); //$NON-NLS-1$
+				final IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, 0,
+						CCorePlugin.getResourceString("PDOMManager.unsupportedHigherVersion"), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
-			if ( !PDOM.isSupportedVersion( version ) ) {
-				final IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, 0, CCorePlugin.getResourceString("PDOMManager.unsupportedVersion"), null); //$NON-NLS-1$
+			if (!PDOM.isSupportedVersion(version)) {
+				final IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, 0,
+						CCorePlugin.getResourceString("PDOMManager.unsupportedVersion"), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 			byte[] buffer= new byte[2048];

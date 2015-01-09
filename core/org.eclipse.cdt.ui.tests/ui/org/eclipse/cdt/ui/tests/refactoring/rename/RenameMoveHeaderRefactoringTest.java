@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Google, Inc and others.
+ * Copyright (c) 2014, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,8 @@ import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor;
 import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
 
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
@@ -60,7 +62,6 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 	protected CRefactoring createRefactoring() {
 		throw new UnsupportedOperationException();
 	}
-
 
 	protected CRenameRefactoring createRenameRefactoring(String newName) {
 		IFile file = getSelectedFile();
@@ -189,7 +190,7 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 	//
 	//#include "dir3/header1.h"
 
-	// header2.cpp
+	// source2.cpp
 	//#include "dir1/header1.h"
 	//#include "dir2/header3.h"
 	//
@@ -209,6 +210,61 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 		processor.setNewResourceName("dir3");
 		RenameRefactoring refactoring = new RenameRefactoring(processor);
 		executeRefactoring(refactoring, true);
+		compareFiles();
+	}
+
+	// src1/header1.h
+	//#ifndef HEADER1_H_
+	//#define HEADER1_H_
+	//
+	//#include "src1/header2.h"
+	//
+	//#endif // HEADER1_H_
+	//====================
+	// src2/header1.h
+	//#ifndef HEADER1_H_
+	//#define HEADER1_H_
+	//
+	//#include "src2/header2.h"
+	//
+	//#endif // HEADER1_H_
+
+	// src1/header2.h
+	//#if !defined(HEADER2_H_)
+	//#define HEADER2_H_
+	//
+	//class A {};
+	//
+	//#endif  /* HEADER2_H_ */
+	//====================
+	// src2/header2.h
+	//#if !defined(HEADER2_H_)
+	//#define HEADER2_H_
+	//
+	//class A {};
+	//
+	//#endif  /* HEADER2_H_ */
+
+	// src1/source1.cpp
+	//#include <string>
+	//
+	//#include "src1/header1.h"
+	//====================
+	// src2/source1.cpp
+	//#include <string>
+	//
+	//#include "src2/header1.h"
+	public void testSourceRootRename() throws Exception {
+		CProjectHelper.addSourceRoot(getCProject(), "src1");
+		IFolder resource = getProject().getFolder("src1");
+		RenameResourceProcessor processor = new RenameResourceProcessor(resource);
+		processor.setNewResourceName("src2");
+		RenameRefactoring refactoring = new RenameRefactoring(processor);
+		executeRefactoring(refactoring, true);
+		ISourceRoot[] sourceRoots = getCProject().getAllSourceRoots();
+		assertEquals(2, sourceRoots.length);
+		assertEquals(getProject().getName(), sourceRoots[0].getElementName());
+		assertEquals("src2", sourceRoots[1].getElementName());
 		compareFiles();
 	}
 
@@ -254,7 +310,7 @@ public class RenameMoveHeaderRefactoringTest extends RefactoringTestBase {
 	//
 	//#include "dir3/dir1/header1.h"
 
-	// header2.cpp
+	// source2.cpp
 	//#include "dir1/header1.h"
 	//#include "dir2/header3.h"
 	//

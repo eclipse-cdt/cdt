@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
@@ -83,9 +85,10 @@ public class HeaderFileMoveParticipant extends MoveParticipant implements IShara
 				if (destinationLocation.equals(movedResource.getLocation().removeLastSegments(1)))
 					continue;
 		
-				if (movedResource instanceof IContainer) {
-					final int prefixLength = movedResource.getFullPath().segmentCount() - 1;
-					((IContainer) movedResource).accept(new IResourceProxyVisitor() {
+				if (movedResource instanceof IFolder) {
+					IFolder folder = (IFolder) movedResource;
+					final int prefixLength = folder.getFullPath().segmentCount() - 1;
+					folder.accept(new IResourceProxyVisitor() {
 						@Override
 						public boolean visit(IResourceProxy proxy) throws CoreException {
 							if (proxy.isLinked())
@@ -103,9 +106,9 @@ public class HeaderFileMoveParticipant extends MoveParticipant implements IShara
 					movedFiles.put(file, destination.getFile(new Path(movedResource.getName())));
 				}
 			}
-			
-			HeaderFileReferenceAdjuster includeAdjuster =
-					new HeaderFileReferenceAdjuster(movedFiles, null, getProcessor());
+
+			HeaderFileReferenceAdjuster includeAdjuster = new HeaderFileReferenceAdjuster(movedFiles,
+					Collections.<IContainer, IContainer>emptyMap(),	getProcessor());
 			change = includeAdjuster.createChange(context, pm);
 		} catch (CoreException e) {
 			return RefactoringStatus.create(e.getStatus());

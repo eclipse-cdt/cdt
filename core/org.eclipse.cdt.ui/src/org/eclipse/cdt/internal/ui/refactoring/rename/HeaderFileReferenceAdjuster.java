@@ -63,11 +63,13 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -77,6 +79,7 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
+import org.eclipse.cdt.internal.core.model.SourceRoot;
 import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
@@ -104,9 +107,10 @@ public class HeaderFileReferenceAdjuster {
 	private int indexLockCount;
 
 	/**
-	 * @param movedFiles keys are moved files, values are new, not yet existing, files
+	 * @param movedFiles keys are files being moved or renamed, values are new, not yet existing,
+	 *     files
 	 * @param renamedContainers keys are folders and projects being renamed, values are new,
-	 *     not yet existing folders and projects. May be {@code null}. 
+	 *     not yet existing folders and projects. 
 	 * @param processor the refactoring processor
 	 */
 	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles,
@@ -114,7 +118,8 @@ public class HeaderFileReferenceAdjuster {
 		this.movedFiles = movedFiles;
 		this.movedFilesByLocation = new HashMap<>();
 		for (Entry<IFile, IFile> entry : movedFiles.entrySet()) {
-			this.movedFilesByLocation.put(entry.getKey().getLocation().toOSString(), entry.getValue().getLocation());
+			this.movedFilesByLocation.put(entry.getKey().getLocation().toOSString(),
+					entry.getValue().getLocation());
 		}
 		this.renamedContainers = renamedContainers;
 		this.astManager = getASTManager(processor);
@@ -458,11 +463,30 @@ public class HeaderFileReferenceAdjuster {
 	private String generateNewIncludeGuardSymbol(IResource resource, IFile newFile, ICProject cProject) {
 		switch (getIncludeGuardScheme(cProject.getProject())) {
 		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH:
-			ISourceRoot root = cProject.findSourceRoot(resource);
-			IContainer base = root == null ? cProject.getProject() : root.getResource();
-			IContainer renamedBase = renamedContainers.get(base);
-			if (renamedBase != null)
-				base = renamedBase;
+			IProject newProject = newFile.getProject();
+			if (newProject.exists()) {
+				// Move within the same or to a different existing project.
+				cProject = CoreModel.getDefault().create(newProject);
+				if (cProject == null)
+					break;
+			}
+			ISourceRoot[] roots;
+			try {
+				roots = cProject.getAllSourceRoots();
+			} catch (CModelException e) {
+				break;
+			}
+			IContainer base = null;
+			for (ISourceRoot root : roots) {
+				root = getModifiedSourceRoot(cProject, root);
+				if (root.isOnSourceEntry(newFile)) {
+					base = root.getResource();
+					break;
+				}
+			}
+
+			if (base == null)
+				break;
 			IPath path = PathUtil.makeRelativePath(newFile.getFullPath(), base.getFullPath());
 			if (path == null)
 				break;
@@ -475,6 +499,33 @@ public class HeaderFileReferenceAdjuster {
 			break;
 		}
 		return null;
+	}
+
+	protected ISourceRoot getModifiedSourceRoot(ICProject cProject, ISourceRoot root) {
+		IContainer container = root.getResource();
+		ICSourceEntry sourceEntry = ((SourceRoot) root).getSourceEntry();
+		for (Entry<IContainer, IContainer> entry : renamedContainers.entrySet()) {
+			IPath oldFolderPath = entry.getKey().getFullPath();
+			IPath newFolderPath = entry.getValue().getFullPath();
+			sourceEntry = RenameCSourceFolderChange.renameSourceEntry(sourceEntry, oldFolderPath, newFolderPath);
+		}
+		IContainer newContainer = getModifiedContainer(container);
+		return new SourceRoot(cProject, newContainer, sourceEntry);
+	}
+
+	private IContainer getModifiedContainer(IContainer container) {
+		IPath relativePath = Path.EMPTY;
+		for (IContainer ancestor = container; ancestor.getType() != IResource.ROOT; ancestor = ancestor.getParent()) {
+			IContainer newContainer = renamedContainers.get(ancestor);
+			if (newContainer != null) {
+				if (relativePath.isEmpty()) {
+					return newContainer;
+				}
+				return newContainer.getFolder(relativePath);
+			}
+			relativePath = new Path(ancestor.getName()).append(relativePath);
+		}
+		return container;
 	}
 
 	private void flushEditBuffer(int offset, StringBuilder text, Deque<DeleteEdit> deletes, MultiTextEdit edit) {

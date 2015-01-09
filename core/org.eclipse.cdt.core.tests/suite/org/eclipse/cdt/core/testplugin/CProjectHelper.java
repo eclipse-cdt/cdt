@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,16 @@
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -30,6 +34,7 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -38,6 +43,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.TestCfgDataProvider;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.model.InternalCoreModelUtil;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -115,7 +121,7 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Add the default binary parser if no binary parser configured.
+	 * Adds the default binary parser if no binary parser configured.
 	 * 
 	 * @param project
 	 * @throws CoreException 
@@ -294,6 +300,45 @@ public class CProjectHelper {
 	}
 
 	/**
+	 * Adds a source root to a C/C++ project.
+	 *
+	 * @param cproject the project to add the source root to
+	 * @param rootName the relative path of the source root
+	 */
+	public static void addSourceRoot(ICProject cproject, String rootName) throws CoreException {
+		IProject project = cproject.getProject();
+		IFolder rootFolder = project.getFolder(rootName);
+		if (!rootFolder.exists()) {
+			rootFolder.create(false, true, null);
+		}
+		IPath rootPath = rootFolder.getFullPath();
+
+		if (!CCorePlugin.getDefault().isNewStyleProject(project)) {
+			InternalCoreModelUtil.addSourceEntry(project, rootFolder, false, null);
+		} else {
+			IPathEntry[] entries = cproject.getRawPathEntries();
+			ArrayList<IPathEntry> newEntries= new ArrayList<>(entries.length + 1);
+			
+			for (IPathEntry entry : entries) {
+				if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
+					if (rootPath.equals(entry.getPath())) {
+						return; // The source root exists already.
+					}
+				}
+				newEntries.add(entry);
+			}
+			
+			IPathEntry newEntry= CoreModel.newSourceEntry(rootPath);
+			
+			Set<IPathEntry> modified= new HashSet<>();				
+			InternalCoreModelUtil.addExclusionPatterns(newEntry, newEntries, modified);
+			newEntries.add(CoreModel.newSourceEntry(rootPath));
+				
+			cproject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), null);
+		}
+	}
+
+	/**
 	 * Attempts to find an archive with the given name in the workspace
 	 */
 	public static IArchive findArchive(ICProject testProject, String name) throws CModelException {
@@ -353,8 +398,7 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Attempts to find a TranslationUnit with the given name in the workspace
-	 * @throws InterruptedException 
+	 * Attempts to find a TranslationUnit with the given name in the workspace.
 	 */
 	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) throws CModelException, InterruptedException {
 		for (int j = 0; j < 20; j++) {
@@ -376,7 +420,7 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Attempts to find an element with the given name in the workspace
+	 * Attempts to find an element with the given name in the workspace.
 	 */
 	public static ICElement findElement(ICProject testProject, String name) throws CModelException {
 		ICElement[] sourceRoots = testProject.getChildren();
@@ -414,7 +458,6 @@ public class CProjectHelper {
 		}
 	}
 
-	
 	public static void importSourcesFromPlugin(ICProject project, Bundle bundle, String sources) throws CoreException {
 		try {
 			String baseDir= FileLocator.toFileURL(FileLocator.find(bundle, new Path(sources), null)).getFile();
@@ -422,21 +465,18 @@ public class CProjectHelper {
 					new File(baseDir), FileSystemStructureProvider.INSTANCE, OVERWRITE_QUERY);
 			importOp.setCreateContainerStructure(false);
 			importOp.run(new NullProgressMonitor());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 		}
 	}
 
 	/**
-	 * @return the location of a newly created directory in temporary area.
-	 *    Note that cleanup should be done with {@link ResourceHelper#cleanUp()}.
-	 * @throws IOException
-	 * @throws CoreException 
+	 * Returns the location of a newly created directory in a temporary area.
+	 * Note that cleanup should be done with {@link ResourceHelper#cleanUp()}.
 	 */
 	public static File freshDir() throws IOException, CoreException {
 		IPath folderPath = ResourceHelper.createTemporaryFolder();
-		File folder = new File(folderPath.toOSString());
+		File folder = folderPath.toFile();
 		Assert.assertTrue(folder.exists());
 		Assert.assertTrue(folder.isDirectory());
 		Assert.assertTrue(folder.canWrite());

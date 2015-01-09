@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2009, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *     Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -39,27 +40,28 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @author Emanuel Graf IFS
  */
 public class RenameCSourceFolderChange extends Change {
-	private IPath oldName;
-	private IPath newName;
-	private IProject project;
-	private IFolder folder;
+	private final IPath oldFolderPath;
+	private final IPath newFolderPath;
+	private final IProject project;
+	private final IFolder oldFolder;
 
-	public RenameCSourceFolderChange(IPath oldFolderPath, IPath newFolderPath, IProject project, IFolder oldFolder) {
+	public RenameCSourceFolderChange(IFolder oldFolder, IPath newFolderPath) {
 		super();
-		this.oldName = oldFolderPath;
-		this.newName = newFolderPath;
-		this.project = project;
-		folder = oldFolder;
+		this.oldFolder = oldFolder;
+		this.newFolderPath = newFolderPath;
+		this.oldFolderPath = oldFolder.getFullPath();
+		this.project = oldFolder.getProject();
 	}
 
 	@Override
 	public Object getModifiedElement() {
-		return folder;
+		return oldFolder;
 	}
 
 	@Override
 	public String getName() {
-		return NLS.bind(RenameMessages.RenameCSourceFolderChange_Name0, oldName.lastSegment(), newName.lastSegment());
+		return NLS.bind(RenameMessages.RenameCSourceFolderChange_Name0,
+				oldFolderPath.lastSegment(), newFolderPath.lastSegment());
 	}
 
 	@Override
@@ -68,51 +70,56 @@ public class RenameCSourceFolderChange extends Change {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if (folder.exists()) {
+		if (oldFolder.exists()) {
 			return RefactoringStatus.create(Status.OK_STATUS); 
 		} else {
 			return RefactoringStatus.create(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
-					NLS.bind(RenameMessages.RenameCSourceFolderChange_ErrorMsg, folder.getName())));
+					NLS.bind(RenameMessages.RenameCSourceFolderChange_ErrorMsg, oldFolder.getName())));
 		}
 	}
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		changeEntryInAllCfgs(CCorePlugin.getDefault().getProjectDescription(project, true));
-		IFolder folder2 = project.getFolder(newName.lastSegment());
-		return new RenameCSourceFolderChange(newName, oldName, project, folder2);
+		IFolder newFolder = project.getFolder(newFolderPath.removeFirstSegments(1));
+		return new RenameCSourceFolderChange(newFolder, oldFolderPath);
 	}
 	
 	private void changeEntryInAllCfgs(ICProjectDescription des) throws WriteAccessException, CoreException {
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
 		for (ICConfigurationDescription cfg : cfgs) {
 			ICSourceEntry[] entries = cfg.getSourceEntries();
-			entries = renameEntry(entries);
+			entries = renameSourceEntries(entries);
 			cfg.setSourceEntries(entries);
 		}
 		CCorePlugin.getDefault().setProjectDescription(project, des, false, new NullProgressMonitor());
 	}
 	
-	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries) {
+	private ICSourceEntry[] renameSourceEntries(ICSourceEntry[] sourceEntries) {
 		Set<ICSourceEntry> set = new HashSet<>();
-		for (ICSourceEntry entry : entries) {
-			String entryPath = entry.getName();
-			if (entryPath.equals(oldName.toString())) {
-				set.add(new CSourceEntry(newName, entry.getExclusionPatterns(), entry.getFlags()));
-			} else {
-				IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() - 1);
-				Set<IPath> exclusionPatterns = new HashSet<>();
-				for (IPath pattern : entry.getExclusionPatterns()) {
-					if (pattern.equals(oldSegments)) {
-						exclusionPatterns.add(newName.removeFirstSegments(newName.segmentCount() - 1));
-					} else {
-						exclusionPatterns.add(pattern);
-					}
-				}
-				
-				set.add(new CSourceEntry(entry.getValue(), exclusionPatterns.toArray(new IPath[exclusionPatterns.size()]), entry.getFlags()));
-			}
+		for (ICSourceEntry entry : sourceEntries) {
+			set.add(renameSourceEntry(entry, oldFolderPath, newFolderPath));
 		}
 		return set.toArray(new ICSourceEntry[set.size()]);
+	}
+
+	static ICSourceEntry renameSourceEntry(ICSourceEntry sourceEntry, IPath oldFolderPath, IPath newFolderPath) {
+		String entryPath = sourceEntry.getName();
+		if (entryPath.equals(oldFolderPath.toString())) {
+			return new CSourceEntry(newFolderPath, sourceEntry.getExclusionPatterns(), sourceEntry.getFlags());
+		} else {
+			IPath oldSegments = oldFolderPath.removeFirstSegments(oldFolderPath.segmentCount() - 1);
+			Set<IPath> exclusionPatterns = new HashSet<>();
+			for (IPath pattern : sourceEntry.getExclusionPatterns()) {
+				if (pattern.equals(oldSegments)) {
+					exclusionPatterns.add(newFolderPath.removeFirstSegments(newFolderPath.segmentCount() - 1));
+				} else {
+					exclusionPatterns.add(pattern);
+				}
+			}
+			
+			return new CSourceEntry(sourceEntry.getValue(),
+					exclusionPatterns.toArray(new IPath[exclusionPatterns.size()]), sourceEntry.getFlags());
+		}
 	}
 }

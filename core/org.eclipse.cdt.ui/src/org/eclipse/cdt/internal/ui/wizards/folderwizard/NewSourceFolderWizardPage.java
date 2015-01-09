@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.ui.wizards.folderwizard;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFolder;
@@ -50,21 +49,15 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.settings.model.CSourceEntry;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.model.InternalCoreModelUtil;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -357,10 +350,10 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				
 				Set<IPathEntry> modified= new HashSet<>();				
 				if (fExcludeInOthersFields.isSelected()) {
-					addExclusionPatterns(newEntry, newEntries, modified);
+					InternalCoreModelUtil.addExclusionPatterns(newEntry, newEntries, modified);
 					newEntries.add(CoreModel.newSourceEntry(path));
 				} else {
-					if (projectEntryIndex != -1) {
+					if (projectEntryIndex >= 0) {
 						fIsProjectAsSourceFolder= true;
 						newEntries.set(projectEntryIndex, newEntry);
 					} else {
@@ -390,27 +383,6 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		}
 	}
 	
-	private static void addExclusionPatterns(IPathEntry newEntry, List<IPathEntry> existing, Set<IPathEntry> modifiedEntries) {
-		IPath entryPath= newEntry.getPath();
-		for (int i= 0; i < existing.size(); i++) {
-			IPathEntry curr= existing.get(i);
-			IPath currPath= curr.getPath();
-			if (curr.getEntryKind() == IPathEntry.CDT_SOURCE && currPath.isPrefixOf(entryPath)) {
-				IPath[] exclusionFilters= ((ISourceEntry) curr).getExclusionPatterns();
-				if (!CoreModelUtil.isExcludedPath(entryPath, exclusionFilters)) {
-					IPath pathToExclude= entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
-					IPath[] newExclusionFilters= new IPath[exclusionFilters.length + 1];
-					System.arraycopy(exclusionFilters, 0, newExclusionFilters, 0, exclusionFilters.length);
-					newExclusionFilters[exclusionFilters.length]= pathToExclude;
-					
-					IPathEntry updated= CoreModel.newSourceEntry(currPath, newExclusionFilters);
-					existing.set(i, updated);
-					modifiedEntries.add(updated);
-				}
-			}
-		}
-	}	
-	
 	// ---- creation ----------------
 	
 	public ISourceRoot getNewSourceRoot() {
@@ -429,7 +401,8 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 		try {
 			String relPath= fRootDialogField.getText();
 				
-			IFolder folder= fCurrCProject.getProject().getFolder(relPath);
+			IProject project = fCurrCProject.getProject();
+			IFolder folder= project.getFolder(relPath);
 			if (!folder.exists()) {
 				CoreUtility.createFolder(folder, true, true, new SubProgressMonitor(monitor, 1));			
 			}
@@ -437,11 +410,9 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 				throw new InterruptedException();
 			}
 			
-			if (CCorePlugin.getDefault().isNewStyleProject(fCurrCProject.getProject())) {
-				ICSourceEntry newEntry = new CSourceEntry(folder, null, 0); 
-				ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(fCurrCProject.getProject(), true);
-				addEntryToAllCfgs(des, newEntry, fIsProjectAsSourceFolder);
-				CCorePlugin.getDefault().setProjectDescription(fCurrCProject.getProject(), des, false, new SubProgressMonitor(monitor, 2));
+			if (CCorePlugin.getDefault().isNewStyleProject(project)) {
+				InternalCoreModelUtil.addSourceEntry(project, folder, fIsProjectAsSourceFolder,
+						new SubProgressMonitor(monitor, 2));
 			} else {
 				fCurrCProject.setRawPathEntries(fNewEntries, new SubProgressMonitor(monitor, 2));
 			}
@@ -451,28 +422,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 			monitor.done();
 		}
 	}
-	
-	private void addEntryToAllCfgs(ICProjectDescription des, ICSourceEntry entry, boolean removeProj)
-			throws WriteAccessException, CoreException{
-		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for (ICConfigurationDescription cfg : cfgs) {
-			ICSourceEntry[] entries = cfg.getSourceEntries();
-			entries = addEntry(entries, entry, removeProj);
-			cfg.setSourceEntries(entries);
-		}
-	}
-	
-	private ICSourceEntry[] addEntry(ICSourceEntry[] entries, ICSourceEntry sourceEntry, boolean removeProj) {
-		Set<ICSourceEntry> set = new HashSet<>();
-		for (ICSourceEntry entry : entries) {
-			if (removeProj && new Path(entry.getValue()).segmentCount() == 1)
-				continue;
-			set.add(entry);
-		}
-		set.add(sourceEntry);
-		return set.toArray(new ICSourceEntry[set.size()]);
-	}
-	
+
 	// ------------- choose dialogs
 	
 	private IFolder chooseFolder(String title, String message, IPath initialPath) {	

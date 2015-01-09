@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2009, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -41,10 +41,9 @@ public class SourceFolderRenameParticipant extends RenameParticipant {
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		IPath oldFolderPath = oldFolder.getFullPath();
 		String newName = getArguments().getNewName();		
-		IPath newFolderPath = oldFolderPath.removeLastSegments(1).append(newName);
-		return new RenameCSourceFolderChange(oldFolderPath, newFolderPath, oldFolder.getProject(), oldFolder);
+		IPath newFolderPath = oldFolder.getFullPath().removeLastSegments(1).append(newName);
+		return new RenameCSourceFolderChange(oldFolder, newFolderPath);
 	}
 
 	@Override

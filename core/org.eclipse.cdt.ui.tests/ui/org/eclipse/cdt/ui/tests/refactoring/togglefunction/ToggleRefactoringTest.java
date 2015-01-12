@@ -2863,4 +2863,24 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testImplToHeaderTopCommentWithoutDeclaration() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//#define MACRO 1
+	//int /*$*/freefunction/*$$*/() {
+	//	return MACRO;
+	//}
+	//====================
+	//#define MACRO 1
+	//int freefunction();
+
+	//A.cpp
+	//====================
+	//#include "A.h"
+	//
+	//int freefunction() {
+	//	return MACRO;
+	//}
+	public void testFunctionWithMacroReference_399215() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

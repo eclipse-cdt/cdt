@@ -161,8 +161,9 @@ public abstract class ASTNode implements IASTNode {
     }
 
     protected char[] getRawSignatureChars() {
-    	final IASTFileLocation floc= getFileLocation();
-        final IASTTranslationUnit ast = getTranslationUnit();
+    	final IASTNode originalNode = getOriginalNode();
+    	final IASTFileLocation floc= originalNode.getFileLocation();
+        final IASTTranslationUnit ast = originalNode.getTranslationUnit();
         if (floc != null && ast != null) {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
         	if (lr != null) {

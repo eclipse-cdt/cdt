@@ -12,6 +12,12 @@
 # Stop the script if any command fails
 set -e
 
+# Make sure getopt is the command and not the bash built-in
+if [[ `getopt --version` != *"getopt"* ]]; then
+  echo "getopt command not found."
+  exit 1
+fi
+
 # Our work directory
 default_base_dir="$HOME/gdb-all"
 base_dir="${default_base_dir}"
@@ -146,8 +152,10 @@ function fixup_gdb() {
       ${dryrun} find "${build}/gdb" -type f -exec sed -i -e 's/struct siginfo/siginfo_t/g' {} \;
       ;;
   esac
-}
 
+  # Fix wrong include on Mac
+  ${dryrun} find "${build}" -name "darwin-nat.c" -type f -exec sed -i -e "s/machine\/setjmp.h/setjmp.h/g" {} \;
+}
 
 # Run ./configure.
 #

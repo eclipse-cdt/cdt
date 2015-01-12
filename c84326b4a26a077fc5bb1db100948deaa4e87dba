@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_e9a233f5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T20:32:32Z",
+      "side": 1,
+      "message": "The quotes around the content of ${cflags} won\u0027t be shown in this case.  This was what was happening before this dry-run case was split in two anyway. I think having a single line to change is more future proof.",
+      "revId": "c84326b4a26a077fc5bb1db100948deaa4e87dba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_ef65183a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T01:57:19Z",
+      "side": 1,
+      "message": "People probably won\u0027t specify this flag, more often than not.  Wouldn\u0027t it be nicer to make it 4 as it was before, to save them time?",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_4f5a4c7c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T01:57:19Z",
+      "side": 1,
+      "message": "Nice idea",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_0f61742d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T01:57:19Z",
+      "side": 1,
+      "message": "The above line is not written right",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_2f571053",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T01:57:19Z",
+      "side": 1,
+      "message": "You can specify what the default value is, whatever you decide in the end.",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_6f51085a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T01:57:19Z",
+      "side": 1,
+      "message": "I haven\u0027t tried it but isn\u0027t there a risk that some code in $build would need these changes?  After all we are building that entire directory.",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_8f54644d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-12T01:57:19Z",
+      "side": 1,
+      "message": "How about finishing by printing a one-liner telling the user what has been done?e.g.,\n\n\"GDB versions 7.6.2, 7.8.1 have been built in /home/user/gdb-all/bin.  You can add this directory to your $PATH variable to access them easily.\"",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

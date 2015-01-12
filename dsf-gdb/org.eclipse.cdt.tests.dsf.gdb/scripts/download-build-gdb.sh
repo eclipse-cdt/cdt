@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# * Copyright (c) 2014 Ericsson and others.
+# * Copyright (c) 2015 Ericsson and others.
 # * All rights reserved. This program and the accompanying materials
 # * are made available under the terms of the Eclipse Public License v1.0
 # * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ base_dir="${default_base_dir}"
 default_jlevel="4"
 jlevel="${default_jlevel}"
 
-# Default versions (for when "all" is used)
+# Supported versions
 default_versions="6.6 6.7.1 6.8 7.0.1 7.1 7.2 7.3.1 7.4.1 7.5.1 7.6.2 7.7.1 7.8.1"
 
 # Is set to "echo" if we are doing a dry-run.
@@ -66,8 +66,11 @@ function echo_header() {
 #
 # $1: version number
 function check_supported() {
-  case "$version" in
-    "6.6"|"6.7.1"|"6.8"|"7.0.1"|"7.1"|"7.2"|"7.3.1"|"7.4.1"|"7.5.1"|"7.6.2"|"7.7.1"|"7.8.1")
+  local supported_pattern="@(${default_versions// /|})"
+
+  shopt -s extglob
+  case "$version" in 
+    ${supported_pattern})
       # Supported, do nothing.
       ;;
     *)
@@ -154,6 +157,7 @@ function configure_gdb() {
 
   local build="${build_dir}/gdb-${version}"
   local cflags="-Wno-error -g -O0"
+  local command=
 
   echo_header "Configuring in ${build}"
 
@@ -169,10 +173,11 @@ function configure_gdb() {
   cflags="${cflags} ${CFLAGS}"
 
   # The ${dryrun} trick doesn't work here, because of the env var.
+  command='CFLAGS="${cflags}" ./configure --prefix="${install_dir}/gdb-${version}"'
   if [ -z "${dryrun}" ]; then
-    CFLAGS="${cflags}" ./configure --prefix="${install_dir}/gdb-${version}"
+    eval ${command}
   else
-    ${dryrun} CFLAGS="\"${cflags}\"" ./configure --prefix="${install_dir}/gdb-${version}"
+    eval ${dryrun} ${command}
   fi
 
   ${dryrun} popd

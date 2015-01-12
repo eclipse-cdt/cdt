@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_aab66e23",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T02:48:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8761b321_ef65183a",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_4f5a4c7c",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 8
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_0abcc203",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T02:48:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8761b321_0f61742d",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_2f571053",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 8
@@ -64,6 +100,24 @@
       "writtenOn": "2015-01-12T01:57:19Z",
       "side": 1,
       "message": "You can specify what the default value is, whatever you decide in the end.",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_eac06676",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T02:48:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8761b321_2f571053",
       "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_4ac51a83",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T02:48:44Z",
+      "side": 1,
+      "message": "I grepped for these and they are only found in the gdb subdirectory. I changed it to cut down the time a bit on this step. We could even target the specific files that we know they contain it. It\u0027s not like it can change.",
+      "parentUuid": "8761b321_6f51085a",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_8f54644d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 8
@@ -98,6 +170,24 @@
       "writtenOn": "2015-01-12T01:57:19Z",
       "side": 1,
       "message": "How about finishing by printing a one-liner telling the user what has been done?e.g.,\n\n\"GDB versions 7.6.2, 7.8.1 have been built in /home/user/gdb-all/bin.  You can add this directory to your $PATH variable to access them easily.\"",
+      "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_6acc56ae",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T02:48:44Z",
+      "side": 1,
+      "message": "Good idea. Done.",
+      "parentUuid": "8761b321_8f54644d",
       "revId": "df154a429ecf4e3581d3165d250f400388bcb847",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

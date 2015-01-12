@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8761b321_0c369d6d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T23:47:53Z",
+      "side": 1,
+      "message": "If we need to, we could use the bash built-in. Is there some cases where it\u0027s not available?",
+      "revId": "e4f0770e8c2e5ce752e68efc99cadd69add5756d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8761b321_6c2bd107",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-12T23:47:53Z",
+      "side": 1,
+      "message": "It would be simpler to always change it. It won\u0027t hurt when you are not on Mac.",
+      "revId": "e4f0770e8c2e5ce752e68efc99cadd69add5756d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

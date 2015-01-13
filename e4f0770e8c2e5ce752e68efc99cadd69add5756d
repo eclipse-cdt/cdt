@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8761b321_2f2b8bba",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-01-13T03:39:16Z",
+      "side": 1,
+      "message": "built-in doesn\u0027t support -l (longoptions). I think it\u0027s OK to use the command, that way we don\u0027t cripple the script because of Mac. It\u0027s pretty easy to install anyway.",
+      "parentUuid": "8761b321_0c369d6d",
+      "revId": "e4f0770e8c2e5ce752e68efc99cadd69add5756d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8761b321_6c2bd107",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/scripts/download-build-gdb.sh",
         "patchSetId": 1

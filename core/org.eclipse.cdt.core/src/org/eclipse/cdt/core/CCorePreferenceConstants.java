@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,6 +235,22 @@ public class CCorePreferenceConstants {
 	public static final String INCLUDE_PRIVATE_PATTERN = "includes.privatePattern"; //$NON-NLS-1$
 
 	/**
+	 * Default value for {@link #INCLUDE_KEEP_PATTERN}.
+	 * @since 5.9
+	 */
+	public static final String DEFAULT_INCLUDE_KEEP_PATTERN = "IWYU\\s+(pragma:?\\s+)?keep"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key for the regular expression pattern that, when appears in a comment on the same
+	 * line as include statement, indicates that the include statement should be preserved when
+	 * organizing includes.
+	 * @see "https://code.google.com/p/include-what-you-use/wiki/IWYUPragmas"
+	 *
+	 * @since 5.9
+	 */
+	public static final String INCLUDE_KEEP_PATTERN = "includes.keepPattern"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether the parser should skip trivial expressions in initializer lists.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -301,17 +317,31 @@ public class CCorePreferenceConstants {
 
     /**
      * Returns the node in the preference in the given context.
+     *
+     * @param key The preference key.
+     * @param cProject The current context or {@code null} if no context is available and
+     *     the workspace setting should be taken. Note that passing {@code null} should
+     *     be avoided.
+     * @return Returns the node matching the given context.
+     */
+	private static IEclipsePreferences getPreferenceNode(String key, ICProject cProject) {
+		IProject project = cProject == null ? null : cProject.getProject();
+		return getPreferenceNode(key, project);
+	}
+
+    /**
+     * Returns the node in the preference in the given context.
+     *
      * @param key The preference key.
      * @param project The current context or {@code null} if no context is available and
      *     the workspace setting should be taken. Note that passing {@code null} should
      *     be avoided.
      * @return Returns the node matching the given context.
      */
-	private static IEclipsePreferences getPreferenceNode(String key, ICProject project) {
+	private static IEclipsePreferences getPreferenceNode(String key, IProject project) {
 		IEclipsePreferences node = null;
-
 		if (project != null) {
-			node = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
+			node = new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID);
 			if (node.get(key, null) != null) {
 				return node;
 			}
@@ -331,6 +361,7 @@ public class CCorePreferenceConstants {
 
 	/**
 	 * Returns the string value for the given key in the given context.
+	 *
 	 * @param key The preference key
 	 * @param project The current context or {@code null} if no context is available and
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
@@ -343,6 +374,20 @@ public class CCorePreferenceConstants {
 
 	/**
 	 * Returns the string value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @return Returns the current value for the string.
+	 * @since 5.9
+	 */
+	public static String getPreference(String key, IProject project) {
+		return getPreference(key, project, null);
+	}
+
+	/**
+	 * Returns the string value for the given key in the given context.
+	 *
 	 * @param key The preference key
 	 * @param project The current context or {@code null} if no context is available and
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
@@ -355,7 +400,22 @@ public class CCorePreferenceConstants {
 	}
 
 	/**
+	 * Returns the string value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.9
+	 */
+	public static String getPreference(String key, IProject project, String defaultValue) {
+		return getPreferenceNode(key, project).get(key, defaultValue);
+	}
+
+	/**
 	 * Returns the integer value for the given key in the given context.
+	 *
 	 * @param key The preference key
 	 * @param project The current context or {@code null} if no context is available and
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
@@ -368,7 +428,22 @@ public class CCorePreferenceConstants {
 	}
 
 	/**
+	 * Returns the integer value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.9
+	 */
+	public static int getPreference(String key, IProject project, int defaultValue) {
+		return getPreferenceNode(key, project).getInt(key, defaultValue);
+	}
+
+	/**
 	 * Returns the boolean value for the given key in the given context.
+	 *
 	 * @param key The preference key
 	 * @param project The current context or {@code null} if no context is available and
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
@@ -377,6 +452,20 @@ public class CCorePreferenceConstants {
 	 * @since 5.5
 	 */
 	public static boolean getPreference(String key, ICProject project, boolean defaultValue) {
+		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
+	}
+
+	/**
+	 * Returns the boolean value for the given key in the given context.
+	 *
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.9
+	 */
+	public static boolean getPreference(String key, IProject project, boolean defaultValue) {
 		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
 	}
 

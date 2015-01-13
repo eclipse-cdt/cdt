@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Google, Inc and others.
+ * Copyright (c) 2013, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,12 +45,14 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 	private static final Key KEY_BEGIN_EXPORTS_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_BEGIN_EXPORTS_PATTERN);
 	private static final Key KEY_END_EXPORTS_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_END_EXPORTS_PATTERN);
 	private static final Key KEY_PRIVATE_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_PRIVATE_PATTERN);
+	private static final Key KEY_KEEP_PATTERN = getCDTCoreKey(CCorePreferenceConstants.INCLUDE_KEEP_PATTERN);
 
 	private static Key[] ALL_KEYS = {
 		KEY_EXPORT_PATTERN,
 		KEY_BEGIN_EXPORTS_PATTERN,
 		KEY_END_EXPORTS_PATTERN,
 		KEY_PRIVATE_PATTERN,
+		KEY_KEEP_PATTERN,
 	};
 	private PixelConverter pixelConverter;
 
@@ -83,8 +85,11 @@ public class IncludePragmasBlock extends OptionsConfigurationBlock {
 		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_end_exports_pattern,
 				KEY_END_EXPORTS_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
 		LayoutUtil.setHorizontalGrabbing(control, true);
-		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_end_exports_pattern,
+		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_private_pattern,
 				KEY_PRIVATE_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
+		LayoutUtil.setHorizontalGrabbing(control, true);
+		control = addTextField(composite, PreferencesMessages.IncludePragmasBlock_keep_pattern,
+				KEY_KEEP_PATTERN, 0, pixelConverter.convertWidthInCharsToPixels(40));
 		LayoutUtil.setHorizontalGrabbing(control, true);
 
 		updateControls();

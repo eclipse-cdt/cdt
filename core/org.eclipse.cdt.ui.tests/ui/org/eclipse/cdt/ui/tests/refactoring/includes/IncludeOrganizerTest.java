@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Google, Inc and others.
+ * Copyright (c) 2013, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -425,6 +425,23 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 				new IncludeMap(false));
 		getPreferenceStore().setValue(PreferenceConstants.INCLUDES_HEADER_SUBSTITUTION,
 				HeaderSubstitutionMap.serializeMaps(Collections.singletonList(headerMap)));
+		assertExpectedResults();
+	}
+
+	//h1.h
+
+	//h2.h
+
+	//h3.h
+
+	//source.cpp
+	//#include "h1.h"
+	//#include "h2.h"  //  IWYU pragma: keep
+	//#include "h3.h"  /*   IWYU pragma: keep   */
+	//====================
+	//#include "h2.h"  //  IWYU pragma: keep
+	//#include "h3.h"  /*   IWYU pragma: keep   */
+	public void testPragmaKeep() throws Exception {
 		assertExpectedResults();
 	}
 

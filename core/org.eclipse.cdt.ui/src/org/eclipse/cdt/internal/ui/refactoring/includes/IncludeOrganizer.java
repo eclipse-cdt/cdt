@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2012, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,9 +107,9 @@ public class IncludeOrganizer {
 		 * {@code null} if the include was not resolved.
 		 */
 		IncludePrototype(IPath header, IncludeInfo includeInfo,	IncludeGroupStyle style,
-				IASTPreprocessorIncludeStatement existingInclude) {
+				IASTPreprocessorIncludeStatement existingInclude, boolean required) {
 			super(header, includeInfo, style, existingInclude);
-			this.required = false;
+			this.required = required;
 		}
 
 		public boolean isRequired() {
@@ -195,6 +195,8 @@ public class IncludeOrganizer {
 		List<InclusionRequest> requests = createInclusionRequests(ast, bindingsToInclude, false, reachableHeaders);
 		processInclusionRequests(requests, headerSubstitutor);
 
+		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
+
 		// Use a map instead of a set to be able to retrieve existing elements using equal elements.
 		// Maps each element to itself. 
 		Map<IncludePrototype, IncludePrototype> includePrototypes = new HashMap<>();
@@ -215,12 +217,12 @@ public class IncludeOrganizer {
 				IPath header = path.isEmpty() ? null : Path.fromOSString(path);
 				IncludeGroupStyle style =
 						header != null ? fContext.getIncludeStyle(header) : fContext.getIncludeStyle(includeInfo);
-				IncludePrototype prototype = new IncludePrototype(header, includeInfo, style, include);
+				boolean required = hasPragmaKeep(include, commentedNodeMap);
+				IncludePrototype prototype = new IncludePrototype(header, includeInfo, style, include, required);
 				updateIncludePrototypes(includePrototypes, prototype);
 			}
 		}
 
-		NodeCommentMap commentedNodeMap = ASTCommenter.getCommentedNodeMap(ast);
 		IRegion includeReplacementRegion =
 				IncludeUtil.getSafeIncludeReplacementRegion(fContext.getSourceContents(), ast, commentedNodeMap);
 		
@@ -933,5 +935,32 @@ public class IncludeOrganizer {
 		buf.append(include.getIncludeInfo().composeIncludeStatement());
 		buf.append(lineComment);
 		return buf.toString();
+	}
+
+	private boolean hasPragmaKeep(IASTPreprocessorIncludeStatement include, NodeCommentMap commentedNodeMap) {
+		List<IASTComment> comments = commentedNodeMap.getTrailingCommentsForNode(include);
+		for (IASTComment comment : comments) {
+			String text = getTrimmedCommentText(comment);
+			if (fContext.getKeepPragmaPattern().matcher(text).matches())
+				return true;
+		}
+		return false;
+	}
+	
+	private String getTrimmedCommentText(IASTComment comment) {
+		char[] text = comment.getComment();
+		int end = text.length - (comment.isBlockComment() ? 2 : 0);
+		int begin;
+		for (begin = 2; begin < end; begin++) {
+			if (!Character.isWhitespace(text[begin]))
+				break;
+		}
+		if (end <= begin)
+			return ""; //$NON-NLS-1$
+		while (--end >= begin) {
+			if (!Character.isWhitespace(text[end]))
+				break;
+		}
+		return new String(text, begin, end + 1 - begin);
 	}
 }

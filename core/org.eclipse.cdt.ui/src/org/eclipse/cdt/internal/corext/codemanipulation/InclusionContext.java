@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Google, Inc and others.
+ * Copyright (c) 2013, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,15 @@ package org.eclipse.cdt.internal.corext.codemanipulation;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -48,6 +51,7 @@ public class InclusionContext {
 	private final IncludePreferences fPreferences;
 	private String fSourceContents;
 	private String fLineDelimiter;
+	private Pattern fKeepPragmaPattern;
 	private IPath fTuLocation;
 
 	public InclusionContext(ITranslationUnit tu) {
@@ -293,6 +297,20 @@ public class InclusionContext {
 			}
 		}
 		return fLineDelimiter;
+	}
+
+	public Pattern getKeepPragmaPattern() {
+		if (fKeepPragmaPattern == null) {
+			String keepPattern = CCorePreferenceConstants.getPreference(
+					CCorePreferenceConstants.INCLUDE_KEEP_PATTERN, fProject,
+					CCorePreferenceConstants.DEFAULT_INCLUDE_KEEP_PATTERN);
+			try {
+				fKeepPragmaPattern = Pattern.compile(keepPattern);
+			} catch (PatternSyntaxException e) {
+				fKeepPragmaPattern = Pattern.compile(CCorePreferenceConstants.DEFAULT_INCLUDE_KEEP_PATTERN);
+			}
+		}
+		return fKeepPragmaPattern;
 	}
 
 	/**

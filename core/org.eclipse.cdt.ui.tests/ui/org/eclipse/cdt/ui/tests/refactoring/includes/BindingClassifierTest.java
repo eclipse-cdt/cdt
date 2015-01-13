@@ -361,6 +361,16 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		assertDeclared();
 	}
 
+	//	namespace ns {
+	//	class A {};
+	//	}
+
+	//	using ns::A;
+	public void testUsingDeclaration() throws Exception {
+		assertDefined();
+		assertDeclared("A");
+	}
+
 	//	struct A {
 	//	  A(const char* s);
 	//	};

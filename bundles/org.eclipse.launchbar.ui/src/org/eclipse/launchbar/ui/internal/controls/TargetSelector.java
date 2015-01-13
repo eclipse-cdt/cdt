@@ -184,7 +184,7 @@ public class TargetSelector extends CSelector {
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = buttonLayout.marginHeight = 7;
 		createButton.setLayout(buttonLayout);
-		createButton.setBackground(white);
+		createButton.setBackground(backgroundColor);
 		createButton.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -198,7 +198,7 @@ public class TargetSelector extends CSelector {
 		final Label createLabel = new Label(createButton, SWT.None);
 		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createLabel.setText("Create New Target...");
-		createLabel.setBackground(white);
+		createLabel.setBackground(backgroundColor);
 
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {

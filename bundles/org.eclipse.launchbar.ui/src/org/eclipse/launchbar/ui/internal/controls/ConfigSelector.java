@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.controls;
 
-import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +25,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -79,27 +77,13 @@ public class ConfigSelector extends CSelector {
 			@Override
 			public void dispose() {
 			}
+
 			@Override
 			public Object[] getElements(Object inputElement) {
 				ILaunchDescriptor[] descs = uiManager.getManager().getLaunchDescriptors();
-				if (descs.length > 0) {
-					int separatorIndex = getSeparatorIndex();
-					if (descs.length > separatorIndex + 1) {
-						ILaunchDescriptor[] descsCopy = new ILaunchDescriptor[separatorIndex + descs.length];
-						System.arraycopy(descs, 0, descsCopy, 0, separatorIndex); // copy first 3 elements
-						System.arraycopy(descs, 0, descsCopy, separatorIndex, descs.length); // copy all into rest
-						// sort rest
-						Arrays.sort(descsCopy, separatorIndex, descsCopy.length, new Comparator<ILaunchDescriptor>() {
-							@Override
-							public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
-								return o1.getName().compareTo(o2.getName());
-							}
-						});
-						return descsCopy;
-					} else
-						return descs;
-				}
-				return noConfigs;
+				if (descs.length == 0)
+					return noConfigs;
+				return descs;
 			}
 		});
 
@@ -141,13 +125,23 @@ public class ConfigSelector extends CSelector {
 				return defaultProvider.getText(element);
 			}
 		});
-		// no sorter on view, data is sorted by provider
-		setSorter(null);
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		int separator = store.getInt(Activator.PREF_LAUNCH_HISTORY_SIZE);
-		if (separator <= 0)
-			separator = 1;
-		setSeparatorIndex(separator);
+		// no sorter for top, data is sorted by provider in historical order
+		setHistorySortComparator(null);
+		// alphabetic sorter
+		setSorter(new Comparator<ILaunchDescriptor>() {
+			@Override
+			public int compare(ILaunchDescriptor o1, ILaunchDescriptor o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+
+	}
+
+	@Override
+	protected void initializeListViewer(LaunchBarListViewer listViewer) {
+		listViewer.setHistorySupported(true);
+		listViewer.setHistoryPreferenceName(Activator.PREF_LAUNCH_HISTORY_SIZE);
+		super.initializeListViewer(listViewer);
 	}
 
 	@Override
@@ -162,17 +156,7 @@ public class ConfigSelector extends CSelector {
 			}
 		}
 	}
-	
-	@Override
-	public void setSeparatorIndex(int separatorIndex) {
-		super.setSeparatorIndex(separatorIndex);
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		int separator = store.getInt(Activator.PREF_LAUNCH_HISTORY_SIZE);
-		if (separator != getSeparatorIndex()) {
-			store.setValue(Activator.PREF_LAUNCH_HISTORY_SIZE, getSeparatorIndex());
-		}
-	}
-	
+
 	@Override
 	public boolean isEditable(Object element) {
 		return element instanceof ILaunchDescriptor;
@@ -233,7 +217,7 @@ public class ConfigSelector extends CSelector {
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = buttonLayout.marginHeight = 7;
 		createButton.setLayout(buttonLayout);
-		createButton.setBackground(white);
+		createButton.setBackground(backgroundColor);
 		createButton.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -247,7 +231,7 @@ public class ConfigSelector extends CSelector {
 		final Label createLabel = new Label(createButton, SWT.None);
 		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		createLabel.setText("Create New Configuration...");
-		createLabel.setBackground(white);
+		createLabel.setBackground(backgroundColor);
 
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
@@ -281,8 +265,8 @@ public class ConfigSelector extends CSelector {
 			}
 			@Override
 			public void mouseExit(MouseEvent e) {
-				createButton.setBackground(white);
-				createLabel.setBackground(white);
+				createButton.setBackground(backgroundColor);
+				createLabel.setBackground(backgroundColor);
 			}
 		};
 		createButton.addMouseTrackListener(mouseTrackListener);

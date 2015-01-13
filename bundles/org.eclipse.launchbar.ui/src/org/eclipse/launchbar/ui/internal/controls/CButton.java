@@ -10,25 +10,27 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.controls;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TypedListener;
 
 public class CButton extends Canvas {
-
 	private boolean inButton;
 	private Image hotImage;
 	private Image coldImage;
-	
+
 	public CButton(Composite parent, int style) {
 		super(parent, style);
-		
 		addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -47,17 +49,28 @@ public class CButton extends Canvas {
 				}
 			}
 		});
-		
 		addMouseTrackListener(new MouseTrackAdapter() {
 			@Override
 			public void mouseEnter(MouseEvent e) {
-				inButton = true;
-				redraw();
+				setSelected(true);
 			}
+
 			@Override
 			public void mouseExit(MouseEvent e) {
-				inButton = false;
-				redraw();
+				setSelected(false);
+			}
+		});
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				setSelected(true);
+				handleSelection(inButton);
+			}
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				setSelected(true);
+				handleDefaultSelection(inButton);
 			}
 		});
 	}
@@ -65,14 +78,12 @@ public class CButton extends Canvas {
 	@Override
 	public void dispose() {
 		super.dispose();
-
 		if (hotImage != null)
 			hotImage.dispose();
-
 		if (coldImage != null)
 			coldImage.dispose();
 	}
-	
+
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int width = 0;
@@ -91,7 +102,7 @@ public class CButton extends Canvas {
 		}
 		return new Point(width, height);
 	}
-	
+
 	public void setHotImage(Image image) {
 		this.hotImage = image;
 	}
@@ -100,4 +111,29 @@ public class CButton extends Canvas {
 		this.coldImage = image;
 	}
 
+	protected void handleSelection(boolean selection) {
+		// Send event
+		notifyListeners(SWT.Selection, null);
+	}
+
+	protected void handleDefaultSelection(boolean selection) {
+		// Send event
+		notifyListeners(SWT.DefaultSelection, null);
+	}
+
+	public void addSelectionListener(SelectionListener listener) {
+		checkWidget();
+		TypedListener typedListener = new TypedListener(listener);
+		addListener(SWT.Selection, typedListener);
+		addListener(SWT.DefaultSelection, typedListener);
+	}
+
+	public void setSelected(boolean sel) {
+		inButton = sel;
+		redraw();
+	}
+
+	public boolean isSelected() {
+		return inButton;
+	}
 }

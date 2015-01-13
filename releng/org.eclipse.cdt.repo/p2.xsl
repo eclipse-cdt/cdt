@@ -16,7 +16,7 @@
 		</properties>
 	</xsl:template>
 
-	<!-- add p2.mirrorsURL property -->
+	<!-- add download.stats property to every CDT feature -->
 	<xsl:template match="repository/artifacts/artifact/properties[../@classifier='org.eclipse.update.feature']">
 		<properties size='{@size+1}'>
 			<xsl:copy-of select="property"/>
@@ -28,6 +28,13 @@
 	<xsl:template match="* | @*">
 		<xsl:copy>
 			<xsl:copy-of select="@*"/>
+			<xsl:apply-templates/>
+		</xsl:copy>
+	</xsl:template>
+
+	<!-- also copy every processing instruction -->
+	<xsl:template match="processing-instruction()">
+		<xsl:copy>
 			<xsl:apply-templates/>
 		</xsl:copy>
 	</xsl:template>

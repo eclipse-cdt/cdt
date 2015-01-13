@@ -48,21 +48,27 @@
 			<url>http://download.eclipse.org/cbi/updates/license/</url>
 			<layout>p2</layout>
 		</repository>
+		<repository>
+			<id>orbit</id>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/S20141129202728/repository/</url>
+			<layout>p2</layout>
+		</repository>
 	</repositories>
 
 	<modules>
 		<module>bundles/org.eclipse.launchbar.core</module>
 		<module>bundles/org.eclipse.launchbar.ui</module>
 		<module>features/org.eclipse.launchbar</module>
+		<module>tests/org.eclipse.launchbar.core.tests</module>
 		<module>repo</module>
 	</modules>
 
 	<pluginRepositories>
-   		<pluginRepository>
+		<pluginRepository>
 			<id>cbi</id>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
-  	</pluginRepositories>
+	</pluginRepositories>
 	<profiles>
 		<profile>
 			<id>cdtRepo</id>
@@ -325,43 +331,44 @@
 					</executions>
 				</plugin>
 				<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho-extras-version}</version>
-				<configuration>
-					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile customBuildCallbacks.xml build.index</appArgLine>
-					<dependencies>
-						<dependency>
-							<artifactId>org.apache.ant</artifactId>
-							<type>eclipse-plugin</type>
-						</dependency>
-						<dependency>
-							<artifactId>org.eclipse.help.base</artifactId>
-							<type>eclipse-plugin</type>
-						</dependency>
-						<dependency>
-							<artifactId>org.eclipse.ant.core</artifactId>
-							<type>eclipse-plugin</type>
-						</dependency>
-					</dependencies>
-					<!-- This needs to be explicitely set now, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395281 -->
-					<repositories>
-						<repository>
-							<id>platform</id>
-							<layout>p2</layout>
-							<url>${help-docs-eclipserun-repo}</url>
-						</repository>
-					</repositories>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>eclipse-run</goal>
-						</goals>
-						<phase>compile</phase>
-					</execution>
-				</executions>
-			</plugin>
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-eclipserun-plugin</artifactId>
+					<version>${tycho-extras-version}</version>
+					<configuration>
+						<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile
+							customBuildCallbacks.xml build.index</appArgLine>
+						<dependencies>
+							<dependency>
+								<artifactId>org.apache.ant</artifactId>
+								<type>eclipse-plugin</type>
+							</dependency>
+							<dependency>
+								<artifactId>org.eclipse.help.base</artifactId>
+								<type>eclipse-plugin</type>
+							</dependency>
+							<dependency>
+								<artifactId>org.eclipse.ant.core</artifactId>
+								<type>eclipse-plugin</type>
+							</dependency>
+						</dependencies>
+						<!-- This needs to be explicitely set now, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395281 -->
+						<repositories>
+							<repository>
+								<id>platform</id>
+								<layout>p2</layout>
+								<url>${help-docs-eclipserun-repo}</url>
+							</repository>
+						</repositories>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>eclipse-run</goal>
+							</goals>
+							<phase>compile</phase>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

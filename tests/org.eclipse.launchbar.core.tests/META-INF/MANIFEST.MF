@@ -8,9 +8,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit;bundle-version="4.11.0",
  org.mockito,
  org.eclipse.launchbar.core;bundle-version="1.0.0",
- org.eclipse.debug.core,
- org.eclipse.core.filesystem,
- org.hamcrest.core
+ org.eclipse.debug.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.launchbar.core.tests

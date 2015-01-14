@@ -67,17 +67,26 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	private static final String LAUNCHING_PREFERENCE_PAGE_ID = "org.eclipse.debug.ui.LaunchingPreferencePage"; //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	protected String filterPlatform = EMPTY_STRING;
+	/**
+	 * @since 7.1
+	 */
+	protected static final String AUTO_CONFIG = "AUTO"; //$NON-NLS-1$
 
 	/**
 	 * @since 6.0
 	 */
 	protected Combo fBuildConfigCombo;
-	/** @since 7.0*/
+	/**
+	 * @since 7.0
+	 * @deprecated This control won't be used anymore, selection will have addition selection: Automatic
+	 * */
 	protected Button fBuildConfigAuto;
 	/**
-	 * Indicates whether the user has clicked on the build config auto button
-	 * Prevents causing a delta to the underlying launch configuration if the user hasn't touched this setting.
+	 * Indicates whether the user has clicked on the build config auto button Prevents causing a delta to the underlying launch
+	 * configuration if the user hasn't touched this setting.
+	 * 
 	 * @since 7.0
+	 * @deprecated
 	 */
 	protected boolean fBuildConfigAutoChanged;
 	/** @since 6.1 */
@@ -265,36 +274,37 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	protected void updateBuildConfigCombo(String selectedConfigID) {
 		if (fBuildConfigCombo != null) {
-			fBuildConfigCombo.setEnabled(!fBuildConfigAuto.getSelection());
 			fBuildConfigCombo.removeAll();
+			int offset = 0;
 			fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Active); 
-			fBuildConfigCombo.setData("0", EMPTY_STRING); //$NON-NLS-1$
-			fBuildConfigCombo.select(0);
+			fBuildConfigCombo.setData(String.valueOf(offset), EMPTY_STRING);
+			fBuildConfigCombo.select(offset);
+			offset++;
+			if (isAutoConfigSupported()) {
+				fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Automatic);
+				fBuildConfigCombo.setData(String.valueOf(offset), AUTO_CONFIG);
+				if (selectedConfigID.equals(AUTO_CONFIG)) {
+					fBuildConfigCombo.select(offset);
+				}
+			}
+			offset++;
 			ICProject cproject = getCProject();
 			if (cproject != null) {
 				ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(cproject.getProject());
 				if (projDes != null) {
-					// Find the config that should be automatically selected
-					String autoConfigId = null;
-					if (fBuildConfigAuto.getSelection()) {
-						ICConfigurationDescription autoConfig = LaunchUtils.getBuildConfigByProgramPath(cproject.getProject(), fProgText.getText());
-						if (autoConfig != null)
-							autoConfigId = autoConfig.getId();
-					}
-
-					int selIndex = 0;
+					// Populate and select config
 					ICConfigurationDescription[] configurations = projDes.getConfigurations();
 					ICConfigurationDescription selectedConfig = projDes.getConfigurationById(selectedConfigID);
 					for (int i = 0; i < configurations.length; i++) {
 						String configName = configurations[i].getName();
+						String id = configurations[i].getId();
 						fBuildConfigCombo.add(configName);
-						fBuildConfigCombo.setData(Integer.toString(i + 1), configurations[i].getId());
-						if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()) ||
-							fBuildConfigAuto.getSelection() && configurations[i].getId().equals(autoConfigId)) {
-							selIndex = i + 1;
+						int comboIndex = i + offset;
+						fBuildConfigCombo.setData(String.valueOf(comboIndex), id);
+						if (id.equals(selectedConfigID)) {
+							fBuildConfigCombo.select(comboIndex);
 						}
 					}
-					fBuildConfigCombo.select(selIndex);
 				}
 			}
 		}	
@@ -326,27 +336,13 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		    }
 		});
 
-		new Label(comboComp, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		fBuildConfigAuto = new Button(comboComp, SWT.CHECK);
-		fBuildConfigAuto.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+		gd1.heightHint = 0;
+		gd1.horizontalSpan = 2;
+		fBuildConfigAuto.setLayoutData(gd1);
+		fBuildConfigAuto.setVisible(false);
 		fBuildConfigAuto.setText(LaunchMessages.CMainTab_Build_Config_Auto); 
-		fBuildConfigAuto.addSelectionListener(new SelectionListener() {
-		    @Override
-			public void widgetSelected(SelectionEvent e) {
-		    	fBuildConfigAutoChanged = true;
-		    	fBuildConfigCombo.setEnabled(false);
-		    	updateBuildConfigCombo(EMPTY_STRING);
-		    	updateLaunchConfigurationDialog();
-		    }
-		    @Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-		    	fBuildConfigAutoChanged = true;
-		    	fBuildConfigCombo.setEnabled(true);
-				updateBuildConfigCombo(EMPTY_STRING);
-		    	updateLaunchConfigurationDialog();
-		    }
-		});
 	}
 
 	/** @since 6.1 */
@@ -422,12 +418,9 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(e);
 		}
-	
-		if (fBuildConfigAuto != null) {
-			fBuildConfigAuto.setSelection(configAuto);
-			if (configAuto)
-				updateBuildConfigCombo(EMPTY_STRING);
-		}
+
+		if (configAuto)
+			updateBuildConfigCombo(AUTO_CONFIG);
 		if (fDisableBuildButton != null)
 			fDisableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
 		if (fEnableBuildButton != null)
@@ -546,11 +539,14 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (fBuildConfigCombo != null) {
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));
-		}
-
-		if (fBuildConfigAutoChanged && fBuildConfigAuto != null) {
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, fBuildConfigAuto.getSelection());
+			String configId = (String) fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
+			boolean auto = false;
+			if (configId.equals(AUTO_CONFIG)) {
+				auto = true;
+				configId = getAutoConfigId();
+			}
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, configId);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, auto);
 		}
 
 		if (fDisableBuildButton != null) {
@@ -562,6 +558,36 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			}
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH, buildBeforeLaunchValue);
 		}
+	}
+
+	/**
+	 * Calculate build config id based on selection of the binary. Subclasses may override.
+	 * @return
+	 * @since 7.1
+	 */
+	protected String getAutoConfigId() {
+		String data = null;
+		ICProject cproject = getCProject();
+		if (cproject != null) {
+			ICConfigurationDescription autoConfig = LaunchUtils.getBuildConfigByProgramPath(cproject.getProject(),
+					fProgText.getText());
+			if (autoConfig != null)
+				data = autoConfig.getId();
+		}
+		if (data == null)
+			data = EMPTY_STRING;
+		return data;
+	}
+
+	/**
+	 * Either page wants Automatic selection in combo or not. Subclass should override
+	 * 
+	 * @return true if panel support AUTO_CONFIG
+	 * @since 7.1
+	 */
+	protected boolean isAutoConfigSupported() {
+		// original behavior was if this button is null it won't be shown and "supported"
+		return fBuildConfigAuto != null;
 	}
 
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -597,8 +623,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
-		if (fBuildConfigAuto != null && fBuildConfigAuto.getSelection())
-			updateBuildConfigCombo(EMPTY_STRING);
 		super.updateLaunchConfigurationDialog();
 	}
 }

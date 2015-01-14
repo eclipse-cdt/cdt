@@ -83,6 +83,7 @@ public class LaunchMessages extends NLS {
 	public static String CMainTab_Program_invalid_proj_path;
 	public static String CMainTab_Build_Config;
 	public static String CMainTab_Use_Active;
+	public static String CMainTab_Use_Automatic;
 	public static String CMainTab_Build_Config_Auto;
 	public static String CMainTab_Configuration_name;
 	public static String CMainTab_Build_options;

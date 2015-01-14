@@ -67,17 +67,25 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	private static final String LAUNCHING_PREFERENCE_PAGE_ID = "org.eclipse.debug.ui.LaunchingPreferencePage"; //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	protected String filterPlatform = EMPTY_STRING;
-
+	/**
+	 * @since 7.1
+	 */
+	protected static final String AUTO_CONFIG = "AUTO"; //$NON-NLS-1$
 	/**
 	 * @since 6.0
 	 */
 	protected Combo fBuildConfigCombo;
-	/** @since 7.0*/
+	/**
+	 * @since 7.0
+	 * @deprecated This control won't be used anymore, selection will have addition selection: Automatic
+	 * */
 	protected Button fBuildConfigAuto;
 	/**
-	 * Indicates whether the user has clicked on the build config auto button
-	 * Prevents causing a delta to the underlying launch configuration if the user hasn't touched this setting.
+	 * Indicates whether the user has clicked on the build config auto button Prevents causing a delta to the underlying launch
+	 * configuration if the user hasn't touched this setting.
+	 * 
 	 * @since 7.0
+	 * @deprecated
 	 */
 	protected boolean fBuildConfigAutoChanged;
 	/** @since 6.1 */
@@ -92,11 +100,9 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected Label fProjLabel;
 	protected Text fProjText;
 	protected Button fProjButton;
-
 	protected Label fProgLabel;
 	protected Text fProgText;
 	protected Button fSearchButton;
-
 	// Core file UI widgets
 	/** @since 2.0 */
 	protected Label fCoreLabel;
@@ -104,20 +110,18 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected Text fCoreText;
 	/** @since 2.0 */
 	protected Button fCoreButton;
-
 	/**
-	 * Name of most recently checked program; avoid constantly checking binary.
-	 * See bug 277663.
+	 * Name of most recently checked program; avoid constantly checking binary. See bug 277663.
 	 */
 	protected String fPreviouslyCheckedProgram;
 	/**
-	 * Validity result of most recently checked program; avoid constantly
-	 * checking binary. See bug 277663. N/A if fPreviouslyCheckedProgram = null;
+	 * Validity result of most recently checked program; avoid constantly checking binary. See bug 277663. N/A if
+	 * fPreviouslyCheckedProgram = null;
 	 */
 	protected boolean fPreviouslyCheckedProgramIsValid;
 	/**
-	 * Validity error message of most recently checked program; avoid constantly
-	 * checking binary. See bug 277663. N/A if fPreviouslyCheckedProgram = null.
+	 * Validity error message of most recently checked program; avoid constantly checking binary. See bug 277663. N/A if
+	 * fPreviouslyCheckedProgram = null.
 	 */
 	protected String fPreviouslyCheckedProgramErrorMsg;
 
@@ -140,13 +144,11 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = colSpan;
 		projComp.setLayoutData(gd);
-
 		fProjLabel = new Label(projComp, SWT.NONE);
 		fProjLabel.setText(LaunchMessages.CMainTab_ProjectColon);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
-
 		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
@@ -159,8 +161,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-
-		fProjButton = createPushButton(projComp, LaunchMessages.Launch_common_Browse_1, null); 
+		fProjButton = createPushButton(projComp, LaunchMessages.Launch_common_Browse_1, null);
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -171,8 +172,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	}
 
 	/**
-	 * Return the ICProject corresponding to the project name in the project name text field, or
-	 * null if the text does not match a project name.
+	 * Return the ICProject corresponding to the project name in the project name text field, or null if the text does not match a
+	 * project name.
 	 */
 	protected ICProject getCProject() {
 		String projectName = fProjText.getText().trim();
@@ -183,9 +184,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	}
 
 	/**
-	 * Show a dialog that lets the user select a project. This in turn provides context for the main
-	 * type, allowing the user to key a main type name, or constraining the search for main types to
-	 * the specified project.
+	 * Show a dialog that lets the user select a project. This in turn provides context for the main type, allowing the user to key
+	 * a main type name, or constraining the search for main types to the specified project.
 	 */
 	protected void handleProjectButtonSelected() {
 		String currentProjectName = fProjText.getText();
@@ -193,13 +193,12 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		if (project == null) {
 			return;
 		}
-
 		String projectName = project.getElementName();
 		fProjText.setText(projectName);
 		if (currentProjectName.length() == 0) {
 			// New project selected for the first time, set the program name default too.
 			IBinary[] bins = getBinaryFiles(project);
-			if (bins != null && bins.length == 1) {				
+			if (bins != null && bins.length == 1) {
 				fProgText.setText(bins[0].getResource().getProjectRelativePath().toOSString());
 			}
 		}
@@ -211,7 +210,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
 		ArrayList<ICProject> list = new ArrayList<ICProject>(cproject.length);
-
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {
@@ -234,25 +232,22 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	}
 
 	/**
-	 * Realize a C Project selection dialog and return the first selected project, or null if there
-	 * was none.
+	 * Realize a C Project selection dialog and return the first selected project, or null if there was none.
 	 */
 	protected ICProject chooseCProject() {
 		try {
 			ICProject[] projects = getCProjects();
-
 			ILabelProvider labelProvider = new CElementLabelProvider();
 			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-			dialog.setTitle(LaunchMessages.CMainTab_Project_Selection); 
-			dialog.setMessage(LaunchMessages.CMainTab_Choose_project_to_constrain_search_for_program); 
+			dialog.setTitle(LaunchMessages.CMainTab_Project_Selection);
+			dialog.setMessage(LaunchMessages.CMainTab_Choose_project_to_constrain_search_for_program);
 			dialog.setElements(projects);
-
 			ICProject cProject = getCProject();
 			if (cProject != null) {
 				dialog.setInitialSelections(new Object[] { cProject });
 			}
 			if (dialog.open() == Window.OK) {
-				return (ICProject)dialog.getFirstResult();
+				return (ICProject) dialog.getFirstResult();
 			}
 		} catch (CModelException e) {
 			LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$			
@@ -265,39 +260,40 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	protected void updateBuildConfigCombo(String selectedConfigID) {
 		if (fBuildConfigCombo != null) {
-			fBuildConfigCombo.setEnabled(!fBuildConfigAuto.getSelection());
 			fBuildConfigCombo.removeAll();
-			fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Active); 
-			fBuildConfigCombo.setData("0", EMPTY_STRING); //$NON-NLS-1$
-			fBuildConfigCombo.select(0);
+			int offset = 0;
+			fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Active);
+			fBuildConfigCombo.setData(String.valueOf(offset), EMPTY_STRING);
+			fBuildConfigCombo.select(offset);
+			offset++;
+			if (isAutoConfigSupported()) {
+				fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Automatic);
+				fBuildConfigCombo.setData(String.valueOf(offset), AUTO_CONFIG);
+				if (selectedConfigID.equals(AUTO_CONFIG)) {
+					fBuildConfigCombo.select(offset);
+				}
+			}
+			offset++;
 			ICProject cproject = getCProject();
 			if (cproject != null) {
 				ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(cproject.getProject());
 				if (projDes != null) {
-					// Find the config that should be automatically selected
-					String autoConfigId = null;
-					if (fBuildConfigAuto.getSelection()) {
-						ICConfigurationDescription autoConfig = LaunchUtils.getBuildConfigByProgramPath(cproject.getProject(), fProgText.getText());
-						if (autoConfig != null)
-							autoConfigId = autoConfig.getId();
-					}
-
-					int selIndex = 0;
+					// Populate and select config
 					ICConfigurationDescription[] configurations = projDes.getConfigurations();
-					ICConfigurationDescription selectedConfig = projDes.getConfigurationById(selectedConfigID);
+
 					for (int i = 0; i < configurations.length; i++) {
 						String configName = configurations[i].getName();
+						String id = configurations[i].getId();
 						fBuildConfigCombo.add(configName);
-						fBuildConfigCombo.setData(Integer.toString(i + 1), configurations[i].getId());
-						if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()) ||
-							fBuildConfigAuto.getSelection() && configurations[i].getId().equals(autoConfigId)) {
-							selIndex = i + 1;
+						int comboIndex = i + offset;
+						fBuildConfigCombo.setData(String.valueOf(comboIndex), id);
+						if (id.equals(selectedConfigID)) {
+							fBuildConfigCombo.select(comboIndex);
 						}
 					}
-					fBuildConfigCombo.select(selIndex);
 				}
 			}
-		}	
+		}
 	}
 
 	/**
@@ -311,42 +307,27 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		gd.horizontalSpan = colspan;
 		comboComp.setLayoutData(gd);
 		Label dlabel = new Label(comboComp, SWT.NONE);
-		dlabel.setText(LaunchMessages.CMainTab_Build_Config); 
+		dlabel.setText(LaunchMessages.CMainTab_Build_Config);
 		fBuildConfigCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fBuildConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fBuildConfigCombo.addSelectionListener(new SelectionListener() {
-		    @Override
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-		    	updateLaunchConfigurationDialog();
-		    }
-	
-		    @Override
+				updateLaunchConfigurationDialog();
+			}
+
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-		    	updateLaunchConfigurationDialog();
-		    }
+				updateLaunchConfigurationDialog();
+			}
 		});
-
-		new Label(comboComp, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		fBuildConfigAuto = new Button(comboComp, SWT.CHECK);
-		fBuildConfigAuto.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fBuildConfigAuto.setText(LaunchMessages.CMainTab_Build_Config_Auto); 
-		fBuildConfigAuto.addSelectionListener(new SelectionListener() {
-		    @Override
-			public void widgetSelected(SelectionEvent e) {
-		    	fBuildConfigAutoChanged = true;
-		    	fBuildConfigCombo.setEnabled(false);
-		    	updateBuildConfigCombo(EMPTY_STRING);
-		    	updateLaunchConfigurationDialog();
-		    }
-		    @Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-		    	fBuildConfigAutoChanged = true;
-		    	fBuildConfigCombo.setEnabled(true);
-				updateBuildConfigCombo(EMPTY_STRING);
-		    	updateLaunchConfigurationDialog();
-		    }
-		});
+		GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+		gd1.heightHint = 0;
+		gd1.horizontalSpan = 2;
+		fBuildConfigAuto.setLayoutData(gd1);
+		fBuildConfigAuto.setVisible(false);
+		fBuildConfigAuto.setText(LaunchMessages.CMainTab_Build_Config_Auto);
 	}
 
 	/** @since 6.1 */
@@ -358,55 +339,47 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		gridLayout.numColumns = 2;
 		gridLayout.marginHeight = 5;
 		gridLayout.marginWidth = 5;
-		gridLayout.makeColumnsEqualWidth= true;
+		gridLayout.makeColumnsEqualWidth = true;
 		buildGroup.setLayoutData(gridData);
 		buildGroup.setLayout(gridLayout);
-		buildGroup.setText(LaunchMessages.CMainTab_Build_options); 
-		
+		buildGroup.setText(LaunchMessages.CMainTab_Build_options);
 		createBuildConfigCombo(buildGroup, 2);
-	
 		fEnableBuildButton = new Button(buildGroup, SWT.RADIO);
-		fEnableBuildButton.setText(LaunchMessages.CMainTab_Enable_build_button_label); 
-		fEnableBuildButton.setToolTipText(LaunchMessages.CMainTab_Enable_build_button_tooltip); 
+		fEnableBuildButton.setText(LaunchMessages.CMainTab_Enable_build_button_label);
+		fEnableBuildButton.setToolTipText(LaunchMessages.CMainTab_Enable_build_button_tooltip);
 		fEnableBuildButton.addSelectionListener(new SelectionAdapter() {
-	
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-	
 		fDisableBuildButton = new Button(buildGroup, SWT.RADIO);
-		fDisableBuildButton.setText(LaunchMessages.CMainTab_Disable_build_button_label); 
-		fDisableBuildButton.setToolTipText(LaunchMessages.CMainTab_Disable_build_button_tooltip); 
+		fDisableBuildButton.setText(LaunchMessages.CMainTab_Disable_build_button_label);
+		fDisableBuildButton.setToolTipText(LaunchMessages.CMainTab_Disable_build_button_tooltip);
 		fDisableBuildButton.addSelectionListener(new SelectionAdapter() {
-	
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-	
 		fWorkspaceSettingsButton = new Button(buildGroup, SWT.RADIO);
-		fWorkspaceSettingsButton.setText(LaunchMessages.CMainTab_Workspace_settings_button_label); 
-		fWorkspaceSettingsButton.setToolTipText(LaunchMessages.CMainTab_Workspace_settings_button_tooltip); 
+		fWorkspaceSettingsButton.setText(LaunchMessages.CMainTab_Workspace_settings_button_label);
+		fWorkspaceSettingsButton.setToolTipText(LaunchMessages.CMainTab_Workspace_settings_button_tooltip);
 		fWorkspaceSettingsButton.addSelectionListener(new SelectionAdapter() {
-	
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-	
 		fWorkpsaceSettingsLink = new Link(buildGroup, SWT.NONE);
-		fWorkpsaceSettingsLink.setText(LaunchMessages.CMainTab_Workspace_settings_link_label); 
+		fWorkpsaceSettingsLink.setText(LaunchMessages.CMainTab_Workspace_settings_link_label);
 		fWorkpsaceSettingsLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(
-						parent.getShell(), 
+						parent.getShell(),
 						LAUNCHING_PREFERENCE_PAGE_ID,
-						null, 
+						null,
 						null).open();
 			}
 		});
@@ -417,23 +390,23 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		boolean configAuto = false;
 		int buildBeforeLaunchValue = ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING;
 		try {
-			buildBeforeLaunchValue = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH, buildBeforeLaunchValue);
+			buildBeforeLaunchValue = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+					buildBeforeLaunchValue);
 			configAuto = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, false);
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(e);
 		}
-	
-		if (fBuildConfigAuto != null) {
-			fBuildConfigAuto.setSelection(configAuto);
-			if (configAuto)
-				updateBuildConfigCombo(EMPTY_STRING);
-		}
+		if (configAuto)
+			updateBuildConfigCombo(AUTO_CONFIG);
+		updateComboTooltip();
 		if (fDisableBuildButton != null)
-			fDisableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
+			fDisableBuildButton
+					.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
 		if (fEnableBuildButton != null)
 			fEnableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
 		if (fWorkspaceSettingsButton != null)
-			fWorkspaceSettingsButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+			fWorkspaceSettingsButton
+					.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
 	}
 
 	/**
@@ -459,7 +432,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		gd.horizontalSpan = colSpan;
 		coreComp.setLayoutData(gd);
 		fCoreLabel = new Label(coreComp, SWT.NONE);
-		fCoreLabel.setText(LaunchMessages.CMainTab_CoreFile_path); 
+		fCoreLabel.setText(LaunchMessages.CMainTab_CoreFile_path);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fCoreLabel.setLayoutData(gd);
@@ -472,7 +445,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-
 		Button browseForCoreButton;
 		browseForCoreButton = createPushButton(coreComp, LaunchMessages.Launch_common_Browse_3, null);
 		browseForCoreButton.addSelectionListener(new SelectionAdapter() {
@@ -488,8 +460,9 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	}
 
 	/**
-	 * This method is deprecated since LaunchUtils#getBinary(IProject, IPath) is too slow to be
-	 * called on the UI thread. See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
+	 * This method is deprecated since LaunchUtils#getBinary(IProject, IPath) is too slow to be called on the UI thread. See
+	 * "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
+	 * 
 	 * @param project
 	 * @param exePath
 	 * @return
@@ -502,14 +475,14 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			if (binValue == null) {
 				IBinaryObject exe = LaunchUtils.getBinary(project, exePath);
 				binValue = exe != null;
-				fBinaryExeCache.put(exePath, binValue);				
+				fBinaryExeCache.put(exePath, binValue);
 			}
 			return binValue;
 		} catch (ClassCastException e) {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Iterate through and suck up all of the executable files that we can find.
 	 */
@@ -534,7 +507,6 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				}
 			}
 		});
-
 		return ret[0];
 	}
 
@@ -546,13 +518,15 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (fBuildConfigCombo != null) {
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));
+			String configId = (String) fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
+			boolean auto = false;
+			if (configId.equals(AUTO_CONFIG)) {
+				auto = true;
+				configId = getAutoConfigId();
+			}
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, configId);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, auto);
 		}
-
-		if (fBuildConfigAutoChanged && fBuildConfigAuto != null) {
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, fBuildConfigAuto.getSelection());
-		}
-
 		if (fDisableBuildButton != null) {
 			int buildBeforeLaunchValue = ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING;
 			if (fDisableBuildButton.getSelection()) {
@@ -564,18 +538,49 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	/**
+	 * Calculate build config id based on selection of the binary. Subclasses may override.
+	 * 
+	 * @return
+	 * @since 7.1
+	 */
+	protected String getAutoConfigId() {
+		String data = null;
+		ICProject cproject = getCProject();
+		if (cproject != null) {
+			ICConfigurationDescription autoConfig = LaunchUtils.getBuildConfigByProgramPath(cproject.getProject(),
+					fProgText.getText());
+			if (autoConfig != null)
+				data = autoConfig.getId();
+		}
+		if (data == null)
+			data = EMPTY_STRING;
+		return data;
+	}
+
+	/**
+	 * Either page wants Automatic selection in combo or not. Subclass should override
+	 * 
+	 * @return true if panel support AUTO_CONFIG
+	 * @since 7.1
+	 */
+	protected boolean isAutoConfigSupported() {
+		// original behavior was if this button is null it won't be shown and "supported"
+		return fBuildConfigAuto != null;
+	}
+
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
 		String projectName = EMPTY_STRING;
 		String configName = EMPTY_STRING;
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
-			configName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);			
+			configName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);
 		} catch (CoreException ce) {
 			LaunchUIPlugin.log(ce);
 		}
 		if (!fProjText.getText().equals(projectName))
 			fProjText.setText(projectName);
-		updateBuildConfigCombo(configName);		
+		updateBuildConfigCombo(configName);
 	}
 
 	protected void updateProgramFromConfig(ILaunchConfiguration config) {
@@ -597,8 +602,23 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
-		if (fBuildConfigAuto != null && fBuildConfigAuto.getSelection())
-			updateBuildConfigCombo(EMPTY_STRING);
+		updateComboTooltip();
 		super.updateLaunchConfigurationDialog();
+	}
+
+	/**
+	 * @since 7.1
+	 */
+	protected void updateComboTooltip() {
+		if (fBuildConfigCombo != null) {
+			String configId = (String) fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
+			String tooltip = EMPTY_STRING;
+			if (configId.equals(AUTO_CONFIG)) {
+				tooltip =  LaunchMessages.CMainTab_Build_Config_Auto_tooltip;
+			} else if (configId.equals(EMPTY_STRING)) {
+				tooltip = LaunchMessages.CMainTab_Build_Config_Active_tooltip;
+			}
+			fBuildConfigCombo.setToolTipText(tooltip);
+		}
 	}
 }

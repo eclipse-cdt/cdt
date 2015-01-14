@@ -273,7 +273,7 @@
 						<artifactId>target-platform-configuration</artifactId>
 						<version>${tycho-version}</version>
 						<configuration>
-							<includePackedArtifacts>false</includePackedArtifacts>
+							<includePackedArtifacts>true</includePackedArtifacts>
 						</configuration>
 					</plugin>
 					<plugin>

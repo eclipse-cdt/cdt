@@ -167,6 +167,8 @@ public class NewLaunchConfigEditPage extends WizardPage {
 	}
 
 	public void validateFields() {
+		// page is not complete unless we finish validation successfully
+		setPageComplete(false); 
 		if (workingCopy == null)
 			return;
 		String message = null;

@@ -124,8 +124,9 @@ public class CMainTab extends CAbstractMainTab {
 		comp.setLayout(topLayout);
 
 		createVerticalSpacer(comp, 1);
-		createExeFileGroup(comp, 1);
 		createProjectGroup(comp, 1);
+		createExeFileGroup(comp, 1);
+
 		if (fIncludeBuildSettings){
 			createBuildOptionGroup(comp, 1);			
 		}

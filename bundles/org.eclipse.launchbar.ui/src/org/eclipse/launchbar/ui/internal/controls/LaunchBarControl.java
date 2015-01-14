@@ -23,8 +23,7 @@ import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class LaunchBarControl implements Listener {
-
 	public static final String ID = "org.eclipse.launchbar"; //$NON-NLS-1$
 	public static final String CLASS_URI = "bundleclass://" + Activator.PLUGIN_ID + "/" + LaunchBarControl.class.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -41,6 +39,8 @@ public class LaunchBarControl implements Listener {
 	private ConfigSelector configSelector;
 	private ModeSelector modeSelector;
 	private TargetSelector targetSelector;
+
+	private static final int SELECTION_DELAY = 200;
 
 	@PostConstruct
 	public void createControl(Composite parent) {
@@ -79,14 +79,16 @@ public class LaunchBarControl implements Listener {
 		targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		targetSelector.setInput(manager);
 
-		ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
-		configSelector.setSelection(configDesc == null ? null : configDesc);
+		syncSelectors();
+	}
 
-		ILaunchMode mode = manager.getActiveLaunchMode();
-		modeSelector.setSelection(mode == null ? null : mode);
-
-		ILaunchTarget target = manager.getActiveLaunchTarget();
-		targetSelector.setSelection(target == null ? null : target);
+	protected void syncSelectors() {
+		if (configSelector != null)
+			configSelector.setSelection(manager.getActiveLaunchDescriptor());
+		if (modeSelector != null)
+			modeSelector.setSelection(manager.getActiveLaunchMode());
+		if (targetSelector != null)
+			targetSelector.setSelection(manager.getActiveLaunchTarget());
 	}
 
 	@PreDestroy
@@ -101,53 +103,34 @@ public class LaunchBarControl implements Listener {
 		Image image = new Image(parent.getDisplay(), srcImage, SWT.IMAGE_COPY);
 		button.setHotImage(image);
 		button.setToolTipText(toolTipText);
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				Activator.runCommand(command);
-			}
+			};
 		});
 	}
 
 	@Override
 	public void activeLaunchDescriptorChanged() {
-		if (configSelector != null && !configSelector.isDisposed()) {
-			final ILaunchDescriptor configDesc = manager.getActiveLaunchDescriptor();
-			configSelector.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!configSelector.isDisposed())
-						configSelector.setSelection(configDesc == null ? null : configDesc);
-				}
-			});
+		if (configSelector != null) {
+			final ILaunchDescriptor descriptor = manager.getActiveLaunchDescriptor();
+			configSelector.setDelayedSelection(descriptor, SELECTION_DELAY);
 		}
 	}
 
 	@Override
 	public void activeLaunchModeChanged() {
-		if (modeSelector != null && !modeSelector.isDisposed()) {
+		if (modeSelector != null) {
 			final ILaunchMode mode = manager.getActiveLaunchMode();
-			modeSelector.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!modeSelector.isDisposed())
-						modeSelector.setSelection(mode == null ? null : mode);
-				}
-			});
+			modeSelector.setDelayedSelection(mode, SELECTION_DELAY);
 		}
 	}
 
 	@Override
 	public void activeLaunchTargetChanged() {
-		if (targetSelector != null && !targetSelector.isDisposed()) {
+		if (targetSelector != null) {
 			final ILaunchTarget target = manager.getActiveLaunchTarget();
-			targetSelector.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!targetSelector.isDisposed())
-						targetSelector.setSelection(target == null ? null : target);
-				}
-			});
+			targetSelector.setDelayedSelection(target, SELECTION_DELAY);
 		}
 	}
 
@@ -162,5 +145,4 @@ public class LaunchBarControl implements Listener {
 		// TODO Auto-generated method stub
 
 	}
-
 }

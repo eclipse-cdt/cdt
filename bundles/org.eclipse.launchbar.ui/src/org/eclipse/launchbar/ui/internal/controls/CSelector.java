@@ -73,6 +73,7 @@ public abstract class CSelector extends Composite {
 	private Label currentLabel;
 	private Shell popup;
 	private LaunchBarListViewer listViewer;
+	private Job delayJob;
 	private MouseTrackListener mouseTrackListener = new MouseTrackListener() {
 		@Override
 		public void mouseEnter(MouseEvent e) {
@@ -202,6 +203,7 @@ public abstract class CSelector extends Composite {
 		}
 	};
 
+
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
 		backgroundColor = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -239,6 +241,30 @@ public abstract class CSelector extends Composite {
 		super.dispose();
 		if (popup != null)
 			popup.dispose();
+	}
+
+	public void setDelayedSelection(final Object element, long millis) {
+		if (delayJob != null)
+			delayJob.cancel();
+		delayJob = new Job("Updating launch bar selection") {
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				if (isDisposed())
+					return Status.CANCEL_STATUS;
+				getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (monitor.isCanceled())
+							return;
+						setSelection(element);
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		delayJob.schedule(millis);
 	}
 
 	public void setSelection(Object element) {

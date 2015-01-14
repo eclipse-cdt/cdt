@@ -223,8 +223,7 @@ public class JSchConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(false);
 		fPublicKeyButton.setSelection(true);
-		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton,
-				fPassphraseText, fPasswordButton, fPasswordText });
+		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton, fPasswordText });
 	}
 
 	@Override
@@ -302,6 +301,7 @@ public class JSchConnectionPage extends WizardPage {
 						new String[] { PREFS_PAGE_ID_NET_PROXY }, null);
 				dlg.open();
 			}
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// ignore
@@ -349,8 +349,12 @@ public class JSchConnectionPage extends WizardPage {
 				fPassphraseText.setText(fConnection.getPassphrase());
 			}
 			fProxyCommandText.setText(fConnection.getProxyCommand());
-
-			fProxyConnectionWidget.setConnection(fConnection.getProxyConnection());
+			IRemoteConnection proxyConn = fConnection.getProxyConnection();
+			if (proxyConn == null) {
+				proxyConn = RemoteServices.getLocalServices().getConnectionManager()
+						.getConnection(IRemoteConnectionManager.LOCAL_CONNECTION_NAME);
+			}
+			fProxyConnectionWidget.setConnection(proxyConn);
 		} else {
 			fConnectionName.setText(fInitialName);
 			String host = fInitialAttributes.get(JSchConnectionAttributes.ADDRESS_ATTR);
@@ -381,8 +385,8 @@ public class JSchConnectionPage extends WizardPage {
 			if (passphrase != null) {
 				fPassphraseText.setText(passphrase);
 			}
-			fProxyConnectionWidget.setConnection(RemoteServices.getLocalServices().getConnectionManager().getConnection(
-					IRemoteConnectionManager.LOCAL_CONNECTION_NAME));
+			fProxyConnectionWidget.setConnection(RemoteServices.getLocalServices().getConnectionManager()
+					.getConnection(IRemoteConnectionManager.LOCAL_CONNECTION_NAME));
 		}
 	}
 

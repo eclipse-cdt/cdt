@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,10 +47,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 
 public class PathEntryUtil {
-	static PathEntryManager manager = PathEntryManager.getDefault();
+	static final PathEntryManager manager = PathEntryManager.getDefault();
 	static final IMarker[] NO_MARKERS = new IMarker[0];
+	static final boolean VALIDATE_INCLUDE_ENTRIES = 
+			DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).getBoolean("validate_include_entries", true); //$NON-NLS-1$
 
 	private PathEntryUtil() {
 		super();
@@ -426,15 +429,17 @@ public class PathEntryUtil {
 
 		switch (entry.getEntryKind()) {
 			case IPathEntry.CDT_INCLUDE: {
-				IIncludeEntry include = (IIncludeEntry) entry;
-				IPath includePath = include.getFullIncludePath();
-				if (!isValidExternalPath(includePath)) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$
-				}
-				if (!isValidBasePath(include.getBasePath())) {
-					return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
-							CoreModelMessages.getFormattedString("PathEntryManager.1", includePath.toOSString()));  //$NON-NLS-1$
+				if (VALIDATE_INCLUDE_ENTRIES) {
+					IIncludeEntry include = (IIncludeEntry) entry;
+					IPath includePath = include.getFullIncludePath();
+					if (!isValidExternalPath(includePath)) {
+						return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+								CoreModelMessages.getFormattedString("PathEntryManager.2", includePath.toOSString())); //$NON-NLS-1$
+					}
+					if (!isValidBasePath(include.getBasePath())) {
+						return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY,
+								CoreModelMessages.getFormattedString("PathEntryManager.1", includePath.toOSString()));  //$NON-NLS-1$
+					}
 				}
 				break;
 			}

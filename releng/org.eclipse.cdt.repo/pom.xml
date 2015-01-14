@@ -48,6 +48,21 @@
 												<include name="**" />
 											</fileset>
 										</copy>
+
+										<!-- remove the packed files from the zip file to make it smaller -->
+										<unzip src="target/org.eclipse.cdt.repo.zip" dest="target/tmp"/>
+										<delete file="target/org.eclipse.cdt.repo.zip"/>
+										<delete>
+											<fileset dir="target/tmp">
+												<include name="plugins/*.pack.gz"/>
+											</fileset>
+										</delete>
+										<zip destfile="target/org.eclipse.cdt.repo.zip">
+											<fileset dir="target/tmp">
+												<include name="**"/>
+											</fileset>
+										</zip>
+									 	<delete dir="target/tmp"/>
 									</target>
 								</configuration>
 								<goals>

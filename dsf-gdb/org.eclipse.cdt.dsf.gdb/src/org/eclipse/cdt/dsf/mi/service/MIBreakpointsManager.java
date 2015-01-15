@@ -15,7 +15,8 @@
  *     Marc Khouzam (Ericsson) - Generalize thread filtering logic (Bug 431986)
  *     Marc Khouzam (Ericsson) - Accept multiple calls to startTrackingBreakpoints (Bug 389945)
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
- *     Alvaro Sanchez-Leon (Ericcson) - Sometimes breakpoints set and immediately deleted when debugging with GDB (Bug 442394)
+ *     Alvaro Sanchez-Leon (Ericsson) - Sometimes breakpoints set and immediately deleted when debugging with GDB (Bug 442394)
+ *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -1529,18 +1530,23 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
-    	if (e.getDMContext() instanceof IContainerDMContext) {
-        	// Process exited, remove it from the thread filtering of all breakpoints
-    		// We must get the list of breakpoints from the platform because our different
-    		// maps might already have been cleaned up
-    		IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
-            for (IBreakpoint bp : allBreakpoints) {
-                if (supportsBreakpoint(bp)) {
-           			removeTargetFilter((ICBreakpoint)bp, (IContainerDMContext)e.getDMContext());
-            	}
-            }
-    	}
+		// original code moved to API removeTargetFilter (Bug 456959)
     }
+
+	/**
+	 * Remove process from the thread filtering of all breakpoints
+	 * @since 4.6
+	 */
+	public void removeTargetFilter(IContainerDMContext containerDMC) {
+		// We must get the list of breakpoints from the platform because our different
+		// maps might already have been cleaned up
+		IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
+		for (IBreakpoint bp : allBreakpoints) {
+			if (supportsBreakpoint(bp)) {
+				removeTargetFilter((ICBreakpoint) bp, containerDMC);
+			}
+		}
+	}
     
     private void removeTargetFilter(ICBreakpoint breakpoint, IContainerDMContext containerDmc) {
     	try {

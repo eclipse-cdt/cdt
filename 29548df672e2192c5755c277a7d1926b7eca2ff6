@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "67fe7f71_58741543",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/LaunchConfigurationAndRestartTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-15T19:28:17Z",
+      "side": 1,
+      "message": "I forget what we are removing with this remove...(4). What is it? Maybe we can improve on it.",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_186a8d64",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/LaunchConfigurationAndRestartTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-15T19:28:17Z",
+      "side": 1,
+      "message": "The comment is wrong.  Please change the comment to use EXEC_PATH",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_b878a137",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-15T19:28:17Z",
+      "side": 1,
+      "message": "This should be INVALID_COREFILE_NAME",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_9875dd3f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-15T19:28:17Z",
+      "side": 1,
+      "message": "This should be COREFILE_NAME to match the above change",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_98f83d3f",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
         "patchSetId": 5
@@ -47,6 +115,23 @@
       "writtenOn": "2015-01-15T19:05:20Z",
       "side": 1,
       "message": "This too.",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_f85989d5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-15T19:28:17Z",
+      "side": 1,
+      "message": "Should become TRACEFILE_NAME to be consistent.",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

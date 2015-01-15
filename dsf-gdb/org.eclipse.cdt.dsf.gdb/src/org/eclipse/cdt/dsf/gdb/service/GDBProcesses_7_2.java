@@ -9,6 +9,7 @@
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
+ *     Alvaro Sanchez-Leon (Ericcson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -628,6 +629,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
     @Override
     public void eventDispatched(IExitedDMEvent e) {
     	IDMContext dmc = e.getDMContext();
+		boolean restarting = fProcRestarting.contains(dmc);
+
+		if (!restarting && dmc instanceof IContainerDMContext) {
+			// Process exited, remove it from the thread break point filtering
+			MIBreakpointsManager bpService = getServicesTracker().getService(MIBreakpointsManager.class);
+			bpService.removeTargetFilter((IContainerDMContext) dmc);
+		}
+
     	if (dmc instanceof IBreakpointsTargetDMContext) {
     		// A process has died, we should stop tracking its breakpoints, but only if it is not restarting
     		// We only do this when the process is a breakpointTargetDMC itself (GDB < 7.4);

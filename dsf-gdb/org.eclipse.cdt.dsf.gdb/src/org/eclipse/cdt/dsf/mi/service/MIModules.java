@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Hashtable;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -23,12 +24,14 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IModules;
+import org.eclipse.cdt.dsf.debug.service.IModules2;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo.DsfMISharedInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
@@ -38,7 +41,7 @@ import org.osgi.framework.BundleContext;
 /**
  * 
  */
-public class MIModules extends AbstractDsfService implements IModules, ICachingService {
+public class MIModules extends AbstractDsfService implements IModules2, ICachingService {
 	private CommandCache fModulesCache;
 	private CommandFactory fCommandFactory;
 
@@ -72,7 +75,10 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         /*
          * Make ourselves known so clients can use us.
          */
-        register(new String[]{IModules.class.getName(), MIModules.class.getName()}, new Hashtable<String,String>());
+        register(new String[]{ IModules.class.getName(),
+        		               IModules2.class.getName(),
+        		               MIModules.class.getName() },
+        		 new Hashtable<String,String>());
 
         requestMonitor.done();
     }
@@ -90,6 +96,10 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
             fFile = file; 
         }
         
+        public String getFile() {
+        	return fFile;
+        }
+        
         @Override
         public boolean equals(Object obj) {
             return baseEquals(obj) && fFile.equals(((ModuleDMContext)obj).fFile);
@@ -98,6 +108,11 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         @Override
         public int hashCode() {
             return baseHashCode() + fFile.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+        	return baseToString() + ".file[" + fFile + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -212,6 +227,35 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
             rm.done();
         }
     }
+
+	/**
+	 * @since 4.6
+	 */
+	@Override
+	public void loadSymbolsForAllModules(ISymbolDMContext symCtx, RequestMonitor rm) {
+        assert symCtx != null;
+		if (symCtx != null) {
+			fModulesCache.execute(fCommandFactory.createCLISharedLibrary(symCtx), new ImmediateDataRequestMonitor<MIInfo>(rm));
+		} else {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DM Context", null)); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * @since 4.6
+	 */
+	@Override
+	public void loadSymbols(IModuleDMContext dmc, RequestMonitor rm) {
+		assert dmc != null;
+		ISymbolDMContext symCtx = DMContexts.getAncestorOfType(dmc, ISymbolDMContext.class);
+        if (symCtx != null && dmc instanceof ModuleDMContext) {
+			fModulesCache.execute(fCommandFactory.createCLISharedLibrary(symCtx, ((ModuleDMContext)dmc).getFile()), 
+					              new ImmediateDataRequestMonitor<MIInfo>(rm));
+		} else {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DM Context", null)); //$NON-NLS-1$
+		}
+	}
+
 
     private IModuleDMData createSharedLibInfo(ModuleDMContext dmc, CLIInfoSharedLibraryInfo info){
         for (CLIInfoSharedLibraryInfo.DsfMISharedInfo shared : info.getMIShared()) {

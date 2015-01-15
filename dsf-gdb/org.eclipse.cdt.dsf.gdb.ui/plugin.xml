@@ -328,6 +328,34 @@
             class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.SelectPrevTraceRecordCommandHandler"
             commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord">
       </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfLoadSymbolsCommandHandler"
+      		commandId="org.eclipse.cdt.debug.ui.command.loadSymbols">
+			 <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen> 
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfLoadSymbolsCommandHandler"
+      		commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols">
+			 <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="or">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen> 
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_1bb60726",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/LaunchConfigurationAndRestartTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "We are removing data/launch/src, and we are adding data/launch/bin.\n\nI don\u0027t see any easy way better than this, given that we don\u0027t know what is the current working directory at the start.",
+      "parentUuid": "67fe7f71_58741543",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_186a8d64",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/LaunchConfigurationAndRestartTest.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2015-01-15T19:28:17Z",
       "side": 1,
       "message": "The comment is wrong.  Please change the comment to use EXEC_PATH",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_7bbbd30d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/LaunchConfigurationAndRestartTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "What is the point of this test exactly? The original comment says \"[we] will verify that we can find the file LaunchConfigurationAndRestartTestApp.cpp\", but we cd in the bin directory.",
+      "parentUuid": "67fe7f71_186a8d64",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_bbc41b89",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_b878a137",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_9875dd3f",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2015-01-15T19:28:17Z",
       "side": 1,
       "message": "This should be COREFILE_NAME to match the above change",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_5bc08f74",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "Are you ok with CORE_NAME and INVALID_CORE_NAME? It would be more in line with EXEC_NAME, SOURCE_NAME.",
+      "parentUuid": "67fe7f71_9875dd3f",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_fbcea3a6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_98f83d3f",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_f8f50945",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2015-01-15T19:05:20Z",
       "side": 1,
       "message": "This too.",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_9bc15779",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_f8f50945",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_dbcbdf94",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_d8f2c55a",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_f85989d5",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2015-01-15T19:28:17Z",
       "side": 1,
       "message": "Should become TRACEFILE_NAME to be consistent.",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_1bdd6756",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T21:29:14Z",
+      "side": 1,
+      "message": "Ok with TRACE_NAME?",
+      "parentUuid": "67fe7f71_f85989d5",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

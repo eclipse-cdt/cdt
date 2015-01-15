@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -46,27 +46,20 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 		super(index);
 	}
 	
-	/* 
-	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
-	 */
 	@Override
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
-		if(rscope==null)
+		if (rscope == null)
 			return null;
-		if(rscope instanceof ICCompositeTypeScope) {
+		if (rscope instanceof ICCompositeTypeScope) {
 			ICCompositeTypeScope cscope = (ICCompositeTypeScope) rscope;
 			IIndexFragmentBinding rbinding = (IIndexFragmentBinding) cscope.getCompositeType();
-			return (IIndexScope) ((ICompositeType)getCompositeBinding(rbinding)).getCompositeScope();
+			return (IIndexScope) ((ICompositeType) getCompositeBinding(rbinding)).getCompositeScope();
 		}
 		throw new CompositingNotImplementedError();
 	}
 
-	/* 
-	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	@Override
 	public IType getCompositeType(IType rtype) {
-
 		if (rtype instanceof IIndexFragmentBinding) {
 			return (IType) getCompositeBinding((IIndexFragmentBinding) rtype);
 		} 
@@ -138,28 +131,28 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding rbinding) {
 		IIndexBinding result;
 		
-		if(rbinding==null) {
+		if (rbinding == null) {
 			result = null; 
-		} else if(rbinding instanceof IParameter) {
+		} else if (rbinding instanceof IParameter) {
 			result = new CompositeCParameter(this, rbinding);
-		} else if(rbinding instanceof IField) {
+		} else if (rbinding instanceof IField) {
 			result = new CompositeCField(this, rbinding);
-		} else if(rbinding instanceof IVariable) {
+		} else if (rbinding instanceof IVariable) {
 			result = new CompositeCVariable(this, rbinding);
-		} else if(rbinding instanceof ICompositeType) {
+		} else if (rbinding instanceof ICompositeType) {
 			result = new CompositeCStructure(this, findOneBinding(rbinding, false));
-		} else if(rbinding instanceof IEnumeration) {
+		} else if (rbinding instanceof IEnumeration) {
 			result = new CompositeCEnumeration(this, findOneBinding(rbinding, false));
-		} else if(rbinding instanceof IFunction) {
+		} else if (rbinding instanceof IFunction) {
 			result = new CompositeCFunction(this, rbinding);				
-		} else if(rbinding instanceof IEnumerator) {
+		} else if (rbinding instanceof IEnumerator) {
 			result = new CompositeCEnumerator(this, rbinding);
-		} else if(rbinding instanceof ITypedef) {
+		} else if (rbinding instanceof ITypedef) {
 			result = new CompositeCTypedef(this, rbinding);
-		} else if(rbinding instanceof IIndexMacroContainer) {
+		} else if (rbinding instanceof IIndexMacroContainer) {
 			result= new CompositeMacroContainer(this, rbinding);
 		} else {
-			throw new CompositingNotImplementedError("composite binding unavailable for "+rbinding+" "+rbinding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new CompositingNotImplementedError("Composite binding unavailable for " + rbinding + " " + rbinding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		return result;

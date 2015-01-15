@@ -51,7 +51,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding preresult = null;
-		for(int i=0; preresult==null && i<namespaces.length; i++) {
+		for (int i= 0; preresult == null && i < namespaces.length; i++) {
 			preresult = namespaces[i].getNamespaceScope().getBinding(name, resolve, fileSet);
 		}
 		return processUncertainBinding(preresult);
@@ -65,7 +65,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
-		for(int i=0; i<namespaces.length; i++) {
+		for (int i= 0; i < namespaces.length; i++) {
 			IBinding[] raw = namespaces[i].getNamespaceScope().getBindings(lookup);
 			preresult[i] = new IIndexFragmentBinding[raw.length];
 			System.arraycopy(raw, 0, preresult[i], 0, raw.length);
@@ -76,7 +76,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	@Override
 	final public IBinding[] find(String name) {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
-		for(int i=0; i<namespaces.length; i++) {
+		for (int i= 0; i < namespaces.length; i++) {
 			IBinding[] raw = namespaces[i].getNamespaceScope().find(name);
 			preresult[i] = new IIndexFragmentBinding[raw.length];
 			System.arraycopy(raw, 0, preresult[i], 0, raw.length);
@@ -92,32 +92,29 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	@Override
 	public IIndexName getScopeName() {
 		for (ICPPNamespace namespace : namespaces) {
-			if(namespace instanceof IIndexScope) {
+			if (namespace instanceof IIndexScope) {
 				IIndexScope s= (IIndexScope) namespace;
 				IIndexName nm= s.getScopeName();
-				if(nm!=null)
+				if (nm != null)
 					return nm;
 			}
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getInlineNamespaces()
-	 */
 	@Override
 	public ICPPNamespaceScope[] getInlineNamespaces() {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
-		for(int i=0; i<namespaces.length; i++) {
+		for (int i= 0; i < namespaces.length; i++) {
 			ICPPNamespaceScope[] raw = namespaces[i].getNamespaceScope().getInlineNamespaces();
 			IIndexFragmentBinding[] arr = preresult[i] = new IIndexFragmentBinding[raw.length];
-			for (int j=0; j<raw.length; j++) {
+			for (int j= 0; j < raw.length; j++) {
 				arr[j]= (IIndexFragmentBinding) ((IIndexScope) raw[j]).getScopeBinding();
 			}
 		}
 		IIndexBinding[] compBinding = cf.getCompositeBindings(preresult);
 		ICPPNamespaceScope[] result = new ICPPNamespaceScope[compBinding.length];
-		for(int i=0; i<result.length; i++) {
+		for (int i= 0; i < result.length; i++) {
 			result[i]= ((ICPPNamespace) compBinding[i]).getNamespaceScope();
 		}
 		return result;

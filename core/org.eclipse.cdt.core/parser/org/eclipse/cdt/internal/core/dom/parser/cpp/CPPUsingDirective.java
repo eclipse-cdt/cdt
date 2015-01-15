@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * Represents a using-directive found in the AST.
  */
 public class CPPUsingDirective implements ICPPUsingDirective {
-
 	private IASTName fNamespaceName;
 
 	/**
@@ -43,9 +42,6 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 		fNamespaceName= nsdef.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getNamespaceScope()
-	 */
 	@Override
 	public ICPPNamespaceScope getNominatedScope() throws DOMException {
 		IBinding binding= fNamespaceName.resolveBinding();
@@ -55,18 +51,12 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getPointOfDeclaration()
-	 */
 	@Override
 	public int getPointOfDeclaration() {
 		final ASTNode astNode = (ASTNode) fNamespaceName;
 		return astNode.getOffset() + astNode.getLength();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getContainingScope()
-	 */
 	@Override
 	public IScope getContainingScope() {
 		return CPPVisitor.getContainingScope(fNamespaceName);

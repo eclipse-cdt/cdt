@@ -338,7 +338,7 @@ public class ASTManager implements IDisposable {
         IASTNode node1= ASTInternal.getPhysicalNodeOfScope(s1);
         IASTNode node2= ASTInternal.getPhysicalNodeOfScope(s2);
 
-        // forward declarations do not have parent scopes.
+        // Forward declarations do not have parent scopes.
         if (s1 == null) {
             if (!fileStatic && node2 instanceof IASTTranslationUnit) {
                 return TRUE;
@@ -359,7 +359,7 @@ public class ASTManager implements IDisposable {
         if (node1 instanceof IASTTranslationUnit && node2 instanceof IASTTranslationUnit) {
             return hasSameLocation(node1, node2, fileStatic);
         }
-        
+
         String name1= getName(s1);
         String name2= getName(s2);
         
@@ -389,7 +389,7 @@ public class ASTManager implements IDisposable {
             return FALSE;
         }
 
-        // classes
+        // Classes.
         if (s1 instanceof ICPPClassScope || s1 instanceof ICCompositeTypeScope) {
             if (s2 instanceof ICPPClassScope || s2 instanceof ICCompositeTypeScope) {
                 return isSameScope(s1.getParent(), s2.getParent(), fileStatic);
@@ -606,7 +606,7 @@ public class ASTManager implements IDisposable {
     }
 
     private static IType getRealType(IType t) {
-        while(t instanceof ITypedef) {
+        while (t instanceof ITypedef) {
             t= ((ITypedef) t).getType();
         }
         return t;
@@ -758,8 +758,7 @@ public class ASTManager implements IDisposable {
         
         // eliminate global bindings when looking up in a class type
         if (removeGlobalsWhenClassScope &&
-                (scope instanceof ICPPClassScope || 
-                        scope instanceof ICCompositeTypeScope)) {
+                (scope instanceof ICPPClassScope || scope instanceof ICCompositeTypeScope)) {
             int count= 0;
             for (int i = 0; i < result.length; i++) {
                 IBinding binding = result[i];
@@ -772,7 +771,7 @@ public class ASTManager implements IDisposable {
             }
             if (count < result.length) {
                 IBinding[] copy= new IBinding[count];
-                int i=0;
+                int i= 0;
                 for (IBinding b : result) {
                     if (b != null) {
                         copy[i++]= b;
@@ -782,7 +781,7 @@ public class ASTManager implements IDisposable {
             }
         }        
         
-        // try to find constructors
+        // Try to find constructors.
         if (scope instanceof ICPPBlockScope) {
             for (int i = 0; i < result.length; i++) {
                 IBinding binding = result[i];
@@ -805,9 +804,6 @@ public class ASTManager implements IDisposable {
         fArgument= arg;
     }
 
-	/**
-	 * @see IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
         Assert.isTrue(!fDisposed, "ASTManager.dispose() called more than once"); //$NON-NLS-1$
@@ -898,17 +894,15 @@ public class ASTManager implements IDisposable {
 			if (!Character.isJavaIdentifierPart(sig[i]))
 				return null;
 		}
-		while(offset > 0) {
-			if (Character.isJavaIdentifierPart(sig[offset-1]))
-				offset--;
-			else 
+		while (offset > 0) {
+			if (!Character.isJavaIdentifierPart(sig[offset - 1]))
 				break;
+			offset--;
 		}
-		while(end < sig.length) {
-			if (Character.isJavaIdentifierPart(sig[end]))
-				end++;
-			else
+		while (end < sig.length) {
+			if (!Character.isJavaIdentifierPart(sig[end]))
 				break;
+			end++;
 		}
 		return rawSignature.substring(offset, end);
 	}
@@ -1497,7 +1491,7 @@ public class ASTManager implements IDisposable {
 
     protected void classifyConflictingBindings(IASTTranslationUnit tu, Set<IBinding> shadows,
     		Collection<IBinding> redecl, Collection<IBinding> barriers, RefactoringStatus status) {
-        // collect bindings on higher or equal level
+        // Collect bindings on higher or equal level.
         String name= fArgument.getName();
         IBinding[] newBindingsAboverOrEqual= null;
         IScope oldBindingsScope= null;
@@ -1523,11 +1517,11 @@ public class ASTManager implements IDisposable {
             newBindingsAboverOrEqual= IBinding.EMPTY_BINDING_ARRAY;
         }
         
-        // check conflicting bindings for being from above or equal level.
+        // Check conflicting bindings for being from above or equal level.
         for (IBinding conflictingBinding : fConflictingBinding) {
             if (conflictingBinding != null) {
                 boolean isAboveOrEqual= false;
-                for (int i = 0; !isAboveOrEqual && i<newBindingsAboverOrEqual.length; i++) {
+                for (int i = 0; !isAboveOrEqual && i < newBindingsAboverOrEqual.length; i++) {
                     IBinding aboveBinding = newBindingsAboverOrEqual[i];
                     try {
                         if (isSameBinding(tu.getIndex(), aboveBinding, conflictingBinding) == TRUE) {
@@ -1543,7 +1537,7 @@ public class ASTManager implements IDisposable {
             }
         }
 
-        // find bindings on same level
+        // Find bindings on same level.
         for (IBinding aboveBinding : newBindingsAboverOrEqual) {
             IScope aboveScope;
             try {

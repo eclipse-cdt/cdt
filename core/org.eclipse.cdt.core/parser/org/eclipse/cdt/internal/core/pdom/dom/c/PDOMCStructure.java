@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
- *
  */
 public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCompositeTypeScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
@@ -58,7 +57,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		super(linkage, parent, compType.getNameCharArray());		
 		setKind(compType);
 		setAnonymous(compType);
-		// linked list is initialized by malloc zeroing allocated storage
+		// Linked list is initialized by malloc zeroing allocated storage.
 	}
 
 	public PDOMCStructure(PDOMLinkage linkage, long record) {
@@ -87,7 +86,6 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	private void setAnonymous(ICompositeType ct) throws CoreException {
 		getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
 	}
-
 
 	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
@@ -126,7 +124,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 
 	private static class GetFields implements IPDOMVisitor {
-		private final List<IPDOMNode> fields = new ArrayList<IPDOMNode>();
+		private final List<IPDOMNode> fields = new ArrayList<>();
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IField) {
@@ -156,20 +154,22 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 			return fields.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new IField[0];
+			return IField.EMPTY_FIELD_ARRAY;
 		}
 	}
 
 	public static class FindField implements IPDOMVisitor {
 		private IField field;
 		private final String name;
+
 		public FindField(String name) {
 			this.name = name;
 		}
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IField) {
-				IField tField = (IField)node;
+				IField tField = (IField) node;
 				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(tField)) {
 					if (name.equals(tField.getName())) {
 						field = tField;
@@ -183,10 +183,14 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 			}
 			return false;
 		}
+
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
-		public IField getField() { return field; }
+
+		public IField getField() {
+			return field;
+		}
 	}
 	
 	@Override
@@ -254,7 +258,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		new PDOMNodeLinkedList(getLinkage(), record+MEMBERLIST).addMember(member);
+		new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST).addMember(member);
 	}
 	
 	@Override
@@ -296,9 +300,9 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		IBinding b= getBinding(name);
 		if (b == null)
 			return IBinding.EMPTY_BINDING_ARRAY;
-		return new IBinding[]{b};
+		return new IBinding[] { b };
 	}
-	
+
 	@Override
 	public IIndexBinding getScopeBinding() {
 		return this;

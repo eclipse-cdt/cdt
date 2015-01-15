@@ -131,8 +131,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory codeReaderFactory,
 			IIndex index, int options, IParserLogService log) throws CoreException {
-		return getASTTranslationUnit(FileContent.adapt(reader), scanInfo, IncludeFileContentProvider
-				.adapt(codeReaderFactory), index, options, log);
+		return getASTTranslationUnit(FileContent.adapt(reader), scanInfo,
+				IncludeFileContentProvider.adapt(codeReaderFactory), index, options, log);
 	}
 	
 	@Override
@@ -167,7 +167,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 			IASTTranslationUnit ast= parser.parse();
 			ast.setIsHeaderUnit((options & OPTION_IS_SOURCE_UNIT) == 0);
 			return ast;
-		} catch(ParseError e) {
+		} catch (ParseError e) {
 			// Only the TOO_MANY_TOKENS error can be handled here.
 			if (e.getErrorKind() != ParseErrorKind.TOO_MANY_TOKENS)
 				throw e;
@@ -178,7 +178,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 				if (scanner.getLocationResolver() != null)
 					tuName = scanner.getLocationResolver().getTranslationUnitPath();
 
-				log.traceLog(e.getMessage() + (tuName == null ? new String() : (" while parsing " + tuName))); //$NON-NLS-1$
+				log.traceLog(e.getMessage() + (tuName == null ? "" : (" while parsing " + tuName))); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return null;
 		} finally {
@@ -241,7 +241,8 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 * @return  an instance of ISourceCodeParser
 	 * @since 5.6
 	 */
-	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options, IParserSettings settings) {
+	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index,
+			boolean forCompletion, int options, IParserSettings settings) {
 		ParserMode mode = createParserMode(forCompletion, options);
 		return createParser(scanner, mode, log, index, options, settings);
 	}

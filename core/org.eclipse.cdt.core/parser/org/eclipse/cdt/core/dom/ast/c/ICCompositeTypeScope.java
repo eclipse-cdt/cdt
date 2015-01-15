@@ -20,13 +20,13 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
  */
 public interface ICCompositeTypeScope extends ICScope {
 	/**
-	 * get the binding for the member that has been previous added to this scope
+	 * Returns the binding for the member that has been previous added to this scope
 	 * and that matches the given name.
 	 */
 	public IBinding getBinding(char[] name);
 
 	/**
-	 * Get the type this scope is associated with
+	 * Returns the type this scope is associated with.
 	 * @since 4.0
 	 */
 	public ICompositeType getCompositeType();

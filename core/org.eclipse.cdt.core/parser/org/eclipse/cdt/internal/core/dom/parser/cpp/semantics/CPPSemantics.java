@@ -1005,14 +1005,14 @@ public class CPPSemantics {
 
 				// Nominate using-directives found in this block or namespace.
 				if (scope instanceof ICPPNamespaceScope) {
-					final ICPPNamespaceScope blockScope= (ICPPNamespaceScope) scope;
+					final ICPPNamespaceScope namespaceScope= (ICPPNamespaceScope) scope;
 
-					if (data.qualified && blockScope.getKind() != EScopeKind.eLocal) {
-						lookupInlineNamespaces(data, blockScope);
+					if (data.qualified && namespaceScope.getKind() != EScopeKind.eLocal) {
+						lookupInlineNamespaces(data, namespaceScope);
 					}
 					if (data.contentAssist || !data.hasResults() || !data.qualified) {
 						// Nominate namespaces
-						nominateNamespaces(data, blockScope);
+						nominateNamespaces(data, namespaceScope);
 					}
 				}
 			}

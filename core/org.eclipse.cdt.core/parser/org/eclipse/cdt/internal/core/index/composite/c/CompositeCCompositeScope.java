@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -39,7 +39,7 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
-		IBinding binding = ((ICompositeType)rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
+		IBinding binding = ((ICompositeType) rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 	
@@ -50,13 +50,13 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-		IBinding[] bindings = ((ICompositeType)rbinding).getCompositeScope().getBindings(lookup);
+		IBinding[] bindings = ((ICompositeType) rbinding).getCompositeScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
 	
 	@Override
 	public IBinding[] find(String name) {
-		IBinding[] preresult = ((ICompositeType)rbinding).getCompositeScope().find(name);
+		IBinding[] preresult = ((ICompositeType) rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	
 	}
 	

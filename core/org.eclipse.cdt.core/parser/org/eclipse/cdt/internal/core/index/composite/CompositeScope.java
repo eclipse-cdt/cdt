@@ -38,7 +38,9 @@ public abstract class CompositeScope implements IIndexScope {
 	protected final IIndexFragmentBinding rbinding;
 
 	public CompositeScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
-		if (cf == null || rbinding == null)
+		if (cf == null)
+			throw new NullPointerException();
+		if (rbinding == null)
 			throw new NullPointerException();
 		this.cf = cf;
 		this.rbinding = rbinding;
@@ -66,7 +68,6 @@ public abstract class CompositeScope implements IIndexScope {
 		throw new CompositingNotImplementedError();
 	}
 	
-	
 	public IBinding getRawScopeBinding() {
 		return rbinding;
 	}
@@ -84,8 +85,7 @@ public abstract class CompositeScope implements IIndexScope {
 			return binding;
 		} else if (binding instanceof CPPCompositeBinding /* AST composite */) {
 			return new CPPCompositeBinding(
-				processUncertainBindings(((CPPCompositeBinding) binding).getBindings())
-			);
+					processUncertainBindings(((CPPCompositeBinding) binding).getBindings()));
 		} else if (binding instanceof CPPUsingDeclaration) {
 			return binding;
 		} else if (binding == null) {
@@ -98,8 +98,10 @@ public abstract class CompositeScope implements IIndexScope {
 	}
 	
 	/**
-	 * A convenience method for processing an array of bindings with {@link CompositeScope#processUncertainBinding(IBinding)}
-     * Returns an empty array if the input parameter is null
+	 * A convenience method for processing an array of bindings with
+	 * {@link CompositeScope#processUncertainBinding(IBinding)}.
+     * Returns an empty array if the input parameter is null.
+     *
 	 * @param frgBindings
 	 * @return a non-null IBinding[] 
 	 */
@@ -125,19 +127,19 @@ public abstract class CompositeScope implements IIndexScope {
 	}
 	
 	/**
-	 * The c++-name resolution stores scopes in hash-maps, we need to make sure equality is detected
+	 * The c++ name resolution stores scopes in hash-maps, we need to make sure equality is detected
 	 * in order to prevent infinite loops.
 	 */
 	@Override
 	public final boolean equals(Object other) {
 		if (other instanceof CompositeScope) {
-			return rbinding.equals(((CompositeScope)other).rbinding);
+			return rbinding.equals(((CompositeScope) other).rbinding);
 		}
 		return false;
 	}
 	
 	/**
-	 * The c++-name resolution stores scopes in hash-maps, we need to make sure equality is detected
+	 * The c++ name resolution stores scopes in hash-maps, we need to make sure equality is detected
 	 * in order to prevent infinite loops.
 	 */
 	@Override

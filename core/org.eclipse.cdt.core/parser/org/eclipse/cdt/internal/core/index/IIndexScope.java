@@ -6,15 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
-
 
 /**
  * Interface for scopes returned via the index
@@ -24,12 +23,12 @@ public interface IIndexScope extends IScope {
 	IIndexScope[] EMPTY_INDEX_SCOPE_ARRAY = {};
 
 	/**
-	 * Get the binding associated with scope
+	 * Returns the binding associated with the scope.
 	 */
 	IIndexBinding getScopeBinding();
 
 	/**
-	 * Returns the parent scope or <code>null</code> if the scope is nested in the global scope.
+	 * Returns the parent scope or {@code null} if the scope is nested in the global scope.
 	 */
 	@Override
 	IIndexScope getParent();

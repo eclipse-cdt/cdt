@@ -284,8 +284,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 				}
 			}
 		} catch (DOMException e) {
-		} catch (CoreException ce) {
-			CCorePlugin.log(ce);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 		}
 		return null;
 	}

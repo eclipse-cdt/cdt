@@ -9,6 +9,7 @@
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
+ *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -626,29 +627,39 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
     /** @since 4.0 */
     @DsfServiceEventHandler
     @Override
-    public void eventDispatched(IExitedDMEvent e) {
-    	IDMContext dmc = e.getDMContext();
-    	if (dmc instanceof IBreakpointsTargetDMContext) {
-    		// A process has died, we should stop tracking its breakpoints, but only if it is not restarting
-    		// We only do this when the process is a breakpointTargetDMC itself (GDB < 7.4);
-    		// we don't want to stop tracking breakpoints when breakpoints are only set once
-    		// for all processes (GDB >= 7.4)
-    		if (!fProcRestarting.remove(dmc)) {
-    			if (fBackend.getSessionType() != SessionType.CORE) {
-    				IBreakpointsTargetDMContext bpTargetDmc = (IBreakpointsTargetDMContext)dmc;
-    				MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
-    				if (bpmService != null) {
-    					bpmService.stopTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor() {
-    						@Override
-    						protected void handleCompleted() {
-    							// Ok, no need to report any error because we may have already shutdown.
-    							// We need to override handleCompleted to avoid risking having a error printout in the log
-    						}
-    					});
-    				}
-    			}
-    		}
-    	}
+	public void eventDispatched(IExitedDMEvent e) {
+		IDMContext dmc = e.getDMContext();
+
+		if (dmc instanceof IContainerDMContext) {
+			MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
+
+			// Time to remove the tracking of a restarting process
+			boolean restarting = fProcRestarting.remove(dmc);
+
+			if (bpmService != null) {
+				if (!restarting) {
+					// Process exited, remove it from the thread break point filtering
+					bpmService.removeTargetFilter((IContainerDMContext) dmc);
+
+					if (dmc instanceof IBreakpointsTargetDMContext) {
+						// A process has died, we should stop tracking its breakpoints, but only if it is not restarting
+						// We only do this when the process is a breakpointTargetDMC itself (GDB < 7.4);
+						// we don't want to stop tracking breakpoints when breakpoints are only set once
+						// for all processes (GDB >= 7.4)
+						if (fBackend.getSessionType() != SessionType.CORE) {
+							IBreakpointsTargetDMContext bpTargetDmc = (IBreakpointsTargetDMContext) dmc;
+							bpmService.stopTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor() {
+								@Override
+								protected void handleCompleted() {
+									// Ok, no need to report any error because we may have already shutdown.
+									// We need to override handleCompleted to avoid risking having a error printout in the log
+								}
+							});
+						}
+					}
+				}
+			}
+		}
     	
     	super.eventDispatched(e);
     }

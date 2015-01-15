@@ -23,12 +23,15 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IModules;
+import org.eclipse.cdt.dsf.debug.service.IModules2;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo.DsfMISharedInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
@@ -38,7 +41,7 @@ import org.osgi.framework.BundleContext;
 /**
  * 
  */
-public class MIModules extends AbstractDsfService implements IModules, ICachingService {
+public class MIModules extends AbstractDsfService implements IModules2, ICachingService {
 	private CommandCache fModulesCache;
 	private CommandFactory fCommandFactory;
 
@@ -72,7 +75,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         /*
          * Make ourselves known so clients can use us.
          */
-        register(new String[]{IModules.class.getName(), MIModules.class.getName()}, new Hashtable<String,String>());
+        register(new String[]{IModules.class.getName(), MIModules.class.getName(), IModules2.class.getName()}, new Hashtable<String,String>());
 
         requestMonitor.done();
     }
@@ -98,6 +101,11 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         @Override
         public int hashCode() {
             return baseHashCode() + fFile.hashCode();
+        }
+        
+        @Override
+        public String toString() {
+        	return fFile;
         }
     }
     
@@ -212,7 +220,50 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
             rm.done();
         }
     }
+	
+	/**
+	 * @since 4.6
+	 */
+	@Override
+	public void loadSymbols(final IModuleDMContext dmc, final RequestMonitor rm, String name) {
+		assert dmc != null;
+		ICommandControlDMContext dcc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
+		if (dcc != null) {
+			fModulesCache.execute(fCommandFactory.createCLISharedLibrary(dcc, name), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+				@Override
+				protected void handleSuccess() {
+					rm.done();
+				}
+			});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DM Context", null)); //$NON-NLS-1$
+			rm.done();
+		}
+	}
 
+
+	/**
+	 * @since 4.6
+	 */
+	@Override
+	public void loadSymbolsForAllModules(ISymbolDMContext symCtx, final RequestMonitor rm) {
+        assert symCtx != null;
+        ICommandControlDMContext dmc1 = DMContexts.getAncestorOfType(symCtx, ICommandControlDMContext.class);
+        if (dmc1 != null) {
+            fModulesCache.execute(fCommandFactory.createCLISharedLibrary(dmc1),
+                    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+                        @Override
+                        protected void handleSuccess() {
+                            rm.done();
+                        }
+                    });
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Unknown DM Context", null)); //$NON-NLS-1$
+            rm.done();
+        }
+		
+	}
+	
     private IModuleDMData createSharedLibInfo(ModuleDMContext dmc, CLIInfoSharedLibraryInfo info){
         for (CLIInfoSharedLibraryInfo.DsfMISharedInfo shared : info.getMIShared()) {
             if(shared.getName().equals(dmc.fFile)){
@@ -243,4 +294,5 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
 	public void flushCache(IDMContext context) {
 		fModulesCache.reset();		
 	}
+
 }

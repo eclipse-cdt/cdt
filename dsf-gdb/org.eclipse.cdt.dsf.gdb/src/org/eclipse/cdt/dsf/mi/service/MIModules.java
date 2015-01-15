@@ -99,6 +99,11 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         public int hashCode() {
             return baseHashCode() + fFile.hashCode();
         }
+        
+        @Override
+        public String toString() {
+        	return fFile;
+        }
     }
     
     static class ModuleDMData implements IModuleDMData {

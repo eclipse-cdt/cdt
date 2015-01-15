@@ -803,15 +803,6 @@
             objectClass="org.eclipse.cdt.debug.core.model.ICModule"
             id="org.eclipse.cdt.debug.ui.ModuleActions">
          <action
-               helpContextId="load_symbols_action_context"
-               enablesFor="1"
-               label="%LoadSymbolsAction.label"
-               tooltip="%LoadSymbolsAction.tooltip"
-               icon="icons/elcl16/load_symbols_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadModuleSymbolsActionDelegate"
-               menubarPath="modulesGroup"
-               id="org.eclipse.cdt.debug.ui.LoadSymbolsAction"/>
-         <action
                helpContextId="module_properties_action_context"
                enablesFor="1"
                label="%ModulePropertiesAction.label"
@@ -821,25 +812,6 @@
                id="org.eclipse.cdt.debug.ui.ModulePropertiesAction">
          </action>
       </objectContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.ModuleView"
-            id="org.eclipse.cdt.debug.ui.modulesView.popupMenu">
-         <action
-               helpContextId="load_symbols_for_all_context"
-               label="%LoadSymbolsForAllAction.label"
-               tooltip="%LoadSymbolsForAllAction.tooltip"
-               icon="icons/elcl16/load_all_symbols_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
-               style="push"
-               menubarPath="modulesGroup"
-               id="org.eclipse.cdt.debug.ui.LoadSymbolsForAllAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-      </viewerContribution>
       <viewerContribution
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
@@ -1022,26 +994,6 @@
             <separator name="refreshGroup"/>
             <separator name="emptyRefreshGroup"/>
          </menu>
-      </viewContribution>
-      <viewContribution
-            targetID="org.eclipse.debug.ui.ModuleView"
-            id="org.eclipse.debug.ui.modulesView.toolbar">
-         <action
-               helpContextId="load_symbols_for_all_context"
-               disabledIcon="icons/dlcl16/load_all_symbols_co.gif"
-               toolbarPath="modulesGroup"
-               label="%LoadSymbolsForAllAction.label"
-               tooltip="%LoadSymbolsForAllAction.tooltip"
-               icon="icons/elcl16/load_all_symbols_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
-               style="push"
-               id="org.eclipse.cdt.debug.ui.LoadSymbolsForAllAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
       </viewContribution>
       <viewContribution
             id="org.eclipse.cdt.debug.ui.expression.toolbar"
@@ -2045,6 +1997,14 @@
           id="org.eclipse.cdt.debug.ui.command.debugNewExecutable"
           name="%DebugNewExecutable.name">
     </command>
+    <command
+          id="org.eclipse.cdt.debug.ui.command.loadSymbols"
+          name="%LoadSymbolsAction.label">
+    </command>
+    <command
+          id="org.eclipse.cdt.debug.ui.command.loadAllSymbols"
+          name="%LoadSymbolsForAllAction.label">
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -2117,6 +2077,34 @@
 			        </count>
 			    </with>
 			</activeWhen>
+      </handler>
+       <handler
+      		class="org.eclipse.cdt.debug.internal.ui.commands.LoadSymbolsCommandHandler"
+      		commandId="org.eclipse.cdt.debug.ui.command.loadSymbols">
+			 <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.debug.core.model.ICModule">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen> 
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.debug.internal.ui.commands.LoadAllSymbolsCommandHandler"
+      		commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols">
+			 <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.debug.core.model.ICModule">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen> 
       </handler>
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ReverseToggleCommandHandler"
@@ -2889,7 +2877,46 @@
 	          <visibleWhen checkEnabled="true">
 	          </visibleWhen>
 	       </command>	       
-     	</menuContribution>     	
+     	</menuContribution>
+		<!-- items for Module view... -->
+	   	<menuContribution 
+	          locationURI="popup:org.eclipse.debug.ui.ModuleView?after=modulesGroup">
+	       <command commandId="org.eclipse.cdt.debug.ui.command.loadSymbols"
+	           id="org.eclipse.cdt.debug.menu.command.loadSymbols"
+	           helpContextId="load_symbols_action_context"
+               label="%LoadSymbolsAction.label"
+               tooltip="%LoadSymbolsAction.tooltip"
+               icon="icons/elcl16/load_symbols_co.gif">
+	           <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>       
+     	</menuContribution>
+         <menuContribution 
+	          locationURI="popup:org.eclipse.debug.ui.ModuleView?after=modulesGroup">
+	       <command commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols"
+	           id="org.eclipse.cdt.debug.menu.command.loadAllSymbols"
+	           helpContextId="load_symbols_for_all_context"
+               label="%LoadSymbolsForAllAction.label"
+               tooltip="%LoadSymbolsForAllAction.tooltip"
+               icon="icons/elcl16/load_all_symbols_co.gif"
+               disabledIcon="icons/dlcl16/load_all_symbols_co.gif">
+	           <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>       
+     	</menuContribution> 
+     	 <menuContribution 
+	          locationURI="toolbar:org.eclipse.debug.ui.ModuleView?after=modulesGroup">
+	       <command commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols"
+	           id="org.eclipse.cdt.debug.toolbar.command.loadAllSymbols"
+	           helpContextId="load_symbols_for_all_context"
+               label="%LoadSymbolsForAllAction.label"
+               tooltip="%LoadSymbolsForAllAction.tooltip"
+               icon="icons/elcl16/load_all_symbols_co.gif"
+               disabledIcon="icons/dlcl16/load_all_symbols_co.gif">
+	           <visibleWhen checkEnabled="false">
+	          </visibleWhen>
+	       </command>       
+     	</menuContribution>           	
 	</extension>  
 	
  	<extension

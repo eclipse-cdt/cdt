@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMaintenance;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRemoteGet;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLISharedLibrary;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIShowEndian;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
@@ -318,6 +319,16 @@ public class CommandFactory {
 	/** @since 4.1 */
 	public ICommand<MIInfo> createCLIRemoteGet(ICommandControlDMContext ctx, String remoteFile, String localFile) {
 		return new CLIRemoteGet(ctx, remoteFile, localFile);
+	}
+
+	/** @since 4.6 */
+	public ICommand<MIInfo> createCLISharedLibrary(ISymbolDMContext ctx) {
+		return new CLISharedLibrary(ctx);
+	}
+
+	/** @since 4.6 */
+	public ICommand<MIInfo> createCLISharedLibrary(ISymbolDMContext ctx, String name) {
+		return new CLISharedLibrary(ctx, name);
 	}
 
 	/**

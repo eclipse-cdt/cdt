@@ -19,10 +19,10 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.cdt.dsf.debug.service.IModules.IModuleDMData;
 import org.eclipse.cdt.dsf.debug.service.IModules.ISymbolDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUILabelImage;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -210,7 +210,8 @@ public class ModulesVMNode extends AbstractDMVMNode
 
     @Override
     public int getDeltaFlags(Object e) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        if (e instanceof IRunControl.ISuspendedDMEvent || 
+        		e instanceof IModules.ModuleLoadedDMEvent) {
             return IModelDelta.CONTENT;
         } 
         return IModelDelta.NO_CHANGE;
@@ -218,7 +219,8 @@ public class ModulesVMNode extends AbstractDMVMNode
 
     @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        if (e instanceof IRunControl.ISuspendedDMEvent ||
+        		e instanceof IModules.ModuleLoadedDMEvent) {
             // Create a delta that indicates all groups have changed
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 

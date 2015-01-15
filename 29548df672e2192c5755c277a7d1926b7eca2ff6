@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_98f83d3f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T19:05:20Z",
+      "side": 1,
+      "message": "This should use CORE_NAME",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_f8f50945",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T19:05:20Z",
+      "side": 1,
+      "message": "This too.",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_d8f2c55a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-15T19:05:20Z",
+      "side": 1,
+      "message": "This too.",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

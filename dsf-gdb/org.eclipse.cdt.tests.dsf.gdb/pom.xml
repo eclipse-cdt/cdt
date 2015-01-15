@@ -16,7 +16,7 @@
 	<packaging>eclipse-test-plugin</packaging>
 	
 	<properties>
-		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/shared/common/gdb</gdbPathOption>
+		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/shared/common/gdb/gdb-all/bin</gdbPathOption>
 		<gdbTestSuite>AutomatedSuite.java</gdbTestSuite>
 	</properties>
 	

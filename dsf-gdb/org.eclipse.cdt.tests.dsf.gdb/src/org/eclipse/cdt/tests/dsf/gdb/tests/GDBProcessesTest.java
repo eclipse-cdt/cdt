@@ -150,8 +150,17 @@ public class GDBProcessesTest extends BaseTestCase {
 	 */
 	@Test
 	public void getThreadData() throws Throwable {
-		// Start all threads, stop when they are all started
-		SyncUtil.runToLine(SOURCE_NAME, getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
+		// Start the threads one by one to make sure they are discovered by gdb in the right
+		// order.
+		for (int i = 0; i < 5; i++) {
+			SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_AFTER_THREAD_START"));
+			SyncUtil.resumeUntilStopped();
+		}
+
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
+		SyncUtil.resumeUntilStopped();
+		// We need to get there to make sure that all the threads have their name set.
+		//SyncUtil.runToLine(SOURCE_NAME, getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
 		IThreadDMData mainThreadData = SyncUtil.getThreadData(1);
 

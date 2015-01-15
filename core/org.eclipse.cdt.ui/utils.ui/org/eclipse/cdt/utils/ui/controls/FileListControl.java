@@ -238,7 +238,7 @@ public class FileListControl {
 						/* See if we can discover the project from the context *
 						 * and check whether the path must be resolved... */
 						IProject project = null;
-						IResource resource = null;
+
 						if(contextInfo != null) {
 							try {
 								// Try to find the project
@@ -262,9 +262,15 @@ public class FileListControl {
 								// ignore
 							}
 						}
+						IResource resource = null;
 						if (!currentPathText.isEmpty()) {
-							IResource rs[] = ResourcesPlugin.getWorkspace().getRoot()
-									.findContainersForLocationURI(URIUtil.toURI(currentPathText));
+							IResource rs[] = null;
+							try {
+								rs = ResourcesPlugin.getWorkspace().getRoot()
+										.findContainersForLocationURI(URIUtil.toURI(currentPathText));
+							} catch (Exception e) {
+								// rs will be null here, exception is throw is path is not absolute
+							}
 							if (rs == null || rs.length == 0)
 								resource = ResourceLookup.selectFileForLocation(new Path(currentPathText),
 										null);

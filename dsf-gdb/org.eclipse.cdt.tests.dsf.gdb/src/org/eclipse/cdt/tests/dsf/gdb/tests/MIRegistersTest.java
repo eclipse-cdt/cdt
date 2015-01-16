@@ -364,8 +364,8 @@ public class MIRegistersTest extends BaseTestCase {
 
 	@Test
 	public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-		MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SOURCE_NAME,
-				getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(SOURCE_NAME + ':'
+				+ getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
 		// Get the thread IDs
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);

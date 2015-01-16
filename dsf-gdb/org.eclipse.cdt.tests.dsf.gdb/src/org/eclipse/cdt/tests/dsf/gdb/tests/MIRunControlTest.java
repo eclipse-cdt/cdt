@@ -274,11 +274,8 @@ public class MIRunControlTest extends BaseTestCase {
             		getGDBLaunch().getSession(),
             		IStartedDMEvent.class);
 
-		SyncUtil.runToLine(
-				fContainerDmc,
-				SOURCE_NAME,
-				getLineForTag("LINE_MAIN_AFTER_THREAD_START"),
-				true);
+		SyncUtil.runToLocation(SOURCE_NAME + ':'
+				+ getLineForTag("LINE_MAIN_AFTER_THREAD_START"));
 
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         

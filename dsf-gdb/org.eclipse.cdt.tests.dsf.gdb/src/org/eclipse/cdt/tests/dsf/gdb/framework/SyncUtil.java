@@ -202,25 +202,6 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(timeout);	
 	}
 
-	public static MIStoppedEvent runToLine(String fileName, int lineNo,
-            boolean skipBreakpoints) throws Throwable {
-		return runToLine(fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo,
-            boolean skipBreakpoints, int timeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return runToLine(containerDmc, fileName, lineNo, skipBreakpoints, timeout);
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo) throws Throwable {
-		return runToLine(fileName, lineNo, DefaultTimeouts.get(ETimeout.runToLine));
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo, int timeout) throws Throwable {
-		return runToLine(fileName, lineNo, false, timeout);
-	}
-
 	public static int addBreakpoint(String location) throws Throwable {
 		return addBreakpoint(location, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}

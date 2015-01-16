@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_018cd4bd",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:25:38Z",
+      "side": 1,
+      "message": "Should this be removed also?",
+      "revId": "5c395c40c6dcc09fc5471463659642683d7c60dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

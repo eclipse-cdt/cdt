@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_016df4a6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/LaunchConfigurationAndRestartTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T14:57:40Z",
+      "side": 1,
+      "message": "I started by wanting to check in the src dir, but then I only found a good way by using MIFileExecFile, which fails for a src file, so I moved to use the bin dir.  We should just update the comment.",
+      "parentUuid": "67fe7f71_7bbbd30d",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_b878a137",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
         "patchSetId": 5
@@ -136,6 +154,24 @@
       "side": 1,
       "message": "Are you ok with CORE_NAME and INVALID_CORE_NAME? It would be more in line with EXEC_NAME, SOURCE_NAME.",
       "parentUuid": "67fe7f71_9875dd3f",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_e1dc3006",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/PostMortemCoreTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T14:57:40Z",
+      "side": 1,
+      "message": "Ok",
+      "parentUuid": "67fe7f71_5bc08f74",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -276,6 +312,24 @@
       "side": 1,
       "message": "Ok with TRACE_NAME?",
       "parentUuid": "67fe7f71_f85989d5",
+      "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_419d3c46",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T14:57:40Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "67fe7f71_1bdd6756",
       "revId": "29548df672e2192c5755c277a7d1926b7eca2ff6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

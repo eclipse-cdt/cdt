@@ -173,54 +173,6 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(timeout);
 	}
 
-	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final int lineNo,
-			final boolean skipBreakpoints) throws Throwable {
-		return runToLine(dmc, fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
-	}
-
-	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final int lineNo,
-			final boolean skipBreakpoints, final int timeout) throws Throwable {
-		
-        final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-            new ServiceEventWaitor<MIStoppedEvent>(
-                    fSession,
-                    MIStoppedEvent.class);
-		
-		fRunControl.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				// No need for a RequestMonitor since we will wait for the
-				// ServiceEvent telling us the program has been suspended again
-				
-				fGdbControl.queueCommand(
-						fCommandFactory.createMIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
-						null);
-			}
-		});
-
-		// Wait for the execution to suspend after the step
-    	return eventWaitor.waitForEvent(timeout);	
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo,
-            boolean skipBreakpoints) throws Throwable {
-		return runToLine(fileName, lineNo, skipBreakpoints, DefaultTimeouts.get(ETimeout.runToLine));
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo,
-            boolean skipBreakpoints, int timeout) throws Throwable {
-        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		return runToLine(containerDmc, fileName, lineNo, skipBreakpoints, timeout);
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo) throws Throwable {
-		return runToLine(fileName, lineNo, DefaultTimeouts.get(ETimeout.runToLine));
-	}
-
-	public static MIStoppedEvent runToLine(String fileName, int lineNo, int timeout) throws Throwable {
-		return runToLine(fileName, lineNo, false, timeout);
-	}
-
 	public static int addBreakpoint(String location) throws Throwable {
 		return addBreakpoint(location, DefaultTimeouts.get(ETimeout.addBreakpoint));
 	}

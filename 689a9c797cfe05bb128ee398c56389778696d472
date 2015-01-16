@@ -16,6 +16,24 @@
       "revId": "689a9c797cfe05bb128ee398c56389778696d472",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_6c8e7784",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIRunControlTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:59:25Z",
+      "side": 0,
+      "message": "Yep, that is ok.  runToLocation() gets the container itself.",
+      "parentUuid": "67fe7f71_e1d55060",
+      "revId": "689a9c797cfe05bb128ee398c56389778696d472",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

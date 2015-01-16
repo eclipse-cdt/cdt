@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -121,6 +122,16 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 
 		copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME,
 				newName);
+
+		// Update the program name if it corresponds to the project name
+		IPath pathProgName = new Path(launchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "")); //$NON-NLS-1$
+		String progExtension = pathProgName.getFileExtension();
+		String progName = pathProgName.removeFileExtension().lastSegment();
+		if (progName.equals(oldName)) {
+			pathProgName = pathProgName.removeLastSegments(1).append(newName).addFileExtension(progExtension);
+		}
+		copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+				pathProgName.toOSString());
 
 		try {
 			// Note: for non-local LCs, this will end up updating the .launch

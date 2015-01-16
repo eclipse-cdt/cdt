@@ -87,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_2cb62f26",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfLoadSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T16:18:00Z",
+      "side": 1,
+      "message": "Please add copyright header",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_e19ef0b3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIModules.java",
         "patchSetId": 2

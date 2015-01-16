@@ -2,6 +2,91 @@
   "comments": [
     {
       "key": {
+        "uuid": "67fe7f71_ace21fbd",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2000,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "I\u0027m not sure what \"categoryId\" is used for, but I wonder if we should put these in a category too?",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_4c9d7346",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2086,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "Should this be an \u0027and\u0027?  What if you select some ICModule nodes and others that are not?",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_0cbb6baa",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2098,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "I wonder if we need this?  Why put a restriction on the selection if the selection is not used by the load all command?\n\nThis ties in to the fact that this command used to be available for the entire view, no selection required (see comment above).\n\nAlso, the toolbar button only shows if there is a selection due to this restriction.",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_ac94df15",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2912,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "Change id to be unique (this is the same id as the one above)",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_ec8ee705",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadAllSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "I think LoadSymbolsForAllActionDelegate can be removed and integrated in this file, that way, you don\u0027t have to follow its (    internal) API which does not really match what you need.",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_61ea0024",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadAllSymbolsCommandHandler.java",
         "patchSetId": 2
@@ -53,6 +138,23 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_8c791b6f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "I think LoadModuleSymbolsActionDelegate can be removed and integrated in this file, that way, you don\u0027t have to follow its ( internal) API which does not really match what you need.",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_a1cb48c7",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadSymbolsCommandHandler.java",
         "patchSetId": 2
@@ -87,6 +189,74 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_ecdb87e2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "We\u0027ll probably move these to DSF if we can implement the commandHandler directly in DSF",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_cc49633a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "Same comment as this maybe being an \u0027and\u0027",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_6c55d7ca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "Same comment about not needed a selection",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_2c18ef34",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfLoadSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "As Mikhail pointed out, this should use the IModules service and not send commands directly.",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_2cb62f26",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfLoadSymbolsCommandHandler.java",
         "patchSetId": 2
@@ -98,6 +268,23 @@
       "writtenOn": "2015-01-16T16:18:00Z",
       "side": 1,
       "message": "Please add copyright header",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_ec6f07ed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfLoadSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "When this class uses the IModules service, it can probably be moved to DSF directly.",
       "revId": "17794286f4b88612563262c1d0e7819d025898a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -149,6 +336,23 @@
       "writtenOn": "2015-01-16T15:53:21Z",
       "side": 1,
       "message": "Please move up a bit, the methods are in alphabetical order.  I know with an IDE it is not a big deal, but it can be nice when skimming the file.",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_0cf6cb50",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 1,
+      "message": "When these commands are called from the Modules service, the service should make this null check and call one of two createCLIShareLibrary() methods based on the results (see comment below)",
       "revId": "17794286f4b88612563262c1d0e7819d025898a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

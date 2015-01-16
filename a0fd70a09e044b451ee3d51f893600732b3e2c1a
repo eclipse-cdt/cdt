@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_2cf74f83",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 0,
+      "message": "This contribution used to show the \"Load symbols for All\" when right-clicking anywhere in the view, no need for a selection.  The new code no longer allows that.  Was that on purpose?  Try unselecting everything in the modules view and right-clicking below all the nodes.  Before you would see this menu, now you don\u0027t.",
+      "revId": "a0fd70a09e044b451ee3d51f893600732b3e2c1a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_6cf1578a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1026,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T17:02:09Z",
+      "side": 0,
+      "message": "This was a button on the toolbar to load all symbols.  Did you mean to remove it completely?  Oh, wait, I see you didn\u0027t remove it but it does not show where there is no selection. See comments below.",
+      "revId": "a0fd70a09e044b451ee3d51f893600732b3e2c1a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

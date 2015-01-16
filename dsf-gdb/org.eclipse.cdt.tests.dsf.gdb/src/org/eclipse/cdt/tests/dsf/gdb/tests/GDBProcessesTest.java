@@ -151,7 +151,7 @@ public class GDBProcessesTest extends BaseTestCase {
 	@Test
 	public void getThreadData() throws Throwable {
 		// Start all threads, stop when they are all started
-		SyncUtil.runToLine(SOURCE_NAME, getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
+		SyncUtil.runToLocation(SOURCE_NAME + ':' + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
 		IThreadDMData mainThreadData = SyncUtil.getThreadData(1);
 

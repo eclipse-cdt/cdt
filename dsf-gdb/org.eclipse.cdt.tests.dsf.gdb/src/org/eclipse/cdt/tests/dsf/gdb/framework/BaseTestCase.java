@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -372,16 +371,12 @@ public class BaseTestCase {
 
 	}
 
- 	@After
+	@After
 	public void doAfterTest() throws Exception {
- 		if (fLaunch != null) {
- 			try {
-				fLaunch.terminate();
-			} catch (DebugException e) {
-				assert false : "Could not terminate launch";
-			}
-            fLaunch = null;
- 		}
+		if (fLaunch != null) {
+			fLaunch.terminate();
+			fLaunch = null;
+		}
 	}
 
  	/**

@@ -1,0 +1,9 @@
+Verified+1: Hudson CI
+Code-Review+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Code-Review+2: Thomas Corbat <tcorbat@hsr.ch>
+Verified+1: Thomas Corbat <tcorbat@hsr.ch>
+Submitted-by: Thomas Corbat <tcorbat@hsr.ch>
+Submitted-at: Fri, 16 Jan 2015 09:26:19 -0500
+Reviewed-on: https://git.eclipse.org/r/39406
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

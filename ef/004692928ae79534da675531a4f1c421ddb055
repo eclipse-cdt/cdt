@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+2: Anton Leherbauer <anton.leherbauer@windriver.com>
+Verified+1: Anton Leherbauer <anton.leherbauer@windriver.com>
+Submitted-by: Anton Leherbauer <anton.leherbauer@windriver.com>
+Submitted-at: Fri, 16 Jan 2015 04:22:57 -0500
+Reviewed-on: https://git.eclipse.org/r/39642
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

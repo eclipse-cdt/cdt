@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -86,7 +87,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return null;
+		return PDOMCPPGlobalScope.INSTANCE;
 	}
 
 	@Override
@@ -115,5 +116,10 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		fLinkage.getDB().free(fRecord);
+	}
+
+	@Override
+	public String toString() {
+		return "using namespace " + getNominatedScope(); //$NON-NLS-1$
 	}
 }

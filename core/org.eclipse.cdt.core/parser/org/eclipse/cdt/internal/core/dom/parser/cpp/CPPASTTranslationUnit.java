@@ -161,13 +161,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		fScopeMapper.registerAdditionalDirectives(offset, fileContent.getUsingDirectives());
 	}	
 
-	/**
-	 * Maps an index scope to the AST.
-	 *
-	 * @param scope a scope, possibly from index
-	 * @return the corresponding scope in the AST, or the original scope if it doesn't have
-	 *     a counterpart in the AST.
-	 */
+	@Override
 	public IScope mapToASTScope(IScope scope) {
 		if (scope instanceof IIndexScope) {
 			return fScopeMapper.mapToASTScope((IIndexScope) scope);

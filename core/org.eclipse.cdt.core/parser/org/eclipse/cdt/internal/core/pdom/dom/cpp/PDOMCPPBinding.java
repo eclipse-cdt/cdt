@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Symbian Corporation and others.
+ * Copyright (c) 2006, 2015 Symbian Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,22 @@
  * Contributors:
  *     Symbian - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -48,5 +56,34 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 	public final boolean isGloballyQualified() throws DOMException {
 		// Local stuff is not stored in the index.
 		return true;
+	}
+
+	@Override
+	public final IIndexScope getScope() {
+		// The parent node in the binding hierarchy is the scope.
+		try {
+			IBinding parent= getParentBinding();
+			while (parent != null) {
+				if (parent instanceof ICPPClassType) {
+					return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
+				} else if (parent instanceof ICPPUnknownBinding) {
+					return (IIndexScope) ((ICPPUnknownBinding) parent).asScope();
+				} else if (parent instanceof ICPPEnumeration) {
+					final ICPPEnumeration enumeration = (ICPPEnumeration) parent;
+					if (enumeration.isScoped()) {
+						return (IIndexScope) enumeration.asScope();
+					}
+					parent= ((PDOMNamedNode) parent).getParentBinding();
+				} else if (parent instanceof IIndexScope) {
+					return (IIndexScope) parent;
+				} else {
+					break;
+				}
+			}
+		} catch (DOMException e) {
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return PDOMCPPGlobalScope.INSTANCE;
 	}
 }

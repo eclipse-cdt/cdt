@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2005, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -36,6 +36,7 @@ import org.eclipse.ui.services.IDisposable;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -359,6 +360,9 @@ public class ASTManager implements IDisposable {
         if (node1 instanceof IASTTranslationUnit && node2 instanceof IASTTranslationUnit) {
             return hasSameLocation(node1, node2, fileStatic);
         }
+
+        if (s1.getKind() == EScopeKind.eGlobal && s2.getKind() == EScopeKind.eGlobal)
+        	return TRUE;
 
         String name1= getName(s1);
         String name2= getName(s2);

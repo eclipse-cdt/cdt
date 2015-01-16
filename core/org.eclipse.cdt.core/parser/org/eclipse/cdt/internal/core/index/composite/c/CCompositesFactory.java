@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -50,6 +52,9 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
 		if (rscope == null)
 			return null;
+		if (rscope.getKind() == EScopeKind.eGlobal)
+			return rscope;
+
 		if (rscope instanceof ICCompositeTypeScope) {
 			ICCompositeTypeScope cscope = (ICCompositeTypeScope) rscope;
 			IIndexFragmentBinding rbinding = (IIndexFragmentBinding) cscope.getCompositeType();

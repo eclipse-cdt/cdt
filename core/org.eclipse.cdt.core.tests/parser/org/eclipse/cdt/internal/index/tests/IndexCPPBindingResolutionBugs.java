@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1306,6 +1306,23 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		name= findName("- ", 1);
 		assertTrue(name instanceof IASTImplicitName);
 		assertEquals("base", name.resolveBinding().getOwner().getName());
+	}
+
+	//	class A {};
+
+	//	void waldo(A p) {}
+	//
+	//	namespace ns {
+	//
+	//	void waldo() {}
+	//
+	//	void test(A a) {
+	//	  waldo(a);
+	//	}
+	//
+	//	}
+	public void test_457503() throws Exception {
+		checkBindings();
 	}
 
 	//	class A {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -421,7 +422,16 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	/**
 	 * Can be called to create a type for a type-id.
 	 */
-	abstract protected IType createType(IASTTypeId typeid);
+	protected abstract IType createType(IASTTypeId typeid);
+
+	/**
+	 * Maps an index scope to the AST.
+	 *
+	 * @param scope a scope, possibly from index
+	 * @return the corresponding scope in the AST, or the original scope if it doesn't have
+	 *     a counterpart in the AST.
+	 */
+	public abstract IScope mapToASTScope(IScope scope);
 
 	protected <T extends ASTTranslationUnit> T copy(T copy, CopyStyle style) {
 		copy.setIndex(fIndex);

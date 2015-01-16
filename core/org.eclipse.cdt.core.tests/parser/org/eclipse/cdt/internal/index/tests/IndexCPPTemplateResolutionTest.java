@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.List;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -1185,7 +1186,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding foo3= getBindingFromASTName("foo(e)", 3);
 		IBinding foo4= getBindingFromASTName("foo(cx)", 3);
 
-		assertEquals(foo1, foo2); assertEquals(foo2, foo3);
+		assertEquals(foo1, foo2);
+		assertEquals(foo2, foo3);
 		assertEquals(foo3, foo4);
     }
 
@@ -1209,8 +1211,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassType sc1= assertInstance(b1.getSpecializedBinding(), ICPPClassType.class);
     	assertTrue(sc0.isSameType(sc1));
 
-    	assertNull(sc0.getScope());
-    	assertNull(b0.getScope());
+    	assertEquals(EScopeKind.eGlobal, sc0.getScope().getKind());
+    	assertEquals(EScopeKind.eGlobal, b0.getScope().getKind());
     }
 
     // template<typename T>
@@ -1256,7 +1258,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
     	assertFalse(b0 instanceof ICPPSpecialization);
 
-    	IIndexScope s0= (IIndexScope) b0.getScope(), s4= (IIndexScope) b4.getScope();
+    	IIndexScope s0= (IIndexScope) b0.getScope();
+    	IIndexScope s4= (IIndexScope) b4.getScope();
     	IScope s1= b1.getScope();
 
     	assertTrue(((IType)s0.getScopeBinding()).isSameType((IType)((IIndexScope)b2.getCompositeScope()).getScopeBinding()));
@@ -1315,7 +1318,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassScope s1= assertInstance(b1.getScope(), ICPPClassScope.class);
     	assertInstance(s1.getClassType(), ICPPTemplateDefinition.class);
 
-    	assertNull(s1.getClassType().getScope());
+    	assertEquals(EScopeKind.eGlobal, s1.getClassType().getScope().getKind());
     }
 
 	//    typedef signed int SI;

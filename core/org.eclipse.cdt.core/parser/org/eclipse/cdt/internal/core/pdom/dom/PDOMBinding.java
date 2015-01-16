@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -17,19 +18,15 @@ import java.lang.reflect.Modifier;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
@@ -38,6 +35,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMExternalReferencesList;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCGlobalScope;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.CoreException;
 
@@ -55,6 +53,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
+
 	private byte hasDeclaration= -1;
 
 	protected PDOMBinding(PDOMLinkage linkage, PDOMNode parent, char[] name) throws CoreException {
@@ -255,39 +254,24 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 			if (parent instanceof IIndexScope) {
 				return (IIndexScope) parent;
 			}
-		} catch (CoreException ce) {
-			CCorePlugin.log(ce);
-		}
-		return null;
-	}
-
-	@Override
-	public final IIndexScope getScope() {
-		// The parent node in the binding hierarchy is the scope.
-		try {
-			IBinding parent= getParentBinding();
-			while (parent != null) {
-				if (parent instanceof ICPPClassType) {
-					return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
-				} else if (parent instanceof ICPPUnknownBinding) {
-					return (IIndexScope) ((ICPPUnknownBinding) parent).asScope();
-				} else if (parent instanceof ICPPEnumeration) {
-					final ICPPEnumeration enumeration = (ICPPEnumeration) parent;
-					if (enumeration.isScoped()) {
-						return (IIndexScope) enumeration.asScope();
-					}
-					parent= ((PDOMNamedNode) parent).getParentBinding();
-				} else if (parent instanceof IIndexScope) {
-					return (IIndexScope) parent;
-				} else {
-					return null;
-				}
-			}
-		} catch (DOMException e) {
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return null;
+		return PDOMCGlobalScope.INSTANCE;
+	}
+
+	@Override
+	public IIndexScope getScope() {
+		// The parent node in the binding hierarchy is the scope.
+		try {
+			IBinding parent= getParentBinding();
+			if (parent instanceof IIndexScope) {
+				return (IIndexScope) parent;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return PDOMCGlobalScope.INSTANCE;
 	}
 
 	@Override

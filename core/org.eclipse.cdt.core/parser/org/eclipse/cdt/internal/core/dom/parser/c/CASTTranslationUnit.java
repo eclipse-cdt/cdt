@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -21,11 +22,13 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
  * C-specific implementation of a translation unit.
@@ -99,6 +102,20 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	@Override
 	public void resolveAmbiguities() {
 		accept(new CASTAmbiguityResolver()); 
+	}
+
+	@Override
+	public IScope mapToASTScope(IScope scope) {
+		if (scope instanceof IIndexScope) {
+			if (scope.getKind() == EScopeKind.eGlobal)
+				return getScope();
+			if (scope instanceof ICCompositeTypeScope) {
+				ICompositeType type = ((ICCompositeTypeScope) scope).getCompositeType();
+				type = mapToASTType(type);
+				return type.getCompositeScope();
+			}
+		}
+		return scope;
 	}
 
 	/**

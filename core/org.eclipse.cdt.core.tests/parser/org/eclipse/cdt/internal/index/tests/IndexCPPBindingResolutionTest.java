@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -236,7 +237,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// namespace n { class C{}; }
 	// m::C c;
 	public void testUsingNamingDirective_177917_1b() {
-		IBinding b0= getBindingFromASTName("C c", 1);
+		IBinding b0= getBindingFromFirstIdentifier("C c");
 	}
 
 	// int ff(int x) { return x; }
@@ -438,7 +439,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			assertVariable(b1, "c", ICPPClassType.class, "C");
 			ICPPClassType b1type = (ICPPClassType) ((ICPPVariable) b1).getType();
 			assertClassTypeBinding(b1type, "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
-			assertTrue(b1type.getScope() == null);
+			assertEquals(EScopeKind.eGlobal, b1type.getScope().getKind());
 			assertTrue(b1type.getCompositeScope() instanceof ICPPClassScope);
 			assertClassTypeBinding(((ICPPClassScope) b1type.getCompositeScope()).getClassType(), "C", ICPPClassType.k_class, 0, 0, 0, 4, 0, 0, 0, 2, 0);
 		}
@@ -468,7 +469,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			assertVariable(b7, "e", IEnumeration.class, "E");
 			IEnumeration b5type = (IEnumeration) ((ICPPVariable) b7).getType();
 			assertEnumeration(b5type, "E", new String[] {"ER1","ER2","ER3"});
-			assertTrue(b5type.getScope() == null);
+			assertEquals(EScopeKind.eGlobal, b5type.getScope().getKind());
 		}
 		{
 			IBinding b8 = getBindingFromASTName("var1 = 1;", 4);
@@ -504,7 +505,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b24 = getBindingFromASTName("S2 : public", 2);
 		IBinding b25 = getBindingFromASTName("S {}; /*base*/", 1);
 	}
-
 
 	//// header content
 	//class TopC {}; struct TopS {}; union TopU {}; enum TopE {TopER1,TopER2};
@@ -566,19 +566,19 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b0 = getBindingFromASTName("S _s0;", 1);
 		assertTrue(b0.getScope() instanceof ICPPNamespaceScope);
 		assertTrue(b0.getScope().getParent() instanceof ICPPNamespaceScope);
-		assertTrue(b0.getScope().getParent().getParent() == null);
+		assertEquals(EScopeKind.eGlobal, b0.getScope().getParent().getParent().getKind());
 		assertQNEquals("n1::n2::S", b0);
 
 		IBinding b1 = getBindingFromASTName("S _s1;", 1);
 		assertTrue(b1.getScope() instanceof ICPPNamespaceScope);
 		assertTrue(b1.getScope().getParent() instanceof ICPPNamespaceScope);
-		assertTrue(b1.getScope().getParent().getParent() == null);
+		assertEquals(EScopeKind.eGlobal, b1.getScope().getParent().getParent().getKind());
 		assertQNEquals("n1::n2::S", b1);
 
 		IBinding b2 = getBindingFromASTName("S _s2;", 1);
 		assertTrue(b2.getScope() instanceof ICPPClassScope);
 		assertTrue(b2.getScope().getParent() instanceof ICPPClassScope);
-		assertTrue(b2.getScope().getParent().getParent() == null);
+		assertEquals(EScopeKind.eGlobal, b2.getScope().getParent().getParent().getKind());
 		assertQNEquals("c1::c2::S", b2);
 
 		IBinding b3 = getBindingFromASTName("S _s3;", 1);
@@ -601,7 +601,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertTrue(b10.getScope().getParent() instanceof ICPPClassScope);
 		assertTrue(b10.getScope().getParent().getParent() instanceof ICPPClassScope);
 		assertTrue(b10.getScope().getParent().getParent().getParent() instanceof ICPPNamespaceScope);
-		assertTrue(b10.getScope().getParent().getParent().getParent().getParent() == null);
+		assertEquals(EScopeKind.eGlobal, b10.getScope().getParent().getParent().getParent().getParent().getKind());
 		assertQNEquals("n3::c3::s3::u3::S", b10);
 
 		IBinding b11 = getBindingFromASTName("S _s11;", 1);

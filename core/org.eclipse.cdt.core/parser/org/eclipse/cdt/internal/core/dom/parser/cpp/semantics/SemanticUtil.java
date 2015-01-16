@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -541,8 +542,8 @@ public class SemanticUtil {
 	public static IScope mapToAST(IScope scope, IASTNode point) {
 		if (point != null) {
 			IASTTranslationUnit ast = point.getTranslationUnit();
-			if (ast instanceof CPPASTTranslationUnit) {
-				return ((CPPASTTranslationUnit) ast).mapToASTScope(scope);
+			if (ast instanceof ASTTranslationUnit) {
+				return ((ASTTranslationUnit) ast).mapToASTScope(scope);
 			}
 		}
 		return scope;

@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_61ea0024",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadAllSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Please add copyright header",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_c1a76c07",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadAllSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Move to within if statement",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_41941c9a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadAllSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Should we call delegate.dispose() since a new one is created every time?  Assuming the call to run is synchronous",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_a1cb48c7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Please add copyright header",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_a1a4e803",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadSymbolsCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Should we call delegate.dispose() since a new one is created every time?  Assuming the call to run is synchronous",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_e19ef0b3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIModules.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Probably should be:\nreturn baseToString() + \".file[\" + fFile + \"]\"; \n\nor\nreturn baseToString() + \".[\" + fFile + \"]\";",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_8189e47c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "We don\u0027t use *.  To avoid eclipse making that change for you you can go to Preferences-\u003eJava-\u003eOrganize Imports and at the bottom set \"Number of imports needed for *\" to something like 999",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_8160c42a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Please move up a bit, the methods are in alphabetical order.  I know with an IDE it is not a big deal, but it can be nice when skimming the file.",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_216bd811",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "You should have, for completeness, another:\n\npublic ICommand\u003cMIInfo\u003e createCLISharedLibrary(ICommandControlDMContext ctx) {\n           return new CLISharedLibrary(ctx);\n}",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_6165e038",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISharedLibrary.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "Please add copyright header",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_a156a853",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLISharedLibrary.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-16T15:53:21Z",
+      "side": 1,
+      "message": "We no longer send CLI command directly, but wrap them in MIInterpreterConsole.  You can immitate CLIShowEndian.\n\nThis allows to send MI flags that are not supported by CLI commands, like --thread-group, --thread, and --frame",
+      "revId": "17794286f4b88612563262c1d0e7819d025898a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

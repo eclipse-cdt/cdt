@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_dcf632ca",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 2098,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "This check still makes the toolbar command appear and disappear when something is selected and not selected.  Having buttons disappear is not a good thing.\n\nI set the visibleWhen check from the menuContribution below to false to avoid the disappearing button.  The button is still disabled without a selection though, which it would be nice to fix but this is not blocking.",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_bcf36ed8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadAllSymbolsCommandHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "This is a hack to follow an internal API that is not needed.  You can move the code of LoadSymbolsForAllActionDelegate here and remove that old internal API",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_1c01da3d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/LoadSymbolsCommandHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "This is a hack to follow an internal API that is not needed. You can move the code of LoadModuleSymbolsActionDelegate here and remove that old internal API",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_5c2a42b6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "Should we move to DSF?",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_3c2f7ec6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfLoadSymbolsCommandHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "Should use event. This clears the MIModules cache (along with the caches of all other services) and prevents the \u0027sharedlibrary\u0027 command from ever being cached.",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_9c24aae7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfLoadSymbolsCommandHandler.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "This refreshes all the views.  Clearing all data and fetching back from GDB.  That is not good.",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_fcfdf6a4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-17T11:39:02Z",
+      "side": 1,
+      "message": "Doing this can hide a bug.  The name should be valid.",
+      "revId": "375294f5bcacb0cba9ee9b127cfb18762a9e0b53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

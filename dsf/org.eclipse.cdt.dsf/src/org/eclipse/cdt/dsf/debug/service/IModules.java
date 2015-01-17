@@ -85,7 +85,7 @@ public interface IModules extends IDsfService {
     void getModuleData(IModuleDMContext dmc, DataRequestMonitor<IModuleDMData> rm);
 
     /** 
-     * Retreives the list of modules loaded in given symbol context. 
+     * Retrieves the list of modules loaded in given symbol context. 
      */ 
     void getModules(ISymbolDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
 

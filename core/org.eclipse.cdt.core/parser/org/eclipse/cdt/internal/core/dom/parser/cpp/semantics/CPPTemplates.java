@@ -1372,21 +1372,22 @@ public class CPPTemplates {
 
 			if (within != null && type instanceof IBinding) {
 				IType unwound= getNestedType(type, TDEF);
-				if (unwound instanceof ICPPClassType && unwound.isSameType(getSpecializedType(within))) {
+				ICPPClassSpecialization withinClass = getSpecializationContext(within);
+				if (unwound instanceof ICPPClassType && unwound.isSameType(withinClass.getSpecializedBinding())) {
 					// Convert (partial) class-templates (specializations) to the more specialized
 					// version.
-					if (within instanceof ICPPClassTemplate || !(unwound instanceof ICPPClassTemplate))
-						return within;
+					if (withinClass instanceof ICPPClassTemplate || !(unwound instanceof ICPPClassTemplate))
+						return withinClass;
 				}
 				IBinding typeAsBinding= (IBinding) type;
 				IBinding owner= typeAsBinding.getOwner();
 				if (owner instanceof IType) {
 					final IType ownerAsType = getNestedType((IType) owner, TDEF);
 					Object newOwner= owner;
-					if (ownerAsType instanceof ICPPClassType && ownerAsType.isSameType(getSpecializedType(within))) {
+					if (ownerAsType instanceof ICPPClassType && ownerAsType.isSameType(withinClass.getSpecializedBinding())) {
 						// Convert (partial) class-templates (specializations) that are used as
 						// owner of another binding, to the more specialized version.
-						newOwner= within;
+						newOwner= withinClass;
 					} else {
 						newOwner= instantiateType(ownerAsType, tpMap, packOffset, within, point);
 					}
@@ -1461,10 +1462,6 @@ public class CPPTemplates {
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
-	}
-
-	private static IType getSpecializedType(ICPPTypeSpecialization typeSpecialization) {
-		return (IType) typeSpecialization.getSpecializedBinding();
 	}
 
 	/**

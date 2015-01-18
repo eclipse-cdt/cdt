@@ -8643,4 +8643,38 @@ public class AST2TemplateTests extends AST2TestBase {
 		IVariable var2 = helper.assertNonProblem("var2");
 		assertSameType(var1.getType(), var2.getType());
 	}
+	
+	//	template <bool>
+	//	struct integral_constant {
+	//	    static const bool value = true;
+	//	};
+	//
+	//	template <class>
+	//	struct meta2 {
+	//	    struct Test {};
+	//
+	//	    enum {
+	//	        value = sizeof((Test()))
+	//	    };
+	//	};
+	//
+	//	struct meta : integral_constant<meta2<int>::value> {};
+	//
+	//	template <int>
+	//	struct base {
+	//	    int waldo;
+	//	};
+	//
+	//	template <typename>
+	//	struct S : base<meta::value> {
+	//	    using base<meta::value>::waldo;
+	//	};
+	//
+	//	int main() {
+	//	    S<int> s;
+	//	    s.waldo = 42;
+	//	}
+	public void testClassSpecializationInEnumerator_457511() throws Exception {
+		parseAndCheckBindings();
+	}
 }

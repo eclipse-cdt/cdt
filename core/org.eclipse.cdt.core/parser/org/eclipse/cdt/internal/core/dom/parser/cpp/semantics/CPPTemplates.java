@@ -1381,18 +1381,27 @@ public class CPPTemplates {
 				IBinding typeAsBinding= (IBinding) type;
 				IBinding owner= typeAsBinding.getOwner();
 				if (owner instanceof IType) {
-					final IType ownerAsType = getNestedType((IType) owner, TDEF);
+					IType ownerAsType = getNestedType((IType) owner, TDEF);
 					Object newOwner= owner;
 					if (ownerAsType instanceof ICPPClassType && ownerAsType.isSameType(getSpecializedType(within))) {
 						// Convert (partial) class-templates (specializations) that are used as
 						// owner of another binding, to the more specialized version.
 						newOwner= within;
 					} else {
+						if (ownerAsType instanceof ICPPClassTemplate) {
+							ownerAsType = createDeferredInstance((ICPPClassTemplate) ownerAsType);
+						}
 						newOwner= instantiateType(ownerAsType, tpMap, packOffset, within, point);
 					}
 
 					if (newOwner != owner && newOwner instanceof ICPPClassSpecialization) {
-						return (IType) ((ICPPClassSpecialization) newOwner).specializeMember(typeAsBinding, point);
+						//	TODO(nathanridge): 
+						//		We used to return here, but because alias template specializations
+						//		can report an incorrect owner, we can sometimes get into here in
+						//		cases where this doesn't do anything and the real substitution
+						//		happens in the 'type instanceof ITypeContainer' clause below.
+						//		Until that's fixed, work around this by continuing.
+						type = (IType) ((ICPPClassSpecialization) newOwner).specializeMember(typeAsBinding, point);
 					}
 				}
 

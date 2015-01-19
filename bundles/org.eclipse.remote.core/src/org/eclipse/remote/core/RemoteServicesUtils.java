@@ -143,7 +143,7 @@ public class RemoteServicesUtils {
 				String scheme = conn.getRemoteServices().getScheme();
 				String filePath = path.removeFirstSegments(1).makeAbsolute().toString();
 				try {
-					return new URI(scheme, connName, filePath, null);
+					return new URI(scheme, connName, filePath, null, null);
 				} catch (URISyntaxException e) {
 					// Ignore
 				}

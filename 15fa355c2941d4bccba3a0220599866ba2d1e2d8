@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_926f7173",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIModules.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-01-19T15:59:14Z",
+      "side": 1,
+      "message": "As far as I understand ModuleLoadedEvent notifies clients that a shared library is loaded. We need an event for symbols, that\u0027s a different case.",
+      "revId": "15fa355c2941d4bccba3a0220599866ba2d1e2d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

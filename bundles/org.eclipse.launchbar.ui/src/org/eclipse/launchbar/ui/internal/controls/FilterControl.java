@@ -271,6 +271,9 @@ public class FilterControl extends Composite {
 				} else if (e.detail == SWT.TRAVERSE_ARROW_NEXT) {
 					listViewer.setFocus();
 					updateListSelection(false);
+				} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					listViewer.setDefaultSelection(new StructuredSelection());
+					e.doit = false;
 				}
 			}
 		});

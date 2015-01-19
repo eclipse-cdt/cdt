@@ -137,7 +137,28 @@ public class LaunchBarListViewer extends StructuredViewer {
 		}
 	};
 
+	private KeyListener lisItemKeyListener = new KeyListener() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// ignore
+		}
 
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.character != 0 && e.character >= 0x20 && !filterControl.isVisible()) {
+				if (listItems.length <= 1)
+					return; // no filter for 1 item!
+				// enable filter control and send the character there
+				filterControl.setVisible(true);
+				filterControl.setFocus();
+				filterControl.getParent().layout(true);
+				filterControl.getFilterText().setText(e.character + "");
+				filterControl.getFilterText().setSelection(1);
+			} else if (e.character == SWT.ESC) {
+				setDefaultSelection(new StructuredSelection());
+			}
+		}
+	};
 
 
 	private class ListItem extends Composite {
@@ -171,6 +192,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 					GC gc = e.gc;
 					gc.setForeground(outlineColor);
 					gc.drawLine(0, size.y - 1, size.x, size.y - 1);
+					System.out.println(ListItem.this.index);
 					if (label == null)
 						lazyInit();
 				}
@@ -235,28 +257,13 @@ public class LaunchBarListViewer extends StructuredViewer {
 				editButton.setBackground(backgroundColor);
 				editButton.addMouseTrackListener(listItemMouseTrackListener);
 				editButton.addTraverseListener(listItemTraverseListener);
+				editButton.addKeyListener(lisItemKeyListener);
 			} else {
 				// add traverse listnener to control which will have keyboard focus
 				addTraverseListener(listItemTraverseListener);
+				addKeyListener(lisItemKeyListener);
 			}
-			addKeyListener(new KeyListener() {
-				@Override
-				public void keyReleased(KeyEvent e) {
-					// ignore
-				}
 
-				@Override
-				public void keyPressed(KeyEvent e) {
-					if (e.character != 0 && !filterControl.isVisible()) {
-						// enable filter control and send the character there
-						filterControl.setVisible(true);
-						filterControl.setFocus();
-						filterControl.getParent().layout(true);
-						filterControl.getFilterText().setText(e.character + "");
-						filterControl.getFilterText().setSelection(1);
-					}
-				}
-			});
 			setBackground(backgroundColor);
 			layout(true);
 		}
@@ -453,6 +460,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 			createSash(listComposite);
 		}
 		listComposite.pack(true);
+		listComposite.layout(true, true);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		if (elements.length > maxScrollBucket) {
 			Rectangle bounds = listItems[maxScrollBucket].getBounds();

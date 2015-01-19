@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_419edcec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_d8ec8534",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_589375af",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-01-15T21:16:51Z",
       "side": 1,
       "message": "To avoid doing the below line for every thread-exit event, I suggest putting\n\nif (dmc instanceof IContainerDMContext)\n\naround everything, even the logic that was there already.  Doing if (dmc instanceof IBreakpointsTargetDMContext) was taking care of it before, but now you have to do it anyway.",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_0ccfeba4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_589375af",
       "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_eccb8794",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 636,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_387f91d5",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_f8534962",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
         "patchSetId": 2
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_d2d459b8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "I found bug 457843 while looking into this, \nI seems this bug needs to be fixed before implementing the removal of bp filters for older versions of gdb.",
+      "parentUuid": "67fe7f71_f8534962",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_788e398d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
         "patchSetId": 2
@@ -81,6 +153,24 @@
       "writtenOn": "2015-01-15T21:16:51Z",
       "side": 1,
       "message": "I believe the remove should have been done all the time.  Notice that it is only called when (dmc instanceof IBreakpointsTargetDMContext); effectively, that means for GDB \u003e\u003d 7.4 this is never called and the map will grow for each restart.\n\nI suggest you use the new \u0027restarting\u0027 variable here and use remove() instead of contains() above.",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_6c64b715",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "Done, \nGood catch !",
+      "parentUuid": "67fe7f71_788e398d",
       "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +211,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_cc6843eb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_18072d91",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_3802f180",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
         "patchSetId": 2
@@ -132,6 +240,24 @@
       "writtenOn": "2015-01-15T21:16:51Z",
       "side": 1,
       "message": "Ericsson",
+      "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_ac65ff10",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-19T15:46:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67fe7f71_3802f180",
       "revId": "870a7c3d32c2974c4c4526abba56812c53313b5a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -327,6 +327,7 @@ public class MIModules extends AbstractDsfService implements IModules2, ICaching
         rm.done();
     }
 
+    /** @since 4.6 */
     @DsfServiceEventHandler
     public void eventDispatched(ISymbolsLoadedDMEvent e) {
     	fModulesCache.reset();

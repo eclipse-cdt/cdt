@@ -34,6 +34,24 @@
       "revId": "15fa355c2941d4bccba3a0220599866ba2d1e2d8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_123ee141",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIModules.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-01-19T16:17:19Z",
+      "side": 1,
+      "message": "Yes, that\u0027s correct. If auto-solib-add is off, symbols must be loaded manually. Otherwise GDB will load them automatically when the library is loaded or when it is attached to a process that already loaded a library.",
+      "parentUuid": "67fe7f71_128c21be",
+      "revId": "15fa355c2941d4bccba3a0220599866ba2d1e2d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

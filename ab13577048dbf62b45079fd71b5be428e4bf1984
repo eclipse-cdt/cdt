@@ -160,6 +160,24 @@
       "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a766b734_52c0e322",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/UNCPathConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2015-01-19T15:05:35Z",
+      "side": 1,
+      "message": "The only change this makes is it allows the authority section to be used in addition to the host section. The authority section needs to be used for remote implementations that use a connection name rather than a host name for the URI. Since o.e.remote is the only implementation that actually uses this remote functionality (that I know about at least), and it uses connection names, this change is needed to make remote support work with CDT.\n\nThe behavior is the same as the current version unless the authority section is used. I don\u0027t know what the behavior is supposed to be for a local path, but this patch doesn\u0027t change it. I think it\u0027s unreasonable to require a test case to cover functionality that is already there if there is not already one provided.",
+      "parentUuid": "a766b734_e3e35994",
+      "revId": "ab13577048dbf62b45079fd71b5be428e4bf1984",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_8066f446",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "This should be part of o.e.cdt.dsf.gdb.ui as the pattern matching is entirely implemented in DSF-GDB, not DSF itself.",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_c060fc2b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "dsf.gdb.ui",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_a065f83a",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "dsf.gdb.ui",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_005a047b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddLocalsExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "Please move to o.e.cdt.dsf.gdb.ui",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_2051085b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddLocalsExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_83b1de2f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddLocalsExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "This was confusing when using it.  The command does do anything when there is already such an expression and if the user does not know what this command is supposed to do they might get confused.\n\nWe could actually allow to create more than one of such commands, just to let the user really notice what is happening.  They\u0027ll learn not to use it more than once after.",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_0073240b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddLocalsExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "Although * is nicer, it would be more instructive to put \u003d* to teach users that you need an \u003d sign for groups.",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_e056e054",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddRegistersExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "Please move to o.e.cdt.dsf.gdb.ui",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_40540c4c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddRegistersExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_e06f001f",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/actions/AddRegistersExpressionCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-20T21:36:26Z",
+      "side": 1,
+      "message": "Although $* is nicer, it would be more instructive to put \u003d$* to teach users that you need an \u003d sign for groups.",
+      "revId": "0460e876f66b2646542f43696c2eb2c29a2e2613",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

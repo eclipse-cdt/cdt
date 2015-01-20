@@ -269,7 +269,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			if (isAutoConfigSupported()) {
 				fBuildConfigCombo.add(LaunchMessages.CMainTab_Use_Automatic);
 				fBuildConfigCombo.setData(String.valueOf(offset), AUTO_CONFIG);
-				if (selectedConfigID.equals(AUTO_CONFIG)) {
+				if (AUTO_CONFIG.equals(selectedConfigID)) {
 					fBuildConfigCombo.select(offset);
 				}
 			}

@@ -61,7 +61,7 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 			@Override
 			public void run() {
 				if (all) {
-					queueLoadAllSymbols(dsfSession, selection);
+					queueLoadAllSymbols(dsfSession);
 				} else {
 					// load symbols of specific element
 					for (Object o : selection.toList()) {
@@ -72,7 +72,7 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 		});
 	}
 
-	@ConfinedToDsfExecutor("fSession.getExecutor()")
+	@ConfinedToDsfExecutor("session.getExecutor()")
 	private void queueLoadSymbols(final DsfSession session, final Object module) {
 		if (!(module instanceof IDMVMContext))
 			return;
@@ -96,8 +96,8 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 		}
 	}
 
-	@ConfinedToDsfExecutor("fSession.getExecutor()")
-	private void queueLoadAllSymbols(final DsfSession session, IStructuredSelection selection) {
+	@ConfinedToDsfExecutor("session.getExecutor()")
+	private void queueLoadAllSymbols(final DsfSession session) {
 		IAdaptable debugContext = DebugUITools.getDebugContext();
 		IDMContext dmcontext = (IDMContext) debugContext.getAdapter(IDMContext.class);
 		ISymbolDMContext symDmc = DMContexts.getAncestorOfType(dmcontext, ISymbolDMContext.class);

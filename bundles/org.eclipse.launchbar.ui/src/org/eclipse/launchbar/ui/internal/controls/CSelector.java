@@ -268,6 +268,8 @@ public abstract class CSelector extends Composite {
 	}
 
 	public void setSelection(Object element) {
+		if (isDisposed())
+			return;
 		this.selection = element;
 		if (buttonComposite != null)
 			buttonComposite.dispose();

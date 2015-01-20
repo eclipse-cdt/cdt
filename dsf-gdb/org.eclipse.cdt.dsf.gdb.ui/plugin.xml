@@ -356,6 +356,26 @@
 			    </with>
 			</activeWhen> 
       </handler>
+            <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.AddLocalsExpressionCommandHandler"
+            commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression">
+            <activeWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.gdb.ui" value="ACTIVE"/>
+            </with>
+            </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.AddRegistersExpressionCommandHandler"
+            commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression">
+            <activeWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.gdb.ui" value="ACTIVE"/>
+            </with>
+            </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

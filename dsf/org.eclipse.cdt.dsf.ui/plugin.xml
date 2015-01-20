@@ -256,6 +256,22 @@
            	 <separator name="updatePolicy" visible="true"/>
        </menuContribution>
        <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
+		     <command
+                 id="org.eclipse.cdt.dsf.ui.menu.addRegistersExpression"
+                 commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression" 
+            	 label="%command.addRegisters.label">
+            </command>       
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
+		     <command
+                 id="org.eclipse.cdt.dsf.ui.menu.addLocalsExpression"
+                 commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression" 
+            	 label="%command.addLocals.label">
+            </command>       
+       </menuContribution>
+       <menuContribution
             locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=updatePolicy">
             <menu 
                  id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updatePolicies" 
@@ -326,6 +342,28 @@
          <activeWhen>
             <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
          </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.debug.internal.ui.actions.AddLocalsExpressionCommandHandler"
+            commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression">
+            <activeWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.debug.internal.ui.actions.AddRegistersExpressionCommandHandler"
+            commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression">
+            <activeWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            </activeWhen>
       </handler>
       <handler
       		class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.DsfViewMemoryHandler"
@@ -577,6 +615,14 @@
             description="%command.rulerToggleBreakpoint.description"
             id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
             name="%command.rulerToggleBreakpoint.name">
+      </command>
+      <command
+            id="org.eclipse.cdt.dsf.ui.addLocalsExpression"
+            name="%command.addLocals.label">
+      </command>
+	  <command
+            id="org.eclipse.cdt.dsf.ui.addRegistersExpression"
+            name="%command.addRegisters.label">
       </command>
    </extension>
 

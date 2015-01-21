@@ -57,8 +57,6 @@ public class IndexLocationFactory {
 	/**
 	 * Returns the absolute file path of a location, or {@code null}
 	 * if the location is not a file-system path.
-	 * @return the absolute file path of a location, or {@code null}
-	 * if the location is not a file-system path.
 	 */
 	public static IPath getAbsolutePath(IIndexFileLocation location) {
 		return UNCPathConverter.toPath(location.getURI());

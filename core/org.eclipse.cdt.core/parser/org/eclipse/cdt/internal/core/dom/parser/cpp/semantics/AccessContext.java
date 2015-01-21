@@ -46,9 +46,10 @@ public class AccessContext {
 
 	/**
 	 * Checks if a binding is accessible from a given name.
+	 *
 	 * @param binding  A binding to check access for.
 	 * @param from A name corresponding to the binding.
-	 * @return <code>true</code> if the binding is accessible.
+	 * @return {@code true} if the binding is accessible.
 	 */
 	public static boolean isAccessible(IBinding binding, IASTName from) {
 		return new AccessContext(from).isAccessible(binding);
@@ -56,11 +57,12 @@ public class AccessContext {
 
 	/**
 	 * Checks if a binding is accessible from a given name.
+	 *
 	 * @param binding  A binding to check access for.
 	 * @param bindingVisibility visibility of the binding in the containing composite type.
 	 *     Used instead of calling {@link ICPPMember#getVisibility()}.
 	 * @param from A name corresponding to the binding.
-	 * @return <code>true</code> if the binding is accessible.
+	 * @return {@code true} if the binding is accessible.
 	 */
 	public static boolean isAccessible(IBinding binding, int bindingVisibility, IASTName from) {
 		return new AccessContext(from).isAccessible(binding, bindingVisibility);
@@ -68,9 +70,10 @@ public class AccessContext {
 
 	private final IASTName name;
 	/**
-	 * A chain of nested classes or/and a function that determine accessibility of private/protected members
-	 * by participating in friendship or class inheritance relationships. If both, classes and a function
-	 * are present in the context, the outermost class has to be local to the function.
+	 * A chain of nested classes or/and a function that determine accessibility of private/protected
+	 * members by participating in friendship or class inheritance relationships. If both, classes
+	 * and a function are present in the context, the outermost class has to be local to
+	 * the function.
 	 * {@link "http://www.open-std.org/JTC1/SC22/WG21/docs/cwg_defects.html#45"}
 	 */
 	private IBinding[] context;
@@ -78,7 +81,7 @@ public class AccessContext {
 	 * A class through which the bindings are accessed (11.2.4).
 	 */
 	private boolean isUnqualifiedLookup;
-	private ICPPClassType namingClass;  // depends on the binding for which we check the access
+	private ICPPClassType namingClass;  // Depends on the binding for which we check the access.
 	// The first candidate is independent of the binding for which we do the access-check.
 	private ICPPClassType firstCandidateForNamingClass;
 	private DOMException initializationException;
@@ -89,8 +92,9 @@ public class AccessContext {
 
 	/**
 	 * Checks if a binding is accessible in a given context.
+	 *
 	 * @param binding A binding to check access for.
-	 * @return <code>true</code> if the binding is accessible.
+	 * @return {@code true} if the binding is accessible.
 	 */
 	public boolean isAccessible(IBinding binding) {
 		if (binding instanceof ICPPTemplateParameter)
@@ -123,10 +127,11 @@ public class AccessContext {
 
 	/**
 	 * Checks if a binding is accessible in a given context.
+	 *
 	 * @param binding A binding to check access for.
 	 * @param bindingVisibility visibility of the binding in the containing composite type.
 	 *     Used instead of calling {@link ICPPMember#getVisibility()}.
-	 * @return <code>true</code> if the binding is accessible.
+	 * @return {@code true} if the binding is accessible.
 	 */
 	public boolean isAccessible(IBinding binding, int bindingVisibility) {
 		IBinding owner;
@@ -149,7 +154,7 @@ public class AccessContext {
 	}
 
 	/**
-	 * @return <code>true</code> if initialization succeeded.
+	 * @return {@code true} if initialization succeeded.
 	 */
 	private boolean initialize(ICPPClassType accessOwner) {
 		if (context == null) {
@@ -276,7 +281,6 @@ public class AccessContext {
 		return null;
 	}
 
-	
 	private ICPPClassType getNamingClass(ICPPClassType accessOwner) {
 		ICPPClassType classType = firstCandidateForNamingClass;
 		if (classType != null && isUnqualifiedLookup) {
@@ -333,9 +337,10 @@ public class AccessContext {
 
 	/**
 	 * Checks if objects with the given visibility are accessible at the given access level.
+	 *
 	 * @param visibility one of: v_public, v_protected, v_private.
 	 * @param accessLevel one of: v_public, v_protected, v_private.
-	 * @return <code>true</code> if the access level is sufficiently high.
+	 * @return {@code true} if the access level is sufficiently high.
 	 */
 	private static boolean isAccessible(int visibility, int accessLevel) {
 		// Note the ordering of numeric visibility values: v_public < v_protected < v_private.

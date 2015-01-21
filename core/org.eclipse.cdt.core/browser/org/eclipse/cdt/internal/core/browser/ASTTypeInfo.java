@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IFunctionInfo;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
@@ -37,8 +39,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import java.util.Arrays;
-
 /**
  * Type info object needed to support search for local variables.
  * @since 5.0
@@ -62,13 +62,13 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 			final ASTTypeReference ref= createReference(name);
 			elementType = IndexModelUtil.getElementType(binding);
 			if (binding instanceof ICPPBinding) {
-				fqn= ((ICPPBinding)binding).getQualifiedName();
+				fqn= ((ICPPBinding) binding).getQualifiedName();
 			} else if (binding instanceof IField) {
 				IField field= (IField) binding;
 				ICompositeType owner= field.getCompositeTypeOwner();
-				fqn= new String[] {owner.getName(), field.getName()};
+				fqn= new String[] { owner.getName(), field.getName() };
 			} else {
-				fqn= new String[] {binding.getName()};
+				fqn= new String[] { binding.getName() };
 			}
 			if (binding instanceof IFunction) {
 				final IFunction function= (IFunction)binding;
@@ -132,7 +132,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public ICProject getEnclosingProject() {
-		if (getResolvedReference()!=null) {
+		if (getResolvedReference() != null) {
 			IProject project = reference.getProject();
 			if (project != null) {
 				return CCorePlugin.getDefault().getCoreModel().getCModel().getCProject(project.getName());

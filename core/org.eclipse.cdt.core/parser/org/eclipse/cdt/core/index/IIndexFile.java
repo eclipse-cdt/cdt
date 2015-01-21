@@ -29,7 +29,6 @@ public interface IIndexFile extends IFileNomination {
 
 	/**
 	 * Returns an IIndexFileLocation representing the location of this file
-	 * @return an IIndexFileLocation representing the location of this file
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getLocation() throws CoreException;

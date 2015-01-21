@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface ITypedef extends IBinding, IType {
 	/**
-	 * Returns the type that this thing is a typedef of
+	 * Returns the type that this thing is a typedef of.
 	 */
 	public IType getType();
 }

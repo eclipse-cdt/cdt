@@ -152,7 +152,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		if (obj == this)
 			return true;
 		if (obj instanceof PDOMFile) {
-			PDOMFile other = (PDOMFile)obj;
+			PDOMFile other = (PDOMFile) obj;
 			return fLinkage.getPDOM().equals(other.getLinkage().getPDOM()) && record == other.record;
 		}
 		return false;

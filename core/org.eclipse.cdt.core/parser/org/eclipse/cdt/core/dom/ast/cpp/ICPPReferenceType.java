@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public interface ICPPReferenceType extends IType {
 	/**
-	 * Returns the type that this is a reference of
+	 * Returns the type that this is a reference of.
 	 */
 	public IType getType();
 	

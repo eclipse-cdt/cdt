@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IPointerType extends IType {
     /**
-     * Returns the type that this is a pointer to
+     * Returns the type that this is a pointer to.
      */
     public IType getType();
     
@@ -33,7 +33,7 @@ public interface IPointerType extends IType {
     
 	/**
 	 * Returns whether the pointer is qualified to be restrict.
-	 * For c++ this is a gnu-extension.
+	 * For c++ this is a GNU-extension.
 	 * @since 5.3
 	 */
 	boolean isRestrict();

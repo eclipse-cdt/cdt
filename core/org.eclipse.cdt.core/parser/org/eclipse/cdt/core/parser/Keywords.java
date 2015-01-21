@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
@@ -306,7 +307,7 @@ public class Keywords {
 	public static final char[] cVA_ARGS= "__VA_ARGS__".toCharArray();
 
 
-	// preprocessor extensions (supported by GCC)
+	// Preprocessor extensions (supported by GCC).
 	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray();
 	public static final char[] cIMPORT = "import".toCharArray();
 	public static final char[] cIDENT = "ident".toCharArray();
@@ -327,6 +328,8 @@ public class Keywords {
 
 	private static void addCommon(CharArrayIntMap words) {
 		words.put(Keywords._Pragma, IToken.t_PRAGMA);
+		words.put(Keywords.cALIGNAS, IToken.t_alignas);
+		words.put(Keywords.cALIGNOF, IToken.t_alignof);
         words.put(Keywords.cAUTO, IToken.t_auto);
         words.put(Keywords.cBREAK, IToken.t_break);
         words.put(Keywords.cCASE, IToken.t_case);
@@ -363,7 +366,7 @@ public class Keywords {
         words.put(Keywords.cASM, IToken.t_asm);
 	}
 
-        // ANSI C keywords
+    // ANSI C keywords
 	private static void addC(CharArrayIntMap ckeywords) {
         ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict);
         ckeywords.put(Keywords.c_BOOL, IToken.t__Bool);

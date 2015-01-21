@@ -9024,6 +9024,52 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <bool> struct B {};
+	//	template <>
+	//	struct B<true> {
+	//	  void waldo();
+	//	};
+	//	typedef char& one;
+	//	void test() {
+	//	  B<sizeof(one) == 1> b;
+	//	  b.waldo();
+	//	}
+	public void testSizeofReference_397342() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//	  char a[100];
+	//	};
+	//	struct B {
+	//	  A& b;
+	//	};
+	//	A* p;
+	public void testSizeofStructWithReferenceField_397342() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		IASTName nameB = bh.findName("B");
+		IASTName namep = bh.findName("p");
+		ICPPClassType B = (ICPPClassType) nameB.resolveBinding();
+		IPointerType ptrToA = (IPointerType) ((ICPPVariable) namep.resolveBinding()).getType();
+		long pointerSize = SizeofCalculator.getSizeAndAlignment(ptrToA, namep).size;
+		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
+		assertEquals(pointerSize, BSize);
+	}
+
+	//	template <bool> struct B {};
+	//	template <>
+	//	struct B<true> {
+	//	  void waldo();
+	//	};
+	//	typedef char& one;
+	//	void test() {
+	//	  B<alignof(one) == 1> b;
+	//	  b.waldo();
+	//	}
+	public void testAlignof_451082() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	void f(int);
 	//	void f(unsigned int);
 	//	void test() {
@@ -10587,38 +10633,6 @@ public class AST2CPPTests extends AST2TestBase {
 		BindingAssertionHelper b = getAssertionHelper();
 		IVariable var = b.assertNonProblem("value");
 		assertEquals(1 /*true */, var.getInitialValue().numericalValue().longValue());
-	}
-
-	//	template <bool> struct B{};
-	//	template <>
-	//	struct B<true> {
-	//	    void waldo();
-	//	};
-	//	typedef char& one;
-	//	int main() {
-	//	    B<sizeof(one) == 1> b;
-	//	    b.waldo();
-	//	}
-	public void testSizeofReference_397342() throws Exception {
-		parseAndCheckBindings();
-	}
-
-	//	struct A {
-	//		char a[100];
-	//	};
-	//	struct B {
-	//		A& b;
-	//	};
-	//	A* p;
-	public void testSizeofStructWithReferenceField_397342() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper();
-		IASTName nameB = bh.findName("B");
-		IASTName namep = bh.findName("p");
-		ICPPClassType B = (ICPPClassType) nameB.resolveBinding();
-		IPointerType ptrToA = (IPointerType) ((ICPPVariable) namep.resolveBinding()).getType();
-		long pointerSize = SizeofCalculator.getSizeAndAlignment(ptrToA, namep).size;
-		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
-		assertEquals(pointerSize, BSize);
 	}
 
 	//  namespace NS {

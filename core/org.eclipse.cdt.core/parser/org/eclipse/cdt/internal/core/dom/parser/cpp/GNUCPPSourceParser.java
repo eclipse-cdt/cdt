@@ -326,7 +326,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     			if (!haveName || destructorOffset >= 0 || keywordTemplate) {
     				throwBacktrack(LA(1));
     			}
-    			nameSpec= (ICPPASTName) nodeFactory.newName(CharArrayUtils.EMPTY);
+    			nameSpec= nodeFactory.newName(CharArrayUtils.EMPTY);
     			if (qname != null) {
     				addNameSpecifier(qname, nameSpec);
     			}
@@ -593,6 +593,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_new:
         case IToken.t_delete:
         case IToken.t_sizeof:
+        case IToken.t_alignof:
         case IGCCToken.t___alignof__:
         	return NO_TEMPLATE_ID;
 
@@ -1404,6 +1405,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	}
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(),
         			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx, strat);
+        case IToken.t_alignof:
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(),
         			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx, strat);

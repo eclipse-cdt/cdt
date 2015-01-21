@@ -16,6 +16,24 @@
       "revId": "12280edf128c00f36eecff35a8475519fb83edaa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_6374ba75",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1375,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-21T04:45:50Z",
+      "side": 1,
+      "message": "I was under an impression that before http://git.eclipse.org/c/cdt/org.eclipse.cdt.git/commit/?id\u003d8e5a31e714d28d2760b36168d48aa01bf828e211 the CPPTemplates.instatiateType method had always been called with \u0027within\u0027 parameter obtained by calling getSpecializationContext(). Upon closer examination it turned out not to be true. There was was at least one exception.\n\nI\u0027ve modified the patch to avoid walking up the chain of specializations.",
+      "parentUuid": "67fe7f71_e3ad4a71",
+      "revId": "12280edf128c00f36eecff35a8475519fb83edaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

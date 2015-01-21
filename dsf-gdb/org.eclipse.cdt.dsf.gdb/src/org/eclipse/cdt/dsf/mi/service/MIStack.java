@@ -944,17 +944,44 @@ public class MIStack extends AbstractDsfService
 	    						rm.done();	    				    	
 	    					} else {
 								// We're seeing gdb in some cases fail when it's
-								// being asked for the stack depth or stack
-								// frames, but the same command succeeds if
-								// the request is limited to one frame. So try
-								// again with a limit of 1. It's better to show
-								// just one frame than none at all
-	    						if (maxDepth != 1) {
-	    							getStackDepth(dmc, 1, rm);
-	    						}
-	    						else {
-		    						super.handleError();
-	    						}
+								// being asked for the stack depth but stack frames command succeeds
+								// it seems like an overkill but it will cached and ui later will ask for it anyway
+								ICommand<MIStackListFramesInfo> listFramesCommand;
+								if (maxDepth <= 0)
+									listFramesCommand = fCommandFactory.createMIStackListFrames(execDmc);
+								else
+									listFramesCommand = fCommandFactory.createMIStackListFrames(execDmc, 0, maxDepth);
+								fMICommandCache.execute(
+										listFramesCommand,
+										new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
+											@Override
+											protected void handleSuccess() {
+												try {
+													// Find the index to the correct MI frame object.
+													MIFrame[] miFrames = getData().getMIFrames();
+													int level = 0;
+													for (MIFrame miFrame : miFrames) {
+														if (miFrame.getLevel() > level)
+															level = miFrame.getLevel();
+													}
+													// Create the data object. Depth is +1 of maximum frame level
+													int depth = level + 1;
+													fStackDepthCache.put(execDmc.getThreadId(), new StackDepthInfo(maxDepth, depth));
+													rm.setData(depth);
+												} finally {
+													rm.done(); // we have to close monitor no matter what
+												}
+											}
+
+											@Override
+											protected void handleError() {
+												// There is no point asking for stack-depth with limit of 1, lets just assume it is
+												// at least 1, worst case it will show error or no data on the first frame
+												rm.setData(1);
+												rm.done();
+											};
+										}
+										);
 	    					}
 	    				}
 	    			});

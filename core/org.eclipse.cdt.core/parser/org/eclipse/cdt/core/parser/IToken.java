@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -95,6 +96,8 @@ public interface IToken {
 	 */
 	int tGT_in_SHIFTR= 5201;
 
+	/** @since 5.9 */ int t_alignas = 5900;
+	/** @since 5.9 */ int t_alignof = 5901;
 	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
 	int t_asm = 56;
@@ -106,10 +109,8 @@ public interface IToken {
 	int t_case = 62;
 	int t_catch = 63;
 	int t_char = 64;
-	/** @since 5.2 */
-	int t_char16_t= 5202;
-	/** @since 5.2 */
-	int t_char32_t= 5203;
+	/** @since 5.2 */ int t_char16_t= 5202;
+	/** @since 5.2 */ int t_char32_t= 5203;
 	int t_class = 65;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int tCOMPL= tBITCOMPLEMENT;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int t_compl = 66;
@@ -118,8 +119,7 @@ public interface IToken {
 	/** @since 5.4 */ int t_constexpr = 5400;
 	int t_const_cast = 69;
 	int t_continue = 70;
-	/** @since 5.2 */
-	int t_decltype= 5204;
+	/** @since 5.2 */ int t_decltype= 5204;
 	int t_default = 71;
 	int t_delete = 72;
 	int t_do = 73;
@@ -158,8 +158,7 @@ public interface IToken {
 	int t_short = 104;
 	int t_sizeof = 105;
 	int t_static = 106;
-	/** @since 5.2 */
-	int t_static_assert = 5205;
+	/** @since 5.2 */ int t_static_assert = 5205;
 	int t_static_cast = 107;
 	int t_signed = 108;
 	int t_struct = 109;
@@ -225,7 +224,6 @@ public interface IToken {
 		OVERRIDE,
 		FINAL
 	}
-
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.

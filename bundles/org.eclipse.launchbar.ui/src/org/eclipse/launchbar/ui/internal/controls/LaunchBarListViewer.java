@@ -192,7 +192,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 					GC gc = e.gc;
 					gc.setForeground(outlineColor);
 					gc.drawLine(0, size.y - 1, size.x, size.y - 1);
-					System.out.println(ListItem.this.index);
 					if (label == null)
 						lazyInit();
 				}

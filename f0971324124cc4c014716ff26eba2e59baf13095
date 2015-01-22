@@ -33,6 +33,23 @@
       "revId": "f0971324124cc4c014716ff26eba2e59baf13095",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_5d834ea6",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-01-22T23:24:53Z",
+      "side": 1,
+      "message": "cannot use same label for command and menu since menu just sais Local variable and command name appears in key bindings settings",
+      "revId": "f0971324124cc4c014716ff26eba2e59baf13095",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -127,11 +127,13 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 		IPath pathProgName = new Path(launchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "")); //$NON-NLS-1$
 		String progExtension = pathProgName.getFileExtension();
 		String progName = pathProgName.removeFileExtension().lastSegment();
-		if (progName.equals(oldName)) {
-			pathProgName = pathProgName.removeLastSegments(1).append(newName).addFileExtension(progExtension);
-		}
-		copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
+		if (oldName.equals(progName)) {
+			pathProgName = pathProgName.removeLastSegments(1).append(newName);
+			if (progExtension != null )
+				pathProgName = pathProgName.addFileExtension(progExtension);
+			copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME,
 				pathProgName.toOSString());
+		}
 
 		try {
 			// Note: for non-local LCs, this will end up updating the .launch

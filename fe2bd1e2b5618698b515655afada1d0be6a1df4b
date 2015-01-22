@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_a7cb474c",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/refactoring/ProjectRenameChange.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2015-01-22T15:34:05Z",
+      "side": 1,
+      "message": "Fix appending \".null\" extension for original file paths with no extensions",
+      "revId": "fe2bd1e2b5618698b515655afada1d0be6a1df4b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

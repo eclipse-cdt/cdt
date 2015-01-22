@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_8aa28a81",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 7887,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-22T18:17:25Z",
+      "side": 1,
+      "message": "CDT should not be more picky than clang or g++. Both compilers have an option to disable warnings related to this. This means that CDT should not issue any warning or error.",
+      "revId": "c1c87e2c50e9533b57c56fef8a01c2bbe637b8f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_0aae9a6c",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 7888,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-22T18:17:25Z",
+      "side": 1,
+      "message": "IASTLiteralExpression.toString() should return \"aaamacro\".",
+      "revId": "c1c87e2c50e9533b57c56fef8a01c2bbe637b8f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_aa84aeec",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-01-22T18:17:25Z",
+      "side": 1,
+      "message": "I don\u0027t think calling getSequenceNumberForOffset is legitimate at this point. If I\u0027m not mistaken, this function can only be called after the parsing is complete.",
+      "revId": "c1c87e2c50e9533b57c56fef8a01c2bbe637b8f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -37,7 +37,7 @@ public class StandaloneTest1 extends StandaloneTest {
 	@Test
 	public void Test1() throws Exception {
 		// Verify the top-level menus are there
-		SWTBotMenu fileMenu = bot.menu("File");
+		SWTBotMenu fileMenu = bot.menu("Files");
 		assertNotNull(fileMenu);
 		SWTBotMenu editMenu = bot.menu("Edit");
 		assertNotNull(editMenu);

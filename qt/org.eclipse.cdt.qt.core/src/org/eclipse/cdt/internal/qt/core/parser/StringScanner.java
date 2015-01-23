@@ -115,4 +115,9 @@ public class StringScanner implements IScanner {
 	@Deprecated
 	public void setScanComments(boolean val) {
 	}
+
+	@Override
+	public char[] getAdditionalNumericLiteralSuffixes() {
+		return new char[] {};
+	}
 }

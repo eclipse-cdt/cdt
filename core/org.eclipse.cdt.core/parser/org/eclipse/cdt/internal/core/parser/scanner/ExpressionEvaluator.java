@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
  *     Anton Leherbauer (Wind River Systems)
+ *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Used to evaluate expressions in preprocessor directives.
@@ -351,42 +353,26 @@ public class ExpressionEvaluator {
         // supported by GCC since 4.3 and by some other C compilers
         // They consist of a prefix 0b or 0B, followed by a sequence of 0 and 1 digits
         // see http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html
-        boolean isBin = false;
-        
-        boolean isHex = false;
-        boolean isOctal = false;
-
-        int pos= 0;
+		
         if (image.length > 1) {
         	if (image[0] == '0') {
-        		switch (image[++pos]) {
+        		switch (image[1]) {
         		case 'b':
         		case 'B':
-        			isBin = true;
-        			++pos;
-        			break;
+        			return getNumber(image, 2, image.length, 2, IProblem.SCANNER_BAD_BINARY_FORMAT);
+        			
         		case 'x':
         		case 'X':
-        			isHex = true;
-        			++pos;
-        			break;
-        		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-        			isOctal = true;
-        			++pos;
-        			break;
+        			return getNumber(image, 2, image.length, 16, IProblem.SCANNER_BAD_HEX_FORMAT);
+        			
+        		case '0': case '1': case '2': case '3': case '4':
+        		case '5': case '6': case '7': case '8': case '9':
+        			return getNumber(image, 1, image.length, 8, IProblem.SCANNER_BAD_OCTAL_FORMAT);
         		}
         	}
         }
-        if (isBin) {
-        	return getNumber(image, 2, image.length, 2, IProblem.SCANNER_BAD_BINARY_FORMAT);
-        }
-        if (isHex) {
-        	return getNumber(image, 2, image.length, 16, IProblem.SCANNER_BAD_HEX_FORMAT);
-        }
-        if (isOctal) {
-        	return getNumber(image, 1, image.length, 8, IProblem.SCANNER_BAD_OCTAL_FORMAT);
-        }
-    	return getNumber(image, 0, image.length, 10, IProblem.SCANNER_BAD_DECIMAL_FORMAT);
+        
+        return getNumber(image, 0, image.length, 10, IProblem.SCANNER_BAD_DECIMAL_FORMAT);
     }
 
 	public static long getChar(char[] tokenImage, int i) throws EvalException {
@@ -424,23 +410,50 @@ public class ExpressionEvaluator {
 	}
 
 	private static long getNumber(char[] tokenImage, int from, int to, int base, int problemID) throws EvalException {
-		if (from == to) {
-			throw new EvalException(problemID, tokenImage);
-		}
-		long result= 0;
-		int i= from;
-		for (; i < to; i++) {
-			int digit= getDigit(tokenImage[i]);
-			if (digit >= base) {
-				break;
+		char c;
+		long result = 0;
+		int i = from;
+		if (from != to) {
+			for (; i < to; i++) {
+				int digit = getDigit(tokenImage[i]);
+				if (digit >= base) {
+					break;
+				}
+				result = result*base + digit;
 			}
-			result= result*base + digit;
+			
+			if (i >= to) {
+				return result; // return early
+			}
+			
+			c = tokenImage[i];
+			if ('0' <= c && c <= '9') {
+				// A suffix cannot start with a number
+				throw new EvalException(problemID, tokenImage);
+			} else if (i == 2 && base != 10) {
+				// Possible that the prefix is bad.
+				i--;
+			}
+			
+		} else {
+			/*
+			 * If we get in here, then the number literal is 2 characters,
+			 * but hasn't had the last character checked if it's a suffix
+			 */
+			i = 1;
 		}
+		// The rest should be a suffix
+		final int suffixStart = i;
 		for (; i < to; i++) {
 			switch (tokenImage[i]) {
 			case 'u' : case 'l': case 'U': case 'L':
 				break;
 			default:
+				c = tokenImage[i];
+				if (Character.isLetterOrDigit(c) || c == '_') {
+					char[] suffix = CharArrayUtils.subarray(tokenImage, suffixStart, -1);
+					throw new EvalException(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX, suffix);
+				}
 				throw new EvalException(problemID, tokenImage);
 			}
 		}

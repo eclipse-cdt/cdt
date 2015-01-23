@@ -115,4 +115,10 @@ public interface IScannerExtensionConfiguration {
 	 * @since 5.5
 	 */
 	public boolean supportRawStringLiterals();
+		
+	/**
+	 * Support for User Defined Literals such as 123_suffix
+	 * @since 5.10
+	 */
+	public boolean supportUserDefinedLiterals();
 }

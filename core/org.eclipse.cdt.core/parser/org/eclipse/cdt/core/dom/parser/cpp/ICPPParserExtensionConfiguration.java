@@ -148,6 +148,13 @@ public interface ICPPParserExtensionConfiguration {
 	 * @since 5.1
 	 */
 	public boolean supportFunctionStyleAssembler();
+	
+	/**
+	 * Support user-defined literal expressions:
+	 * (char_expr | string_expr | int_expr | float_expr) ud-suffix
+	 * @since 5.10
+	 */
+	public boolean supportUserDefinedLiterals();
 
 	/**
 	 * Additional variants of context-sensitive keywords.

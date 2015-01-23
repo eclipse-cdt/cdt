@@ -16,6 +16,7 @@
  *     Thomas Corbat (IFS)
  *     Anders Dahlberg (Ericsson) - bug 84144
  *     Nathan Ridge
+ *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -184,12 +185,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private final boolean allowCPPRestrict;
     private final boolean supportExtendedTemplateSyntax;
     private final boolean supportAutoTypeSpecifier;
+    private final boolean supportUserDefinedLiterals;
 
 	private final IIndex index;
     protected ICPPASTTranslationUnit translationUnit;
 
     private int functionBodyCount;
 	private char[] currentClassName;
+	private char[] additionalNumericalSuffixes;
 
 	private final ICPPNodeFactory nodeFactory;
 	private TemplateIdStrategy fTemplateParameterListStrategy;
@@ -218,10 +221,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         supportFunctionStyleAsm= config.supportFunctionStyleAssembler();
         functionCallCanBeLValue= true;
         supportAutoTypeSpecifier= true;
+        supportUserDefinedLiterals= config.supportUserDefinedLiterals();
         this.index= index;
         this.nodeFactory = CPPNodeFactory.getDefault();
         scanner.setSplitShiftROperator(true);
         fContextSensitiveTokens = createContextSensitiveTokenMap(config);
+        additionalNumericalSuffixes = scanner.getAdditionalNumericLiteralSuffixes();
     }
     
     private Map<String, ContextSensitiveTokenType> createContextSensitiveTokenMap(
@@ -831,6 +836,29 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	consume();
         	endOffset= consume(IToken.tGT_in_SHIFTR).getEndOffset();
         	op= OverloadableOperator.SHIFTR;
+        	break;
+        case IToken.tSTRING: // User defined literal T operator "" SUFFIX
+        	IToken strOp = consume();
+        	
+        	// Should be an empty string
+        	if (strOp.getLength() == 2) {
+	        	endOffset = strOp.getEndOffset();
+	        	
+	    		IToken ident = consume(IToken.tIDENTIFIER);
+	    		
+	    		// Make sure there is at least one white space
+	    		if (ident.getOffset() <= endOffset) { 
+	    			break;
+	    		}
+	    		
+	    		char[] operatorName = CharArrayUtils.concat(firstToken.getCharImage(), " ".toCharArray()); //$NON-NLS-1$
+	    		operatorName = CharArrayUtils.concat(operatorName,  strOp.getCharImage());
+	    		operatorName = CharArrayUtils.concat(operatorName, ident.getCharImage());
+	    		
+	    		IASTName name = nodeFactory.newOperatorName(operatorName);
+	    		setRange(name, firstToken.getOffset(), ident.getEndOffset());
+	    		return name;
+        	}
         	break;
         default:
         	op= OverloadableOperator.valueOf(LA(1));
@@ -1779,29 +1807,46 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected IASTExpression primaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
         IToken t = null;
         IASTLiteralExpression literalExpression = null;
+        IASTLiteralExpression leWithRange = null;
+        
         switch (LT(1)) {
         // TO DO: we need more literals...
         case IToken.tINTEGER:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage());
-            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+            leWithRange = setRange(literalExpression, t.getOffset(), t.getEndOffset());
+            ((CPPASTLiteralExpression) literalExpression).calculateSuffix(additionalNumericalSuffixes);
+            break;
         case IToken.tFLOATINGPT:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage());
-            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+            leWithRange = setRange(literalExpression, t.getOffset(), t.getEndOffset());
+            ((CPPASTLiteralExpression) literalExpression).calculateSuffix(additionalNumericalSuffixes);
+            break;
         case IToken.tSTRING:
         case IToken.tLSTRING:
         case IToken.tUTF16STRING:
         case IToken.tUTF32STRING:
-            return stringLiteral();
+        case IToken.tUSER_DEFINED_STRING_LITERAL:
+        	leWithRange = stringLiteral();
+        	if (supportUserDefinedLiterals) {
+        		 ((CPPASTLiteralExpression) leWithRange).calculateSuffix();
+        	}
+            break;
         case IToken.tCHAR:
         case IToken.tLCHAR:
         case IToken.tUTF16CHAR:
         case IToken.tUTF32CHAR:
-            t = consume();
-            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_char_constant, t.getImage());
-            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
-        case IToken.t_false:
+        case IToken.tUSER_DEFINED_CHAR_LITERAL:
+			t = consume();
+			literalExpression = nodeFactory.newLiteralExpression(
+					IASTLiteralExpression.lk_char_constant, t.getImage());
+			leWithRange = setRange(literalExpression, t.getOffset(), t.getEndOffset());
+			if (supportUserDefinedLiterals) {
+				((CPPASTLiteralExpression) leWithRange).calculateSuffix();
+			}
+			break;
+		case IToken.t_false:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_false, t.getImage());
             return setRange(literalExpression, t.getOffset(), t.getEndOffset());
@@ -1858,7 +1903,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(startingOffset, la.getLength());
             return null;
         }
-
+        
+        if (supportUserDefinedLiterals) {
+	        IToken la = LA(1);
+	        int offset = ((ASTNode) leWithRange).getOffset();
+	        int length = ((ASTNode) leWithRange).getLength();
+	        if (la.getType() == IToken.tIDENTIFIER) {
+	        	if ((offset + length) != la.getOffset()) {
+	        		return leWithRange;
+	        	}
+				IToken opName = consume(IToken.tIDENTIFIER);
+				((CPPASTLiteralExpression) leWithRange).setSuffix(opName.getCharImage());
+				setRange(leWithRange, offset, opName.getEndOffset());
+	        }
+        }
+        
+        return leWithRange;
     }
 
 	private ICPPASTLiteralExpression stringLiteral() throws EndOfFileException, BacktrackException {
@@ -1867,6 +1927,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLSTRING:
         case IToken.tUTF16STRING:
         case IToken.tUTF32STRING:
+        case IToken.tUSER_DEFINED_STRING_LITERAL:
         	break;
         default:
         	throwBacktrack(LA(1));

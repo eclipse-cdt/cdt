@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Mike Kucera (IBM) - Initial API and implementation
+ *    Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -50,7 +51,7 @@ public enum StringType {
 	public static StringType max(StringType st1, StringType st2) {
 		return values()[Math.max(st1.ordinal(), st2.ordinal())];
 	}
-
+	
 	/**
 	 * Returns the StringType value for the given string literal type.
 	 * 
@@ -70,5 +71,51 @@ public enum StringType {
         default:
         	throw new IllegalArgumentException(tokenVal + " is not a string token");
 		}
+	}
+	
+	/**
+	 * Returns the StringType for a given string literal token, including a
+	 * user-defined string literal
+	 * @see StringType#fromToken(int)
+	 * @since 5.10
+	 */
+	public static StringType fromToken(IToken token) {
+		switch(token.getType()) {
+		case IToken.tSTRING:      return NARROW;
+		case IToken.tLSTRING:     return WIDE;
+		case IToken.tUTF16STRING: return UTF16;
+		case IToken.tUTF32STRING: return UTF32;
+		case IToken.tUSER_DEFINED_STRING_LITERAL: {
+			char[] image = token.getCharImage();
+			switch (image[0]) {
+			case 'R':
+			case '"': return NARROW;
+			case 'L': return WIDE;
+			case 'u': 
+				if (image.length > 3 && image[1] == '8') {
+					return NARROW;
+				}
+				return UTF16;
+			case 'U': return UTF32;
+			}
+		}
+			//$FALL-THROUGH$
+		default:
+			throw new IllegalArgumentException(token.getType() + " is not a string token");
+		}
+	}
+	
+	/**
+	 * Returns the user-defined suffix of a user-define string literal
+	 * @param token
+	 * @return the suffix of the token, if it exists
+	 * @since 5.10
+	 */
+	public static String getUserDefinedLiteralSuffix(IToken token) {
+		if (token.getType() == IToken.tUSER_DEFINED_STRING_LITERAL) {
+			int offset = token.getImage().lastIndexOf('"');
+			return token.getImage().substring(offset + 1);
+		}
+		return new String();
 	}
 }

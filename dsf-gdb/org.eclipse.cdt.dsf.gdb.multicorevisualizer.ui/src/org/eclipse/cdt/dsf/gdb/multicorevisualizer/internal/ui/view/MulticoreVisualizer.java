@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Tilera Corporation and others.
+ * Copyright (c) 2012, 2015 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,13 @@
  *     Marc Dumais (Ericsson) - Bug 442312
  *     Marc Dumais (Ericsson) - Bug 451392
  *     Marc Dumais (Ericsson) - Bug 453206
+ *     Marc Dumais (Ericsson) - Bug 458076
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -135,12 +137,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	protected ISelectionChangedListener m_debugViewSelectionChangedListener = null;
 	
 	
-	// These two arrays are used to cache the CPU and core
+	// This is used to cache the CPU and core
 	// contexts, each time the model is recreated.  This way
 	// we can avoid asking the backend for the CPU/core
 	// geometry each time we want to update the load information.
-	protected ICPUDMContext[] m_cpuContextsCache = null;
-	protected ICoreDMContext[] m_coreContextsCache = null;
+	protected List<IDMContext> m_cpuCoreContextsCache = null;
+
 	
 	/** Main switch that determines if we should display the load meters */
 	protected boolean m_loadMetersEnabled = false;
@@ -235,6 +237,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		disposeActions();
 		disposeLoadMeterTimer();
 		removeEventListener();
+		// dispose CPU/core contexts cache
+		if (m_cpuCoreContextsCache != null) {
+			m_cpuCoreContextsCache.clear();
+			m_cpuCoreContextsCache = null;
+		}
 	}
 	
 	
@@ -244,6 +251,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	@Override
 	public void initializeVisualizer() {
 		fEventListener = new MulticoreVisualizerEventListener(this);
+		m_cpuCoreContextsCache = new ArrayList<IDMContext>(); 
 	}
 	
 	/**
@@ -1004,8 +1012,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		{
 			// stop timer that updates the load meters
 			disposeLoadMeterTimer();
-			m_cpuContextsCache = null;
-			m_coreContextsCache = null;
 			
 			m_sessionState.removeServiceEventListener(fEventListener);
 			m_sessionState.dispose();
@@ -1039,6 +1045,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			setCanvasModel(null);
 			return;
 		}
+		// clear CPU/core cache
+		m_cpuCoreContextsCache.clear();
+		
 		m_sessionState.execute(new DsfRunnable() { @Override public void run() {
 			// get model asynchronously, and update canvas
 			// in getVisualizerModelDone().
@@ -1127,8 +1136,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getCPUsDone(ICPUDMContext[] cpuContexts, Object arg)
 	{
-		// save CPU contexts
-		m_cpuContextsCache = cpuContexts;
 		VisualizerModel model = (VisualizerModel) arg;
 		
 		if (cpuContexts == null || cpuContexts.length == 0) {
@@ -1143,6 +1150,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			// Collect core data.
 			DSFDebugModel.getCores(m_sessionState, this, model);
 		} else {
+			// save CPU contexts
+			m_cpuCoreContextsCache.addAll(Arrays.asList(cpuContexts));
+			
 			// keep track of CPUs left to visit
 			int count = cpuContexts.length;
 			model.getTodo().add(count);
@@ -1166,14 +1176,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 							 ICoreDMContext[] coreContexts,
 							 Object arg)
 	{
-		// save core contexts
-		m_coreContextsCache = coreContexts;
 		VisualizerModel model = (VisualizerModel) arg;
 
 		if (coreContexts == null || coreContexts.length == 0) {
 			// no cores for this cpu context
 			// That's fine.
 		} else {
+			// save core contexts
+			m_cpuCoreContextsCache.addAll(Arrays.asList(coreContexts));
+			
 			int cpuID = Integer.parseInt(cpuContext.getId());
 			VisualizerCPU cpu = model.getCPU(cpuID);
 
@@ -1298,7 +1309,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	@Override
 	public void updateLoads() {
-		if (m_cpuContextsCache == null || m_coreContextsCache == null) {
+		if (m_cpuCoreContextsCache.isEmpty()) {
 			// not ready to get load info yet
 			return;
 		}
@@ -1309,18 +1320,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		
 		VisualizerModel model = fDataModel;
 		
-		// keep track of how many loads we expect
-		int count = m_cpuContextsCache.length + m_coreContextsCache.length;
 		model.getLoadTodo().dispose();
-		model.getLoadTodo().add(count);
+		// keep track of how many loads we expect
+		model.getLoadTodo().add(m_cpuCoreContextsCache.size());
 		
-		// ask load for each CPU
-		for (ICPUDMContext cpuCtx : m_cpuContextsCache) {
-			DSFDebugModel.getLoad(m_sessionState, cpuCtx, this, model);
-		}
-		// ask load for each core
-		for (ICoreDMContext coreCtx : m_coreContextsCache) {
-			DSFDebugModel.getLoad(m_sessionState, coreCtx, this, model);
+		// ask load for each CPU and core
+		for (IDMContext context : m_cpuCoreContextsCache) {
+			DSFDebugModel.getLoad(m_sessionState, context, this, model);
 		}
 	}
 	

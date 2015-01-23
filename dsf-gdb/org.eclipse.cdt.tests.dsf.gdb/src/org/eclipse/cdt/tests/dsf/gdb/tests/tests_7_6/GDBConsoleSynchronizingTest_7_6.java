@@ -188,19 +188,13 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         assertEquals(newValue, exprValue);
 	}
 
-    /**
-     * This test verifies that setting a variable from the console
-     * using the set command will properly trigger a DSF event to 
-     * indicate the change, when the address is not in the memory cache.
-     */
-	@Test
-	public void testSettingVariableWithSet() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
-        
-        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
+	private void testSettingVariableWithCommon(String commandPrefix) throws Throwable {
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
 
-        // Read the memory that will change first, or else there will be no event for it
+		final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
+
+		// Read the memory that will change first, or else there will be no event for it
 		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
@@ -211,30 +205,40 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		fSession.getExecutor().execute(query);
 		IExpressionDMAddress data = query.get();
 		
-        fEventsReceived.clear();
+		fEventsReceived.clear();
 
-        final String newValue = NEW_VAR_VALUE;
-        queueConsoleCommand("set variable i=" + newValue);
-        
-        IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
-        assertEquals(1, memoryEvent.getAddresses().length);
-        assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+		final String newValue = NEW_VAR_VALUE;
+		queueConsoleCommand(commandPrefix + " = " + newValue);
 
-        // Now verify the memory service knows the new memory value
-        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
-        assertEquals(NEW_VAR_SIZE, memory.length);
-        for (int i=0; i<NEW_VAR_SIZE; i++) {
-        	if (memory[0].isBigEndian()) {
-        		assertEquals(NEW_MEM[i], memory[i].getValue());
-        	} else {
-        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
-        	}
-        }
+		IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
+		assertEquals(1, memoryEvent.getAddresses().length);
+		assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
 
-        // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
-        assertEquals(newValue, exprValue);
+		// Now verify the memory service knows the new memory value
+		IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
+		MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+		assertEquals(NEW_VAR_SIZE, memory.length);
+		for (int i=0; i<NEW_VAR_SIZE; i++) {
+			if (memory[0].isBigEndian()) {
+				assertEquals(NEW_MEM[i], memory[i].getValue());
+			} else {
+				assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
+			}
+		}
+
+		// Now verify the expressions service knows the new value
+		String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
+		assertEquals(newValue, exprValue);
+	}
+
+    /**
+     * This test verifies that setting a variable from the console
+     * using the set command will properly trigger a DSF event to
+     * indicate the change, when the address is not in the memory cache.
+     */
+	@Test
+	public void testSettingVariableWithSet() throws Throwable {
+		testSettingVariableWithCommon("set variable i");
 	}
 
     /**
@@ -244,46 +248,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
      */
 	@Test
 	public void testSettingVariableWithPrint() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testMemoryChanges");
-        
-        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "i");
-
-        // Read the memory that will change first, or else there will be no event for it
-		Query<IExpressionDMAddress> query = new Query<IExpressionDMAddress>() {
-			@Override
-			protected void execute(final DataRequestMonitor<IExpressionDMAddress> rm) {
-				fExprService.getExpressionAddressData(exprDmc, rm);
-			}
-		};
-
-		fSession.getExecutor().execute(query);
-		IExpressionDMAddress data = query.get();
-
-		fEventsReceived.clear();
-		
-        final String newValue = NEW_VAR_VALUE;
-        queueConsoleCommand("print i=" + newValue);
-        
-        IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
-        assertEquals(1, memoryEvent.getAddresses().length);
-        assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
-        
-        // Now verify the memory service knows the new memory value
-        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
-        assertEquals(NEW_VAR_SIZE, memory.length);
-        for (int i=0; i<NEW_VAR_SIZE; i++) {
-        	if (memory[0].isBigEndian()) {
-        		assertEquals(NEW_MEM[i], memory[i].getValue());
-        	} else {
-        		assertEquals(NEW_MEM[i], memory[NEW_VAR_SIZE-1-i].getValue());
-        	}
-        }
-
-        // Now verify the expressions service knows the new value
-        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.HEX_FORMAT);
-        assertEquals(newValue, exprValue);
+		testSettingVariableWithCommon("print i");
 	}
 
 	/**

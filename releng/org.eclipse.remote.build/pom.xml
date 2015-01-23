@@ -19,6 +19,7 @@
 		<eclipse-release>luna</eclipse-release>
 		<tycho-version>0.20.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git</tycho.scmUrl>
 		<platform-version>4.4</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<cdt-version>8.4</cdt-version>
@@ -227,6 +228,23 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<sourceReferences>
+							<generate>true</generate>
+						</sourceReferences>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.eclipse.tycho.extras</groupId>
+							<artifactId>tycho-sourceref-jgit</artifactId>
+							<version>${tycho-extras-version}</version>
+						</dependency>
+					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>

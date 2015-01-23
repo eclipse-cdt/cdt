@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_1ba8aed7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-01-23T13:24:27Z",
+      "side": 1,
+      "message": "Strongly disagree.",
+      "parentUuid": "67fe7f71_9d55b628",
+      "revId": "635cfd7e9b048f0335e9d558de8e9a33fdb4a02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_5d734ed8",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 2
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "67fe7f71_db8e268b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-01-23T13:24:27Z",
+      "side": 1,
+      "message": "Yeah",
+      "parentUuid": "67fe7f71_7d5a9257",
+      "revId": "635cfd7e9b048f0335e9d558de8e9a33fdb4a02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67fe7f71_7d41f261",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 2
@@ -81,6 +117,24 @@
       "writtenOn": "2015-01-22T21:38:11Z",
       "side": 1,
       "message": "Should we set fStackDepthCache here too?",
+      "revId": "635cfd7e9b048f0335e9d558de8e9a33fdb4a02a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_dd13bee6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 976,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-01-23T13:24:27Z",
+      "side": 1,
+      "message": "No, I don\u0027t want to cache errors. Gdb sometimes actually works when asked second time",
+      "parentUuid": "67fe7f71_3d476a73",
       "revId": "635cfd7e9b048f0335e9d558de8e9a33fdb4a02a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

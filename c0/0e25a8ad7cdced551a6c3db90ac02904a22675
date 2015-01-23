@@ -1,0 +1,8 @@
+Code-Review-1: Hudson CI
+Code-Review+2: Teodor Madan <teodor.madan@freescale.com>
+Verified+1: Teodor Madan <teodor.madan@freescale.com>
+Submitted-by: Teodor Madan <teodor.madan@freescale.com>
+Submitted-at: Fri, 23 Jan 2015 03:21:17 -0500
+Reviewed-on: https://git.eclipse.org/r/40150
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

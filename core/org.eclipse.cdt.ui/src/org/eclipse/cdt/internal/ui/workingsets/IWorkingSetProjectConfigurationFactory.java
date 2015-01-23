@@ -176,10 +176,9 @@ public interface IWorkingSetProjectConfigurationFactory {
 					public int compare(String nature1, String nature2) {
 						Set<String> required1 = projectNaturePartOrdering.get(nature1);
 						Set<String> required2 = projectNaturePartOrdering.get(nature2);
-
-						if (required1.contains(nature2)) {
+						if (required1 != null && required1.contains(nature2)) {
 							return -1; // required1 precedes required2
-						} else if (required2.contains(nature1)) {
+						} else if (required2 != null && required2.contains(nature1)) {
 							return +1; // required2 precedes required1
 						} else if (nature1.startsWith("org.eclipse.cdt.") //$NON-NLS-1$
 								&& !nature2.startsWith("org.eclipse.cdt.")) { //$NON-NLS-1$

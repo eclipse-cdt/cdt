@@ -150,6 +150,10 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		validateToken(IToken.tUTF32STRING, "U\"" + expectedImage + "\"");
 	}
 	
+	protected void validateUserDefinedLiteralString(String expectedImage, String expectedSuffix) throws Exception {
+		validateToken(IToken.tUSER_DEFINED_STRING_LITERAL, "\"" + expectedImage + "\"" + expectedSuffix);
+	}
+	
 	protected void validateChar(String expectedImage) throws Exception {
 		validateToken(IToken.tCHAR, "'" + expectedImage + "'");
 	}

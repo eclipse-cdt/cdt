@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     	errorMessages.put(new Integer(PREPROCESSOR_MISSING_RPAREN_PARMLIST),
     			ParserMessages.getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$       
     	errorMessages.put(new Integer(PREPROCESSOR_INVALID_VA_ARGS), 
-    			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$       
+    			ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$   
     	errorMessages.put(new Integer(SCANNER_INVALID_ESCAPECHAR), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SCANNER_UNBOUNDED_STRING), 
@@ -88,6 +88,12 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SCANNER_BAD_CHARACTER), 
     			ParserMessages.getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
+    	errorMessages.put(new Integer(SCANNER_CONSTANT_WITH_BAD_SUFFIX),
+    			ParserMessages.getString("ScannerProblemFactory.error.scanner.constantWithBadSuffix")); //$NON-NLS-1$
+    	errorMessages.put(new Integer(SCANNER_FLOAT_WITH_BAD_PREFIX),
+    			ParserMessages.getString("ScannerProblemFactory.error.scanner.floatWithBadPrefix")); //$NON-NLS-1$
+    	errorMessages.put(new Integer(PREPROCESSOR_MULTIPLE_USER_DEFINED_SUFFIXES_IN_CONCATENATION),
+    			ParserMessages.getString("ScannerProblemFactory.error.preproc.multipleUserDefinedLiteralSuffixesOnStringLiteral")); //$NON-NLS-1$
     	errorMessages.put(new Integer(SYNTAX_ERROR), 
     			ParserMessages.getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
     	errorMessages.put(new Integer(MISSING_SEMICOLON), 

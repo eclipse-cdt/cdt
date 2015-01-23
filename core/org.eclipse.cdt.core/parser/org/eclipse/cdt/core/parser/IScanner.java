@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,4 +118,11 @@ public interface IScanner {
 	 */
 	@Deprecated
 	public void setScanComments(boolean val);
+	
+	/**
+	 * Returns a list of additional (compiler specific) suffixes which can
+	 * be placed on numbers. e.g. 'u' 'l' -> 1l or 1u.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public char[] getAdditionalNumericLiteralSuffixes();
 }

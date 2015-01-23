@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.cdt.core.parser.tests.scanner;
 
 import java.io.IOException;
-
-import junit.framework.ComparisonFailure;
 
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -35,6 +33,8 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
+
+import junit.framework.ComparisonFailure;
 
 public abstract class PreprocessorTestsBase extends BaseTestCase {
 	private static final IParserLogService NULL_LOG = new NullLogService();
@@ -148,6 +148,10 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	
 	protected void validateUTF32String(String expectedImage) throws Exception {
 		validateToken(IToken.tUTF32STRING, "U\"" + expectedImage + "\"");
+	}
+	
+	protected void validateUserDefinedLiteralString(String expectedImage, String expectedSuffix) throws Exception {
+		validateToken(IToken.tUSER_DEFINED_STRING_LITERAL, "\"" + expectedImage + "\"" + expectedSuffix);
 	}
 	
 	protected void validateChar(String expectedImage) throws Exception {

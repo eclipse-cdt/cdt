@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,6 +137,13 @@ public interface ICPPParserExtensionConfiguration {
 	 * @since 5.1
 	 */
 	public boolean supportFunctionStyleAssembler();
+	
+	/**
+	 * Support user-defined literal expressions:
+	 * (char_expr | string_expr | int_expr | float_expr) ud-suffix
+	 * @since 5.11
+	 */
+	public boolean supportUserDefinedLiterals();
 
 	/**
 	 * Additional variants of context-sensitive keywords.

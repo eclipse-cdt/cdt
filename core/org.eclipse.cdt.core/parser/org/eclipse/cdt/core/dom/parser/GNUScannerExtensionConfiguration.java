@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Richard Eames
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -89,7 +90,15 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 	public char[] supportAdditionalNumericLiteralSuffixes() {
         return "ij".toCharArray(); //$NON-NLS-1$
     }
-        	
+    
+    /**
+	 * @since 5.10
+	 */
+    @Override
+	public boolean supportUserDefinedLiterals() {
+    	return false;
+    }
+    
 	/**
 	 * @deprecated simply derive from this class and use {@link #addMacro(String, String)} to
 	 * add additional macros.

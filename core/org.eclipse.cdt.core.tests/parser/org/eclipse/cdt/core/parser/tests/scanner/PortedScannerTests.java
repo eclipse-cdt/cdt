@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1796,9 +1796,9 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals(17, problems.length);
 		int i= 0;
 		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[i].getID());
-		assertEquals(IProblem.SCANNER_BAD_DECIMAL_FORMAT,        problems[++i].getID());  
-		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID());  
-		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID());  
+		assertEquals(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX,  problems[++i].getID());
+		assertEquals(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX,  problems[++i].getID());
+		assertEquals(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX,  problems[++i].getID());
 		assertEquals(IProblem.SCANNER_DIVIDE_BY_ZERO,            problems[++i].getID());
 		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID());
 		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID());

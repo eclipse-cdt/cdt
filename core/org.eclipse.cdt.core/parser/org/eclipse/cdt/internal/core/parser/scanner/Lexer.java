@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Mike Kucera (IBM) - UTF string literals
  *     Sergey Prigogin (Google)
+ *     Richard Eames
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -57,6 +58,7 @@ final public class Lexer implements ITokenSequence {
 		public boolean fSupportSlashPercentComments= false;
 		public boolean fSupportUTFLiterals= true;
 		public boolean fSupportRawStringLiterals= false;
+		public boolean fSupportUserDefinedLiterals = false; 
 		public IncludeExportPatterns fIncludeExportPatterns;
 		
 		@Override
@@ -348,7 +350,7 @@ final public class Lexer implements ITokenSequence {
 				if (fInsideIncludeDirective) {
 					return headerName(start, true);
 				}
-				return stringLiteral(start, 1, IToken.tSTRING);
+ 				return stringLiteral(start, 1, IToken.tSTRING);
 
 			case '\'':
 				return charLiteral(start, IToken.tCHAR);
@@ -732,8 +734,17 @@ final public class Lexer implements ITokenSequence {
 			c= nextCharPhase3();
 		}
 	}
-
-	private Token stringLiteral(final int start, int length, final int tokenType) throws OffsetLimitReachedException {
+	
+	private boolean isIdentifierStart(int c) {
+		return Character.isLetter((char)c) || 
+				Character.isDigit((char)c) || 
+				Character.isUnicodeIdentifierPart(c) ||
+				(fOptions.fSupportDollarInIdentifiers && c == '$') ||
+				(fOptions.fSupportAtSignInIdentifiers && c == '@') ||
+				c == '_';
+	}
+	
+	private Token stringLiteral(final int start, int length, int tokenType) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
 		
@@ -766,10 +777,35 @@ final public class Lexer implements ITokenSequence {
 			length++;
 			c= nextCharPhase3();
 		}
+		
+		if (fOptions.fSupportUserDefinedLiterals && isUDLSuffixStart(c)) {
+			Token t = identifier(start + length, 0);
+			tokenType = IToken.tUSER_DEFINED_STRING_LITERAL;
+			length += t.getLength();
+		}
+		
 		return newToken(tokenType, start, length);
 	}
 
-	private Token rawStringLiteral(final int start, int length, final int tokenType) throws OffsetLimitReachedException {
+	private boolean isUDLSuffixStart(int c) {
+		// C++11 introduced a backward incompatible change breaking the following code:
+		// #define __STDC_FORMAT_MACROS
+		// #include <inttypes.h>
+		// #include <stdio.h>
+		//
+		// void test() {
+		//   int64_t i64 = 123;
+		//   printf("My int64: %"PRId64"\n", i64);
+		// }
+		//
+		// We follow the example of Clang and GCC that are working around this by interpreting literal
+		// suffixes that don't start with underscores as separate tokens, which allows them to expand
+		// as macros: http://llvm.org/viewvc/llvm-project?view=rev&revision=152287 and
+		// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52538
+		return c == '_';
+	}
+
+	private Token rawStringLiteral(final int start, int length, int tokenType) throws OffsetLimitReachedException {
 		final int delimOffset= fOffset;
 		int delimEndOffset = delimOffset;
 		int offset;
@@ -813,10 +849,17 @@ final public class Lexer implements ITokenSequence {
 		fEndOffset= offset;
 		fCharPhase3=  0;
 		nextCharPhase3();
+		
+		if (fOptions.fSupportUserDefinedLiterals && isUDLSuffixStart(fCharPhase3)) {
+			Token t = identifier(offset, 0);
+			tokenType = IToken.tUSER_DEFINED_STRING_LITERAL;
+			offset += t.getLength();
+		}
+		
 		return newToken(tokenType, start, offset - start);
 	}
 
-	private Token charLiteral(final int start, final int tokenType) throws OffsetLimitReachedException {
+	private Token charLiteral(final int start, int tokenType) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
 		int length= tokenType == IToken.tCHAR ? 1 : 2;
@@ -848,6 +891,13 @@ final public class Lexer implements ITokenSequence {
 			length++;
 			c= nextCharPhase3();
 		}
+		
+		if (fOptions.fSupportUserDefinedLiterals && isIdentifierStart(c)) {
+			Token t = identifier(start+length, 0);
+			tokenType = IToken.tUSER_DEFINED_CHAR_LITERAL;
+			length += t.getLength();
+		}
+		
 		return newToken(tokenType, start, length);
 	}
 	

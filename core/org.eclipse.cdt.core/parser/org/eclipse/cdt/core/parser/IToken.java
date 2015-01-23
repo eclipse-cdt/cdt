@@ -188,11 +188,13 @@ public interface IToken {
 	int tLSTRING = 131;
 	/** @since 5.1 */ int tUTF16STRING = 5000;
 	/** @since 5.1 */ int tUTF32STRING = 5001;
+	/** @since 5.11 */ int tUSER_DEFINED_STRING_LITERAL = 51002;
 
 	int tCHAR = 132;
 	int tLCHAR = 133;
 	/** @since 5.1 */ int tUTF16CHAR = 5002;
 	/** @since 5.1 */ int tUTF32CHAR = 5003;
+	/** @since 5.11 */ int tUSER_DEFINED_CHAR_LITERAL = 51003;
 
 	/** @since 5.10 */ int t__Alignas = 51000;
 	/** @since 5.10 */ int t__Alignof = 51001;

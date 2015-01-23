@@ -365,10 +365,10 @@ public class BaseTestCase {
  		if (gdbserverProc != null) {
             DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
  		}
- 		
- 		// Now initialize our SyncUtility, since we have the launcher
- 		SyncUtil.initialize(fLaunch.getSession());
 
+		// Now initialize our SyncUtility, since we have the launcher
+		SyncUtil.initialize(fLaunch.getSession());
+		AsyncUtil.initialize(fLaunch.getSession());
 	}
 
 	@After

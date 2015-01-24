@@ -31,7 +31,6 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
@@ -66,7 +65,6 @@ public class PostMortemCoreTest extends BaseTestCase {
     private DsfServicesTracker fServicesTracker;
 
     private IExpressions fExpService;
-	private IMemory fMemoryService;
 
 	private IMemoryDMContext fMemoryDmc;
 
@@ -117,7 +115,6 @@ public class PostMortemCoreTest extends BaseTestCase {
 			public void run() {
             	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
             	fExpService = fServicesTracker.getService(IExpressions.class);
-        		fMemoryService = fServicesTracker.getService(IMemory.class);
             }
         };
         fSession.getExecutor().submit(runnable).get();
@@ -138,7 +135,6 @@ public class PostMortemCoreTest extends BaseTestCase {
     	}
     	
     	fExpService = null;
-    	fMemoryService = null;
     	if (fServicesTracker != null) fServicesTracker.dispose();
     }
 
@@ -406,7 +402,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		final int LENGTH = 4;
 
 		// Get the memory block
-		MemoryByte[] buffer = readMemory(fMemoryDmc, address, 0, 1, LENGTH);
+		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, 0, 1, LENGTH);
 		
 		assertEquals(LENGTH, buffer.length);
 
@@ -484,26 +480,6 @@ public class PostMortemCoreTest extends BaseTestCase {
 		return new Addr64(value.getFormattedValue());
 	}
 
-	
-	private MemoryByte[] readMemory(final IMemoryDMContext dmc, final IAddress address,
-			                        final long offset, final int word_size, final int count) throws InterruptedException
-	{		
-		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
-			@Override
-			protected void execute(final DataRequestMonitor<MemoryByte[]> rm) {
-				fMemoryService.getMemory(dmc, address, offset, word_size, count, rm);
-			}
-		};
-		
-		fSession.getExecutor().execute(query);
-		try {
-			return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		return null;
-	}
-	
 	/**
 	 * Executes a group of sub-tests.
 	 * 

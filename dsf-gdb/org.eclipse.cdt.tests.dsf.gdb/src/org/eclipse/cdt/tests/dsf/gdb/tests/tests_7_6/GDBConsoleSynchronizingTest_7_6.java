@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
@@ -161,7 +160,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		IExpressionDMAddress data = query.get();
 		
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
         
         fEventsReceived.clear();
         
@@ -173,7 +172,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
 
         // Now verify the memory service knows the new memory value
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
         assertEquals(NEW_VAR_SIZE, memory.length);
         for (int i=0; i<NEW_VAR_SIZE; i++) {
         	if (memory[0].isBigEndian()) {
@@ -216,7 +215,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 
 		// Now verify the memory service knows the new memory value
 		IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-		MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+		MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
 		assertEquals(NEW_VAR_SIZE, memory.length);
 		for (int i=0; i<NEW_VAR_SIZE; i++) {
 			if (memory[0].isBigEndian()) {
@@ -284,7 +283,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         
         // Now verify the memory service knows the new memory value
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), NEW_VAR_SIZE);
+        MemoryByte[] memory = SyncUtil.readMemory(memoryDmc, data.getAddress(), 0, 1, NEW_VAR_SIZE);
         assertEquals(NEW_VAR_SIZE, memory.length);
         for (int i=0; i<NEW_VAR_SIZE; i++) {
         	if (memory[0].isBigEndian()) {
@@ -410,19 +409,6 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
   		}
   	}
 
-	private MemoryByte[] readMemory(final IMemoryDMContext dmc, final IAddress address, final int count)
-	throws Throwable
-	{
-		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
-			@Override
-			protected void execute(DataRequestMonitor<MemoryByte[]> rm) {
-				fMemoryService.getMemory(dmc, address, 0, 1, count, rm);
-			}
-		};
-		fSession.getExecutor().execute(query);
-		return query.get(DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
-	}
-	
   	private void queueConsoleCommand(String command) throws Throwable {
   		queueConsoleCommand(command, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
   	}

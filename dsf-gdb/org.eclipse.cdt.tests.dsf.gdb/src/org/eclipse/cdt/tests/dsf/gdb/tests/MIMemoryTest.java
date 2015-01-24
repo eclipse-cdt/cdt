@@ -1103,7 +1103,7 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < (count * length); i++)
 			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
 					(block[i].getValue() == (byte) 0));
-		
+
 		for (int i = 0; i < BLOCK_SIZE; i += length) {
 			IAddress address = fBaseAddress.add(i);
 			SyncUtil.fillMemory(fMemoryDmc, address, offset, word_size, count, pattern);
@@ -1148,11 +1148,11 @@ public class MIMemoryTest extends BaseTestCase {
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);;
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		for (int i = 0; i < (count * length); i++)
 			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
 					(block[i].getValue() == (byte) 0));
-		
+
 		for (int i = 0; i < (BLOCK_SIZE / length); i++) {
 			offset = i * length;
 			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1, pattern);

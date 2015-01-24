@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
-public class AsyncCompletionWaitor {
+public class AsyncCompletionWaitor<T> {
 	
 	/*
 	 *  Indicates we will wait forever. Otherwise the time specified
@@ -27,7 +27,7 @@ public class AsyncCompletionWaitor {
 	 *  Private control space.
 	 */
 	private IStatus  fStatus;
-	private Object   fReturnInfo;
+	private T   fReturnInfo;
 	private boolean  fWaitFinished;
 	private int      fNumWaiting;
 	
@@ -115,11 +115,11 @@ public class AsyncCompletionWaitor {
 		return fullMessage.length() <= 2 ? fullMessage : fullMessage.substring(0, fullMessage.length() - 2);
 	}
 	
-	public synchronized void setReturnInfo(Object info) {
+	public synchronized void setReturnInfo(T info) {
 		fReturnInfo = info ;
 	}
 	
-	public synchronized Object getReturnInfo() {
+	public synchronized T getReturnInfo() {
 		return fReturnInfo;
 	}
 	

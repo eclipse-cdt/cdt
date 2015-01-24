@@ -45,19 +45,13 @@ public class GDBProcessesTest extends BaseTestCase {
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SOURCE_NAME = "MultiThread.cc";
-	
+
 	private DsfSession fSession;
-    private DsfServicesTracker fServicesTracker;	
-	
-	private IMIProcesses fProcService; 
-	
-	/*
-     *  Create a waiter and a generic completion object. They will be used to 
-     *  wait for  asynchronous call completion.
-     */
-    private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
-    
-    @Override
+	private DsfServicesTracker fServicesTracker;
+
+	private IMIProcesses fProcService;
+
+	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
 
@@ -95,6 +89,7 @@ public class GDBProcessesTest extends BaseTestCase {
      *  Get the process data for the current program. Process is executable name in case of GDB back end
      */
 	public void getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
+		final AsyncCompletionWaitor<IThreadDMData> waitor = new AsyncCompletionWaitor<>();
 		
 		/*
 		 * Create a request monitor 
@@ -104,9 +99,9 @@ public class GDBProcessesTest extends BaseTestCase {
             @Override
             protected void handleCompleted() {
                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
+                    waitor.setReturnInfo(getData());
                 }
-                fWait.waitFinished(getStatus());
+                waitor.waitFinished(getStatus());
             }
         };
         
@@ -124,13 +119,13 @@ public class GDBProcessesTest extends BaseTestCase {
         /*
          * Wait for the operation to complete and validate success.
          */
-        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+        waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
+        Assert.assertTrue(waitor.getMessage(), waitor.isOK());
 
         /*
          * Get process data. Name of the process is the executable name in case of GDB back-end. 
          */
-        IThreadDMData processData = (IThreadDMData)fWait.getReturnInfo();
+        IThreadDMData processData = waitor.getReturnInfo();
         Assert.assertNotNull("No process data is returned for Process DMC", processData);
         Assert.assertTrue("Process data should be executable name " + EXEC_NAME + "but we got " + processData.getName(),
         		 processData.getName().contains(EXEC_NAME));

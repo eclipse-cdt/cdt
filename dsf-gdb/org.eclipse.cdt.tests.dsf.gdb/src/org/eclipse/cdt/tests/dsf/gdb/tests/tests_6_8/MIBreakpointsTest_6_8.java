@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
+import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
@@ -62,8 +63,9 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint
-		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+		AsyncCompletionWaitor waitor = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(waitor.getMessage(), waitor.isOK());
+		IBreakpointDMContext ref = (IBreakpointDMContext) waitor.getReturnInfo();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -113,8 +115,9 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint		
-		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+		AsyncCompletionWaitor waitor = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(waitor.getMessage(), waitor.isOK());
+		IBreakpointDMContext ref = (IBreakpointDMContext) waitor.getReturnInfo();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -173,8 +176,10 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		SyncUtil.resume();
 
 		// ...we install the breakpoint
-		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+		AsyncCompletionWaitor waitor = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(waitor.getMessage(), waitor.isOK());
+		MIBreakpointDMContext ref = (MIBreakpointDMContext) waitor.getReturnInfo();
+
 
 		waitForBreakpointEvent(1);
     	// Ensure the correct BreakpointEvent was received

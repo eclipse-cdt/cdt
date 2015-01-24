@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -1215,6 +1216,18 @@ public class MIMemoryTest extends BaseTestCase {
 		}
 	}
 
+	private void memoryCacheReadHelper(int offset, int count, int word_size)
+			throws InterruptedException {
+		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress,
+				offset, word_size, count);
+
+		// Verify that all bytes are correctly set
+		for (int i = 0; i < count; i++) {
+			assertEquals("Wrong value read at offset " + i,
+					(byte) (offset + i), buffer[i].getValue());
+		}
+	}
+
 	// ------------------------------------------------------------------------
 	// memoryCacheRead
 	// Get a bunch of blocks to exercise the memory cache 
@@ -1229,112 +1242,41 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		long offset = 0;
 		int word_size = 1;
-		int count = BLOCK_SIZE;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Get the 'reference' memory block
-		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are set to 'i'
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) i));
-		}
+		memoryCacheReadHelper(0, BLOCK_SIZE, word_size);
 
 		// Clear the cache
 		SyncUtil.step(StepType.STEP_OVER);
 
 		// Get a first block
-		offset =  0;
-		count = 64;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
+		memoryCacheReadHelper(0, 64, word_size);
 
 		// Get a second block
-		offset =  128;
-		count = 64;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
+		memoryCacheReadHelper(128, 64, word_size);
 
 		// Get a third block between the first 2
-		offset =  80;
-		count = 32;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
+		memoryCacheReadHelper(80, 32, word_size);
 
 		// Get a block that is contiguous to the end of an existing block
-		offset =  192;
-		count = 32;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
+		memoryCacheReadHelper(192, 32, word_size);
 
 		// Get a block that ends beyond an existing block
-		offset =  192;
-		count = 64;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
+		memoryCacheReadHelper(192, 64, word_size);
 
 		// Get a block that will require 2 reads (for the gaps between blocks 1-2 and 2-3)
-		offset =  32;
-		count = 128;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
+		memoryCacheReadHelper(32, 128, word_size);
 
 		// Get a block that involves multiple cached blocks
-		offset =  48;
-		count = 192;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+		memoryCacheReadHelper(48, 192, word_size);
 
-		// Verify that all bytes are set to 'i'
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
-		
 		// Get the whole block
-		offset =  0;
-		count = BLOCK_SIZE;
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+		memoryCacheReadHelper(0, BLOCK_SIZE, word_size);
 
-		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + offset + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) (offset + i)));
-		}
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events received.",
+				0, getEventCount());
 	}
-
 }

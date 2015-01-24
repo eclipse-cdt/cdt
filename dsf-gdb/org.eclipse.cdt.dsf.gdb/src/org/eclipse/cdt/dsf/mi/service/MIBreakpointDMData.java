@@ -243,6 +243,15 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return (fNature == other.fNature) && (fProperties.equals(other.fProperties));
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof MIBreakpointDMData) {
+			return equals((MIBreakpointDMData) other);
+		} else {
+			return false;
+		}
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// IBreakpointDMData
 	///////////////////////////////////////////////////////////////////////////

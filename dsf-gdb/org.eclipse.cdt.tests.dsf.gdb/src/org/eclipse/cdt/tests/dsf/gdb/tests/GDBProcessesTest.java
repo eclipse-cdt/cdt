@@ -11,25 +11,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
@@ -45,19 +44,13 @@ public class GDBProcessesTest extends BaseTestCase {
 	 */
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SOURCE_NAME = "MultiThread.cc";
-	
+
 	private DsfSession fSession;
-    private DsfServicesTracker fServicesTracker;	
-	
-	private IMIProcesses fProcService; 
-	
-	/*
-     *  Create a waiter and a generic completion object. They will be used to 
-     *  wait for  asynchronous call completion.
-     */
-    private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
-    
-    @Override
+	private DsfServicesTracker fServicesTracker;
+
+	private IMIProcesses fProcService;
+
+	@Override
 	public void doBeforeTest() throws Exception {
 		super.doBeforeTest();
 
@@ -95,45 +88,24 @@ public class GDBProcessesTest extends BaseTestCase {
      *  Get the process data for the current program. Process is executable name in case of GDB back end
      */
 	public void getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
-		
-		/*
-		 * Create a request monitor 
-		 */
-        final DataRequestMonitor<IThreadDMData> rm = 
-        	new DataRequestMonitor<IThreadDMData>(fSession.getExecutor(), null) {
-            @Override
-            protected void handleCompleted() {
-               if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
-                }
-                fWait.waitFinished(getStatus());
-            }
-        };
-        
-        /*
-         * Ask the service to get model data for the process. 
-         * There is only one process in case of GDB back end. 
-         */
-		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(), IProcessDMContext.class);
-        fSession.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
+				SyncUtil.getContainerContext(), IProcessDMContext.class);
+		Query<IThreadDMData> query = new Query<IThreadDMData>() {
+			@Override
+			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
 				fProcService.getExecutionData(processContext, rm);
-            }
-        });
-        /*
-         * Wait for the operation to complete and validate success.
-         */
-        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
-        Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+			}
+		};
 
-        /*
-         * Get process data. Name of the process is the executable name in case of GDB back-end. 
-         */
-        IThreadDMData processData = (IThreadDMData)fWait.getReturnInfo();
-        Assert.assertNotNull("No process data is returned for Process DMC", processData);
-        Assert.assertTrue("Process data should be executable name " + EXEC_NAME + "but we got " + processData.getName(),
-        		 processData.getName().contains(EXEC_NAME));
+		fProcService.getExecutor().execute(query);
+
+		/*
+		 * Get process data. Name of the process is the executable name in case of GDB back-end.
+		 */
+		IThreadDMData processData = query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+		Assert.assertNotNull("No process data is returned for Process DMC", processData);
+		Assert.assertTrue("Process data should be executable name " + EXEC_NAME +
+				"but we got " + processData.getName(), processData.getName().contains(EXEC_NAME));
 	}
 
 	/*

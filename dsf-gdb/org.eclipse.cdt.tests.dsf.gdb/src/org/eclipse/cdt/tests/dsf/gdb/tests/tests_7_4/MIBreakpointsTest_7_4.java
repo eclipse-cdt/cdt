@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
+import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3.MIBreakpointsTest_7_3;
@@ -49,8 +50,9 @@ public class MIBreakpointsTest_7_4 extends MIBreakpointsTest_7_3 {
 		breakpoint.put(LINE_NUMBER_TAG, 0);
 
 		// Perform the test
-		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+		AsyncCompletionWaitor<IBreakpointDMContext> waitor = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(waitor.getMessage(), waitor.isOK());
+		IBreakpointDMContext ref = waitor.getReturnInfo();
 
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "

@@ -426,4 +426,12 @@ public class SemanticHighlightingTest extends TestCase {
     public void testCStructureName_451772() throws Exception {
     	makeAssertions(false /* parse as C file */);
     }
+    
+    //	template <typename T>                            //$templateParameter
+    //	void foo(T t) {                                  //$functionDeclaration,templateParameter,parameterVariable
+    //		bar(t);                                      //$function,parameterVariable
+    //	}
+    public void testNPE_458317() throws Exception {
+    	makeAssertions();
+    }
 }

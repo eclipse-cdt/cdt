@@ -486,9 +486,12 @@ public class SemanticHighlightings {
 				if (binding instanceof ICPPMethod) {
 					return true;
 				} else if (binding instanceof ICPPDeferredFunction) {
-					for (ICPPFunction candidate : ((ICPPDeferredFunction) binding).getCandidates()) {
-						if (candidate instanceof ICPPMethod) {
-							return true;
+					ICPPFunction[] candidates = ((ICPPDeferredFunction) binding).getCandidates();
+					if (candidates != null) {
+						for (ICPPFunction candidate : candidates) {
+							if (candidate instanceof ICPPMethod) {
+								return true;
+							}
 						}
 					}
 				}

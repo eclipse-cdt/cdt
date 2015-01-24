@@ -276,7 +276,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -304,11 +304,11 @@ public class MIMemoryTest extends BaseTestCase {
 		//	Ensure that we receive a block of invalid memory bytes
 		assertTrue(wait.getMessage(), wait.isOK());
 		MemoryByte[] buffer = (MemoryByte[]) wait.getReturnInfo();
-		assertTrue("Wrong value: expected '0, 32', received '" + buffer[0].getValue() + ", " + buffer[0].getFlags() + "'",
-				(buffer[0].getValue() == (byte) 0) && (buffer[0].getFlags() == (byte) 32));
+		assertEquals("Wrong value", (byte) 0, buffer[0].getValue());
+		assertEquals("Wrong flags", (byte) 32, buffer[0].getFlags());
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -338,7 +338,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -369,7 +369,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -395,8 +395,7 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			IAddress address = fBaseAddress.add(i);
 			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, offset, word_size, count);
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + buffer[0].getValue() + "'",
-				(buffer[0].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, (byte) 0, buffer[0].getValue());
 		}
 
 		// Run to the point where the variable is initialized
@@ -408,12 +407,11 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			IAddress address = fBaseAddress.add(i);
 			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, offset, word_size, count);
-			assertTrue("Wrong value read at offset " + i + ": expected '" + i + "', received '" + buffer[0].getValue() + "'",
-				(buffer[0].getValue() == (byte) i));
+			assertEquals("Wrong value read at offset " + i, (byte) i, buffer[0].getValue());
 		}
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -437,8 +435,8 @@ public class MIMemoryTest extends BaseTestCase {
 		// Verify that all bytes are '0'
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + 0 + "', received '" + buffer[0].getValue() + "'",
-				(buffer[0].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + offset, (byte) 0, buffer[0].getValue());
+
 		}
 
 		// Run to the point where the array is set
@@ -449,12 +447,11 @@ public class MIMemoryTest extends BaseTestCase {
 		// Verify that all bytes are set
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + offset + "', received '" + buffer[0].getValue() + "'",
-				(buffer[0].getValue() == (byte) offset));
+			assertEquals("Wrong value read at offset " + offset, (byte) offset, buffer[0].getValue());
 		}
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -481,8 +478,8 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify that all bytes are '0'
 		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, (byte) 0, buffer[i].getValue());
+
 		}
 
 		// Run to the point where the variable is initialized
@@ -495,12 +492,12 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify that all bytes are '0'
 		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + i + "', received '" + buffer[i].getValue() + "'",
-				(buffer[i].getValue() == (byte) i));
+			assertEquals("Wrong value read at offset " + i, (byte) i, buffer[i].getValue());
+
 		}
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -536,7 +533,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -565,7 +562,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Don't test the error message since it changes from one GDB version to another
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -596,7 +593,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -628,7 +625,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -660,7 +657,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -688,8 +685,8 @@ public class MIMemoryTest extends BaseTestCase {
 			
 			// [1] Ensure that the memory byte = 0
 			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[0].getValue() + "'",
-					(block[0].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, (byte) 0, block[0].getValue());
+
 			
 			// [2] Write a byte value (count - i - 1)
 			IAddress address = fBaseAddress.add(i);
@@ -701,21 +698,18 @@ public class MIMemoryTest extends BaseTestCase {
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
 			// (I hardly believe there are no synchronization problems here...)
-			assertTrue("MemoryChangedEvent problem at offset " + i + ": expected " + (i + 1) + " events, received " + getEventCount(),
-					getEventCount() == (i + 1));
+			assertEquals("Incorrect count of MemoryChangedEvent at offset " + i, i + 1, getEventCount());
 			assertTrue("MemoryChangedEvent problem at offset " + i, fMemoryAddressesChanged[i]);
 
 			// [4] Verify that the memory byte was written correctly
 			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
-			assertTrue("Wrong value read at offset " + i + ": expected '" + expected + "', received '" + block[0].getValue() + "'",
-					(block[0].getValue() == expected));
+			assertEquals("Wrong value read at offset " + i, (byte) expected, block[0].getValue());
 		}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " events, received " + getEventCount(),
-				getEventCount() == BLOCK_SIZE);
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getEventCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
+		// NOTE FOR REVIEW: I believe there was a copy paste error here.
 	}
 
 	// ------------------------------------------------------------------------
@@ -741,8 +735,7 @@ public class MIMemoryTest extends BaseTestCase {
 			
 			// [1] Ensure that the memory byte = 0
 			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + 0 + "', received '" + block[0].getValue() + "'",
-					(block[0].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + offset, (byte) 0, block[0].getValue());
 			
 			// [2] Write a byte value (count - offset - 1)
 			byte expected = (byte) (count - offset - 1);
@@ -752,21 +745,17 @@ public class MIMemoryTest extends BaseTestCase {
 			assertTrue(wait.getMessage(), wait.isOK());
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
-			assertTrue("MemoryChangedEvent problem at offset " + offset + ": expected " + (offset + 1) + " events, received " + getEventCount(),
-					getEventCount() == (offset + 1));
+			assertEquals("Incorrect count of MemoryChangedEvent at offset " + offset, offset + 1, getEventCount());
 			assertTrue("MemoryChangedEvent problem at offset " + offset, fMemoryAddressesChanged[offset]);
 
 			// [4] Verify that the memory byte was written correctly
 			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + expected + "', received '" + block[0].getValue() + "'",
-					(block[0].getValue() == expected));
+			assertEquals("Wrong value read at offset " + offset, (byte) expected, block[0].getValue());
 		}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " events, received " + getEventCount(),
-				getEventCount() == BLOCK_SIZE);
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getAddressCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -791,8 +780,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Make sure that the memory block is zeroed
 		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
-				(block[i].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, (byte) 0, block[i].getValue());
 		}
 
 		// Write an initialized memory block
@@ -807,15 +795,12 @@ public class MIMemoryTest extends BaseTestCase {
 		// Make sure that the memory block is initialized
 		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
 		for (int i = 0; i < count; i++) {
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
-				(block[i].getValue() == (byte) i));
+			assertEquals("Wrong value read at offset " + i, (byte) i, block[i].getValue());
 		}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + 1 + " event, received " + getEventCount(),
-				getEventCount() == 1);
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getAddressCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", 1, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -851,7 +836,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("Incorrect count of MemoryChangedEvent", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -887,7 +872,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected) || wait.getMessage().contains(expected2));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -918,7 +903,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -950,7 +935,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -982,7 +967,7 @@ public class MIMemoryTest extends BaseTestCase {
 				wait.getMessage().contains(expected));
 
 		// Ensure no MemoryChangedEvent event was received
-		assertTrue("MemoryChangedEvent problem: expected " + 0 + ", received " + getEventCount(), getEventCount() == 0);
+		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -1010,8 +995,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Ensure that the memory is zeroed
 		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		for (int i = 0; i < (count * length); i++)
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
-					(block[i].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, (byte) 0, block[i].getValue());
 		
 		AsyncCompletionWaitor wait;
 		for (int i = 0; i < BLOCK_SIZE; i += length) {
@@ -1027,15 +1011,12 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < count; i++)
 			for (int j = 0; j < length; j++) {
 				int index = i * length + j;
-				assertTrue("Wrong value read at offset " + index + ": expected '" + j + "', received '" + block[index].getValue() + "'",
-						(block[index].getValue() == (byte) j));
+				assertEquals("Wrong value read at offset " + index, (byte) j, block[index].getValue());
 			}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + (BLOCK_SIZE / length) + " events, received " + getEventCount(),
-				getEventCount() == (BLOCK_SIZE / length));
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getAddressCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE / length, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
 	}
 
 	// ------------------------------------------------------------------------
@@ -1063,8 +1044,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Ensure that the memory is zeroed
 		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		for (int i = 0; i < (count * length); i++)
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
-					(block[i].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, 0, block[i].getValue());
 		
 		AsyncCompletionWaitor wait;
 		for (int i = 0; i < (BLOCK_SIZE / length); i++) {
@@ -1080,15 +1060,13 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < count; i++)
 			for (int j = 0; j < length; j++) {
 				int index = i * length + j;
-				assertTrue("Wrong value read at offset " + index + ": expected '" + j + "', received '" + block[index].getValue() + "'",
-						(block[index].getValue() == (byte) j));
+				assertEquals("Wrong value read at offset " + index, (byte) j, block[index].getValue());
 			}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + (BLOCK_SIZE / length) + " events, received " + getEventCount(),
-				getEventCount() == (BLOCK_SIZE / length));
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getAddressCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE / length, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
+
 	}
 
 	// ------------------------------------------------------------------------
@@ -1116,8 +1094,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Ensure that the memory is zeroed
 		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
 		for (int i = 0; i < (count * length); i++)
-			assertTrue("Wrong value read at offset " + i + ": expected '" + 0 + "', received '" + block[i].getValue() + "'",
-					(block[i].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + i, (byte) 0, block[i].getValue());
 		
 		// Write the pattern [count] times
 		AsyncCompletionWaitor wait = AsyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
@@ -1129,15 +1106,13 @@ public class MIMemoryTest extends BaseTestCase {
 		for (int i = 0; i < count; i++)
 			for (int j = 0; j < length; j++) {
 				int index = i * length + j;
-				assertTrue("Wrong value read at offset " + index + ": expected '" + j + "', received '" + block[index].getValue() + "'",
-						(block[index].getValue() == (byte) j));
+				assertEquals("Wrong value read at offset " + index, (byte) j, block[index].getValue());
 			}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + 1 + " events, received " + getEventCount(),
-				getEventCount() == 1);
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getAddressCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", 1, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
+
 	}
 
 	// ------------------------------------------------------------------------
@@ -1177,8 +1152,7 @@ public class MIMemoryTest extends BaseTestCase {
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + 0 + "', received '" + buffer[offset].getValue() + "'",
-					(buffer[offset].getValue() == (byte) 0));
+			assertEquals("Wrong value read at offset " + offset, (byte) 0, buffer[offset].getValue());
 		}
 
 		// Write asynchronously
@@ -1195,10 +1169,9 @@ public class MIMemoryTest extends BaseTestCase {
 		assertTrue(wait.getMessage(), wait.isOK());
 
 		// Ensure the MemoryChangedEvent events were received
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " events, received " + getEventCount(),
-				getEventCount() == BLOCK_SIZE);
-		assertTrue("MemoryChangedEvent problem: expected " + BLOCK_SIZE + " distinct addresses, received " + getAddressCount(),
-				getAddressCount() == BLOCK_SIZE);
+		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE, getEventCount());
+		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
+
 
 		// Verify asynchronously that all bytes are set
 		wait.waitReset();
@@ -1211,8 +1184,7 @@ public class MIMemoryTest extends BaseTestCase {
 		wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(wait.getMessage(), wait.isOK());
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + offset + "', received '" + buffer[offset].getValue() + "'",
-					(buffer[offset].getValue() == (byte) offset));
+			assertEquals("Wrong value read at offset " + offset, (byte) offset, buffer[offset].getValue());
 		}
 	}
 
@@ -1223,8 +1195,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify that all bytes are correctly set
 		for (int i = 0; i < count; i++) {
-			assertEquals("Wrong value read at offset " + i,
-					(byte) (offset + i), buffer[i].getValue());
+			assertEquals("Wrong value read at offset " + i, (byte) (offset + i), buffer[i].getValue());
 		}
 	}
 
@@ -1276,7 +1247,6 @@ public class MIMemoryTest extends BaseTestCase {
 		memoryCacheReadHelper(0, BLOCK_SIZE, word_size);
 
 		// Ensure no MemoryChangedEvent event was received
-		assertEquals("MemoryChangedEvent problem: expected 0 events received.",
-				0, getEventCount());
+		assertEquals("Incorrect count of MemoryChangedEvent", 0, getEventCount());
 	}
 }

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_cea77fc3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-25T15:25:58Z",
+      "side": 1,
+      "message": "You have to initialize this service at the same time as the others.",
+      "revId": "47e4dcc12532ef627a566c6d377f75981846ff72",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_aeacbba8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-25T15:25:58Z",
+      "side": 1,
+      "message": "Avoid using AsyncCompletionWaitor",
+      "revId": "47e4dcc12532ef627a566c6d377f75981846ff72",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

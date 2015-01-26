@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,11 +8,16 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
+ * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
 import org.eclipse.tm.terminal.model.Style;
 
+/**
+ * @author toni
+ *
+ */
 public interface IVT100EmulatorBackend {
 
 	/**
@@ -186,4 +191,10 @@ public interface IVT100EmulatorBackend {
 	 */
 	boolean isVT100LineWrapping();
 
+	/**
+	 * Enables/disables insert mode (IRM).
+	 * 
+	 * @param enable  whether to enable insert mode
+	 */
+	void setInsertMode(boolean enable);
 }

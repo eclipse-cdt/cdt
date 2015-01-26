@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67fe7f71_11d6caf0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-26T12:44:02Z",
+      "side": 1,
+      "message": "copy right year shall be updated.",
+      "revId": "46c2049de8001cba9a4cdcaeae8deb79e7e9ce11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67fe7f71_91c91a51",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-26T12:44:02Z",
+      "side": 1,
+      "message": "A recommendation for all collections,\n I have adopted the practice to never set them to null.  I do as follow to simplify null check handling.\n\n1) I declare the collection fields as \"final\" but define them in the constructor\n2) The definition at the constructor is done with an empty Collection,\n3) Then the logic does not ever check for null, it continues building the list as needed\n4) At dispose or initialization functions I simply call the clear method.\n\nThe above avoids checking for null all over with out minimal resources being used as the list gets cleared as needed.",
+      "revId": "46c2049de8001cba9a4cdcaeae8deb79e7e9ce11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

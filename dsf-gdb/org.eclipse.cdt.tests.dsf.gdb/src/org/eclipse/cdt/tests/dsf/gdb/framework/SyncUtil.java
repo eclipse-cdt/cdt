@@ -38,7 +38,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -88,7 +87,6 @@ public class SyncUtil {
     private static MIStack fStack;
     private static IExpressions fExpressions;
     private static DsfSession fSession;
-    private static IMemory fMemory;
 	
     private static CommandFactory fCommandFactory;
 	private static IGDBProcesses fProcessesService;
@@ -817,20 +815,15 @@ public class SyncUtil {
 	 * @param count		the number of bytes to read
 	 * @return			the memory content
 	 * @throws InterruptedException
+	 * @throws ExecutionException
 	 */
 	public static MemoryByte[] readMemory(final IMemoryDMContext dmc,
 			final IAddress address, final long offset, final int word_size,
-			final int count) throws InterruptedException {
-		MemoryByte[] ret;
+			final int count) throws InterruptedException, ExecutionException {
+		Query<MemoryByte[]> query = AsyncUtil.readMemory(dmc, address, offset,
+				word_size, count);
 
-		AsyncCompletionWaitor waitor = AsyncUtil.readMemory(dmc, address,
-				offset, word_size, count);
-
-		waitor.waitUntilDone(TestsPlugin.massageTimeout(1000));
-
-		assertTrue(waitor.getMessage(), waitor.isOK());
-
-		return (MemoryByte[]) waitor.getReturnInfo();
+		return query.get();
 	}
 
 	/**
@@ -843,15 +836,15 @@ public class SyncUtil {
 	 * @param count		the number of bytes to write
 	 * @param buffer	the byte buffer to write from
 	 * @throws InterruptedException
+	 * @throws ExecutionException
 	 */
 	public static void writeMemory(final IMemoryDMContext dmc,
 			final IAddress address, final long offset, final int word_size,
-			final int count, final byte[] buffer) throws InterruptedException {
-		AsyncCompletionWaitor waitor = AsyncUtil.writeMemory(dmc, address, offset, word_size, count, buffer);
+			final int count, final byte[] buffer) throws InterruptedException, ExecutionException {
+		Query<Void> query = AsyncUtil.writeMemory(dmc, address, offset,
+				word_size, count, buffer);
 
-		waitor.waitUntilDone(TestsPlugin.massageTimeout(1000));
-
-		assertTrue(waitor.getMessage(), waitor.isOK());
+		query.get();
 	}
 
 	/**
@@ -864,14 +857,14 @@ public class SyncUtil {
 	 * @param count		the number of bytes to write
 	 * @param pattern	the pattern to write
 	 * @throws InterruptedException
+	 * @throws ExecutionException
 	 */
 	public static void fillMemory(final IMemoryDMContext dmc,
 			final IAddress address, final long offset, final int word_size,
-			final int count, final byte[] pattern) throws InterruptedException {
-		AsyncCompletionWaitor waitor = AsyncUtil.fillMemory(dmc, address, offset, word_size, count, pattern);
+			final int count, final byte[] pattern) throws InterruptedException, ExecutionException {
+		Query<Void> query = AsyncUtil.fillMemory(dmc, address, offset,
+				word_size, count, pattern);
 
-		waitor.waitUntilDone(TestsPlugin.massageTimeout(1000));
-
-		assertTrue(waitor.getMessage(), waitor.isOK());
+		query.get();
 	}
 }

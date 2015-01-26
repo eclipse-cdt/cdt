@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -42,6 +43,8 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemory;
+import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -73,43 +76,45 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * Timeout wait values are in milliseconds, or WAIT_FOREVER.
  */
 public class SyncUtil {
-    
-    private static IGDBControl fGdbControl;
-    private static IMIRunControl fRunControl;
-    private static MIStack fStack;
-    private static IExpressions fExpressions;
-    private static DsfSession fSession;
-	
-    private static CommandFactory fCommandFactory;
+
+	private static IGDBControl fGdbControl;
+	private static IMIRunControl fRunControl;
+	private static MIStack fStack;
+	private static IExpressions fExpressions;
+	private static DsfSession fSession;
+	private static IMemory fMemory;
+
+	private static CommandFactory fCommandFactory;
 	private static IGDBProcesses fProcessesService;
-    
-    // Initialize some common things, once the session has been established
-    public static void initialize(DsfSession session) throws Exception {
-    	fSession = session;
-    	
-        Runnable runnable = new Runnable() {
-            @Override
+
+	// Initialize some common things, once the session has been established
+	public static void initialize(DsfSession session) throws Exception {
+		fSession = session;
+
+		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
-	        	DsfServicesTracker tracker = 
-	        		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
-	        				fSession.getId());
-	        	
-	        	fGdbControl = tracker.getService(IGDBControl.class);		   		
-	        	fRunControl = tracker.getService(IMIRunControl.class);
-	        	fStack = tracker.getService(MIStack.class);
-	        	fExpressions = tracker.getService(IExpressions.class);
-	        	fProcessesService = tracker.getService(IGDBProcesses.class);
-	        	fCommandFactory = fGdbControl.getCommandFactory();
-	        		        		        	
-	        	tracker.dispose();
-            }
-	    };
-	    fSession.getExecutor().submit(runnable).get();
+				DsfServicesTracker tracker = new DsfServicesTracker(
+						TestsPlugin.getBundleContext(), fSession.getId());
+
+				fGdbControl = tracker.getService(IGDBControl.class);
+				fRunControl = tracker.getService(IMIRunControl.class);
+				fStack = tracker.getService(MIStack.class);
+				fExpressions = tracker.getService(IExpressions.class);
+				fProcessesService = tracker.getService(IGDBProcesses.class);
+				fMemory = tracker.getService(IMemory.class);
+				fCommandFactory = fGdbControl.getCommandFactory();
+
+				tracker.dispose();
+			}
+		};
+		fSession.getExecutor().submit(runnable).get();
 	}
 
 	public static MIStoppedEvent step(int numSteps, StepType stepType) throws Throwable {
@@ -801,4 +806,89 @@ public class SyncUtil {
     	IVariableDMData[] result = query.get(500, TimeUnit.MILLISECONDS);
     	return result;
     }
+
+	/**
+	 * Read data from memory.
+	 *
+	 * @param dmc		the data model context
+	 * @param address	the memory block address
+	 * @param offset	the offset in the buffer
+	 * @param word_size	the size of a word, in octets
+	 * @param count		the number of bytes to read
+	 * @return			the memory content
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public static MemoryByte[] readMemory(final IMemoryDMContext dmc,
+			final IAddress address, final long offset, final int word_size,
+			final int count) throws InterruptedException, ExecutionException {
+		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+			@Override
+			protected void execute(DataRequestMonitor<MemoryByte[]> rm) {
+				fMemory.getMemory(dmc, address, offset, word_size, count, rm);
+			}
+		};
+
+		fMemory.getExecutor().execute(query);
+
+		return query.get();
+	}
+
+	/**
+	 * Write data to memory.
+	 *
+	 * @param dmc		the data model context
+	 * @param address	the memory block address (could be an expression)
+	 * @param offset	the offset from address
+	 * @param word_size	the word size, in octets
+	 * @param count		the number of bytes to write
+	 * @param buffer	the byte buffer to write from
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public static void writeMemory(final IMemoryDMContext dmc,
+			final IAddress address, final long offset, final int word_size,
+			final int count, final byte[] buffer) throws InterruptedException,
+			ExecutionException {
+		Query<Void> query = new Query<Void>() {
+			@Override
+			protected void execute(DataRequestMonitor<Void> rm) {
+				fMemory.setMemory(dmc, address, offset, word_size, count,
+						buffer, rm);
+			}
+		};
+
+		fMemory.getExecutor().execute(query);
+
+		query.get();
+	}
+
+	/**
+	 * Fill memory with a pattern.
+	 *
+	 * @param dmc		the data model context
+	 * @param address	the memory block address (could be an expression)
+	 * @param offset	the offset from address
+	 * @param word_size	the word size, in octets
+	 * @param count		the number of bytes to write
+	 * @param pattern	the pattern to write
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public static void fillMemory(final IMemoryDMContext dmc,
+			final IAddress address, final long offset, final int word_size,
+			final int count, final byte[] pattern) throws InterruptedException,
+			ExecutionException {
+		Query<Void> query = new Query<Void>() {
+			@Override
+			protected void execute(DataRequestMonitor<Void> rm) {
+				fMemory.fillMemory(dmc, address, offset, word_size, count,
+						pattern, rm);
+			}
+		};
+
+		fMemory.getExecutor().execute(query);
+
+		query.get();
+	}
 }

@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [401480] Handle ESC[39;49m and ESC[G
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
+ * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -69,6 +70,13 @@ public class VT100Emulator implements ControlListener {
 	 * reprograms an intelligent terminal.
 	 */
 	private static final int ANSISTATE_EXPECTING_OS_COMMAND = 3;
+
+	/**
+	 * This is a character processing state: We've seen a '[?' after an escape
+	 * character. Expecting a parameter character or a command character next.
+	 */
+	private static final int ANSISTATE_EXPECTING_DEC_PRIVATE_COMMAND = 4;
+
 
 	/**
 	 * This field holds the current state of the Finite TerminalState Automaton (FSA)
@@ -364,6 +372,11 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case ANSISTATE_EXPECTING_PARAMETER_OR_COMMAND:
+				if (character == '?') {
+					ansiState = ANSISTATE_EXPECTING_DEC_PRIVATE_COMMAND;
+					break;
+				}
+
 				// Parameters can appear after the '[' in an escape sequence, but they
 				// are optional.
 
@@ -384,6 +397,19 @@ public class VT100Emulator implements ControlListener {
 					processAnsiOsCommand();
 				} else {
 					ansiOsCommand.append(character);
+				}
+				break;
+
+			case ANSISTATE_EXPECTING_DEC_PRIVATE_COMMAND:
+				// Parameters can appear after the '[?' in an escape sequence, but they
+				// are optional.
+
+				if (character == '@' || (character >= 'A' && character <= 'Z')
+						|| (character >= 'a' && character <= 'z')) {
+					ansiState = ANSISTATE_INITIAL;
+					processDecPrivateCommandCharacter(character);
+				} else {
+					processAnsiParameterCharacter(character);
 				}
 				break;
 
@@ -549,6 +575,31 @@ public class VT100Emulator implements ControlListener {
 		default:
 			Logger.log("Ignoring unsupported ANSI command character: '" + //$NON-NLS-1$
 					ansiCommandCharacter + "'"); //$NON-NLS-1$
+			break;
+		}
+	}
+
+	/**
+	 * This method dispatches control to various processing methods based on the
+	 * command character found in the most recently received DEC private mode escape
+	 * sequence. This method only handles command characters that follow the
+	 * control sequence CSI ?
+	 */
+	private void processDecPrivateCommandCharacter(char commandCharacter) {
+		switch (commandCharacter) {
+		case 'h':
+			// DEC Private Mode Set (DECSET)
+			processDecPrivateCommand_h();
+			break;
+
+		case 'l':
+			// DEC Private Mode Reset (DECRST)
+			processDecPrivateCommand_l();
+			break;
+
+		default:
+			Logger.log("Ignoring unsupported DEC private command character: '" + //$NON-NLS-1$
+					commandCharacter + "'"); //$NON-NLS-1$
 			break;
 		}
 	}
@@ -916,6 +967,20 @@ public class VT100Emulator implements ControlListener {
 		text.deleteCharacters(getAnsiParameter(0));
 	}
 
+	private void processDecPrivateCommand_h() {
+		if (getAnsiParameter(0) == 1) {
+			// Enable Application Cursor Keys (DECCKM)
+			terminal.enableApplicationCursorKeys(true);
+		}
+	}
+
+	private void processDecPrivateCommand_l() {
+		if (getAnsiParameter(0) == 1) {
+			// Enable Normal Cursor Keys (DECCKM)
+			terminal.enableApplicationCursorKeys(false);
+		}
+	}
+	
 	/**
 	 * This method returns one of the numeric ANSI parameters received in the
 	 * most recent escape sequence.

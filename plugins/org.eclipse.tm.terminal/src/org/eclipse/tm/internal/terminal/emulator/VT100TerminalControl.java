@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@
  * Martin Oberhuber (Wind River) - [434294] Add Mac bindings with COMMAND
  * Anton Leherbauer (Wind River) - [434749] UnhandledEventLoopException when copying to clipboard while the selection is empty
  * Martin Oberhuber (Wind River) - [436612] Restore Eclipse 3.4 compatibility by using Reflection
+ * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -154,6 +155,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private final ITerminalTextData fTerminalModel;
 
 	private final EditActionAccelerators editActionAccelerators = new EditActionAccelerators();
+
+	private boolean fApplicationCursorKeys;
 
 	/**
 	 * Listens to changes in the preferences
@@ -958,22 +961,22 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				switch (event.keyCode) {
 				case 0x1000001: // Up arrow.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[A"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOA" : "\u001b[A"; //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 
 				case 0x1000002: // Down arrow.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[B"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOB" : "\u001b[B"; //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 
 				case 0x1000003: // Left arrow.
 					if (onlyCtrlKeyPressed) {
 						escSeq = "\u001b[1;5D"; //$NON-NLS-1$
 					} else if (!anyModifierPressed) {
-						escSeq = "\u001b[D"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOD" : "\u001b[D"; //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (onlyMacCmdKeyPressed) {
 						// Cmd-Left is "Home" on the Mac
-						escSeq = "\u001b[H"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOH" : "\u001b[H"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					break;
 
@@ -981,10 +984,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					if (onlyCtrlKeyPressed) {
 						escSeq = "\u001b[1;5C"; //$NON-NLS-1$
 					} else if (!anyModifierPressed) {
-						escSeq = "\u001b[C"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOC" : "\u001b[C"; //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (onlyMacCmdKeyPressed) {
 						// Cmd-Right is "End" on the Mac
-						escSeq = "\u001b[F"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOF" : "\u001b[F"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					break;
 
@@ -1000,12 +1003,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 				case 0x1000007: // Home key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[H"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOH" : "\u001b[H"; //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 
 				case 0x1000008: // End key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[F"; //$NON-NLS-1$
+						escSeq = fApplicationCursorKeys ? "\u001bOF" : "\u001b[F"; //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 
 				case 0x1000009: // Insert.
@@ -1311,6 +1314,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	public boolean isVT100LineWrapping() {
 		return getTerminalText().isVT100LineWrapping();
+	}
+
+	public void enableApplicationCursorKeys(boolean enable) {
+		fApplicationCursorKeys = enable;
 	}
 	
 }

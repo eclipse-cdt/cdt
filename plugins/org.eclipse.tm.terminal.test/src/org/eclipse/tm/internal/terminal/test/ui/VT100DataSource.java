@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.test.ui;
 
@@ -107,6 +108,9 @@ final class VT100DataSource implements IDataSource {
 			}
 
 			public void setTerminalTitle(String title) {
+			}
+
+			public void enableApplicationCursorKeys(boolean enable) {
 			}
 		}, reader);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
 
@@ -30,5 +31,11 @@ public interface ITerminalControlForText {
 	ITerminalConnector getTerminalConnector();
 
 	OutputStream getOutputStream();
+	
+	/**
+	 * Enable/disable Application Cursor Keys mode (DECCKM)
+	 * @param enable
+	 */
+	void enableApplicationCursorKeys(boolean enable);
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [206329] Changing terminal size right after connect does not scroll properly
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
+ * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -54,6 +55,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* true if last output occurred on rightmost column 
 	 * and next output requires line wrap */
 	private boolean fWrapPending;
+	private boolean fInsertMode;
 	private Style fDefaultStyle;
 	private Style fStyle;
 	int fLines;
@@ -289,6 +291,8 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	public void appendString(String buffer) {
 		synchronized (fTerminal) {
 			char[] chars=buffer.toCharArray();
+			if (fInsertMode)
+				insertCharacters(chars.length);
 			int line=toAbsoluteLine(fCursorLine);
 			int i=0;
 			while (i < chars.length) {
@@ -431,5 +435,9 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 
 	public boolean isVT100LineWrapping() {
 		return fVT100LineWrapping;
+	}
+	
+	public void setInsertMode(boolean enable) {
+		fInsertMode = enable;
 	}
 }

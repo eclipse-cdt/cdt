@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
+ * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -149,6 +150,11 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 
 	public boolean isVT100LineWrapping() {
 		return fBackend.isVT100LineWrapping();
+	}
+
+	public void setInsertMode(boolean enable) {
+		fWriter.println("setInsertMode("+enable+")"); //$NON-NLS-1$ //$NON-NLS-2$
+		fBackend.setInsertMode(enable);
 	}
 
 }

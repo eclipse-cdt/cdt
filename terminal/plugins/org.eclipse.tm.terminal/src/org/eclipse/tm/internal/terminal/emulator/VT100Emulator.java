@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [401386] Regression: No header on top due to incorrect ESC[K interpretation
  * Martin Oberhuber (Wind River) - [401480] Handle ESC[39;49m and ESC[G
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
+ * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -476,6 +477,11 @@ public class VT100Emulator implements ControlListener {
 			processAnsiCommand_H();
 			break;
 
+		case 'h':
+			// Reset Mode.
+			processAnsiCommand_h();
+			break;
+
 		case 'J':
 			// Erase part or all of display. Cursor does not move.
 			processAnsiCommand_J();
@@ -491,6 +497,11 @@ public class VT100Emulator implements ControlListener {
 			processAnsiCommand_L();
 			break;
 
+		case 'l':
+			// Set Mode.
+			processAnsiCommand_l();
+			break;
+			
 		case 'M':
 			// Delete line(s).
 			processAnsiCommand_M();
@@ -621,6 +632,16 @@ public class VT100Emulator implements ControlListener {
 	}
 
 	/**
+	 * This method sets terminal modes.
+	 */
+	private void processAnsiCommand_h() {
+		if (getAnsiParameter(0) == 4) {
+			// set insert mode
+			text.setInsertMode(true);
+		}
+	}
+
+	/**
 	 * This method deletes some (or all) of the text on the screen without
 	 * moving the cursor.
 	 */
@@ -692,6 +713,16 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private void processAnsiCommand_L() {
 		text.insertLines(getAnsiParameter(0));
+	}
+
+	/**
+	 * This method resets terminal modes.
+	 */
+	private void processAnsiCommand_l() {
+		if (getAnsiParameter(0) == 4) {
+			// reset insert mode
+			text.setInsertMode(false);
+		}
 	}
 
 	/**

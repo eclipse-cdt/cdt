@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
+ * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -1284,4 +1285,26 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertFalse(term.isWrappedLine(2));
 		assertTrue(term.isWrappedLine(3));
 	}
+
+	public void testInsertMode() {
+		ITerminalTextData term=makeITerminalTextData();
+		IVT100EmulatorBackend vt100=makeBakend(term);
+		term.setMaxHeight(10);
+		vt100.setDimensions(4, 6);
+		// replace mode
+		vt100.appendString("123");
+		vt100.setCursorColumn(0);
+		vt100.appendString("abc");
+		assertEquals("abc", new String(term.getChars(0)));
+		vt100.clearAll();
+		// insert mode
+		vt100.setCursorColumn(0);
+		vt100.appendString("123");
+		vt100.setCursorColumn(0);
+		vt100.setInsertMode(true);
+		vt100.appendString("abc");
+		vt100.setInsertMode(false);
+		assertEquals("abc123", new String(term.getChars(0)));
+	}
+
 }

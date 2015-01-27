@@ -7,12 +7,22 @@
    <extension-point id="authenticator" name="User Authenticator" schema="schema/authenticator.exsd"/>
    <extension
          point="org.eclipse.remote.core.remoteServices">
-      <remoteServices
-            class="org.eclipse.remote.internal.core.services.local.LocalServicesFactory"
+      <connectionType
+            capabilities="0"
             id="org.eclipse.remote.LocalServices"
             name="Local"
             scheme="file">
-      </remoteServices>
+      </connectionType>
+      <connectionTypeService
+            factory="org.eclipse.remote.internal.core.services.local.LocalConnectionProviderService$Factory"
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            service="org.eclipse.remote.core.IRemoteConnectionProviderService">
+      </connectionTypeService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalConnectionPropertyService$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionPropertyService">
+      </connectionService>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

@@ -2,14 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         point="org.eclipse.remote.ui.remoteUIServices">
-      <remoteUIServices
-            class="org.eclipse.remote.internal.jsch.ui.JSchUIServicesFactory"
-            id="org.eclipse.remote.JSch"
-            name="JSch">
-      </remoteUIServices>
-   </extension>
-   <extension
          point="org.eclipse.ui.ide.filesystemSupport">
       <filesystemContributor
             class="org.eclipse.remote.internal.jsch.ui.JSchFileSystemContributor"
@@ -41,6 +33,19 @@
             id="org.eclipse.remote.JSch"
             priority="0">
       </authenticator>
+   </extension>
+   <extension
+         point="org.eclipse.remote.core.remoteServices">
+      <connectionTypeService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.ui.JSchUIConnectionService$Factory"
+            service="org.eclipse.remote.ui.IRemoteUIConnectionService">
+      </connectionTypeService>
+      <connectionTypeService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.ui.JSchUIFileService$Factory"
+            service="org.eclipse.remote.ui.IRemoteUIFileService">
+      </connectionTypeService>
    </extension>
    
 </plugin>

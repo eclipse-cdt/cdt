@@ -27,18 +27,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Abstract base class for providing UI connection manager services.
- * 
- * @since 7.0
  */
-public abstract class AbstractRemoteUIConnectionManager implements IRemoteUIConnectionManager {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.ui.IRemoteUIConnectionManager#
-	 * openConnectionWithProgress(org.eclipse.swt.widgets.Shell,
-	 * org.eclipse.jface.operation.IRunnableContext,
-	 * org.eclipse.remote.core.IRemoteConnection)
-	 */
+public abstract class AbstractRemoteUIConnectionManager implements IRemoteUIConnectionService {
+
 	public void openConnectionWithProgress(final Shell shell, IRunnableContext context, final IRemoteConnection connection) {
 		if (!connection.isOpen()) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -70,4 +61,5 @@ public abstract class AbstractRemoteUIConnectionManager implements IRemoteUIConn
 			}
 		}
 	}
+
 }

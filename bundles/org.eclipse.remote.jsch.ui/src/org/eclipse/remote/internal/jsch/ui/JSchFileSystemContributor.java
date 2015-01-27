@@ -27,14 +27,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteServices;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.internal.jsch.core.JSchConnection;
 import org.eclipse.remote.internal.jsch.core.JSchFileSystem;
-import org.eclipse.remote.internal.jsch.core.JSchServices;
 import org.eclipse.remote.internal.jsch.ui.messages.Messages;
-import org.eclipse.remote.ui.IRemoteUIFileManager;
-import org.eclipse.remote.ui.IRemoteUIServices;
-import org.eclipse.remote.ui.RemoteUIServices;
+import org.eclipse.remote.ui.IRemoteUIFileService;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
 
@@ -48,9 +46,9 @@ public class JSchFileSystemContributor extends FileSystemContributor {
 	 */
 	@Override
 	public URI browseFileSystem(String initialPath, Shell shell) {
-		IRemoteServices services = RemoteServices.getRemoteServices(JSchServices.JSCH_ID);
-		IRemoteUIServices uiServices = RemoteUIServices.getRemoteUIServices(services);
-		IRemoteUIFileManager uiFileMgr = uiServices.getUIFileManager();
+		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
+		IRemoteConnectionType connectionType = manager.getConnectionType(JSchConnection.JSCH_ID);
+		IRemoteUIFileService uiFileMgr = connectionType.getService(IRemoteUIFileService.class);
 		uiFileMgr.showConnections(true);
 		String path = uiFileMgr.browseDirectory(shell, Messages.JSchFileSystemContributor_0, initialPath, 0);
 		if (path != null) {

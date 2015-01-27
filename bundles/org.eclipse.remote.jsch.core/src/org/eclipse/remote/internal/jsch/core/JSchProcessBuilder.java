@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
-import org.eclipse.remote.core.IRemoteFileManager;
+import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.core.RemoteDebugOptions;
@@ -34,15 +34,13 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 
 public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
+
 	private final JSchConnection fConnection;
 	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 	private final Set<Character> charSet = new HashSet<Character>();
 
 	private Map<String, String> fNewRemoteEnv = null;
 
-	/**
-	 * @since 4.0
-	 */
 	public JSchProcessBuilder(JSchConnection connection, List<String> command) {
 		super(command);
 		fConnection = connection;
@@ -58,34 +56,21 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 	}
 
-	/**
-	 * @since 4.0
-	 */
 	public JSchProcessBuilder(JSchConnection connection, String... command) {
 		this(connection, Arrays.asList(command));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.AbstractRemoteProcessBuilder#directory()
-	 */
 	@Override
 	public IFileStore directory() {
 		IFileStore dir = super.directory();
-		IRemoteFileManager fileMgr = fConnection.getFileManager();
-		if (dir == null && fileMgr != null) {
-			dir = fileMgr.getResource(fConnection.getWorkingDirectory());
+		IRemoteFileService fileService = fConnection.getRemoteConnection().getService(IRemoteFileService.class);
+		if (dir == null && fileService != null) {
+			dir = fileService.getResource(fConnection.getWorkingDirectory());
 			directory(dir);
 		}
 		return dir;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.AbstractRemoteProcessBuilder#environment()
-	 */
 	@Override
 	public Map<String, String> environment() {
 		if (fNewRemoteEnv == null) {
@@ -95,21 +80,11 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		return fNewRemoteEnv;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.AbstractRemoteProcessBuilder#getSupportedFlags ()
-	 */
 	@Override
 	public int getSupportedFlags() {
 		return ALLOCATE_PTY | FORWARD_X11;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#start(int)
-	 */
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
 		if (!fConnection.isOpen()) {
@@ -234,4 +209,5 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		inputString = newString.toString();
 		return inputString;
 	}
+
 }

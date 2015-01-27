@@ -78,6 +78,18 @@ public class Activator extends Plugin {
 	public Activator() {
 	}
 
+	/**
+	 * Return the OSGi service with the given service interface.
+	 * 
+	 * @param service service interface
+	 * @return the specified service or null if it's not registered
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
+	}
+
 	public IJSchService getService() {
 		return fJSchService;
 	}

@@ -15,37 +15,27 @@ import java.util.Set;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
-import org.eclipse.remote.internal.jsch.core.JSchConnectionWorkingCopy;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.swt.widgets.Shell;
 
 public class JSchConnectionWizard extends Wizard implements IRemoteUIConnectionWizard {
+
 	private final Shell fShell;
 	private final JSchConnectionPage fPage;
 
-	public JSchConnectionWizard(Shell shell, IRemoteConnectionManager connMgr) {
+	public JSchConnectionWizard(Shell shell, IRemoteConnectionType connectionType) {
 		fShell = shell;
-		fPage = new JSchConnectionPage(connMgr);
+		fPage = new JSchConnectionPage(connectionType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		super.addPages();
 		addPage(fPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.ui.IRemoteUIConnectionWizard#getWorkingCopy()
-	 */
 	public IRemoteConnectionWorkingCopy open() {
 		WizardDialog dialog = new WizardDialog(fShell, this);
 		dialog.setBlockOnOpen(true);
@@ -55,50 +45,31 @@ public class JSchConnectionWizard extends Wizard implements IRemoteUIConnectionW
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performCancel()
-	 */
+	@Override
+	public IRemoteConnectionWorkingCopy getConnection() {
+		return fPage.getConnection();
+	}
+
 	@Override
 	public boolean performCancel() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.ui.IRemoteUIConnectionWizard#setConnection(org.eclipse.remote.core.IRemoteConnectionWorkingCopy)
-	 */
 	public void setConnection(IRemoteConnectionWorkingCopy connection) {
-		fPage.setConnection((JSchConnectionWorkingCopy) connection);
+		fPage.setConnection(connection);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.ui.IRemoteUIConnectionWizard#setConnectionName(java.lang.String)
-	 */
 	public void setConnectionName(String name) {
 		fPage.setConnectionName(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.ui.IRemoteUIConnectionWizard#setInvalidConnectionNames(java.util.Set)
-	 */
 	public void setInvalidConnectionNames(Set<String> names) {
 		fPage.setInvalidConnectionNames(names);
 	}
+
 }

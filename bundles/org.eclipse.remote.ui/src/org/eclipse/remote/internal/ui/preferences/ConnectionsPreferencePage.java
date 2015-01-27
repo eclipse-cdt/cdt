@@ -28,19 +28,17 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionControlService;
+import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemotePreferenceConstants;
-import org.eclipse.remote.core.IRemoteServices;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
-import org.eclipse.remote.internal.core.RemoteServicesDescriptor;
-import org.eclipse.remote.internal.core.RemoteServicesImpl;
 import org.eclipse.remote.internal.core.preferences.Preferences;
+import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.internal.ui.messages.Messages;
-import org.eclipse.remote.ui.IRemoteUIConnectionManager;
+import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
-import org.eclipse.remote.ui.RemoteUIServices;
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -112,10 +110,10 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open : Messages.ConnectionsPreferencePage_closed;
 			case 1:
 				return connection.getName();
-			case 2:
-				return connection.getAddress();
-			case 3:
-				return connection.getUsername();
+//			case 2:
+//				return connection.getAttribute(IRemoteConnection.ADDRESS_ATTR);
+//			case 3:
+//				return connection.getAttribute(IRemoteConnection.USERNAME_ATTR);
 			}
 			return null;
 		}
@@ -188,8 +186,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	private String[] fServiceIDs;
 	private boolean fIsDirty;
 	private IRemoteConnection fSelectedConnection;
-	private IRemoteConnectionManager fConnectionManager;
-	private IRemoteUIConnectionManager fUIConnectionManager;
+	private IRemoteConnectionType fConnectionType;
+	private IRemoteUIConnectionService fUIConnectionManager;
 
 	private final Map<String, IRemoteConnection> fWorkingCopies = new HashMap<String, IRemoteConnection>();
 
@@ -214,7 +212,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		if (fIsDirty) {
 			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
 					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION, new String[] {
-							IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+				IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
 			if (dialog.open() == 1) {
 				return;
 			}
@@ -263,12 +261,18 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		label.setLayoutData(new GridData());
 		fServicesCombo = new Combo(selectComp, SWT.READ_ONLY);
 		label.setLayoutData(new GridData());
-		List<RemoteServicesDescriptor> descriptors = RemoteServicesImpl.getRemoteServiceDescriptors();
-		String[] names = new String[descriptors.size()];
-		fServiceIDs = new String[descriptors.size()];
-		for (int i = 0; i < descriptors.size(); i++) {
-			names[i] = descriptors.get(i).getName();
-			fServiceIDs[i] = descriptors.get(i).getId();
+
+		IRemoteServicesManager manager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
+		List<IRemoteConnectionType> services = manager.getRemoteConnectionTypes();
+		String[] names = new String[services.size()];
+		fServiceIDs = new String[services.size()];
+		{
+			int i = 0;
+			for (IRemoteConnectionType s : services) {
+				names[i] = s.getName();
+				fServiceIDs[i] = s.getId();
+				i++;
+			}
 		}
 		fServicesCombo.addSelectionListener(fEventHandler);
 		fServicesCombo.setItems(names);
@@ -287,8 +291,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fConnectionTable.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				if (fSelectedConnection != null && !getOriginalIfClean(fSelectedConnection).isOpen()) {
-					editConnection();
+				if (fSelectedConnection != null) {
+					IRemoteConnection original = getOriginalIfClean(fSelectedConnection);
+					if (original.isOpen()) {
+						editConnection();
+					}
 				}
 			}
 
@@ -404,7 +411,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	private void initWorkingConnections() {
 		fWorkingCopies.clear();
-		for (IRemoteConnection conn : fConnectionManager.getConnections()) {
+		for (IRemoteConnection conn : fConnectionType.getConnections()) {
 			fWorkingCopies.put(conn.getName(), conn);
 		}
 	}
@@ -467,13 +474,13 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	}
 
 	private void selectServices(String id) {
-		IRemoteServices services = RemoteServices.getRemoteServices(id);
-		if (services != null) {
-			fConnectionManager = services.getConnectionManager();
-			fUIConnectionManager = RemoteUIServices.getRemoteUIServices(services).getUIConnectionManager();
+		IRemoteServicesManager manager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
+		fConnectionType = manager.getConnectionType(id);
+		if (fConnectionType != null) {
+			fUIConnectionManager = fConnectionType.getService(IRemoteUIConnectionService.class);
 			initWorkingConnections();
 			fConnectionViewer.refresh();
-			fAddButton.setEnabled((services.getCapabilities() & IRemoteServices.CAPABILITY_ADD_CONNECTIONS) != 0);
+			fAddButton.setEnabled((fConnectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
 		}
 		fIsDirty = false;
 	}
@@ -485,12 +492,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		TableItem[] items = fConnectionTable.getSelection();
 		if (items.length > 0) {
 			IRemoteConnection conn = getOriginalIfClean((IRemoteConnection) items[0].getData());
-			if (conn.isOpen()) {
+			if (conn.hasService(IRemoteConnectionControlService.class) && conn.isOpen()) {
 				conn.close();
 			} else {
 				if (conn instanceof IRemoteConnectionWorkingCopy) {
 					IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
-					conn = wc.getOriginal();
 					if (wc.isDirty()) {
 						MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions,
 								null, Messages.ConnectionsPreferencePage_This_connection_contains_unsaved_changes,
@@ -498,15 +504,18 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 						if (dialog.open() == 1) {
 							return;
 						}
-						wc.save();
+						try {
+							conn = wc.save();
+						} catch (RemoteConnectionException e) {
+							RemoteUIPlugin.log(e);
+						}
 						/*
 						 * Replace working copy with original so that the correct version will be used in the future
 						 */
 						fWorkingCopies.put(conn.getName(), conn);
 					}
 				}
-				IRemoteUIConnectionManager mgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices())
-						.getUIConnectionManager();
+				IRemoteUIConnectionService mgr = conn.getConnectionType().getService(IRemoteUIConnectionService.class);
 				if (mgr != null) {
 					mgr.openConnectionWithProgress(getShell(), null, conn);
 				}
@@ -523,10 +532,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		/*
 		 * Remove any deleted connections
 		 */
-		for (IRemoteConnection conn : fConnectionManager.getConnections()) {
-			if (!fWorkingCopies.containsKey(conn.getName()) && !conn.isOpen()) {
+		for (IRemoteConnection conn : fConnectionType.getConnections()) {
+			if (!fWorkingCopies.containsKey(conn.getName()) &&
+					(!conn.hasService(IRemoteConnectionControlService.class) || !conn.isOpen())) {
 				try {
-					fConnectionManager.removeConnection(conn);
+					fConnectionType.removeConnection(conn);
 				} catch (RemoteConnectionException e) {
 					// Ignore
 				}
@@ -539,7 +549,11 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			if (conn instanceof IRemoteConnectionWorkingCopy) {
 				IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) conn;
 				if (wc.isDirty()) {
-					wc.save();
+					try {
+						wc.save();
+					} catch (RemoteConnectionException e) {
+						RemoteUIPlugin.log(e);
+					}
 				}
 			}
 		}
@@ -553,14 +567,16 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fCloseButton.setEnabled(false);
 		if (fSelectedConnection != null) {
 			IRemoteConnection conn = getOriginalIfClean(fSelectedConnection);
-			if (!conn.isOpen()) {
-				fEditButton
-						.setEnabled((conn.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_EDIT_CONNECTIONS) != 0);
-				fRemoveButton
-						.setEnabled((conn.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_REMOVE_CONNECTIONS) != 0);
-				fOpenButton.setEnabled(true);
+			if (conn.hasService(IRemoteConnectionControlService.class)) {
+				if (!conn.isOpen()) {
+					fEditButton.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
+					fRemoveButton.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+					fOpenButton.setEnabled(true);
+				} else {
+					fCloseButton.setEnabled(true);
+				}
 			} else {
-				fCloseButton.setEnabled(true);
+				fEditButton.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
 			}
 		}
 	}

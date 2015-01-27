@@ -17,8 +17,9 @@ import java.util.List;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.remote.core.IRemotePreferenceConstants;
-import org.eclipse.remote.internal.core.RemoteServicesDescriptor;
-import org.eclipse.remote.internal.core.RemoteServicesImpl;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -46,7 +47,8 @@ public class RemoteDevelopmentPreferencePage extends FieldEditorPreferencePage i
 		nameAndValue[1] = ""; //$NON-NLS-1$
 		namesAndValues.add(nameAndValue);
 
-		for (RemoteServicesDescriptor service : RemoteServicesImpl.getRemoteServiceDescriptors()) {
+		IRemoteServicesManager manager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
+		for (IRemoteConnectionType service : manager.getRemoteConnectionTypes()) {
 			nameAndValue = new String[2];
 			nameAndValue[0] = service.getName();
 			nameAndValue[1] = service.getId();

@@ -10,9 +10,18 @@
  *******************************************************************************/
 package org.eclipse.remote.core;
 
+import org.eclipse.remote.core.exception.RemoteConnectionException;
+
+/**
+ * A working copy of a remote connection used to change the name and/or
+ * attributes of the connection. It is also used when creating a new
+ * connection
+ */
 public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
+
 	/**
 	 * Returns the original connection this working copy was created from.
+	 * Returns null if this is a new connection.
 	 * 
 	 * @return original connection
 	 */
@@ -30,27 +39,9 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	 * connection does not need saving.
 	 * 
 	 * @return saved connection
+	 * @throws RemoteConnectionException 
 	 */
-	public IRemoteConnection save();
-
-	/**
-	 * Set the address for this connection
-	 * 
-	 * @param address
-	 */
-	public void setAddress(String address);
-
-	/**
-	 * Set an implementation dependent attribute for the connection. Attributes keys supported by the connection can be obtained
-	 * using {@link #getAttributes()}. Attributes are persisted along with connection information.
-	 * 
-	 * @param key
-	 *            attribute key
-	 * @param value
-	 *            attribute value
-	 * @since 5.0
-	 */
-	public void setAttribute(String key, String value);
+	public IRemoteConnection save() throws RemoteConnectionException;
 
 	/**
 	 * Set the name for this connection
@@ -60,26 +51,23 @@ public interface IRemoteConnectionWorkingCopy extends IRemoteConnection {
 	public void setName(String name);
 
 	/**
-	 * Set the password for this connection
+	 * Set an implementation dependent attribute for the connection. Attributes keys supported by the connection can be obtained
+	 * using {@link #getAttributes()}. Attributes are persisted along with connection information.
 	 * 
-	 * @param password
-	 * @since 5.0
+	 * @param key
+	 *            attribute key
+	 * @param value
+	 *            attribute value
 	 */
-	public void setPassword(String password);
+	public void setAttribute(String key, String value);
 
 	/**
-	 * Set the port used for this connection. Only valid if supported by the underlying service provider.
+	 * Set an attribute such as a password that's stored in secure storage.
 	 * 
-	 * @param port
-	 *            port number for the connection
-	 * @since 5.0
+	 * @param key
+	 * @param value
+	 * @since 2.0
 	 */
-	public void setPort(int port);
+	public void setSecureAttribute(String key, String value);
 
-	/**
-	 * Set the username for this connection
-	 * 
-	 * @param username
-	 */
-	public void setUsername(String username);
 }

@@ -3,12 +3,42 @@
 <plugin>
    <extension
          point="org.eclipse.remote.core.remoteServices">
-      <remoteServices
-            class="org.eclipse.remote.internal.jsch.core.JSchServicesFactory"
+      <connectionType
+            capabilities="31"
             id="org.eclipse.remote.JSch"
-            name="Built-in SSH"
+            name="SSH"
             scheme="ssh">
-      </remoteServices>
+      </connectionType>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionControlService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
+            service="org.eclipse.remote.core.IRemotePortForwardingService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionPropertyService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchFileManager$Factory"
+            service="org.eclipse.remote.core.IRemoteFileService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
+            service="org.eclipse.remote.internal.jsch.core.JSchConnection">
+      </connectionService>
    </extension>
    <extension
          id="org.eclipse.remote.jsch.filesystem"

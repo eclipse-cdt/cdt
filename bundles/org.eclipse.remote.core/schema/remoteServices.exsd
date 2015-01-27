@@ -17,8 +17,10 @@
          </appInfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="remoteServices"/>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="connectionType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="connectionTypeService" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="connectionService" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,11 +49,14 @@
       </complexType>
    </element>
 
-   <element name="remoteServices">
+   <element name="connectionType">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
+         <documentation>
+            A connection type.
+         </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -71,35 +76,103 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="scheme" type="string" use="required">
+         <attribute name="scheme" type="string">
             <annotation>
                <documentation>
                   An EFS scheme name for this service
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="capabilities" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.remote.core.IRemoteServicesFactory&lt;/samp&gt;.
+                  The capabilities of this connection. This an integer created by ORing the applicable capabilities as listed in IRemoteServices.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="connectionTypeService">
+      <annotation>
+         <documentation>
+            This is a service that implements the given service interface for a given connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="connectionTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The remote services that this service applies to.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteServicesFactory"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="service" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The interface class that this service implements. The service is found by calling the getService() method on the IRemoteServices object with this interface class as the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory class used to instantiate the service.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteServices$Service$Factory"/>
                </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
+   <element name="connectionService">
+      <annotation>
+         <documentation>
+            This is a service that implements the given service interface for connections of a given connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="connectionTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The connection type for the connections that this service applies to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="service" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The interface class that this service implements. The service is found by calling the getService() method on the IRemoteConnection object with this interface class as the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory class used to instantiate the service.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteConnection$Service$Factory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The value of the class attribute must implement &lt;samp&gt;org.eclipse.remote.core.IRemoteServicesFactory&lt;/samp&gt;.
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -117,6 +190,15 @@
       &lt;/remoteServices&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must implement &lt;samp&gt;org.eclipse.remote.core.IRemoteServicesFactory&lt;/samp&gt;.
       </documentation>
    </annotation>
 

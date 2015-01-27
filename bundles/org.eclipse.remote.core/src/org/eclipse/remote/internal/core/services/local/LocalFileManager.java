@@ -17,56 +17,56 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.remote.core.IRemoteFileManager;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteFileService;
+import org.eclipse.remote.core.IRemoteProcessService;
 
-public class LocalFileManager implements IRemoteFileManager {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteFileManager#getDirectorySeparator()
-	 */
+public class LocalFileManager implements IRemoteFileService {
+
+	private final IRemoteConnection connection;
+
+	public LocalFileManager(IRemoteConnection connection) {
+		this.connection = connection;
+	}
+
+	@Override
+	public IRemoteConnection getRemoteConnection() {
+		return connection;
+	}
+
 	@Override
 	public String getDirectorySeparator() {
 		return System.getProperty("file.separator", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteFileManager#getResource(java.lang.String)
-	 */
 	@Override
 	public IFileStore getResource(String path) {
 		return EFS.getLocalFileSystem().getStore(new Path(path));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteFileManager#toPath(java.net.URI)
-	 */
+	@Override
+	public String getBaseDirectory() {
+		return connection.getService(IRemoteProcessService.class).getWorkingDirectory();
+	}
+
+	@Override
+	public void setBaseDirectory(String path) {
+		connection.getService(IRemoteProcessService.class).setWorkingDirectory(path);
+	}
+
 	@Override
 	public String toPath(URI uri) {
 		return URIUtil.toPath(uri).toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteFileManager#toURI(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public URI toURI(IPath path) {
 		return URIUtil.toURI(path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteFileManager#toURI(java.lang.String)
-	 */
 	@Override
 	public URI toURI(String path) {
 		return URIUtil.toURI(path);
 	}
+
 }

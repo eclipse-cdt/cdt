@@ -16,24 +16,35 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jsch.ui.UserInfoPrompter;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IUserAuthenticator;
+import org.eclipse.remote.core.IUserAuthenticatorService;
+import org.eclipse.remote.internal.jsch.core.JSchConnection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 
-public class JSchUserAuthenticator implements IUserAuthenticator {
+public class JSchUserAuthenticator implements IUserAuthenticatorService {
+	
+	private final IRemoteConnection remoteConnection;
 	private UserInfoPrompter prompter;
 
 	public JSchUserAuthenticator(IRemoteConnection conn) {
+		this.remoteConnection = conn;
 		try {
-			prompter = new UserInfoPrompter(new JSch().getSession(conn.getUsername(), conn.getAddress()));
+			String username = conn.getAttribute(JSchConnection.USERNAME_ATTR);
+			String address = conn.getAttribute(JSchConnection.ADDRESS_ATTR);
+			prompter = new UserInfoPrompter(new JSch().getSession(username, address));
 		} catch (JSchException e) {
 			// Not allowed
 		}
 	}
 
+	@Override
+	public IRemoteConnection getRemoteConnection() {
+		return remoteConnection;
+	}
+	
 	@Override
 	public PasswordAuthentication prompt(String username, String message) {
 		if (prompter.promptPassword(message)) {

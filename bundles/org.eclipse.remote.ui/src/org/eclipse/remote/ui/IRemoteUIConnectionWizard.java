@@ -12,12 +12,13 @@ package org.eclipse.remote.ui;
 
 import java.util.Set;
 
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 
 /**
  * Interface for creating and editing connections in the UI.
  */
-public interface IRemoteUIConnectionWizard {
+public interface IRemoteUIConnectionWizard extends IWizard {
 	/**
 	 * Open configuration wizard allowing the user to enter information about a connection. If the user confirms the information is
 	 * correct (e.g. selects OK in a dialog) then a working copy of the connection is returned. If the user discards the
@@ -25,7 +26,15 @@ public interface IRemoteUIConnectionWizard {
 	 * 
 	 * @return connection working copy or null if the wizard is canceled
 	 */
-	public IRemoteConnectionWorkingCopy open();
+	IRemoteConnectionWorkingCopy open();
+
+	/**
+	 * Get the connection being edited.
+	 * 
+	 * @return connection being edited
+	 * @since 2.0
+	 */
+	IRemoteConnectionWorkingCopy getConnection();
 
 	/**
 	 * Set a connection containing the information to be edited by the wizard. Setting this value overrides the
@@ -34,7 +43,7 @@ public interface IRemoteUIConnectionWizard {
 	 * @param connection
 	 *            connection used to initialize the wizard
 	 */
-	public void setConnection(IRemoteConnectionWorkingCopy connection);
+	void setConnection(IRemoteConnectionWorkingCopy connection);
 
 	/**
 	 * Set the initial name of the connection.
@@ -42,7 +51,7 @@ public interface IRemoteUIConnectionWizard {
 	 * @param name
 	 *            initial connection name
 	 */
-	public void setConnectionName(String name);
+	void setConnectionName(String name);
 
 	/**
 	 * Supply a set of connection names that are invalid. The dialog should display an error if the user trys to select a name from
@@ -51,5 +60,6 @@ public interface IRemoteUIConnectionWizard {
 	 * @param names
 	 *            set of invalid connections names
 	 */
-	public void setInvalidConnectionNames(Set<String> names);
+	void setInvalidConnectionNames(Set<String> names);
+
 }

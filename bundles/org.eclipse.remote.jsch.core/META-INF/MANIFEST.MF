@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.jcraft.jsch,
  org.eclipse.equinox.security
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.remote.internal.jsch.core;x-friends:="org.eclipse.remote.jsch.ui",
+Export-Package: org.eclipse.remote.internal.jsch.core;x-friends:="org.eclipse.remote.jsch.ui,org.eclipse.remote.jsch.tests",
  org.eclipse.remote.internal.jsch.core.messages;x-internal:=true
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

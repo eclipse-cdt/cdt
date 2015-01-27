@@ -24,9 +24,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteProcess;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
@@ -113,8 +114,9 @@ public class JSchConnectionProxyFactory {
 					}
 				} else {
 					List<String> cmd = new ArgumentParser(command).getTokenList();
-					process = RemoteServices.getLocalServices().getConnectionManager().getConnection(
-							IRemoteConnectionManager.LOCAL_CONNECTION_NAME).getProcessBuilder(cmd).start();
+					IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
+					IRemoteConnection connection = manager.getLocalConnectionType().getConnections().get(0); 
+					process = connection.getService(IRemoteProcessService.class).getProcessBuilder(cmd).start();
 				}
 
 				// Wait on command to produce stdout output

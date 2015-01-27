@@ -15,62 +15,64 @@ import java.net.URI;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.remote.core.IRemoteFileManager;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteFileService;
+import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteConnection.Service;
 
-public class JSchFileManager implements IRemoteFileManager {
-	private final JSchConnection fConnection;
+public class JSchFileManager implements IRemoteFileService {
 
-	public JSchFileManager(JSchConnection connection) {
+	private final IRemoteConnection fConnection;
+
+	public JSchFileManager(IRemoteConnection connection) {
 		fConnection = connection;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#getDirectorySeparator()
-	 */
-	/**
-	 * @since 4.0
-	 */
+	public static class Factory implements IRemoteFileService.Factory {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T extends Service> T getService(IRemoteConnection remoteConnection, Class<T> service) {
+			if (IRemoteFileService.class.equals(service)) {
+				return (T) new JSchFileManager(remoteConnection);
+			}
+			return null;
+		}
+	}
+
+	@Override
+	public IRemoteConnection getRemoteConnection() {
+		return fConnection;
+	}
+
 	@Override
 	public String getDirectorySeparator() {
 		return "/"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#getResource(java.lang.
-	 * String)
-	 */
 	@Override
 	public IFileStore getResource(String pathStr) {
 		IPath path = new Path(pathStr);
 		if (!path.isAbsolute()) {
-			path = new Path(fConnection.getWorkingDirectory()).append(path);
+			path = new Path(getBaseDirectory()).append(path);
 		}
 		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnection.getName(), path.toString()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteFileManager#toPath(java.net.URI)
-	 */
+	@Override
+	public String getBaseDirectory() {
+		return fConnection.getService(IRemoteProcessService.class).getWorkingDirectory();
+	}
+
+	@Override
+	public void setBaseDirectory(String path) {
+		fConnection.getService(IRemoteProcessService.class).setWorkingDirectory(path);
+	}
+
 	@Override
 	public String toPath(URI uri) {
 		return uri.getPath();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#toURI(org.eclipse.core
-	 * .runtime.IPath)
-	 */
 	@Override
 	public URI toURI(IPath path) {
 		try {
@@ -80,14 +82,9 @@ public class JSchFileManager implements IRemoteFileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.remote.core.IRemoteFileManager#toURI(java.lang.String)
-	 */
 	@Override
 	public URI toURI(String path) {
 		return toURI(new Path(path));
 	}
+
 }

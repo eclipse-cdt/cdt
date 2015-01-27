@@ -30,9 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionManager;
-import org.eclipse.remote.core.IRemoteServices;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.commands.ChildInfosCommand;
 import org.eclipse.remote.internal.jsch.core.commands.DeleteCommand;
@@ -73,24 +72,27 @@ public class JschFileStore extends FileStore {
 	}
 
 	private JSchConnection checkConnection(IProgressMonitor monitor) throws RemoteConnectionException {
-		IRemoteServices services = RemoteServices.getRemoteServices(fURI);
-		assert (services instanceof JSchServices);
-		if (services == null) {
+		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
+		IRemoteConnectionType connectionType = manager.getConnectionType(fURI);
+		if (connectionType == null) {
 			throw new RemoteConnectionException(NLS.bind(Messages.JschFileStore_No_remote_services_found_for_URI, fURI));
 		}
-		IRemoteConnectionManager manager = services.getConnectionManager();
-		assert (manager != null);
-		IRemoteConnection connection = manager.getConnection(fURI);
-		if (connection == null || !(connection instanceof JSchConnection)) {
-			throw new RemoteConnectionException(NLS.bind(Messages.JschFileStore_Invalid_connection_for_URI, fURI));
-		}
-		if (!connection.isOpen()) {
-			connection.open(monitor);
-			if (!connection.isOpen()) {
-				throw new RemoteConnectionException(Messages.JschFileStore_Connection_is_not_open);
+
+		try {
+			IRemoteConnection connection = connectionType.getConnection(fURI);
+			if (connection == null) {
+				throw new RemoteConnectionException(NLS.bind(Messages.JschFileStore_Invalid_connection_for_URI, fURI));
 			}
+			if (!connection.isOpen()) {
+				connection.open(monitor);
+				if (!connection.isOpen()) {
+					throw new RemoteConnectionException(Messages.JschFileStore_Connection_is_not_open);
+				}
+			}
+			return connection.getService(JSchConnection.class);
+		} catch (CoreException e) {
+			throw new RemoteConnectionException(e);
 		}
-		return (JSchConnection) connection;
 	}
 
 	/*

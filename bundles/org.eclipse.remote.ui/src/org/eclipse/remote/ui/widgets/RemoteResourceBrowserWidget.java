@@ -43,7 +43,8 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteFileManager;
+import org.eclipse.remote.core.IRemoteFileService;
+import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.internal.ui.DeferredFileStore;
 import org.eclipse.remote.internal.ui.DeferredFileStoreComparer;
 import org.eclipse.remote.internal.ui.PendingUpdateAdapter;
@@ -51,9 +52,9 @@ import org.eclipse.remote.internal.ui.RemoteContentProvider;
 import org.eclipse.remote.internal.ui.RemoteResourceComparator;
 import org.eclipse.remote.internal.ui.RemoteTreeViewer;
 import org.eclipse.remote.internal.ui.RemoteUIImages;
+import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.internal.ui.messages.Messages;
-import org.eclipse.remote.ui.IRemoteUIConnectionManager;
-import org.eclipse.remote.ui.RemoteUIServices;
+import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -187,7 +188,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	private String fResource;
 	private String fInitialPath;
 	private IPath fRootPath;
-	private IRemoteFileManager fFileMgr;
+	private IRemoteFileService fFileMgr;
 	private IRemoteConnection fConnection;
 
 	private final ListenerList fSelectionListeners = new ListenerList();
@@ -222,7 +223,11 @@ public class RemoteResourceBrowserWidget extends Composite {
 			fRemoteConnectionWidget.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					connectionSelected();
+					try {
+						connectionSelected();
+					} catch (CoreException e) {
+						RemoteUIPlugin.log(e.getStatus());
+					}
 					updateEnablement();
 					notifySelectionChangedListeners(new SelectionChangedEvent(fTreeViewer, new ISelection() {
 						@Override
@@ -435,7 +440,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 			setRoot(null);
 			return true;
 		}
-		IRemoteUIConnectionManager uiMgr = RemoteUIServices.getRemoteUIServices(conn.getRemoteServices()).getUIConnectionManager();
+		IRemoteUIConnectionService uiMgr = conn.getConnectionType().getService(IRemoteUIConnectionService.class);
 		if (uiMgr != null) {
 			uiMgr.openConnectionWithProgress(getShell(), getRunnableContext(), conn);
 		}
@@ -443,18 +448,21 @@ public class RemoteResourceBrowserWidget extends Composite {
 			return false;
 		}
 
-		fFileMgr = conn.getFileManager();
+		fFileMgr = conn.getService(IRemoteFileService.class);
 		if (fFileMgr != null) {
 			/*
 			 * Note: the call to findInitialPath must happen before the
 			 * fTreeViewer input is set or the fTreeViewer fails. No idea why this
 			 * is.
 			 */
-			String cwd = conn.getWorkingDirectory();
-			IPath initial = findInitialPath(cwd, fInitialPath);
+			IRemoteProcessService processService = conn.getService(IRemoteProcessService.class);
+			if (processService != null) {
+				String cwd = processService.getWorkingDirectory();
+				IPath initial = findInitialPath(cwd, fInitialPath);
 
-			// TODO: not platform independent - needs IRemotePath
-			setRoot(initial.toString());
+				// TODO: not platform independent - needs IRemotePath
+				setRoot(initial.toString());
+			}
 
 			fConnection = conn;
 			return true;
@@ -465,8 +473,9 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * When a new connection is selected, make sure it is open before using it.
+	 * @throws CoreException 
 	 */
-	private void connectionSelected() {
+	private void connectionSelected() throws CoreException {
 		/*
 		 * Make sure the connection is open before we try and read from the
 		 * connection.
@@ -492,7 +501,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 				public void run(IProgressMonitor monitor) {
 					SubMonitor progress = SubMonitor.convert(monitor, 10);
 					String baseName = "newfolder"; //$NON-NLS-1$
-					final IFileStore path = fConnection.getFileManager().getResource(parent);
+					final IFileStore path = fConnection.getService(IRemoteFileService.class).getResource(parent);
 					IFileStore child = path.getChild(baseName);
 					int count = 1;
 					try {
@@ -516,19 +525,19 @@ public class RemoteResourceBrowserWidget extends Composite {
 						public void run() {
 							DelayedInputDialog dialog = new DelayedInputDialog(getShell(), Messages.RemoteResourceBrowserWidget_1,
 									Messages.RemoteResourceBrowserWidget_2, basePath.getName(), new IInputValidator() {
-										@Override
-										public String isValid(String newText) {
-											if (!newText.equals("")) { //$NON-NLS-1$
-												IFileStore newPath = path.getChild(newText);
-												if (newPath.fetchInfo().exists()) {
-													return Messages.RemoteResourceBrowserWidget_3;
-												}
-											} else {
-												return Messages.RemoteResourceBrowserWidget_4;
-											}
-											return null;
+								@Override
+								public String isValid(String newText) {
+									if (!newText.equals("")) { //$NON-NLS-1$
+										IFileStore newPath = path.getChild(newText);
+										if (newPath.fetchInfo().exists()) {
+											return Messages.RemoteResourceBrowserWidget_3;
 										}
-									});
+									} else {
+										return Messages.RemoteResourceBrowserWidget_4;
+									}
+									return null;
+								}
+							});
 							fValidateJob.setDialog(dialog);
 							if (dialog.open() == Dialog.OK) {
 								userPath[0] = dialog.getValue();
@@ -603,7 +612,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	public IFileStore getResource() {
 		if (fResource != null) {
 			if (!fResource.equals("") && getConnection() != null) { //$NON-NLS-1$
-				return getConnection().getFileManager().getResource(fResource);
+				return getConnection().getService(IRemoteFileService.class).getResource(fResource);
 			}
 		}
 		return null;
@@ -645,8 +654,9 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 * Set the connection for the browser
 	 * 
 	 * @param connection
+	 * @throws CoreException 
 	 */
-	public void setConnection(IRemoteConnection connection) {
+	public void setConnection(IRemoteConnection connection) throws CoreException {
 		changeInput(connection);
 		if (fRemoteConnectionWidget != null) {
 			fRemoteConnectionWidget.setConnection(connection);

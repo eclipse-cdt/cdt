@@ -15,10 +15,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.internal.ui.messages.Messages;
-import org.eclipse.remote.ui.IRemoteUIConnectionManager;
-import org.eclipse.remote.ui.IRemoteUIFileManager;
-import org.eclipse.remote.ui.RemoteUIServices;
+import org.eclipse.remote.ui.IRemoteUIConnectionService;
+import org.eclipse.remote.ui.IRemoteUIFileService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -201,12 +201,12 @@ public class RemoteDirectoryWidget extends Composite {
 	}
 
 	private void browse() {
-		IRemoteUIConnectionManager connMgr = getUIConnectionManager();
+		IRemoteUIConnectionService connMgr = getUIConnectionManager();
 		if (connMgr != null) {
 			connMgr.openConnectionWithProgress(getShell(), null, fRemoteConnection);
 		}
 		if (fRemoteConnection.isOpen()) {
-			IRemoteUIFileManager fileMgr = getUIFileManager();
+			IRemoteUIFileService fileMgr = getUIFileManager();
 			if (fileMgr != null) {
 				fileMgr.setConnection(fRemoteConnection);
 				String path = fileMgr.browseDirectory(getShell(), fBrowseMessage, "", 0); //$NON-NLS-1$
@@ -219,21 +219,21 @@ public class RemoteDirectoryWidget extends Composite {
 
 	private String getSavedPath() {
 		if (fRemoteConnection != null) {
-			return previousSelections.get(fRemoteConnection.getRemoteServices().getId() + "." + fRemoteConnection.getName()); //$NON-NLS-1$
+			return previousSelections.get(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName()); //$NON-NLS-1$
 		}
 		return null;
 	}
 
-	private IRemoteUIFileManager getUIFileManager() {
+	private IRemoteUIFileService getUIFileManager() {
 		if (fRemoteConnection != null) {
-			return RemoteUIServices.getRemoteUIServices(fRemoteConnection.getRemoteServices()).getUIFileManager();
+			return fRemoteConnection.getConnectionType().getService(IRemoteUIFileService.class);
 		}
 		return null;
 	}
 
-	private IRemoteUIConnectionManager getUIConnectionManager() {
+	private IRemoteUIConnectionService getUIConnectionManager() {
 		if (fRemoteConnection != null) {
-			return RemoteUIServices.getRemoteUIServices(fRemoteConnection.getRemoteServices()).getUIConnectionManager();
+			return fRemoteConnection.getConnectionType().getService(IRemoteUIConnectionService.class);
 		}
 		return null;
 	}
@@ -246,7 +246,10 @@ public class RemoteDirectoryWidget extends Composite {
 
 	private void restoreDefault(String path) {
 		if (path == null && fRemoteConnection != null) {
-			path = fRemoteConnection.getWorkingDirectory().toString();
+			IRemoteProcessService processService = fRemoteConnection.getService(IRemoteProcessService.class);
+			if (processService != null) {
+				path = processService.getWorkingDirectory().toString();
+			}
 		}
 		if (path == null) {
 			path = ""; //$NON-NLS-1$
@@ -256,7 +259,7 @@ public class RemoteDirectoryWidget extends Composite {
 
 	private void setSavedPath(String path) {
 		if (fRemoteConnection != null) {
-			previousSelections.put(fRemoteConnection.getRemoteServices().getId() + "." + fRemoteConnection.getName(), path); //$NON-NLS-1$
+			previousSelections.put(fRemoteConnection.getConnectionType().getId() + "." + fRemoteConnection.getName(), path); //$NON-NLS-1$
 		}
 	}
 

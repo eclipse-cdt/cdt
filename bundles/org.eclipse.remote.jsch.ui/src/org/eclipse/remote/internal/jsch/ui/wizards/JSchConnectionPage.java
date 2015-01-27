@@ -15,16 +15,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionManager;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.Activator;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
-import org.eclipse.remote.internal.jsch.core.JSchConnectionAttributes;
-import org.eclipse.remote.internal.jsch.core.JSchConnectionWorkingCopy;
 import org.eclipse.remote.internal.jsch.ui.messages.Messages;
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
@@ -51,6 +51,7 @@ import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 public class JSchConnectionPage extends WizardPage {
+
 	private class DataModifyListener implements ModifyListener {
 		@Override
 		public synchronized void modifyText(ModifyEvent e) {
@@ -72,18 +73,18 @@ public class JSchConnectionPage extends WizardPage {
 	private String fInitialName = "Remote Host"; //$NON-NLS-1$
 	private Set<String> fInvalidConnectionNames;
 	private final Map<String, String> fInitialAttributes = new HashMap<String, String>();
-	private JSchConnectionWorkingCopy fConnection;
+	private IRemoteConnectionWorkingCopy fConnection;
 
-	private final IRemoteConnectionManager fConnectionManager;
+	private final IRemoteConnectionType fConnectionType;
 
 	private final DataModifyListener fDataModifyListener = new DataModifyListener();
 	private RemoteConnectionWidget fProxyConnectionWidget;
 	private Text fProxyCommandText;
 	private static final String PREFS_PAGE_ID_NET_PROXY = "org.eclipse.ui.net.NetPreferences"; //$NON-NLS-1$
 
-	public JSchConnectionPage(IRemoteConnectionManager connMgr) {
+	public JSchConnectionPage(IRemoteConnectionType connectionType) {
 		super(Messages.JSchNewConnectionPage_New_Connection);
-		fConnectionManager = connMgr;
+		fConnectionType = connectionType;
 		setPageComplete(false);
 	}
 
@@ -258,7 +259,12 @@ public class JSchConnectionPage extends WizardPage {
 		createAuthControls(authGroup);
 		createAdvancedControls(authGroup);
 
-		loadValues();
+		try {
+			loadValues();
+		} catch (CoreException e) {
+			Activator.log(e.getStatus());
+		}
+
 		/*
 		 * Register listeners after loading values so we don't trigger listeners
 		 */
@@ -312,7 +318,7 @@ public class JSchConnectionPage extends WizardPage {
 		link.setText(Messages.JSchConnectionPage_Help);
 	}
 
-	public JSchConnectionWorkingCopy getConnection() {
+	public IRemoteConnectionWorkingCopy getConnection() {
 		return fConnection;
 	}
 
@@ -326,67 +332,69 @@ public class JSchConnectionPage extends WizardPage {
 	private boolean isInvalidName(String name) {
 		if (fConnection == null) {
 			if (fInvalidConnectionNames == null) {
-				return fConnectionManager.getConnection(name) != null;
+				return fConnectionType.getConnection(name) != null;
 			}
 			return fInvalidConnectionNames.contains(name);
 		}
 		return false;
 	}
 
-	private void loadValues() {
+	private void loadValues() throws CoreException {
+		IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
 		if (fConnection != null) {
 			fConnectionName.setText(fConnection.getName());
-			fHostText.setText(fConnection.getAddress());
-			fUserText.setText(fConnection.getUsername());
-			fPortText.setText(Integer.toString(fConnection.getPort()));
-			fTimeoutText.setText(Integer.toString(fConnection.getTimeout()));
-			boolean isPwd = fConnection.isPasswordAuth();
+			fHostText.setText(fConnection.getAttribute(JSchConnection.ADDRESS_ATTR));
+			fUserText.setText(fConnection.getAttribute(JSchConnection.USERNAME_ATTR));
+			fPortText.setText(fConnection.getAttribute(JSchConnection.PORT_ATTR));
+			fTimeoutText.setText(fConnection.getAttribute(JSchConnection.TIMEOUT_ATTR));
+			String isPwdStr = fConnection.getAttribute(JSchConnection.IS_PASSWORD_ATTR);
+			boolean isPwd = isPwdStr != null && Boolean.parseBoolean(isPwdStr);
 			fPasswordButton.setSelection(isPwd);
 			fPublicKeyButton.setSelection(!isPwd);
 			if (isPwd) {
-				fPasswordText.setText(fConnection.getPassword());
+				fPasswordText.setText(fConnection.getSecureAttribute(JSchConnection.PASSWORD_ATTR));
 			} else {
-				fPassphraseText.setText(fConnection.getPassphrase());
+				fPassphraseText.setText(fConnection.getSecureAttribute(JSchConnection.PASSPHRASE_ATTR));
 			}
-			fProxyCommandText.setText(fConnection.getProxyCommand());
-			IRemoteConnection proxyConn = fConnection.getProxyConnection();
+			fProxyCommandText.setText(fConnection.getAttribute(JSchConnection.PROXYCOMMAND_ATTR));
+			JSchConnection proxyConn = fConnection.getService(JSchConnection.class).getProxyConnection();
 			if (proxyConn == null) {
-				proxyConn = RemoteServices.getLocalServices().getConnectionManager()
-						.getConnection(IRemoteConnectionManager.LOCAL_CONNECTION_NAME);
+				// Use local connection
+				fProxyConnectionWidget.setConnection(manager.getLocalConnectionType().getConnections().get(0));
+			} else {
+				fProxyConnectionWidget.setConnection(proxyConn.getRemoteConnection());
 			}
-			fProxyConnectionWidget.setConnection(proxyConn);
 		} else {
 			fConnectionName.setText(fInitialName);
-			String host = fInitialAttributes.get(JSchConnectionAttributes.ADDRESS_ATTR);
+			String host = fInitialAttributes.get(JSchConnection.ADDRESS_ATTR);
 			if (host != null) {
 				fHostText.setText(host);
 			}
-			String username = fInitialAttributes.get(JSchConnectionAttributes.USERNAME_ATTR);
+			String username = fInitialAttributes.get(JSchConnection.USERNAME_ATTR);
 			if (username != null) {
 				fUserText.setText(username);
 			}
-			String port = fInitialAttributes.get(JSchConnectionAttributes.PORT_ATTR);
+			String port = fInitialAttributes.get(JSchConnection.PORT_ATTR);
 			if (port != null) {
 				fPortText.setText(port);
 			}
-			String timeout = fInitialAttributes.get(JSchConnectionAttributes.TIMEOUT_ATTR);
+			String timeout = fInitialAttributes.get(JSchConnection.TIMEOUT_ATTR);
 			if (timeout != null) {
 				fTimeoutText.setText(timeout);
 			}
-			String isPwd = fInitialAttributes.get(JSchConnectionAttributes.IS_PASSWORD_ATTR);
+			String isPwd = fInitialAttributes.get(JSchConnection.IS_PASSWORD_ATTR);
 			if (isPwd != null) {
 				fPasswordButton.setSelection(Boolean.parseBoolean(isPwd));
 			}
-			String password = fInitialAttributes.get(JSchConnectionAttributes.PASSWORD_ATTR);
+			String password = fInitialAttributes.get(JSchConnection.PASSWORD_ATTR);
 			if (password != null) {
 				fPasswordText.setText(password);
 			}
-			String passphrase = fInitialAttributes.get(JSchConnectionAttributes.PASSPHRASE_ATTR);
+			String passphrase = fInitialAttributes.get(JSchConnection.PASSPHRASE_ATTR);
 			if (passphrase != null) {
 				fPassphraseText.setText(passphrase);
 			}
-			fProxyConnectionWidget.setConnection(RemoteServices.getLocalServices().getConnectionManager()
-					.getConnection(IRemoteConnectionManager.LOCAL_CONNECTION_NAME));
+			fProxyConnectionWidget.setConnection(manager.getLocalConnectionType().getConnections().get(0));
 		}
 	}
 
@@ -409,14 +417,14 @@ public class JSchConnectionPage extends WizardPage {
 	}
 
 	public void setAddress(String address) {
-		fInitialAttributes.put(JSchConnectionAttributes.ADDRESS_ATTR, address);
+		fInitialAttributes.put(JSchConnection.ADDRESS_ATTR, address);
 	}
 
 	public void setAttributes(Map<String, String> attributes) {
 		fInitialAttributes.putAll(attributes);
 	}
 
-	public void setConnection(JSchConnectionWorkingCopy connection) {
+	public void setConnection(IRemoteConnectionWorkingCopy connection) {
 		fConnection = connection;
 	}
 
@@ -437,7 +445,7 @@ public class JSchConnectionPage extends WizardPage {
 	}
 
 	public void setPort(int port) {
-		fInitialAttributes.put(JSchConnectionAttributes.PORT_ATTR, Integer.toString(port));
+		fInitialAttributes.put(JSchConnection.PORT_ATTR, Integer.toString(port));
 	}
 
 	private void setTextFieldWidthInChars(Text text, int chars) {
@@ -453,56 +461,34 @@ public class JSchConnectionPage extends WizardPage {
 	}
 
 	public void setUsername(String username) {
-		fInitialAttributes.put(JSchConnectionAttributes.USERNAME_ATTR, username);
+		fInitialAttributes.put(JSchConnection.USERNAME_ATTR, username);
 	}
 
 	private void storeValues() {
 		if (fConnection == null) {
 			try {
-				JSchConnection conn = (JSchConnection) fConnectionManager.newConnection(fConnectionName.getText().trim());
-				fConnection = (JSchConnectionWorkingCopy) conn.getWorkingCopy();
+				fConnection = fConnectionType.newConnection(fConnectionName.getText().trim());
 			} catch (RemoteConnectionException e) {
 				Activator.log(e);
 			}
 		}
 		if (fConnection != null) {
-			if (!fConnection.getName().equals(fConnectionName.getText().trim())) {
-				fConnection.setName(fConnectionName.getText().trim());
-			}
-			if (!fConnection.getAddress().equals(fHostText.getText().trim())) {
-				fConnection.setAddress(fHostText.getText().trim());
-			}
-			if (!fConnection.getUsername().equals(fUserText.getText().trim())) {
-				fConnection.setUsername(fUserText.getText().trim());
-			}
-			if (!fConnection.getPassword().equals(fPasswordText.getText().trim())) {
-				fConnection.setPassword(fPasswordText.getText().trim());
-			}
-			if (!fConnection.getPassphrase().equals(fPassphraseText.getText().trim())) {
-				fConnection.setPassphrase(fPassphraseText.getText().trim());
-			}
-			if (fConnection.isPasswordAuth() != fPasswordButton.getSelection()) {
-				fConnection.setIsPasswordAuth(fPasswordButton.getSelection());
-			}
-			int timeout = Integer.parseInt(fTimeoutText.getText().trim());
-			if (fConnection.getTimeout() != timeout) {
-				fConnection.setTimeout(timeout);
-			}
-			int port = Integer.parseInt(fPortText.getText().trim());
-			if (fConnection.getPort() != port) {
-				fConnection.setPort(port);
-			}
-			if (!fConnection.getProxyCommand().equals(fProxyCommandText.getText().trim())) {
-				fConnection.setProxyCommand(fProxyCommandText.getText().trim());
-			}
+			fConnection.setName(fConnectionName.getText().trim());
+			fConnection.setAttribute(JSchConnection.ADDRESS_ATTR, fHostText.getText().trim());
+			fConnection.setAttribute(JSchConnection.USERNAME_ATTR, fUserText.getText().trim());
+			fConnection.setSecureAttribute(JSchConnection.PASSWORD_ATTR, fPasswordText.getText().trim());
+			fConnection.setSecureAttribute(JSchConnection.PASSPHRASE_ATTR, fPassphraseText.getText().trim());
+			fConnection.setAttribute(JSchConnection.IS_PASSWORD_ATTR, Boolean.toString(fPasswordButton.getSelection()));
+			fConnection.setAttribute(JSchConnection.TIMEOUT_ATTR, fTimeoutText.getText().trim());
+			fConnection.setAttribute(JSchConnection.PORT_ATTR, fPortText.getText().trim());
+			fConnection.setAttribute(JSchConnection.PROXYCOMMAND_ATTR, fProxyCommandText.getText().trim());
 			IRemoteConnection proxyConnection = fProxyConnectionWidget.getConnection();
+			IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
 			String proxyConnectionName = ""; //$NON-NLS-1$
-			if (proxyConnection != null && proxyConnection.getRemoteServices() != RemoteServices.getLocalServices()) {
+			if (proxyConnection != null && proxyConnection.getConnectionType() != manager.getLocalConnectionType()) {
 				proxyConnectionName = proxyConnection.getName();
 			}
-			if (!fConnection.getProxyConnectionName().equals(proxyConnectionName)) {
-				fConnection.setProxyConnectionName(proxyConnectionName);
-			}
+			fConnection.setAttribute(JSchConnection.PROXYCONNECTION_ATTR, proxyConnectionName);
 		}
 	}
 

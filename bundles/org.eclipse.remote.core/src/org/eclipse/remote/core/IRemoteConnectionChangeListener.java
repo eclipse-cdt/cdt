@@ -13,8 +13,11 @@ package org.eclipse.remote.core;
 import java.util.EventListener;
 
 /**
- * Listener used to register for notification of connection status changes. Clients should register a listener using the
- * {@link IRemoteConnection#addConnectionChangeListener(IRemoteConnectionChangeListener)} method.
+ * Listener used to register for notification of connection status changes.
+ * Listeners can be registered on individual connections using
+ * {@link IRemoteConnection#addConnectionChangeListener(IRemoteConnectionChangeListener)},
+ * or globally for all connections using
+ * {@link IRemoteServicesManager#addRemoteConnectionChangeListener(IRemoteConnectionChangeListener)}.
  */
 public interface IRemoteConnectionChangeListener extends EventListener {
 
@@ -23,7 +26,9 @@ public interface IRemoteConnectionChangeListener extends EventListener {
 	 * 
 	 * @param event
 	 *            the connection change event
+	 * @since 2.0
 	 */
 
-	public void connectionChanged(IRemoteConnectionChangeEvent event);
+	public void connectionChanged(RemoteConnectionChangeEvent event);
+
 }

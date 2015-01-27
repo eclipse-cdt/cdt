@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  * Anton Leherbauer (Wind River) - [453393] Add support for copying wrapped lines without line break
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
+ * Anton Leherbauer (Wind River) - [458402] Add support for scroll up/down and scroll region
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -1305,6 +1306,76 @@ public class VT100EmulatorBackendTest extends TestCase {
 		vt100.appendString("abc");
 		vt100.setInsertMode(false);
 		assertEquals("abc123", new String(term.getChars(0)));
+	}
+
+	public void testScrollRegion() {
+		ITerminalTextData term=makeITerminalTextData();
+		IVT100EmulatorBackend vt100=makeBakend(term);
+		term.setMaxHeight(10);
+		vt100.setDimensions(8, 6);
+		vt100.appendString("123");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("456");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("789");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("abc");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("def");
+		vt100.setCursorColumn(0);
+		vt100.processNewline();
+		vt100.appendString("ghi");
+		
+		// test scroll within region
+		vt100.setCursorLine(1);
+		vt100.setScrollRegion(1, 4);
+		vt100.scrollUp(1);
+		assertEquals("123", new String(term.getChars(0)));
+		assertEquals("789", new String(term.getChars(1)));
+		assertEquals("abc", new String(term.getChars(2)));
+		assertEquals("def", new String(term.getChars(3)));
+		assertNull(term.getChars(4));
+		assertEquals("ghi", new String(term.getChars(5)));
+		vt100.scrollDown(1);
+		assertEquals("123", new String(term.getChars(0)));
+		assertNull(term.getChars(1));
+		assertEquals("789", new String(term.getChars(2)));
+		assertEquals("abc", new String(term.getChars(3)));
+		assertEquals("def", new String(term.getChars(4)));
+		assertEquals("ghi", new String(term.getChars(5)));
+
+		// test scroll without region
+		vt100.setScrollRegion(-1, -1);
+		vt100.scrollDown(1);
+		assertNull(term.getChars(0));
+		assertEquals("123", new String(term.getChars(1)));
+		assertNull(term.getChars(2));
+		assertEquals("789", new String(term.getChars(3)));
+		assertEquals("abc", new String(term.getChars(4)));
+		assertEquals("def", new String(term.getChars(5)));
+		assertEquals("ghi", new String(term.getChars(6)));
+		vt100.scrollUp(1);
+		assertEquals("123", new String(term.getChars(0)));
+		assertNull(term.getChars(1));
+		assertEquals("789", new String(term.getChars(2)));
+		assertEquals("abc", new String(term.getChars(3)));
+		assertEquals("def", new String(term.getChars(4)));
+		assertEquals("ghi", new String(term.getChars(5)));
+		
+		// test scroll by newline
+		vt100.setScrollRegion(1, 4);
+		vt100.setCursorLine(4);
+		vt100.processNewline();
+		assertEquals("123", new String(term.getChars(0)));
+		assertEquals("789", new String(term.getChars(1)));
+		assertEquals("abc", new String(term.getChars(2)));
+		assertEquals("def", new String(term.getChars(3)));
+		assertNull(term.getChars(4));
+		assertEquals("ghi", new String(term.getChars(5)));
 	}
 
 }

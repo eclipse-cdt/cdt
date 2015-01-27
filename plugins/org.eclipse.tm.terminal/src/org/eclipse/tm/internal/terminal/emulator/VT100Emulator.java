@@ -23,6 +23,7 @@
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
  * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
+ * Anton Leherbauer (Wind River) - [458402] Add support for scroll up/down and scroll region
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -77,6 +78,12 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private static final int ANSISTATE_EXPECTING_DEC_PRIVATE_COMMAND = 4;
 
+	/**
+	 * This is a character processing state: We've seen one of ()*+-./ after an escape
+	 * character. Expecting a character set designation character.
+	 */
+	private static final int ANSISTATE_EXPECTING_CHARSET_DESIGNATION = 5;
+	
 
 	/**
 	 * This field holds the current state of the Finite TerminalState Automaton (FSA)
@@ -341,6 +348,16 @@ public class VT100Emulator implements ControlListener {
 					ansiOsCommand.delete(0, ansiOsCommand.length());
 					break;
 
+				case ')':
+				case '(':
+				case '*':
+				case '+':
+				case '-':
+				case '.':
+				case '/':
+					ansiState = ANSISTATE_EXPECTING_CHARSET_DESIGNATION;
+					break;
+
 				case '7':
 					// Save cursor position and character attributes
 
@@ -413,6 +430,12 @@ public class VT100Emulator implements ControlListener {
 				}
 				break;
 
+			case ANSISTATE_EXPECTING_CHARSET_DESIGNATION:
+				if (character != '%')
+					ansiState = ANSISTATE_INITIAL;
+				// Character set designation commands are ignored
+				break;
+
 			default:
 				// This should never happen! If it does happen, it means there is a
 				// bug in the FSA. For robustness, we return to the initial
@@ -483,6 +506,11 @@ public class VT100Emulator implements ControlListener {
 			processAnsiCommand_D();
 			break;
 
+		case 'd':
+			// Line Position Absolute [row] (default = [1,column]) (VPA).
+			processAnsiCommand_d();
+			break;
+			
 		case 'E':
 			// Move cursor to first column of Nth next line (default 1).
 			processAnsiCommand_E();
@@ -548,16 +576,19 @@ public class VT100Emulator implements ControlListener {
 			processAnsiCommand_P();
 			break;
 
+		case 'r':
+			// Set Scrolling Region.
+			processAnsiCommand_r();
+			break;
+
 		case 'S':
 			// Scroll up.
-			// Emacs, vi, and GNU readline don't seem to use this command, so we ignore
-			// it for now.
+			processAnsiCommand_S();
 			break;
 
 		case 'T':
 			// Scroll down.
-			// Emacs, vi, and GNU readline don't seem to use this command, so we ignore
-			// it for now.
+			processAnsiCommand_T();
 			break;
 
 		case 'X':
@@ -646,6 +677,14 @@ public class VT100Emulator implements ControlListener {
 		moveCursorBackward(getAnsiParameter(0));
 	}
 
+	/**
+	 * This method moves the cursor to a specific row.
+	 */
+	private void processAnsiCommand_d() {
+		// Line Position Absolute [row] (default = [1,column]) (VPA).
+		text.setCursorLine(getAnsiParameter(0) - 1);
+	}
+	
 	/**
 	 * This method moves the cursor to the first column of the Nth next line,
 	 * where N is specified by the ANSI parameter (default 1).
@@ -967,17 +1006,63 @@ public class VT100Emulator implements ControlListener {
 		text.deleteCharacters(getAnsiParameter(0));
 	}
 
+	/**
+	 *  Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).
+	 */
+	private void processAnsiCommand_r() {
+		int top = 0;
+		int bottom = 0;
+		if (ansiParameters[0].length() > 0 && ansiParameters[1].length() > 0) {
+			top = getAnsiParameter(0);
+			bottom = getAnsiParameter(1);
+		}
+		text.setScrollRegion(top-1, bottom-1);
+	}
+	
+	/**
+	 * Scroll up n lines (default = 1 line).
+	 */
+	private void processAnsiCommand_S() {
+		text.scrollUp(getAnsiParameter(0));
+	}
+	
+	/**
+	 * Scroll down n lines (default = 1 line).
+	 */
+	private void processAnsiCommand_T() {
+		text.scrollDown(getAnsiParameter(0));
+	}
+	
 	private void processDecPrivateCommand_h() {
-		if (getAnsiParameter(0) == 1) {
+		int param = getAnsiParameter(0);
+		switch (param) {
+		case 1:
 			// Enable Application Cursor Keys (DECCKM)
 			terminal.enableApplicationCursorKeys(true);
+			break;
+		case 47:
+			// Use Alternate Screen Buffer (ignored).
+			break;
+		default:
+			Logger.log("Unsupported command parameter: CSI ?" + param + 'h'); //$NON-NLS-1$
+			break;
 		}
 	}
 
 	private void processDecPrivateCommand_l() {
-		if (getAnsiParameter(0) == 1) {
+		int param = getAnsiParameter(0);
+		switch (param) {
+		case 1:
 			// Enable Normal Cursor Keys (DECCKM)
 			terminal.enableApplicationCursorKeys(false);
+			break;
+		case 47:
+			// Use Normal Screen Buffer (ignored, but reset scroll region).
+			text.setScrollRegion(-1, -1);
+			break;
+		default:
+			Logger.log("Unsupported command parameter: CSI ?" + param + 'l'); //$NON-NLS-1$
+			break;
 		}
 	}
 	

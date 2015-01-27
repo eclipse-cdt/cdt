@@ -9,13 +9,13 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
+ * Anton Leherbauer (Wind River) - [458402] Add support for scroll up/down and scroll region
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
 import org.eclipse.tm.terminal.model.Style;
 
 /**
- * @author toni
  *
  */
 public interface IVT100EmulatorBackend {
@@ -197,4 +197,26 @@ public interface IVT100EmulatorBackend {
 	 * @param enable  whether to enable insert mode
 	 */
 	void setInsertMode(boolean enable);
+
+	/**
+	 * Set scrolling region. Negative values reset the scroll region.
+	 * 
+	 * @param top  top line of scroll region
+	 * @param bottom  bottom line of scroll region
+	 */
+	void setScrollRegion(int top, int bottom);
+
+	/**
+	 * Scroll text upwards.
+	 * 
+	 * @param lines  number of lines to scroll
+	 */
+	void scrollUp(int lines);
+
+	/**
+	 * Scroll text downwards.
+	 * 
+	 * @param lines  number of lines to scroll
+	 */
+	void scrollDown(int lines);
 }

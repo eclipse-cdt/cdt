@@ -10,6 +10,7 @@
  * Anton Leherbauer (Wind River) - [206329] Changing terminal size right after connect does not scroll properly
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
+ * Anton Leherbauer (Wind River) - [458402] Add support for scroll up/down and scroll region
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -20,6 +21,28 @@ import org.eclipse.tm.terminal.model.Style;
  *
  */
 public class VT100EmulatorBackend implements IVT100EmulatorBackend {
+
+	private static class ScrollRegion {
+		static final ScrollRegion FULL_WINDOW = new ScrollRegion(0, Integer.MAX_VALUE-1);
+		private final int fTop;
+		private final int fBottom;
+		ScrollRegion(int top, int bottom) {
+			fTop = top;
+			fBottom = bottom;
+		}
+		boolean contains(int line) {
+			return line >= fTop && line <= fBottom;
+		}
+		int getTopLine() {
+			return fTop;
+		}
+		int getBottomLine() {
+			return fBottom;
+		}
+		int getHeight() {
+			return fBottom - fTop + 1;
+		}
+	}
 
 	/**
 	 * This field holds the number of the column in which the cursor is
@@ -62,6 +85,8 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	int fColumns;
 	final private ITerminalTextData fTerminal;
 	private boolean fVT100LineWrapping;
+	private ScrollRegion fScrollRegion = ScrollRegion.FULL_WINDOW;
+
 	public VT100EmulatorBackend(ITerminalTextData terminal) {
 		fTerminal=terminal;
 	}
@@ -210,7 +235,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 				return;
 			assert n>0;
 			int line=toAbsoluteLine(fCursorLine);
-			int nLines=fTerminal.getHeight()-line;
+			int nLines=Math.min(fTerminal.getHeight()-line, fScrollRegion.getBottomLine()-fCursorLine+1);
 			fTerminal.scroll(line, nLines, n);
 		}
 	}
@@ -240,13 +265,12 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 				return;
 			assert n>0;
 			int line=toAbsoluteLine(fCursorLine);
-			int nLines=fTerminal.getHeight()-line;
+			int nLines=Math.min(fTerminal.getHeight()-line, fScrollRegion.getBottomLine()-fCursorLine+1);
 			fTerminal.scroll(line, nLines, -n);
 		}
 	}
 	private boolean isCusorInScrollingRegion() {
-		// TODO Auto-generated method stub
-		return true;
+		return fScrollRegion.contains(fCursorLine);
 	}
 
 	/* (non-Javadoc)
@@ -333,7 +357,9 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * MUST be called from a synchronized block!
 	 */
 	private void doNewline() {
-		if(fCursorLine+1>=fLines) {
+		if (fCursorLine == fScrollRegion.getBottomLine())
+			scrollUp(1);
+		else if (fCursorLine+1>=fLines) {
 			int h=fTerminal.getHeight();
 			fTerminal.addLine();
 			if(h!=fTerminal.getHeight())
@@ -439,5 +465,30 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	
 	public void setInsertMode(boolean enable) {
 		fInsertMode = enable;
+	}
+
+	public void setScrollRegion(int top, int bottom) {
+		if (top < 0 || bottom < 0)
+			fScrollRegion  = ScrollRegion.FULL_WINDOW;
+		else if (top < bottom)
+			fScrollRegion = new ScrollRegion(top, bottom);
+	}
+
+	public void scrollUp(int n) {
+		assert n>0;
+		synchronized (fTerminal) {
+			int line = toAbsoluteLine(fScrollRegion.getTopLine());
+			int nLines = Math.min(fTerminal.getHeight()-line, fScrollRegion.getHeight());
+			fTerminal.scroll(line, nLines, -n);
+		}
+	}
+
+	public void scrollDown(int n) {
+		assert n>0;
+		synchronized (fTerminal) {
+			int line = toAbsoluteLine(fScrollRegion.getTopLine());
+			int nLines = Math.min(fTerminal.getHeight()-line, fScrollRegion.getHeight());
+			fTerminal.scroll(line, nLines, n);
+		}
 	}
 }

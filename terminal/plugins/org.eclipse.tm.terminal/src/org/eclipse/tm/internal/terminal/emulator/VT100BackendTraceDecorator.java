@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [433751] Add option to enable VT100 line wrapping mode
  * Anton Leherbauer (Wind River) - [458218] Add support for ANSI insert mode
+ * Anton Leherbauer (Wind River) - [458402] Add support for scroll up/down and scroll region
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -155,6 +156,21 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 	public void setInsertMode(boolean enable) {
 		fWriter.println("setInsertMode("+enable+")"); //$NON-NLS-1$ //$NON-NLS-2$
 		fBackend.setInsertMode(enable);
+	}
+
+	public void setScrollRegion(int top, int bottom) {
+		fWriter.println("setScrollRegion("+top+','+bottom+")"); //$NON-NLS-1$ //$NON-NLS-2$
+		fBackend.setScrollRegion(top, bottom);
+	}
+
+	public void scrollUp(int lines) {
+		fWriter.println("scrollUp("+lines+")"); //$NON-NLS-1$ //$NON-NLS-2$
+		fBackend.scrollUp(lines);
+	}
+
+	public void scrollDown(int lines) {
+		fWriter.println("scrollDown("+lines+")"); //$NON-NLS-1$ //$NON-NLS-2$
+		fBackend.scrollDown(lines);
 	}
 
 }

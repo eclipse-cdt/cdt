@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Google, Inc and others.
+ * Copyright (c) 2012, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -85,28 +87,29 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	private void assertDefined(String... names) {
+	private void assertDefined(String... names) throws Exception {
 		classifyBindings();
 		assertExpectedBindings(names, fBindingClassifier.getBindingsToDefine(), "defined");
 	}
 
-	private void assertDeclared(String... names) {
+	private void assertDeclared(String... names) throws Exception {
 		classifyBindings();
 		assertExpectedBindings(names, fBindingClassifier.getBindingsToForwardDeclare(), "declared");
 	}
 
-	private void assertExpectedBindings(String[] expectedNames, Set<IBinding> bindings, String verb) {
-		Set<String> expected = new TreeSet<String>(Arrays.asList(expectedNames));
-		Set<String> extra = new TreeSet<String>();
+	private void assertExpectedBindings(String[] expectedNames, Set<IBinding> bindings, String verb)
+			throws Exception {
+		Set<String> expected = new TreeSet<>(Arrays.asList(expectedNames));
+		Set<String> extra = new TreeSet<>();
 		for (IBinding binding : bindings) {
-			extra.add(binding.getName());
+			extra.add(getQualifiedName(binding));
 		}
-		Set<String> missing = new TreeSet<String>(expected);
+		Set<String> missing = new TreeSet<>(expected);
 		missing.removeAll(extra);
 		extra.removeAll(expected);
 		if (extra.isEmpty() && missing.isEmpty())
 			return;
-		List<String> errors = new ArrayList<String>(2);
+		List<String> errors = new ArrayList<>(2);
 		if (!missing.isEmpty()) {
 			errors.add(MessageFormat.format("{0,choice,1#Binding|1<Bindings} \"{1}\" {0,choice,1#is|1<are} not {2}.",
 					missing.size(), StringUtil.join(missing, "\", \""), verb));
@@ -116,6 +119,14 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 					extra.size(), StringUtil.join(extra, "\", \""), verb));
 		}
 		fail(StringUtil.join(errors, " "));
+	}
+
+	protected String getQualifiedName(IBinding binding) throws DOMException {
+		if (binding instanceof ICPPBinding) {
+			return StringUtil.join(((ICPPBinding) binding).getQualifiedName(), "::");
+		} else {
+			return binding.getName();
+		}
 	}
 
 	//	class A;
@@ -161,7 +172,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	//	int a = f()->x;
 	public void testClassMember() throws Exception {
-		assertDefined("f", "A");
+		assertDefined("A", "f");
 		assertDeclared();
 	}
 
@@ -169,14 +180,14 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	class B : public A {};
 	//	B b;
 	//	class C : public A {};
-	//	C c;
+	//	C* c;
 
 	//	void test() {
 	//	  b.m();
 	//	  c->m();
 	//	}
 	public void testClassHierarchy() throws Exception {
-		assertDefined("b", "B", "c", "C", "m");
+		assertDefined("B", "b", "C", "c", "A::m");
 		assertDeclared();
 	}
 
@@ -186,7 +197,24 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  a->m();
 	//	}
 	public void testMethodCall() throws Exception {
-		assertDefined("A", "m");
+		assertDefined("A", "A::m");
+		assertDeclared();
+	}
+
+	//	class Base {
+	//	public:
+	//	  void m();
+	//	};
+	//
+	//	class Derived : public Base	{
+	//	};
+
+	//	class Derived;
+	//	void test(Derived& d) {
+	//	  d.m();
+	//	}
+	public void testSuperClassMethodCall_436656() throws Exception {
+		assertDefined("Derived", "Base::m");
 		assertDeclared();
 	}
 
@@ -202,19 +230,19 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	public void testFunctionCallWithPointerParameter_1() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
-		assertDeclared("f", "A", "g");
+		assertDeclared("A", "f", "g");
 	}
 
 	//	typedef int A;
-	//	void f(const A* p);
+	//	void f(const A* p) {}
 
 	//	void test() {
 	//	  f(nullptr);
 	//	}
 	public void testFunctionCallWithPointerParameter_2() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
-		assertDefined("A");
-		assertDeclared("f");
+		assertDefined("f"); // Inline definition has to be included.
+		assertDeclared();
 	}
 
 	//	class A {};
@@ -227,7 +255,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	public void testFunctionCallWithReferenceParameter() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		assertDefined();
-		assertDeclared("f", "A", "g");
+		assertDeclared("A", "f", "g");
 	}
 
 	//	struct A {
@@ -239,11 +267,10 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f("");
 	//	}
 	public void testFunctionCallWithTypeConversion_1() throws Exception {
-		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		// A header declaring the function is responsible for defining the parameter type that
 		// provides constructor that can be used for implicit conversion.
-		assertDefined();
-		assertDeclared("f", "A");
+		assertDefined("f");
+		assertDeclared();
 	}
 
 	//	struct A {};
@@ -254,11 +281,10 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f(b);
 	//	}
 	public void testFunctionCallWithTypeConversion_2() throws Exception {
-		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
 		// A header declaring the function is not responsible for defining the parameter type since
 		// the implicit conversion from B to A is provided externally to parameter type.
-		assertDefined("A", "B");
-		assertDeclared("f");
+		assertDefined("A", "B", "f");
+		assertDeclared();
 	}
 
 	//	typedef int int32;
@@ -282,9 +308,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 	public void testConstructorCall() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
-		// A header declaring the function is not responsible for defining the parameter type since
-		// the implicit conversion from B to A is provided externally to parameter type.
-		assertDefined("A");
+		assertDefined("A", "A::A");
 		assertDeclared();
 	}
 
@@ -298,9 +322,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 	public void testConstructorCallWithTypedef() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FORWARD_DECLARE_FUNCTIONS, true);
-		// A header declaring the function is not responsible for defining the parameter type since
-		// the implicit conversion from B to A is provided externally to parameter type.
-		assertDefined("B", "A");
+		assertDefined("B", "A::A");
 		assertDeclared();
 	}
 
@@ -357,7 +379,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 
 	//	ns::A a;
 	public void testNamespaceAlias() throws Exception {
-		assertDefined("A", "ns");
+		assertDefined("ns1::ns2::A", "ns");
 		assertDeclared();
 	}
 
@@ -368,7 +390,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	using ns::A;
 	public void testUsingDeclaration() throws Exception {
 		assertDefined();
-		assertDeclared("A");
+		assertDeclared("ns::A");
 	}
 
 	//	struct A {
@@ -418,7 +440,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  a(1);
 	//	}
 	public void testCallOperator() throws Exception {
-		assertDefined("A", "a", "operator ()");
+		assertDefined("A", "a", "A::operator ()");
 		assertDeclared();
 	}
 
@@ -430,7 +452,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	}
 
 	//	bool test(const A& a, const A& b) {
-	//		return a == b;
+	//	  return a == b;
 	//	}
 	public void testOverloadedOperator() throws Exception {
 		assertDefined("operator ==");
@@ -510,7 +532,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  unique_ptr<C> y;
 	//	}
 	public void testTemplatesAllowingIncompleteParameterType_1() throws Exception {
-		assertDefined("B", "C", "shared_ptr", "unique_ptr");
+		assertDefined("B", "C", "std::shared_ptr", "std::unique_ptr");
 		assertDeclared("A");
 	}
 
@@ -531,7 +553,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  b->m();
 	//	}
 	public void testTemplatesAllowingIncompleteParameterType_2() throws Exception {
-		assertDefined("B", "b", "m");
+		assertDefined("B", "b", "A::m");
 		assertDeclared();
 	}
 
@@ -554,7 +576,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  c->x->m();
 	//	}
 	public void testTemplatesAllowingIncompleteParameterType_3() throws Exception {
-		assertDefined("B", "C", "m");
+		assertDefined("B", "C", "A::m");
 		assertDeclared();
 	}
 
@@ -575,7 +597,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  f()->m();
 	//	}
 	public void testTemplatesAllowingIncompleteParameterType_4() throws Exception {
-		assertDefined("B", "f", "m");
+		assertDefined("B", "f", "A::m");
 		assertDeclared();
 	}
 
@@ -598,7 +620,7 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	  c->f()->m();
 	//	}
 	public void testTemplatesAllowingIncompleteParameterType_5() throws Exception {
-		assertDefined("B", "C", "f", "m");
+		assertDefined("B", "C", "C::f", "A::m");
 		assertDeclared();
 	}
 
@@ -622,8 +644,25 @@ public class BindingClassifierTest extends OneSourceMultipleHeadersTestCase {
 	//	void test(C* c) {
 	//	  c->b();
 	//	}
-	public void testFieldAccess_442841() throws Exception {
-		assertDefined("C", "operator ()");
+	public void testFieldAccess_442841_1() throws Exception {
+		assertDefined("C", "A::operator ()");
+		assertDeclared();
+	}
+
+	//	struct A {
+	//	  void operator()();
+	//	};
+	//	struct B : public A {
+	//	};
+	//	struct C {
+	//	  B& b;
+	//	};
+
+	//	void test(C* c) {
+	//	  c->b();
+	//	}
+	public void testFieldAccess_442841_2() throws Exception {
+		assertDefined("B", "C", "A::operator ()");
 		assertDeclared();
 	}
 

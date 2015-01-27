@@ -102,9 +102,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 				// however for the purposes of exposing the bug, any non-"file://" scheme will do.
 				return EFS.getStore(
 						new URI(EFS.getNullFileSystem().getScheme(), uri.getSchemeSpecificPart(), null));
-			} catch (URISyntaxException e) {
-				throw new RuntimeException(e);
-			} catch (CoreException e) {
+			} catch (URISyntaxException | CoreException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -297,6 +295,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		children= tUnit.getChildren();
 		assertEquals(5, children.length);
 	}
+
 	public void testEditInNonCProject() throws Exception {
 		final String file= "/ceditor/src/main.cpp";
 		fNonCProject= EditorTestHelper.createNonCProject("ceditor", "resources/ceditor", false);
@@ -405,7 +404,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 	public void testSyntaxHighlighting_Bug180433() throws Exception {
 		IColorManager colorMgr= CUIPlugin.getDefault().getTextTools().getColorManager();
 		colorMgr.unbindColor(ICColorConstants.PP_DIRECTIVE);
-		colorMgr.bindColor(ICColorConstants.PP_DIRECTIVE, new RGB(7,7,7));
+		colorMgr.bindColor(ICColorConstants.PP_DIRECTIVE, new RGB(7, 7, 7));
 		final Color ppDirectiveColor= colorMgr.getColor(ICColorConstants.PP_DIRECTIVE);
 		final String file= "/ceditor/src/main.cpp";
 		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
@@ -450,7 +449,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		setUpEditor(file);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
-		WeakReference<CEditor> ref = new WeakReference<CEditor>(fEditor);
+		WeakReference<CEditor> ref = new WeakReference<>(fEditor);
 		EditorTestHelper.closeEditor(fEditor);
 		fEditor = null;
 		fSourceViewer = null;

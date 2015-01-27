@@ -517,6 +517,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 
 	/** Cleans up actions. */
 	protected void disposeActions() {
+		if (!m_actionsInitialized) {
+			return;
+		}
+
 		if (m_resumeAction != null) {
 			m_resumeAction.dispose();
 			m_resumeAction = null;

@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -45,6 +40,11 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	private boolean fClearedBecauseOfVersionMismatch= false;
@@ -322,7 +322,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		if (fileBeingUpdated == null) {
 			return binding.hasDefinition();
 		}
-		// Definitions in fileBeingUpdated will soon go away, so look for a definition elsewhere.
+		// Definitions in fileBeingUpdated will be removed when the file is committed, so look for
+		// a definition elsewhere.
 		for (PDOMName name = binding.getFirstDefinition(); name != null; name = name.getNextInBinding()) {
 			if (!fileBeingUpdated.getPDOM().equals(name.getPDOM()) ||
 					fileBeingUpdated.getRecord() != name.getFileRecord()) {

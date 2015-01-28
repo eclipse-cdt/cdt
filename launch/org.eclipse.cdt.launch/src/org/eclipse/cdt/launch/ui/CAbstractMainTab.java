@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011  Nokia Corporation and others.
+ * Copyright (c) 2010, 2015  Nokia Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -611,12 +611,15 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	protected void updateComboTooltip() {
 		if (fBuildConfigCombo != null) {
+			// fBuildConfigCombo might not be loaded when controls are created
 			String configId = (String) fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex()));
 			String tooltip = EMPTY_STRING;
-			if (configId.equals(AUTO_CONFIG)) {
-				tooltip =  LaunchMessages.CMainTab_Build_Config_Auto_tooltip;
-			} else if (configId.equals(EMPTY_STRING)) {
-				tooltip = LaunchMessages.CMainTab_Build_Config_Active_tooltip;
+			if (configId != null) {
+				if (configId.equals(AUTO_CONFIG)) {
+					tooltip =  LaunchMessages.CMainTab_Build_Config_Auto_tooltip;
+				} else if (configId.equals(EMPTY_STRING)) {
+					tooltip = LaunchMessages.CMainTab_Build_Config_Active_tooltip;
+				}
 			}
 			fBuildConfigCombo.setToolTipText(tooltip);
 		}

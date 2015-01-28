@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012, 2015 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,31 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 458671
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.examples.sourcegraph;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
+import org.eclipse.cdt.visualizer.examples.VisualizerExamplesPlugin;
 import org.eclipse.cdt.visualizer.ui.canvas.BufferedCanvas;
+import org.eclipse.cdt.visualizer.ui.canvas.GraphicObject;
 import org.eclipse.cdt.visualizer.ui.util.Colors;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.framework.Bundle;
 
 // ---------------------------------------------------------------------------
 // SourceGraphControl
@@ -37,10 +48,16 @@ public class SourceGraphControl extends BufferedCanvas
 	/** Line height used in drawing graph and computing control height. */
 	public static final int LINE_HEIGHT = 20;	
 	
+	/** Path for the banner image, relative to plug-in root path */
+	protected static final String BANNER_FILE = "images/sgv-banner.png"; //$NON-NLS-1$
+	protected static final int BANNER_HEIGHT = 50;
+	
 	// --- members ---
 	
 	/** Text we're currently displaying. */
 	protected String m_sourceText = ""; //$NON-NLS-1$
+	
+	protected GraphicObject m_banner;
 	
 	/** Data structure used to hold character stats. */
 	class CharStat
@@ -72,6 +89,7 @@ public class SourceGraphControl extends BufferedCanvas
 	public SourceGraphControl(Composite parent) {
 		super(parent);
 		m_characters = new ArrayList<CharStat>();
+		m_banner = new GraphicObject();
 	}
 	
 	/** Dispose method. */
@@ -139,6 +157,10 @@ public class SourceGraphControl extends BufferedCanvas
 		
 		Rectangle bounds = getBounds();
 		int height = MARGIN * 2 + m_characters.size() * LINE_HEIGHT;
+		
+		// reserve space for banner at the top
+		height = height + BANNER_HEIGHT;
+		
 		bounds.height = height;
 		setBounds(bounds);
 		
@@ -162,11 +184,22 @@ public class SourceGraphControl extends BufferedCanvas
 		int lh = LINE_HEIGHT;
 		
 		int x = margin;
-		int y = margin;
+		// skip banner space 
+		int y = BANNER_HEIGHT + margin;
 		
 		Rectangle area = getClientArea();
 		int w  = area.width - margin*2 - tw;
-
+		
+		// position and size banner container object
+		m_banner.setBounds(new Rectangle(x - margin, margin, area.width, BANNER_HEIGHT - margin));
+		
+		// draw banner
+		try {
+			m_banner.drawImage(gc, getAbsFilePath(BANNER_FILE), GraphicObject.IMGPOS_MAXSIZE);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		int maxcount = 0;
 		for (CharStat cs : m_characters)
 		{
@@ -209,5 +242,20 @@ public class SourceGraphControl extends BufferedCanvas
 	@Override
 	public void resized(Rectangle bounds) {
 		refresh();
+	}
+	
+	/** Get the absolute path of a file, from the path relative to plugin root. */
+	private String getAbsFilePath(String relPath) {
+		Bundle bundle = Platform.getBundle(VisualizerExamplesPlugin.PLUGIN_ID);
+		URL fileURL = bundle.getEntry(relPath);
+		File file = null;
+
+		try {
+			file = new File(FileLocator.resolve(fileURL).toURI());
+		} catch (URISyntaxException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return file.getAbsolutePath();
 	}
 }

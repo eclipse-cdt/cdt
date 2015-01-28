@@ -37,7 +37,7 @@
  * David McKnight   (IBM)        - [458647] RSE table views don't support quick search when SWT.VIRTUAL used
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.ui.view; 
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -34,6 +34,7 @@
  * David McKnight   (IBM)        - [388947] column sort icon issue with Remote Systems Details view
  * David McKnight   (IBM)        - [398306] table sorting of RSE table views inconsistent with Eclipse
  * David McKnight   (IBM)        - [430900] RSE table enhancement to populate full column when clicking column for sorting purposes
+ * David McKnight   (IBM)        - [458647] RSE table views don't support quick search when SWT.VIRTUAL used
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -2209,6 +2210,38 @@ public class SystemTableView
 				dltAction.run();
 			}
 			*/
+		}
+		else if (event.stateMask == 0){
+			// now that we use SWT.VIRTUAL, quick search does not automatically work
+			// instead we have to implement this ourselves
+			int sel = getTable().getSelectionIndex();
+			
+			
+			char c = event.character;
+			TableItem[] items = getTable().getItems();
+			TableItem found = null;
+			for (int i = sel+1; i < items.length && found == null; i++){
+				TableItem item = items[i];
+				String text = item.getText();
+				if (text.startsWith(""+c)){ //$NON-NLS-1$
+					found = item;
+				}
+			}
+			if (found == null){
+				// search from 0 to sel
+				for (int i = 0; i < sel && found == null; i++){
+					TableItem item = items[i];
+					String text = item.getText();
+					if (text.startsWith(""+c)){ //$NON-NLS-1$
+						found = item;
+					}
+				}
+			}
+			
+			if (found != null){
+				getTable().setSelection(found);
+				event.doit = false;
+			}
 		}
 	}
 

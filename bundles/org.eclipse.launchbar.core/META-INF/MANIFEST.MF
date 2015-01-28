@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.launchbar.core.internal.Activator
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
- org.eclipse.remote.core;bundle-version="[1.0.0,2.0.0)";visibility:=reexport,
  org.eclipse.core.filesystem
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

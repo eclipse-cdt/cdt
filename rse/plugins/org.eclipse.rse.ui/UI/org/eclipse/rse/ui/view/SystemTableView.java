@@ -2221,7 +2221,7 @@ public class SystemTableView
 			TableItem[] items = getTable().getItems();
 			TableItem found = null;
 			for (int i = sel+1; i < items.length && found == null; i++){
-				TableItem item = items[i];
+				TableItem item = items[i]; 
 				String text = item.getText();
 				if (text.startsWith(""+c)){ //$NON-NLS-1$
 					found = item;

@@ -2211,7 +2211,7 @@ public class SystemTableView
 			}
 			*/
 		}
-		else if (event.stateMask == 0){
+		else if (event.stateMask == 0){ 
 			// now that we use SWT.VIRTUAL, quick search does not automatically work
 			// instead we have to implement this ourselves
 			int sel = getTable().getSelectionIndex();

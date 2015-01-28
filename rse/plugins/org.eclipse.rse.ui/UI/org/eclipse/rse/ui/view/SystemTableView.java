@@ -176,7 +176,7 @@ public class SystemTableView
 			}
 			return value;
 		}
-
+ 
 		public boolean canModify(Object element, String property)
 		{
 			boolean modifiable = true;

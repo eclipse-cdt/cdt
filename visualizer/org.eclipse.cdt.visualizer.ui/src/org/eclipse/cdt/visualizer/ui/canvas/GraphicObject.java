@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Tilera Corporation and others.
+ * Copyright (c) 2012, 2015 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,17 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
  *     Xavier Raynaud (Kalray) - Bug 430804
+ *     Marc Dumais (Ericsson) - Bug 458644
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.canvas;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
 
@@ -47,6 +52,38 @@ public class GraphicObject
 	
 	/** Background color (null means inherit from canvas) */
 	protected Color m_background = null;
+	
+	
+	// --- enums ---
+	
+	/**
+	 * Pre-defined sizes/positions for super-imposing images on graphic objects.
+	 * @since 1.3
+	 */
+	public enum ImageSizeAndPosition {
+		/** Image occupies upper-left quadrant of graphic object's area */
+		UPPER_LEFT_QUADRANT(new Rectangle(0, 0, 50, 50)),
+		/** Image occupies upper-right quadrant of graphic object's area */
+		UPPER_RIGHT_QUADRANT(new Rectangle(50, 0, 50, 50)),
+		/** Image occupies lower-left quadrant of graphic object's area */
+		LOWER_LEFT_QUADRANT(new Rectangle(0, 50, 50, 50)), 
+		/** Image occupies lower-right quadrant of graphic object's area */
+		LOWER_RIGHT_QUADRANT(new Rectangle(50, 50, 50, 50)),
+		/** Image occupies lower-right 1/8 of graphic object's area */
+		LOWER_RIGHT_HEIGHTH(new Rectangle(75, 75, 25, 25)),
+		/** Image occupies upper-left 7/8 of graphic object's area */
+		UPPER_LEFT_SEVENTH_HEIGHTH(new Rectangle(0, 0, 75, 75)),
+		/** Image completely occupies the graphic object's area */
+		MAXSIZE(new Rectangle(0, 0, 100, 100));
+		
+		private Rectangle value;
+		private ImageSizeAndPosition(Rectangle sizeAndPos) {
+			value = sizeAndPos;
+		}
+		public Rectangle getValue() {
+			return value;
+		}
+	}
 	
 	
 	// --- constructors/destructors ---
@@ -283,5 +320,105 @@ public class GraphicObject
 	@Override
 	public String getTooltip(int x, int y) {
 		return null;
+	}
+	
+	
+	/**
+	 * Draws an image on the current canvas graphic element. Where the image is
+	 * located, relative to the graphic object and it's horizontal and vertical 
+	 * scale is configurable. 
+	 * 
+	 * @param gc
+	 * @param imgPath : Absolute path and name of image to display
+	 * by this margin, in each dimension.
+	 * @param imgRelPositionAndScale : Rectangle object, where x, y  are in % and 
+	 *  represent the relative position where the upper left corner of the image
+	 *  will be positioned, relative to the parent graphic object. 
+	 *  The width and height are in % and represent the scale of the object relative
+	 *  to the parent object. For example. a relative width and height of 25 means 
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
+	 *  graphic object. 
+	 * @throws FileNotFoundException 
+	 * @since 1.3
+	 */
+	public void drawImage(GC gc, String imgPath, Rectangle imgRelPositionAndScale) 
+			throws FileNotFoundException 
+	{
+		// by default no margin
+		drawImageWithMargin(gc, imgPath, imgRelPositionAndScale, 0);
+	}
+	
+	
+	/** 
+	 * Draws an image on the current canvas graphic element. Where the image is
+	 * located, relative to the graphic object and it's horizontal and vertical 
+	 * scale is configurable. This version of the method allows to specify a margin,
+	 * in pixels, that is to be left, by reducing the size of the image 
+	 * 
+	 * @param gc
+	 * @param imgPath : Absolute path and name of image to draw
+	 * @param sizeAndpos : ImageSizeAndPosition enum value
+	 *  represent the relative position where the upper left corner of the image
+	 *  will be positioned, relative to the parent graphic object. 
+	 *  The width and height are in % and represent the scale of the object relative
+	 *  to the parent object. For example. a relative width and height of 25 means 
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
+	 *  graphic object. 
+	 * @param margin: margin in pixels: the image will be reduced in size
+	 *  by this margin, in each dimension.
+	 * @throws FileNotFoundException 
+	 * @since 1.3
+	 */
+	public void drawImageWithMargin(GC gc, String imgPath, ImageSizeAndPosition sizeAndpos, int margin) 
+			throws FileNotFoundException 
+	{
+		drawImageWithMargin(gc, imgPath, sizeAndpos.getValue(), margin);
+	}
+	
+	/** 
+	 * Draws an image on the current canvas graphic element. Where the image is
+	 * located, relative to the graphic object and it's horizontal and vertical 
+	 * scale is configurable. This version of the method allows to specify a margin,
+	 * in pixels, that is to be left, by reducing the size of the image 
+	 * 
+	 * @param gc
+	 * @param imgPath : Absolute path and name of image to draw
+	 * @param imgRelPositionAndScale : Rectangle object, where x, y  are in % and 
+	 *  represent the relative position where the upper left corner of the image
+	 *  will be positioned, relative to the parent graphic object. 
+	 *  The width and height are in % and represent the scale of the object relative
+	 *  to the parent object. For example. a relative width and height of 25 means 
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
+	 *  graphic object. 
+	 * @param margin: margin in pixels: the image will be reduced in size
+	 *  by this margin, in each dimension.
+	 * @throws FileNotFoundException 
+	 * @since 1.3
+	 */
+	public void drawImageWithMargin(GC gc, String imgPath, Rectangle imgRelPositionAndScale, int margin) 
+			throws FileNotFoundException 
+	{
+		File file = new File(imgPath);
+		if (!file.exists()) {
+			throw new FileNotFoundException();
+		}
+		if (margin < 0) margin = 0; 
+		
+		// extract params
+		int imgPosX = imgRelPositionAndScale.x;
+		int imgPosY = imgRelPositionAndScale.y;
+		int imgScaleW = imgRelPositionAndScale.width;
+		int imgScaleH = imgRelPositionAndScale.height;
+
+		// compute wanted image pixel position and size
+		float posX =  (m_bounds.x + (float) m_bounds.width * imgPosX / 100) + margin;
+		float posY =  (m_bounds.y + (float) m_bounds.height * imgPosY / 100) + margin;
+		float width = ((float) m_bounds.width * imgScaleW / 100) - 2 * margin;
+		float height = ((float) m_bounds.height * imgScaleH / 100) - 2 * margin;
+		
+		Image img = new Image(gc.getDevice(),imgPath);
+		// draw image
+		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height, 
+				Math.round(posX), Math.round(posY), Math.round(width), Math.round(height));
 	}
 }

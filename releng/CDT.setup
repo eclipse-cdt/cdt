@@ -94,7 +94,7 @@
     <setupTask
         xsi:type="setup.targlets:TargletTask"
         programArguments="-consolelog"
-        vmArguments="-Xms40m -Xmx512M -XX:MaxPermSize=256m">
+        vmArguments="-Xms40m -Xmx512M -XX:MaxPermSize=256m -ea">
       <targlet
           name="CDT"
           activeRepositoryList="${eclipse.target.platform}">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Red Hat, Inc.
+ * Copyright (c) 2013, 2015 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,6 +143,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			String arguments = null;
 			String remoteAddress = null;
 			String remotePort = null;
+			String pid = null;
 			String[] args = Platform.getCommandLineArgs();
 
 			try {
@@ -161,6 +162,14 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						// Make sure 'executable' is still null in case we are dealing with a remote
 						// session that is also an attach, as the -r flag could have been set first
 						executable = null;
+						
+						// Check for optional pid
+						if (i + 1 < args.length) {
+							if (!args[i+1].startsWith("-")) { //$NON-NLS-1$
+								++i;
+								pid = args[i];
+							}
+						}
 					}
 					else if ("-c".equals(args[i])) { //$NON-NLS-1$
 						++i;
@@ -347,7 +356,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						remotePort != null && remotePort.length() > 0) {
 					config = DebugRemoteExecutable.createLaunchConfig(monitor, buildLog, executable, remoteAddress, remotePort, attachExecutable);
 				} else if (attachExecutable) {
-					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog);
+					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog, pid);
 				} else if (corefile != null && corefile.length() > 0) {
 					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);
 				} else if (executable != null && executable.length() > 0) {

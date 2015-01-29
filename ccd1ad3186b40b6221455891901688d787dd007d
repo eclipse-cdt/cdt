@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_7013f0e8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-01-29T16:15:02Z",
+      "side": 1,
+      "message": "That should not be a static class with static members, this should be created as instance by test for the dsf session. Otherwise tests can never run in parallel. Even if they don\u0027t run parallel if this access from multiple thread that can be a problem",
+      "revId": "ccd1ad3186b40b6221455891901688d787dd007d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

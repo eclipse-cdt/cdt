@@ -143,6 +143,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			String arguments = null;
 			String remoteAddress = null;
 			String remotePort = null;
+			String pid = null;
 			String[] args = Platform.getCommandLineArgs();
 
 			try {
@@ -161,6 +162,12 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						// Make sure 'executable' is still null in case we are dealing with a remote
 						// session that is also an attach, as the -r flag could have been set first
 						executable = null;
+						if (args.length - i > 1) {
+							if (!args[i+1].startsWith("-")) {
+								++i;
+								pid = args[i];
+							}
+						}
 					}
 					else if ("-c".equals(args[i])) { //$NON-NLS-1$
 						++i;
@@ -347,7 +354,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 						remotePort != null && remotePort.length() > 0) {
 					config = DebugRemoteExecutable.createLaunchConfig(monitor, buildLog, executable, remoteAddress, remotePort, attachExecutable);
 				} else if (attachExecutable) {
-					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog);
+					config = DebugAttachedExecutable.createLaunchConfig(monitor, buildLog, pid);
 				} else if (corefile != null && corefile.length() > 0) {
 					config = DebugCoreFile.createLaunchConfig(monitor, buildLog, executable, corefile);
 				} else if (executable != null && executable.length() > 0) {

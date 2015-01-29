@@ -16,11 +16,11 @@
 The script contains the command-line needed to start Eclipse and to pass appropriate
 parameters at start-up.  The following are the command-line options supported:
 
-<h4>-a</h4>
+<h4>-a [pid]</h4>
 <p>This option specifies that you want to attach and debug an existing executable that is running on your system.
-The option will bring up a dialog which contains a list of current executables running and you may choose the
-executable(s) you wish to attach to.  You also have the option of starting a new executable, if desired, but you
-cannot specify a build log using this method.
+If no pid is specified or an invalid pid is specified, the option will bring up a dialog which contains a list of current executables running and you may choose the
+executable(s) you wish to attach to.  The dialog will also give you the option of starting a new executable, if desired, but you
+cannot specify a build log using this method.  When used at the same as the -r option, the pid argument is ignored.
 
 <h4>-b &lt;build log&gt;</h4>
 <p>This option specifies an optional build log to use for indexing the source.  The build log

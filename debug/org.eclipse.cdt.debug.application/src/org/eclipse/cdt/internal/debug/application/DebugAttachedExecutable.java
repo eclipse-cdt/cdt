@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Red Hat, Inc.
+ * Copyright (c) 2014, 2015 Red Hat, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,12 +84,27 @@ public class DebugAttachedExecutable {
 	 * @param monitor
 	 * @param executable
 	 * @param buildLog
-	 * @param arguments
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
 	public static ILaunchConfiguration createLaunchConfig(IProgressMonitor monitor,
 			String buildLog)
+					throws CoreException, InterruptedException {
+		return createLaunchConfig(monitor, buildLog, null);
+	}
+
+	/**
+	 * Import given executable into the Executables project then create a launch configuration.
+	 * 
+	 * @param monitor
+	 * @param executable
+	 * @param buildLog
+	 * @param pid
+	 * @throws CoreException
+	 * @throws InterruptedException
+	 */
+	public static ILaunchConfiguration createLaunchConfig(IProgressMonitor monitor,
+			String buildLog, String pid)
 					throws CoreException, InterruptedException {
 		ILaunchConfiguration config = null;
 		String defaultProjectName = "Executables"; //$NON-NLS-1$
@@ -202,7 +217,7 @@ public class DebugAttachedExecutable {
 			}
 		}
 
-		config = createConfiguration(true);
+		config = createConfiguration(pid, true);
 		monitor.worked(1);
 		return config;
 	}
@@ -212,6 +227,10 @@ public class DebugAttachedExecutable {
 	}
 
 	protected static ILaunchConfiguration createConfiguration(boolean save) {
+		return createConfiguration(null, save);
+	}
+
+	protected static ILaunchConfiguration createConfiguration(String pid, boolean save) {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getLaunchConfigType();
@@ -226,6 +245,12 @@ public class DebugAttachedExecutable {
 			wc.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 					(String) null);
+
+			if (pid != null) {
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID,
+						Integer.valueOf(pid));
+			}
+			
 			if (save) {
 				config = wc.doSave();
 			} else {

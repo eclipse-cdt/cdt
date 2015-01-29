@@ -34,3 +34,5 @@ Import-Package: org.eclipse.cdt.core.model,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
  org.eclipse.debug.ui.actions
+Export-Package: org.eclipse.cdt.debug.application,
+ org.eclipse.cdt.internal.debug.application;x-internal:=true

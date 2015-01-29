@@ -20,8 +20,10 @@ The script takes a few options which are mentioned below:
         
 -consoleLog : if you want error messages reported directly to the command console
 
--a		 : specify attaching to an existing executable on system.  A dialog will
-           be brought up to allow you to select which one.
+-a [pid] : specify attaching to an existing executable on system.  If no pid is specified,
+           a dialog will be brought up to allow you to select an executable from existing
+           processes.  The same dialog will be brought up if the pid is invalid.  The pid
+           is not used for a remote debugging session using the -r option described below.
            
 -b $PATH : path to build log for an executable.  This will be used to figure out
            include paths and compilation flags.  This option assumes you will

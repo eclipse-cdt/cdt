@@ -43,7 +43,8 @@
 <launcherArgs>
 <vmArgs>-Xms40m
 -Xmx512M
--XX:MaxPermSize=256m</vmArgs>
+-XX:MaxPermSize=256m
+-ea</vmArgs>
 <programArgs>-consolelog</programArgs>
 </launcherArgs>
 </target>

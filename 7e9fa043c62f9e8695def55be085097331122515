@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47017b3c_91565c54",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CAbstractMainTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-01-29T01:04:13Z",
+      "side": 1,
+      "message": "Aren\u0027t selection index starts with 0?\nMain tooltip would be actually for 0th element...\n\nJust need regular NPE protection\nif (configId\u003d\u003dnull) return;",
+      "revId": "7e9fa043c62f9e8695def55be085097331122515",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for handling of multiple execution contexts
  *     Marc Khouzam (Ericsson) - Show return value of the method when doing a step-return (Bug 341731)
+ *     Elena Laskavaia (Qnx Software Systems) - Stack Frames chache and error recovery
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -64,8 +65,9 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 public class MIStack extends AbstractDsfService
-implements IStack, ICachingService
-{
+implements IStack, ICachingService {
+	private static final int DEFAULT_STACK_DEPTH = 5;
+
 	protected static class MIFrameDMC extends AbstractDMContext
 	implements IFrameDMContext
 	{
@@ -135,37 +137,6 @@ implements IStack, ICachingService
 			return baseToString() + ".variable(" + fType + ")[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-
-	/**
-	 * Class to track stack depth requests for our internal cache
-	 */
-	private class StackDepthInfo {
-		// The maximum depth we requested
-		public int maxDepthRequested;
-		// The actual depth we received
-		public int returnedDepth;
-
-		StackDepthInfo(int requested, int returned) {
-			maxDepthRequested = requested;
-			returnedDepth = returned;
-		}
-	}
-
-	/**
-	 * A HashMap for our StackDepth cache, that can clear based on a context.
-	 */
-	@SuppressWarnings("serial")
-	private class StackDepthHashMap<V,T> extends HashMap<V,T> {
-		public void clear(IDMContext context) {
-			final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-			if (execDmc != null) {
-				remove(execDmc.getThreadId());
-			} else {
-				clear();
-			};
-		}
-	}
-
 	/**
 	 * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to
 	 * provide the data.  Sub-classes must supply the MIArg object.
@@ -196,13 +167,146 @@ implements IStack, ICachingService
 	private CommandCache fMICommandCache;
 	private CommandFactory fCommandFactory;
 
+	/**
+	 * Class to track stack depth requests for our internal cache
+	 */
+	private class FramesCacheInfo {
+		// The maximum depth for which cached stack depth is valid
+		private int maxStackDepth = -1;
+		// The actual depth we received
+		private int stackDepth = -1;
+		private final ArrayList<FrameData> frames = new ArrayList<FrameData>();
+
+		/**
+		 * Return currently cached stack depth if cache value if valid, otherwise return -1.
+		 *
+		 * Cache value is valid if previous limited requests were with limits of this request.
+		 *
+		 * @param maxDepth
+		 * @return
+		 */
+		public int getStackDepth(int maxDepth) {
+			if (maxDepth <= 0 && (maxStackDepth <= 0 || stackDepth < maxStackDepth))
+				return stackDepth;
+			if (maxDepth > 0 && (maxDepth <= maxStackDepth || stackDepth < maxDepth))
+				return stackDepth;
+			return -1;
+		}
+
+		public void setStackDepth(int returned, int requested) {
+			if (returned <= 0)
+				return; // no valid depths, not updating
+			if (returned < requested) {
+				// since we did not reach the limit, cache is valid for unlimited range
+				requested = -1;
+			}
+			if (requested > 0 && requested > maxStackDepth) {
+				// adjust max depth if it was limited
+				maxStackDepth = requested;
+			} else if (requested <= 0) {
+				// if it was unlimited now stackDepth cache is valid in all ranges
+				maxStackDepth = -1;
+			}
+			if (returned > stackDepth) {
+				// that should only increase (and only if increased requested depth)
+				stackDepth = returned;
+			}
+			if (stackDepth > maxStackDepth && maxStackDepth > 0) {
+				// max known depth is at least same as current stackDepth
+				maxStackDepth = stackDepth;
+			}
+		}
+
+		/**
+		 * Return currently cached stack depth, and if not cache available return default depth
+		 *
+		 * @return
+		 */
+		public int getValidStackDepth() {
+			if (stackDepth <= 0)
+				return DEFAULT_STACK_DEPTH;
+			return stackDepth;
+		}
+
+		public void updateFrameData(FrameData frame) {
+			try {
+				int level = frame.getMIFrame().getLevel();
+				if (stackDepth < level + 1) {
+					stackDepth = level + 1;
+				}
+				if (maxStackDepth > 0 && maxStackDepth < stackDepth) {
+					maxStackDepth = stackDepth;
+				}
+				while (level >= frames.size()) {
+					frames.add(null);
+				}
+				frames.set(level, frame);
+			} catch (Exception e) {
+				// cannot afford throwing runtime exceptions
+				GdbPlugin.log(e);
+			}
+		}
+
+		public FrameData getFrameData(int level) {
+			try {
+				if (level < 0 || level >= frames.size())
+					return null;
+				return frames.get(level);
+			} catch (Exception e) {
+				// cannot afford throwing runtime exceptions
+				GdbPlugin.log(e);
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * A HashMap for our StackDepth cache, that can clear based on a context.
+	 */
+	@SuppressWarnings("serial")
+	private class FramesCache extends HashMap<Integer, FramesCacheInfo> {
+		public void clear(IDMContext context) {
+			final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+			if (execDmc != null) {
+				remove(execDmc.getThreadId());
+			} else {
+				clear();
+			};
+		}
+
+		private FramesCacheInfo getThreadFramesCache(int threadId) {
+			FramesCacheInfo info = get(threadId);
+			if (info == null) {
+				put(threadId, info = new FramesCacheInfo());
+			}
+			return info;
+		}
+
+		public FramesCacheInfo update(int threadId, int stackDepth, int maxRequestedStackDepth) {
+			FramesCacheInfo info = getThreadFramesCache(threadId);
+			info.setStackDepth(stackDepth, maxRequestedStackDepth);
+			return info;
+		}
+
+		public FramesCacheInfo update(int threadId, MIStackListFramesInfo framesInfo) {
+			FramesCacheInfo info = getThreadFramesCache(threadId);
+			if (framesInfo != null) {
+				int len = framesInfo.getMIFrames().length;
+				for (int i = 0; i < len; i++) {
+					info.updateFrameData(new FrameDataFromMIStackFrameListInfo(framesInfo, i));
+				}
+			}
+			return info;
+		}
+	}
+
 	// Two commands such as
 	//  -stack-info-depth 11
 	//  -stack-info-depth 2
 	// would both be sent to GDB because the command cache sees them as different.
 	// This stackDepthCache allows us to know that if we already ask for a stack depth
 	// we can potentially re-use the answer.
-	private StackDepthHashMap<Integer, StackDepthInfo> fStackDepthCache = new StackDepthHashMap<Integer, StackDepthInfo>();
+	private FramesCache fFramesCache = new FramesCache();
 
 	private MIStoppedEvent fCachedStoppedEvent;
 	private IRunControl fRunControl;
@@ -220,9 +324,67 @@ implements IStack, ICachingService
 	 */
 	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<IMIExecutionDMContext, VariableData>();
 
-	public MIStack(DsfSession session)
-	{
+	public MIStack(DsfSession session) {
 		super(session);
+	}
+
+	/**
+	 * Base class for the IFrameDMData object that uses an MIFrame object to
+	 * provide the data.  Sub-classes must provide the MIFrame object
+	 */
+	private abstract class FrameData implements IFrameDMData
+	{
+		abstract protected MIFrame getMIFrame();
+
+		@Override
+		public IAddress getAddress() {
+			String addr = getMIFrame().getAddress();
+			if (addr == null || addr.length() == 0)
+				return new Addr32(0);
+			if (addr.startsWith("0x")) { //$NON-NLS-1$
+				addr = addr.substring(2);
+			}
+			if (addr.length() <= 8)
+				return new Addr32(getMIFrame().getAddress());
+			else
+				return new Addr64(getMIFrame().getAddress());
+		}
+
+		@Override
+		public int getColumn() { return 0; }
+
+		@Override
+		public String getFile() { return getMIFrame().getFile(); }
+		@Override
+		public int getLine() { return getMIFrame().getLine(); }
+		@Override
+		public String getFunction() { return getMIFrame().getFunction(); }
+		@Override
+		public String getModule() { return ""; }//$NON-NLS-1$
+
+		@Override
+		public String toString() { return getMIFrame().toString(); }
+	}
+
+
+	private class FrameDataFromStoppedEvent extends FrameData {
+		private final MIStoppedEvent fEvent;
+		FrameDataFromStoppedEvent(MIStoppedEvent event) { fEvent = event; }
+		@Override
+		protected MIFrame getMIFrame() { return fEvent.getFrame(); }
+	}
+
+	private class FrameDataFromMIStackFrameListInfo extends FrameData {
+		private MIStackListFramesInfo fFrameDataCacheInfo;
+		private int fFrameIndex;
+
+		FrameDataFromMIStackFrameListInfo(MIStackListFramesInfo info, int index) {
+			fFrameDataCacheInfo = info;
+			fFrameIndex = index;
+		}
+
+		@Override
+		protected MIFrame getMIFrame() { return fFrameDataCacheInfo.getMIFrames()[fFrameIndex]; }
 	}
 
 	@Override
@@ -329,25 +491,67 @@ implements IStack, ICachingService
 			}
 		}
 
-		final ICommand<MIStackListFramesInfo> miStackListCmd;
-		// firstIndex is the first index retrieved
-		final int firstIndex;
-		if (endIndex >= 0) {
-			miStackListCmd = fCommandFactory.createMIStackListFrames(execDmc, startIndex, endIndex);
-			firstIndex = startIndex;
-		} else {
-			miStackListCmd = fCommandFactory.createMIStackListFrames(execDmc);
-			firstIndex = 0;
+		// if requested stack limit is bigger then currently cached this call will return -1
+		int depth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getStackDepth(
+				endIndex > 0 ? endIndex + 1 : -1);
+		if (depth > 0) { // our stack depth cache is good so we can use it to fill levels array
+			rm.setData(getDMFrames(execDmc, startIndex, endIndex));
+			rm.done();
+			return;
 		}
+
 		fMICommandCache.execute(
-				miStackListCmd,
+				createMIStackListFrames(execDmc, startIndex, endIndex), //
 				new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
 					@Override
+					protected void handleError() {
+						// this command does not actually use frames but only return array of levels,
+						// lets just fake it based on know stack depth
+						rm.done(getDMFrames(execDmc, startIndex, endIndex, DEFAULT_STACK_DEPTH));
+					}
+
+					@Override
 					protected void handleSuccess() {
-						rm.setData(getFrames(execDmc, getData(), firstIndex, endIndex, startIndex));
-						rm.done();
+						fFramesCache.update(execDmc.getThreadId(), getData());
+						rm.done(getDMFrames(execDmc, startIndex, endIndex));
 					}
 				});
+	}
+
+	private IFrameDMContext[] getDMFrames(final IMIExecutionDMContext execDmc, int startIndex,
+			int endIndex, int stackDepth) {
+		if (endIndex > stackDepth - 1 || endIndex < 0) {
+			endIndex = stackDepth - 1;
+		}
+		if (startIndex > endIndex)
+			return new IFrameDMContext[] {};
+		int length = endIndex - startIndex + 1;
+		IFrameDMContext[] frameDMCs = new MIFrameDMC[length];
+		for (int i = 0; i < length; i++) {
+			frameDMCs[i] = createFrameDMContext(execDmc, i + startIndex);
+		}
+		return frameDMCs;
+	}
+
+	private IFrameDMContext[] getDMFrames(final IMIExecutionDMContext execDmc, int startIndex,
+			int endIndex) {
+		int stackDepth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getValidStackDepth();
+		return getDMFrames(execDmc, startIndex, endIndex, stackDepth);
+	}
+
+	private ICommand<MIStackListFramesInfo> createMIStackListFrames(final IMIExecutionDMContext execDmc) {
+		return fCommandFactory.createMIStackListFrames(execDmc);
+	}
+
+	private ICommand<MIStackListFramesInfo> createMIStackListFrames(final IMIExecutionDMContext execDmc,
+			final int startIndex, final int endIndex) {
+		final ICommand<MIStackListFramesInfo> miStackListCmd;
+		if (endIndex >= 0) {
+			miStackListCmd = fCommandFactory.createMIStackListFrames(execDmc, startIndex, endIndex);
+		} else {
+			miStackListCmd = fCommandFactory.createMIStackListFrames(execDmc);
+		}
+		return miStackListCmd;
 	}
 
 	@Override
@@ -384,26 +588,6 @@ implements IStack, ICachingService
 				});
 	}
 
-	private IFrameDMContext[] getFrames(IMIExecutionDMContext execDmc, MIStackListFramesInfo info, int firstIndex, int lastIndex, int startIndex) {
-		int length = info.getMIFrames().length;
-		if (lastIndex > 0) {
-			int limit= lastIndex - startIndex + 1;
-			if (limit < length) {
-				length = limit;
-			}
-		}
-		IFrameDMContext[] frameDMCs = new MIFrameDMC[length];
-		for (int i = 0; i < length; i++) {
-			//frameDMCs[i] = new MIFrameDMC(this, info.getMIFrames()[i].getLevel());
-			final MIFrame frame= info.getMIFrames()[i + startIndex - firstIndex];
-			assert startIndex + i == frame.getLevel();
-			frameDMCs[i] = createFrameDMContext(execDmc, frame.getLevel());
-		}
-		return frameDMCs;
-	}
-
-
-
 	@Override
 	public void getFrameData(final IFrameDMContext frameDmc, final DataRequestMonitor<IFrameDMData> rm) {
 		if (!(frameDmc instanceof MIFrameDMC)) {
@@ -421,122 +605,66 @@ implements IStack, ICachingService
 			return;
 		}
 
-		/**
-		 * Base class for the IFrameDMData object that uses an MIFrame object to
-		 * provide the data.  Sub-classes must provide the MIFrame object
-		 */
-		abstract class FrameData implements IFrameDMData
-		{
-			abstract protected MIFrame getMIFrame();
-
-			@Override
-			public IAddress getAddress() {
-				String addr = getMIFrame().getAddress();
-				if (addr == null || addr.length() == 0)
-					return new Addr32(0);
-				if (addr.startsWith("0x")) { //$NON-NLS-1$
-					addr = addr.substring(2);
-				}
-				if (addr.length() <= 8)
-					return new Addr32(getMIFrame().getAddress());
-				else
-					return new Addr64(getMIFrame().getAddress());
-			}
-
-			@Override
-			public int getColumn() { return 0; }
-
-			@Override
-			public String getFile() { return getMIFrame().getFile(); }
-			@Override
-			public int getLine() { return getMIFrame().getLine(); }
-			@Override
-			public String getFunction() { return getMIFrame().getFunction(); }
-			@Override
-			public String getModule() { return ""; }//$NON-NLS-1$
-
-			@Override
-			public String toString() { return getMIFrame().toString(); }
+		final int threadId = execDmc.getThreadId();
+		final int frameLevel = miFrameDmc.fLevel;
+		FrameData fd = fFramesCache.getThreadFramesCache(threadId).getFrameData(frameLevel);
+		if (fd != null) {
+			rm.setData(fd);
+			rm.done();
+			return;
 		}
 
 		// If requested frame is the top stack frame, try to retrieve it from
 		// the stopped event data.
-		class FrameDataFromStoppedEvent extends FrameData {
-			private final MIStoppedEvent fEvent;
-			FrameDataFromStoppedEvent(MIStoppedEvent event) { fEvent = event; }
-			@Override
-			protected MIFrame getMIFrame() { return fEvent.getFrame(); }
-		}
 
 		// Retrieve the top stack frame from the stopped event only if the selected thread is the one on which stopped event
 		// is raised
-		if (miFrameDmc.fLevel == 0) {
-			if (fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
-					(execDmc.equals(fCachedStoppedEvent.getDMContext()) || fTraceVisualization))
-			{
-				rm.setData(new FrameDataFromStoppedEvent(fCachedStoppedEvent));
-				rm.done();
-				return;
+		if (frameLevel == 0) {
+			if (fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null
+					&& (execDmc.equals(fCachedStoppedEvent.getDMContext()) || fTraceVisualization)) {
+				try {
+					rm.setData(new FrameDataFromStoppedEvent(fCachedStoppedEvent));
+					return;
+				} finally {
+					rm.done();
+				}
 			}
 		}
 
 		// If not, retrieve the full list of frame data.
-		class FrameDataFromMIStackFrameListInfo extends FrameData {
-			private MIStackListFramesInfo fFrameDataCacheInfo;
-			private int fFrameIndex;
-
-			FrameDataFromMIStackFrameListInfo(MIStackListFramesInfo info, int index) {
-				fFrameDataCacheInfo = info;
-				fFrameIndex = index;
-			}
-
-			@Override
-			protected MIFrame getMIFrame() { return fFrameDataCacheInfo.getMIFrames()[fFrameIndex]; }
-		}
-
 		fMICommandCache.execute(
-				fCommandFactory.createMIStackListFrames(execDmc),
+				createMIStackListFrames(execDmc),
 				new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
-						// Find the index to the correct MI frame object.
-						int idx = findFrameIndex(getData().getMIFrames(), miFrameDmc.fLevel);
-						if (idx == -1) {
-							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
+						FramesCacheInfo info = fFramesCache.update(threadId, getData());
+						FrameData frameData = info.getFrameData(frameLevel);
+						if (frameData == null) {
+							rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
 									"Invalid frame " + frameDmc, null)); //$NON-NLS-1$
-							rm.done();
-							return;
+						} else {
+							rm.done(frameData);
 						}
-						// Create the data object.
-						rm.setData(new FrameDataFromMIStackFrameListInfo(getData(), idx));
-						rm.done();
 					}
 
 					@Override
 					protected void handleError() {
-						// We're seeing gdb in some cases fail when it's
-						// being asked for the stack depth or stack
-						// frames, but the same command succeeds if
-						// the request is limited to one frame. So try
-						// again for a specific frame. It's better to show
-						// just one frame than none at all. Since it is only happen on error
-						// this should not contribute much to increased traffic
+						// We're seeing gdb in some cases fail when it's being asked for the stack
+						// frames with no limits, but the same command succeeds if the request is limited
+						// to one frame. So try again with a limit of 1.
+						// It's better to show just one frame than none at all
 						fMICommandCache.execute(
-								fCommandFactory.createMIStackListFrames(execDmc, miFrameDmc.fLevel, miFrameDmc.fLevel),
+								createMIStackListFrames(execDmc, frameLevel, frameLevel),
 								new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
 									@Override
 									protected void handleSuccess() {
-										// Find the index to the correct MI frame object.
-										int idx = findFrameIndex(getData().getMIFrames(), miFrameDmc.fLevel);
-										if (idx == -1) {
-											rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
-													"Invalid frame " + frameDmc, null)); //$NON-NLS-1$
-											rm.done();
-											return;
+										FrameData frameData = fFramesCache.update(threadId, getData()).getFrameData(frameLevel);
+										if (frameData == null) {
+											rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+													INVALID_HANDLE, "Invalid frame " + frameDmc, null)); //$NON-NLS-1$
+										} else {
+											rm.done(frameData);
 										}
-										// Create the data object.
-										rm.setData(new FrameDataFromMIStackFrameListInfo(getData(), idx));
-										rm.done();
 									}
 								});
 					}
@@ -790,14 +918,6 @@ implements IStack, ICachingService
 		return variableNames.values().toArray(new MIVariableDMC[0]);
 	}
 
-	private int findFrameIndex(MIFrame[] frames, int level) {
-		for (int idx = 0; idx < frames.length; idx++) {
-			if (frames[idx].getLevel() == level)
-				return idx;
-		}
-		return -1;
-	}
-
 	/**
 	 * Retrieves variables which are used to store the return values of functions.
 	 */
@@ -831,61 +951,61 @@ implements IStack, ICachingService
 		countingRm.setDoneCount(3);
 
 		// First show any return values of methods
-				getReturnValues(
-						frameDmc,
-						new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) {
-							@Override
-							protected void handleSuccess() {
-								localsList.addAll( Arrays.asList(getData()) );
-								countingRm.done();
-							}
-						});
+		getReturnValues(
+				frameDmc,
+				new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) {
+					@Override
+					protected void handleSuccess() {
+						localsList.addAll( Arrays.asList(getData()) );
+						countingRm.done();
+					}
+				});
 
-				// Then show arguments
-				getArguments(
-						frameDmc,
-						new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) {
-							@Override
-							protected void handleSuccess() {
-								localsList.addAll( Arrays.asList(getData()) );
-								countingRm.done();
-							}
-						});
+		// Then show arguments
+		getArguments(
+				frameDmc,
+				new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) {
+					@Override
+					protected void handleSuccess() {
+						localsList.addAll( Arrays.asList(getData()) );
+						countingRm.done();
+					}
+				});
 
-				// Finally get the local variables
-				fMICommandCache.execute(
-						// We don't actually need to ask for the values in this case, but since
-						// we will ask for them right after, it is more efficient to ask for them now
-						// so as to cache the result.  If the command fails, then we will ask for
-						// the result without the values
-						// Don't ask for value when we are visualizing trace data, since some
-						// data will not be there, and the command will fail
-						fCommandFactory.createMIStackListLocals(frameDmc, !fTraceVisualization),
-						new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) {
-							@Override
-							protected void handleSuccess() {
-								localsList.addAll( Arrays.asList(
-										makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
-								countingRm.done();
-							}
-							@Override
-							protected void handleError() {
-								// If the command fails it can be because we asked for values.
-								// This can happen with uninitialized values and pretty printers (bug 307614).
-								// Since asking for values was simply an optimization
-								// to store the command in the cache, let's retry the command without asking for values.
-								fMICommandCache.execute(
-										fCommandFactory.createMIStackListLocals(frameDmc, false),
-										new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) {
-											@Override
-											protected void handleSuccess() {
-												localsList.addAll( Arrays.asList(
-														makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
-												countingRm.done();
-											}
-										});
-							}
-						});
+		// Finally get the local variables
+		fMICommandCache.execute(
+				// We don't actually need to ask for the values in this case, but since
+				// we will ask for them right after, it is more efficient to ask for them now
+				// so as to cache the result.  If the command fails, then we will ask for
+				// the result without the values
+				// Don't ask for value when we are visualizing trace data, since some
+				// data will not be there, and the command will fail
+				fCommandFactory.createMIStackListLocals(frameDmc, !fTraceVisualization),
+				new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) {
+					@Override
+					protected void handleSuccess() {
+						localsList.addAll( Arrays.asList(
+								makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
+						countingRm.done();
+					}
+					@Override
+					protected void handleError() {
+						// If the command fails it can be because we asked for values.
+						// This can happen with uninitialized values and pretty printers (bug 307614).
+						// Since asking for values was simply an optimization
+						// to store the command in the cache, let's retry the command without asking for values.
+						fMICommandCache.execute(
+								fCommandFactory.createMIStackListLocals(frameDmc, false),
+								new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) {
+									@Override
+									protected void handleSuccess() {
+										localsList.addAll( Arrays.asList(
+												makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
+										countingRm.done();
+									}
+								});
+					}
+				});
 	}
 
 	@Override
@@ -901,15 +1021,11 @@ implements IStack, ICachingService
 
 			// Check our internal cache first because different commands can
 			// still be re-used.
-			StackDepthInfo cachedDepth = fStackDepthCache.get(execDmc.getThreadId());
-			if (cachedDepth != null) {
-				if (cachedDepth.maxDepthRequested == 0 ||
-						(maxDepth != 0 && cachedDepth.maxDepthRequested >= maxDepth))
-				{
-					rm.setData(cachedDepth.returnedDepth);
-					rm.done();
-					return;
-				}
+			int depth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getStackDepth(maxDepth);
+			if (depth > 0) {
+				rm.setData(depth);
+				rm.done();
+				return;
 			}
 
 			ICommand<MIStackInfoDepthInfo> depthCommand = null;
@@ -925,9 +1041,9 @@ implements IStack, ICachingService
 						@Override
 						protected void handleSuccess() {
 							// Store result in our internal cache
-							fStackDepthCache.put(execDmc.getThreadId(), new StackDepthInfo(maxDepth, getData().getDepth()));
-
-							rm.setData(getData().getDepth());
+							int stackDepth = getData().getDepth();
+							fFramesCache.update(execDmc.getThreadId(), stackDepth, maxDepth);
+							rm.setData(stackDepth);
 							rm.done();
 						}
 						@Override
@@ -945,47 +1061,24 @@ implements IStack, ICachingService
 								rm.setData(1);
 								rm.done();
 							} else {
-								// We're seeing gdb in some cases fail when it's
-								// being asked for the stack depth but stack frames command succeeds
+								// gdb fails when being asked for the stack depth but stack frames command succeeds
 								// it seems like an overkill but it will cached and ui later will ask for it anyway
-								ICommand<MIStackListFramesInfo> listFramesCommand;
-								if (maxDepth <= 0) {
-									listFramesCommand = fCommandFactory.createMIStackListFrames(execDmc);
-								} else {
-									listFramesCommand = fCommandFactory.createMIStackListFrames(execDmc, 0, maxDepth - 1);
-								}
-								fMICommandCache.execute(
-										listFramesCommand,
+								fMICommandCache.execute(createMIStackListFrames(execDmc, 0, maxDepth - 1),
 										new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
-											@Override
-											protected void handleSuccess() {
-												try {
-													// Find the maximum level in returned frames
-													MIFrame[] miFrames = getData().getMIFrames();
-													int level = 0;
-													for (MIFrame miFrame : miFrames) {
-														if (miFrame.getLevel() > level) {
-															level = miFrame.getLevel();
-														}
-													}
-													// Create the data object. Depth is +1 of maximum frame level
-													int depth = level + 1;
-													fStackDepthCache.put(execDmc.getThreadId(), new StackDepthInfo(maxDepth, depth));
-													rm.setData(depth);
-												} finally {
-													rm.done(); // we have to close monitor no matter what
-												}
-											}
+									@Override
+									protected void handleSuccess() {
+										FramesCacheInfo info = fFramesCache.update(execDmc.getThreadId(), getData());
+										rm.done(info.getValidStackDepth());
+									}
 
-											@Override
-											protected void handleError() {
-												// There is no point asking for stack-depth with limit of 1, lets just assume it is
-												// at least 1, worst case it will show error or no data on the first frame
-												rm.setData(1);
-												rm.done();
-											};
-										}
-										);
+									@Override
+									protected void handleError() {
+										// Lets return that we have 5 frames, if we return just 1 front end will never ask
+										// for more. There is chance that gdb will actually return correct frames later
+										// and one frame is not enough in many case to debug anything
+										rm.done(DEFAULT_STACK_DEPTH);
+									};
+								});
 							}
 						}
 					});
@@ -1005,7 +1098,7 @@ implements IStack, ICachingService
 		if (e.getReason() != StateChangeReason.STEP) {
 			fCachedStoppedEvent = null;
 			fMICommandCache.reset();
-			fStackDepthCache.clear();
+			fFramesCache.clear();
 		}
 
 		handleReturnValues(e);
@@ -1041,7 +1134,7 @@ implements IStack, ICachingService
 	public void eventDispatched(ISuspendedDMEvent e) {
 		fMICommandCache.setContextAvailable(e.getDMContext(), true);
 		fMICommandCache.reset();
-		fStackDepthCache.clear();
+		fFramesCache.clear();
 
 		handleReturnValues(e);
 	}
@@ -1116,7 +1209,7 @@ implements IStack, ICachingService
 	@Override
 	public void flushCache(IDMContext context) {
 		fMICommandCache.reset(context);
-		fStackDepthCache.clear(context);
+		fFramesCache.clear(context);
 		fCachedStoppedEvent = null;
 	}
 

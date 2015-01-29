@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_70e5b051",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-29T16:22:27Z",
+      "side": 1,
+      "message": "I am getting the following API problems, \nSo the manifest needs to be updated.\n\nList of compatible changes:\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_UPPER_LEFT_SEVENTH_HEIGHTH has been added\n- The non-abstract method org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.drawImageWithMargin(GC, String, Rectangle, int) has been added\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_LOWER_RIGHT_HEIGHTH has been added\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_UPPER_LEFT_QUADRANT has been added\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_MAXSIZE has been added\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_LOWER_RIGHT_QUADRANT has been added\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_UPPER_RIGHT_QUADRANT has been added\n- The static field org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.IMGPOS_LOWER_LEFT_QUADRANT has been added\n- The non-abstract method org.eclipse.cdt.visualizer.ui.canvas.GraphicObject.drawImage(GC, String, Rectangle) has been added",
+      "revId": "72051805c58184ea5b93472a4fb79fb15b91be83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_f0108009",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-29T16:22:27Z",
+      "side": 1,
+      "message": "It seems the intention is to have these rectangles as base proportion templates. \nHowever this templates don\u0027t prevent modifications to its coordinates or sizes. \n  The \"final\" makes the reference to the instance immutable but not the state of object.\n\nYou could e.g. use an enum with an associated rectangle which is not exposed.",
+      "revId": "72051805c58184ea5b93472a4fb79fb15b91be83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_908e54b7",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-01-29T16:22:27Z",
+      "side": 1,
+      "message": "you could overload this method to have a variant with e.g the enum mentioned above",
+      "range": {
+        "startLine": 336,
+        "startChar": 20,
+        "endLine": 336,
+        "endChar": 21
+      },
+      "revId": "72051805c58184ea5b93472a4fb79fb15b91be83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

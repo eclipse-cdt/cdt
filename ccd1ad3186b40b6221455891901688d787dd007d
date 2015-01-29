@@ -16,6 +16,24 @@
       "revId": "ccd1ad3186b40b6221455891901688d787dd007d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_b0cef8d7",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-01-29T16:22:26Z",
+      "side": 1,
+      "message": "I agree. It doesn\u0027t look very hard to change, but maybe I\u0027m wrong. If it\u0027s not too complicated, I can change that after this series.",
+      "parentUuid": "27080763_7013f0e8",
+      "revId": "ccd1ad3186b40b6221455891901688d787dd007d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

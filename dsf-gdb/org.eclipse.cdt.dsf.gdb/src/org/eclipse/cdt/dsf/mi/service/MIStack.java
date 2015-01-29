@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Modified for handling of multiple execution contexts	
- *     Marc Khouzam (Ericsson) - Show return value of the method when doing a step-return (Bug 341731)	
+ *     Ericsson			  - Modified for handling of multiple execution contexts
+ *     Marc Khouzam (Ericsson) - Show return value of the method when doing a step-return (Bug 341731)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -66,7 +66,7 @@ import org.osgi.framework.BundleContext;
 public class MIStack extends AbstractDsfService
 	implements IStack, ICachingService
 {
-    protected static class MIFrameDMC extends AbstractDMContext 
+    protected static class MIFrameDMC extends AbstractDMContext
         implements IFrameDMContext
     {
         private final int fLevel;
@@ -74,26 +74,26 @@ public class MIStack extends AbstractDsfService
             super(sessionId, new IDMContext[] { execDmc });
             fLevel = level;
         }
-        
+
     	@Override
         public int getLevel() { return fLevel; }
-        
+
         @Override
         public boolean equals(Object other) {
             return super.baseEquals(other) && ((MIFrameDMC)other).fLevel == fLevel;
         }
-        
+
         @Override
         public int hashCode() {
             return super.baseHashCode() ^ fLevel;
         }
-        
+
         @Override
-        public String toString() { 
+        public String toString() {
             return baseToString() + ".frame[" + fLevel + "]";  //$NON-NLS-1$ //$NON-NLS-2$
-        }            
+        }
     }
-       
+
     protected static class MIVariableDMC extends AbstractDMContext
         implements IVariableDMContext
     {
@@ -106,32 +106,36 @@ public class MIStack extends AbstractDsfService
             fIndex = index;
             fType = type;
         }
-        
+
         public int getIndex() { return fIndex; }
         public Type getType() { return fType; }
-        
+
         @Override
         public boolean equals(Object other) {
-            return super.baseEquals(other) && 
-                   ((MIVariableDMC)other).fType == fType && 
+            return super.baseEquals(other) &&
+                   ((MIVariableDMC)other).fType == fType &&
                    ((MIVariableDMC)other).fIndex == fIndex;
         }
-        
+
         @Override
         public int hashCode() {
             int typeFactor = 0;
-            if (fType == Type.LOCAL) typeFactor = 2;
-            else if (fType == Type.ARGUMENT) typeFactor = 3;
-            else if (fType == Type.RETURN_VALUES) typeFactor = 4;
+            if (fType == Type.LOCAL) {
+				typeFactor = 2;
+			} else if (fType == Type.ARGUMENT) {
+				typeFactor = 3;
+			} else if (fType == Type.RETURN_VALUES) {
+				typeFactor = 4;
+			}
             return super.baseHashCode() ^ typeFactor ^ fIndex;
         }
-        
+
         @Override
-        public String toString() { 
+        public String toString() {
             return baseToString() + ".variable(" + fType + ")[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }            
+        }
     }
-    
+
     /**
      * Class to track stack depth requests for our internal cache
      */
@@ -140,13 +144,13 @@ public class MIStack extends AbstractDsfService
     	public int maxDepthRequested;
     	// The actual depth we received
     	public int returnedDepth;
-    	
+
     	StackDepthInfo(int requested, int returned) {
     		maxDepthRequested = requested;
     		returnedDepth = returned;
     	}
     }
-    
+
     /**
      * A HashMap for our StackDepth cache, that can clear based on a context.
      */
@@ -161,9 +165,9 @@ public class MIStack extends AbstractDsfService
             };
     	}
     }
-    
+
     /**
-     * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to 
+     * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to
      * provide the data.  Sub-classes must supply the MIArg object.
      */
 	private class VariableData implements IVariableDMData {
@@ -174,17 +178,17 @@ public class MIStack extends AbstractDsfService
 		}
 
 		@Override
-		public String getName() { 
-			return fMIArg.getName(); 
+		public String getName() {
+			return fMIArg.getName();
 		}
-		
+
 		@Override
-		public String getValue() { 
-			return fMIArg.getValue(); 
+		public String getValue() {
+			return fMIArg.getValue();
 		}
-		
+
 		@Override
-		public String toString() { 
+		public String toString() {
 			return fMIArg.toString();
 		}
 	}
@@ -192,7 +196,7 @@ public class MIStack extends AbstractDsfService
 	private CommandCache fMICommandCache;
 	private CommandFactory fCommandFactory;
 
-	// Two commands such as 
+	// Two commands such as
 	//  -stack-info-depth 11
 	//  -stack-info-depth 2
 	// would both be sent to GDB because the command cache sees them as different.
@@ -203,34 +207,34 @@ public class MIStack extends AbstractDsfService
     private MIStoppedEvent fCachedStoppedEvent;
     private IRunControl fRunControl;
 
-	/** 
+	/**
 	 * Indicates that we are currently visualizing trace data.
 	 * In this case, some errors should not be reported.
 	 */
 	private boolean fTraceVisualization;
 
 	/**
-	 * A Map of a return value for each thread.  
+	 * A Map of a return value for each thread.
 	 * A return value is stored when the user performs a step-return,
 	 * and it cleared as soon as that thread executes again.
 	 */
 	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<IMIExecutionDMContext, VariableData>();
 
-	public MIStack(DsfSession session) 
+	public MIStack(DsfSession session)
 	{
 		super(session);
 	}
 
     @Override
-    protected BundleContext getBundleContext() 
+    protected BundleContext getBundleContext()
     {
         return GdbPlugin.getBundleContext();
     }
-    
+
     @Override
     public void initialize(final RequestMonitor rm) {
         super.initialize(
-            new ImmediateRequestMonitor(rm) { 
+            new ImmediateRequestMonitor(rm) {
                 @Override
                 protected void handleSuccess() {
                     doInitialize(rm);
@@ -241,7 +245,7 @@ public class MIStack extends AbstractDsfService
     private void doInitialize(RequestMonitor rm) {
     	ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
 		BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(commandControl, getExecutor(), 2);
-		
+
 		// This cache stores the result of a command when received; also, this cache
 		// is manipulated when receiving events.  Currently, events are received after
 		// three scheduling of the executor, while command results after only one.  This
@@ -262,7 +266,7 @@ public class MIStack extends AbstractDsfService
     }
 
     @Override
-    public void shutdown(RequestMonitor rm) 
+    public void shutdown(RequestMonitor rm)
     {
         unregister();
         getSession().removeServiceEventListener(this);
@@ -271,11 +275,11 @@ public class MIStack extends AbstractDsfService
     }
 
     /**
-     * Creates a frame context.  This method is intended to be used by other MI 
+     * Creates a frame context.  This method is intended to be used by other MI
      * services and sub-classes which need to create a frame context directly.
      * <p>
-     * Sub-classes can override this method to provide custom stack frame 
-     * context implementation. 
+     * Sub-classes can override this method to provide custom stack frame
+     * context implementation.
      * </p>
      * @param execDmc Execution context that this frame is to be a child of.
      * @param level Level of the new context.
@@ -284,7 +288,7 @@ public class MIStack extends AbstractDsfService
     public IFrameDMContext createFrameDMContext(IExecutionDMContext execDmc, int level) {
         return new MIFrameDMC(getSession().getId(), execDmc, level);
     }
-    
+
 	@Override
     public void getFrames(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext[]> rm) {
     	getFrames(ctx, 0, ALL_FRAMES, rm);
@@ -300,7 +304,7 @@ public class MIStack extends AbstractDsfService
 	    }
 
 		final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
-	    
+
 	    if (execDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context " + ctx, null)); //$NON-NLS-1$
             rm.done();
@@ -316,9 +320,9 @@ public class MIStack extends AbstractDsfService
 
 	    if (startIndex == 0 && endIndex == 0) {
 	        // Try to retrieve the top stack frame from the cached stopped event.
-	        if (fCachedStoppedEvent != null && 
-	            fCachedStoppedEvent.getFrame() != null && 
-	            execDmc.equals(fCachedStoppedEvent.getDMContext())) 
+	        if (fCachedStoppedEvent != null &&
+	            fCachedStoppedEvent.getFrame() != null &&
+	            execDmc.equals(fCachedStoppedEvent.getDMContext()))
 	        {
 	            rm.setData(new IFrameDMContext[] { createFrameDMContext(execDmc, fCachedStoppedEvent.getFrame().getLevel()) });
 	            rm.done();
@@ -338,7 +342,7 @@ public class MIStack extends AbstractDsfService
 	    }
 		fMICommandCache.execute(
             miStackListCmd,
-            new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
+            new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     rm.setData(getFrames(execDmc, getData(), firstIndex, endIndex, startIndex));
@@ -346,33 +350,33 @@ public class MIStack extends AbstractDsfService
                 }
             });
 	}
-    
+
 	@Override
-    public void getTopFrame(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext> rm) {     
+    public void getTopFrame(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext> rm) {
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
         if (execDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + ctx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
-        
+
         // Try to retrieve the top stack frame from the cached stopped event.
-        if (fCachedStoppedEvent != null && 
-            fCachedStoppedEvent.getFrame() != null && 
-            execDmc.equals(fCachedStoppedEvent.getDMContext())) 
+        if (fCachedStoppedEvent != null &&
+            fCachedStoppedEvent.getFrame() != null &&
+            execDmc.equals(fCachedStoppedEvent.getDMContext()))
         {
             rm.setData(createFrameDMContext(execDmc, fCachedStoppedEvent.getFrame().getLevel()));
             rm.done();
             return;
         }
-        
-        // If stopped event is not available or doesn't contain frame info, 
+
+        // If stopped event is not available or doesn't contain frame info,
         // query top stack frame
         getFrames(
-            ctx, 
+            ctx,
             0,
             0,
-            new DataRequestMonitor<IFrameDMContext[]>(getExecutor(), rm) { 
+            new DataRequestMonitor<IFrameDMContext[]>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     rm.setData(getData()[0]);
@@ -380,7 +384,7 @@ public class MIStack extends AbstractDsfService
                 }
             });
     }
-    
+
     private IFrameDMContext[] getFrames(IMIExecutionDMContext execDmc, MIStackListFramesInfo info, int firstIndex, int lastIndex, int startIndex) {
         int length = info.getMIFrames().length;
         if (lastIndex > 0) {
@@ -391,16 +395,16 @@ public class MIStack extends AbstractDsfService
         }
 		IFrameDMContext[] frameDMCs = new MIFrameDMC[length];
         for (int i = 0; i < length; i++) {
-	        //frameDMCs[i] = new MIFrameDMC(this, info.getMIFrames()[i].getLevel()); 
+	        //frameDMCs[i] = new MIFrameDMC(this, info.getMIFrames()[i].getLevel());
         	final MIFrame frame= info.getMIFrames()[i + startIndex - firstIndex];
 			assert startIndex + i == frame.getLevel();
-            frameDMCs[i] = createFrameDMContext(execDmc, frame.getLevel()); 
+            frameDMCs[i] = createFrameDMContext(execDmc, frame.getLevel());
         }
         return frameDMCs;
     }
-    
 
-    
+
+
 	@Override
     public void getFrameData(final IFrameDMContext frameDmc, final DataRequestMonitor<IFrameDMData> rm) {
         if (!(frameDmc instanceof MIFrameDMC)) {
@@ -410,16 +414,16 @@ public class MIStack extends AbstractDsfService
         }
 
         final MIFrameDMC miFrameDmc = (MIFrameDMC)frameDmc;
-        
+
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
-        if (execDmc == null) { 
+        if (execDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "No execution context found in " + frameDmc, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
         /**
-         * Base class for the IFrameDMData object that uses an MIFrame object to 
+         * Base class for the IFrameDMData object that uses an MIFrame object to
          * provide the data.  Sub-classes must provide the MIFrame object
          */
         abstract class FrameData implements IFrameDMData
@@ -429,17 +433,15 @@ public class MIStack extends AbstractDsfService
         	@Override
             public IAddress getAddress() {
                 String addr = getMIFrame().getAddress();
-                if (addr == null || addr.length() == 0) {
-                	return new Addr32(0);
-                }
+                if (addr == null || addr.length() == 0)
+					return new Addr32(0);
                 if (addr.startsWith("0x")) { //$NON-NLS-1$
                     addr = addr.substring(2);
                 }
-                if (addr.length() <= 8) {
-                    return new Addr32(getMIFrame().getAddress());
-                } else {
-                    return new Addr64(getMIFrame().getAddress());
-                }                    
+                if (addr.length() <= 8)
+					return new Addr32(getMIFrame().getAddress());
+				else
+					return new Addr64(getMIFrame().getAddress());
             }
 
         	@Override
@@ -453,12 +455,12 @@ public class MIStack extends AbstractDsfService
             public String getFunction() { return getMIFrame().getFunction(); }
         	@Override
             public String getModule() { return ""; }//$NON-NLS-1$
-            
+
             @Override
             public String toString() { return getMIFrame().toString(); }
         }
 
-        // If requested frame is the top stack frame, try to retrieve it from 
+        // If requested frame is the top stack frame, try to retrieve it from
         // the stopped event data.
         class FrameDataFromStoppedEvent extends FrameData {
             private final MIStoppedEvent fEvent;
@@ -466,11 +468,11 @@ public class MIStack extends AbstractDsfService
             @Override
             protected MIFrame getMIFrame() { return fEvent.getFrame(); }
         }
-        
-        // Retrieve the top stack frame from the stopped event only if the selected thread is the one on which stopped event 
+
+        // Retrieve the top stack frame from the stopped event only if the selected thread is the one on which stopped event
         // is raised
         if (miFrameDmc.fLevel == 0) {
-        	if (fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null && 
+        	if (fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
         		(execDmc.equals(fCachedStoppedEvent.getDMContext()) || fTraceVisualization))
         	{
                 rm.setData(new FrameDataFromStoppedEvent(fCachedStoppedEvent));
@@ -545,27 +547,27 @@ public class MIStack extends AbstractDsfService
 	@Override
 	public void getArguments(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
-	    if (execDmc == null) { 
+	    if (execDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "No execution context found in " + frameDmc, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
-        
-        // If requested frame is the top stack frame, try to retrieve it from 
+
+        // If requested frame is the top stack frame, try to retrieve it from
         // the stopped event data.
-        if (frameDmc.getLevel() == 0 && 
-            fCachedStoppedEvent != null && 
+        if (frameDmc.getLevel() == 0 &&
+            fCachedStoppedEvent != null &&
             fCachedStoppedEvent.getFrame() != null &&
-            execDmc.equals(fCachedStoppedEvent.getDMContext()) && 
-            fCachedStoppedEvent.getFrame().getArgs() != null) 
+            execDmc.equals(fCachedStoppedEvent.getDMContext()) &&
+            fCachedStoppedEvent.getFrame().getArgs() != null)
         {
             rm.setData(makeVariableDMCs(
-                frameDmc, MIVariableDMC.Type.ARGUMENT, fCachedStoppedEvent.getFrame().getArgs())); 
+                frameDmc, MIVariableDMC.Type.ARGUMENT, fCachedStoppedEvent.getFrame().getArgs()));
             rm.done();
             return;
         }
-        
+
         // If not, retrieve the full list of frame data.  Although we only need one frame
         // for this call, it will be stored the cache and made available for other calls.
         fMICommandCache.execute(
@@ -576,7 +578,7 @@ public class MIStack extends AbstractDsfService
        		// Don't ask for value when we are visualizing trace data, since some
        		// data will not be there, and the command will fail
        		fCommandFactory.createMIStackListArguments(execDmc, true),
-            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
                     // Find the index to the correct MI frame object.
@@ -588,10 +590,12 @@ public class MIStack extends AbstractDsfService
                         rm.done();
                         return;
                     }
-                    
+
                     // Create the variable array out of MIArg array.
                     MIArg[] args = getData().getMIFrames()[idx].getArgs();
-                    if (args == null) args = new MIArg[0]; 
+                    if (args == null) {
+						args = new MIArg[0];
+					}
                     rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args));
                     rm.done();
                 }
@@ -603,7 +607,7 @@ public class MIStack extends AbstractDsfService
                 	// to store the command in the cache, let's retry the command without asking for values.
                     fMICommandCache.execute(
                         	fCommandFactory.createMIStackListArguments(execDmc, false),
-                            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+                            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {
                                     // Find the index to the correct MI frame object.
@@ -615,47 +619,49 @@ public class MIStack extends AbstractDsfService
                                         rm.done();
                                         return;
                                     }
-                                    
+
                                     // Create the variable array out of MIArg array.
                                     MIArg[] args = getData().getMIFrames()[idx].getArgs();
-                                    if (args == null) args = new MIArg[0]; 
+                                    if (args == null) {
+										args = new MIArg[0];
+									}
                                     rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args));
                                     rm.done();
                                 }
-                            }); 
+                            });
                 }
-            }); 
+            });
     }
-	
+
 	@Override
     public void getVariableData(IVariableDMContext variableDmc, final DataRequestMonitor<IVariableDMData> rm) {
         if (!(variableDmc instanceof MIVariableDMC)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context type " + variableDmc, null)); //$NON-NLS-1$
             rm.done();
-            return;            
+            return;
         }
         final MIVariableDMC miVariableDmc = (MIVariableDMC)variableDmc;
-        
+
         // Extract the frame DMC from the variable DMC.
         final MIFrameDMC frameDmc = DMContexts.getAncestorOfType(variableDmc, MIFrameDMC.class);
-        if (frameDmc == null) { 
+        if (frameDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "No frame context found in " + variableDmc, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
-        if (execDmc == null) { 
+        if (execDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "No execution context found in " + frameDmc, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
-        // Check if the stopped event can be used to extract the variable value. 
+        // Check if the stopped event can be used to extract the variable value.
         if (execDmc != null && miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT &&
             frameDmc.fLevel == 0 && fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
-            execDmc.equals(fCachedStoppedEvent.getDMContext()) && 
-            fCachedStoppedEvent.getFrame().getArgs() != null) 
+            execDmc.equals(fCachedStoppedEvent.getDMContext()) &&
+            fCachedStoppedEvent.getFrame().getArgs() != null)
         {
             if (miVariableDmc.fIndex >= fCachedStoppedEvent.getFrame().getArgs().length) {
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid variable " + miVariableDmc, null));  //$NON-NLS-1$
@@ -673,7 +679,7 @@ public class MIStack extends AbstractDsfService
 	            // Don't ask for value when we are visualizing trace data, since some
 	            // data will not be there, and the command will fail
 	    	    fCommandFactory.createMIStackListArguments(execDmc, true),
-	            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+	            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) {
 	                @Override
 	                protected void handleSuccess() {
 	                    // Find the correct frame and argument
@@ -684,7 +690,7 @@ public class MIStack extends AbstractDsfService
 	                        rm.done();
 	                        return;
 	                    }
-	                    
+
 	                    // Create the data object.
 	                    rm.setData(new VariableData(getData().getMIFrames()[frameDmc.fLevel].getArgs()[miVariableDmc.fIndex]));
 	                    rm.done();
@@ -695,7 +701,7 @@ public class MIStack extends AbstractDsfService
 	                	// Let's try to ask for the arguments without their values, which is better than nothing
 	                	fMICommandCache.execute(
 	                			fCommandFactory.createMIStackListArguments(execDmc, false),
-	                			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+	                			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) {
 	                				@Override
 	                				protected void handleSuccess() {
 	                					// Find the correct frame and argument
@@ -711,7 +717,7 @@ public class MIStack extends AbstractDsfService
 	                					rm.setData(new VariableData(getData().getMIFrames()[frameDmc.fLevel].getArgs()[miVariableDmc.fIndex]));
 	                					rm.done();
 	                				}
-	                			});	
+	                			});
 	                }
 	        	});
         } else if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
@@ -719,10 +725,9 @@ public class MIStack extends AbstractDsfService
                 	// Don't ask for value when we are visualizing trace data, since some
                 	// data will not be there, and the command will fail
             		fCommandFactory.createMIStackListLocals(frameDmc, !fTraceVisualization),
-                    new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
+                    new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) {
                         @Override
                         protected void handleSuccess() {
-   		                    
 		                    // Create the data object.
 		                    MIArg[] locals = getData().getLocals();
 		                    if (locals.length > miVariableDmc.fIndex) {
@@ -738,10 +743,9 @@ public class MIStack extends AbstractDsfService
                         	// Let's try to ask for the variables without their values, which is better than nothing
                             fMICommandCache.execute(
                             		fCommandFactory.createMIStackListLocals(frameDmc, false),
-                                    new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
+                                    new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) {
                                         @Override
                                         protected void handleSuccess() {
-                   		                    
                 		                    // Create the data object.
                 		                    MIArg[] locals = getData().getLocals();
                 		                    if (locals.length > miVariableDmc.fIndex) {
@@ -774,11 +778,11 @@ public class MIStack extends AbstractDsfService
     	// so we only keep the first one.
     	// Bug 327621 and 328573
     	Map<String, MIVariableDMC> variableNames = new LinkedHashMap<String, MIVariableDMC>();
-    	
+
     	for (int i = 0; i < miArgs.length; i++) {
     		String name = miArgs[i].getName();
     		MIVariableDMC var = variableNames.get(name);
-    		
+
     		if (var == null) {
     			variableNames.put(name, new MIVariableDMC(this, frame, type, i));
     		}
@@ -789,13 +793,12 @@ public class MIStack extends AbstractDsfService
 
     private int findFrameIndex(MIFrame[] frames, int level) {
         for (int idx = 0; idx < frames.length; idx++) {
-            if (frames[idx].getLevel() == level) {
-                return idx;
-            }
+            if (frames[idx].getLevel() == level)
+				return idx;
         }
         return -1;
     }
-    
+
     /**
      * Retrieves variables which are used to store the return values of functions.
      */
@@ -813,12 +816,12 @@ public class MIStack extends AbstractDsfService
         }
 		rm.done(values);
 	}
-	
+
 	@Override
     public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
         final List<IVariableDMContext> localsList = new ArrayList<IVariableDMContext>();
-        
+
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
             protected void handleSuccess() {
@@ -827,29 +830,29 @@ public class MIStack extends AbstractDsfService
             }
         };
         countingRm.setDoneCount(3);
-        
+
         // First show any return values of methods
         getReturnValues(
                 frameDmc,
-                new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
+                new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) {
                     @Override
                     protected void handleSuccess() {
                         localsList.addAll( Arrays.asList(getData()) );
                         countingRm.done();
                     }
                 });
-        
+
         // Then show arguments
         getArguments(
             frameDmc,
-            new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) { 
+            new DataRequestMonitor<IVariableDMContext[]>(getExecutor(), countingRm) {
                 @Override
                 protected void handleSuccess() {
                     localsList.addAll( Arrays.asList(getData()) );
                     countingRm.done();
                 }
-            }); 
-        
+            });
+
         // Finally get the local variables
 	    fMICommandCache.execute(
 	            // We don't actually need to ask for the values in this case, but since
@@ -859,7 +862,7 @@ public class MIStack extends AbstractDsfService
 	        	// Don't ask for value when we are visualizing trace data, since some
 	        	// data will not be there, and the command will fail
 	    		fCommandFactory.createMIStackListLocals(frameDmc, !fTraceVisualization),
-                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
+                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) {
                     @Override
                     protected void handleSuccess() {
                         localsList.addAll( Arrays.asList(
@@ -874,16 +877,16 @@ public class MIStack extends AbstractDsfService
                     	// to store the command in the cache, let's retry the command without asking for values.
                 	    fMICommandCache.execute(
                 	    		fCommandFactory.createMIStackListLocals(frameDmc, false),
-                                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
+                                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) {
                                     @Override
                                     protected void handleSuccess() {
                                         localsList.addAll( Arrays.asList(
                                             makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals())) );
                                         countingRm.done();
                                     }
-                                }); 
+                                });
                     }
-                }); 
+                });
     }
 
 	@Override
@@ -901,7 +904,7 @@ public class MIStack extends AbstractDsfService
 	    	// still be re-used.
 	    	StackDepthInfo cachedDepth = fStackDepthCache.get(execDmc.getThreadId());
 	    	if (cachedDepth != null) {
-	    	    if (cachedDepth.maxDepthRequested == 0 || 
+	    	    if (cachedDepth.maxDepthRequested == 0 ||
 	    		    (maxDepth != 0 && cachedDepth.maxDepthRequested >= maxDepth))
 	    	    {
 	    	        rm.setData(cachedDepth.returnedDepth);
@@ -909,19 +912,22 @@ public class MIStack extends AbstractDsfService
 	    	        return;
 	    		}
 	    	}
-	    	
+
 	    	ICommand<MIStackInfoDepthInfo> depthCommand = null;
-	    	if (maxDepth > 0) depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc, maxDepth);
-	    	else depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc);
+	    	if (maxDepth > 0) {
+				depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc, maxDepth);
+			} else {
+				depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc);
+			}
 
 	    	fMICommandCache.execute(
 	    			depthCommand,
-	    			new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) { 
+	    			new DataRequestMonitor<MIStackInfoDepthInfo>(getExecutor(), rm) {
 	    				@Override
 	    				protected void handleSuccess() {
 	    					// Store result in our internal cache
 	    					fStackDepthCache.put(execDmc.getThreadId(), new StackDepthInfo(maxDepth, getData().getDepth()));
-	    					
+
 	    					rm.setData(getData().getDepth());
 	    					rm.done();
 	    				}
@@ -938,16 +944,17 @@ public class MIStack extends AbstractDsfService
 	    				    	// To have more stack frames, the user would have to have collected
 	    				    	// the registers and enough stack memory for GDB to build another frame.
 	    						rm.setData(1);
-	    						rm.done();	    				    	
+	    						rm.done();
 	    					} else {
 								// We're seeing gdb in some cases fail when it's
 								// being asked for the stack depth but stack frames command succeeds
 								// it seems like an overkill but it will cached and ui later will ask for it anyway
 								ICommand<MIStackListFramesInfo> listFramesCommand;
-								if (maxDepth <= 0)
+								if (maxDepth <= 0) {
 									listFramesCommand = fCommandFactory.createMIStackListFrames(execDmc);
-								else
+								} else {
 									listFramesCommand = fCommandFactory.createMIStackListFrames(execDmc, 0, maxDepth - 1);
+								}
 								fMICommandCache.execute(
 										listFramesCommand,
 										new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
@@ -958,8 +965,9 @@ public class MIStack extends AbstractDsfService
 													MIFrame[] miFrames = getData().getMIFrames();
 													int level = 0;
 													for (MIFrame miFrame : miFrames) {
-														if (miFrame.getLevel() > level)
+														if (miFrame.getLevel() > level) {
 															level = miFrame.getLevel();
+														}
 													}
 													// Create the data object. Depth is +1 of maximum frame level
 													int depth = level + 1;
@@ -992,7 +1000,7 @@ public class MIStack extends AbstractDsfService
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.
      */
-    @DsfServiceEventHandler 
+    @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), false);
         if (e.getReason() != StateChangeReason.STEP) {
@@ -1000,13 +1008,13 @@ public class MIStack extends AbstractDsfService
             fMICommandCache.reset();
             fStackDepthCache.clear();
         }
-        
+
         handleReturnValues(e);
     }
-    
+
     private void handleReturnValues(IResumedDMEvent e) {
         // Whenever the execution resumes, we can clear any
-        // return values of previous methods for the resuming 
+        // return values of previous methods for the resuming
         // thread context.  For all-stop mode, we get a container event here,
         // and we can clear the entire list, which should contain at most one
         // value for all-stop.
@@ -1024,13 +1032,13 @@ public class MIStack extends AbstractDsfService
         	}
         }
     }
-    
+
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.
      * @since 1.1
      */
-    @DsfServiceEventHandler 
+    @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
     	fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
@@ -1038,7 +1046,7 @@ public class MIStack extends AbstractDsfService
 
         handleReturnValues(e);
     }
-    
+
     private void handleReturnValues(ISuspendedDMEvent e) {
         // Process MIFunctionFinishedEvent from within the ISuspendedDMEvent
         // instead of MIStoppedEvent.
@@ -1051,7 +1059,7 @@ public class MIStack extends AbstractDsfService
         		// for the thread that finished the call.  To do that, we store
         		// the variable in which GDB stores that return value, and we do
         		// that for the proper thread.
-        		
+
         		IMIExecutionDMContext finishedEventThread = null;
         		if (e instanceof IContainerSuspendedDMEvent) {
         			// All-stop mode
@@ -1084,7 +1092,7 @@ public class MIStack extends AbstractDsfService
      * @noreference This method is not intended to be referenced by clients.
      * @since 1.1
      */
-    @DsfServiceEventHandler 
+    @DsfServiceEventHandler
     public void eventDispatched(IMIDMEvent e) {
     	if (e.getMIEvent() instanceof MIStoppedEvent) {
     		fCachedStoppedEvent = (MIStoppedEvent)e.getMIEvent();
@@ -1101,7 +1109,7 @@ public class MIStack extends AbstractDsfService
     		fCachedStoppedEvent = null;
     	}
     }
-    
+
     /**
      * {@inheritDoc}
      * @since 1.1

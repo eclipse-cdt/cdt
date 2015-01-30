@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27080763_44f9ce8d",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-01-30T13:21:02Z",
+      "side": 1,
+      "message": "Done.\nGood catch - With the updated API baseline I now see that too",
+      "parentUuid": "27080763_70e5b051",
+      "revId": "72051805c58184ea5b93472a4fb79fb15b91be83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27080763_f0108009",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "27080763_24d00af4",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-01-30T13:21:02Z",
+      "side": 1,
+      "message": "Good suggestion - done.",
+      "parentUuid": "27080763_f0108009",
+      "revId": "72051805c58184ea5b93472a4fb79fb15b91be83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27080763_908e54b7",
         "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
         "patchSetId": 1
@@ -47,6 +83,30 @@
       "writtenOn": "2015-01-29T16:22:27Z",
       "side": 1,
       "message": "you could overload this method to have a variant with e.g the enum mentioned above",
+      "range": {
+        "startLine": 336,
+        "startChar": 20,
+        "endLine": 336,
+        "endChar": 21
+      },
+      "revId": "72051805c58184ea5b93472a4fb79fb15b91be83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_a4ad1a72",
+        "filename": "visualizer/org.eclipse.cdt.visualizer.ui/src/org/eclipse/cdt/visualizer/ui/canvas/GraphicObject.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-01-30T13:21:02Z",
+      "side": 1,
+      "message": "Good idea - Done.",
+      "parentUuid": "27080763_908e54b7",
       "range": {
         "startLine": 336,
         "startChar": 20,

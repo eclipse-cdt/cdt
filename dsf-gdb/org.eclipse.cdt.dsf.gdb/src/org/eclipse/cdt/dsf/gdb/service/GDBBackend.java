@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Nokia and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.resources.IContainer;
@@ -203,14 +204,18 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
 		// to allow for more flexibility.
-		return new String[] { getGDBPath().toOSString(), // This could contain spaces
-							"--interpreter", //$NON-NLS-1$
-							// We currently work with MI version 2. Don't use just 'mi' because it
-							// points to the latest MI version, while we want mi2 specifically.
-							"mi2", //$NON-NLS-1$
-							// Don't read the gdbinit file here. It is read explicitly in
-							// the LaunchSequence to make it easier to customize.
-							"--nx" }; //$NON-NLS-1$
+		
+		String cmd = getGDBPath().toOSString() +
+				     " --interpreter" + //$NON-NLS-1$
+				     // We currently work with MI version 2. Don't use just 'mi' because it
+				     // points to the latest MI version, while we want mi2 specifically.
+				     " mi2" + //$NON-NLS-1$
+				     // Don't read the gdbinit file here. It is read explicitly in
+				     // the LaunchSequence to make it easier to customize.
+				     " --nx"; //$NON-NLS-1$
+		
+        // Parse to properly handle spaces and such things (bug 458499)
+		return CommandLineUtil.argumentsToArray(cmd);
 	}
 
 	@Override

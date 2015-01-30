@@ -46,6 +46,7 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -299,8 +300,11 @@ public class LaunchUtils {
 	 * A timeout is scheduled which will kill the process if it takes too long.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        String cmd = getGDBPath(configuration).toOSString();
-        String[] args = new String[] { cmd, "--version" }; //$NON-NLS-1$
+        String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$
+        
+        // Parse cmd to properly handle spaces and such things (bug 458499)
+		String[] args = CommandLineUtil.argumentsToArray(cmd);
+        
         Process process = null;
         Job timeoutJob = null;
         try {

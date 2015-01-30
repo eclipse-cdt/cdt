@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_ffb4cb69",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/tabs/RemoteCDSFMainTab.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-01-30T20:20:44Z",
+      "side": 1,
+      "message": "The above call resets the selection of the pulldown to the first entry.  This means that every time we select an existing LC, it will reset its selection.\n\nWhy do we need to do update the pullDown instead of just the buttons?",
+      "revId": "5a3627f15fd3f5821a0ab2682e77d20ba3059e8c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

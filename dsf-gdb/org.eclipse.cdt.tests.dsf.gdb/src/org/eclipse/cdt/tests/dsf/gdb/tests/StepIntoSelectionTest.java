@@ -57,12 +57,22 @@ public class StepIntoSelectionTest extends BaseTestCase {
 	private static final String EXEC_NAME = "StepIntoSelectionTestApp.exe";
 	private static final String SOURCE_NAME = "StepIntoSelectionTestApp.cc";
 	private static final String HEADER_NAME = "StepIntoSelection.h";
-	private static final int FOO_LINE = 11;
-	private static final int BAR_LINE = 20;
-	private static final int VALUE_LINE = 5;
-	private static final int ADD_WITH_ARG_LINE = 30;
-	private static final int ADD_NO_ARG_LINE = 35;
-	
+	protected int FOO_LINE;
+	protected int BAR_LINE;
+	protected int VALUE_LINE;
+	protected int ADD_WITH_ARG_LINE;
+	protected int ADD_NO_ARG_LINE;
+
+	protected static final String[] SOURCE_LINE_TAGS = {
+		"FOO_LINE",
+		"BAR_LINE",
+		"ADD_WITH_ARG_LINE",
+		"ADD_NO_ARG_LINE",
+	};
+	protected static final String[] HEADER_LINE_TAGS = {
+		"VALUE_LINE",
+	};
+
 	//Target Functions
 	private final static FunctionDeclaration funcFoo = new FunctionDeclaration(null, "foo");
 	private final static FunctionDeclaration funcBar = new FunctionDeclaration(null, "bar");
@@ -108,6 +118,14 @@ public class StepIntoSelectionTest extends BaseTestCase {
 		};
 		fSession = getGDBLaunch().getSession();
 		fSession.getExecutor().submit(runnable).get();
+
+		resolveLineTagLocations(SOURCE_NAME, SOURCE_LINE_TAGS);
+		resolveLineTagLocations(HEADER_NAME, HEADER_LINE_TAGS);
+		FOO_LINE = getLineForTag("FOO_LINE");
+		BAR_LINE = getLineForTag("BAR_LINE");
+		VALUE_LINE = getLineForTag("VALUE_LINE");
+		ADD_WITH_ARG_LINE = getLineForTag("ADD_WITH_ARG_LINE");
+		ADD_NO_ARG_LINE = getLineForTag("ADD_NO_ARG_LINE");
 	}
 
 	@Override

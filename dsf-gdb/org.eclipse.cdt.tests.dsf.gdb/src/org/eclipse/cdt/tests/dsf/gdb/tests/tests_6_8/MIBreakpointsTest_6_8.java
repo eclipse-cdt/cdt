@@ -58,7 +58,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, SOURCE_NAME + "_bad");
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_1);
+		breakpoint.put(LINE_NUMBER_TAG, getLineForTag("LINE_NUMBER_1"));
 
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint
@@ -167,7 +167,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
 		breakpoint.put(FILE_NAME_TAG, "Bad file name");
-		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(LINE_NUMBER_TAG, getLineForTag("LINE_NUMBER_5"));
 
 		// Run the program. It will make a two second sleep() call, during which time... 
 		SyncUtil.resume();

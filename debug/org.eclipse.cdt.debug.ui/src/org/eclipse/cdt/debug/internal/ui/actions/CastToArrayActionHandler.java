@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.model.ICastToArray;
+import org.eclipse.cdt.debug.core.model.ICastToArray2;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -62,7 +63,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		private int fFirstIndex = 0;
 
-		private int fLength = 0;
+		private String fLengthExpr = ""; //$NON-NLS-1$
 
 		private Button fOkButton;
 
@@ -72,11 +73,11 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 		private Text fLengthText;
 
-		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, int initialLength ) {
+		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, String initialLengthExpr ) {
 			super( parentShell );
 			fType = (initialType == null) ? "" : initialType; //$NON-NLS-1$
 			fFirstIndex = initialStart;
-			fLength = initialLength;
+			fLengthExpr = initialLengthExpr;
 		}
 
 		protected String getType() {
@@ -87,8 +88,8 @@ public class CastToArrayActionHandler extends AbstractHandler {
 			return fFirstIndex;
 		}
 
-		protected int getLength() {
-			return fLength;
+		protected String getLengthExpr() {
+			return fLengthExpr;
 		}
 
 		/*
@@ -119,7 +120,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 			 * fFirstIndex ) ); fLengthText.setText( String.valueOf( fLength ) ); }
 			 */
 			fFirstIndexText.setText( String.valueOf( fFirstIndex ) );
-			fLengthText.setText( String.valueOf( fLength ) );
+			fLengthText.setText( fLengthExpr );
 		}
 
 		protected Label getErrorMessageLabel() {
@@ -174,12 +175,10 @@ public class CastToArrayActionHandler extends AbstractHandler {
 			if ( firstIndex.length() == 0 ) {
 				message = ActionMessages.getString( "CastToArrayActionDelegate.3" ); //$NON-NLS-1$
 				enabled = false;
-			}
-			else {
+			} else {
 				try {
 					Integer.parseInt( firstIndex );
-				}
-				catch( NumberFormatException e ) {
+				} catch( NumberFormatException e ) {
 					message = ActionMessages.getString( "CastToArrayActionDelegate.4" ); //$NON-NLS-1$
 					enabled = false;
 				}
@@ -188,20 +187,6 @@ public class CastToArrayActionHandler extends AbstractHandler {
 					if ( lengthText.length() == 0 ) {
 						message = ActionMessages.getString( "CastToArrayActionDelegate.5" ); //$NON-NLS-1$
 						enabled = false;
-					}
-					else {
-						int length = -1;
-						try {
-							length = Integer.parseInt( lengthText );
-						}
-						catch( NumberFormatException e ) {
-							message = ActionMessages.getString( "CastToArrayActionDelegate.6" ); //$NON-NLS-1$
-							enabled = false;
-						}
-						if ( enabled && length < 1 ) {
-							message = ActionMessages.getString( "CastToArrayActionDelegate.7" ); //$NON-NLS-1$
-							enabled = false;
-						}
 					}
 				}
 			}
@@ -221,21 +206,19 @@ public class CastToArrayActionHandler extends AbstractHandler {
 				String lengthText = fLengthText.getText().trim();
 				try {
 					fFirstIndex = Integer.parseInt( firstIndex );
-					fLength = Integer.parseInt( lengthText );
-				}
-				catch( NumberFormatException e ) {
+					fLengthExpr = lengthText;
+				} catch( NumberFormatException e ) {
 					fFirstIndex = 0;
-					fLength = 0;
+					fLengthExpr = ""; //$NON-NLS-1$
 				}
-			}
-			else {
+			} else {
 				fType = null;
 			}
 			super.buttonPressed( buttonId );
 		}
 	}
 
-	private ICastToArray[] fCastableItems = new ICastToArray[0];
+	private ICastToArray2[] fCastableItems = new ICastToArray2[0];
 
 	private IStatus fStatus = null;
 
@@ -279,12 +262,12 @@ public class CastToArrayActionHandler extends AbstractHandler {
 
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		ICastToArray[] castableItems = getCastToArray(evaluationContext);
+		ICastToArray2[] castableItems = getCastToArray(evaluationContext);
 		setBaseEnabled(castableItems.length > 0);
 		setCastToArray(castableItems);
 	}
 	
-	private ICastToArray[] getCastToArray(Object evaluationContext) {
+	private ICastToArray2[] getCastToArray(Object evaluationContext) {
 		List<ICastToArray> castableItems = new ArrayList<ICastToArray>();
 	    if (evaluationContext instanceof IEvaluationContext) {
 	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
@@ -300,14 +283,14 @@ public class CastToArrayActionHandler extends AbstractHandler {
 				}
 			}
 		}
-	    return castableItems.toArray(new ICastToArray[castableItems.size()]);
+	    return castableItems.toArray(new ICastToArray2[castableItems.size()]);
 	}
 
-	protected ICastToArray[] getCastToArray() {
+	protected ICastToArray2[] getCastToArray() {
 		return fCastableItems;
 	}
 
-	protected void setCastToArray( ICastToArray[] castableItems ) {
+	protected void setCastToArray( ICastToArray2[] castableItems ) {
 		fCastableItems = castableItems;
 	}
 
@@ -319,14 +302,14 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		fStatus = status;
 	}
 
-	protected void doAction( ICastToArray[] castableItems ) throws DebugException {
+	protected void doAction( ICastToArray2[] castableItems ) throws DebugException {
 		String currentType = castableItems[0].getCurrentType().trim();
-		CastToArrayDialog dialog = new CastToArrayDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType, 0, 1 );
+		CastToArrayDialog dialog = new CastToArrayDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType, 0, "1" );
 		if ( dialog.open() == Window.OK ) {
 			int firstIndex = dialog.getFirstIndex();
-			int lastIndex = dialog.getLength();
-			for ( ICastToArray castableItem : castableItems ) {
-				castableItem.castToArray( firstIndex, lastIndex );
+			String lengthExpr = dialog.getLengthExpr();
+			for ( ICastToArray2 castableItem : castableItems ) {
+				castableItem.castToArray( firstIndex, lengthExpr );
 			}
 			if ( getSelectionProvider() != null )
 				getSelectionProvider().setSelection( new StructuredSelection( castableItems ) );

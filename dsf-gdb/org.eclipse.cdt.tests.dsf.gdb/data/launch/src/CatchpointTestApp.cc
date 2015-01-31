@@ -11,10 +11,10 @@ int main() {
 			std::cout << "Exception caught" << std::endl;
 		}
 	}
-	
+
 	// For setting a catchpoint while target is running
 	std::cout << "Sleeping..." << std::endl;
-	SLEEP(2);
+	SLEEP(2); // LINE_NUMBER_SLEEP_CALL
 	std::cout << "...awake!" << std::endl;
 	try {
 		std::cout << "Throwing exception" << std::endl;
@@ -23,6 +23,6 @@ int main() {
 	catch (int exc) {
 		std::cout << "Exception caught" << std::endl;
 	}
-		
+
 	return 0;
 }

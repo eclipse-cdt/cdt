@@ -29,7 +29,7 @@ public interface ICastToArray extends ICastToType {
 	 *  
 	 * @param startIndex the index of the first element of the array. 0 means that 
 	 * the original element is the first member of the array. 
-	 * @param length tha array size
+	 * @param length the array size
 	 * @throws DebugException
 	 */
 	void castToArray( int startIndex, int length ) throws DebugException;

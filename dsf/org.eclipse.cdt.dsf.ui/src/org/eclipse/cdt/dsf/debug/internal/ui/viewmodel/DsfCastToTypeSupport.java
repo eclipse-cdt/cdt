@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.debug.core.model.ICastToArray;
+import org.eclipse.cdt.debug.core.model.ICastToArray2;
 import org.eclipse.cdt.debug.core.model.ICastToType;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -55,7 +56,7 @@ public class DsfCastToTypeSupport  {
     /** expression memento to casting context (TODO: persist these; bug 228301)*/
     private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<String, CastInfo>();
 
-    public class CastImplementation extends PlatformObject implements ICastToArray  {
+    public class CastImplementation extends PlatformObject implements ICastToArray2 {
 		private final IExpressionDMContext exprDMC;
 		private String memento;
 
@@ -155,16 +156,15 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#cast(java.lang.String)
 		 */
-	    @Override
-        public void cast(String type) throws DebugException {
-        	throwIfNotValid();
-        	
-        	CastInfo currentContext = fCastedExpressionStorage.get(memento);
-        	
-        	updateCastInformation(type, 
-        			currentContext != null ? currentContext.getArrayStartIndex() : 0, 
-        			currentContext != null ? currentContext.getArrayCount() : 0);
-        	
+		@Override
+		public void cast(String type) throws DebugException {
+			throwIfNotValid();
+
+			CastInfo currentContext = fCastedExpressionStorage.get(memento);
+
+			updateCastInformation(type,
+				currentContext != null ? currentContext.getArrayStartIndex() : 0,
+				currentContext != null ? currentContext.getLengthExpr() : null);
 		}
 
         /*
@@ -203,22 +203,29 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(int, int)
 		 */
-	    @Override
+		@Override
 		public void castToArray(int startIndex, int length)
 				throws DebugException {
+			String lengthExpr = Integer.toString(length);
+			castToArray(startIndex, lengthExpr);
+		}
+
+		@Override
+		public void castToArray(int startIndex, String lengthExpr)
+				throws DebugException {
 			throwIfNotValid();
-        	
+
 			CastInfo currentContext = fCastedExpressionStorage.get(memento);
-			
-        	updateCastInformation(currentContext != null ? currentContext.getTypeString() : null, 
-        			startIndex,
-        			length);
+
+			updateCastInformation(
+					currentContext != null ? currentContext.getTypeString()
+							: null, startIndex, lengthExpr);
 		}
 
 		private void updateCastInformation(
 				String type, int arrayStartIndex, 
-				int arrayCount) {
-			final CastInfo info = new CastInfo(type, arrayStartIndex, arrayCount);
+				String lengthExpr) {
+			final CastInfo info = new CastInfo(type, arrayStartIndex, lengthExpr);
 			fCastedExpressionStorage.put(memento, info);
 		    fireExpressionChangedEvent(exprDMC);
 		}

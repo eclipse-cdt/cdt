@@ -1761,7 +1761,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		if (exprDMC instanceof MIExpressionDMC && castInfo != null) {
 			String castType = castInfo.getTypeString();
 			String castExpression = exprDMC.getExpression();
-			int castingLength = castInfo.getArrayCount(); 
+			String castingLengthExpr = castInfo.getLengthExpr();
 			int castingIndex = castInfo.getArrayStartIndex();
 		 
 			// cast to type 
@@ -1773,12 +1773,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			}	
 			
 			// cast to array (can be in addition to cast to type) 
-			if (castingLength > 0) {
+			if (castingLengthExpr != null) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("*("); //$NON-NLS-1$
 				buffer.append('(').append(castExpression).append(')');
 				buffer.append('+').append(castingIndex).append(')');
-				buffer.append('@').append(castingLength);
+				buffer.append('@').append(castingLengthExpr);
 				castExpression = buffer.toString();
 			}
 			

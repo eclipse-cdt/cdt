@@ -26,7 +26,7 @@ public interface IExpressions2 extends IExpressions {
 	 */
 	public static class CastInfo {
 		private final String typeString;
-		private final int arrayCount;
+		private final String lengthExpr;
 		private final int arrayStart;
 
 		/**
@@ -36,11 +36,22 @@ public interface IExpressions2 extends IExpressions {
 		 * @param arrayCount if > 0, indicates to show [arrayStart ... arrayStart+arrayCount) as child expressions
 		 */
 		public CastInfo(String typeString, int arrayStart, int arrayCount) {
+			this(typeString, arrayStart, Integer.toString(arrayCount));
+		}
+
+		/**
+		 * Create an instance of casting information
+		 * @param typeString if not <code>null</code>, the C/C++ type to which to cast the expression (e.g. "char**")
+		 * @param arrayStart if arrayCount > 0, the start index for viewing contents of the expression as an array
+		 * @param lengthExpr an expression representing the number of elements to show
+		 * @since 2.6
+		 */
+		public CastInfo(String typeString, int arrayStart, String lengthExpr) {
 			this.typeString = typeString;
 			this.arrayStart = arrayStart;
-			this.arrayCount = arrayCount;
+			this.lengthExpr = lengthExpr;
 		}
-		
+
 		/**
 		 * Create an instance of casting information for casting to type (only)
 		 * @param typeString must be non-<code>null</code>; the C/C++ type to which to cast the expression (e.g. "char**")
@@ -49,7 +60,8 @@ public interface IExpressions2 extends IExpressions {
 			if (typeString == null)
 				throw new IllegalArgumentException();
 			this.typeString = typeString;
-			this.arrayStart = this.arrayCount = 0;
+			this.arrayStart = 0;
+			this.lengthExpr = null;
 		}
 		
 		
@@ -59,11 +71,19 @@ public interface IExpressions2 extends IExpressions {
 		 * @param arrayCount must be > 0; indicates to show [arrayStart ... arrayStart+arrayCount) as child expressions
 		*/
 		public CastInfo(int arrayStart, int arrayCount) {
-			if (arrayCount <= 0)
-				throw new IllegalArgumentException();
+			this(arrayStart, Integer.toString(arrayCount));
+		}
+
+		/**
+		 * Create an instance of casting information for showing as an array (only)
+		 * @param arrayStart the start index for viewing contents of the expression as an array
+		 * @param lengthExpr an expression representing the number of elements to show
+		 * @since 2.6
+		*/
+		public CastInfo(int arrayStart, String lengthExpr) {
 			this.typeString = null;
 			this.arrayStart = arrayStart;
-			this.arrayCount = arrayCount;
+			this.lengthExpr = lengthExpr;
 		}
 
 		/* (non-Javadoc)
@@ -73,7 +93,7 @@ public interface IExpressions2 extends IExpressions {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + arrayCount;
+			result = prime * result + lengthExpr != null ? lengthExpr.hashCode() : 0;
 			result = prime * result + arrayStart;
 			result = prime * result
 					+ ((typeString == null) ? 0 : typeString.hashCode());
@@ -92,7 +112,7 @@ public interface IExpressions2 extends IExpressions {
 			if (getClass() != obj.getClass())
 				return false;
 			CastInfo other = (CastInfo) obj;
-			if (arrayCount != other.arrayCount)
+			if (!lengthExpr.equals(other.lengthExpr))
 				return false;
 			if (arrayStart != other.arrayStart)
 				return false;
@@ -118,16 +138,29 @@ public interface IExpressions2 extends IExpressions {
 		 * @return the index of the first element of the array. 0 means that 
 		 * the original element is the first member of the array. This may be negative, too.
 		 */
-		public int getArrayStartIndex(){
+		public int getArrayStartIndex() {
 			return arrayStart;
 		}
-		
+
 		/**
 		 * Get the number of elements to show when viewing children as an array.
 		 * @return the array size, or <= 0 if not viewing as an array
 		 */
-		public int getArrayCount(){
-			return arrayCount;
+		public int getArrayCount() {
+			try {
+				return Integer.parseInt(this.lengthExpr);
+			} catch (NumberFormatException e) {
+				return 0;
+			}
+		}
+
+		/**
+		 * Get the expression representing the number of elements to display.
+		 * @return the expression representing the length, possibly null
+		 * @since 2.6
+		 */
+		public String getLengthExpr() {
+			return this.lengthExpr;
 		}
 	}
 	

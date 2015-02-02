@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_c5a77807",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T02:08:41Z",
+      "side": 1,
+      "message": "Yes, looks like you are right. Good job!\nPlease remove note :)",
+      "revId": "79335d5d0075e902556f4498cf7cba13f33f6e26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

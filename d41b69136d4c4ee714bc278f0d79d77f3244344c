@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_cd5f9eba",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T19:23:19Z",
+      "side": 1,
+      "message": "2015\nThe updating of the dates no longer happens automatically, so we have to do it by hand.",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_8d4636f9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T19:23:19Z",
+      "side": 1,
+      "message": "Smart optimization!",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_f0fd15a5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T19:23:19Z",
+      "side": 1,
+      "message": "I\u0027m not sure if this \"private\" has any impact.  Is there any reason to put private here and public for the two methods below?  I don\u0027t mind either way, but I wonder if I\u0027m not understanding something?",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_f024f562",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T19:23:19Z",
+      "side": 1,
+      "message": "Another nice optimization.  I had to think about it for a while :)\n\nCan you put a comment that we don\u0027t actually need to fetch the frames from GDB in this case but can create them ourselves, as long as we known how many they are, which is why we check the depth",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_b08eedb6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T19:23:19Z",
+      "side": 1,
+      "message": "Would it be worth optimizing even further and call getStackDepth() here since we don\u0027t actually need the real frames?  getStackDepth() is already coded to use stack-list-frames if GDB fails to return the depth, so I think it would be efficient, even in the error case.\n\nThe side effect I can see is that we won\u0027t be caching the actual frames here anymore (in handleSuccess()), but if we don\u0027t need to use a heavier command, we probably shouldn\u0027t.\n\nBut you\u0027ve already optimized things quite a bit, so we can leave this as is if you prefer, or do it in another commit.",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_f08875ab",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T19:23:19Z",
+      "side": 1,
+      "message": "Can you put a comment that we must update the cache first, as it will be used when setting the RequestMonitor",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

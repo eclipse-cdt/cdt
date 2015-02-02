@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_259924d2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1362,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-02T01:52:37Z",
+      "side": 1,
+      "message": "This message is missing something.  But since we now use assertEquals, we don\u0027t need to put what was expected and what was received, the method will do it for us.",
+      "revId": "59854a48cd5c4cf833066a53a48f14bc20ce93bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

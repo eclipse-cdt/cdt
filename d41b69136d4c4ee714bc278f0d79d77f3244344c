@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27080763_c1bbe5b8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-03T14:55:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27080763_cd5f9eba",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27080763_8d4636f9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 5
@@ -47,6 +65,24 @@
       "writtenOn": "2015-02-02T19:23:19Z",
       "side": 1,
       "message": "I\u0027m not sure if this \"private\" has any impact.  Is there any reason to put private here and public for the two methods below?  I don\u0027t mind either way, but I wonder if I\u0027m not understanding something?",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_81da7d12",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-03T14:55:39Z",
+      "side": 1,
+      "message": "No it should be public (assuming class is private itself)",
+      "parentUuid": "27080763_f0fd15a5",
       "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "27080763_a1ece1b7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-03T14:55:39Z",
+      "side": 1,
+      "message": "Yes, we should be calling get depth instead but that could have change backend interactions a lot and could have exposed some more bugs which I was not ready to investigate. But I can do it now since we have more soaking time will M6",
+      "parentUuid": "27080763_b08eedb6",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27080763_f08875ab",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
         "patchSetId": 5
@@ -98,6 +152,24 @@
       "writtenOn": "2015-02-02T19:23:19Z",
       "side": 1,
       "message": "Can you put a comment that we must update the cache first, as it will be used when setting the RequestMonitor",
+      "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_81f1dd8c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIStack.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-03T14:55:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27080763_f08875ab",
       "revId": "d41b69136d4c4ee714bc278f0d79d77f3244344c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

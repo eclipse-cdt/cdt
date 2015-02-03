@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_82f27c90",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/AccessContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-03T23:44:42Z",
+      "side": 1,
+      "message": "Remove redundant parentheses around the second condition.",
+      "range": {
+        "startLine": 305,
+        "startChar": 51,
+        "endLine": 305,
+        "endChar": 87
+      },
+      "revId": "07b5ae7d0c4484309a4040978c68cc4a1d210ed6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_22c6303e",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1478,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-03T23:44:42Z",
+      "side": 1,
+      "message": "Add indentation for readability.",
+      "range": {
+        "startLine": 1478,
+        "startChar": 4,
+        "endLine": 1478,
+        "endChar": 12
+      },
+      "revId": "07b5ae7d0c4484309a4040978c68cc4a1d210ed6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

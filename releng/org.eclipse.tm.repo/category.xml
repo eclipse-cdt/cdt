@@ -30,6 +30,12 @@
    <feature url="features/org.eclipse.tm.terminal.core.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.core.sdk" version="0.0.0">
       <category name="tm_37_main"/>
    </feature>
+   <feature url="features/org.eclipse.tm.terminal.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.feature" version="0.0.0">
+      <category name="tm_37_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.remote.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.sdk.feature" version="0.0.0">
+      <category name="tm_37_main"/>
+   </feature>
    
    <category-def name="tm_37_main" label="TM Terminal and RSE 3.7 Main Features">
       <description>

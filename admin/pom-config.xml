@@ -62,6 +62,7 @@
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
         <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
+        <remote-site>http://download.eclipse.org/tools/ptp/updates/remote/1.1.0</remote-site>
         <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
       </properties>
@@ -85,6 +86,11 @@
         <repository>
             <id>cdt</id>
             <url>${cdt-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>remote</id>
+            <url>${remote-site}</url>
             <layout>p2</layout>
         </repository>
         <repository>

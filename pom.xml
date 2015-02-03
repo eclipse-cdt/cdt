@@ -99,6 +99,7 @@
         <module>terminal/plugins/org.eclipse.tm.terminal.telnet</module>
         <module>terminal/plugins/org.eclipse.tm.terminal.view</module>
         <module>terminal/plugins/org.eclipse.tm.terminal.local</module>
+        <module>terminal/plugins/org.eclipse.tm.terminal.remote</module>
         <module>terminal/features/org.eclipse.tm.terminal-feature</module>
         <module>terminal/features/org.eclipse.tm.terminal.serial-feature</module>
         <module>terminal/features/org.eclipse.tm.terminal.ssh-feature</module>
@@ -108,6 +109,8 @@
         <module>terminal/features/org.eclipse.tm.terminal.sdk-feature</module>
         <module>terminal/features/org.eclipse.tm.terminal.local-feature</module>
         <module>terminal/features/org.eclipse.tm.terminal.local.sdk-feature</module>
+        <module>terminal/features/org.eclipse.tm.terminal.remote-feature</module>
+        <module>terminal/features/org.eclipse.tm.terminal.remote.sdk-feature</module>
         
         <module>wince/org.eclipse.rse.wince-feature</module>
         <module>wince/org.eclipse.rse.subsystems.wince</module>

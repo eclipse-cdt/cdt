@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,7 @@ implements IStack, ICachingService {
 	private CommandFactory fCommandFactory;
 
 	/**
-	 * Class to track stack depth requests for our internal cache
+	 * Class to track stack depth and debug frames for our internal cache
 	 */
 	private class FramesCacheInfo {
 		// If this set to true our knowledge of stack depths is limited to current depth, i.e
@@ -251,7 +251,25 @@ implements IStack, ICachingService {
 	}
 
 	/**
-	 * A HashMap for our StackDepth cache, that can clear based on a context.
+	   A Map of threadId -> FramesCacgeInfo, that can clear based on a context.
+	   We use this cache for few reasons:
+	   <br/>
+	   First, is two commands such as
+	   <pre>
+	   -stack-info-depth 11
+	   -stack-info-depth 2
+	   </pre>
+	   would both be sent to GDB because the command cache sees them as different.
+	   This cache allows us to know that if we already ask for a stack depth
+	   we can potentially re-use the answer.
+	   <br/>
+	   Same applicable for -stack-list-frames command with diffrent limits. As well as stack depth
+	   can be deducted from frames-list, so we don't need to ask gdb for it again.
+	   <p/>
+	   Second reason if gdb is unreliable when it comes to returning frames. MI protocol only allows to reply
+	   with data or with error. When gdb is unwinding sometimes it gets both, and while console CLI protocol has no problem
+	   with that for MI gdb replies randomly sometimes with data, sometimes with error. If we cache good data it will
+	   eliminate problem with bad data on subsequent invocations. We don't cache errors.
 	 */
 	@SuppressWarnings("serial")
 	private class FramesCache extends HashMap<Integer, FramesCacheInfo> {
@@ -264,7 +282,7 @@ implements IStack, ICachingService {
 			};
 		}
 
-		private FramesCacheInfo getThreadFramesCache(int threadId) {
+		public FramesCacheInfo getThreadFramesCache(int threadId) {
 			FramesCacheInfo info = get(threadId);
 			if (info == null) {
 				put(threadId, info = new FramesCacheInfo());
@@ -290,12 +308,6 @@ implements IStack, ICachingService {
 		}
 	}
 
-	// Two commands such as
-	//  -stack-info-depth 11
-	//  -stack-info-depth 2
-	// would both be sent to GDB because the command cache sees them as different.
-	// This stackDepthCache allows us to know that if we already ask for a stack depth
-	// we can potentially re-use the answer.
 	private FramesCache fFramesCache = new FramesCache();
 
 	private MIStoppedEvent fCachedStoppedEvent;
@@ -447,7 +459,6 @@ implements IStack, ICachingService {
 
 	@Override
 	public void getFrames(final IDMContext ctx, final int startIndex, final int endIndex, final DataRequestMonitor<IFrameDMContext[]> rm) {
-
 		if (startIndex < 0 || endIndex > 0 && endIndex < startIndex) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid stack frame range [" + startIndex + ',' + endIndex + ']', null)); //$NON-NLS-1$
 			rm.done();
@@ -482,30 +493,26 @@ implements IStack, ICachingService {
 		}
 
 		// if requested stack limit is bigger then currently cached this call will return -1
+		final int maxDepth = endIndex > 0 ? endIndex + 1 : -1;
 		int depth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getStackDepth(
-				endIndex > 0 ? endIndex + 1 : -1);
+				maxDepth);
 		if (depth > 0) { // our stack depth cache is good so we can use it to fill levels array
-			rm.setData(getDMFrames(execDmc, startIndex, endIndex));
+			rm.setData(getDMFrames(execDmc, startIndex, endIndex, depth));
 			rm.done();
 			return;
 		}
-
-		fMICommandCache.execute(
-				createMIStackListFrames(execDmc, startIndex, endIndex), //
-				new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) {
-					@Override
-					protected void handleError() {
-						// this command does not actually use frames but only return array of levels,
-						// lets just fake it based on know stack depth
-						rm.done(getDMFrames(execDmc, startIndex, endIndex, DEFAULT_STACK_DEPTH));
-					}
-
-					@Override
-					protected void handleSuccess() {
-						fFramesCache.update(execDmc.getThreadId(), getData());
-						rm.done(getDMFrames(execDmc, startIndex, endIndex));
-					}
-				});
+		getStackDepth(execDmc, maxDepth, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+			@Override
+			protected void handleCompleted() {
+				// This function does not actually use debug frames but only returns array of levels,
+				// we will use cached stack depth to populate this array,
+				// getStackDepth call would have updated cache for us.
+				// We use same handler on success or error, since gdb is unreliable when comes to frame retrieval
+				// we will return frames array even if we get error when attempting to get stack depth.
+				int stackDepth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getValidStackDepth();
+				rm.done(getDMFrames(execDmc, startIndex, endIndex, stackDepth));
+			}
+		});
 	}
 
 	private IFrameDMContext[] getDMFrames(final IMIExecutionDMContext execDmc, int startIndex,
@@ -521,12 +528,6 @@ implements IStack, ICachingService {
 			frameDMCs[i] = createFrameDMContext(execDmc, i + startIndex);
 		}
 		return frameDMCs;
-	}
-
-	private IFrameDMContext[] getDMFrames(final IMIExecutionDMContext execDmc, int startIndex,
-			int endIndex) {
-		int stackDepth = fFramesCache.getThreadFramesCache(execDmc.getThreadId()).getValidStackDepth();
-		return getDMFrames(execDmc, startIndex, endIndex, stackDepth);
 	}
 
 	private ICommand<MIStackListFramesInfo> createMIStackListFrames(final IMIExecutionDMContext execDmc) {

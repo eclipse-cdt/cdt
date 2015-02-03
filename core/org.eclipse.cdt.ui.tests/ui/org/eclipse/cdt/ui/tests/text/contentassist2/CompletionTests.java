@@ -1474,6 +1474,21 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertContentAssistResults(fCursorOffset, expected, true, DISPLAY);
 	}
 
+	// struct Wrapper {
+	// 	template<typename T>
+	// 	struct A {
+	// 		static void test();
+	// 	};
+	//
+	// 	struct B : A<B> {
+	// 		void run(){ te/*cursor*/ }
+	// 	};
+	// };
+	public void testTemplateInstanceMemberAccess_459047() throws Exception {
+		final String[] expected = { "test(void)" };
+		assertContentAssistResults(fCursorOffset, expected, true, ID);
+	}
+
 	//	void foo() { Specialization<int, /*cursor*/
 	public void testTemplateArgumentList() throws Exception {
 		setCommaAfterFunctionParameter(CCorePlugin.INSERT);

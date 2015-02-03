@@ -16,4 +16,4 @@ Export-Package: org.eclipse.rse.internal.services.local;x-friends:="org.eclipse.
  org.eclipse.rse.internal.services.local.processes;x-friends:="org.eclipse.rse.subsystems.processes.local",
  org.eclipse.rse.internal.services.local.search;x-friends:="org.eclipse.rse.subsystems.files.local",
  org.eclipse.rse.internal.services.local.shells;x-friends:="org.eclipse.rse.subsystems.shells.local"
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

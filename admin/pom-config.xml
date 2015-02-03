@@ -10,7 +10,7 @@
 
     <groupId>org.eclipse.tm</groupId>
     <artifactId>org.eclipse.tm.maven-config</artifactId>
-    <version>3.8.0-SNAPSHOT</version> 
+    <version>4.0.0-SNAPSHOT</version> 
     <packaging>pom</packaging>
     <name>Target Management, Maven Configuration Master</name>
 

@@ -301,12 +301,12 @@ public class AccessContext {
 		}
 		if (maxdepth > 0) {
 			for (ICPPBase cppBase : ClassTypeHelper.getBases(derived, point)) {
-				IBinding base= cppBase.getBaseClass();
-				if (base instanceof ICPPSpecialization) {
+				IBinding base = cppBase.getBaseClass();
+				if (!(target instanceof ICPPSpecialization) && base instanceof ICPPSpecialization) {
 					base = ((ICPPSpecialization) base).getSpecializedBinding();
 				}
 				if (base instanceof ICPPClassType) {
-					ICPPClassType tbase= (ICPPClassType) base;
+					ICPPClassType tbase = (ICPPClassType) base;
 					if (tbase.isSameType(target)) {
 						return true;
 					}

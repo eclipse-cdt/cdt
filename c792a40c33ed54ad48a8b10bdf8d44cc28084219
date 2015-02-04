@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27080763_c8e5c553",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-04T16:35:55Z",
+      "side": 1,
+      "message": "Let\u0027s still return an IBreakpointDMContext and use a Query for the below",
+      "revId": "c792a40c33ed54ad48a8b10bdf8d44cc28084219",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_a8ea0120",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-04T16:35:55Z",
+      "side": 1,
+      "message": "Use a query instead",
+      "revId": "c792a40c33ed54ad48a8b10bdf8d44cc28084219",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27080763_08cfcdd6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIBreakpointsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-04T16:35:55Z",
+      "side": 1,
+      "message": "Query",
+      "revId": "c792a40c33ed54ad48a8b10bdf8d44cc28084219",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

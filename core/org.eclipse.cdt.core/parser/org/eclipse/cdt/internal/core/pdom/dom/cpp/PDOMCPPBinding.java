@@ -84,6 +84,6 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return PDOMCPPGlobalScope.INSTANCE;
+		return getLinkage().getGlobalScope();
 	}
 }

@@ -128,14 +128,6 @@ public class AST2TemplateTests extends AST2TestBase {
 		return parseAndCheckBindings(code, CPP);
 	}
 
-	protected IASTTranslationUnit parseAndCheckImplicitNameBindings() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, true);
-		NameCollector col = new NameCollector(true /* Visit implicit names */);
-		tu.accept(col);
-		assertNoProblemBindings(col);
-		return tu;
-	}
-
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code= getAboveComment();
 		return new BindingAssertionHelper(code, true);

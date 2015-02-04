@@ -8779,6 +8779,30 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 	
 	//	namespace std {
+	//		template<class E>
+	//		class initializer_list {
+	//		  const E* _array;
+	//		  long unsigned int _len;
+	//
+	//		  initializer_list(const E* array, int len) {}
+	//		};
+	//	}
+	//
+	//	template<typename T>
+	//	struct A {
+	//	  A(std::initializer_list<T> list) {}
+	//	};
+	//
+	//	struct B {
+	//	  int b;
+	//	};
+	//
+	//	A<B> waldo({{0}, {0}});	
+	public void testListInitialization_458679() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+	
+	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}
 	//	struct A {};

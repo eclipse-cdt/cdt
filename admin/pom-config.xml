@@ -52,7 +52,7 @@
 
         <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.git</tycho.scmUrl>
 
-        <tm-stream>luna</tm-stream>
+        <tm-stream>mars</tm-stream>
         <tm-zipfile>${project.artifactId}.zip</tm-zipfile>
         <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${tm-stream}/nightly</tm-install>
         <sdk-version>4.4</sdk-version>

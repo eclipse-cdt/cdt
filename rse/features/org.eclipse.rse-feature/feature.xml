@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse"
       label="%featureName"
-      version="3.7.0.qualifier"
+      version="4.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse"
       image="eclipse_update_120.jpg"
@@ -32,7 +32,7 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
    </url>
 
@@ -65,15 +65,6 @@
          id="org.eclipse.rse.telnet"
          version="0.0.0"
          search-location="both"/>
-
-<!-- Do not include the Terminals feature here. The Terminals feature
-     is superseeded by the TCF Terminals feature. All Terminals related
-     functionality is provided by the TCF project.
-   <includes
-         id="org.eclipse.rse.terminals"
-         version="0.0.0"
-         search-location="both"/>
--->
 
    <plugin
          id="org.eclipse.rse"

@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -340,6 +341,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	@Override
 	public IBTreeComparator getIndexComparator() {
 		return new FindBinding.DefaultBindingBTreeComparator(this);
+	}
+
+	@Override
+	public PDOMGlobalScope getGlobalScope() {
+		return PDOMCGlobalScope.INSTANCE;
 	}
 
 	@Override 

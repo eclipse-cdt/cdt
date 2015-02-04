@@ -180,9 +180,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return null;
 	}
 
-	abstract public PDOMNode getNode(long record, int nodeType) throws CoreException;
+	public abstract PDOMNode getNode(long record, int nodeType) throws CoreException;
 
 	public abstract IBTreeComparator getIndexComparator();
+
+	public abstract PDOMGlobalScope getGlobalScope();
 
 	public IBTreeComparator getNestedBindingsComparator() {
 		return new FindBinding.NestedBindingsBTreeComparator(this);

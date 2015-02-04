@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMExternalReferencesList;
-import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCGlobalScope;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.CoreException;
 
@@ -257,7 +256,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return PDOMCGlobalScope.INSTANCE;
+		return getLinkage().getGlobalScope();
 	}
 
 	@Override
@@ -271,7 +270,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return PDOMCGlobalScope.INSTANCE;
+		return getLinkage().getGlobalScope();
 	}
 
 	@Override

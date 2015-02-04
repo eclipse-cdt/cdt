@@ -136,6 +136,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -1052,6 +1053,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	@Override
 	public IBTreeComparator getIndexComparator() {
 		return new CPPFindBinding.CPPBindingBTreeComparator(this);
+	}
+
+	@Override
+	public PDOMGlobalScope getGlobalScope() {
+		return PDOMCPPGlobalScope.INSTANCE;
 	}
 
 	@Override

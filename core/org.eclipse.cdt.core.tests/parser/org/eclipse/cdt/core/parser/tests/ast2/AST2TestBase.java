@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -771,6 +773,14 @@ public class AST2TestBase extends BaseTestCase {
 			int limitTrivialInitializers) throws Exception {
 		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, limitTrivialInitializers);
 		NameCollector col = new NameCollector();
+		tu.accept(col);
+		assertNoProblemBindings(col);
+		return tu;
+	}
+	
+	final protected IASTTranslationUnit parseAndCheckImplicitNameBindings() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, true);
+		NameCollector col = new NameCollector(true /* Visit implicit names */);
 		tu.accept(col);
 		assertNoProblemBindings(col);
 		return tu;

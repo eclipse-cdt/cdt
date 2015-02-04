@@ -601,6 +601,11 @@ public class Conversions {
 					bestCost.setRank(Rank.NO_MATCH);
 				}
 			}
+			// This cost came from listInitializationSequence() with an std::initializer_list
+			// type as the list initialization target. From the point of view of the caller, 
+			// however, the target is the class type, not std::initializer_list, so update it
+			// accordingly.
+			bestCost.setListInitializationTarget(t);
 			return bestCost;
 		}
 

@@ -200,6 +200,35 @@ public class Cost {
 		if (cmp != 0) 
 			return cmp;
 		
+		// [over.ics.rank] p3.3:
+		// List-initialization sequence L1 is a better conversion sequence than
+		// list-initialization sequence L2 if 
+		if (fListInitializationTarget != null && other.fListInitializationTarget != null) {
+			//   - L1 converts to std::initializer_list<X> for some X and L2 does not,
+			//     or if not that,
+			IType initListType = Conversions.getInitListType(fListInitializationTarget);
+			IType otherInitListType = Conversions.getInitListType(other.fListInitializationTarget);
+			if (initListType != null && otherInitListType == null) {
+				return -1;
+			} else if (initListType == null && otherInitListType != null) {
+				return 1;
+			}
+			
+			//   - L1 converts to type "array of N1 T", L2 converts to type "array of
+			//     N2 T", and N1 is smaller than N2
+			if (fListInitializationTarget instanceof IArrayType && other.fListInitializationTarget instanceof IArrayType) {
+				IArrayType arrayType = (IArrayType) fListInitializationTarget;
+				IArrayType otherArrayType = (IArrayType) other.fListInitializationTarget;
+				if (arrayType.getType().isSameType(otherArrayType.getType())) {
+					Long size = arrayType.getSize().numericalValue();
+					Long otherSize = otherArrayType.getSize().numericalValue();
+					if (size != null && otherSize != null) {
+						return size.compareTo(otherSize);
+					}
+				}
+			}
+		}
+		
 		// rank is equal
 		if (rank == Rank.USER_DEFINED_CONVERSION) {
 			// 13.3.3.1.10
@@ -241,35 +270,7 @@ public class Cost {
 			if ((other.fQualificationAdjustments & qdiff) == 0)
 				return 1;
 		}		
-		
-		// [over.ics.rank] p3:
-		// List-initialization sequence L1 is a better conversion sequence than
-		// list-initialization sequence L2 if 
-		if (fListInitializationTarget != null && other.fListInitializationTarget != null) {
-			//   - L1 converts to std::initializer_list<X> for some X and L2 does not,
-			//     or if not that,
-			IType initListType = Conversions.getInitListType(fListInitializationTarget);
-			IType otherInitListType = Conversions.getInitListType(other.fListInitializationTarget);
-			if (initListType != null && otherInitListType == null) {
-				return -1;
-			} else if (initListType == null && otherInitListType != null) {
-				return 1;
-			}
-			
-			//   - L1 converts to type "array of N1 T", L2 converts to type "array of
-			//     N2 T", and N1 is smaller than N2
-			if (fListInitializationTarget instanceof IArrayType && other.fListInitializationTarget instanceof IArrayType) {
-				IArrayType arrayType = (IArrayType) fListInitializationTarget;
-				IArrayType otherArrayType = (IArrayType) other.fListInitializationTarget;
-				if (arrayType.getType().isSameType(otherArrayType.getType())) {
-					Long size = arrayType.getSize().numericalValue();
-					Long otherSize = otherArrayType.getSize().numericalValue();
-					if (size != null && otherSize != null) {
-						return size.compareTo(otherSize);
-					}
-				}
-			}
-		}
+
 		return 0;
 	}
 

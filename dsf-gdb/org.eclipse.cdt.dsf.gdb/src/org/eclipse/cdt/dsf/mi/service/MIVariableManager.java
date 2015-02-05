@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Monta Vista and others.
+ * Copyright (c) 2008, 2015 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *     Alvaro Sanchez-Leon (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *     Martin Schreiber - Bug 435606 - write unsigned variables (UINT32 and UINT64) in the binary format
+ *     Vladimir Prus (Mentor Graphics) - add MIVariableObject.getRawFields
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -75,6 +76,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInf
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDisplayHint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDisplayHint.GdbDisplayHint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVar;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarAssignInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarChange;
@@ -340,6 +342,12 @@ public class MIVariableManager implements ICommandControl {
 		
 	    // This id is the one used to search for this object in our hash-map
 	    private final VariableObjectId internalId;
+
+	    /** The raw MI value for this variable object
+		 * @since 4.6
+		 */
+	    private MITuple raw;
+
 	    // This is the name of the variable object, as given by GDB (e.g., var1 or var1.public.x)
 		private String gdbName = null;
 		// The current format of this variable object, within GDB
@@ -418,6 +426,15 @@ public class MIVariableManager implements ICommandControl {
 			resetValues();
 		}
 		
+		/** Return the raw fields reported via MI.
+		 *
+		 * This method can be used to obtain information from debugger that
+		 * is too special for a particular debugger or architecture to
+		 * be represented as fields or methods in this class.
+		 * @since 4.6
+		 */
+		public MITuple getRawFields() { return raw; }
+
 		public VariableObjectId getInternalId() { return internalId; }
 		public String getGdbName() { return gdbName; }
 		public String getCurrentFormat() {	return format; }
@@ -2048,6 +2065,9 @@ public class MIVariableManager implements ICommandControl {
 			boolean newHasMore = miVar.hasMore()
 					|| (miVar.isDynamic() && (miVar.getNumChild() == 0));
 			
+			assert miVar.getRaw() != null;
+			raw = miVar.getRaw();
+
 			setGdbName(miVar.getVarName());
 			setDisplayHint(miVar.getDisplayHint());
 			setExpressionData(
@@ -2928,12 +2948,8 @@ public class MIVariableManager implements ICommandControl {
 												drm.setData(
 														new ExprMetaGetVarInfo(
 																exprCtx.getRelativeExpression(),
-																varObj.isSafeToAskForAllChildren(),
-																getData().getChildrenCount(),
-																varObj.getType(),
-																varObj.getGDBType(),
-																!varObj.isComplex(),
-																varObj.getDisplayHint().isCollectionHint()));
+																varObj,
+																getData().getChildrenCount()));
 												drm.done();
 												processCommandDone(token, drm.getData());
 											}
@@ -2942,15 +2958,7 @@ public class MIVariableManager implements ICommandControl {
 								drm.setData(
 										new ExprMetaGetVarInfo(
 												exprCtx.getRelativeExpression(),
-												varObj.isSafeToAskForAllChildren(),
-												// We only provide the hint here.  It will be used for hasChildren()
-												// To obtain the correct number of children, the user should use
-												// IExpressions#getSubExpressionCount()
-												varObj.getNumChildrenHint(),
-												varObj.getType(),
-												varObj.getGDBType(),
-												!varObj.isComplex(),
-												varObj.getDisplayHint().isCollectionHint()));
+												varObj));
 								drm.done();
 								processCommandDone(token, drm.getData());
 							}

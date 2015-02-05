@@ -37,15 +37,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * exit policy.
  */
 public class FunctionCompletionProposal extends CCompletionProposal {
-	private boolean fHasParametersComputed= false;
+	private boolean fHasParametersComputed;
 	private boolean fHasParameters;
-	protected IParameter [] fFunctionParameters;
+	protected IParameter[] fFunctionParameters;
 	protected CContentAssistInvocationContext fContext;
 
 	public FunctionCompletionProposal(String replacementString, int replacementOffset, int replacementLength,
-			Image image, String displayString, String idString, int relevance, ITextViewer viewer, IFunction function, CContentAssistInvocationContext context) {
-		super(replacementString, replacementOffset, replacementLength, image, displayString, idString, relevance,
-				viewer);
+			Image image, String displayString, String idString, int relevance, ITextViewer viewer,
+			IFunction function, CContentAssistInvocationContext context) {
+		super(replacementString, replacementOffset, replacementLength, image, displayString,
+				idString, relevance, viewer);
 		fFunctionParameters = function.getParameters();
 		fContext = context;
 	}
@@ -63,8 +64,8 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 	}
 
 	/**
-	 * @return <code>true</code> if the method has any parameters, <code>false</code> if it has
-	 *         no parameters
+	 * Returns <code>true</code> if the method has any parameters, <code>false</code> if it has
+	 * no parameters.
 	 */
 	protected final boolean hasParameters() {
 		if (!fHasParametersComputed) {
@@ -75,28 +76,24 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 	}
 
 	private boolean computeHasParameters() {
-		return (fFunctionParameters != null && fFunctionParameters.length != 0);
+		return fFunctionParameters != null && fFunctionParameters.length != 0;
 	}
 
 	protected static class ExitPolicy implements IExitPolicy {
-
 		final char fExitCharacter;
 
 		public ExitPolicy(char exitCharacter) {
 			fExitCharacter = exitCharacter;
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
-		 */
 		@Override
 		public ExitFlags doExit(LinkedModeModel environment, VerifyEvent event, int offset, int length) {
-
 			if (event.character == fExitCharacter) {
-				if (environment.anyPositionContains(offset))
+				if (environment.anyPositionContains(offset)) {
 					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
-				else
+				} else {
 					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, true);
+				}
 			}
 
 			switch (event.character) {
@@ -127,8 +124,8 @@ public class FunctionCompletionProposal extends CCompletionProposal {
 				ui.setExitPosition(fTextViewer, exit, 0, Integer.MAX_VALUE);
 				ui.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
 				ui.enter();
-			} catch (BadLocationException x) {
-				CUIPlugin.log(x);
+			} catch (BadLocationException e) {
+				CUIPlugin.log(e);
 			}
 		}
 	}

@@ -468,10 +468,9 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException;
 	
 	/**
-	 * Return the completion node using the given index and parsing style at the given offset.
+	 * Returns the completion node using the given index and parsing style at the given offset.
 	 */
 	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException;	
-	
 	
 	/**
 	 * @deprecated use {@link #getSharedWorkingCopy(IProgressMonitor, IProblemRequestor)}, 

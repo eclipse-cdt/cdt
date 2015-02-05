@@ -213,7 +213,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 	
 	/**
-	 * Create the parser.
+	 * Creates the parser.
 	 * 
 	 * @param scanner  the IScanner to get tokens from
 	 * @param log  the parser log service

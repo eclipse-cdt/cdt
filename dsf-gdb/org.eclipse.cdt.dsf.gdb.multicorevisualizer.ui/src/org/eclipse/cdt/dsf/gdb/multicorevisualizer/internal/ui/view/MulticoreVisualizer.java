@@ -22,6 +22,7 @@
  *     Marc Dumais (Ericsson) - Bug 451392
  *     Marc Dumais (Ericsson) - Bug 453206
  *     Marc Dumais (Ericsson) - Bug 458076
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 459114 - override construction of the data model
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -33,7 +34,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -54,14 +58,15 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerL
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerModel;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerThread;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFDebugModel;
-import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFDebugModelListener;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFSessionState;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DebugViewUtils;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.IDSFTargetDataProxy;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
@@ -102,9 +107,7 @@ import org.eclipse.swt.widgets.Composite;
  * This visualizer uses the CDT Visualizer framework.
  */
 @SuppressWarnings("restriction")
-public class MulticoreVisualizer extends GraphicCanvasVisualizer
-    implements DSFDebugModelListener, IPinnable
-{	
+public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPinnable {
 	// --- constants ---
 	
 	/** Eclipse ID for this view */
@@ -117,6 +120,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 * The data model drawn by this visualizer.
 	 */
 	protected VisualizerModel fDataModel;
+	
+	/**
+	 * Proxy to the target data needed to build the model
+	 */
+	protected IDSFTargetDataProxy fTargetData;
 
 	/** Downcast reference to canvas. */
 	protected MulticoreVisualizerCanvas m_canvas;
@@ -226,6 +234,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Constructor. */
 	public MulticoreVisualizer()
 	{
+		fTargetData = new DSFDebugModel();
 	}
 	
 	/** Dispose method. */
@@ -259,7 +268,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 */
 	protected void initializeLoadMeterTimer() {
 		if (!m_loadMetersEnabled) return;
-		m_updateLoadMeterTimer = DSFDebugModel.getLoadTimer(m_sessionState, m_loadMeterTimerPeriod, this);		
+		m_updateLoadMeterTimer = getLoadTimer(m_sessionState, m_loadMeterTimerPeriod);		
 		// one-shot timer (re-scheduled upon successful triggering)
 		m_updateLoadMeterTimer.setRepeating(false); 
 	}
@@ -984,7 +993,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		// is the visualizer pinned? Then inhibit context change
 		if (isPinned())
 			return false;
-		
+		 
 		String sessionId = null;
 		IAdaptable debugContext = DebugUITools.getDebugContext();
 		if (debugContext instanceof IDMVMContext) {
@@ -1119,8 +1128,19 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getVisualizerModel() {
-		fDataModel = new VisualizerModel(m_sessionState.getSessionID());
-		DSFDebugModel.getCPUs(m_sessionState, this, fDataModel);
+		String sessionId = m_sessionState.getSessionID();
+		DsfSession session = DsfSession.getSession(sessionId);
+
+		if (session != null) {
+			fDataModel = new VisualizerModel(sessionId);
+			fTargetData.getCPUs(m_sessionState, new DataRequestMonitor<ICPUDMContext[]>(session.getExecutor(), null) {
+				@Override
+				protected void handleCompleted() {
+					ICPUDMContext[] cpuContexts = isSuccess() ? getData() : null;
+					getCPUsDone(cpuContexts, fDataModel);
+				}
+			});
+		}
 	}
 	
 	/** Invoked when getModel() request completes. */
@@ -1136,10 +1156,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	// --- DSFDebugModelListener implementation ---
 
 	/** Invoked when DSFDebugModel.getCPUs() completes. */
-	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getCPUsDone(ICPUDMContext[] cpuContexts, Object arg)
+	public void getCPUsDone(ICPUDMContext[] dCpuContexts, final Object arg)
 	{
+		ICPUDMContext[] cpuContexts = dCpuContexts;
+		
 		VisualizerModel model = (VisualizerModel) arg;
 		
 		if (cpuContexts == null || cpuContexts.length == 0) {
@@ -1152,7 +1173,24 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			model.getTodo().add(1);
 			
 			// Collect core data.
-			DSFDebugModel.getCores(m_sessionState, this, model);
+			fTargetData.getCores(m_sessionState, new ImmediateDataRequestMonitor<ICoreDMContext[]>(null) {
+				@Override
+				protected void handleCompleted() {
+					// Get Cores
+					ICoreDMContext[] coreContexts = isSuccess() ? getData() : null;
+					
+					ICPUDMContext cpu = null;
+					if (coreContexts != null && coreContexts.length > 0) {
+						// TODO: This keeps the functionality to the same level before change: 459114, 
+						// although it's noted that this does not cover the possibility to have multiple CPU's 
+						// within the list of resolved cores
+						cpu = DMContexts.getAncestorOfType(coreContexts[0], ICPUDMContext.class);
+					}
+
+					// Continue
+					getCoresDone(cpu, coreContexts, arg);
+				}
+			});
 		} else {
 			// save CPU contexts
 			m_cpuCoreContextsCache.addAll(Arrays.asList(cpuContexts));
@@ -1161,24 +1199,25 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			int count = cpuContexts.length;
 			model.getTodo().add(count);
 			
-			for (ICPUDMContext cpuContext : cpuContexts) {
+			for (final ICPUDMContext cpuContext : cpuContexts) {
 				int cpuID = Integer.parseInt(cpuContext.getId());
 				model.addCPU(new VisualizerCPU(cpuID));
 				
 				// Collect core data.
-				DSFDebugModel.getCores(m_sessionState, cpuContext, this, model);
+				fTargetData.getCores(m_sessionState, cpuContext, new ImmediateDataRequestMonitor<ICoreDMContext[]>(null) {
+					@Override
+					protected void handleCompleted() {
+						ICoreDMContext[] coreContexts = isSuccess() ? getData() : null;
+						getCoresDone(cpuContext, coreContexts, arg);
+					}
+				});
 			}
-			
 		}
 	}
-
 	
 	/** Invoked when getCores() request completes. */
-	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getCoresDone(ICPUDMContext cpuContext,
-							 ICoreDMContext[] coreContexts,
-							 Object arg)
+	public void getCoresDone(final ICPUDMContext cpuContext, ICoreDMContext[] coreContexts, final Object arg)
 	{
 		VisualizerModel model = (VisualizerModel) arg;
 
@@ -1196,12 +1235,19 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			int count = coreContexts.length;
 			model.getTodo().add(count);
 			
-			for (ICoreDMContext coreContext : coreContexts) {
+			for (final ICoreDMContext coreContext : coreContexts) {
 				int coreID = Integer.parseInt(coreContext.getId());
 				cpu.addCore(new VisualizerCore(cpu, coreID));
 				
 				// Collect thread data
-				DSFDebugModel.getThreads(m_sessionState, cpuContext, coreContext, this, model);
+				fTargetData.getThreads(m_sessionState, cpuContext, coreContext, new ImmediateDataRequestMonitor<IDMContext[]>(null) {
+					@Override
+					protected void handleCompleted() {
+						IDMContext[] threadContexts = isSuccess() ? getData() : null;
+						
+						getThreadsDone(cpuContext, coreContext, threadContexts, arg);
+					}
+				});
 			}			
 		}
 		
@@ -1212,12 +1258,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 
 	
 	/** Invoked when getThreads() request completes. */
-	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getThreadsDone(ICPUDMContext  cpuContext,
-							   ICoreDMContext coreContext,
+	public void getThreadsDone(final ICPUDMContext  cpuContext,
+							   final ICoreDMContext coreContext,
 							   IDMContext[] threadContexts,
-							   Object arg)
+							   final Object arg)
 	{
 		VisualizerModel model = (VisualizerModel) arg;
 		
@@ -1230,11 +1275,17 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			model.getTodo().add(count);
 
 			for (IDMContext threadContext : threadContexts) {
-				IMIExecutionDMContext execContext =
+				final IMIExecutionDMContext execContext =
 					DMContexts.getAncestorOfType(threadContext, IMIExecutionDMContext.class);
 				// Don't add the thread to the model just yet, let's wait until we have its data and execution state.
 				// Collect thread data
-				DSFDebugModel.getThreadData(m_sessionState, cpuContext, coreContext, execContext, this, model);
+				fTargetData.getThreadData(m_sessionState, cpuContext, coreContext, execContext, new ImmediateDataRequestMonitor<IThreadDMData>() {
+					@Override
+					protected void handleCompleted() {
+						IThreadDMData threadData = isSuccess() ? getData() : null;
+						getThreadDataDone(cpuContext, coreContext, execContext, threadData, arg);
+					}
+				});
 			}
 		}
 		
@@ -1244,22 +1295,35 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	}
 	
 	/** Invoked when getThreads() request completes. */
-	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getThreadDataDone(ICPUDMContext cpuContext,
-			                      ICoreDMContext coreContext,
-			                      IMIExecutionDMContext execContext,
-			                      IThreadDMData threadData,
-			                      Object arg)
+	public void getThreadDataDone(final ICPUDMContext cpuContext,
+			                      final ICoreDMContext coreContext,
+			                      final IMIExecutionDMContext execContext,
+			                      final IThreadDMData threadData,
+			                      final Object arg)
 	{
-
-		// Don't add the thread to the model just yet, let's wait until we have its execution state.
-		DSFDebugModel.getThreadExecutionState(m_sessionState, cpuContext, coreContext, execContext, threadData, this, arg);
+		// Get the frame data
+		fTargetData.getFrameData(m_sessionState, cpuContext, coreContext, execContext, threadData, new ImmediateDataRequestMonitor<IFrameDMData>() {
+			@Override
+			protected void handleCompleted() {
+				final IFrameDMData frameData = isSuccess() ? getData() : null;
+				
+				// Get the execution state
+				// Don't add the thread to the model just yet, let's wait until we have its execution state.
+				fTargetData.getThreadExecutionState(m_sessionState, cpuContext, coreContext, execContext, threadData, new ImmediateDataRequestMonitor<VisualizerExecutionState>() {
+					@Override
+					protected void handleCompleted() {
+						VisualizerExecutionState state = isSuccess() ? getData() : null;
+						getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, frameData, state, arg);
+					}
+				});
+				
+			}
+		});
 	}
 
 	
 	/** Invoked when getThreadExecutionState() request completes. */
-	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getThreadExecutionStateDone(ICPUDMContext cpuContext,
 			                                ICoreDMContext coreContext,
@@ -1311,7 +1375,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	
 	/** Updates the loads for all cpus and cores */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	@Override
 	public void updateLoads() {
 		if (m_cpuCoreContextsCache.isEmpty()) {
 			// not ready to get load info yet
@@ -1322,20 +1385,25 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			return;
 		}
 		
-		VisualizerModel model = fDataModel;
+		final VisualizerModel model = fDataModel;
 		
 		model.getLoadTodo().dispose();
 		// keep track of how many loads we expect
 		model.getLoadTodo().add(m_cpuCoreContextsCache.size());
 		
 		// ask load for each CPU and core
-		for (IDMContext context : m_cpuCoreContextsCache) {
-			DSFDebugModel.getLoad(m_sessionState, context, this, model);
+		for (final IDMContext context : m_cpuCoreContextsCache) {
+			fTargetData.getLoad(m_sessionState, context, new ImmediateDataRequestMonitor<ILoadInfo>(null) {
+				@Override
+				protected void handleCompleted() {
+					ILoadInfo loadInfo = isSuccess() ? getData() : null;
+					getLoadDone(context, loadInfo, model);
+				}
+			});
 		}
 	}
 	
 	/** Invoked when a getLoad() request completes. */
-	@Override
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getLoadDone(IDMContext context, ILoadInfo load, Object arg) 
 	{
@@ -1386,5 +1454,30 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			}
 		}
 	}
+	
+	private Timer getLoadTimer(final DSFSessionState sessionState, final int timeout) {
+		Timer t = new Timer(timeout) {
+			@Override
+			public void run() {
+				if (sessionState != null) {
+					DsfSession session = DsfSession.getSession(sessionState.getSessionID());
+					if (session != null) {
+						DsfExecutor executor = session.getExecutor();
+						if (executor != null) {
+							executor.execute(new Runnable() {
+								@Override
+								public void run() {
+									updateLoads();
+								}
+							});
+						}
+					}
+				}
+			}
+		};
+
+		return t;
+	}
+	
 }
 

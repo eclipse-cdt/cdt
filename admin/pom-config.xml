@@ -55,13 +55,13 @@
         <tm-stream>mars</tm-stream>
         <tm-zipfile>${project.artifactId}.zip</tm-zipfile>
         <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${tm-stream}/nightly</tm-install>
-        <sdk-version>4.4</sdk-version>
+        <sdk-version>4.5</sdk-version>
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
         <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
-        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
         <remote-site>http://download.eclipse.org/tools/ptp/updates/remote/1.1.0</remote-site>
         <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
@@ -131,7 +131,16 @@
                 <tm-stream>kepler</tm-stream>
                 <sdk-version>4.3</sdk-version>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
-                
+            </properties>
+        </profile>
+        <profile>
+            <!-- Eclipse 4.4.x (Luna) -->
+            <id>luna</id>
+            
+            <properties>
+                <tm-stream>luna</tm-stream>
+                <sdk-version>4.4</sdk-version>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
     </profiles>

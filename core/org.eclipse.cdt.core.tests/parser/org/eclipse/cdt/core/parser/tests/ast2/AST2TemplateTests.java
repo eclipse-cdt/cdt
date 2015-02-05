@@ -8177,7 +8177,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testUnqualifiedFunctionCallInTemplate_402498a() throws Exception {
 		parseAndCheckBindings();
 	}
-
+	
 	//	template <typename T>
 	//	auto foo(T t) -> decltype(bar(t));
 	//
@@ -8214,6 +8214,38 @@ public class AST2TemplateTests extends AST2TestBase {
 		// That's another bug for another day.
 		assertFalse(x.getType().isSameType(CommonTypes.int_));
 	}
+
+	//	void bar();
+	//
+	//	template <typename T>
+	//	void foo(T t) {
+	//	    bar(t);
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_458316a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	void bar();
+	//
+	//	template <typename T>
+	//	auto foo(T t) -> decltype(bar(t));
+	//
+	//	struct Cat { void meow(); };
+	//
+	//	namespace N
+	//	{
+	//	    struct S {};
+	//
+	//	    Cat bar(S);
+	//	}
+	//
+	//	int main() {
+	//	    foo(N::S()).meow();
+	//	}
+	public void testUnqualifiedFunctionCallInTemplate_458316b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 
 	//	template <typename>
 	//	struct no_type {};

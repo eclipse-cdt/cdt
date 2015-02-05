@@ -59,7 +59,7 @@
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
         <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
         <remote-site>http://download.eclipse.org/tools/ptp/updates/remote/1.1.0</remote-site>
@@ -130,6 +130,7 @@
             <properties>
                 <tm-stream>kepler</tm-stream>
                 <sdk-version>4.3</sdk-version>
+                <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
             </properties>
         </profile>
@@ -140,6 +141,7 @@
             <properties>
                 <tm-stream>luna</tm-stream>
                 <sdk-version>4.4</sdk-version>
+                <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>

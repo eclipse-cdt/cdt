@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPGlobalScope;
 import org.eclipse.cdt.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -110,7 +111,7 @@ public class QtPDOMLinkage extends PDOMLinkage {
 
 	@Override
 	public PDOMGlobalScope getGlobalScope() {
-		return null;
+		return PDOMCPPGlobalScope.INSTANCE;
 	}
 
 	// IBinding#getAdapter cannot create an instance of PDOMBinding because the Linkage is required.  This

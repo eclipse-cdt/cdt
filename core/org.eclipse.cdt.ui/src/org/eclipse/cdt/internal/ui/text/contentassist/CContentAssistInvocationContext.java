@@ -78,12 +78,17 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		@Override
 		protected IASTCompletionNode calculateValue() {
 			int offset = getParseOffset();
-			if (offset < 0) return null;
+			if (offset < 0)
+				return null;
 
 			ICProject proj= getProject();
-			if (proj == null) return null;
+			if (proj == null)
+				return null;
 
 			try {
+				if (fIndex != null)
+					throw new IllegalStateException("The method should not be called multiple times."); //$NON-NLS-1$
+
 				IIndexManager manager= CCorePlugin.getIndexManager();
 				fIndex = manager.getIndex(proj, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
 
@@ -201,18 +206,19 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * @param editor the editor that content assist is invoked in
 	 * @param isAutoActivated indicates whether content assist was auto-activated
 	 */
-	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor, boolean isCompletion, boolean isAutoActivated) {
+	public CContentAssistInvocationContext(ITextViewer viewer, int offset, IEditorPart editor,
+			boolean isCompletion, boolean isAutoActivated) {
 		super(viewer, offset);
 		Assert.isNotNull(editor);
 		fEditor= editor;
 		fIsCompletion= isCompletion;
 		fIsAutoActivated= isAutoActivated;
 		fTU = new Lazy<ITranslationUnit>() {
-				@Override
-				protected ITranslationUnit calculateValue() {
-					return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
-				}
-			};
+			@Override
+			protected ITranslationUnit calculateValue() {
+				return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
+			}
+		};
 	}
 	
 	/**
@@ -258,13 +264,13 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		
 	@Override
 	public IASTCompletionNode getCompletionNode() {
-		//for scalability
+		// For scalability.
 		if (fEditor != null && fEditor instanceof CEditor) {
-			CEditor editor = (CEditor)fEditor;
+			CEditor editor = (CEditor) fEditor;
 			
-			// check to make sure we should attempt local parsing completions... for remote projects
-			// we should not do this
-			if(!editor.shouldProcessLocalParsingCompletions()) {
+			// Check to make sure we should attempt local parsing completions... for remote projects
+			// we should not do this.
+			if (!editor.shouldProcessLocalParsingCompletions()) {
 				return null;
 			}
 			if (editor.isEnableScalablilityMode()) {

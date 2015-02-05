@@ -123,13 +123,12 @@ public interface ILanguage extends IAdaptable {
 			throws CoreException;
 	
 	/**
-	 * Return the AST completion node for the given offset.
+	 * Returns the AST completion node for the given offset.
 	 * @since 5.2
 	 */
 	public IASTCompletionNode getCompletionNode(FileContent reader, IScannerInfo scanInfo,
 			IncludeFileContentProvider fileCreator, IIndex index, IParserLogService log, int offset)
 			throws CoreException;	
-	
 	
 	/**
 	 * Used to override the default model building behavior for a translation unit.

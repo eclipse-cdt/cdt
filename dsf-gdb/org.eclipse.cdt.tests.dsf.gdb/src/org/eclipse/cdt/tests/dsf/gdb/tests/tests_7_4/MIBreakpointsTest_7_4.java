@@ -50,7 +50,6 @@ public class MIBreakpointsTest_7_4 extends MIBreakpointsTest_7_3 {
 
 		// Perform the test
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that no BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "

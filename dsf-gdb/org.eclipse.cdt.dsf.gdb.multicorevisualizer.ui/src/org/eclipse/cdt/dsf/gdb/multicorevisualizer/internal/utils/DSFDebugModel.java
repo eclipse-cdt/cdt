@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Tilera Corporation and others.
+ * Copyright (c) 2012, 2015 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Xavier Raynaud (Kalray) - Bug 431935
+ *     Alvaro Sanchez-Leon (Ericsson) - Bug 459114 - override construction of the data model
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -16,7 +17,7 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
@@ -44,8 +45,6 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.visualizer.ui.util.Timer;
 
 
 /** Debugger state information accessors.
@@ -59,49 +58,45 @@ import org.eclipse.cdt.visualizer.ui.util.Timer;
  *  by the callback method. This argument is ignored by the methods
  *  on this class, and is allowed to be null.
  */
-public class DSFDebugModel {
+public class DSFDebugModel implements IDSFTargetDataProxy {
 	
 	// --- static methods ---
-	
-	/** Requests list of CPUs.
-	 *  Calls back to getCPUsDone() on listener. */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getCPUs(DSFSessionState sessionState,
-							   final DSFDebugModelListener listener,
-							   final Object arg)
-	{
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getCPUs(DSFSessionState sessionState, final DataRequestMonitor<ICPUDMContext[]> rm) {
 		ICommandControlService controlService = sessionState.getService(ICommandControlService.class);
 		IGDBHardwareAndOS hwService = sessionState.getService(IGDBHardwareAndOS.class);
 		if (controlService == null || hwService == null) {
-			listener.getCPUsDone(null, arg);
+			rm.done(new ICPUDMContext[0]);
 			return;
 		}
-		
-		IHardwareTargetDMContext contextToUse = DMContexts.getAncestorOfType(controlService.getContext(),
-                                                                             IHardwareTargetDMContext.class);
-		hwService.getCPUs(contextToUse,
-			new ImmediateDataRequestMonitor<ICPUDMContext[]>() {
-				@Override
-				protected void handleCompleted() {
-					ICPUDMContext[] cpuContexts = getData();
-					if (! isSuccess()) cpuContexts = null;
-					listener.getCPUsDone(cpuContexts, arg);
+
+		IHardwareTargetDMContext contextToUse = DMContexts.getAncestorOfType(controlService.getContext(), IHardwareTargetDMContext.class);
+		hwService.getCPUs(contextToUse, new ImmediateDataRequestMonitor<ICPUDMContext[]>(rm) {
+			@Override
+			protected void handleCompleted() {
+				ICPUDMContext[] cpuContexts;
+				if (isSuccess()) {
+					cpuContexts = getData();
+				} else {
+					cpuContexts = new ICPUDMContext[0];
 				}
+
+				rm.done(cpuContexts);
 			}
-		);
-	}
-	
-	
-	/** Request load information for a single CPU or core */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getLoad(DSFSessionState sessionState,
+		});
+	}	
+
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getLoad(DSFSessionState sessionState,
 			final IDMContext context,
-			final DSFDebugModelListener listener,
-			final Object arg)
+			final DataRequestMonitor<ILoadInfo> rm)
 	{
 		IGDBHardwareAndOS2 hwService = sessionState.getService(IGDBHardwareAndOS2.class);
 		if (hwService == null) {
-			listener.getLoadDone(context, null, arg);
+			rm.setData(null);
+			rm.done();
 			return;
 		}
 		
@@ -109,33 +104,27 @@ public class DSFDebugModel {
 				new ImmediateDataRequestMonitor<ILoadInfo>() {
 					@Override
 					protected void handleCompleted() {
-						listener.getLoadDone(context, getData(), arg);
+						rm.done(getData());
 					}
 				}
 			);
 	}
-	
-	/** Requests list of Cores.
-	 *  Calls back to getCoresDone() on listener. */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getCores(DSFSessionState sessionState,
-							    DSFDebugModelListener listener,
-							    Object arg) 
-	{
-		getCores(sessionState, null, listener, arg);
+
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getCores(DSFSessionState sessionState, final DataRequestMonitor<ICoreDMContext[]> rm) {
+		getCores(sessionState, null, rm);
 	}
 
-	/** Requests list of Cores.
-	 *  Calls back to getCoresDone() on listener. */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getCores(DSFSessionState sessionState,
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getCores(DSFSessionState sessionState,
 								final ICPUDMContext cpuContext,
-							    final DSFDebugModelListener listener,
-							    final Object arg)
+							    final DataRequestMonitor<ICoreDMContext[]> rm)
 	{
 		IGDBHardwareAndOS hwService = sessionState.getService(IGDBHardwareAndOS.class);
 		if (hwService == null) {
-			listener.getCoresDone(cpuContext, null, arg);
+			rm.done(new ICoreDMContext[0]);
 			return;
 		}
 
@@ -156,29 +145,21 @@ public class DSFDebugModel {
 
 					if (!isSuccess() || coreContexts == null || coreContexts.length < 1) {
 						// Unable to get any core data
-						listener.getCoresDone(cpuContext, null, arg);
-						return;
+						rm.done(new ICoreDMContext[0]);
+					} else {
+						rm.done(coreContexts);						
 					}
-
-					ICPUDMContext cpuContextToUse = cpuContext;
-					if (cpuContextToUse == null) {
-						// If we didn't have a CPU context, lets use the ancestor of the first core context
-						cpuContextToUse = DMContexts.getAncestorOfType(coreContexts[0], ICPUDMContext.class);
-					}
-					listener.getCoresDone(cpuContextToUse, coreContexts, arg);
 				}
 			}
 		);
 	}
-	
-	/** Requests list of Threads.
-	 *  Calls back to getThreadsDone() on listener. */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getThreads(DSFSessionState sessionState,
+
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getThreads(DSFSessionState sessionState,
 								  final ICPUDMContext cpuContext,
 								  final ICoreDMContext coreContext,
-							      final DSFDebugModelListener listener,
-							      final Object arg)
+							      final DataRequestMonitor<IDMContext[]> rm)
 	{
 		// Get control DM context associated with the core
 		// Process/Thread Info service (GDBProcesses_X_Y_Z)
@@ -187,7 +168,7 @@ public class DSFDebugModel {
 		ICommandControlDMContext controlContext =
 				DMContexts.getAncestorOfType(coreContext, ICommandControlDMContext.class);
 		if (procService == null || controlContext == null) {
-			listener.getThreadsDone(cpuContext, coreContext, null, arg);
+			rm.done(new IDMContext[0]);
 			return;
 		}
 		
@@ -202,18 +183,18 @@ public class DSFDebugModel {
 					if (!isSuccess() || processContexts == null || processContexts.length < 1) {
 						// Unable to get any process data for this core
 						// Is this an issue? A core may have no processes/threads, right?
-						listener.getThreadsDone(cpuContext, coreContext, null, arg);
+						rm.done(new IDMContext[0]);
 						return;
 					}
 					
-					final ArrayList<IDMContext> threadContextsList = new ArrayList<IDMContext>();
+					final ArrayList<IDMContext> threadContextsList = new ArrayList<>();
 				
 					final ImmediateCountingRequestMonitor crm1 = new ImmediateCountingRequestMonitor(
 						new ImmediateRequestMonitor() {
 							@Override
 							protected void handleCompleted() {
 								IDMContext[] threadContexts = threadContextsList.toArray(new IDMContext[threadContextsList.size()]);
-								listener.getThreadsDone(cpuContext, coreContext, threadContexts, arg);
+								rm.done(threadContexts);
 							}
 						});
 					crm1.setDoneCount(processContexts.length);
@@ -271,21 +252,19 @@ public class DSFDebugModel {
 			}
 		);
 	}
-	
-	/** Requests data of a thread.
-	 *  Calls back to getThreadDataDone() on listener. */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getThreadData(DSFSessionState sessionState,
+
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getThreadData(DSFSessionState sessionState,
 			                         final ICPUDMContext cpuContext,
 			                         final ICoreDMContext coreContext,
-			                         final IMIExecutionDMContext execContext,
-			                         final DSFDebugModelListener listener,
-			                         final Object arg)
+			                         final IMIExecutionDMContext execContext, final DataRequestMonitor<IThreadDMData> rm)
 	{
 		IProcesses procService = sessionState.getService(IProcesses.class);
 
 		if (procService == null) {
-			listener.getThreadDataDone(cpuContext, coreContext, execContext, null, arg);
+			rm.setData(null);
+			rm.done();
 			return;
 		}
 
@@ -295,81 +274,77 @@ public class DSFDebugModel {
 			@Override
 			protected void handleCompleted() {
 				IThreadDMData threadData = isSuccess() ? getData() : null;
-				listener.getThreadDataDone(cpuContext, coreContext, execContext, threadData, arg);
+				rm.done(threadData);
 			}
 		});
 
 	}
 
-	/** Requests execution state of a thread.
-	 *  Calls back to getThreadExecutionStateDone() on listener. */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public static void getThreadExecutionState(final DSFSessionState sessionState,
-			                                   final ICPUDMContext cpuContext,
-			                                   final ICoreDMContext coreContext,
-			                                   final IMIExecutionDMContext execContext,
-			                                   final IThreadDMData threadData,
-			                                   final DSFDebugModelListener listener,
-			                                   final Object arg)
-	{
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getFrameData(final DSFSessionState sessionState, final ICPUDMContext cpuContext, final ICoreDMContext coreContext,
+			final IMIExecutionDMContext execContext, final IThreadDMData threadData, final DataRequestMonitor<IFrameDMData> rm) {
+
 		IRunControl runControl = sessionState.getService(IRunControl.class);
 
-		if (runControl == null) {
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null, null, arg);
-			return;
-		}
-
-		if (runControl.isSuspended(execContext) == false) {
-			// The thread is running
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, null,
-					                               VisualizerExecutionState.RUNNING, arg);
-		} else {
+		final IFrameDMData nullFrameData = null;
+		if (runControl != null && (runControl.isSuspended(execContext) == false)) {
 			// For a suspended thread, retrieve the current stack
 			final IStack stackService = sessionState.getService(IStack.class);
 			if (stackService != null) {
 				stackService.getTopFrame(execContext, new ImmediateDataRequestMonitor<IFrameDMContext>(null) {
 					@Override
 					protected void handleCompleted() {
-						IFrameDMContext targetFrameContext = null;
-						if (isSuccess()) {
-							targetFrameContext = getData();
-						}
-						if (targetFrameContext!= null) {
+						IFrameDMContext targetFrameContext = isSuccess() ? getData() : null;
+						if (targetFrameContext != null) {
 							stackService.getFrameData(targetFrameContext, new ImmediateDataRequestMonitor<IFrameDMData>(null) {
 								@Override
 								protected void handleCompleted() {
-									IFrameDMData frameData = null;
-									if (isSuccess()) {
-										frameData = getData();
-									}
-									getThreadSuspendReason(sessionState, cpuContext, coreContext, execContext, threadData, frameData, listener, arg);
+									IFrameDMData frameData = isSuccess() ? getData() : null;
+									rm.done(frameData);
 								}
 							});
-						} else {
-							getThreadSuspendReason(sessionState, cpuContext, coreContext, execContext, threadData, null, listener, arg);
+						}
+						else {
+							rm.done(nullFrameData);
 						}
 					}
 				});
 			} else {
-				getThreadSuspendReason(sessionState, cpuContext, coreContext, execContext, threadData, null, listener, arg);
+				rm.done(nullFrameData);
 			}
+		} else {
+			rm.done(nullFrameData);
+		}
+	}
+
+	@Override
+	@ConfinedToDsfExecutor("null")
+	public void getThreadExecutionState(final DSFSessionState sessionState, final ICPUDMContext cpuContext, final ICoreDMContext coreContext,
+			final IMIExecutionDMContext execContext, final IThreadDMData threadData, final DataRequestMonitor<VisualizerExecutionState> rm) {
+		IRunControl runControl = sessionState.getService(IRunControl.class);
+
+		if (runControl == null) {
+			rm.setData(null);
+			rm.done();
+			return;
+		}
+
+		if (runControl.isSuspended(execContext) == false) {
+			// The thread is running
+			rm.done(VisualizerExecutionState.RUNNING);
+		} else {
+			getThreadSuspendReason(sessionState, execContext, rm);
 		}
 	}
 
 	/** For a suspended thread, let's see why it is suspended, 
 	 * to find out if the thread is crashed */
-	private static void getThreadSuspendReason(DSFSessionState sessionState,
-            final ICPUDMContext cpuContext,
-            final ICoreDMContext coreContext,
-            final IMIExecutionDMContext execContext,
-            final IThreadDMData threadData,
-            final IFrameDMData frameData,
-            final DSFDebugModelListener listener,
-            final Object arg) {
+	private static void getThreadSuspendReason(DSFSessionState sessionState, IMIExecutionDMContext execContext,
+			final DataRequestMonitor<VisualizerExecutionState> rm) {
 		IRunControl runControl = sessionState.getService(IRunControl.class);
 		if (runControl != null) {
-			runControl.getExecutionData(execContext, 
-					new ImmediateDataRequestMonitor<IExecutionDMData>() {
+			runControl.getExecutionData(execContext, new ImmediateDataRequestMonitor<IExecutionDMData>() {
 				@Override
 				protected void handleCompleted() {
 					IExecutionDMData executionData = getData();
@@ -378,7 +353,7 @@ public class DSFDebugModel {
 					if (isSuccess() && executionData != null) {
 						if (executionData.getStateChangeReason() == StateChangeReason.SIGNAL) {
 							if (executionData instanceof IExecutionDMData2) {
-								String details = ((IExecutionDMData2)executionData).getDetails();
+								String details = ((IExecutionDMData2) executionData).getDetails();
 								if (details != null) {
 									if (isCrashSignal(details)) {
 										state = VisualizerExecutionState.CRASHED;
@@ -387,11 +362,13 @@ public class DSFDebugModel {
 							}
 						}
 					}
-					listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, frameData, state, arg);
+
+					rm.done(state);
 				}
 			});
 		} else {
-			listener.getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, frameData, null, arg);
+			rm.setData(null);
+			rm.done();
 		}
 	}
 
@@ -411,33 +388,5 @@ public class DSFDebugModel {
 		}
 
 		return false;
-	}
-
-	/** Creates and returns a timer that refreshes the load meters */
-	public static Timer getLoadTimer(final DSFSessionState sessionState,
-									 final int timeout,
-									 final DSFDebugModelListener listener) 
-	{
-		Timer t = new Timer(timeout) {
-			@Override
-			public void run() {
-				if (sessionState != null) {
-					DsfSession session = DsfSession.getSession(sessionState.getSessionID());
-					if (session != null) {
-						DsfExecutor executor = session.getExecutor();
-						if (executor != null) {
-							executor.execute(new Runnable() {
-								@Override
-								public void run() {
-									listener.updateLoads();
-								}
-							});
-						}
-					}
-				}
-			}
-		};
-		
-		return t;
 	}
 }

@@ -6,10 +6,10 @@
     <artifactId>org.eclipse.tm.maven-build</artifactId>
     <groupId>org.eclipse.tm</groupId>
     <version>4.0.0-SNAPSHOT</version>
-    <relativePath>../../../admin/pom-build.xml</relativePath>
+    <relativePath>../../../../admin/pom-build.xml</relativePath>
   </parent>
   <groupId>org.eclipse.tm</groupId>
-  <artifactId>org.eclipse.tm.terminal.local</artifactId>
-  <version>0.2.300.qualifier</version>
+  <artifactId>org.eclipse.tm.terminal.view</artifactId>
+  <version>2.4.200.qualifier</version>
   <packaging>eclipse-plugin</packaging>
 </project>

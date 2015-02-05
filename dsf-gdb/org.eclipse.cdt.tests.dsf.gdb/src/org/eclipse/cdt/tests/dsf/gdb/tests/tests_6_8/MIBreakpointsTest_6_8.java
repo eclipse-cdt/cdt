@@ -63,7 +63,6 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -114,7 +113,6 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 		// Perform the test, which we still expect to succeed
 		// giving us a pending breakpoint		
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(1);
@@ -174,7 +172,6 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 
 		// ...we install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
-		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		waitForBreakpointEvent(1);
     	// Ensure the correct BreakpointEvent was received

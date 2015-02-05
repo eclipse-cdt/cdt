@@ -56,7 +56,6 @@ public class MIBreakpointsTest_7_4 extends MIBreakpointsTest_7_3 {
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		
 		MIBreakpointDMData bpData = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("Breakpoint should be pending", bpData.isPending());
-		assertTrue("Breakpoint mismatch should be enabled", bpData.isEnabled());
+		validateBreakpoint(bpData, SOURCE_NAME, 0, NO_CONDITION, 0, true, true);
 	}
 }

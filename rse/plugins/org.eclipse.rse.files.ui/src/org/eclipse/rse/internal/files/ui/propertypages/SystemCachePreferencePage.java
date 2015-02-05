@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [239459] Clear Cached Files action should not delete project metadata
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
+ * David McKnight   (IBM)        - [459261] clearing temp files cache when metadata is corrupt results in RSEF6102 error
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -422,6 +423,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 							if (subsystem != null)
 							{
 								String path = properties.getRemoteFilePath();
+								if (path != null) {
 								try
 								{
 									IAdaptable remoteFile = (IAdaptable) subsystem.getObjectWithAbsoluteName(path);
@@ -432,10 +434,11 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 												ISystemRemoteElementAdapter.class);
 										ISystemEditableRemoteObject editable =
 											adapter.getEditableRemoteObject(remoteFile);
+										if (editable != null){
 										editable.openEditor();
 										// need this to get a reference back to the object
 										properties.setRemoteFileObject(editable);
-										dirtyReplicas.add(editable);
+										dirtyReplicas.add(editable);}
 									}
 									else
 									{
@@ -446,7 +449,7 @@ public class SystemCachePreferencePage extends PreferencePage implements IWorkbe
 								{
 									return false;
 								}
-							}
+							} }
 						}
 					}
 				}

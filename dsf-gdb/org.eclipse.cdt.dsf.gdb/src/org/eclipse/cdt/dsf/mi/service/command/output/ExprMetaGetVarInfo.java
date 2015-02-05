@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,15 @@
  * Contributors:
  *     Ericsson           - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Vladimir Prus (Mentor Graphics) - Added getRawFields method.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
+import org.eclipse.cdt.dsf.mi.service.MIVariableManager;
+import org.eclipse.cdt.dsf.mi.service.MIVariableManager.MIVariableObject;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildCount;
 
 public class ExprMetaGetVarInfo implements ICommandResult {
@@ -26,6 +29,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 	/** If <code>true</code>, the variable is a collection, i.e. it may have children. */
 	private final boolean isCollectionHint;
 	private final boolean isSafeToAskForAllChildren;
+	private MIVariableObject varObj;
 	
     public ExprMetaGetVarInfo(String e, int n, String t, boolean edit) {
         this (e, n, t, null, edit);
@@ -51,6 +55,37 @@ public class ExprMetaGetVarInfo implements ICommandResult {
     	gdbType = gt;
     	this.isCollectionHint = isCollectionHint;
     }
+
+	/**
+	 * @since 4.7
+	 */
+	public ExprMetaGetVarInfo(String e, MIVariableObject varObj, int n)
+	{
+		this(e,
+				varObj.isSafeToAskForAllChildren(),
+				n,
+				varObj.getType(),
+				varObj.getGDBType(),
+				!varObj.isComplex(),
+				varObj.getDisplayHint().isCollectionHint());
+		this.varObj = varObj;
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	public ExprMetaGetVarInfo(String e, MIVariableManager.MIVariableObject varObj)
+	{
+		// We only provide the hint here.  It will be used for hasChildren()
+		// To obtain the correct number of children, the user should use
+		// IExpressions#getSubExpressionCount()
+		this(e, varObj, varObj.getNumChildrenHint());
+	}
+
+	/** Return raw MI fields for this variable.
+	 * @since 4.7
+	 */
+	public MITuple getRawFields() { return varObj.getRawFields(); }
     
     public String getExpr() { return expression; }
     

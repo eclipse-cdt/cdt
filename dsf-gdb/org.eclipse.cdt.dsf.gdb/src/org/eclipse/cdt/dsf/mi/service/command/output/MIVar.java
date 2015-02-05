@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Vladimir Prus (Mentor Graphics) - Add getRawFields method.
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -26,6 +27,8 @@ namic="1"},child={name="var6.[0].[3]",exp="[3]",numchild="0",type="std::basic_st
  */
 public class MIVar {
 
+    MITuple raw;
+
     String name = ""; //$NON-NLS-1$
     String type = ""; //$NON-NLS-1$
     String value = ""; //$NON-NLS-1$
@@ -34,6 +37,15 @@ public class MIVar {
     int numchild;
 	private boolean hasMore = false;
 	private MIDisplayHint displayHint = MIDisplayHint.NONE;
+
+	/**
+	 * Construct from the raw MI tuple. This is the preferred constructor, since calling all others
+	 * will require caller to reimplement all or parts of parsing.
+	 */
+    public MIVar(MITuple tuple) {
+    	this.raw = tuple;
+        parse(tuple);
+    }
 
     public MIVar(String n, int num, String t) {
     	this(n, false, num, false, t, MIDisplayHint.NONE);
@@ -78,8 +90,13 @@ public class MIVar {
         this.displayHint = displayHint;
     }
 
-    public MIVar(MITuple tuple) {
-        parse(tuple);
+    /** Return raw fields from MI.
+	 * @since 4.7
+	 */
+    public MITuple getRawFields()
+    {
+    	assert raw != null;
+    	return raw;
     }
 
     public String getVarName() {

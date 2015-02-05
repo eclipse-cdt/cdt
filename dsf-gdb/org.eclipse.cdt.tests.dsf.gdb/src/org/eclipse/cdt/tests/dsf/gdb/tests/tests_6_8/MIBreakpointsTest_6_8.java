@@ -74,18 +74,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(""));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong line number)",
-				breakpoint1.getLineNumber() == -1);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
-				breakpoint1.isEnabled());
-		assertTrue("BreakpointService problem: breakpoint mismatch (not pending)",
-				breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, "", -1, NO_CONDITION, 0, true, true);
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -124,16 +113,7 @@ public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {
 
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong file name)",
-				breakpoint1.getFileName().equals(""));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong function)",
-				breakpoint1.getFunctionName().equals(""));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
-				breakpoint1.getCondition().equals(NO_CONDITION));
-		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
-				breakpoint1.getIgnoreCount() == 0);
-		assertTrue("BreakpointService problem: breakpoint mismatch (not pending)",
-				breakpoint1.isPending());
+		validateBreakpoint(breakpoint1, "", "", NO_CONDITION, 0, true, true);
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);

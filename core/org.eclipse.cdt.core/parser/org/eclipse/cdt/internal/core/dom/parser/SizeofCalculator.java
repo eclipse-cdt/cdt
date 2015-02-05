@@ -329,8 +329,9 @@ public class SizeofCalculator {
 			if (maxAlignment < info.alignment)
 				maxAlignment = info.alignment;
 		}
-		if (size > 0)
-			size += maxAlignment - (size - 1) % maxAlignment - 1;
+		if (size == 0)  // a structure cannot have size 0
+			size = 1;
+		size += maxAlignment - (size - 1) % maxAlignment - 1;
 		return new SizeAndAlignment(size, maxAlignment);
 	}
 

@@ -21,6 +21,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9078,6 +9079,15 @@ public class AST2CPPTests extends AST2TestBase {
 		long pointerSize = SizeofCalculator.getSizeAndAlignment(ptrToA, namep).size;
 		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
 		assertEquals(pointerSize, BSize);
+	}
+	
+	//	struct waldo {};
+	public void testSizeofEmptyStruct_457770() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		IASTName nameWaldo = bh.findName("waldo");
+		ICPPClassType waldo = (ICPPClassType) nameWaldo.resolveBinding();
+		long waldoSize = SizeofCalculator.getSizeAndAlignment(waldo, nameWaldo).size;
+		assertNotEquals(0, waldoSize);
 	}
 
 	//	template <bool> struct B {};

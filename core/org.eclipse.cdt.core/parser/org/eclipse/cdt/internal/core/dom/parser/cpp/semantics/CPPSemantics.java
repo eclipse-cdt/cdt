@@ -324,12 +324,21 @@ public class CPPSemantics {
 	}
 
     private static IBinding postResolution(IBinding binding, LookupData data) {
-        if (binding instanceof IProblemBinding)
-        	return binding;
-
-        final IASTName lookupName = data.getLookupName();
-        if (lookupName == null)
-        	return binding;
+		final IASTName lookupName = data.getLookupName();
+		if (lookupName == null)
+			return binding;
+		
+		// If this is the unqualified name of a function in a function call in a template and some
+		// of the function arguments are dependent, a matching function could be found via
+		// argument-dependent lookup at the point of instantiation.
+		if (binding == null || binding instanceof IProblemBinding) {
+			if (!data.qualified && data.isFunctionCall() && CPPTemplates.containsDependentType(data.getFunctionArgumentTypes())) {
+				binding = CPPDeferredFunction.createForName(lookupName.getSimpleID());
+			}
+		}
+		
+		if (binding instanceof IProblemBinding)
+			return binding;
 
 		IASTNode lookupPoint = data.getLookupPoint();
 
@@ -535,15 +544,6 @@ public class CPPSemantics {
 				if (declaration.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
 					ASTInternal.addDefinition(binding, lookupName);
 				}
-			}
-		}
-
-		// If this is the unqualified name of a function in a function call in a template and some
-		// of the function arguments are dependent, the name could be resolved via
-		// argument-dependent lookup at the point of instantiation.
-		if (binding == null) {
-			if (!data.qualified && data.isFunctionCall() && CPPTemplates.containsDependentType(data.getFunctionArgumentTypes())) {
-				binding = CPPDeferredFunction.createForName(lookupName.getSimpleID());
 			}
 		}
 

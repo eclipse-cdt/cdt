@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMGlobalScope;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -105,6 +106,11 @@ public class QtPDOMLinkage extends PDOMLinkage {
 	@Override
 	public IBTreeComparator getIndexComparator() {
 		return new FindBinding.DefaultBindingBTreeComparator(this);
+	}
+
+	@Override
+	public PDOMGlobalScope getGlobalScope() {
+		return null;
 	}
 
 	// IBinding#getAdapter cannot create an instance of PDOMBinding because the Linkage is required.  This

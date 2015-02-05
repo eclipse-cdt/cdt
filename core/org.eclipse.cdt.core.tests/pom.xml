@@ -33,7 +33,7 @@
 				<configuration>
 					<useUIHarness>false</useUIHarness>
 					<!-- Core tests actually use eclipse.ui classes, see CProjectHelper -->
-					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
+					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
 					<includes>
 						<include>**/AutomatedIntegrationSuite.*</include>
 					</includes>

@@ -358,19 +358,13 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	}
 
 	/**
-	 * Returns a list of functions and variables that are defined in the current context.
+	 * Returns a list of functions and variables that are defined in current context.
 	 * @return a list of assignable elements.
 	 */
 	private List<IBinding> getAssignableElements() {
 		int i = getStatementStartOffset(fContext.getDocument(), getStatementStartOffset());
-		CContentAssistInvocationContext context =
-				new CContentAssistInvocationContext(fTextViewer, i, getCEditor(), true, false);
-		IASTCompletionNode node;
-		try {
-			node = context.getCompletionNode();
-		} finally {
-			context.dispose();
-		}
+		CContentAssistInvocationContext c = new CContentAssistInvocationContext(fTextViewer, i, getCEditor(), true, false);
+		IASTCompletionNode node = c.getCompletionNode();
 		IASTName[] names = node.getNames();
 		List<IBinding> allBindings = new ArrayList<>();
 		for (IASTName name : names) {

@@ -272,15 +272,11 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		TemplateCompletionProposalComputer templateComputer = new TemplateCompletionProposalComputer();
 		CContentAssistInvocationContext context = new CContentAssistInvocationContext( editor.getViewer(), textSelection.getOffset(), editor, true, false );
 
-		try {
-			List<ICompletionProposal> proposals= templateComputer.computeCompletionProposals(context, null);
-			if (proposals == null || proposals.isEmpty())
-				return null;
-	
-			return getActionsFromProposals(proposals, context.getInvocationOffset(), editor.getViewer());
-		} finally {
-			context.dispose();
-		}
+		List<ICompletionProposal> proposals= templateComputer.computeCompletionProposals(context, null);
+		if (proposals == null || proposals.isEmpty())
+			return null;
+
+		return getActionsFromProposals(proposals, context.getInvocationOffset(), editor.getViewer());
 	}
 
 	private static ITextSelection getTextSelection(CEditor editor) {

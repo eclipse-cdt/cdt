@@ -42,6 +42,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	
     private int kind;
     private char[] value = CharArrayUtils.EMPTY;
+    private int fStringLiteralSize = -1;  // accounting for escape sequences and the null terminator
 	private ICPPEvaluation fEvaluation;
 
     public CPPASTLiteralExpression() {
@@ -110,31 +111,73 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
         return true;
     }
     
-	private IValue getStringLiteralSize() {
-		char[] value= getValue();
-		int length= value.length-1;
-		boolean isRaw= false;
-		for (int i = 0; i < length; i++) {
-			final char c = value[i];
-			if (c == '"') {
-				if (isRaw) {
-					for (int j = i + 1; j < length; j++) {
-						final char d= value[j];
-						if (d == '(') {
-							length -= 2*(j-i);
-							break;
-						}
-					}
-				}
-				length -= i;
-				if (length < 0)
-					length = 0;
-				break;
-			} else if (c == 'R') {
-				isRaw = true;
+    private int computeStringLiteralSize() {
+    	int start = 0, end = value.length - 1;
+    	boolean isRaw = false;
+    	
+    	// Skip past a prefix affecting the character type.
+    	if (value[0] == 'L' || value[0] == 'u' || value[0] == 'U') {
+    		++start;
+    	}
+    	
+    	// If there is an 'R' prefix, skip past it but take note of it.
+    	if (value[start] == 'R') {
+    		++start;
+    		isRaw = true;
+    	}
+    	
+    	// Now we should have a quote-enclosed string. Skip past the quotes.
+    	if (!(value[start] == '"' && value[end] == '"')) {
+    		// Unexpected!
+    		return 0;
+    	}
+    	++start;
+    	--end;
+    	
+    	// If we have a raw string, skip past the raw prefix.
+    	if (isRaw) {
+    		while (value[start] != '(' && start <= end) {
+    			++start;
+    			--end;
+    		}
+    		
+    		// Now we should have a parenthesis-enclosed string.
+    		if (!(value[start] == '(' && value[end] == ')')) {
+    			// Unexpected!
+    			return 0;
+    		}
+    		
+    		// Since the string is raw, we don't need to process
+    		// escape sequences, so the size is just the number
+    		// of remaining characters, plus 1 for the null terminator.
+    		return (end - start + 1) + 1;
+    	}
+    	
+    	// Otherwise, we have a non-raw string and we need to
+    	// process escape sequences.
+    	int length = 0;
+    	boolean escaping = false;
+    	for (; start <= end; ++start) {
+    		if (escaping) {
+    			escaping = false;
+    			++length;
+    		} else if (value[start] == '\\') {
+				escaping = true;
+			} else {
+				++length;
 			}
+    		// TODO: Handle fancier things like octal literals.
+    	}
+    	
+    	// + 1 for null terminator.
+    	return length + 1;
+    }
+    
+	private IValue getStringLiteralSize() {
+		if (fStringLiteralSize == -1) {
+			fStringLiteralSize = computeStringLiteralSize();
 		}
-		return Value.create(length);
+		return Value.create(fStringLiteralSize);
 	}
 
 	private Kind getCharType() {

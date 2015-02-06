@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICEditorContentAssistInvocationContext {
-
 	/**
 	 * Returns the translation unit that content assist is invoked in, <code>null</code> if there
 	 * is none.

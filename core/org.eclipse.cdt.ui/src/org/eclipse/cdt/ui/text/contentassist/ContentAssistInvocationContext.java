@@ -13,7 +13,6 @@
 package org.eclipse.cdt.ui.text.contentassist;
 
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -27,13 +26,12 @@ import org.eclipse.jface.text.ITextViewer;
  * specific context information such as an AST.
  * </p>
  * <p>
- * Clients may instantiate.
+ * Clients may instantiate. Any created context has to be disposed.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  * @since 4.0
  */
 public class ContentAssistInvocationContext {
-	
 	/* state */
 	private final ITextViewer fViewer;
 	private final IDocument fDocument;

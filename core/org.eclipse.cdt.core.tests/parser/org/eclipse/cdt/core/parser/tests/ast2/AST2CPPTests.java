@@ -256,7 +256,7 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNotNull(second);
 		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
 	}
-
+	
 	// int *zzz1 (char);
 	// int (*zzz2) (char);
 	// int ((*zzz3)) (char);
@@ -9062,6 +9062,13 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testSizeofReference_397342() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	constexpr int waldo = sizeof("cat\b\\\n");
+	public void testSizeofStringLiteralWithEscapeCharacters_459279() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPVariable waldo = helper.assertNonProblem("waldo");
+		assertConstantValue(7, waldo);  // "cat" + backspace + slash + newline + null terminator
+	}
 
 	//	struct A {
 	//	  char a[100];
@@ -10666,7 +10673,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testIsBaseOf_409100() throws Exception {
 		BindingAssertionHelper b = getAssertionHelper();
 		IVariable var = b.assertNonProblem("value");
-		assertEquals(1 /*true */, var.getInitialValue().numericalValue().longValue());
+		assertConstantValue(1 /*true */, var);
 	}
 
 	//  namespace NS {
@@ -10982,7 +10989,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testConditionalExpressionFolding_429891() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable waldo = helper.assertNonProblem("waldo");
-		assertEquals(5, waldo.getInitialValue().numericalValue().longValue());
+		assertConstantValue(5, waldo);
 	}
 	
 	//	constexpr int naive_fibonacci(int x) {
@@ -11009,7 +11016,7 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testNameLookupInDefaultArgument_432701() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable waldo = helper.assertNonProblem("waldo");
-		assertEquals(42, waldo.getInitialValue().numericalValue().longValue());
+		assertConstantValue(42, waldo);
 	}
 	
 	//	struct S1 { S1(int); };

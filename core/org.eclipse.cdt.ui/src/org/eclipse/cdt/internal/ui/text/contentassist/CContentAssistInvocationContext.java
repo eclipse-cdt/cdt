@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -37,11 +38,10 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 
-
 /**
  * Describes the context of a content assist invocation in a C/C++ editor.
  * <p>
- * Clients may use but not subclass this class.
+ * Clients may instantiate. Any created context has to be disposed.
  * </p>
  * 
  * @since 4.0
@@ -50,8 +50,9 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	private final IEditorPart fEditor;
 	private final boolean fIsCompletion;
 	private final boolean fIsAutoActivated;
-	private IIndex fIndex = null;
-	private Lazy<Integer> fContextInfoPosition = new Lazy<Integer>() {
+	private IIndex fIndex;
+
+	private final Lazy<Integer> fContextInfoPosition = new Lazy<Integer>() {
 		@Override
 		protected Integer calculateValue() {
 			return guessContextInformationPosition();
@@ -86,23 +87,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 				return null;
 
 			try {
-				if (fIndex != null)
-					throw new IllegalStateException("The method should not be called multiple times."); //$NON-NLS-1$
-
-				IIndexManager manager= CCorePlugin.getIndexManager();
-				fIndex = manager.getIndex(proj, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
-
-				try {
-					fIndex.acquireReadLock();
-				} catch (InterruptedException e) {
-					fIndex = null;
-				}
-
+				IIndex index = getIndex();
 				boolean parseNonIndexed= CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
 				int flags = parseNonIndexed ? ITranslationUnit.AST_SKIP_INDEXED_HEADERS : ITranslationUnit.AST_SKIP_ALL_HEADERS;
 				flags |= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT;
 
-				return fTU.value().getCompletionNode(fIndex, flags, offset);
+				return fTU.value().getCompletionNode(index, flags, offset);
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
@@ -290,9 +280,6 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return fParseOffset.value();
 	}
 
-	/**
-	 * @return the offset where context information (parameter hints) starts.
-	 */
 	@Override
 	public int getContextInformationOffset() {
 		return fContextInfoPosition.value();
@@ -428,5 +415,29 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 
 	public String getTemplateParameterDelimiter() {
 		return templateParameterDelimiter.value();
+	}
+
+	protected IIndex getIndex() throws CoreException {
+		if (fIndex == null) {
+			IIndexManager manager= CCorePlugin.getIndexManager();
+			fIndex = manager.getIndex(getProject(), IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
+
+			try {
+				fIndex.acquireReadLock();
+			} catch (InterruptedException e) {
+				fIndex = null;
+			}
+		}
+		return fIndex;
+	}
+
+	public ICEditorContentAssistInvocationContext getSubContextForOffset(int offset) {
+		final CContentAssistInvocationContext masterContext = this;
+		return new CContentAssistInvocationContext(getViewer(), offset, fEditor, true, false) {
+			@Override
+			protected IIndex getIndex() throws CoreException {
+				return masterContext.getIndex();
+			}
+		};
 	}
 }

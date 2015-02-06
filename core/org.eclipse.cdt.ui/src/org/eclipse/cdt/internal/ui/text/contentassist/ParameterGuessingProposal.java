@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *		Andrew McCullough - initial API and implementation
- *		IBM Corporation  - general improvement and bug fixes, partial reimplementation
- *		Mentor Graphics (Mohamed Azab) - added the API to CDT and made the necessary changes
+ *	   Andrew McCullough - initial API and implementation
+ *	   IBM Corporation  - general improvement and bug fixes, partial reimplementation
+ *	   Mentor Graphics (Mohamed Azab) - added the API to CDT and made the necessary changes
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 
@@ -351,7 +353,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	}
 
 	/**
-	 * @return the start offset of the statement that contains the current position. 
+	 * Returns the start offset of the statement that contains the current position. 
 	 */
 	private int getStatementStartOffset() {
 		return fContext.getParseOffset() - fPrefix.length();
@@ -362,15 +364,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	 * @return a list of assignable elements.
 	 */
 	private List<IBinding> getAssignableElements() {
-		int i = getStatementStartOffset(fContext.getDocument(), getStatementStartOffset());
-		CContentAssistInvocationContext context =
-				new CContentAssistInvocationContext(fTextViewer, i, getCEditor(), true, false);
-		IASTCompletionNode node;
-		try {
-			node = context.getCompletionNode();
-		} finally {
-			context.dispose();
-		}
+		int statementOffset = getStatementStartOffset(fContext.getDocument(), getStatementStartOffset());
+		ICEditorContentAssistInvocationContext context = fContext.getSubContextForOffset(statementOffset);
+		IASTCompletionNode node = context.getCompletionNode();
 		IASTName[] names = node.getNames();
 		List<IBinding> allBindings = new ArrayList<>();
 		for (IASTName name : names) {

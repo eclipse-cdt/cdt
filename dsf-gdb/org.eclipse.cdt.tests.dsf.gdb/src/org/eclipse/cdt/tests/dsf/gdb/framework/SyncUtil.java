@@ -870,7 +870,7 @@ public class SyncUtil {
 	 * @param address	the memory block address (could be an expression)
 	 * @param offset	the offset from address
 	 * @param wordSize	the word size, in octets
-	 * @param count		the number of bytes to write
+	 * @param count		the number of times the pattern is to be written
 	 * @param pattern	the pattern to write
 	 * @throws InterruptedException
 	 * @throws ExecutionException

@@ -716,7 +716,11 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		
 		// Initialization Commands
 		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_RESET, doReset.getSelection());
-		configuration.setAttribute(IGDBJtagConstants.ATTR_DELAY, Integer.parseInt(delay.getText()));
+		try {
+			configuration.setAttribute(IGDBJtagConstants.ATTR_DELAY, Integer.parseInt(delay.getText()));
+		} catch(NumberFormatException e) {
+			Activator.log(e);
+		}
 		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_HALT, doHalt.getSelection());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, initCommands.getText());
 		

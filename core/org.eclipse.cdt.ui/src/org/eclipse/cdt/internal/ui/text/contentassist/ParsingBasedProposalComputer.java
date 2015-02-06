@@ -8,7 +8,6 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
- *    Mentor Graphics (Mohamed Azab) - added the API to CDT
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.contentassist;

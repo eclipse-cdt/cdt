@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.contentassist;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -26,20 +29,32 @@ import org.eclipse.jface.text.ITextViewer;
  * specific context information such as an AST.
  * </p>
  * <p>
- * Clients may instantiate. Any created context has to be disposed.
+ * Clients may instantiate. A client that created a context is responsible for its disposal.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  * @since 4.0
  */
 public class ContentAssistInvocationContext {
-	/* state */
+	private static final AtomicInteger numberOfUndisposedContexts = new AtomicInteger();
+
+	/* State. */
 	private final ITextViewer fViewer;
 	private final IDocument fDocument;
 	private final int fOffset;
-	
-	/* cached additional info */
+	private boolean fDisposed;
+
+	/* Cached additional info. */
 	private CharSequence fPrefix;
-	
+
+	/**
+	 * For tests only.
+	 * @since 5.9
+	 */
+	public static void assertNoUndisposedContexts() {
+		Assert.isTrue(numberOfUndisposedContexts.get() == 0,
+				numberOfUndisposedContexts.get() + " ContentAssistInvocationContext objects have not been disposed."); //$NON-NLS-1$
+	}
+
 	/**
 	 * Equivalent to
 	 * {@linkplain #ContentAssistInvocationContext(ITextViewer, int) ContentAssistInvocationContext(viewer, viewer.getSelectedRange().x)}.
@@ -61,6 +76,7 @@ public class ContentAssistInvocationContext {
 		fViewer= viewer;
 		fDocument= null;
 		fOffset= offset;
+		numberOfUndisposedContexts.incrementAndGet();
 	}
 	
 	/**
@@ -70,6 +86,7 @@ public class ContentAssistInvocationContext {
 		fDocument= null;
 		fViewer= null;
 		fOffset= -1;
+		numberOfUndisposedContexts.incrementAndGet();
 	}
 	
 	/**
@@ -84,6 +101,7 @@ public class ContentAssistInvocationContext {
 		fViewer= null;
 		fDocument= document;
 		fOffset= offset;
+		numberOfUndisposedContexts.incrementAndGet();
 	}
 	
 	/**
@@ -92,6 +110,7 @@ public class ContentAssistInvocationContext {
 	 * @return the invocation offset
 	 */
 	public final int getInvocationOffset() {
+		assertNotDisposed();
 		return fOffset;
 	}
 	
@@ -101,6 +120,7 @@ public class ContentAssistInvocationContext {
 	 * @return the viewer, possibly <code>null</code>
 	 */
 	public final ITextViewer getViewer() {
+		assertNotDisposed();
 		return fViewer;
 	}
 	
@@ -110,6 +130,7 @@ public class ContentAssistInvocationContext {
 	 * @return the document or <code>null</code>
 	 */
 	public IDocument getDocument() {
+		assertNotDisposed();
 		if (fDocument == null) {
 			if (fViewer == null)
 				return null;
@@ -127,6 +148,7 @@ public class ContentAssistInvocationContext {
 	 * @throws BadLocationException if accessing the document fails
 	 */
 	public CharSequence computeIdentifierPrefix() throws BadLocationException {
+		assertNotDisposed();
 		if (fPrefix == null) {
 			IDocument document= getDocument();
 			if (document == null)
@@ -145,12 +167,23 @@ public class ContentAssistInvocationContext {
 	}
 	
 	/**
-	 * Called upon completion of the content assist. Used to free any resources
+	 * Must be called upon completion of the content assist. Used to free any resources
 	 * used by the context.
 	 */
 	public void dispose() {
+		assertNotDisposed();
+		fDisposed = true;
+		numberOfUndisposedContexts.decrementAndGet();
 	}
-	
+
+	/**
+	 * @since 5.9
+	 */
+	protected void assertNotDisposed() {
+		if (fDisposed)
+			throw new IllegalArgumentException("The content assist context has been disposed already"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Invocation contexts are equal if they describe the same context and are of the same type.
 	 * This implementation checks for <code>null</code> values and class equality. Subclasses
@@ -193,9 +226,6 @@ public class ContentAssistInvocationContext {
 		return (fViewer == null && other.fViewer == null || fViewer != null && fViewer.equals(other.fViewer)) && fOffset == other.fOffset && (fDocument == null && other.fDocument == null || fDocument != null && fDocument.equals(other.fDocument));
 	}
 	
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return 23459213 << 5 | (fViewer == null ? 0 : fViewer.hashCode() << 3) | fOffset;

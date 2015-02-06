@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -39,6 +40,7 @@ import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
@@ -72,23 +74,23 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		fCFile= setUpProjectContent(fCProject.getProject());
 		assertNotNull(fCFile);
 		waitForIndexer(fCProject);
-		fEditor= (ITextEditor)EditorTestHelper.openInEditor(fCFile, true);
+		fEditor= (ITextEditor) EditorTestHelper.openInEditor(fCFile, true);
 		assertNotNull(fEditor);
 		CPPASTNameBase.sAllowNameComputation= true;
 
-//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
+//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor) fEditor);
 	}
 
 	/**
 	 * Setup the project's content.
 	 * @param project
 	 * @return  the file to be opened in the editor
-	 * @throws Exception 
 	 */
 	protected abstract IFile setUpProjectContent(IProject project) throws Exception;
 
 	@Override
 	protected void tearDown() throws Exception {
+		ContentAssistInvocationContext.assertNoUndisposedContexts();
 		EditorTestHelper.closeEditor(fEditor);
 		fEditor= null;
 		CProjectHelper.delete(fCProject);
@@ -97,12 +99,13 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		super.tearDown();
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
+	protected void assertContentAssistResults(int offset, int length, String[] expected,
+			boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
-			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
+			System.out.println("\n\n\n\n\nTesting " + this.getClass().getName());
 		}
 
-		//Call the CContentAssistProcessor
+		// Call the CContentAssistProcessor
 		ISourceViewer sourceViewer= EditorTestHelper.getSourceViewer((AbstractTextEditor)fEditor);
 		String contentType= TextUtilities.getContentType(sourceViewer.getDocument(), ICPartitions.C_PARTITIONING, offset, true);
 		boolean isCode= IDocument.DEFAULT_CONTENT_TYPE.equals(contentType);
@@ -287,8 +290,6 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	protected IDocument getDocument() {
 		return EditorTestHelper.getDocument(fEditor);
 	}
-
-
 
 	protected void setCommaAfterFunctionParameter(String value) {
 		fCProject.setOption(

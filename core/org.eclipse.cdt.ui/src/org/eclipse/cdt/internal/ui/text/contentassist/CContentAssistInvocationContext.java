@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -41,16 +42,18 @@ import org.eclipse.cdt.internal.ui.text.Symbols;
 /**
  * Describes the context of a content assist invocation in a C/C++ editor.
  * <p>
- * Clients may use but not subclass this class.
+ * Clients may instantiate. A client that created a context is responsible for its disposal.
  * </p>
  * 
  * @since 4.0
  */
-public class CContentAssistInvocationContext extends ContentAssistInvocationContext implements ICEditorContentAssistInvocationContext {
+public class CContentAssistInvocationContext extends ContentAssistInvocationContext
+		implements ICEditorContentAssistInvocationContext {
 	private final IEditorPart fEditor;
 	private final boolean fIsCompletion;
 	private final boolean fIsAutoActivated;
-	private IIndex fIndex = null;
+	private IIndex fIndex;
+
 	private Lazy<Integer> fContextInfoPosition = new Lazy<Integer>() {
 		@Override
 		protected Integer calculateValue() {
@@ -247,6 +250,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	@Override
 	public ITranslationUnit getTranslationUnit() {
+		assertNotDisposed();
 		return fTU.value();
 	}
 	
@@ -258,12 +262,14 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	@Override
 	public ICProject getProject() {
+		assertNotDisposed();
 		ITranslationUnit unit= getTranslationUnit();
 		return unit == null ? null : unit.getCProject();
 	}
 		
 	@Override
 	public IASTCompletionNode getCompletionNode() {
+		assertNotDisposed();
 		// For scalability.
 		if (fEditor != null && fEditor instanceof CEditor) {
 			CEditor editor = (CEditor) fEditor;
@@ -287,6 +293,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	
 	@Override
 	public int getParseOffset() {
+		assertNotDisposed();
 		return fParseOffset.value();
 	}
 
@@ -295,6 +302,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	@Override
 	public int getContextInformationOffset() {
+		assertNotDisposed();
 		return fContextInfoPosition.value();
 	}
 	
@@ -306,6 +314,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * @return a sensible completion offset
 	 */
 	protected int guessCompletionPosition(int contextPosition) {
+		assertNotDisposed();
 		CHeuristicScanner scanner= new CHeuristicScanner(getDocument());
 		int bound= Math.max(-1, contextPosition - 200);
 		
@@ -354,6 +363,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 *     offset is not inside a function call (or similar)
 	 */
 	protected int guessContextInformationPosition() {
+		assertNotDisposed();
 		final int contextPosition= getInvocationOffset();
 		
 		CHeuristicScanner scanner= new CHeuristicScanner(getDocument());
@@ -386,15 +396,18 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	@Override
 	public IEditorPart getEditor() {
+		assertNotDisposed();
 		return fEditor;
 	}
 
 	@Override
 	public boolean isContextInformationStyle() {
+		assertNotDisposed();
 		return !fIsCompletion || (getParseOffset() != getInvocationOffset());
 	}
 	
 	public boolean isAutoActivated() {
+		assertNotDisposed();
 		return fIsAutoActivated;
 	}
 
@@ -402,31 +415,38 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	public void dispose() {
 		if (fIndex != null) {
 			fIndex.releaseReadLock();
+			fIndex = null;
 		}
 		super.dispose();
 	}
 
 	public boolean isAfterOpeningParenthesis() {
+		assertNotDisposed();
 		return afterOpeningParenthesis.value();
 	}
 
 	public boolean isAfterOpeningAngleBracket() {
+		assertNotDisposed();
 		return afterOpeningAngleBracket.value();
 	}
 
 	public boolean isInUsingDirective() {
+		assertNotDisposed();
 		return inUsingDeclaration.value();
 	}
 
 	public boolean isFollowedBySemicolon() {
+		assertNotDisposed();
 		return followedBySemicolon.value();
 	}
 
 	public String getFunctionParameterDelimiter() {
+		assertNotDisposed();
 		return functionParameterDelimiter.value();
 	}
 
 	public String getTemplateParameterDelimiter() {
+		assertNotDisposed();
 		return templateParameterDelimiter.value();
 	}
 }

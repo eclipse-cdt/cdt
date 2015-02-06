@@ -347,8 +347,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readWithNullContext() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -379,8 +378,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readWithInvalidAddress() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Setup call parameters
@@ -408,8 +406,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readWithInvalidWordSize() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -438,8 +435,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readWithInvalidCount() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -469,8 +465,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readCharVaryingBaseAddress() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -488,8 +483,7 @@ public class MIMemoryTest extends BaseTestCase {
 		}
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:setBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:setBlocks");
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Verify that all bytes are set
@@ -511,8 +505,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readCharVaryingOffset() throws Throwable {
 
 		// Run to the point where the array is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -529,8 +522,7 @@ public class MIMemoryTest extends BaseTestCase {
 		}
 
 		// Run to the point where the array is set
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:setBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:setBlocks");
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Verify that all bytes are set
@@ -551,8 +543,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void readCharArray() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -572,8 +563,7 @@ public class MIMemoryTest extends BaseTestCase {
 		}
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:setBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:setBlocks");
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Get the memory block
@@ -601,8 +591,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeWithNullContext() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -633,8 +622,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeWithInvalidAddress() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Setup call parameters
@@ -665,8 +653,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeWithInvalidWordSize() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -696,8 +683,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeWithInvalidCount() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -728,8 +714,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeWithInvalidBuffer() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -760,8 +745,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeCharVaryingAddress() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -811,8 +795,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeCharVaryingOffset() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -857,8 +840,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writeCharArray() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -904,8 +886,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void fillWithNullContext() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -936,8 +917,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void fillWithInvalidAddress() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Setup call parameters
@@ -974,8 +954,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void fillWithInvalidWordSize() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1005,8 +984,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void fillWithInvalidCount() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1037,8 +1015,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void fillWithInvalidPattern() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1069,8 +1046,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writePatternVaryingAddress() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1114,8 +1090,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writePatternVaryingOffset() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1160,8 +1135,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void writePatternCountTimes() throws Throwable {
 
 		// Run to the point where the variable is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1204,8 +1178,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void asynchronousReadWrite() throws Throwable {
 
 		// Run to the point where the array is zeroed
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:zeroBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
@@ -1290,8 +1263,7 @@ public class MIMemoryTest extends BaseTestCase {
 	public void memoryCacheRead() throws Throwable {
 
 		// Run to the point where the variable is initialized
-		SyncUtil.addBreakpoint("MemoryTestApp.cc:setBlocks", true);
-		SyncUtil.resumeUntilStopped();
+		SyncUtil.runToLocation("MemoryTestApp.cc:setBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 

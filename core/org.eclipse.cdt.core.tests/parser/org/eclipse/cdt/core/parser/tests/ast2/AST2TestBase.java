@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -493,6 +494,14 @@ public class AST2TestBase extends BaseTestCase {
     	ICompositeType struct = ((IField) binding).getCompositeTypeOwner();
     	assertEquals(ownerName, struct.getName());
     }
+
+	protected static void assertConstantValue(long expected, IVariable constant) {
+		IValue value = constant.getInitialValue();
+		assertNotNull(value);
+		Long numericalValue = value.numericalValue();
+		assertNotNull(numericalValue);
+		assertEquals(expected, numericalValue.longValue());
+	}
 
 	protected class BindingAssertionHelper {
 		protected IASTTranslationUnit tu;

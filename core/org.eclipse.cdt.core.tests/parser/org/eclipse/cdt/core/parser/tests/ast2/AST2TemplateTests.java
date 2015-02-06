@@ -3071,7 +3071,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		ICPPVariable _256= ba.assertNonProblem("_256=0x100", 4, ICPPVariable.class);
 		IQualifierType qt1= assertInstance(_256.getType(), IQualifierType.class);
 		ICPPBasicType bt1= assertInstance(qt1.getType(), ICPPBasicType.class);
-		assertEquals(256, _256.getInitialValue().numericalValue().intValue());
+		assertConstantValue(256, _256);
 
 		ICPPVariable t= ba.assertNonProblem("t;", 1, ICPPVariable.class);
 		ICPPTemplateInstance ci1= assertInstance(t.getType(), ICPPTemplateInstance.class, ICPPClassType.class);
@@ -7383,9 +7383,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSfinaeInNestedTypeInTemplateArgument_402257() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		ICPPVariable B = helper.assertNonProblem("B");
-		Long val = B.getInitialValue().numericalValue();
-		assertNotNull(val);
-		assertEquals(0 /* false */, val.longValue());
+		assertConstantValue(0 /* false */, B);
 	}
 
 	//	struct S {
@@ -8031,9 +8029,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSizeofParameterPackOnTypeid_401973() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
 		ICPPVariable bar = helper.assertNonProblem("bar");
-		Long barValue = bar.getInitialValue().numericalValue();
-		assertNotNull(barValue);
-		assertEquals(2,  barValue.longValue());
+		assertConstantValue(2, bar);
 	}
 
 	//	template <int...> struct tuple_indices {};
@@ -8536,7 +8532,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSpecializationOfConstexprFunction_420995() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPVariable waldo = helper.assertNonProblem("waldo");
-		assertEquals(2, waldo.getInitialValue().numericalValue().longValue());
+		assertConstantValue(2, waldo);
 	}
 	
 	//	struct Test {

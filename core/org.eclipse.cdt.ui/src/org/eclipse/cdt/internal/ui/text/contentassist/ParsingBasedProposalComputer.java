@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems)
- *     Mentor Graphics (Mohamed Azab) - added the API to CDT
+ *    QNX - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
+ *    Mentor Graphics (Mohamed Azab) - added the API to CDT
  *******************************************************************************/
+
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
  * @author Bryan Wilkinson
  */
 public abstract class ParsingBasedProposalComputer implements ICompletionProposalComputer {
-	private String fErrorMessage;
+
+	private String fErrorMessage = null;
 	
 	@Override
 	public List<ICompletionProposal> computeCompletionProposals(
@@ -71,7 +73,8 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 	public List<IContextInformation> computeContextInformation(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		Collection<ICompletionProposal> proposals= computeCompletionProposals(context, monitor);
-		// Remove duplicates
+		// remove duplicates
+		
 		proposals= (new LinkedHashSet<ICompletionProposal>(proposals));
 		List<IContextInformation> result= new ArrayList<IContextInformation>();
 		for (ICompletionProposal proposal : proposals) {
@@ -99,11 +102,11 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 	}
 
 	/**
-	 * Computes base relevance depending on quality of name / prefix match.
+	 * Compute base relevance depending on quality of name / prefix match.
 	 * 
-	 * @param prefix  the completion prefix
+	 * @param prefix  the completion pefix
 	 * @param match  the matching identifier
-	 * @return a relevance value indicating the quality of the name match
+	 * @return a relevance value inidicating the quality of the name match
 	 */
 	protected int computeBaseRelevance(String prefix, String match) {
 		boolean caseMatch= prefix.length() > 0 && match.startsWith(prefix);

@@ -26,7 +26,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -37,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -61,10 +61,10 @@ import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
- * This class is based on org.eclipse.jdt.internal.ui.text.java.ParameterGuesser
+ * This iAPI layout is copied from org.eclipse.jdt.internal.ui.text.java.ParameterGuesser
  * 
- * This class triggers a code-completion that will track all global, local and member variables and
- * order them logically for later use as a parameter guessing proposal.
+ * This class triggers a code-completion that will track all global, local and member variables and order them logically for later
+ * use as a parameter guessing proposal.
  */
 public class ParameterGuesser {
 	private IASTTranslationUnit  fTranslationUnit;
@@ -72,9 +72,9 @@ public class ParameterGuesser {
 	private final Set<String> fAlreadyMatchedNames;
 
 	private final static class Variable {
+
 		/**
-		 * Variable type. Used to choose the best guess based on scope
-		 * (Local beats instance beats inherited beats global).
+		 * Variable type. Used to choose the best guess based on scope (Local beats instance beats inherited beats global).
 		 */
 		public static final int LOCAL = 0;
 		public static final int FIELD = 1;
@@ -92,8 +92,7 @@ public class ParameterGuesser {
 
 		public boolean alreadyMatched;
 
-		public Variable(IType qualifiedTypeName, String name, int variableType,
-				boolean isAutoboxMatch, int positionScore, char[] triggerChars, ImageDescriptor descriptor) {
+		public Variable(IType qualifiedTypeName, String name, int variableType, boolean isAutoboxMatch, int positionScore, char[] triggerChars, ImageDescriptor descriptor) {
 			this.qualifiedTypeName= qualifiedTypeName;
 			this.name= name;
 			this.variableType= variableType;
@@ -104,15 +103,20 @@ public class ParameterGuesser {
 			this.alreadyMatched= false;
 		}
 
+		/*
+		 * @see Object#toString()
+		 */
 		@Override
 		public String toString() {
-			StringBuilder buffer= new StringBuilder();
+
+			StringBuffer buffer= new StringBuffer();
 			buffer.append(qualifiedTypeName);
 			buffer.append(' ');
 			buffer.append(name);
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(variableType);
 			buffer.append(')');
+
 			return buffer.toString();
 		}
 	}
@@ -125,9 +129,8 @@ public class ParameterGuesser {
 		fTranslationUnit = translationUnit;
 	}
 
-	private List<Variable> evaluateVisibleMatches(IType expectedType, List<IBinding> suggestions)
-			throws CModelException {
-		ArrayList<Variable> res= new ArrayList<>();
+	private List<Variable> evaluateVisibleMatches(IType expectedType, ArrayList<IBinding> suggestions) throws CModelException {
+		ArrayList<Variable> res= new ArrayList<Variable>();
 		int size = suggestions.size();
 		for (int i= 0; i < size; i++) {
 			Variable variable= createVariable(suggestions.get(i), expectedType, i);
@@ -169,6 +172,7 @@ public class ParameterGuesser {
 			int variableType = Variable.GLOBAL;
 			if (element instanceof ICPPField) {
 				variableType = Variable.FIELD;
+
 			} else if (element instanceof IVariable) {
 				try {
 					if (element instanceof ICPPBinding && ((ICPPBinding) element).isGloballyQualified()) {
@@ -181,13 +185,11 @@ public class ParameterGuesser {
 			}
 
 			// Handle reference case
-			if (isReferenceTo(enclosingType, elementType)) {
+			if (isReferenceTo(enclosingType, elementType))
 				elementName = "&" + elementName; //$NON-NLS-1$
-			} else if (isReferenceTo(elementType, enclosingType)) {
+			else if (isReferenceTo(elementType, enclosingType))
 				elementName = "*" + elementName; //$NON-NLS-1$
-			}
-			return new Variable(elementType, elementName, variableType, false, positionScore,
-					NO_TRIGGERS, getImageDescriptor(element));
+			return new Variable(elementType, elementName, variableType, false, positionScore, NO_TRIGGERS, getImageDescriptor(element));
 		}
 		return null;
 	}
@@ -292,6 +294,9 @@ public class ParameterGuesser {
 	}
 
 	/**
+	 * 
+	 * Copied from JDT
+	 * 
 	 * Returns the matches for the type and name argument, ordered by match quality.
 	 * 
 	 * @param expectedType - the qualified type of the parameter we are trying to match
@@ -302,7 +307,7 @@ public class ParameterGuesser {
 	 * @param isLastParameter <code>true</code> iff this proposal is for the last parameter of a method
 	 * @return returns the name of the best match, or <code>null</code> if no match found
 	 */
-	public ICompletionProposal[] parameterProposals(IType expectedType, String paramName, Position pos, List<IBinding> suggestions, boolean fillBestGuess, boolean isLastParameter) throws CModelException {
+	public ICompletionProposal[] parameterProposals(IType expectedType, String paramName, Position pos, ArrayList<IBinding> suggestions, boolean fillBestGuess, boolean isLastParameter) throws CModelException {
 		List<Variable> typeMatches= evaluateVisibleMatches(expectedType, suggestions);
 		typeMatches = removeDuplicates(typeMatches);
 		orderMatches(typeMatches, paramName);
@@ -340,7 +345,11 @@ public class ParameterGuesser {
 		return ret;
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	private static class MatchComparator implements Comparator<Variable> {
+
 		private String fParamName;
 
 		MatchComparator(String paramName) {
@@ -380,7 +389,10 @@ public class ParameterGuesser {
 	}
 
 	/**
-	 * Determines the best match of all possible type matches.  The input into this method is all
+	 * 
+	 * Copied from JDT
+	 * 
+	 * Determine the best match of all possible type matches.  The input into this method is all
 	 * possible completions that match the type of the argument. The purpose of this method is to
 	 * choose among them based on the following simple rules:
 	 *
@@ -403,7 +415,10 @@ public class ParameterGuesser {
 	}
 
 	/**
-	 * Removes the duplicates from the list if any.
+	 * 
+	 * Copied from JDT
+	 * 
+	 * Remove the duplicates from the list if any.
 	 */
 	private static List<Variable> removeDuplicates(List<Variable> typeMatches) {
 		HashSet<Variable> set = new HashSet<Variable>();
@@ -412,6 +427,9 @@ public class ParameterGuesser {
 	}
 
 	/**
+	 * 
+	 * Copied from JDT
+	 * 
 	 * Returns the longest common substring of two strings.
 	 *
 	 * @param first the first string
@@ -419,12 +437,13 @@ public class ParameterGuesser {
 	 * @return the longest common substring
 	 */
 	private static String getLongestCommonSubstring(String first, String second) {
-		String shorter= first.length() <= second.length() ? first : second;
+
+		String shorter= (first.length() <= second.length()) ? first : second;
 		String longer= shorter == first ? second : first;
 
 		int minLength= shorter.length();
 
-		StringBuilder pattern= new StringBuilder(shorter.length() + 2);
+		StringBuffer pattern= new StringBuffer(shorter.length() + 2);
 		String longestCommonSubstring= ""; //$NON-NLS-1$
 
 		for (int i= 0; i < minLength; i++) {
@@ -447,7 +466,11 @@ public class ParameterGuesser {
 		return longestCommonSubstring;
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	private Image getImage(ImageDescriptor descriptor) {
-		return descriptor == null ? null : CUIPlugin.getImageDescriptorRegistry().get(descriptor);
+		return (descriptor == null) ? null : CUIPlugin.getImageDescriptorRegistry().get(descriptor);
 	}
+
 }

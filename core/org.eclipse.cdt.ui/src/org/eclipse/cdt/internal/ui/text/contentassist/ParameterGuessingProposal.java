@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -55,7 +54,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
 
 /**
- * This class is based on org.eclipse.jdt.internal.ui.text.java.ParameterGuessingProposal
+ * This API layout is copied from org.eclipse.jdt.internal.ui.text.java.ParameterGuessingProposal
  * 
  * Extents the basic Function Compilation Proposal to add a linked mode for each of
  * the function parameters with a list of suggestions for each parameter.
@@ -63,16 +62,15 @@ import org.eclipse.cdt.internal.ui.editor.EditorHighlightingSynchronizer;
 public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	private ICompletionProposal[][] fChoices; // initialized by guessParameters()
 	private Position[] fPositions; // initialized by guessParameters()
-	private boolean fReplacementStringComputed;
+	private boolean fReplacementStringComputed = false;
 	private IRegion fSelectedRegion; // initialized by apply()
 	private IPositionUpdater fUpdater;
 	private String fPrefix; // The string from the start of the statement to the parse offset.
 	private String fFullPrefix; // The string from the start of the statement to the invocation offset.
 	private char[][] fParametersNames;
-	private IType[] fParametersTypes;
+	private IType [] fParametersTypes;
 
-	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context,
-			CCompletionProposal proposal, IFunction function, String prefix) {
+	public static ParameterGuessingProposal createProposal(CContentAssistInvocationContext context, CCompletionProposal proposal, IFunction function, String prefix) {
 		String replacement = getParametersList(function);
 		String fullPrefix = function.getName() + "("; //$NON-NLS-1$
 		int replacementOffset = proposal.getReplacementOffset();
@@ -91,10 +89,10 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 			try {
 				fullPrefix = context.getDocument().get(replacementOffset, context.getInvocationOffset() - replacementOffset);
 				replacement =  fullPrefix + replacement + ")"; //$NON-NLS-1$
-			} catch (BadLocationException e) {
+			} catch (BadLocationException e1) {
 			}
 			try {
-				// Remove ')' from the replacement string if it is auto appended.
+				// remove ')' from the replacement string if it is auto appended.
 				if (context.getDocument().getChar(context.getInvocationOffset()) == ')')
 					replacement = replacement.substring(0, replacement.length() - 1);
 			} catch (BadLocationException e) {
@@ -105,9 +103,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		}
 		replacementLength = replacement.length();
 		
-		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset,
-				replacementLength, proposal.getImage(), proposal.getDisplayString(),
-				proposal.getIdString(), proposal.getRelevance(), context.getViewer(), function, context);
+		ParameterGuessingProposal ret = new ParameterGuessingProposal(replacement, replacementOffset, replacementLength, proposal.getImage(), proposal.getDisplayString(), proposal.getIdString(), proposal.getRelevance(), context.getViewer(), function, context);
 		ret.setContextInformation(proposal.getContextInformation());
 		ret.fPrefix = prefix;
 		ret.fFullPrefix = fullPrefix;
@@ -159,6 +155,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return super.getPrefixCompletionText(document, completionOffset);
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	@Override
 	public void apply(final IDocument document, char trigger, int offset) {
 		try {
@@ -236,6 +235,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		}
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		if (fSelectedRegion == null)
@@ -244,6 +246,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return new Point(fSelectedRegion.getOffset(), fSelectedRegion.getLength());
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	@Override
 	public String getReplacementString() {
 		if (!fReplacementStringComputed) {
@@ -254,6 +259,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return super.getReplacementString();
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	private String computeReplacementString() {
 		if (!hasParameters())
 			return super.getReplacementString();
@@ -261,18 +269,21 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		String replacement;
 		try {
 			replacement = computeGuessingCompletion();
-		} catch (Exception e) {
+		} catch (Exception x) {
 			fPositions = null;
 			fChoices = null;
-			CUIPlugin.log(e);
+			CUIPlugin.log(x);
 			return super.getReplacementString();
 		}
 
 		return replacement;
 	}
 
+	/**
+	 * Copied from JDT with replacing JDT types with CDT types
+	 */
 	private String computeGuessingCompletion() throws Exception {
-		StringBuilder buffer = new StringBuilder();
+		StringBuffer buffer = new StringBuffer();
 		buffer.append(fFullPrefix);
 		setCursorPosition(buffer.length());
 
@@ -305,26 +316,28 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return buffer.toString();
 	}
 
+	/**
+	 * Copied from JDT with replacing JDT types with CDT types
+	 */
 	private ICompletionProposal[][] guessParameters(char[][] parameterNames) throws Exception {
 		int count= parameterNames.length;
 		fPositions= new Position[count];
 		fChoices= new ICompletionProposal[count][];
 
 		ParameterGuesser guesser= new ParameterGuesser(fContext.getCompletionNode().getTranslationUnit());
-		List<IBinding> assignableElements = getAssignableElements();
+		ArrayList<IBinding> assignableElements = getAssignableElements();
 
 		for (int i= count - 1; i >= 0; i--) {
 			String paramName= new String(parameterNames[i]);
-			Position position= new Position(0, 0);
+			Position position= new Position(0,0);
 
 			boolean isLastParameter= i == count - 1;
-			List<ICompletionProposal> allProposals = new ArrayList<>();
+			ArrayList<ICompletionProposal> allProposals = new ArrayList<ICompletionProposal>();
 			CCompletionProposal proposal= new CCompletionProposal(paramName, 0, paramName.length(), null, paramName, 0);
 			if (isLastParameter)
 				proposal.setTriggerCharacters(new char[] { ',' });
 			allProposals.add(proposal);
-			ICompletionProposal[] argumentProposals=
-					guesser.parameterProposals(fParametersTypes[i], paramName, position, assignableElements, true, isLastParameter);
+			ICompletionProposal[] argumentProposals= guesser.parameterProposals(fParametersTypes[i], paramName, position, assignableElements, true, isLastParameter);
 			allProposals.addAll(Arrays.asList(argumentProposals));
 			fPositions[i]= position;
 			fChoices[i]= allProposals.toArray(new ICompletionProposal[allProposals.size()]);
@@ -333,8 +346,8 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return fChoices;
 	}
 
-	private static IType[] getFunctionParametersTypes(IParameter[] functionParameters) {
-		IType[] ret = new IType[functionParameters.length];
+	private static IType[] getFunctionParametersTypes(IParameter [] functionParameters) {
+		IType [] ret = new IType[functionParameters.length];
 		for (int i = 0; i < functionParameters.length; i++) {
 			ret[i] = functionParameters[i].getType();
 		}
@@ -342,7 +355,7 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	}
 	
 	
-	private static char[][] getFunctionParametersNames(IParameter[] functionParameters) {
+	private static char[][] getFunctionParametersNames(IParameter [] functionParameters) {
 		char[][] parameterNames = new char[functionParameters.length][];
 		for (int i = 0; i < functionParameters.length; i++) {
 			parameterNames[i] = functionParameters[i].getNameCharArray();
@@ -361,12 +374,12 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 	 * Returns a list of functions and variables that are defined in current context.
 	 * @return a list of assignable elements.
 	 */
-	private List<IBinding> getAssignableElements() {
+	private ArrayList<IBinding> getAssignableElements() {
 		int i = getStatementStartOffset(fContext.getDocument(), getStatementStartOffset());
 		CContentAssistInvocationContext c = new CContentAssistInvocationContext(fTextViewer, i, getCEditor(), true, false);
 		IASTCompletionNode node = c.getCompletionNode();
-		IASTName[] names = node.getNames();
-		List<IBinding> allBindings = new ArrayList<>();
+		IASTName [] names = node.getNames();
+		ArrayList<IBinding> allBindings = new ArrayList<IBinding>();
 		for (IASTName name : names) {
 			IASTCompletionContext astContext = name.getCompletionContext();
 			if (astContext != null) {
@@ -408,6 +421,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		return offset;
 	}
 	
+	/**
+	 * Copied from JDT
+	 */
 	private void ensurePositionCategoryInstalled(final IDocument document, LinkedModeModel model) {
 		if (!document.containsPositionCategory(getCategory())) {
 			document.addPositionCategory(getCategory());
@@ -429,6 +445,9 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		}
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	private void ensurePositionCategoryRemoved(IDocument document) {
 		if (document.containsPositionCategory(getCategory())) {
 			try {
@@ -440,11 +459,16 @@ public class ParameterGuessingProposal extends FunctionCompletionProposal {
 		}
 	}
 
+	/**
+	 * Copied from JDT
+	 */
 	private String getCategory() {
 		return "ParameterGuessingProposal_" + toString(); //$NON-NLS-1$
 	}
 
 	/**
+	 * Copied from JDT with replacing JDT types with CDT types.
+	 * 
 	 * Returns the currently active C/C++ editor, or <code>null</code> if it
 	 * cannot be determined.
 	 *

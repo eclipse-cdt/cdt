@@ -12,16 +12,16 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 /**
- * This class represents a field or variable which shall be initialized lazily when accessed
- * the first time. It's value is computed once by the {@code calculateValue()} method. The value is
- * accessed by {@code value()}.
+ * This class represents a field or variable which shall be initialized lazily when accessed the
+ * first time. It's value is computed once by the <code>calculateValue()</code> method. The value is
+ * accessed by <code>value()</code>.
  *
  * This implementation is NOT thread-safe!
  *
  * @param <E> The type of the lazy initialized variable.
  */
 public abstract class Lazy<E> {
-	private static final Object NOT_INITIALIZED = new Object();
+	private final static Object NOT_INITIALIZED = new Object();
 	private Object value = NOT_INITIALIZED;
 
 	/**

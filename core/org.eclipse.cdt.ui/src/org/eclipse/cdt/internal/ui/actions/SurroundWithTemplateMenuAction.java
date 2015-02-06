@@ -57,6 +57,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistInvocationCo
 import org.eclipse.cdt.internal.ui.text.contentassist.TemplateCompletionProposalComputer;
 
 public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownDelegate2 {
+
 	public static final String SURROUND_WITH_QUICK_MENU_ACTION_ID= "org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu";  //$NON-NLS-1$
 
 	private static final String C_TEMPLATE_PREFERENCE_PAGE_ID= "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
@@ -66,10 +67,14 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	private static final String CONFIG_GROUP= "configGroup"; //$NON-NLS-1$
 
 	private static class ConfigureTemplatesAction extends Action {
+
 		public ConfigureTemplatesAction() {
 			super(ActionMessages.SurroundWithTemplateMenuAction_ConfigureTemplatesActionName);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void run() {
 			PreferencesUtil.createPreferenceDialogOn(getShell(), C_TEMPLATE_PREFERENCE_PAGE_ID, new String[] {C_TEMPLATE_PREFERENCE_PAGE_ID}, null).open();
@@ -85,7 +90,6 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		public void run() {
 			//Do nothing
 		}
-
 		@Override
 		public boolean isEnabled() {
 			return false;
@@ -95,6 +99,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	private Menu fMenu;
 	private IPartService fPartService;
 	private IPartListener fPartListener= new IPartListener() {
+
 		@Override
 		public void partActivated(IWorkbenchPart part) {
 		}
@@ -130,6 +135,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
@@ -138,6 +146,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		return fMenu;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Menu getMenu(Control parent) {
 		setMenu(new Menu(parent));
@@ -160,6 +171,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		menu.add(new ConfigureTemplatesAction());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void dispose() {
 		if (fPartService != null) {
@@ -169,6 +183,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		setMenu(null);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 		if (fPartService != null) {
@@ -185,6 +202,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void run(IAction action) {
 		IWorkbenchPart activePart= CUIPlugin.getActivePage().getActivePart();
@@ -201,6 +221,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		}.createMenu();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Default do nothing
@@ -211,6 +234,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	 * @param menu the menu to fill entries into it
 	 */
 	protected void fillMenu(Menu menu) {
+
 		IWorkbenchPart activePart= CUIPlugin.getActivePage().getActivePart();
 		if (!(activePart instanceof CEditor)) {
 			ActionContributionItem item= new ActionContributionItem(NONE_APPLICABLE_ACTION);
@@ -218,7 +242,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			return;
 		}
 
-		CEditor editor= (CEditor) activePart;
+		CEditor editor= (CEditor)activePart;
 		IAction[] actions= getTemplateActions(editor);
 
 		if ( actions == null || actions.length <= 0) {
@@ -243,9 +267,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		fMenu.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuShown(MenuEvent e) {
-				Menu m = (Menu) e.widget;
+				Menu m = (Menu)e.widget;
 				MenuItem[] items = m.getItems();
-				for (int i= 0; i < items.length; i++) {
+				for (int i=0; i < items.length; i++) {
 					items[i].dispose();
 				}
 				fillMenu(m);
@@ -291,19 +315,21 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		return (ITextSelection)selection;
 	}
 
-	private static IAction[] getActionsFromProposals(List<ICompletionProposal> proposals, final int offset,
-			final ITextViewer viewer) {
-		List<Action> result= new ArrayList<>();
+	private static IAction[] getActionsFromProposals(List<ICompletionProposal> proposals, final int offset, final ITextViewer viewer) {
+		List<Action> result= new ArrayList<Action>();
 		int j = 1;
 		for (Iterator<ICompletionProposal> it= proposals.iterator(); it.hasNext();) {
 			final ICompletionProposal proposal= it.next();
 
-			StringBuilder actionName= new StringBuilder();
+			StringBuffer actionName= new StringBuffer();
 			if (j < 10) {
 				actionName.append('&').append(j).append(' ');
 			}
 			actionName.append(proposal.getDisplayString());
 			Action action= new Action(actionName.toString()) {
+				/**
+				 * {@inheritDoc}
+				 */
 				@Override
 				public void run() {
 					applyProposal(proposal, viewer, (char)0, 0, offset);
@@ -313,19 +339,19 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			result.add(action);
 			j++;
 		}
-		if (result.isEmpty())
+		if (result.size() == 0)
 			return null;
 
 		return result.toArray(new IAction[result.size()]);
 	}
 
-	private static void applyProposal(ICompletionProposal proposal, ITextViewer viewer, char trigger,
-			int stateMask, final int offset) {
+	private static void applyProposal(ICompletionProposal proposal, ITextViewer viewer, char trigger, int stateMask, final int offset) {
 		Assert.isTrue(proposal instanceof ICompletionProposalExtension2);
 
 		IRewriteTarget target= null;
 		IEditingSupportRegistry registry= null;
 		IEditingSupport helper= new IEditingSupport() {
+
 			@Override
 			public boolean isOriginator(DocumentEvent event, IRegion focus) {
 				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() >= offset;

@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.rse.scp"
       label="%featureName"
-      version="4.0.0.qualifier"
+      version="3.7.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.subsystems.files.scp"
       image="eclipse_update_120.jpg"

@@ -772,6 +772,24 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, ID);
 	}
 
+	//	template <typename T>
+	//	struct A {
+	//		template <typename U>
+	//		struct AA {
+	//			template <typename V>
+	//			struct AAA {
+	//			};
+	//		};
+	//	};
+	//
+	//	struct B : A<B> {
+	//		AA<B>::/*cursor*/
+	//	};
+	public void testMemebersForDeeplyNestedTemplates_459389() throws Exception {
+		final String[] expected = { "AAA<typename V>" };
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
+	}
+
 	//	struct A {};
 	//
 	//	template<typename T>

@@ -99,6 +99,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * Base class for the c- and c++ parser.
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
+	// see TemplateIdStrategy for an explanation of what this does
 	public interface ITemplateIdStrategy {
 		boolean shallParseAsTemplateID(IASTName name);
 	}

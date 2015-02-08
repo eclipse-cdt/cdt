@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2014 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Anders Dahlberg (Ericsson) - bug 84144
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -261,7 +262,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		try {
     			return nameSpecifier(ctx, strat);
     		} catch (BacktrackException e) {
-    			if (strat.setNextAlternative()) {
+    			if (strat.setNextAlternative(true /* previous alternative failed to parse */)) {
     				backup(m);
     			} else {
     				throw e;
@@ -342,14 +343,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				final int haveArgs = haveTemplateArguments(inBinaryExpression);
             	boolean templateID= true;
             	if (!keywordTemplate) {
-					if (haveArgs == -1) {
+					if (haveArgs == NO_TEMPLATE_ID) {
 						templateID= false;
-					} else if (haveArgs == 0) {
+					} else if (haveArgs == AMBIGUOUS_TEMPLATE_ID) {
 						templateID= strat.shallParseAsTemplateID(name);
 					}
             	}
             	if (templateID) {
-            		if (haveArgs == -1)
+            		if (haveArgs == NO_TEMPLATE_ID)
             			throwBacktrack(LA(1));
 
             		nameSpec= (ICPPASTName) addTemplateArguments(name, strat);
@@ -560,7 +561,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			break;
         		}
         	}
-        	return 0;
+        	return AMBIGUOUS_TEMPLATE_ID;
         } finally {
         	backup(mark);
         }
@@ -1156,11 +1157,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				if (variants != null) {
 					variants = new Variant(variants, e, strat.getTemplateNames(), lastToken.getOffset());
 				}
-				if (!strat.setNextAlternative()) {
+				if (!strat.setNextAlternative(false /* previous alternative parsed ok */)) {
 					break;
 				}
 			} catch (BacktrackException e) {
-				if (!strat.setNextAlternative()) {
+				if (!strat.setNextAlternative(true /* previous alternative failed to parse */)) {
 					if (lastToken == null)
 						throw e;
 
@@ -1839,6 +1840,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tBITCOMPLEMENT:
         case IToken.t_decltype: {
             IASTName name = qualifiedName(ctx, strat);
+            // A qualified-name's last name can sometimes be empty in a declaration (e.g. in "int A::*x",
+            // "A::" is a valid qualified-name with an empty last name), but not in an expression
+            // (unless we are invoking code completion at the '::').
+            if (name.getLookupKey().length == 0 && LT(1) != IToken.tEOC)
+                throwBacktrack(LA(1));
             IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
             return setRange(idExpression, name);
         }
@@ -2228,7 +2234,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     			try {
     				return templateParameterList(result);
     			} catch (BacktrackException e) {
-    				if (!fTemplateParameterListStrategy.setNextAlternative()) {
+    				if (!fTemplateParameterListStrategy.setNextAlternative(true /* previous alternative failed to parse */)) {
     					fTemplateParameterListStrategy= null;
     					throw e;
     				}

@@ -6086,6 +6086,13 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testTemplateAmbiguityInDeleteExpression_364225() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<int, int> struct a {};
+	//	const int b = 0, c = 1;
+	//	int a<b<c,b<c>::*mp6;  // syntax error here
+	public void testTemplateParameterListParsing_445177() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T> void foo(T);
 	//	template <typename T> void foo(T, typename T::type* = 0);

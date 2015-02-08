@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_b175533f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/TemplateIdStrategy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-08T19:34:32Z",
+      "side": 1,
+      "message": "Please try to keep comments within 100-character limit.",
+      "range": {
+        "startLine": 29,
+        "startChar": 100,
+        "endLine": 29,
+        "endChar": 106
+      },
+      "revId": "23938e2b3dae7ef6ba8ec7a5438fd769c731ab48",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

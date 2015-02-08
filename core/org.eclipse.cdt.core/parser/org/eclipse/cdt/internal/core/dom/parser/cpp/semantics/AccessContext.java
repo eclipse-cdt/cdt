@@ -180,9 +180,16 @@ public class AccessContext {
 			return false;
 
 		accessLevel = getMemberAccessLevel(derivedClass, accessLevel);
-		if (owner.isSameType(derivedClass) ||
-				(derivedClass instanceof ICPPClassSpecialization &&
-						owner.equals(((ICPPClassSpecialization) derivedClass).getSpecializedBinding()))) {
+		
+		if (!(owner instanceof ICPPSpecialization)) {
+			while (derivedClass instanceof ICPPSpecialization) {
+				IBinding specialized = ((ICPPSpecialization) derivedClass).getSpecializedBinding();
+				if (specialized instanceof ICPPClassType) {
+					derivedClass = (ICPPClassType) specialized;
+				}
+			}
+		}
+		if (owner.isSameType(derivedClass)) {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
 
@@ -302,8 +309,10 @@ public class AccessContext {
 		if (maxdepth > 0) {
 			for (ICPPBase cppBase : ClassTypeHelper.getBases(derived, point)) {
 				IBinding base = cppBase.getBaseClass();
-				if (!(target instanceof ICPPSpecialization) && base instanceof ICPPSpecialization) {
-					base = ((ICPPSpecialization) base).getSpecializedBinding();
+				if (!(target instanceof ICPPSpecialization)) {
+					while (base instanceof ICPPSpecialization) {
+						base = ((ICPPSpecialization) base).getSpecializedBinding();
+					}
 				}
 				if (base instanceof ICPPClassType) {
 					ICPPClassType tbase = (ICPPClassType) base;

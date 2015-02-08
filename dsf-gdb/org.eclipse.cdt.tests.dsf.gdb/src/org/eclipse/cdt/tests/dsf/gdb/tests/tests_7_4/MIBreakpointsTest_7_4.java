@@ -60,4 +60,16 @@ public class MIBreakpointsTest_7_4 extends MIBreakpointsTest_7_3 {
 		assertTrue("Breakpoint should be pending", bpData.isPending());
 		assertTrue("Breakpoint mismatch should be enabled", bpData.isEnabled());
 	}
+	
+	// Re-enabled this test since it needs breakpoint synchronization
+	// with the gdb console, which is available starting with GDB 7.4
+	// We still leave the test in the base class MIBreakpointsTest because
+	// the test could be written differently and made to work for older
+	// gdb versions
+	@Override
+	@Test
+	public void updateBreakpoint_AfterRestart() throws Throwable {
+		super.updateBreakpoint_AfterRestart();
+	}
+
 }

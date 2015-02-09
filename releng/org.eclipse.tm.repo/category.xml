@@ -15,9 +15,6 @@
    <feature url="features/org.eclipse.rse.useractions_0.0.0.jar" id="org.eclipse.rse.useractions" version="0.0.0">
       <category name="tm_37_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.0.0">
-      <category name="tm_37_optional"/>
-   </feature>
    <feature url="features/org.eclipse.rse.examples_0.0.0.jar" id="org.eclipse.rse.examples" version="0.0.0">
       <category name="tm_37_optional"/>
    </feature>

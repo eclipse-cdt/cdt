@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
@@ -191,14 +192,15 @@ public abstract class VariableReadWriteFlags {
 				if (functionNameExpression != null) {
 					final IType type= functionNameExpression.getExpressionType();
 					if (type instanceof IFunctionType) {
-						return rwArgumentForFunctionCall((IFunctionType) type, i, indirection);
+						return rwArgumentForFunctionCall((IFunctionType) type, i, args[i], indirection);
 					} else if (funcCall instanceof IASTImplicitNameOwner) {
 						IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall).getImplicitNames();
 						if (implicitNames.length == 1) {
 							IASTImplicitName name = implicitNames[0];
 							IBinding binding = name.resolveBinding();
 							if (binding instanceof IFunction) {
-								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i, indirection);
+								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i, 
+										args[i], indirection);
 							}
 						}
 					}
@@ -209,10 +211,29 @@ public abstract class VariableReadWriteFlags {
 		return READ | WRITE;  // Fallback
 	}
 
-	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx, int indirection) {
+	private IType getArgumentType(IASTInitializerClause argument) {
+		if (argument instanceof ICPPASTInitializerClause) {
+			return ((ICPPASTInitializerClause) argument).getEvaluation().getTypeOrFunctionSet(argument);
+		} else if (argument instanceof IASTExpression) {
+			return ((IASTExpression) argument).getExpressionType();
+		}
+		return null;
+	}
+	
+	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx, 
+			IASTInitializerClause argument, int indirection) {
 		IType[] ptypes= type.getParameterTypes();
+		IType parameterType = null;
 		if (ptypes != null && ptypes.length > parameterIdx) {
-			return rwAssignmentToType(ptypes[parameterIdx], indirection);
+			parameterType = ptypes[parameterIdx];
+		} else if (type.takesVarArgs()) {
+			// Since variadic functions take their arguments by value, synthesize a parameter type
+			// equal to the argument type.
+			parameterType = getArgumentType(argument);
+		}
+		
+		if (parameterType != null) {
+			return rwAssignmentToType(parameterType, indirection);
 		}
 		return READ | WRITE; // Fallback
 	}

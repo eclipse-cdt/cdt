@@ -215,4 +215,16 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		a.assertReadWriteFlags("ap->m()", "ap", READ);
 		a.assertReadWriteFlags("(*ap).m()", "ap", READ);
 	}
+	
+	//	void variadic(...);
+	//	void test() {
+	//		int waldo;
+	//		variadic(waldo);
+	//		variadic(&waldo);
+	//	}
+	public void testVariadicFunctionCall_452416() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("variadic(waldo)", "waldo", READ);
+		a.assertReadWriteFlags("variadic(&waldo)", "waldo", READ | WRITE);
+	}
 }

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_b156f353",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TestBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-09T04:17:49Z",
+      "side": 1,
+      "message": "Please move to the previous line.",
+      "range": {
+        "startLine": 499,
+        "startChar": 1,
+        "endLine": 499,
+        "endChar": 2
+      },
+      "revId": "dc1940f2d4f9d2c0f17002d5edacca77f665eaf5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,7 +1,10 @@
 <FindBugsFilter>
     <!-- Ignore all RSE -->
     <Match>
-		<Package name="~org\.eclipse\.rse\..*"/>
+        <Or>
+            <Package name="~org\.eclipse\.rse\..*"/>
+            <Package name="~org\.eclipse\.dstore\..*"/>
+        </Or>
     </Match>
     
 	<!-- Set maximum rank level to 16 -->

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -78,9 +79,9 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 					if (b instanceof ICPPConstructor) {
 						final ICPPConstructor ctor = (ICPPConstructor) b;
 						int idx= 0;
-						for (IASTNode child : parent.getArguments()) {
+						for (IASTInitializerClause child : parent.getArguments()) {
 							if (child == node) {
-								return rwArgumentForFunctionCall(ctor.getType(), idx, indirection);
+								return rwArgumentForFunctionCall(ctor.getType(), idx, child, indirection);
 							}
 							idx++;
 						}

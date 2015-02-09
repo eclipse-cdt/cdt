@@ -74,8 +74,9 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 			IType r2= getCompositeType(r);
 			IType[] p= ft.getParameterTypes();
 			IType[] p2= getCompositeTypes(p);
+			boolean takesVarargs = ft.takesVarArgs();
 			if (r != r2 || p != p2) {
-				return new CFunctionType(r2, p2);
+				return new CFunctionType(r2, p2, takesVarargs);
 			}
 			return ft;
 		} 

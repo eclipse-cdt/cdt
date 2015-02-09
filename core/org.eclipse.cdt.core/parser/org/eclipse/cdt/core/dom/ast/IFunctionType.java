@@ -25,4 +25,10 @@ public interface IFunctionType extends IType {
      * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
      */
     public IType[] getParameterTypes();
+    
+    /**
+     * Whether the function type takes variable number of arguments.
+     * @since 5.9
+     */
+    public boolean takesVarArgs();
 }

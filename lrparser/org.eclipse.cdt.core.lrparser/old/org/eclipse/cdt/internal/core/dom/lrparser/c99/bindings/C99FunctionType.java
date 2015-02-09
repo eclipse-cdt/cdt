@@ -58,4 +58,10 @@ public class C99FunctionType implements IFunctionType {
 		}
 		
 	}
+
+	@Override
+	public boolean takesVarArgs() {
+		// Not implemented
+		return false;
+	}
 }

@@ -7574,4 +7574,12 @@ public class AST2Tests extends AST2TestBase {
     public void testAtomicBuiltin_bug456131() throws Exception {
     	parseAndCheckBindings(true);
     }
+    
+    //	void waldo(...);
+    public void testVariadicCFunction_452416() throws Exception {
+    	String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, false /* not C++ */);
+		IFunction waldo = bh.assertNonProblem("waldo");
+		assertTrue(waldo.getType().takesVarArgs());		
+    }
 }

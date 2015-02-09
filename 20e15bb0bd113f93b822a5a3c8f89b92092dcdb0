@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_f1507b58",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8236,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-09T04:20:37Z",
+      "side": 1,
+      "message": "Please move to the previous line.",
+      "range": {
+        "startLine": 8236,
+        "startChar": 4,
+        "endLine": 8236,
+        "endChar": 5
+      },
+      "revId": "20e15bb0bd113f93b822a5a3c8f89b92092dcdb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_6cb1522d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8249,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-09T04:20:37Z",
+      "side": 1,
+      "message": "Extra blank line.",
+      "revId": "20e15bb0bd113f93b822a5a3c8f89b92092dcdb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

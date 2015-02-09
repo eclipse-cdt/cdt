@@ -40,6 +40,24 @@
       "revId": "879284f752fa404d3d6dbc8822d5cdac03217876",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_fd24ca62",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-09T22:30:41Z",
+      "side": 1,
+      "message": "Oops, it was my mistake. Yes, please add the comment in a separate patch.",
+      "parentUuid": "070b0362_7dd0dac2",
+      "revId": "879284f752fa404d3d6dbc8822d5cdac03217876",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

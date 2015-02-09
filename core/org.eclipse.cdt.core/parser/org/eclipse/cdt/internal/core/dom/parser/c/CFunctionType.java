@@ -22,10 +22,16 @@ import org.eclipse.core.runtime.CoreException;
 public class CFunctionType implements IFunctionType, ISerializableType {
     private final IType[] parameters;
     private final IType returnType;
+    private final boolean takesVarargs;
     
-    public CFunctionType(IType returnType, IType[] types) {
+    public CFunctionType(IType returnType, IType[] parameters) {
+    	this(returnType, parameters, false);
+    }
+    
+    public CFunctionType(IType returnType, IType[] parameters, boolean takesVarargs) {
         this.returnType = returnType;
-        this.parameters = types;
+        this.parameters = parameters;
+        this.takesVarargs = takesVarargs;
     }
 
     @Override
@@ -75,9 +81,10 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		short firstBytes = ITypeMarshalBuffer.FUNCTION_TYPE;
+		if (takesVarargs) firstBytes |= ITypeMarshalBuffer.FLAG1;
 
 		int len= parameters.length & 0xffff;
-		int codedLen= len * ITypeMarshalBuffer.FIRST_FLAG;
+		int codedLen= len * ITypeMarshalBuffer.FLAG2;
 		if (codedLen < ITypeMarshalBuffer.LAST_FLAG) {
 			firstBytes |= codedLen;
 			buffer.putShort(firstBytes);
@@ -98,13 +105,19 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 		if (((firstBytes & ITypeMarshalBuffer.LAST_FLAG) != 0)) {
 			len= buffer.getInt();
 		} else {
-			len= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG - 1)) / ITypeMarshalBuffer.FIRST_FLAG;
+			len= (firstBytes & (ITypeMarshalBuffer.LAST_FLAG - 1)) / ITypeMarshalBuffer.FLAG2;
 		}
 		IType rt= buffer.unmarshalType();
 		IType[] pars= new IType[len];
 		for (int i = 0; i < pars.length; i++) {
 			pars[i]= buffer.unmarshalType();
 		}
-		return new CFunctionType(rt, pars);
+		return new CFunctionType(rt, pars,
+				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0);  // takes varargs
+	}
+
+	@Override
+	public boolean takesVarArgs() {
+		return takesVarargs;
 	}
 }

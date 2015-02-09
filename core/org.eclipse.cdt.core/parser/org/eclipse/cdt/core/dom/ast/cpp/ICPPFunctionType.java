@@ -46,6 +46,7 @@ public interface ICPPFunctionType extends IFunctionType {
 	 * Whether the function type takes variable number of arguments.
 	 * @since 5.2
 	 */
+	@Override
 	public boolean takesVarArgs();
 
 	/**

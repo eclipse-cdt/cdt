@@ -1342,7 +1342,9 @@ public class CVisitor extends ASTQueries {
 	    IType[] pTypes = getParmTypes(declarator);
 	    returnType = setupPointerChain(declarator.getPointerOperators(), returnType);
 	    
-	    IType type = new CFunctionType(returnType, pTypes);
+	    boolean takesVarargs = declarator instanceof IASTStandardFunctionDeclarator &&
+	    		((IASTStandardFunctionDeclarator) declarator).takesVarArgs();
+	    IType type = new CFunctionType(returnType, pTypes, takesVarargs);
 	    
 	    IASTDeclarator nested = declarator.getNestedDeclarator();
 	    if (nested != null) {

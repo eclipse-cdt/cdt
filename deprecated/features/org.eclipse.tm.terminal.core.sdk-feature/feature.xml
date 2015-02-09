@@ -51,32 +51,11 @@
          id="org.eclipse.tm.terminal.telnet"
          version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.tm.terminal.source"
-         download-size="84"
-         install-size="137"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.serial.source"
-         download-size="15"
-         install-size="23"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.ssh.source"
-         download-size="17"
-         install-size="25"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.telnet.source"
-         download-size="23"
-         install-size="32"
-         version="0.0.0"
-         unpack="false"/>
+   <requires>
+      <import feature="org.eclipse.tm.terminal.sdk.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.serial.sdk.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.ssh.sdk.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.telnet.sdk.feature" version="4.0.0" match="compatible"/>
+   </requires>
 
 </feature>

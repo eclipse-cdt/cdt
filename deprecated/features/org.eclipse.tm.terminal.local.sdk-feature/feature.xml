@@ -36,26 +36,9 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
    </url>
 
-   <includes
-         id="org.eclipse.tm.terminal.local"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.tm.terminal.view"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.tm.terminal"
-         version="0.0.0"/>
-
    <requires>
-      <import plugin="org.eclipse.cdt.core" version="5.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.externaltools"/>
+      <import feature="org.eclipse.tm.terminal.sdk.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.sdk" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

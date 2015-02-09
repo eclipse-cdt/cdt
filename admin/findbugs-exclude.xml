@@ -1,4 +1,9 @@
 <FindBugsFilter>
+    <!-- Ignore all RSE -->
+    <Match>
+		<Package name="~org\.eclipse\.rse\..*"/>
+    </Match>
+    
 	<!-- Set maximum rank level to 16 -->
 	<Match>
 		<Rank value="17"/>

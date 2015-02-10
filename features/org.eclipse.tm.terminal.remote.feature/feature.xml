@@ -46,7 +46,6 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import feature="org.eclipse.tm.terminal.feature" version="4.0.0" match="compatible"/>
-      <import feature="org.eclipse.tm.terminal.view" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

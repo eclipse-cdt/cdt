@@ -987,12 +987,19 @@ public class VT100Emulator implements ControlListener {
 		String positionReport = "\u001b[" + (relativeCursorLine() + 1) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
 				(getCursorColumn() + 1) + "R"; //$NON-NLS-1$
 
+		OutputStreamWriter streamWriter = null;
 		try {
-			OutputStreamWriter streamWriter = new OutputStreamWriter(terminal.getOutputStream(), "ISO-8859-1"); //$NON-NLS-1$
+			streamWriter = new OutputStreamWriter(terminal.getOutputStream(), "ISO-8859-1"); //$NON-NLS-1$
 			streamWriter.write(positionReport, 0, positionReport.length());
 			streamWriter.flush();
 		} catch (IOException ex) {
 			Logger.log("Caught IOException!"); //$NON-NLS-1$
+		} finally {
+			if (streamWriter != null) {
+				try {
+					streamWriter.close();
+				} catch (IOException e) { /* ignored on purpose */ }
+			}
 		}
 	}
 

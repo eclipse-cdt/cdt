@@ -257,6 +257,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  180.0 - Internal types of enumerators, bug 446711.
 	 *  180.1 - Storing types of unknown members, bug 447728.
 	 *  180.2 - Do not apply significant macros to source files, bug 450888.
+	 *  
+	 *  CDT 8.7 development (versions not supported on the 8.6.x branch)
 	 *  181.0 - C function type with varargs, bug 452416.
 	 */
 	private static final int MIN_SUPPORTED_VERSION= version(181, 0);

@@ -26,9 +26,10 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.tm.internal.terminal.control.actions.ImageConsts;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 public class TerminalPlugin extends AbstractUIPlugin {
-	protected static TerminalPlugin fDefault;
+	private static TerminalPlugin plugin;
 	public static final String  PLUGIN_ID  = "org.eclipse.tm.terminal"; //$NON-NLS-1$
 	public static final String  HELP_VIEW  = PLUGIN_ID + ".terminal_view"; //$NON-NLS-1$
 
@@ -36,13 +37,28 @@ public class TerminalPlugin extends AbstractUIPlugin {
 	 * The constructor.
 	 */
 	public TerminalPlugin() {
-		fDefault = this;
 	}
 	/**
 	 * Returns the shared instance.
 	 */
 	public static TerminalPlugin getDefault() {
-		return fDefault;
+		return plugin;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		super.stop(context);
 	}
 
 	public static boolean isLogInfoEnabled() {

@@ -813,19 +813,19 @@ public class SyncUtil {
 	 * @param dmc		the data model context
 	 * @param address	the memory block address
 	 * @param offset	the offset in the buffer
-	 * @param word_size	the size of a word, in octets
+	 * @param wordSize	the size of a word, in octets
 	 * @param count		the number of bytes to read
 	 * @return			the memory content
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
 	public static MemoryByte[] readMemory(final IMemoryDMContext dmc,
-			final IAddress address, final long offset, final int word_size,
+			final IAddress address, final long offset, final int wordSize,
 			final int count) throws InterruptedException, ExecutionException {
 		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(DataRequestMonitor<MemoryByte[]> rm) {
-				fMemory.getMemory(dmc, address, offset, word_size, count, rm);
+				fMemory.getMemory(dmc, address, offset, wordSize, count, rm);
 			}
 		};
 
@@ -840,20 +840,20 @@ public class SyncUtil {
 	 * @param dmc		the data model context
 	 * @param address	the memory block address (could be an expression)
 	 * @param offset	the offset from address
-	 * @param word_size	the word size, in octets
+	 * @param wordSize	the word size, in octets
 	 * @param count		the number of bytes to write
 	 * @param buffer	the byte buffer to write from
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
 	public static void writeMemory(final IMemoryDMContext dmc,
-			final IAddress address, final long offset, final int word_size,
+			final IAddress address, final long offset, final int wordSize,
 			final int count, final byte[] buffer) throws InterruptedException,
 			ExecutionException {
 		Query<Void> query = new Query<Void>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
-				fMemory.setMemory(dmc, address, offset, word_size, count,
+				fMemory.setMemory(dmc, address, offset, wordSize, count,
 						buffer, rm);
 			}
 		};
@@ -869,20 +869,20 @@ public class SyncUtil {
 	 * @param dmc		the data model context
 	 * @param address	the memory block address (could be an expression)
 	 * @param offset	the offset from address
-	 * @param word_size	the word size, in octets
+	 * @param wordSize	the word size, in octets
 	 * @param count		the number of bytes to write
 	 * @param pattern	the pattern to write
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
 	public static void fillMemory(final IMemoryDMContext dmc,
-			final IAddress address, final long offset, final int word_size,
+			final IAddress address, final long offset, final int wordSize,
 			final int count, final byte[] pattern) throws InterruptedException,
 			ExecutionException {
 		Query<Void> query = new Query<Void>() {
 			@Override
 			protected void execute(DataRequestMonitor<Void> rm) {
-				fMemory.fillMemory(dmc, address, offset, word_size, count,
+				fMemory.fillMemory(dmc, address, offset, wordSize, count,
 						pattern, rm);
 			}
 		};

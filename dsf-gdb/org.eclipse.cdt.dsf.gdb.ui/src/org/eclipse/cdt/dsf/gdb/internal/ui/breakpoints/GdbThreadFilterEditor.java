@@ -515,18 +515,21 @@ public class GdbThreadFilterEditor {
                         @Override
                         protected void handleSuccess() {
                             final StringBuilder builder = new StringBuilder(Messages.GdbThreadFilterEditor_Thread);
-                            builder.append("["); //$NON-NLS-1$
+                            builder.append(" #"); //$NON-NLS-1$
                             builder.append(((IMIExecutionDMContext)thread).getThreadId());
-                            builder.append("] "); //$NON-NLS-1$
+
+                            String threadName = getData().getName();
+                            if (threadName != null) {
+                            	builder.append(" ["); //$NON-NLS-1$
+                            	builder.append(threadName);
+                            	builder.append("] "); //$NON-NLS-1$
+                            }
+
                             String threadId = getData().getId();
                             if (threadId != null) {
                             	builder.append(threadId);
                             }
-                            String threadName = getData().getName();
-                            if (threadName != null) {
-                            	builder.append(threadName);
-                            }
-
+                            
                             rm.setData(builder.toString());
                             rm.done();
                         }

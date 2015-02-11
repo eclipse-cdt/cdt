@@ -366,7 +366,7 @@ public class SyncUtil {
                     MIStoppedEvent.class);
 
 		// Wait for the execution to suspend
-    	return eventWaitor.waitForEvent(timeout);			
+		return eventWaitor.waitForEvent(TestsPlugin.massageTimeout(timeout));
 	}
 	
 	public static MIStoppedEvent runToLocation(String location) throws Throwable {

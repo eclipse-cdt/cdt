@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_1614084a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "I wonder if something a bit more generic than \"target\" could be used? I find that term fits very well with a GDB session, but maybe less so with other potential places where we could be getting the model data from. Maybe something like \"fDataSource\"?\n\nIf we change this here, we might also consider renaming \"IDSFTargetDataProxy\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_d6f8c03f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1160,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "just curious, what does the \u0027d\u0027 in \u0027dCpuContexts\u0027 stand-for? is this a popular, used in such situations?",
+      "range": {
+        "startLine": 1160,
+        "startChar": 41,
+        "endLine": 1160,
+        "endChar": 53
+      },
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_16f36860",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1162,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "I do not see, at first look, the reason to have this local variable. Why not just use the one passed as param?",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_cac01477",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1306,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "Could you please split the really long lines in this method?",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_6acf68a4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1313,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "this one should probably be split too",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_8add6c58",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1317,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "this one too?",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_aa2af0b2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1458,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "Just curious why move this method here?",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ca2934bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-11T16:11:10Z",
+      "side": 1,
+      "message": "why the use non-javadoc comments? I see that the javadoc of corresponding abstract methods is picked-up, which is good. But I just wonder what this type of comments adds? Should it create links to the mentioned classes in the hover pop-up? I do not see that it\u0027s happening...",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

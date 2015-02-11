@@ -124,7 +124,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         }
 
         String start = (startAddress != null) ? startAddress.toString() : "$pc";       //$NON-NLS-1$
-        String end   = (endAddress   != null) ? endAddress.toString()   : "$pc + 100"; //$NON-NLS-1$
+        String end   = (endAddress   != null) ? endAddress.toString()   : start + " + 100"; //$NON-NLS-1$
         fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, mode),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
@@ -206,7 +206,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         }
 
         String start = (startAddress != null) ? startAddress.toString() : "$pc";       //$NON-NLS-1$
-        String end   = (endAddress   != null) ? endAddress.toString()   : "$pc + 100"; //$NON-NLS-1$
+        String end   = (endAddress   != null) ? endAddress.toString()   : start + " + 100"; //$NON-NLS-1$
         fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, mode),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override

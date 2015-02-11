@@ -50,7 +50,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         super(session);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.service.AbstractDsfService#initialize(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
     @Override
@@ -72,7 +72,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         rm.done();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.service.AbstractDsfService#shutdown(org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
     @Override
@@ -81,7 +81,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 		super.shutdown(rm);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.service.AbstractDsfService#getBundleContext()
      */
     @Override
@@ -93,7 +93,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
     // IDisassembly
     ///////////////////////////////////////////////////////////////////////////
     
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.math.BigInteger, java.math.BigInteger, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
     @Override
@@ -136,7 +136,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
             });
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.lang.String, int, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
 	@Override
@@ -175,7 +175,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
             });
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getMixedInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.math.BigInteger, java.math.BigInteger, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
 	@Override
@@ -218,7 +218,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
             });
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.cdt.dsf.debug.service.IDisassembly#getMixedInstructions(org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext, java.lang.String, int, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
 	@Override

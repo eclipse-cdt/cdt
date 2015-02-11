@@ -11,21 +11,22 @@
 
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -34,13 +35,14 @@ import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 /*
@@ -62,13 +64,15 @@ public class MIDisassemblyTest extends BaseTestCase {
     private static final String SOURCE_NAME = "MemoryTestApp.cc";
     private static final int LINE_NUMBER = 35;
     private static final String INVALID_SOURCE_NAME = "invalid_filename";
-    
-    private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
+
     private DsfSession          fSession;
     private DsfServicesTracker  fServicesTracker;
     private IDisassemblyDMContext fDisassemblyDmc;
     private MIDisassembly       fDisassembly;
     private IExpressions        fExpressionService;
+
+	@Rule
+	final public ExpectedException expectedException = ExpectedException.none();
 
     // ========================================================================
     // Housekeeping stuff
@@ -139,42 +143,9 @@ public class MIDisassemblyTest extends BaseTestCase {
     private IAddress evaluateExpression(String expression) throws Throwable
     {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-
-        // Create the expression and format contexts 
-        final IExpressionDMContext expressionDMC = SyncUtil.createExpression(frameDmc, expression);
-        final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService, expressionDMC, IFormattedValues.HEX_FORMAT);
-
-        // Create the DataRequestMonitor which will store the operation result in the wait object
-        final DataRequestMonitor<FormattedValueDMData> drm =
-            new DataRequestMonitor<FormattedValueDMData>(fSession.getExecutor(), null) {
-            @Override
-            protected void handleCompleted() {
-                if (isSuccess()) {
-                    fWait.setReturnInfo(getData());
-                }
-                fWait.waitFinished(getStatus());
-            }
-        };
-
-        // Evaluate the expression (asynchronously)
-        fSession.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-                fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
-            }
-        });
-
-        // Wait for completion
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(fWait.getMessage(), fWait.isOK());
-
-        // Return the string formatted by the back-end
-        String result = "";
-        Object returnInfo = fWait.getReturnInfo();
-        if (returnInfo instanceof FormattedValueDMData)
-            result = ((FormattedValueDMData) returnInfo).getFormattedValue();
-        return new Addr64(result);
+        IFrameDMContext ctx = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
+		return new Addr64(SyncUtil.getExpressionValue(expressionDMC, IFormattedValues.HEX_FORMAT));
     }
 
     /* ------------------------------------------------------------------------
@@ -193,30 +164,21 @@ public class MIDisassemblyTest extends BaseTestCase {
      * @throws InterruptedException
      * ------------------------------------------------------------------------
      */
-    private void getInstruction(final IDisassemblyDMContext dmc,
-            final BigInteger startAddress, final BigInteger endAddress)
-    throws InterruptedException
-    {
-        // Set the Data Request Monitor
-        final DataRequestMonitor<IInstruction[]> drm = 
-            new DataRequestMonitor<IInstruction[]>(fSession.getExecutor(), null) {
-                @Override
-                protected void handleCompleted() {
-                    if (isSuccess()) {
-                        fWait.setReturnInfo(getData());
-                    }
-                    fWait.waitFinished(getStatus());
-                }
-            };
+	private IInstruction[] getInstruction(final IDisassemblyDMContext dmc,
+			final BigInteger startAddress, final BigInteger endAddress)
+			throws InterruptedException, ExecutionException {
+		Query<IInstruction[]> query = new Query<IInstruction[]>() {
 
-        // Issue the get memory request
-        fSession.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-                fDisassembly.getInstructions(dmc, startAddress, endAddress, drm);
-            }
-        });
-    }
+			@Override
+			protected void execute(DataRequestMonitor<IInstruction[]> rm) {
+				fDisassembly.getInstructions(dmc, startAddress, endAddress, rm);
+			}
+		};
+
+		fDisassembly.getExecutor().submit(query);
+
+		return query.get();
+	}
 
     /* ------------------------------------------------------------------------
      * getInstruction
@@ -235,30 +197,21 @@ public class MIDisassemblyTest extends BaseTestCase {
      * @throws InterruptedException
      * ------------------------------------------------------------------------
      */
-    private void getInstruction(final IDisassemblyDMContext dmc,
-            final String function, final int linenum, final int count)
-    throws InterruptedException
-    {
-        // Set the Data Request Monitor
-        final DataRequestMonitor<IInstruction[]> drm = 
-            new DataRequestMonitor<IInstruction[]>(fSession.getExecutor(), null) {
-                @Override
-                protected void handleCompleted() {
-                    if (isSuccess()) {
-                        fWait.setReturnInfo(getData());
-                    }
-                    fWait.waitFinished(getStatus());
-                }
-            };
+	private IInstruction[] getInstruction(final IDisassemblyDMContext dmc,
+			final String function, final int linenum, final int count)
+			throws InterruptedException, ExecutionException {
+		Query<IInstruction[]> query = new Query<IInstruction[]>() {
 
-        // Issue the get memory request
-        fSession.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-                fDisassembly.getInstructions(dmc, function, linenum, count, drm);
-            }
-        });
-    }
+			@Override
+			protected void execute(DataRequestMonitor<IInstruction[]> rm) {
+				fDisassembly.getInstructions(dmc, function, linenum, count, rm);
+			}
+		};
+
+		fDisassembly.getExecutor().submit(query);
+
+		return query.get();
+	}
 
     /* ------------------------------------------------------------------------
      * getMixedInstruction
@@ -276,30 +229,23 @@ public class MIDisassemblyTest extends BaseTestCase {
      * @throws InterruptedException
      * ------------------------------------------------------------------------
      */
-    private void getMixedInstruction(final IDisassemblyDMContext dmc,
-            final BigInteger startAddress, final BigInteger endAddress)
-    throws InterruptedException
-    {
-        // Set the Data Request Monitor
-        final DataRequestMonitor<IMixedInstruction[]> drm = 
-            new DataRequestMonitor<IMixedInstruction[]>(fSession.getExecutor(), null) {
-                @Override
-                protected void handleCompleted() {
-                    if (isSuccess()) {
-                        fWait.setReturnInfo(getData());
-                    }
-                    fWait.waitFinished(getStatus());
-                }
-            };
+	private IMixedInstruction[] getMixedInstruction(
+			final IDisassemblyDMContext dmc, final BigInteger startAddress,
+			final BigInteger endAddress) throws InterruptedException,
+			ExecutionException {
+		Query<IMixedInstruction[]> query = new Query<IMixedInstruction[]>() {
 
-        // Issue the get memory request
-        fSession.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-                fDisassembly.getMixedInstructions(dmc, startAddress, endAddress, drm);
-            }
-        });
-    }
+			@Override
+			protected void execute(DataRequestMonitor<IMixedInstruction[]> rm) {
+				fDisassembly.getMixedInstructions(dmc, startAddress,
+						endAddress, rm);
+			}
+		};
+
+		fDisassembly.getExecutor().submit(query);
+
+		return query.get();
+	}
 
 
     /* ------------------------------------------------------------------------
@@ -318,30 +264,23 @@ public class MIDisassemblyTest extends BaseTestCase {
      * @throws InterruptedException
      * ------------------------------------------------------------------------
      */
-    private void getMixedInstruction(final IDisassemblyDMContext dmc,
-            final String function, final int linenum, final int count)
-    throws InterruptedException
-    {
-        // Set the Data Request Monitor
-        final DataRequestMonitor<IMixedInstruction[]> drm = 
-            new DataRequestMonitor<IMixedInstruction[]>(fSession.getExecutor(), null) {
-                @Override
-                protected void handleCompleted() {
-                    if (isSuccess()) {
-                        fWait.setReturnInfo(getData());
-                    }
-                    fWait.waitFinished(getStatus());
-                }
-            };
+	private IMixedInstruction[] getMixedInstruction(
+			final IDisassemblyDMContext dmc, final String function,
+			final int linenum, final int count) throws InterruptedException,
+			ExecutionException {
+		Query<IMixedInstruction[]> query = new Query<IMixedInstruction[]>() {
 
-        // Issue the get memory request
-        fSession.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-                fDisassembly.getMixedInstructions(dmc, function, linenum, count, drm);
-            }
-        });
-    }
+			@Override
+			protected void execute(DataRequestMonitor<IMixedInstruction[]> rm) {
+				fDisassembly.getMixedInstructions(dmc, function, linenum,
+						count, rm);
+			}
+		};
+
+		fDisassembly.getExecutor().submit(query);
+
+		return query.get();
+	}
 
     // ========================================================================
     // Test Cases
@@ -380,17 +319,12 @@ public class MIDisassemblyTest extends BaseTestCase {
         // Setup call parameters
         BigInteger startAddress = null;
         BigInteger endAddress = null;
-        
-        // Perform the test
-        fWait.waitReset();
-        getInstruction(null, startAddress, endAddress);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 
-        // Verify the result
-        String expected = "Unknown context type";
-        assertFalse(fWait.getMessage(), fWait.isOK());
-        assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-                fWait.getMessage().contains(expected));
+        expectedException.expect(ExecutionException.class);
+        expectedException.expectMessage("Unknown context type");
+
+        // Perform the test
+        getInstruction(null, startAddress, endAddress);
     }
 
     // ------------------------------------------------------------------------
@@ -402,17 +336,12 @@ public class MIDisassemblyTest extends BaseTestCase {
         // Setup call parameters
         BigInteger startAddress = BigInteger.ZERO;
         BigInteger endAddress = null;
-        
-        // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, startAddress, endAddress);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 
-        // Verify the result
-        String expected = "Cannot access memory at address";
-        assertFalse(fWait.getMessage(), fWait.isOK());
-        assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-                fWait.getMessage().contains(expected));
+        expectedException.expect(ExecutionException.class);
+        expectedException.expectMessage("Cannot access memory at address");
+
+        // Perform the test
+        getInstruction(fDisassemblyDmc, startAddress, endAddress);
     }
 
     // ------------------------------------------------------------------------
@@ -424,16 +353,12 @@ public class MIDisassemblyTest extends BaseTestCase {
         // Setup call parameters
         BigInteger startAddress = null;
         BigInteger endAddress = null;
-        
+
         // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, startAddress, endAddress);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        IInstruction[] result = getInstruction(fDisassemblyDmc, startAddress, endAddress);
 
         // Verify the result
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        IInstruction[] result = (IInstruction[]) fWait.getReturnInfo();
-        assertTrue("No instruction retrieved", result.length != 0);
+        assertThat(result.length, is(not(0)));
     }
 
     // ------------------------------------------------------------------------
@@ -446,39 +371,30 @@ public class MIDisassemblyTest extends BaseTestCase {
         Addr64 main = (Addr64) evaluateExpression("&main");
         BigInteger startAddress = main.getValue();
         BigInteger endAddress = null;
-        
+
         // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, startAddress, endAddress);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        IInstruction[] result = getInstruction(fDisassemblyDmc, startAddress, endAddress);
 
         // Verify the result
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        IInstruction[] result = (IInstruction[]) fWait.getReturnInfo();
-        assertTrue("No instruction retrieved", result.length != 0);
+        assertThat(result.length, is(not(0)));
     }
 
     // ------------------------------------------------------------------------
     // readWithInvalidFilename
     // ------------------------------------------------------------------------
     @Test(timeout=20000)
-    public void readWithValidFunction() throws Throwable {
+    public void readWithInvalidFilename() throws Throwable {
 
         // Setup call parameters
         String filename = INVALID_SOURCE_NAME;
         int linenum = 1;
         int count = -1;
-        
-        // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, filename, linenum, count);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 
-        // Verify the result
-        String expected = "Invalid filename";
-        assertFalse(fWait.getMessage(), fWait.isOK());
-        assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-                fWait.getMessage().contains(expected));
+        expectedException.expect(ExecutionException.class);
+        expectedException.expectMessage("Invalid filename");
+
+        // Perform the test
+        getInstruction(fDisassemblyDmc, filename, linenum, count);
     }
 
     // ------------------------------------------------------------------------
@@ -492,16 +408,11 @@ public class MIDisassemblyTest extends BaseTestCase {
         int linenum = -1;
         int count = -1;
 
-        // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, filename, linenum, count);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        expectedException.expect(ExecutionException.class);
+        expectedException.expectMessage("Invalid line number");
 
-        // Verify the result
-        String expected = "Invalid line number";
-        assertFalse(fWait.getMessage(), fWait.isOK());
-        assertTrue("Wrong error message: expected '" + expected + "', received '" + fWait.getMessage() + "'",
-                fWait.getMessage().contains(expected));
+        // Perform the test
+        getInstruction(fDisassemblyDmc, filename, linenum, count);
     }
 
     // ------------------------------------------------------------------------
@@ -516,14 +427,10 @@ public class MIDisassemblyTest extends BaseTestCase {
         int count = -1;
 
         // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, filename, linenum, count);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        IInstruction[] result = getInstruction(fDisassemblyDmc, filename, linenum, count);
 
         // Verify the result
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        IInstruction[] result = (IInstruction[]) fWait.getReturnInfo();
-        assertTrue("No instruction retrieved", result.length != 0);
+        assertThat(result.length, is(not(0)));
     }
 
     // ------------------------------------------------------------------------
@@ -536,17 +443,12 @@ public class MIDisassemblyTest extends BaseTestCase {
         String filename = SOURCE_NAME;
         int linenum = LINE_NUMBER;
         int count = 5;
-      
+
         // Perform the test
-        fWait.waitReset();
-        getInstruction(fDisassemblyDmc, filename, linenum, count);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        IInstruction[] result = getInstruction(fDisassemblyDmc, filename, linenum, count);
 
         // Verify the result
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        IInstruction[] result = (IInstruction[]) fWait.getReturnInfo();
-        assertTrue("Wrong number of instructions retrieved, expected " + count + ", got " + result.length,
-                result.length == count);
+        assertThat(result.length, is(count));
     }
 
     // ------------------------------------------------------------------------
@@ -559,16 +461,12 @@ public class MIDisassemblyTest extends BaseTestCase {
         Addr64 main = (Addr64) evaluateExpression("&main");
         BigInteger startAddress = main.getValue();
         BigInteger endAddress = null;
-        
+
         // Perform the test
-        fWait.waitReset();
-        getMixedInstruction(fDisassemblyDmc, startAddress, endAddress);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        IMixedInstruction[] result = getMixedInstruction(fDisassemblyDmc, startAddress, endAddress);
 
         // Verify the result
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        IMixedInstruction[] result = (IMixedInstruction[]) fWait.getReturnInfo();
-        assertTrue("No instruction retrieved", result.length != 0);
+        assertThat(result.length, is(not(0)));
     }
 
     // ------------------------------------------------------------------------
@@ -581,22 +479,16 @@ public class MIDisassemblyTest extends BaseTestCase {
         String filename = SOURCE_NAME;
         int linenum = LINE_NUMBER;
         int count = 5;
-      
+
         // Perform the test
-        fWait.waitReset();
-        getMixedInstruction(fDisassemblyDmc, filename, linenum, count);
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        IMixedInstruction[] result = getMixedInstruction(fDisassemblyDmc, filename, linenum, count);
 
         // Verify the result
-        assertTrue(fWait.getMessage(), fWait.isOK());
-        IMixedInstruction[] result = (IMixedInstruction[]) fWait.getReturnInfo();
         int total = 0;
         for (IMixedInstruction mixed : result) {
             IInstruction[] inst = mixed.getInstructions();
             total += inst.length;
         }
-        assertTrue("Wrong number of instructions retrieved, expected " + count + ", got " + result.length,
-                total == count);
+        assertThat(total, is(count));
     }
-
 }

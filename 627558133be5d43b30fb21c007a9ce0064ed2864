@@ -134,6 +134,30 @@
     },
     {
       "key": {
+        "uuid": "070b0362_5944fc1d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T18:39:15Z",
+      "side": 1,
+      "message": "Usually our member variables start with an f for field. Although the current class does not use that.  We could refactor the class to add \u0027f\u0027 to each member variable.\n\nI don\u0027t think the \u0027_\u0027 suffix is a bad idea, except for the fact we don\u0027t use it anywhere else.  One can imagine that the next developer to contribute may have his/her own way of naming parameters and we\u0027ll get into a mix of naming convention.",
+      "parentUuid": "070b0362_3915b86f",
+      "range": {
+        "startLine": 61,
+        "startChar": 37,
+        "endLine": 61,
+        "endChar": 71
+      },
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_8d18e636",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVar.java",
         "patchSetId": 2

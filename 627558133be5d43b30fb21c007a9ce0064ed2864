@@ -158,6 +158,30 @@
     },
     {
       "key": {
+        "uuid": "070b0362_59b51c63",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2015-02-12T19:43:20Z",
+      "side": 1,
+      "message": "Eclipse is in general inconsistent about \u0027f\u0027 prefix, and I don\u0027t like it personally for a few reasons. First, unlike C++, it\u0027s not necessary, because getters/setters are usually called getFoo/setFoo, therefore not conflicting with field name, and further, Java does allow a class to have both a field called foo and a method called foo. So prefixing has no technical need, and make code completion and outline be rather less useful.",
+      "parentUuid": "070b0362_5944fc1d",
+      "range": {
+        "startLine": 61,
+        "startChar": 37,
+        "endLine": 61,
+        "endChar": 71
+      },
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_8d18e636",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVar.java",
         "patchSetId": 2

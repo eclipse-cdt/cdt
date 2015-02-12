@@ -110,6 +110,30 @@
     },
     {
       "key": {
+        "uuid": "070b0362_3915b86f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2015-02-12T17:10:03Z",
+      "side": 1,
+      "message": "I can rename the parameter if you so prefer, but I\u0027d rather use _ suffix, as opposed to using two different abbreviations, which seems even more error prone - it\u0027s not apparent which of varObject and varObj is a parameter really, whereas using _ suffix for a less long-lived object seems ok.",
+      "parentUuid": "070b0362_ad132a19",
+      "range": {
+        "startLine": 61,
+        "startChar": 37,
+        "endLine": 61,
+        "endChar": 71
+      },
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_8d18e636",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVar.java",
         "patchSetId": 2

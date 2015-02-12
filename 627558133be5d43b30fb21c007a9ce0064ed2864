@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_4ddc3edc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "2008, 2015\n\nWe have to make the date change manually when we touch a file.",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ade84a75",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "Why protected?  Since there is a getRaw() do we need to have this protected.",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ede25291",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "Missing @since",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_2dfc5a32",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "2015",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ad132a19",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "Can we rename the parameter to varObject?\n\nI find it unnecessarily risky to have parameters and members use the same name.  Although the compiler gives a warning, it may go unnoticed among the sea of warnings present in CDT.\n\nI realize other parts of the file use the same name with parameters, but we don\u0027t have to continue that :)",
+      "range": {
+        "startLine": 61,
+        "startChar": 37,
+        "endLine": 61,
+        "endChar": 71
+      },
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_4df39e5f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "Do you prefer the format MIVariableManager.MIVariableObject?  Unless Eclipse requires it, we always use a single type format, i.e., MIVariableObject",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_8d18e636",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "2015",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ed1d3226",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-12T16:37:48Z",
+      "side": 1,
+      "message": "Please add javadoc and @since",
+      "revId": "627558133be5d43b30fb21c007a9ce0064ed2864",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

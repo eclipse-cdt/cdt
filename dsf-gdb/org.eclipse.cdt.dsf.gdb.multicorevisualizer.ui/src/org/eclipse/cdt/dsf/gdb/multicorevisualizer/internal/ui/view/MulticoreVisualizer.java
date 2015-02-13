@@ -1132,12 +1132,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		DsfSession session = DsfSession.getSession(sessionId);
 
 		if (session != null) {
-			fDataModel = new VisualizerModel(sessionId);
+			final VisualizerModel model = new VisualizerModel(sessionId);
+			fDataModel = model;
 			fTargetData.getCPUs(m_sessionState, new DataRequestMonitor<ICPUDMContext[]>(session.getExecutor(), null) {
 				@Override
 				protected void handleCompleted() {
 					ICPUDMContext[] cpuContexts = isSuccess() ? getData() : null;
-					getCPUsDone(cpuContexts, fDataModel);
+					getCPUsDone(cpuContexts, model);
 				}
 			});
 		}
@@ -1146,8 +1147,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** Invoked when getModel() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getVisualizerModelDone(VisualizerModel model) {
-		fDataModel.setLoadMetersEnabled(m_loadMetersEnabled);
-		updateLoads();
+		model.setLoadMetersEnabled(m_loadMetersEnabled);
+		updateLoads(model);
 		model.sort();
 		setCanvasModel(model);
 	}
@@ -1375,10 +1376,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		done(1, model);
 	}
 	
-	
 	/** Updates the loads for all cpus and cores */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void updateLoads() {
+	public void updateLoads(final VisualizerModel model) {
 		if (m_cpuCoreContextsCache.isEmpty()) {
 			// not ready to get load info yet
 			return;
@@ -1387,8 +1387,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		if (!m_loadMetersEnabled) {
 			return;
 		}
-		
-		final VisualizerModel model = fDataModel;
 		
 		model.getLoadTodo().dispose();
 		// keep track of how many loads we expect
@@ -1459,6 +1457,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	}
 	
 	private Timer getLoadTimer(final DSFSessionState sessionState, final int timeout) {
+		final VisualizerModel model = fDataModel;
 		Timer t = new Timer(timeout) {
 			@Override
 			public void run() {
@@ -1470,7 +1469,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 							executor.execute(new Runnable() {
 								@Override
 								public void run() {
-									updateLoads();
+									updateLoads(model);
 								}
 							});
 						}

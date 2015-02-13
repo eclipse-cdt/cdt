@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River and others.
+ * Copyright (c) 2007, 2015 Wind River and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -562,11 +562,6 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
         // Get the list of corresponding back-end breakpoints 
         final List<IBreakpointDMContext> oldBpContexts = new ArrayList<IBreakpointDMContext>(breakpointIDs.get(breakpoint));
-        if (oldBpContexts == null) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid breakpoint", null)); //$NON-NLS-1$
-            rm.done();
-            return;
-        }
 
         // Calculate the list of attributes maps that have not changed.  
         // Immediately add these to the list of new breakpoint contexts,

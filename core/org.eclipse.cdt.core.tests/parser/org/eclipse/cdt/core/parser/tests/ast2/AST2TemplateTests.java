@@ -7560,7 +7560,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSfinaeInNewExpressionWithDeletedConstructor_430230() throws Exception {
 		parseAndCheckBindings();
 	}
-
+	
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>
@@ -7869,6 +7869,41 @@ public class AST2TemplateTests extends AST2TestBase {
     public void testVariadicTemplatesAndFunctionObjects_401479() throws Exception {
     	parseAndCheckBindings();
     }
+    
+	//	template<typename _Tp>
+	//	_Tp declval() noexcept;
+	//
+	//	template<typename _From>
+	//	struct is_convertible {};
+	//
+	//	template<typename _Signature>
+	//	class function;
+	//
+	//	template<typename _Res, typename... _ArgTypes>
+	//	class function<_Res(_ArgTypes...)> {
+	//	  template<typename _Functor>
+	//	  using _Invoke = decltype(declval<_Functor&>()(declval<_ArgTypes>()...));
+	//
+	//	public:
+	//	  template<typename _Functor, typename = typename is_convertible<_Invoke<_Functor>>::type>
+	//	  function(_Functor);
+	//	};
+	//
+	//	class A {};
+	//
+	//	struct B {
+	//	  B(const char* s);
+	//	};
+	//
+	//	template <class T> void waldo(const B& response);
+	//	template <class T> void waldo(function<T()> generator);
+	//
+	//	void test() {
+	//	    waldo<A>("");  // problem on waldo
+	//	}
+	public void testPackExpansionInNestedTemplate_459844() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	// struct S {
 	//     void kind();

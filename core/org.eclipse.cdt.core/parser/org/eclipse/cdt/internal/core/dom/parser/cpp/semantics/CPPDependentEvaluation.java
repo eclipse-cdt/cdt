@@ -115,11 +115,11 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 			ICPPEvaluation origEval = subexpressions[i];
 			ICPPEvaluation newEval;
 			if (origEval instanceof EvalParameterPack) {
-				origEval = ((EvalParameterPack) origEval).getExpansionPattern();
-				if (origEval == null) {
+				ICPPEvaluation pattern = ((EvalParameterPack) origEval).getExpansionPattern();
+				if (pattern == null) {
 					newEval = EvalFixed.INCOMPLETE;
 				} else {
-					int packSize = origEval.determinePackSize(tpMap);
+					int packSize = pattern.determinePackSize(tpMap);
 					if (packSize == CPPTemplates.PACK_SIZE_FAIL || packSize == CPPTemplates.PACK_SIZE_NOT_FOUND) {
 						newEval = EvalFixed.INCOMPLETE;
 					} else if (packSize == CPPTemplates.PACK_SIZE_DEFER) {
@@ -129,7 +129,7 @@ public abstract class CPPDependentEvaluation extends CPPEvaluation {
 						ICPPEvaluation[] newResult = new ICPPEvaluation[subexpressions.length + resultShift + shift];
 						System.arraycopy(result, 0, newResult, 0, i + resultShift);
 						for (int j = 0; j < packSize; ++j) {
-							newEval = origEval.instantiate(tpMap, j, within, maxdepth, point);
+							newEval = pattern.instantiate(tpMap, j, within, maxdepth, point);
 							newResult[i + resultShift + j] = newEval;
 						}
 						result = newResult;

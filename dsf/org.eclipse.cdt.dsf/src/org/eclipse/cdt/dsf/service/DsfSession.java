@@ -320,13 +320,16 @@ public class DsfSession
         
         ListenerEntry entry = new ListenerEntry(listener, filter);
         if (DEBUG_SESSION_LISTENERS) {
-        	String msg = new Formatter().format(
+        	Formatter formatter = new Formatter();
+        	String msg = formatter.format(
         			"%s %s added as a service listener to %s (id=%s)", //$NON-NLS-1$
         			DsfPlugin.getDebugTime(),
         			LoggingUtils.toString(listener),
         			LoggingUtils.toString(this),
         			getId()
         			).toString();
+        	formatter.close();
+
         	DsfPlugin.debug(msg);
         }
         fListeners.put(entry, getEventHandlerMethods(listener));
@@ -343,13 +346,16 @@ public class DsfSession
 
         ListenerEntry entry = new ListenerEntry(listener, null);
         if (DEBUG_SESSION_LISTENERS) {
-        	String msg = new Formatter().format(
+        	Formatter formatter = new Formatter();
+        	String msg = formatter.format(
         			"%s %s removed as a service listener to %s (id=%s)", //$NON-NLS-1$
         			DsfPlugin.getDebugTime(),
         			LoggingUtils.toString(listener),
         			LoggingUtils.toString(this),
         			getId()
         			).toString();
+        	formatter.close();
+
         	DsfPlugin.debug(msg);
         }
         fListeners.remove(entry);
@@ -374,7 +380,8 @@ public class DsfSession
     public void dispatchEvent(final Object event, final Dictionary<?,?> serviceProperties) {
     	assert event != null;
         if (DEBUG_SESSION_DISPATCHES) {
-        	String msg = new Formatter().format(
+        	Formatter formatter = new Formatter();
+        	String msg = formatter.format(
         			"%s Dispatching event %s to session %s from thread \"%s\" (%d)", //$NON-NLS-1$
         			DsfPlugin.getDebugTime(),
         			LoggingUtils.toString(event),
@@ -382,6 +389,7 @@ public class DsfSession
         			Thread.currentThread().getName(),
         			Thread.currentThread().getId()
         			).toString();
+        	formatter.close();
         	
         	DsfPlugin.debug(msg);
         }
@@ -402,7 +410,8 @@ public class DsfSession
     @ThreadSafe
     public void registerModelAdapter(Class<?> adapterType, Object adapter) {
         if (DEBUG_SESSION_MODELADAPTERS) {
-        	String msg = new Formatter().format(
+        	Formatter formatter = new Formatter();
+        	String msg = formatter.format(
         			"%s Registering model adapter %s of type %s to session %s (%s)", //$NON-NLS-1$
         			DsfPlugin.getDebugTime(),
         			LoggingUtils.toString(adapter),
@@ -410,6 +419,7 @@ public class DsfSession
         			LoggingUtils.toString(this),
         			getId()
         			).toString();
+        	formatter.close();
         	
         	DsfPlugin.debug(msg);
         }
@@ -425,13 +435,15 @@ public class DsfSession
     @ThreadSafe
     public void unregisterModelAdapter(Class<?> adapterType) {
         if (DEBUG_SESSION_MODELADAPTERS) {
-        	String msg = new Formatter().format(
+        	Formatter formatter = new Formatter();
+        	String msg = formatter.format(
         			"%s Unregistering model adapter of type %s from session %s (%s)", //$NON-NLS-1$
         			DsfPlugin.getDebugTime(),
         			adapterType.getName(),
         			LoggingUtils.toString(this),
         			getId()
         			).toString();
+        	formatter.close();
         	
         	DsfPlugin.debug(msg);
         }

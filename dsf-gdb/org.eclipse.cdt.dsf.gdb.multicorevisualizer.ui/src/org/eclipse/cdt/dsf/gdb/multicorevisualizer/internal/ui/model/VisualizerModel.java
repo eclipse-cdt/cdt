@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Tilera Corporation and others.
+ * Copyright (c) 2012, 2015 Tilera Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.visualizer.ui.util.Todo;
-
 /** 
  * Class representing the state of the data to display in the MulticoreVisualizer. 
  */
@@ -37,12 +35,6 @@ public class VisualizerModel
 	
 	/** List of threads */
 	protected ArrayList<VisualizerThread> m_threads;
-	
-	/** Completion state tracker. */
-	protected Todo m_todo;
-	
-	/** Completion state tracker for load meters. */
-	protected Todo m_loadTodo;
 	
 	// Setting to remove exited threads, or keep them shown.
 	// If we are to support this, we should have a preference
@@ -63,8 +55,6 @@ public class VisualizerModel
 		m_cpus = new ArrayList<VisualizerCPU>();
 		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
 		m_threads = new ArrayList<VisualizerThread>();
-		m_todo = new Todo();
-		m_loadTodo = new Todo();
 	}
 	
 	/** Dispose method */
@@ -85,30 +75,12 @@ public class VisualizerModel
 			m_threads.clear();
 			m_threads = null;
 		}
-		if (m_todo != null) {
-			m_todo.dispose();
-			m_todo = null;
-		}
-		if (m_loadTodo != null) {
-			m_loadTodo.dispose();
-			m_loadTodo = null;
-		}
 		m_sessionId = null;
 	}
 	
 	
 	// --- accessors ---
-	
-	/** Gets completion state tracker. */
-	public Todo getTodo() {
-		return m_todo;
-	}
-	
-	/** Gets completion state tracker. */
-	public Todo getLoadTodo() {
-		return m_loadTodo;
-	}
-	
+
 	public void setLoadMetersEnabled (boolean enable) {
 		m_loadMetersEnabled = enable;
 	}

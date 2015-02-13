@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>org.eclipse.cdt.debug.application.product</artifactId>
+	<packaging>eclipse-repository</packaging>
+	<name>Stand-Alone C/C++ Debugger Product</name>
+
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>8.7.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<properties>
+		<productId>org.eclipse.cdt.debug.application.product</productId>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-director-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>materialize-products</id>
+						<goals>
+							<goal>materialize-products</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>archive-products</id>
+						<goals>
+							<goal>archive-products</goal>
+						</goals>
+						<configuration>
+							<formats>
+								<linux>tar.gz</linux>
+							</formats>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<products>
+						<product>
+							<archiveFileName>cdt-stand-alone-debugger-${unqualifiedVersion}-${build.timestamp}</archiveFileName>
+							<id>${productId}</id>
+							<rootFolder>cdt-stand-alone-debugger</rootFolder>
+						</product>
+					</products>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+					<pomDependencies>consider</pomDependencies>
+					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Deploy RCP builds and update site to the downloads area -->
+	<profiles>
+		<profile>
+			<id>production</id>
+			<properties>
+				<rcpDestination>/home/data/httpd/download.eclipse.org/${repo-path}/rcp/</rcpDestination>
+				<rcpSiteDestination>/home/data/httpd/download.eclipse.org/${repo-path}/rcp-repository/</rcpSiteDestination>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<target>
+										<!-- Cleanup the "rcp" destination, and copy over the new archives -->
+										<delete includeemptydirs="false" failonerror="false">
+											<fileset dir="${rcpDestination}">
+												<include name="*.tar.gz" />
+												<include name="*.zip" />
+											</fileset>
+										</delete>
+										<mkdir dir="${rcpDestination}" />
+										<copy includeemptydirs="false" todir="${rcpDestination}">
+											<fileset dir="target/products">
+												<include name="cdt-stand-alone-debugger-*" />
+											</fileset>
+										</copy>
+
+										<!-- Cleanup the "rcp-repository" update site, and copy over the 
+											new one -->
+										<delete includeemptydirs="false" failonerror="false">
+											<fileset dir="${rcpSiteDestination}">
+												<include name="**" />
+											</fileset>
+										</delete>
+										<mkdir dir="${rcpSiteDestination}" />
+										<copy includeemptydirs="false" todir="${rcpSiteDestination}">
+											<fileset dir="target/repository">
+												<include name="**" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

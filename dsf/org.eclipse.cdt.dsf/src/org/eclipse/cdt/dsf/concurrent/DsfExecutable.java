@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public class DsfExecutable {
             // Get the stack trace and find the first method that is not a 
             // constructor of this object. 
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            Class thisClass = getClass();
+            Class<?> thisClass = getClass();
             Set<String> classNamesSet = new HashSet<String>();
             while(thisClass != null) {
                 classNamesSet.add(thisClass.getName());

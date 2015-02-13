@@ -260,6 +260,12 @@
 			</repositories>
 		</profile>
 		<profile>
+			<id>build-standalone-debugger-rcp</id>
+			<modules>
+				<module>debug/org.eclipse.cdt.debug.application.product</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>macosx</id>
 			<activation>
 				<os>

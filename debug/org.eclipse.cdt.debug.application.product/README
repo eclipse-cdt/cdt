@@ -1,0 +1,11 @@
+This product is based on the CDT Stand-alone Debugger application found in
+org.eclipse.cdt.debug.application. This product can be downloaded on its own, without the rest of
+the C/C++ package which makes it much smaller. It also makes it easier to use because the user only
+has to launch the executable after extracting the product. For example the product can be launched
+by simply running: ./cdtdebug -e ~/myproject/bin/a.out arg1 arg2
+
+You can find more information about command-line options in
+org.eclipse.cdt.debug.application/scripts/README.
+
+Note that this product is currently only built for the more popular architecture x86 and x86_64 on
+Linux.

@@ -13,11 +13,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
@@ -50,24 +51,14 @@ public final class Logger {
     private static PrintStream logStream;
 
 	static {
-		String logFile = null;
-		//TODO I think this should go into the workspace metadata instead.
-		File logDirWindows = new File("C:\\eclipselogs"); //$NON-NLS-1$
-		File logDirUNIX = new File("/tmp/eclipselogs"); //$NON-NLS-1$
-
-		if (logDirWindows.isDirectory()) {
-			logFile = logDirWindows + "\\tmterminal.log"; //$NON-NLS-1$
-		} else if (logDirUNIX.isDirectory()) {
-			logFile = logDirUNIX + "/tmterminal.log"; //$NON-NLS-1$
-		}
-
-		if (logFile != null) {
+		IPath logFile = Platform.getStateLocation(TerminalPlugin.getDefault().getBundle());
+		if (logFile != null && logFile.toFile().isDirectory()) {
+			logFile = logFile.append("tmterminal.log"); //$NON-NLS-1$
 			try {
-				logStream = new PrintStream(new FileOutputStream(logFile, true));
+				logStream = new PrintStream(new FileOutputStream(logFile.toFile(), true));
 			} catch (Exception ex) {
 				logStream = System.err;
-				logStream
-						.println("Exception when opening log file -- logging to stderr!"); //$NON-NLS-1$
+				logStream.println("Exception when opening log file -- logging to stderr!"); //$NON-NLS-1$
 				ex.printStackTrace(logStream);
 			}
 		}

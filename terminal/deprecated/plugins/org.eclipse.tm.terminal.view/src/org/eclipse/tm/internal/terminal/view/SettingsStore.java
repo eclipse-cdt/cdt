@@ -11,7 +11,6 @@
 package org.eclipse.tm.internal.terminal.view;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -27,10 +26,10 @@ import org.eclipse.ui.IMemento;
  * 
  * @author Michael Scharf
  */
-class SettingsStore implements ISettingsStore {
+class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.SettingsStore {
 
 	private static final String KEYS = "_keys_"; //$NON-NLS-1$
-	final private Map fMap=new HashMap();
+	
 	public SettingsStore(IMemento memento) {
 		if(memento==null)
 			return;
@@ -50,40 +49,27 @@ class SettingsStore implements ISettingsStore {
 					}
 					if(m!=null) {
 						// cache the value in the map
-						fMap.put(key,m.getString(path[path.length-1]));
+						setProperty(key,m.getString(path[path.length-1]));
 					}
 				}
 			}
 		}
 	}
 
-	public String get(String key) {
-		return get(key,null);
-	}
-	public String get(String key, String defaultValue) {
-		String value = (String) fMap.get(key);
-		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
-			return defaultValue;
-
-		return value;
-	}
-
-	public void put(String key, String value) {
+	public boolean setProperty(String key, Object value) {
 		if(!key.matches("^[\\w.]+$")) //$NON-NLS-1$
 			throw new IllegalArgumentException("Key '"+key+"' is not alpha numeric or '.'!"); //$NON-NLS-1$ //$NON-NLS-2$
-		// null values remove the key from the map
-		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
-			fMap.remove(key);
-		else
-			fMap.put(key, value);
+		return super.setProperty(key, value);
 	}
+	
 	/**
 	 * Save the state into memento.
 	 * 
 	 * @param memento Memento to save state into.
 	 */
 	public void saveState(IMemento memento) {
-		String[] keyNames=(String[]) fMap.keySet().toArray(new String[fMap.size()]);
+		Map map = getProperties();
+		String[] keyNames=(String[]) map.keySet().toArray(new String[map.size()]);
 		Arrays.sort(keyNames);
 		StringBuffer buffer=new StringBuffer();
 		for (int i = 0; i < keyNames.length; i++) {
@@ -99,7 +85,7 @@ class SettingsStore implements ISettingsStore {
 				m=child;
 			}
 			// use the last element in path as key of the child memento
-			m.putString(path[path.length-1], (String) fMap.get(key));
+			m.putString(path[path.length-1], (String) map.get(key));
 			// construct the string for the keys
 			if(i>0)
 				buffer.append(","); //$NON-NLS-1$

@@ -12,6 +12,7 @@
 package org.eclipse.tm.internal.terminal.local.process;
 
 import java.util.Map;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IProcessFactory;
 import org.eclipse.debug.core.model.IProcess;
@@ -33,7 +34,7 @@ public class LocalTerminalProcessFactory implements IProcessFactory {
 	/**
 	 * @see IProcessFactory#newProcess(ILaunch, Process, String, Map)
 	 */
-	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
+	public IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes) {
 
 		return new LocalTerminalProcess(launch, process, label, attributes);
 	}

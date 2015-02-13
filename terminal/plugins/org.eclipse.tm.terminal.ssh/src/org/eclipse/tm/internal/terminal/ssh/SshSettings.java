@@ -40,27 +40,27 @@ public class SshSettings implements ISshSettings {
 	}
 
 	public void load(ISettingsStore store) {
-		fHost = store.get("Host");//$NON-NLS-1$
-		fUser = store.get("User");//$NON-NLS-1$
+		fHost = store.getStringProperty("Host");//$NON-NLS-1$
+		fUser = store.getStringProperty("User");//$NON-NLS-1$
 		// ISettingsStore providers have to make sure that
 		// the password is not saved in some as plain text
 		// on disk. [bug 313991] 
-		fPassword = store.get("Password");//$NON-NLS-1$
-		fPort = store.get("Port");//$NON-NLS-1$
-		fTimeout = store.get("Timeout");//$NON-NLS-1$
-		fKeepalive = store.get("Keepalive");//$NON-NLS-1$
+		fPassword = store.getStringProperty("Password");//$NON-NLS-1$
+		fPort = store.getStringProperty("Port");//$NON-NLS-1$
+		fTimeout = store.getStringProperty("Timeout");//$NON-NLS-1$
+		fKeepalive = store.getStringProperty("Keepalive");//$NON-NLS-1$
 	}
 
 
 	public void save(ISettingsStore store) {
-		store.put("Host", fHost);//$NON-NLS-1$
-		store.put("User", fUser);//$NON-NLS-1$
-		store.put("Port", fPort);//$NON-NLS-1$
+		store.setProperty("Host", fHost);//$NON-NLS-1$
+		store.setProperty("User", fUser);//$NON-NLS-1$
+		store.setProperty("Port", fPort);//$NON-NLS-1$
 		// We do *not* store the password in the settings because
 		// this can cause the password to be stored as plain text
 		// in some settings file
-		store.put("Timeout", fTimeout);//$NON-NLS-1$
-		store.put("Keepalive", fKeepalive);//$NON-NLS-1$
+		store.setProperty("Timeout", fTimeout);//$NON-NLS-1$
+		store.setProperty("Keepalive", fKeepalive);//$NON-NLS-1$
 	}
 
 

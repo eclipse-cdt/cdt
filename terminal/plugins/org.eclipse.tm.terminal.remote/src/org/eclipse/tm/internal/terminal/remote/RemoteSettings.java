@@ -39,16 +39,16 @@ public class RemoteSettings implements IRemoteSettings {
 	 * Load information into the RemoteSettings object.
 	 */
 	public void load(ISettingsStore store) {
-		fRemoteServices = store.get(REMOTE_SERVICES);
-		fConnectionName = store.get(CONNECTION_NAME);
+		fRemoteServices = store.getStringProperty(REMOTE_SERVICES);
+		fConnectionName = store.getStringProperty(CONNECTION_NAME);
 	}
 
 	/**
 	 * Extract information from the RemoteSettings object.
 	 */
 	public void save(ISettingsStore store) {
-		store.put(REMOTE_SERVICES, fRemoteServices);
-		store.put(CONNECTION_NAME, fConnectionName);
+		store.getStringProperty(REMOTE_SERVICES, fRemoteServices);
+		store.getStringProperty(CONNECTION_NAME, fConnectionName);
 	}
 
 	public void setConnectionName(String name) {

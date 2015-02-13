@@ -71,9 +71,7 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.LayeredSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.internal.terminal.provisional.api.PreferenceSettingStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionFactory;
@@ -489,7 +487,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 */
 	private ITerminalConnector loadSettings(ISettingsStore store, ITerminalConnector[] connectors) {
 		ITerminalConnector connector=null;
-		String connectionType=store.get(STORE_CONNECTION_TYPE);
+		String connectionType=store.getStringProperty(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].load(getStore(store,connectors[i]));
 			if(connectors[i].getId().equals(connectionType))
@@ -523,7 +521,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		if(connector!=null) {
 			connector.save(getStore(store, connector));
 			// the last saved connector becomes the default
-			store.put(STORE_CONNECTION_TYPE,connector.getId());
+			store.setProperty(STORE_CONNECTION_TYPE,connector.getId());
 		}
 
 	}
@@ -533,7 +531,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	}
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		fStore.put(STORE_TITLE,getPartName());
+		fStore.setProperty(STORE_TITLE,getPartName());
 		fMultiConnectionManager.saveState(new SettingStorePrefixDecorator(fStore,"connectionManager")); //$NON-NLS-1$
 		fStore.saveState(memento);
 	}
@@ -685,10 +683,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 */
 	private void legacyLoadState() {
 		// TODO legacy: load the old title....
-		String summary=fStore.get(STORE_SETTING_SUMMARY);
+		String summary=fStore.getStringProperty(STORE_SETTING_SUMMARY);
 		if(summary!=null) {
 			getActiveConnection().setSummary(summary);
-			fStore.put(STORE_SETTING_SUMMARY,null);
+			fStore.setProperty(STORE_SETTING_SUMMARY,null);
 		}
 	}
 	/**
@@ -699,10 +697,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 */
 	private void legacySetTitle() {
 		// restore the title of this view
-		String title=fStore.get(STORE_TITLE);
+		String title=fStore.getStringProperty(STORE_TITLE);
 		if(title!=null && title.length()>0) {
 			setViewTitle(title);
-			fStore.put(STORE_TITLE, null);
+			fStore.setProperty(STORE_TITLE, null);
 		}
 	}
 

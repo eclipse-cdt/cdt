@@ -15,15 +15,13 @@
 	<name>Remote Parent</name>
 
 	<properties>
-		<remote-release>1.1.1</remote-release>
+		<remote-release>2.0.0</remote-release>
 		<eclipse-release>luna</eclipse-release>
 		<tycho-version>0.20.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git</tycho.scmUrl>
-		<platform-version>4.4</platform-version>
+		<platform-version>4.5milestones</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
-		<cdt-version>8.4</cdt-version>
-		<cdt-site>http://download.eclipse.org/tools/cdt/builds/${cdt-version}/nightly</cdt-site>	
 		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
 		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/remote/${remote-release}</remote-install-dir>
 	</properties>
@@ -55,11 +53,6 @@
 		<repository>
 			<id>platform-${platform-version}</id>
 			<url>${platform-site}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>cdt-${cdt-version}</id>
-			<url>${cdt-site}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

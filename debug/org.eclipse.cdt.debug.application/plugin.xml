@@ -255,9 +255,22 @@
              application="org.eclipse.cdt.debug.application.app"
              description="%ProductDesc"
              name="%ProductName">
-             <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif"/> 
-             <property name="aboutImage" value="eclipse_lg.gif"/> 
-             <property name="aboutText" value="%aboutText"/> 
+             <property
+                   name="appName"
+                   value="%ProductName">
+             </property>
+             <property
+                   name="aboutImage"
+                   value="icons/about.png">
+             </property>
+             <property
+                   name="windowImages"
+                   value="icons/cc16.png,icons/cc32.png,icons/cc48.png,icons/cc64.png,icons/cc128.png,icons/cc.png">
+             </property>
+             <property
+                   name="aboutText"
+                   value="%aboutText">
+             </property> 
              
        </product>
     </extension>

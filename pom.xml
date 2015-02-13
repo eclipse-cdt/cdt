@@ -245,6 +245,12 @@
 			</repositories>
 		</profile>
 		<profile>
+			<id>build-rcp</id>
+			<modules>
+				<module>debug/org.eclipse.cdt.debug.application.product</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>macosx</id>
 			<activation>
 				<os>

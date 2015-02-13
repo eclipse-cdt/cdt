@@ -34,10 +34,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -1061,11 +1064,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		// clear CPU/core cache
 		m_cpuCoreContextsCache.clear();
 		
-		m_sessionState.execute(new DsfRunnable() { @Override public void run() {
-			// get model asynchronously, and update canvas
-			// in getVisualizerModelDone().
-			getVisualizerModel();
-		}});
+		fDataModel = new VisualizerModel(m_sessionState.getSessionID());
+		getVisualizerModel(fDataModel);
 	}
 	
 	/** Sets canvas model. (Also updates canvas selection.) */
@@ -1123,53 +1123,43 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	
 	// --- Visualizer model update methods ---
 	
-	/** Starts visualizer model request.
-	 *  Calls getVisualizerModelDone() with the constructed model.
+	/** 
+	 * Starts visualizer model request.
 	 */
-	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getVisualizerModel() {
-		String sessionId = m_sessionState.getSessionID();
-		DsfSession session = DsfSession.getSession(sessionId);
-
-		if (session != null) {
-			final VisualizerModel model = new VisualizerModel(sessionId);
-			fDataModel = model;
-			fTargetData.getCPUs(m_sessionState, new DataRequestMonitor<ICPUDMContext[]>(session.getExecutor(), null) {
+	protected void getVisualizerModel(final VisualizerModel model) {
+		m_sessionState.execute(new DsfRunnable() { @Override public void run() {
+			// get model asynchronously starting at the top of the hierarchy
+			getCPUs(model, new ImmediateRequestMonitor() {
 				@Override
 				protected void handleCompleted() {
-					ICPUDMContext[] cpuContexts = isSuccess() ? getData() : null;
-					getCPUsDone(cpuContexts, model);
+					model.setLoadMetersEnabled(m_loadMetersEnabled);
+					updateLoads(model);
+					model.sort();
+					setCanvasModel(model);
 				}
 			});
-		}
+		}});
 	}
 	
-	/** Invoked when getModel() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getVisualizerModelDone(VisualizerModel model) {
-		model.setLoadMetersEnabled(m_loadMetersEnabled);
-		updateLoads(model);
-		model.sort();
-		setCanvasModel(model);
+	protected void getCPUs(final VisualizerModel model, final RequestMonitor rm) {
+		fTargetData.getCPUs(m_sessionState, new ImmediateDataRequestMonitor<ICPUDMContext[]>() {
+			@Override
+			protected void handleCompleted() {
+				ICPUDMContext[] cpuContexts = isSuccess() ? getData() : null;
+				getCores(cpuContexts, model, rm);
+			}
+		});
 	}
 	
-	
-	// --- DSFDebugModelListener implementation ---
-
-	/** Invoked when DSFDebugModel.getCPUs() completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getCPUsDone(ICPUDMContext[] cpuContexts, final Object arg)
+	protected void getCores(ICPUDMContext[] cpuContexts, final VisualizerModel model, final RequestMonitor rm)
 	{
-		VisualizerModel model = (VisualizerModel) arg;
-		
 		if (cpuContexts == null || cpuContexts.length == 0) {
 			// Whoops, no CPU data.
 			// We'll fake a CPU and use it to contain any cores we find.
 			
 			model.addCPU(new VisualizerCPU(0));
-			
-			// keep track of CPUs left to visit
-			model.getTodo().add(1);
 			
 			// Collect core data.
 			fTargetData.getCores(m_sessionState, new ImmediateDataRequestMonitor<ICoreDMContext[]>() {
@@ -1187,16 +1177,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					}
 
 					// Continue
-					getCoresDone(cpu, coreContexts, arg);
+					getThreads(cpu, coreContexts, model, rm);
 				}
 			});
 		} else {
 			// save CPU contexts
 			m_cpuCoreContextsCache.addAll(Arrays.asList(cpuContexts));
 			
-			// keep track of CPUs left to visit
-			int count = cpuContexts.length;
-			model.getTodo().add(count);
+			final CountingRequestMonitor crm = new ImmediateCountingRequestMonitor(rm);
+			crm.setDoneCount(cpuContexts.length);
 			
 			for (final ICPUDMContext cpuContext : cpuContexts) {
 				int cpuID = Integer.parseInt(cpuContext.getId());
@@ -1207,22 +1196,23 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					@Override
 					protected void handleCompleted() {
 						ICoreDMContext[] coreContexts = isSuccess() ? getData() : null;
-						getCoresDone(cpuContext, coreContexts, arg);
+						getThreads(cpuContext, coreContexts, model, crm);
 					}
 				});
 			}
 		}
 	}
 	
-	/** Invoked when getCores() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getCoresDone(final ICPUDMContext cpuContext, ICoreDMContext[] coreContexts, final Object arg)
+	protected void getThreads(final ICPUDMContext cpuContext, 
+			                  ICoreDMContext[] coreContexts,
+			                  final VisualizerModel model,
+			                  RequestMonitor rm)
 	{
-		VisualizerModel model = (VisualizerModel) arg;
-
 		if (coreContexts == null || coreContexts.length == 0) {
 			// no cores for this cpu context
 			// That's fine.
+			rm.done();
 		} else {
 			// save core contexts
 			m_cpuCoreContextsCache.addAll(Arrays.asList(coreContexts));
@@ -1230,10 +1220,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			int cpuID = Integer.parseInt(cpuContext.getId());
 			VisualizerCPU cpu = model.getCPU(cpuID);
 
-			// keep track of Cores left to visit
-			int count = coreContexts.length;
-			model.getTodo().add(count);
-			
+			final CountingRequestMonitor crm = new ImmediateCountingRequestMonitor(rm);
+			crm.setDoneCount(coreContexts.length);
+
 			for (final ICoreDMContext coreContext : coreContexts) {
 				int coreID = Integer.parseInt(coreContext.getId());
 				cpu.addCore(new VisualizerCore(cpu, coreID));
@@ -1243,35 +1232,27 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					@Override
 					protected void handleCompleted() {
 						IDMContext[] threadContexts = isSuccess() ? getData() : null;
-						
-						getThreadsDone(cpuContext, coreContext, threadContexts, arg);
+						getThreadData(cpuContext, coreContext, threadContexts, model, crm);
 					}
 				});
 			}			
 		}
-		
-		// keep track of CPUs visited
-		// note: do this _after_ incrementing for cores
-		done(1, model);
 	}
 
-	
-	/** Invoked when getThreads() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getThreadsDone(final ICPUDMContext  cpuContext,
-							   final ICoreDMContext coreContext,
-							   IDMContext[] threadContexts,
-							   final Object arg)
+	protected void getThreadData(final ICPUDMContext  cpuContext,
+						         final ICoreDMContext coreContext,
+							     IDMContext[] threadContexts,
+							     final VisualizerModel model,
+							     RequestMonitor rm)
 	{
-		VisualizerModel model = (VisualizerModel) arg;
-		
 		if (threadContexts == null || threadContexts.length == 0) {
 			// no threads for this core
 			// That's fine.
+			rm.done();
 		} else {
-			// keep track of threads left to visit
-			int count = threadContexts.length;
-			model.getTodo().add(count);
+			final CountingRequestMonitor crm = new ImmediateCountingRequestMonitor(rm);
+			crm.setDoneCount(threadContexts.length);
 
 			for (IDMContext threadContext : threadContexts) {
 				final IMIExecutionDMContext execContext =
@@ -1282,24 +1263,21 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 					@Override
 					protected void handleCompleted() {
 						IThreadDMData threadData = isSuccess() ? getData() : null;
-						getThreadDataDone(cpuContext, coreContext, execContext, threadData, arg);
+						getThreadExecutionState(cpuContext, coreContext, execContext, threadData, model, crm);
 					}
 				});
 			}
 		}
-		
-		// keep track of cores visited
-		// note: do this _after_ incrementing for threads
-		done(1, model);
 	}
 	
 	/** Invoked when getThreads() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getThreadDataDone(final ICPUDMContext cpuContext,
-			                      final ICoreDMContext coreContext,
-			                      final IMIExecutionDMContext execContext,
-			                      final IThreadDMData threadData,
-			                      final Object arg)
+	protected void getThreadExecutionState(final ICPUDMContext cpuContext,
+			                               final ICoreDMContext coreContext,
+			                               final IMIExecutionDMContext execContext,
+			                               final IThreadDMData threadData,
+			                               final VisualizerModel model,
+			                               final RequestMonitor rm)
 	{
 		// Get the execution state
 		fTargetData.getThreadExecutionState(m_sessionState, cpuContext, coreContext, execContext, 
@@ -1314,13 +1292,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 						protected void handleCompleted() {
 							IFrameDMData frameData = isSuccess() ? getData() : null;
 							getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, 
-									frameData, state, arg);
+									frameData, state, model, rm);
 						}
 					});
 				} else {
 					// frame data is not valid
 					getThreadExecutionStateDone(cpuContext, coreContext, execContext, threadData, 
-							null, state, arg);
+							null, state, model, rm);
 				}
 			}
 		});
@@ -1329,15 +1307,15 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	
 	/** Invoked when getThreadExecutionState() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getThreadExecutionStateDone(ICPUDMContext cpuContext,
-			                                ICoreDMContext coreContext,
-			                                IMIExecutionDMContext execContext,
-			                                IThreadDMData threadData,
-			                                IFrameDMData frame,
-			                                VisualizerExecutionState state,
-			                                Object arg)
+	protected void getThreadExecutionStateDone(ICPUDMContext cpuContext,
+			                                   ICoreDMContext coreContext,
+			                                   IMIExecutionDMContext execContext,
+			                                   IThreadDMData threadData,
+			                                   IFrameDMData frame,
+			                                   VisualizerExecutionState state,
+			                                   VisualizerModel model,
+			                                   RequestMonitor rm)
 	{
-		VisualizerModel model = (VisualizerModel) arg;
 		int cpuID  = Integer.parseInt(cpuContext.getId());
 		VisualizerCPU  cpu  = model.getCPU(cpuID);
 		int coreID = Integer.parseInt(coreContext.getId());
@@ -1372,13 +1350,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			t.setLocationInfo(frame);
 		}
 		
-		// keep track of threads visited
-		done(1, model);
+		rm.done();
 	}
 	
 	/** Updates the loads for all cpus and cores */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void updateLoads(final VisualizerModel model) {
+	protected void updateLoads(final VisualizerModel model) {
 		if (m_cpuCoreContextsCache.isEmpty()) {
 			// not ready to get load info yet
 			return;
@@ -1388,9 +1365,21 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			return;
 		}
 		
-		model.getLoadTodo().dispose();
-		// keep track of how many loads we expect
-		model.getLoadTodo().add(m_cpuCoreContextsCache.size());
+		final CountingRequestMonitor crm = new ImmediateCountingRequestMonitor() {
+			@Override
+			protected void handleSuccess() {
+				// canvas may have been disposed since the transaction has started
+				if (m_canvas != null) {
+					m_canvas.refreshLoadMeters();
+					m_canvas.requestUpdate();
+				}
+				if (m_updateLoadMeterTimer != null) {
+					// re-start timer 
+					m_updateLoadMeterTimer.start();
+				}
+			}
+		};
+		crm.setDoneCount(m_cpuCoreContextsCache.size());
 		
 		// ask load for each CPU and core
 		for (final IDMContext context : m_cpuCoreContextsCache) {
@@ -1398,7 +1387,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 				@Override
 				protected void handleCompleted() {
 					ILoadInfo loadInfo = isSuccess() ? getData() : null;
-					getLoadDone(context, loadInfo, model);
+					getLoadDone(context, loadInfo, model, crm);
 				}
 			});
 		}
@@ -1406,9 +1395,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	
 	/** Invoked when a getLoad() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
-	public void getLoadDone(IDMContext context, ILoadInfo load, Object arg) 
+	protected void getLoadDone(IDMContext context, ILoadInfo load, VisualizerModel model, RequestMonitor rm) 
 	{
-		VisualizerModel model = (VisualizerModel) arg;
 		Integer l = null;
 		
 		if (load != null) {
@@ -1428,32 +1416,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			core.setLoadInfo(new VisualizerLoadInfo(l));
 		}
 		
-		loadDone(1, model);
-	}
-	
-	
-	/** Update "done" count for current visualizer model. */
-	protected void done(int n, VisualizerModel model) {
-		model.getTodo().done(n);
-		if (model.getTodo().isDone()) {
-			getVisualizerModelDone(model);
-		}
-	}
-	
-	/** Update "done" count for current visualizer model. */
-	protected void loadDone(int n, VisualizerModel model) {
-		model.getLoadTodo().done(n);
-		if (model.getLoadTodo().isDone()) {
-			// canvas may have been disposed since the transaction has started
-			if (m_canvas != null) {
-				m_canvas.refreshLoadMeters();
-				m_canvas.requestUpdate();
-			}
-			if (m_updateLoadMeterTimer != null) {
-				// re-start timer 
-				m_updateLoadMeterTimer.start();
-			}
-		}
+		rm.done();
 	}
 	
 	private Timer getLoadTimer(final DSFSessionState sessionState, final int timeout) {
@@ -1468,8 +1431,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 							executor.execute(new Runnable() {
 								@Override
 								public void run() {
-									final VisualizerModel model = fDataModel;
-									updateLoads(model);
+									updateLoads(fDataModel);
 								}
 							});
 						}
@@ -1480,6 +1442,5 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 		return t;
 	}
-	
 }
 

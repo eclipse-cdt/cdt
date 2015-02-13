@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -79,6 +80,7 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 	 * @param launch the {@link ILaunch} object
 	 * @exception CoreException if launching fails
 	 */
+	@SuppressWarnings("deprecation")
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch,
 	IProgressMonitor progressMonitor) throws CoreException {
 
@@ -179,7 +181,7 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 
 		// Use program name as "process type" attribute:
 		//
-		Map processAttributes = new HashMap();
+		Map<String, String> processAttributes = new HashMap<String, String>();
 		String programName = location.lastSegment();
 		String extension = location.getFileExtension();
 		if (extension != null) {

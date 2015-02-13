@@ -12,7 +12,7 @@ package org.eclipse.tm.internal.terminal.view;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
-public class SettingStorePrefixDecorator implements ISettingsStore {
+public class SettingStorePrefixDecorator extends org.eclipse.tm.internal.terminal.provisional.api.SettingsStore {
 	private final String fPrefix;
 	private final ISettingsStore fStore;
 	SettingStorePrefixDecorator(ISettingsStore store,String prefix) {
@@ -20,16 +20,11 @@ public class SettingStorePrefixDecorator implements ISettingsStore {
 		fStore=store;
 	}
 
-	public String get(String key) {
-		return fStore.get(fPrefix+key);
+	public Object getProperty(String key) {
+		return fStore.getProperty(fPrefix+key);
 	}
 
-	public String get(String key, String defaultValue) {
-		return fStore.get(fPrefix+key,defaultValue);
+	public boolean setProperty(String key, Object value) {
+		return super.setProperty(fPrefix+key,value);
 	}
-
-	public void put(String key, String value) {
-		fStore.put(fPrefix+key,value);
-	}
-
 }

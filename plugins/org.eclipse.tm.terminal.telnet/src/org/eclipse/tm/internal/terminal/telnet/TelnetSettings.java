@@ -52,15 +52,15 @@ public class TelnetSettings implements ITelnetSettings {
 	}
 
 	public void load(ISettingsStore store) {
-		fHost = store.get("Host", fProperties.getDefaultHost());//$NON-NLS-1$
-		fNetworkPort = store.get("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
-		fTimeout = store.get("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
+		fHost = store.getStringProperty("Host", fProperties.getDefaultHost());//$NON-NLS-1$
+		fNetworkPort = store.getStringProperty("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
+		fTimeout = store.getStringProperty("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void save(ISettingsStore store) {
-		store.put("Host", fHost);//$NON-NLS-1$
-		store.put("NetworkPort", fNetworkPort);//$NON-NLS-1$
-		store.put("Timeout", fTimeout);//$NON-NLS-1$
+		store.setProperty("Host", fHost);//$NON-NLS-1$
+		store.setProperty("NetworkPort", fNetworkPort);//$NON-NLS-1$
+		store.setProperty("Timeout", fTimeout);//$NON-NLS-1$
 	}
 
 	public TelnetProperties getProperties() {

@@ -37,6 +37,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#addListener(org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage.Listener)
 	 */
+	@Override
 	public void addListener(Listener listener) {
     	Assert.isNotNull(listener);
     	listeners.add(listener);
@@ -45,6 +46,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#removeListener(org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage.Listener)
 	 */
+	@Override
 	public void removeListener(Listener listener) {
     	Assert.isNotNull(listener);
     	listeners.remove(listener);
@@ -67,6 +69,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
 	 */
+	@Override
 	public final String getMessage() {
 		return message;
 	}
@@ -74,6 +77,7 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
 	 */
+	@Override
 	public final int getMessageType() {
 		return messageType;
 	}

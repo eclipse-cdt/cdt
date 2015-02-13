@@ -8,7 +8,10 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.provisional.api;
+package org.eclipse.tm.internal.terminal.view;
+
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.SettingsStore;
 
 /**
  * Uses an array of {@link ISettingsStore} to find a value.
@@ -19,13 +22,13 @@ package org.eclipse.tm.internal.terminal.provisional.api;
  * the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
-public class LayeredSettingsStore implements ISettingsStore {
+public class LayeredSettingsStore extends SettingsStore {
 
 	private final ISettingsStore[] fStores;
 
 	/**
 	 * @param stores the stores used to search the values.
-	 * {@link #put(String, String)} will put the value in the
+	 * {@link #setProperty(String, Object)} will put the value in the
 	 * first store in the list.
 	 */
 	public LayeredSettingsStore(ISettingsStore[] stores) {
@@ -39,24 +42,18 @@ public class LayeredSettingsStore implements ISettingsStore {
 	public LayeredSettingsStore(ISettingsStore s1, ISettingsStore s2) {
 		this(new ISettingsStore[]{s1,s2});
 	}
-	public String get(String key) {
+	
+	public Object getProperty(String key) {
 		for (int i = 0; i < fStores.length; i++) {
-			String value=fStores[i].get(key);
-			if(value!=null)
+			Object value=fStores[i].getProperty(key);
+			if (value!=null)
 				return value;
 		}
 		return null;
 	}
 
-	public String get(String key, String defaultValue) {
-		String value=get(key);
-		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
-			return defaultValue;
-		return value;
-	}
-
-	public void put(String key, String value) {
-		fStores[0].put(key,value);
+	public boolean setProperty(String key, Object value) {
+		return fStores[0].setProperty(key,value);
 	}
 
 }

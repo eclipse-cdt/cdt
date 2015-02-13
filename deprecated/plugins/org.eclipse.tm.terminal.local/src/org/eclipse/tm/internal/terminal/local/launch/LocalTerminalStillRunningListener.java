@@ -81,7 +81,7 @@ public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 
 			return true;
 		}
-		List notTerminated = new ArrayList();
+		List<ILaunch> notTerminated = new ArrayList<ILaunch>();
 		ILaunch launches[] = LocalTerminalUtilities.LAUNCH_MANAGER.getLaunches();
 		ILaunchConfigurationType configurationType;
 		ILaunchConfiguration configuration;
@@ -109,7 +109,7 @@ public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 		if (!notTerminated.isEmpty()) {
 
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-			ILaunch[] launch = (ILaunch[])notTerminated.toArray(new ILaunch[notTerminated.size()]);
+			ILaunch[] launch = notTerminated.toArray(new ILaunch[notTerminated.size()]);
 			return LocalTerminalStillRunningDialog.openDialog(window.getShell(), launch);
 		}
 		return true;

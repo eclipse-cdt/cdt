@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.local.process;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalUtilities;
@@ -31,7 +32,7 @@ public class LocalTerminalProcessRegistry implements ILaunchesListener2 {
 
 	private final static LocalTerminalProcessRegistry INSTANCE = new LocalTerminalProcessRegistry();
 
-	private Map processes;
+	private Map<ILaunch, LocalTerminalProcess> processes;
 
 	private LocalTerminalProcessRegistry() {
 
@@ -40,7 +41,7 @@ public class LocalTerminalProcessRegistry implements ILaunchesListener2 {
 		// hash code value if the object changes internally. To be safe in those cases, an
 		// IdentityHashMap is used:
 		//
-		processes = new IdentityHashMap();
+		processes = new IdentityHashMap<ILaunch, LocalTerminalProcess>();
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class LocalTerminalProcessRegistry implements ILaunchesListener2 {
 	 */
 	public static LocalTerminalProcess getFromLaunch(ILaunch launch) {
 
-		return (LocalTerminalProcess)INSTANCE.processes.get(launch);
+		return INSTANCE.processes.get(launch);
 	}
 
 	/**

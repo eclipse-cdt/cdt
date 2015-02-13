@@ -24,24 +24,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.SettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 public class TerminalConnectorFactoryTest extends TestCase {
-	public class SettingsMock implements ISettingsStore {
-
-		public String get(String key) {
-			return null;
-		}
-
-		public String get(String key, String defaultValue) {
-			return null;
-		}
-
-		public void put(String key, String value) {
-		}
-
-	}
 	public static class TerminalControlMock implements ITerminalControl {
 
 		public void setEncoding(String encoding) {
@@ -245,7 +232,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 	public void testLoad() {
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c = makeTerminalConnector(mock);
-		ISettingsStore s=new SettingsMock();
+		ISettingsStore s=new SettingsStore();
 		c.load(s);
 		// the load is called after the connect...
 		assertNull(mock.fLoadStore);
@@ -256,7 +243,7 @@ public class TerminalConnectorFactoryTest extends TestCase {
 	public void testSave() {
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c = makeTerminalConnector(mock);
-		ISettingsStore s=new SettingsMock();
+		ISettingsStore s=new SettingsStore();
 		c.save(s);
 		assertNull(mock.fSaveStore);
 		c.connect(new TerminalControlMock());

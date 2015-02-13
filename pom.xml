@@ -97,6 +97,7 @@
 		<module>debug/org.eclipse.cdt.debug.standalone-feature</module>
 		<module>debug/org.eclipse.cdt.debug.standalone.source-feature</module>
 		<module>debug/org.eclipse.cdt.debug.application.tests</module>
+		<module>debug/org.eclipse.cdt.debug.application.product</module>
 
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui</module>

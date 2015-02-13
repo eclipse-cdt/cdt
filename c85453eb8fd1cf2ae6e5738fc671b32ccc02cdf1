@@ -59,6 +59,57 @@
     },
     {
       "key": {
+        "uuid": "070b0362_6b9f65b1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1176,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "No need for null.  There is a constructor for ImmediateDataRM that takes no parameters and puts null for you.",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_6ecc93ae",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1207,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "No need for null",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_4eec2f05",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "No null",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_cac01477",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 1
@@ -70,6 +121,24 @@
       "writtenOn": "2015-02-11T16:11:10Z",
       "side": 1,
       "message": "Could you please split the really long lines in this method?",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_2e60cbad",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1306,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Why are we now getting the frame data explicitly and before getting the threadState?  If the thread is running we don\u0027t need to make this call at all.  Also, getting the frame is a detail necessary to getting the thread execution state, it should be hidden it the call to fTargetData.getThreadExecutionState() as it was before, no?",
+      "parentUuid": "070b0362_cac01477",
       "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -110,6 +179,23 @@
     },
     {
       "key": {
+        "uuid": "070b0362_ae5afb53",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1396,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "No null",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_aa2af0b2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 1
@@ -127,6 +213,40 @@
     },
     {
       "key": {
+        "uuid": "070b0362_cb301174",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Please update to match changes",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ab35cd62",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "here too",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_ca2934bf",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
         "patchSetId": 1
@@ -138,6 +258,278 @@
       "writtenOn": "2015-02-11T16:11:10Z",
       "side": 1,
       "message": "why the use non-javadoc comments? I see that the javadoc of corresponding abstract methods is picked-up, which is good. But I just wonder what this type of comments adds? Should it create links to the mentioned classes in the hover pop-up? I do not see that it\u0027s happening...",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ae931b60",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_0e898732",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_6e2bf382",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Don\u0027t need this new RM.  You can just use \u0027rm\u0027 from above, since we aren\u0027t doing anything with the answer here.",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_4e826f0d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_2e7f2b88",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_8e7c5792",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_6e79339f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_0ed6a7f0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "I believe you could just use rm from above and not create a new one.  We can pass any errors up to the caller",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_cef93f90",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put\n\"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_ee5523cc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "We should remove most of the parameters, which are never used.",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_6e3bf350",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "This is not very good.  It is not related to what this method should be doing but a side effect of the previous implementation.\n\nI recommend leaving the getFrame() logic in the same place as before for now.  We can clean that up better in another patch.",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_8ee0d7b6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Instead of \"null\" you can put \"sessionState.getDsfSession().getExecutor()\"",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_aea2fb80",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "This should also be @ConfinedToDsfExecutor",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_8ec9f750",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Maybe this shouldn\u0027t be static anymore?",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_2bd27dc9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/IDSFTargetDataProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "\"to query data from\", i.e., remove \u0027a\u0027",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_fe567654",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/IDSFTargetDataProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-13T18:09:16Z",
+      "side": 1,
+      "message": "Why put \u0027abstract\u0027?\n\nYou can even remove public in an interface",
       "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

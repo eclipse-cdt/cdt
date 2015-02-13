@@ -30,6 +30,11 @@
 						</goals>
 						<configuration>
 							<artifacts>
+                                                                <artifact>
+                                                                        <file>cdt-e4.5.target</file>
+                                                                        <type>target</type>
+                                                                        <classifier>cdt-e4.5</classifier>
+                                                                </artifact>
 								<artifact>
 									<file>cdt-e4.4.target</file>
 									<type>target</type>

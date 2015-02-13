@@ -254,10 +254,22 @@
        <product
              application="org.eclipse.cdt.debug.application.app"
              description="%ProductDesc"
-             name="%ProductName">
-             <property name="windowImages" value="eclipse.gif,eclipse32.gif,eclipse48.gif"/> 
-             <property name="aboutImage" value="eclipse_lg.gif"/> 
-             <property name="aboutText" value="%aboutText"/> 
+             name="Stand-alone Debugger">
+             <property
+                   name="aboutText"
+                   value="Stand-alone Debugger&#x0A;&#x0A;Version: 1.0.0&#x0A;&#x0A;Copyright (c) 2015 Red Hat, Inc. and others.&#x0A;&#x0A;All rights reserved. This program and the accompanying materials are&#x0A;made available under the terms of the Eclipse Public License v1.0 which&#x0A;accompanies this distribution, and is available at&#x0A;http://www.eclipse.org/legal/epl-v10.html"/>
+             <property
+                   name="appName"
+                   value="Stand-alone Debugger">
+             </property>
+             <property
+                   name="aboutImage"
+                   value="icons/about.png">
+             </property>
+             <property
+                   name="windowImages"
+                   value="icons/cc16.png,icons/cc32.png,icons/cc48.png,icons/cc64.png,icons/cc128.png,icons/cc.png">
+             </property> 
              
        </product>
     </extension>

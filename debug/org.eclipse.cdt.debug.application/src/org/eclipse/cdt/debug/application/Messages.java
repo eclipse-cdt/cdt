@@ -104,6 +104,10 @@ public class Messages extends NLS {
 	public static String RemoteExecutableMenuName;
 	public static String AttachedExecutable_toolTip;
 	public static String AttachedExecutableMenuName;
+	public static String Application_WorkspaceRootNotExistError;
+	public static String Application_WorkspaceCreationError ;
+	public static String Application_WorkspaceRootPermissionError;
+	public static String Application_WorkspaceInUseError;
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);

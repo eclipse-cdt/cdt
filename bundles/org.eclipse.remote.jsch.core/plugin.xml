@@ -36,6 +36,11 @@
       </connectionService>
       <connectionService
             connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchFileManager$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionHostService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
             factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
             service="org.eclipse.remote.internal.jsch.core.JSchConnection">
       </connectionService>

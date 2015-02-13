@@ -10,8 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.application;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.text.MessageFormat;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -20,6 +30,10 @@ import org.eclipse.ui.PlatformUI;
  * This class controls all aspects of the application's execution
  */
 public class Application implements IApplication {
+	
+	public static final String WORKSPACE_NAME = "workspace-cdtdebug"; //$NON-NLS-1$
+
+	private Location fInstanceLoc = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
@@ -28,6 +42,10 @@ public class Application implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {
 		Display display = PlatformUI.createDisplay();
 		try {
+			if (!setupWorkspaceLocation(display)) {
+				return IApplication.EXIT_OK;
+			}
+			
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if (returnCode == PlatformUI.RETURN_RESTART)
 				return IApplication.EXIT_RESTART;
@@ -37,6 +55,46 @@ public class Application implements IApplication {
 			display.dispose();
 		}
 		
+	}
+	
+	private boolean setupWorkspaceLocation(Display display) throws IOException {
+        // fetch the Location that we will be modifying
+        fInstanceLoc = Platform.getInstanceLocation();
+
+        // -data @noDefault in <applName>.ini allows us to set the workspace here.
+        // If the user wants to change the location then he has to change
+        // @noDefault to a specific location or remove -data @noDefault for
+        // default location
+        if (!fInstanceLoc.allowsDefault() && !fInstanceLoc.isSet()) {
+            File workspaceRoot = new File(getWorkspaceRoot());
+
+            if (!workspaceRoot.exists()) {
+                MessageDialog.openError(display.getActiveShell(),
+                        Messages.Application_WorkspaceCreationError,
+                        MessageFormat.format(Messages.Application_WorkspaceRootNotExistError, new Object[] { getWorkspaceRoot() }));
+                return false;
+            }
+
+            if (!workspaceRoot.canWrite()) {
+                MessageDialog.openError(display.getActiveShell(),
+                        Messages.Application_WorkspaceCreationError,
+                        MessageFormat.format(Messages.Application_WorkspaceRootPermissionError, new Object[] { getWorkspaceRoot() }));
+                return false;
+            }
+
+            String workspace = getWorkspaceRoot();
+            // set location to workspace
+            fInstanceLoc.set(new URL("file", null, workspace), false); //$NON-NLS-1$
+        }
+
+        if (!fInstanceLoc.lock()) {
+            MessageDialog.openError(display.getActiveShell(),
+                    Messages.Application_WorkspaceCreationError,
+                    MessageFormat.format(Messages.Application_WorkspaceInUseError, new Object[] { fInstanceLoc.getURL().getPath() }));
+            return false;
+        }
+		
+        return true;
 	}
 
 	/* (non-Javadoc)
@@ -48,6 +106,7 @@ public class Application implements IApplication {
 			return;
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
+		fInstanceLoc.release();
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -56,4 +115,15 @@ public class Application implements IApplication {
 			}
 		});
 	}
+	
+    /**
+     * Gets the workspace directory.
+     *
+     * @return the workspace root directory
+     */
+    private static String getWorkspaceRoot() {
+    	IPath workspacePath = new Path(System.getProperty("user.home")); //$NON-NLS-1$
+    	workspacePath.append(WORKSPACE_NAME);
+        return workspacePath.toOSString();
+    }
 }

@@ -246,6 +246,12 @@
 			</repositories>
 		</profile>
 		<profile>
+			<id>build-standalone-debugger-rcp</id>
+			<modules>
+				<module>debug/org.eclipse.cdt.debug.application.product</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>macosx</id>
 			<activation>
 				<os>
@@ -293,7 +299,7 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
+<!--					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
 						<artifactId>eclipse-jarsigner-plugin</artifactId>
 						<version>1.1.1</version>
@@ -307,6 +313,7 @@
 							</execution>
 						</executions>
 					</plugin>
+-->
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-pack200b-plugin</artifactId>

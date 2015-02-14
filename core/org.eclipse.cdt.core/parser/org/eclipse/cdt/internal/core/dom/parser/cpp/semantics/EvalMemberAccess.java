@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
@@ -233,8 +232,6 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 		if (fMember instanceof IVariable) {
 			IType e2 = ((IVariable) fMember).getType();
 			e2= SemanticUtil.getNestedType(e2, TDEF);
-			if (e2 instanceof ICPPUnknownType)
-				return new TypeOfDependentExpression(this);
 			if (e2 instanceof ICPPReferenceType) {
 				e2= glvalueType(e2);
 			} else if (fMember instanceof ICPPField && !((ICPPField) fMember).isStatic()) {

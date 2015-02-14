@@ -1230,9 +1230,30 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	//	}
 	public void testLocallyDeclaredExternVariable_372004() throws Exception {
 		String code = getAboveComment();
-		IFile file = importFile("testWaldo.cpp", code);
+		IFile file = importFile("testBug372004.cpp", code);
 		
 		int offset = code.indexOf("extern int waldo") + 12;
 		assertTrue(testF3(file, offset) instanceof IASTName);
 	}
+	
+	//	template <typename>
+	//	struct A {
+	//	    int waldo;
+	//	};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	    A<T> obj;
+	//	    void foo() {
+	//	        obj.waldo;
+	//	    }
+	//	};
+	public void testDependentMemberAccess_448764() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug448764.cpp", code);
+		
+		int offset = code.indexOf("obj.waldo") + 4;
+		assertTrue(testF3(file, offset) instanceof IASTName);
+	}
+	
 }

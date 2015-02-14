@@ -7561,6 +7561,31 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 	
+	//	template<typename _From>
+	//	struct is_convertible {};
+	//
+	//	class function {
+	//	public:
+	//	  template<typename _Functor, bool = is_convertible<_Functor>::type::value>
+	//	  function(_Functor);
+	//	};
+	//
+	//	class A {};
+	//
+	//	struct B {
+	//	  B(const char* s);
+	//	};
+	//
+	//	template <class T> void waldo(const B& b);
+	//	template <class T> void waldo(function f);
+	//
+	//	void test() {
+	//	    waldo<A>(""); // problem on waldo
+	//	}
+	public void testSfinaeInIdExpression_459940() throws Exception {
+		parseAndCheckBindings();
+	}
+	
 	//	template <typename>
 	//	struct M {
 	//	    template <typename... Args>

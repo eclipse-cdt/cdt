@@ -563,4 +563,18 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(code);
 		checkErrorLine(4, ER_ID);
 	}
+
+	//	void foo() {
+	//		switch (0) {
+	//		case 0:
+	//			return 42;;
+	//		case 1:
+	//			break;
+	//		}
+	//	}
+	public void testDoubleSemicolon_bug441714() {
+		String code = getAboveComment();
+		loadCodeAndRun(code);
+		checkNoErrorsOfKind(ER_ID);
+	}
 }

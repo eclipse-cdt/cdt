@@ -8,7 +8,7 @@
             category="org.eclipse.cdt.ui.views"
             class="org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView"
             icon="icons/decision.png"
-            id="oeg.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView"
+            id="org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView"
             name="Control Flow Graph">
       </view>
    </extension>

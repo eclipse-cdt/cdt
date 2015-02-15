@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
@@ -90,6 +91,9 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 						IASTStatement next = null;
 						if (i < statements.length - 1)
 							next = statements[i + 1];
+						IASTStatement prev = null;
+						if (i > 0)
+							prev = statements[i - 1];
 						if (isCaseStatement(curr)) {
 							prevCase = curr;
 						}
@@ -101,6 +105,13 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 							}
 							if (!fCheckLastCase && next == null) {
 								continue; // Last case and we don't care
+							}
+							// If this is the null statement, base the decision on the previous statement
+							// instead (if there is one). Null statements can sneak in via macros in cases
+							// where the macro expansion ends in a semicolon, and the macro use is followed
+							// by a semicolon as well.
+							if (curr instanceof IASTNullStatement && (prev != prevCase)) {
+								curr = prev;
 							}
 							if (!isProducedByMacroExpansion(prevCase) && isFallThroughStamement(curr)) {
 								IASTComment comment = null;

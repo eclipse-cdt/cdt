@@ -18,7 +18,7 @@ package org.eclipse.tm.internal.terminal.serial;
 
 import gnu.io.SerialPort;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 public class SerialSettings implements ISerialSettings {
     protected String fSerialPort;
@@ -153,7 +153,7 @@ public class SerialSettings implements ISerialSettings {
 			getFlowControlString();
 	}
 
-	public void load(ISettingsStore store) {
+	public void load(ISettings store) {
 		fSerialPort = store.getStringProperty("SerialPort", fProperties.getDefaultSerialPort());//$NON-NLS-1$
 		fBaudRate = store.getStringProperty("BaudRate", fProperties.getDefaultBaudRate());//$NON-NLS-1$
 		fDataBits = store.getStringProperty("DataBits", fProperties.getDefaultDataBits());//$NON-NLS-1$
@@ -163,7 +163,7 @@ public class SerialSettings implements ISerialSettings {
 		fTimeout = store.getStringProperty("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
 	}
 
-	public void save(ISettingsStore store) {
+	public void save(ISettings store) {
 		store.setProperty("SerialPort", fSerialPort); //$NON-NLS-1$
 		store.setProperty("BaudRate", fBaudRate); //$NON-NLS-1$
 		store.setProperty("DataBits", fDataBits); //$NON-NLS-1$

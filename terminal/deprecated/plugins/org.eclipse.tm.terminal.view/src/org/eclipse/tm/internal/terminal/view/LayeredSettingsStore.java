@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.SettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.Settings;
 
 /**
- * Uses an array of {@link ISettingsStore} to find a value.
+ * Uses an array of {@link ISettings} to find a value.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
@@ -22,16 +22,16 @@ import org.eclipse.tm.internal.terminal.provisional.api.SettingsStore;
  * the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
-public class LayeredSettingsStore extends SettingsStore {
+public class LayeredSettingsStore extends Settings {
 
-	private final ISettingsStore[] fStores;
+	private final ISettings[] fStores;
 
 	/**
 	 * @param stores the stores used to search the values.
 	 * {@link #setProperty(String, Object)} will put the value in the
 	 * first store in the list.
 	 */
-	public LayeredSettingsStore(ISettingsStore[] stores) {
+	public LayeredSettingsStore(ISettings[] stores) {
 		fStores=stores;
 	}
 	/**
@@ -39,8 +39,8 @@ public class LayeredSettingsStore extends SettingsStore {
 	 * @param s1 first store
 	 * @param s2 second store
 	 */
-	public LayeredSettingsStore(ISettingsStore s1, ISettingsStore s2) {
-		this(new ISettingsStore[]{s1,s2});
+	public LayeredSettingsStore(ISettings s1, ISettings s2) {
+		this(new ISettings[]{s1,s2});
 	}
 	
 	public Object getProperty(String key) {

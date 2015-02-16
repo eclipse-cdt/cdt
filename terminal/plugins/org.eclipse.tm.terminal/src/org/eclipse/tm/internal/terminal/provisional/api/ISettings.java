@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Uwe Stieber (Wind River) - Extend API to allow storage of non-string settings
@@ -17,11 +17,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * The settings store contains the state of a connection. The content of the
- * settings store is not the persisted state of the connection. Storing data
- * in the settings store does not make any assumption about possibly persisting
- * the connection state. Connection persistence has to be implemented by the UI
- * container embedding the Terminal control.  
+ * The settings contains the state of a connection. The content of the settings
+ * is not the persisted state of the connection. Storing data in the settings
+ * does not make any assumption about possibly persisting the connection state.
+ * Connection persistence has to be implemented by the UI container embedding
+ * the Terminal control.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will
@@ -29,8 +29,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * consulting with the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
-public interface ISettingsStore extends IAdaptable {
-	
+public interface ISettings extends IAdaptable {
+
 	/**
 	 * Set the properties from the given map. Calling this method
 	 * will overwrite all previous set properties.
@@ -166,7 +166,7 @@ public interface ISettingsStore extends IAdaptable {
 	 *
 	 * @param key The property key. Must not be <code>null</code>!
 	 * @param defaultValue The default value or <code>null</code>.
-	 * 
+	 *
 	 * @return The stored property value casted <code>java.lang.String</code> or <code>null</code>.
 	 */
 	public String getStringProperty(String key, String defaultValue);

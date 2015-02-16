@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Terminal connection settings store implementation.
+ * Terminal connection settings implementation.
  */
-public class SettingsStore extends PlatformObject implements ISettingsStore {
+public class Settings extends PlatformObject implements ISettings {
 	/**
 	 * A map of settings. The keys are always strings, the value might be any object.
 	 */
@@ -28,18 +28,18 @@ public class SettingsStore extends PlatformObject implements ISettingsStore {
 	/**
 	 * Constructor.
 	 */
-	public SettingsStore() {
+	public Settings() {
 		super();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		boolean equals = super.equals(obj);
-		if (!equals && obj instanceof SettingsStore) {
-			return settings.equals(((SettingsStore)obj).settings);
+		if (!equals && obj instanceof Settings) {
+			return settings.equals(((Settings)obj).settings);
 		}
 		return equals;
 	}
@@ -66,7 +66,7 @@ public class SettingsStore extends PlatformObject implements ISettingsStore {
 			buffer.append("="); //$NON-NLS-1$
 
 			Object value = settings.get(key);
-			if (value instanceof Map || value instanceof ISettingsStore) {
+			if (value instanceof Map || value instanceof ISettings) {
 				buffer.append("{...}"); //$NON-NLS-1$
 			} else {
 				buffer.append(value);
@@ -171,7 +171,7 @@ public class SettingsStore extends PlatformObject implements ISettingsStore {
 		return value instanceof String ? (String)value :
 					(value != null ? value.toString() : null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getStringProperty(java.lang.String, java.lang.String)
 	 */

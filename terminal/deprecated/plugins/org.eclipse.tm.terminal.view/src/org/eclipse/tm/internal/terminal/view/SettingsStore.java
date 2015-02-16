@@ -14,11 +14,11 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.ui.IMemento;
 
 /**
- * A {@link IDialogSettings} based {@link ISettingsStore}.
+ * A {@link IDialogSettings} based {@link ISettings}.
  * 
  * Setting Store based on IMemento. IMemento documentations says only alpha numeric
  * values may be used as keys. Therefore the implementation converts dots (.) into
@@ -26,7 +26,7 @@ import org.eclipse.ui.IMemento;
  * 
  * @author Michael Scharf
  */
-class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.SettingsStore {
+class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.Settings {
 
 	private static final String KEYS = "_keys_"; //$NON-NLS-1$
 	

@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
@@ -101,10 +101,10 @@ public class SshConnector extends TerminalConnectorImpl {
 	public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
-	public void load(ISettingsStore store) {
+	public void load(ISettings store) {
 		fSettings.load(store);
 	}
-	public void save(ISettingsStore store) {
+	public void save(ISettings store) {
 		fSettings.save(store);
 	}
 	protected JSch getJsch() {

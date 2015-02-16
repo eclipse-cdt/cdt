@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 
 /**
@@ -31,7 +31,7 @@ public interface ITerminalViewConnectionManager {
 	}
 	/**
 	 * Used to create instances of the ITerminalViewConnection 
-	 * when the state is read from the {@link ISettingsStore}
+	 * when the state is read from the {@link ISettings}
 	 *
 	 */
 	interface ITerminalViewConnectionFactory {
@@ -73,11 +73,11 @@ public interface ITerminalViewConnectionManager {
 	void addListener(ITerminalViewConnectionListener listener);
 	void removeListener(ITerminalViewConnectionListener listener);
 	
-	void saveState(ISettingsStore store);
+	void saveState(ISettings store);
 	/**
 	 * @param store
 	 * @param factory used to create new {@link ITerminalViewConnection}
 	 */
-	void loadState(ISettingsStore store,ITerminalViewConnectionFactory factory);
+	void loadState(ISettings store,ITerminalViewConnectionFactory factory);
 	
 }

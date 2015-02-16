@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -37,8 +37,8 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * provided {@link TerminalConnector.Factory} interface when needed. class, and
  * delegates to the actual implementation when needed. The following methods can
  * be called without initializing the contributed implementation class:
- * {@link #getId()}, {@link #getName()}, {@link #getSettingsSummary()},{@link #load(ISettingsStore)},
- * {@link #setTerminalSize(int, int)}, {@link #save(ISettingsStore)},
+ * {@link #getId()}, {@link #getName()}, {@link #getSettingsSummary()},{@link #load(ISettings)},
+ * {@link #setTerminalSize(int, int)}, {@link #save(ISettings)},
  * {@link #getAdapter(Class)}
  *
  * @noextend This class is not intended to be subclassed by clients.
@@ -93,7 +93,7 @@ public class TerminalConnector implements ITerminalConnector {
 	 * The store might be set before the real connector is initialized.
 	 * This keeps the value until the connector is created.
 	 */
-	private ISettingsStore fStore;
+	private ISettings fStore;
 	/**
 	 * Constructor for the terminal connector.
 	 *
@@ -173,7 +173,7 @@ public class TerminalConnector implements ITerminalConnector {
 	public boolean isLocalEcho() {
 		return getConnectorImpl().isLocalEcho();
 	}
-	public void load(ISettingsStore store) {
+	public void load(ISettings store) {
 		if(fConnector==null) {
 			fStore=store;
 		} else {
@@ -183,7 +183,7 @@ public class TerminalConnector implements ITerminalConnector {
 	public ISettingsPage makeSettingsPage() {
 		return getConnectorImpl().makeSettingsPage();
 	}
-	public void save(ISettingsStore store) {
+	public void save(ISettings store) {
 		// no need to save the settings: it cannot have changed
 		// because we are not initialized....
 		if(fConnector!=null)

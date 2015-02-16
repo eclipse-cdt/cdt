@@ -11,7 +11,7 @@
 
 package org.eclipse.tm.internal.terminal.local;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 /**
  * The interface {@link ILocalTerminalSettings} defines the public interface for connector-specific
@@ -40,24 +40,24 @@ public interface ILocalTerminalSettings {
 	public final static String LINE_SEPARATOR_LF = "\\n"; //$NON-NLS-1$
 
 	/**
-	 * Loads the settings from a specified {@link ISettingsStore}.
+	 * Loads the settings from a specified {@link ISettings}.
 	 *
-	 * TODO: the {@link #load(ISettingsStore)} method should probably extracted to a super-interface
+	 * TODO: the {@link #load(ISettings)} method should probably extracted to a super-interface
 	 *       as it appears to be common to all customized settings interfaces
 	 *
-	 * @param store the {@link ISettingsStore} to load the settings from
+	 * @param store the {@link ISettings} to load the settings from
 	 */
-	public abstract void load(ISettingsStore store);
+	public abstract void load(ISettings store);
 
 	/**
-	 * Saves the settings to a specified {@link ISettingsStore}.
+	 * Saves the settings to a specified {@link ISettings}.
 	 *
-	 * TODO: the {@link #save(ISettingsStore)} method should probably extracted to a super-interface
+	 * TODO: the {@link #save(ISettings)} method should probably extracted to a super-interface
 	 *       as it appears to be common to all customized settings interfaces
 	 *
-	 * @param store the {@link ISettingsStore} for storing the settings
+	 * @param store the {@link ISettings} for storing the settings
 	 */
-	public abstract void save(ISettingsStore store);
+	public abstract void save(ISettings store);
 
 	/**
 	 * Gets the name of the launch configuration that will be started in the terminal.

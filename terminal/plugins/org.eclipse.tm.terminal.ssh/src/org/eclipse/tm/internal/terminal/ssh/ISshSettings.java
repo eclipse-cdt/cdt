@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 public interface ISshSettings {
 	/** 
@@ -68,11 +68,11 @@ public interface ISshSettings {
 	 * Load connection data from a settings store.
 	 * @param store the settings store to access.
 	 */
-	void load(ISettingsStore store);
+	void load(ISettings store);
 
 	/**
 	 * Store connection data into a settings store.
 	 * @param store the settings store to access.
 	 */
-	void save(ISettingsStore store);
+	void save(ISettings store);
 }

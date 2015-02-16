@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
-public class SettingStorePrefixDecorator extends org.eclipse.tm.internal.terminal.provisional.api.SettingsStore {
+public class SettingStorePrefixDecorator extends org.eclipse.tm.internal.terminal.provisional.api.Settings {
 	private final String fPrefix;
-	private final ISettingsStore fStore;
-	SettingStorePrefixDecorator(ISettingsStore store,String prefix) {
+	private final ISettings fStore;
+	SettingStorePrefixDecorator(ISettings store,String prefix) {
 		fPrefix=prefix;
 		fStore=store;
 	}

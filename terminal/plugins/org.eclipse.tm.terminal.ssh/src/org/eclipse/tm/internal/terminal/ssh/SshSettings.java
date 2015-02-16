@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 public class SshSettings implements ISshSettings {
     protected String fHost;
@@ -39,7 +39,7 @@ public class SshSettings implements ISshSettings {
 		return settings;
 	}
 
-	public void load(ISettingsStore store) {
+	public void load(ISettings store) {
 		fHost = store.getStringProperty("Host");//$NON-NLS-1$
 		fUser = store.getStringProperty("User");//$NON-NLS-1$
 		// ISettingsStore providers have to make sure that
@@ -52,7 +52,7 @@ public class SshSettings implements ISshSettings {
 	}
 
 
-	public void save(ISettingsStore store) {
+	public void save(ISettings store) {
 		store.setProperty("Host", fHost);//$NON-NLS-1$
 		store.setProperty("User", fUser);//$NON-NLS-1$
 		store.setProperty("Port", fPort);//$NON-NLS-1$

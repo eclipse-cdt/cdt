@@ -12,7 +12,7 @@
 package org.eclipse.tm.internal.terminal.local;
 
 import java.lang.reflect.Field;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
 /**
@@ -27,7 +27,7 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 	private String launchConfiguration;
 
 	/**
-	 * Loads the settings from the given {@link ISettingsStore}.
+	 * Loads the settings from the given {@link ISettings}.
 	 * This method loads the store contents by means of reflection. This is clearly overkill for
 	 * the few settings supported by this class, but the code is much more reusable. Pretty much
 	 * every implementation of a custom settings store is implemented in the same fashion and
@@ -35,10 +35,10 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 	 *
 	 * TODO: check for possibilities to reuse this code!
 	 *
-	 * @param store the {@link ISettingsStore}
-	 * @see ILocalTerminalSettings#load(ISettingsStore)
+	 * @param store the {@link ISettings}
+	 * @see ILocalTerminalSettings#load(ISettings)
 	 */
-	public void load(ISettingsStore store) {
+	public void load(ISettings store) {
 
 		Field[] declaredField = getClass().getDeclaredFields();
 		int numberOfFields = declaredField.length;
@@ -64,14 +64,14 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 	}
 
 	/**
-	 * Saves the settings to the specified {@link ISettingsStore}.
-	 * See {@link #load(ISettingsStore)} for further implementation notes.
+	 * Saves the settings to the specified {@link ISettings}.
+	 * See {@link #load(ISettings)} for further implementation notes.
 	 *
-	 * @param store the {@link ISettingsStore}
+	 * @param store the {@link ISettings}
 	 *
-	 * @see ILocalTerminalSettings#save(ISettingsStore)
+	 * @see ILocalTerminalSettings#save(ISettings)
 	 */
-	public void save(ISettingsStore store) {
+	public void save(ISettings store) {
 
 		Field[] declaredField = getClass().getDeclaredFields();
 		int numberOfFields = declaredField.length;

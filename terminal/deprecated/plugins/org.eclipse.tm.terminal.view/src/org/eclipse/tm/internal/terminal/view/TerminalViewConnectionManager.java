@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 public class TerminalViewConnectionManager implements ITerminalViewConnectionManager {
 	private static final String STORE_CONNECTION_PREFIX = "connection"; //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 		}
 	}
 
-	public void saveState(ISettingsStore store) {
+	public void saveState(ISettings store) {
 		store.setProperty(STORE_SIZE,""+fConnections.size()); //$NON-NLS-1$
 		// save all connections
 		int n=0;
@@ -124,7 +124,7 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 		}
 	}
 
-	public void loadState(ISettingsStore store,ITerminalViewConnectionFactory factory) {
+	public void loadState(ISettings store,ITerminalViewConnectionFactory factory) {
 		int size=0;
 		try {
 			size=Integer.parseInt(store.getStringProperty(STORE_SIZE));

@@ -2,3 +2,4 @@ bin
 @dot
 javaCompiler...args
 build.xml
+/screenshots/

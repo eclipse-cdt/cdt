@@ -26,11 +26,14 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
@@ -51,6 +54,9 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -88,7 +94,31 @@ public abstract class AbstractTest {
 			// do nothing
 		}
 		// Turn off automatic building by default
-		clickMainMenu("Window", "Preferences");
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			// On Mac, the Preferences menu is under the system menu
+			final IWorkbench workbench = PlatformUI.getWorkbench();
+			workbench.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+					if (window != null) {
+						Menu appMenu = workbench.getDisplay().getSystemMenu();
+						for (MenuItem item : appMenu.getItems()) {
+							if (item.getText().startsWith("Preferences")) {
+								Event event = new Event();
+								event.time = (int) System.currentTimeMillis();
+								event.widget = item;
+								event.display = workbench.getDisplay();
+								item.setSelection(true);
+								item.notifyListeners(SWT.Selection, event);
+								break;
+							}
+						}
+					}
+				}
+			});
+		} else {
+			clickMainMenu("Window", "Preferences");
+		}
 		SWTBotShell shell = bot.shell("Preferences");
 		shell.activate();
 		bot.text().setText("Workspace");
@@ -325,13 +355,13 @@ public abstract class AbstractTest {
 		return view;
 	}
 
-    /**
-     * Focus on the main window
-     */
-    public static void focusMainShell() {
-        SWTBotShell shell = getMainShell();
-        shell.activate();
-    }
+	/**
+	 * Focus on the main window
+	 */
+	public static void focusMainShell() {
+		SWTBotShell shell = getMainShell();
+		shell.activate();
+	}
 
 	private static SWTBotShell getMainShell() {
 		for (SWTBotShell shellBot : bot.shells()) {

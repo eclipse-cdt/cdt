@@ -80,11 +80,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionControlService;
+import org.eclipse.remote.core.IRemoteConnectionPropertyService;
+import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteResource;
-import org.eclipse.remote.core.IRemoteServices;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
-
 
 @SuppressWarnings("deprecation")
 public class AutotoolsNewMakeGenerator extends MarkerGenerator {
@@ -1073,21 +1074,23 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     			(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
     	if (remRes != null) {
     		URI uri = remRes.getActiveLocationURI();
-    		IRemoteServices remServices = RemoteServices.getRemoteServices(uri);
-    		if (remServices != null) {
-    			IRemoteConnection conn =
-    					remServices.getConnectionManager().getConnection(uri);
+    		IRemoteServicesManager remoteServiceManager = AutotoolsPlugin.getService(IRemoteServicesManager.class);
+    		IRemoteConnectionType connectionType = remoteServiceManager.getConnectionType(uri);
+    		if (connectionType != null) {
+    			IRemoteConnection conn = connectionType.getConnection(uri);
     			if (conn != null) {
     				if (!conn.isOpen()) {
     					try {
 							conn.open(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
-							if (conn.isOpen()) {
-								return conn.getProperty(IRemoteConnection.OS_NAME_PROPERTY);
-							}
 						} catch (RemoteConnectionException e) {
 							// Ignore and return platform OS
 						}
     				}
+    				
+					if (conn.isOpen()) {
+						return conn.getProperty(IRemoteConnection.OS_NAME_PROPERTY);
+					}
+
     			}
     		}
     	}

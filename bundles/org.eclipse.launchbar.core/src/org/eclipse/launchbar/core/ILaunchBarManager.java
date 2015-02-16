@@ -39,30 +39,6 @@ public interface ILaunchBarManager {
 	 */
 	void launchObjectChanged(Object launchObject) throws CoreException;
 
-	/**
-	 * A new launch target has been added.
-	 * 
-	 * @param target launch target
-	 * @throws CoreException 
-	 */
-	void launchTargetAdded(ILaunchTarget target) throws CoreException;
-
-	/**
-	 * A launch target has been removed.
-	 * 
-	 * @param target launch target
-	 * @throws CoreException 
-	 */
-	void launchTargetRemoved(ILaunchTarget target) throws CoreException;
-
-	/**
-	 * The launch target has changed in some way that affects the
-	 * launch bar.
-	 * 
-	 * @param target launch target
-	 */
-	void launchTargetChanged(ILaunchTarget target);
-
 	// TODO API for adding and removing types.
 
 }

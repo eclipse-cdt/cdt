@@ -62,24 +62,6 @@
             descriptorTypeId="org.eclipse.launchbar.core.descriptor.default"
             labelProvider="org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider">
       </descriptorUI>
-      <targetUI
-            labelProvider="org.eclipse.launchbar.ui.internal.LocalTargetLabelProvider"
-            targetTypeId="org.eclipse.launchbar.core.target.local"
-            name="Local Target">
-      </targetUI>
-   </extension>
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            class="org.eclipse.launchbar.ui.internal.targetsView.TargetPropertyPage"
-            id="org.eclipse.launchbar.ui.infoPropertyPage"
-            name="About">
-         <enabledWhen>
-            <instanceof
-                  value="org.eclipse.launchbar.core.ILaunchTarget">
-            </instanceof>
-         </enabledWhen>
-      </page>
    </extension>
 
 </plugin>

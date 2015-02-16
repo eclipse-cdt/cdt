@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.launchbar.core.launchBarContributions">
       <targetType
-            class="org.eclipse.launchbar.core.internal.LocalTargetType"
+            connectionTypeId="ca.cdtdoug.wascana.arduino.core.connectionType"
             id="org.eclipse.launchbar.core.targetType.local">
       </targetType>
       <objectProvider

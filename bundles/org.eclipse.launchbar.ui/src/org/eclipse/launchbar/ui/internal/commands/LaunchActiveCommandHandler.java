@@ -20,8 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchTarget;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.swt.widgets.Display;
@@ -35,9 +33,7 @@ public class LaunchActiveCommandHandler extends AbstractHandler {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				try {
 					LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
-					ILaunchDescriptor desc = launchBarManager.getActiveLaunchDescriptor();
-					ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
-					ILaunchConfiguration config = launchBarManager.getLaunchConfiguration(desc, target);
+					ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
 					if (config == null)
 						return Status.OK_STATUS;
 					ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();

@@ -19,7 +19,6 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="descriptorUI"/>
-            <element ref="targetUI"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -67,81 +66,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.jface.viewers.ILabelProvider"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="targetUI">
-      <complexType>
-         <attribute name="targetTypeId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.launchbar.core.launchBarContributions/targetType/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Used for identifying this launch target type in various UI elements.
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="icon" type="string">
-            <annotation>
-               <documentation>
-                  Used for identifying this launch target type in various UI elements.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="labelProvider" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.jface.viewers.ILabelProvider"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="hoverProvider" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.launchbar.ui.IHoverProvider"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="editCommandId" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="newWizard" type="string">
-            <annotation>
-               <documentation>
-                  An INewWizard that creates a target of this type.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.INewWizard"/>
                </appinfo>
             </annotation>
          </attribute>

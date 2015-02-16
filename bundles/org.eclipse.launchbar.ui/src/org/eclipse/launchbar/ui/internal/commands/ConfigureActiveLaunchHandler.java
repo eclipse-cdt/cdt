@@ -22,8 +22,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.window.Window;
-import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchTarget;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -34,16 +32,14 @@ public class ConfigureActiveLaunchHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
-			ILaunchDescriptor desc = launchBarManager.getActiveLaunchDescriptor();
-			ILaunchTarget target = launchBarManager.getActiveLaunchTarget();
-			ILaunchConfiguration launchConfiguration = launchBarManager.getLaunchConfiguration(desc, target);
+			ILaunchConfiguration launchConfiguration = launchBarManager.getActiveLaunchConfiguration();
 			if (launchConfiguration == null)
 				return Status.OK_STATUS;
 			ILaunchConfigurationWorkingCopy wc = launchConfiguration.getWorkingCopy();
 
 			ILaunchMode activeLaunchMode = launchBarManager.getActiveLaunchMode();
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(launchConfiguration.getType(), activeLaunchMode.getIdentifier());
-			
+
 			if (DebugUITools.openLaunchConfigurationPropertiesDialog(HandlerUtil.getActiveShell(event), wc, group.getIdentifier()) == Window.OK)
 				wc.doSave();
 		} catch (CoreException e) {

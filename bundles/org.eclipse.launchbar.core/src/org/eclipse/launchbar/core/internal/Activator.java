@@ -17,33 +17,38 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class Activator extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eclipse.launchbar.core";
 	private static Activator plugin;
-	private LaunchBarManager launchBarManager;
 
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		plugin = this;
-		launchBarManager = new LaunchBarManager();
-		bundleContext.registerService(ILaunchBarManager.class, launchBarManager, null);
+		bundleContext.registerService(ILaunchBarManager.class, new LaunchBarManager(), null);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		plugin = null;
-		launchBarManager.dispose();
-		launchBarManager = null;
 	}
 
 	public static Activator getDefault() {
 		return plugin;
 	}
 
-	public LaunchBarManager getLaunchBarManager() {
-		return launchBarManager;
+	/**
+	 * Return the OSGi service with the given service interface.
+	 * 
+	 * @param service service interface
+	 * @return the specified service or null if it's not registered
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 
 	public static void throwCoreException(Exception e) throws CoreException {
@@ -58,7 +63,11 @@ public class Activator extends Plugin {
 	}
 
 	public static void log(Exception exception) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, exception.getLocalizedMessage(), exception));
+		if (exception instanceof CoreException) {
+			log(((CoreException) exception).getStatus());
+		} else {
+			log(new Status(IStatus.ERROR, PLUGIN_ID, exception.getLocalizedMessage(), exception));
+		}
 	}
 
 	private static final String DEBUG_ONE =

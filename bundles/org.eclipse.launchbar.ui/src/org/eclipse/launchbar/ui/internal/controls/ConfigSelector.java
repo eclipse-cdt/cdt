@@ -32,13 +32,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchTarget;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.launchbar.ui.internal.dialogs.LaunchConfigurationEditDialog;
 import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigWizard;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -169,7 +169,7 @@ public class ConfigSelector extends CSelector {
 			LaunchBarManager manager = uiManager.getManager();
 			ILaunchDescriptor desc = (ILaunchDescriptor) element;
 			ILaunchMode mode = manager.getActiveLaunchMode();
-			ILaunchTarget target = manager.getActiveLaunchTarget();
+			IRemoteConnection target = manager.getActiveLaunchTarget();
 			if (target == null) {
 				MessageDialog.openError(shell, "No Active Target", "You must create a target to edit this launch configuration.");
 				return;

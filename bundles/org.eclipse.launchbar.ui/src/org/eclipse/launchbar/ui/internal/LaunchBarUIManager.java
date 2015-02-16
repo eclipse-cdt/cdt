@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,8 +23,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchTarget;
-import org.eclipse.launchbar.core.ILaunchTargetType;
 import org.eclipse.launchbar.core.internal.ExecutableExtension;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.IHoverProvider;
@@ -85,67 +82,6 @@ public class LaunchBarUIManager {
 	public ILabelProvider getLabelProvider(ILaunchDescriptor descriptor) throws CoreException {
 		ExecutableExtension<ILabelProvider> provider = descriptorLabelProviders.get(manager.getDescriptorTypeId(descriptor.getType()));
 		return provider != null ? provider.get() : null;
-	}
-
-	public String getTargetTypeName(ILaunchTarget target) {
-		return getTargetTypeName(target.getType());
-	}
-
-	public String getTargetTypeName(ILaunchTargetType targetType) {
-		String typeId = manager.getTargetTypeId(targetType);
-		String name = targetContributions.get(typeId).name;
-		return name != null ? name : typeId;
-	}
-
-	public Image getTargetTypeIcon(ILaunchTargetType targetType) {
-		String typeId = manager.getTargetTypeId(targetType);
-		return targetContributions.get(typeId).getIcon();
-	}
-
-	public ILabelProvider getLabelProvider(ILaunchTarget target) throws CoreException {
-		ExecutableExtension<ILabelProvider> provider = getContribution(target).labelProvider;
-		return provider != null ? provider.get() : null;
-	}
-
-	public IHoverProvider getHoverProvider(ILaunchTarget target) throws CoreException {
-		ExecutableExtension<IHoverProvider> hoverProvider = getContribution(target).hoverProvider;
-		return hoverProvider != null ? hoverProvider.get() : null;
-	}
-
-	public String getEditCommand(ILaunchTarget target) {
-		return getContribution(target).editCommandId;
-	}
-
-	public Map<ILaunchTargetType, ExecutableExtension<INewWizard>> getNewTargetWizards() {
-		Map<ILaunchTargetType, ExecutableExtension<INewWizard>> wizards = new HashMap<>();
-		for (Entry<String, LaunchBarTargetContribution> contrib : targetContributions.entrySet()) {
-			if (contrib.getValue().newWizard != null) {
-				ILaunchTargetType type = manager.getLaunchTargetType(contrib.getKey());
-				if (type != null) {
-					wizards.put(type, contrib.getValue().newWizard);
-				}
-			}
-		}
-		return wizards;
-	}
-
-	public Map<String, Image> getTargetIcons() {
-		Map<String, Image> icons = new HashMap<>();
-		for (LaunchBarTargetContribution contribution : targetContributions.values()) {
-			Image icon = contribution.getIcon();
-			if (icon != null) {
-				icons.put(contribution.name, icon);
-			}
-		}
-		return icons;
-	}
-
-	private LaunchBarTargetContribution getContribution(ILaunchTarget target) {
-		LaunchBarTargetContribution c = targetContributions.get(manager.getTargetTypeId(target.getType()));
-		if (c == null) {
-			return DEFAULT_CONTRIBUTION;
-		}
-		return c;
 	}
 
 	private class LaunchBarTargetContribution {

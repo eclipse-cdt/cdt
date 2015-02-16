@@ -15,11 +15,11 @@ import javax.annotation.PreDestroy;
 
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ILaunchTarget;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -129,7 +129,7 @@ public class LaunchBarControl implements Listener {
 	@Override
 	public void activeLaunchTargetChanged() {
 		if (targetSelector != null) {
-			final ILaunchTarget target = manager.getActiveLaunchTarget();
+			final IRemoteConnection target = manager.getActiveLaunchTarget();
 			targetSelector.setDelayedSelection(target, SELECTION_DELAY);
 		}
 	}

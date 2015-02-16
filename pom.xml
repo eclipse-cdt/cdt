@@ -40,7 +40,12 @@
 	<repositories>
 		<repository>
 			<id>eclipse</id>
-			<url>http://download.eclipse.org/releases/luna/</url>
+			<url>http://download.eclipse.org/releases/mars/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>platform</id>
+			<url>http://download.eclipse.org/eclipse/updates/4.5milestones</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -50,7 +55,12 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/S20141129202728/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>remote</id>
+			<url>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -59,7 +69,7 @@
 		<module>bundles/org.eclipse.launchbar.core</module>
 		<module>bundles/org.eclipse.launchbar.ui</module>
 		<module>features/org.eclipse.launchbar</module>
-		<module>tests/org.eclipse.launchbar.core.tests</module>
+		<!-- module>tests/org.eclipse.launchbar.core.tests</module-->
 		<module>repo</module>
 	</modules>
 

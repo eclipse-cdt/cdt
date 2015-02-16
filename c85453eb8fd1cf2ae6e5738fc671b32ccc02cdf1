@@ -575,6 +575,24 @@
     },
     {
       "key": {
+        "uuid": "070b0362_5a1ea598",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-16T15:21:45Z",
+      "side": 1,
+      "message": "I don\u0027t know that it is being used.  I\u0027m learning about it as I go :)  But we could maybe write some run-time code that would verify that each method with this annotation does run in the executor, and the string in parameter would provide a way to find that executor for the comparison.",
+      "parentUuid": "070b0362_9173d8d7",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_0e898732",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
         "patchSetId": 1
@@ -890,6 +908,24 @@
     },
     {
       "key": {
+        "uuid": "070b0362_3a1be1a7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-16T15:21:45Z",
+      "side": 1,
+      "message": "Sure, we can wait for the next patch of clean ups.",
+      "parentUuid": "070b0362_d1a720c3",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_6e3bf350",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
         "patchSetId": 1
@@ -1024,6 +1060,24 @@
       "side": 1,
       "message": "This one is a private method i.e. not part of the api and does not use any instance variables. \n  Having it static sound like a good fit for this case as we don\u0027t load the same code for multiple instances. \n  Do you see any drawbacks ?",
       "parentUuid": "070b0362_8ec9f750",
+      "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_9a180daa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-16T15:21:45Z",
+      "side": 1,
+      "message": "No problems.  Just curious.  That is fine.",
+      "parentUuid": "070b0362_d18e003d",
       "revId": "c85453eb8fd1cf2ae6e5738fc671b32ccc02cdf1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

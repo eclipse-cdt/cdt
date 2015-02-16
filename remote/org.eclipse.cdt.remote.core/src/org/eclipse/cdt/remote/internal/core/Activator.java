@@ -12,6 +12,7 @@ package org.eclipse.cdt.remote.internal.core;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class Activator implements BundleActivator {
 
@@ -39,6 +40,17 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+	}
+
+	/**
+	 * Return the OSGi service with the given service interface.
+	 * 
+	 * @param service service interface
+	 * @return the specified service or null if it's not registered
+	 */
+	public static <T> T getService(Class<T> service) {
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 
 }

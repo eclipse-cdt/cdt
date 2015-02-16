@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.remote.internal.core.Activator;
 import org.eclipse.cdt.remote.internal.core.messages.Messages;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
@@ -27,12 +28,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
+import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IRemoteResource;
-import org.eclipse.remote.core.IRemoteServices;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.RemoteProcessAdapter;
-import org.eclipse.remote.core.RemoteServices;
 
 public class RemoteCommandLauncher implements ICommandLauncher {
 	
@@ -130,16 +133,19 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 			IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {
 				URI uri = remRes.getActiveLocationURI();
-				IRemoteServices remServices = RemoteServices.getRemoteServices(uri);
-				if (remServices != null) {
-					fConnection = remServices.getConnectionManager().getConnection(uri);
+				IRemoteServicesManager remoteServicesManager = Activator.getService(IRemoteServicesManager.class);
+				IRemoteConnectionType connectionType = remoteServicesManager.getConnectionType(uri);
+				if (connectionType != null) {
+					fConnection = connectionType.getConnection(uri);
 					if (fConnection != null) {
 						parseEnvironment(env);
 						fCommandArgs = constructCommandArray(commandPath.toString(), args, remRes);
-						IRemoteProcessBuilder processBuilder = fConnection.getProcessBuilder(fCommandArgs);
+						IRemoteProcessService processService = fConnection.getService(IRemoteProcessService.class);
+						IRemoteProcessBuilder processBuilder = processService.getProcessBuilder(fCommandArgs);
 						if (workingDirectory != null) {
 							String remoteWorkingPath = makeRemote(workingDirectory.toString(), remRes);
-			                IFileStore wd = fConnection.getFileManager().getResource(remoteWorkingPath);
+							IRemoteFileService fileManager = fConnection.getService(IRemoteFileService.class);
+			                IFileStore wd = fileManager.getResource(remoteWorkingPath);
 							processBuilder.directory(wd);
 						}
 						Map<String, String> processEnv = processBuilder.environment();

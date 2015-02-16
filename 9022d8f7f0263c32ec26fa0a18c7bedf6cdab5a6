@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_da8e153d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-16T15:50:15Z",
+      "side": 1,
+      "message": "Can we rename this to getTopFrameData() since that is what it does?",
+      "revId": "9022d8f7f0263c32ec26fa0a18c7bedf6cdab5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

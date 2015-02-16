@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_05db2219",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-16T19:26:26Z",
+      "side": 1,
+      "message": "I believe you have to change the sequenceNumber for the change to be properly picked up",
+      "revId": "2ae4540ec68e7417aae86f2d1ed83e3a686e8b70",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

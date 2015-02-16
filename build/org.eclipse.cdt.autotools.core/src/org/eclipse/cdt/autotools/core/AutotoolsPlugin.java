@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -99,6 +100,18 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	 */
 	public static AutotoolsPlugin getDefault() {
 		return plugin;
+	}
+
+	/**
+	 * Return the OSGi service with the given service interface.
+	 * 
+	 * @param service service interface
+	 * @return the specified service or null if it's not registered
+	 */
+	public static <T> T getService(Class<T> service) {
+		BundleContext context = plugin.getBundle().getBundleContext();
+		ServiceReference<T> ref = context.getServiceReference(service);
+		return ref != null ? context.getService(ref) : null;
 	}
 
 	/**

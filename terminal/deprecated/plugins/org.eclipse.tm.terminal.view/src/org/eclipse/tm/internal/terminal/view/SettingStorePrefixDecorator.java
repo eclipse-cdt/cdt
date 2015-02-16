@@ -20,11 +20,11 @@ public class SettingStorePrefixDecorator extends org.eclipse.tm.internal.termina
 		fStore=store;
 	}
 
-	public Object getProperty(String key) {
-		return fStore.getProperty(fPrefix+key);
+	public Object get(String key) {
+		return fStore.get(fPrefix+key);
 	}
 
-	public boolean setProperty(String key, Object value) {
-		return super.setProperty(fPrefix+key,value);
+	public boolean set(String key, Object value) {
+		return super.set(fPrefix+key,value);
 	}
 }

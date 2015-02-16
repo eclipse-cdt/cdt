@@ -32,213 +32,213 @@ import org.eclipse.core.runtime.IAdaptable;
 public interface ISettings extends IAdaptable {
 
 	/**
-	 * Set the properties from the given map. Calling this method
-	 * will overwrite all previous set properties.
+	 * Set the settings from the given map. Calling this method
+	 * will overwrite all previous set settings.
 	 * <p>
-	 * <b>Note:</b> The method will have no effect if the given properties are the
-	 * same as the already set properties.
+	 * <b>Note:</b> The method will have no effect if the given settings are the
+	 * same as the already set settings.
 	 *
-	 * @param properties The map of properties to set. Must not be <code>null</code>.
+	 * @param settings The map of settings to set. Must not be <code>null</code>.
 	 */
-	public void setProperties(Map<String, Object> properties);
+	public void set(Map<String, Object> settings);
 
 	/**
-	 * Adds all properties from the given map. If a property already exist
-	 * in the properties container, than the value of the property is overwritten.
+	 * Adds all settings from the given map. If a setting already exist
+	 * in the settings, than the value of the setting is overwritten.
 	 *
-	 * @param properties The map of properties to add. Must not be <code>null</code>.
+	 * @param settings The map of settings to add. Must not be <code>null</code>.
 	 */
-	public void addProperties(Map<String, ?> properties);
+	public void addAll(Map<String, ?> settings);
 
 	/**
-	 * Stores the property under the given property key using the given property value.
-	 * If the current property value is equal to the given property value, no store
-	 * operation will be executed. If the property value is not <code>null</code> and
-	 * is different from the current property value, the new value will be written to
-	 * the property store and a property change event is fired. If the property value
-	 * is <code>null</code>, the property key and the currently stored value are removed
-	 * from the property store.
+	 * Stores the setting under the given key using the given value. If the current
+	 * value is equal to the given value, no store operation will be executed. If the
+	 * value is not <code>null</code> and is different from the current value, the new
+	 * value will be written to the settings. If the value is <code>null</code>, the
+	 * key and the currently stored value are removed from the settings.
 	 *
+	 * @param key The key. Must not be <code>null</code>!
+	 * @param value The value.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @param value The property value.
-	 * @return <code>true</code> if the property value had been applied to the property store, <code>false</code> otherwise.
+	 * @return <code>true</code> if the value had been applied to the settings, <code>false</code> otherwise.
 	 */
-	public boolean setProperty(String key, Object value);
+	public boolean set(String key, Object value);
 
 	/**
-	 * Stores the property under the given property key using the given long
-	 * property value. The given long value is transformed to an <code>Long</code>
-	 * object and stored to the properties store via <code>setProperty(java.lang.String, java.lang.Object)</code>.
+	 * Stores the setting under the given key using the given long value. The given
+	 * long value is transformed to an <code>Long</code> object and stored to the
+	 * settings store via <code>set(java.lang.String, java.lang.Object)</code>.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @param value The property value.
-	 * @return <code>true</code> if the property value had been applied to the property store, <code>false</code> otherwise.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @param value The value.
 	 *
-	 * @see <code>setProperty(java.lang.String, java.lang.Object)</code>
+	 * @return <code>true</code> if the value had been applied to the settings, <code>false</code> otherwise.
+	 *
+	 * @see <code>set(java.lang.String, java.lang.Object)</code>
 	 */
-	public boolean setProperty(String key, long value);
+	public boolean set(String key, long value);
 
 	/**
-	 * Stores the property under the given property key using the given integer
-	 * property value. The given integer value is transformed to an <code>Integer</code>
-	 * object and stored to the properties store via <code>setProperty(java.lang.String, java.lang.Object)</code>.
+	 * Stores the setting under the given key using the given integer value. The given
+	 * integer value is transformed to an <code>Integer</code> object and stored to the
+	 * settings via <code>set(java.lang.String, java.lang.Object)</code>.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @param value The property value.
-	 * @return <code>true</code> if the property value had been applied to the property store, <code>false</code> otherwise.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @param value The value.
 	 *
-	 * @see <code>setProperty(java.lang.String, java.lang.Object)</code>
+	 * @return <code>true</code> if the value had been applied to the settings, <code>false</code> otherwise.
+	 *
+	 * @see <code>set(java.lang.String, java.lang.Object)</code>
 	 */
-	public boolean setProperty(String key, int value);
+	public boolean set(String key, int value);
 
 	/**
-	 * Stores the property under the given property key using the given boolean
-	 * property value. The given boolean value is transformed to an <code>Boolean</code>
-	 * object and stored to the properties store via <code>setProperty(java.lang.String, java.lang.Object)</code>.
+	 * Stores the setting under the given key using the given boolean value. The given
+	 * boolean value is transformed to an <code>Boolean</code> object and stored to the
+	 * settings via <code>set(java.lang.String, java.lang.Object)</code>.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @param value The property value.
-	 * @return <code>true</code> if the property value had been applied to the property store, <code>false</code> otherwise.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @param value The value.
 	 *
-	 * @see <code>setProperty(java.lang.String, java.lang.Object)</code>
+	 * @return <code>true</code> if the value had been applied to the settings, <code>false</code> otherwise.
+	 *
+	 * @see <code>set(java.lang.String, java.lang.Object)</code>
 	 */
-	public boolean setProperty(String key, boolean value);
+	public boolean set(String key, boolean value);
 
 	/**
-	 * Stores the property under the given property key using the given float
-	 * property value. The given float value is transformed to an <code>Float</code>
-	 * object and stored to the properties store via <code>setProperty(java.lang.String, java.lang.Object)</code>.
+	 * Stores the setting under the given key using the given float value. The given
+	 * float value is transformed to an <code>Float</code> object and stored to the
+	 * settings via <code>set(java.lang.String, java.lang.Object)</code>.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @param value The property value.
-	 * @return <code>true</code> if the property value had been applied to the property store, <code>false</code> otherwise.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @param value The value.
 	 *
-	 * @see <code>setProperty(java.lang.String, java.lang.Object)</code>
+	 * @return <code>true</code> if the value had been applied to the settings, <code>false</code> otherwise.
+	 *
+	 * @see <code>set(java.lang.String, java.lang.Object)</code>
 	 */
-	public boolean setProperty(String key, float value);
+	public boolean set(String key, float value);
 
 	/**
-	 * Stores the property under the given property key using the given double
-	 * property value. The given double value is transformed to an <code>Double</code>
-	 * object and stored to the properties store via <code>setProperty(java.lang.String, java.lang.Object)</code>.
+	 * Stores the setting under the given key using the given double value. The given
+	 * double value is transformed to an <code>Double</code> object and stored to the
+	 * settings via <code>set(java.lang.String, java.lang.Object)</code>.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @param value The property value.
-	 * @return <code>true</code> if the property value had been applied to the property store, <code>false</code> otherwise.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @param value The value.
 	 *
-	 * @see <code>setProperty(java.lang.String, java.lang.Object)</code>
+	 * @return <code>true</code> if the value had been applied to the settings, <code>false</code> otherwise.
+	 *
+	 * @see <code>set(java.lang.String, java.lang.Object)</code>
 	 */
-	public boolean setProperty(String key, double value);
+	public boolean set(String key, double value);
 
 	/**
-	 * Return all properties. The result map is read-only.
+	 * Return all settings. The result map is read-only.
 	 *
-	 * @return A map containing all properties.
+	 * @return A map containing all settings.
 	 */
-	public Map<String, Object> getProperties();
+	public Map<String, Object> getAll();
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * does not exist, <code>null</code> is returned.
+	 * Queries the value stored under the given key. If the setting does not exist,
+	 * <code>null</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value or <code>null</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value or <code>null</code>.
 	 */
-	public Object getProperty(String key);
+	public Object get(String key);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.String</code>, the property value casted to
-	 * <code>java.lang.String</code> is returned. In all other cases, <code>null</code>
-	 * is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.String</code>, the value casted to <code>java.lang.String</code>
+	 * is returned. In all other cases, <code>null</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value casted <code>java.lang.String</code> or <code>null</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value casted <code>java.lang.String</code> or <code>null</code>.
 	 */
-	public String getStringProperty(String key);
+	public String getString(String key);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.String</code>, the property value casted to
-	 * <code>java.lang.String</code> is returned. In all other cases, the given default
-	 * value is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.String</code>, the value casted to <code>java.lang.String</code>
+	 * is returned. In all other cases, the given default value is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
+	 * @param key The key. Must not be <code>null</code>!
 	 * @param defaultValue The default value or <code>null</code>.
 	 *
-	 * @return The stored property value casted <code>java.lang.String</code> or <code>null</code>.
+	 * @return The stored value casted <code>java.lang.String</code> or the default value.
 	 */
-	public String getStringProperty(String key, String defaultValue);
+	public String getString(String key, String defaultValue);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.Long</code>, the property value converted
-	 * to an long value is returned. In all other cases, <code>-1</code> is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.Long</code>, the value converted to an long value is returned. In
+	 * all other cases, <code>-1</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value converted to a long value or <code>-1</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value converted to a long value or <code>-1</code>.
 	 */
-	public long getLongProperty(String key);
+	public long getLong(String key);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.Integer</code>, the property value converted
-	 * to an integer value is returned. In all other cases, <code>-1</code> is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.Integer</code>, the value converted to an integer value is returned.
+	 * In all other cases, <code>-1</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value converted to an integer value or <code>-1</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value converted to an integer value or <code>-1</code>.
 	 */
-	public int getIntProperty(String key);
+	public int getInt(String key);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.Boolean</code>, the property value converted
-	 * to an boolean value is returned. In all other cases, <code>false</code> is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.Boolean</code>, the value converted to an boolean value is returned.
+	 * In all other cases, <code>false</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value converted to an boolean value or <code>false</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value converted to an boolean value or <code>false</code>.
 	 */
-	public boolean getBooleanProperty(String key);
+	public boolean getBoolean(String key);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.Float</code>, the property value converted
-	 * to an float value is returned. In all other cases, <code>Float.NaN</code> is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.Float</code>, the value converted to an float value is returned.
+	 * In all other cases, <code>Float.NaN</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value converted to a float value or <code>Float.NaN</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value converted to a float value or <code>Float.NaN</code>.
 	 */
-	public float getFloatProperty(String key);
+	public float getFloat(String key);
 
 	/**
-	 * Queries the property value stored under the given property key. If the property
-	 * exist and is of type <code>java.lang.Double</code>, the property value converted
-	 * to an double value is returned. In all other cases, <code>Double.NaN</code> is returned.
+	 * Queries the value stored under the given key. If the setting exist and is of type
+	 * <code>java.lang.Double</code>, the value converted to an double value is returned.
+	 * In all other cases, <code>Double.NaN</code> is returned.
 	 *
-	 * @param key The property key. Must not be <code>null</code>!
-	 * @return The stored property value converted to a double value or <code>Double.NaN</code>.
+	 * @param key The key. Must not be <code>null</code>!
+	 * @return The stored value converted to a double value or <code>Double.NaN</code>.
 	 */
-	public double getDoubleProperty(String key);
+	public double getDouble(String key);
 
 	/**
-	 * Remove all properties from the properties store. The method does not fire any
-	 * properties changed event.
+	 * Remove all settings.
 	 */
-	public void clearProperties();
+	public void clear();
 
 	/**
-	 * Returns whether this properties container is empty or not.
+	 * Returns whether the settings are empty or not.
 	 *
-	 * @return <code>True</code> if the properties container is empty, <code>false</code> if not.
+	 * @return <code>True</code> if the settings are empty, <code>false</code> if not.
 	 */
 	public boolean isEmpty();
 
 	/**
-	 * Returns whether this properties container contains the given key.
+	 * Returns whether the settings contains the given key.
 	 *
 	 * @param key The key. Must not be <code>null</code>.
-	 * @return <code>True</code> if the properties container contains the key, <code>false</code> if not.
+	 * @return <code>True</code> if the settings contains the key, <code>false</code> if not.
 	 */
 	public boolean containsKey(String key);
 }

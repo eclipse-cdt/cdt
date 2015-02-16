@@ -28,7 +28,7 @@ public class LayeredSettingsStore extends Settings {
 
 	/**
 	 * @param stores the stores used to search the values.
-	 * {@link #setProperty(String, Object)} will put the value in the
+	 * {@link #set(String, Object)} will put the value in the
 	 * first store in the list.
 	 */
 	public LayeredSettingsStore(ISettings[] stores) {
@@ -43,17 +43,17 @@ public class LayeredSettingsStore extends Settings {
 		this(new ISettings[]{s1,s2});
 	}
 	
-	public Object getProperty(String key) {
+	public Object get(String key) {
 		for (int i = 0; i < fStores.length; i++) {
-			Object value=fStores[i].getProperty(key);
+			Object value=fStores[i].get(key);
 			if (value!=null)
 				return value;
 		}
 		return null;
 	}
 
-	public boolean setProperty(String key, Object value) {
-		return fStores[0].setProperty(key,value);
+	public boolean set(String key, Object value) {
+		return fStores[0].set(key,value);
 	}
 
 }

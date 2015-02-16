@@ -154,22 +154,22 @@ public class SerialSettings implements ISerialSettings {
 	}
 
 	public void load(ISettings store) {
-		fSerialPort = store.getStringProperty("SerialPort", fProperties.getDefaultSerialPort());//$NON-NLS-1$
-		fBaudRate = store.getStringProperty("BaudRate", fProperties.getDefaultBaudRate());//$NON-NLS-1$
-		fDataBits = store.getStringProperty("DataBits", fProperties.getDefaultDataBits());//$NON-NLS-1$
-		fStopBits = store.getStringProperty("StopBits", fProperties.getDefaultStopBits());//$NON-NLS-1$
-		fParity = store.getStringProperty("Parity", fProperties.getDefaultParity());//$NON-NLS-1$
-		fFlowControl = store.getStringProperty("FlowControl", fProperties.getDefaultFlowControl());//$NON-NLS-1$
-		fTimeout = store.getStringProperty("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
+		fSerialPort = store.getString("SerialPort", fProperties.getDefaultSerialPort());//$NON-NLS-1$
+		fBaudRate = store.getString("BaudRate", fProperties.getDefaultBaudRate());//$NON-NLS-1$
+		fDataBits = store.getString("DataBits", fProperties.getDefaultDataBits());//$NON-NLS-1$
+		fStopBits = store.getString("StopBits", fProperties.getDefaultStopBits());//$NON-NLS-1$
+		fParity = store.getString("Parity", fProperties.getDefaultParity());//$NON-NLS-1$
+		fFlowControl = store.getString("FlowControl", fProperties.getDefaultFlowControl());//$NON-NLS-1$
+		fTimeout = store.getString("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
 	}
 
 	public void save(ISettings store) {
-		store.setProperty("SerialPort", fSerialPort); //$NON-NLS-1$
-		store.setProperty("BaudRate", fBaudRate); //$NON-NLS-1$
-		store.setProperty("DataBits", fDataBits); //$NON-NLS-1$
-		store.setProperty("StopBits", fStopBits); //$NON-NLS-1$
-		store.setProperty("Parity", fParity); //$NON-NLS-1$
-		store.setProperty("FlowControl", fFlowControl); //$NON-NLS-1$
+		store.set("SerialPort", fSerialPort); //$NON-NLS-1$
+		store.set("BaudRate", fBaudRate); //$NON-NLS-1$
+		store.set("DataBits", fDataBits); //$NON-NLS-1$
+		store.set("StopBits", fStopBits); //$NON-NLS-1$
+		store.set("Parity", fParity); //$NON-NLS-1$
+		store.set("FlowControl", fFlowControl); //$NON-NLS-1$
 	}
 
 	public SerialProperties getProperties() {

@@ -59,7 +59,7 @@ public class Settings extends PlatformObject implements ISettings {
 	public String toString() {
 		final StringBuilder buffer = new StringBuilder();
 
-		// print the first level of the properties map only
+		// print the first level of the settings map only
 		buffer.append("settings={"); //$NON-NLS-1$
 		for (String key : settings.keySet()) {
 			buffer.append(key);
@@ -84,27 +84,27 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getProperties()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getAll()
 	 */
 	@Override
-	public Map<String, Object> getProperties() {
+	public Map<String, Object> getAll() {
 		return Collections.unmodifiableMap(new HashMap<String, Object>(settings));
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#get(java.lang.String)
 	 */
 	@Override
-	public Object getProperty(String key) {
+	public Object get(String key) {
 		return settings.get(key);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getBooleanProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getBoolean(java.lang.String)
 	 */
 	@Override
-	public final boolean getBooleanProperty(String key) {
-		Object value = getProperty(key);
+	public final boolean getBoolean(String key) {
+		Object value = get(key);
 		if (value instanceof Boolean) {
 			return ((Boolean)value).booleanValue();
 		}
@@ -117,11 +117,11 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getLongProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getLong(java.lang.String)
 	 */
 	@Override
-	public final long getLongProperty(String key) {
-		Object value = getProperty(key);
+	public final long getLong(String key) {
+		Object value = get(key);
 		try {
 			if (value instanceof Long) {
 				return ((Long)value).longValue();
@@ -140,11 +140,11 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getIntProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getInt(java.lang.String)
 	 */
 	@Override
-	public final int getIntProperty(String key) {
-		Object value = getProperty(key);
+	public final int getInt(String key) {
+		Object value = get(key);
 		try {
 			if (value instanceof Integer) {
 				return ((Integer)value).intValue();
@@ -163,30 +163,29 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getStringProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getString(java.lang.String)
 	 */
 	@Override
-	public final String getStringProperty(String key) {
-		Object value = getProperty(key);
-		return value instanceof String ? (String)value :
-					(value != null ? value.toString() : null);
+	public final String getString(String key) {
+		Object value = get(key);
+		return value instanceof String ? (String)value : null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getStringProperty(java.lang.String, java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getString(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getStringProperty(String key, String defaultValue) {
-		String value = getStringProperty(key);
+	public String getString(String key, String defaultValue) {
+		String value = getString(key);
 		return value != null ? value : defaultValue;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getFloatProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getFloat(java.lang.String)
 	 */
 	@Override
-	public final float getFloatProperty(String key) {
-		Object value = getProperty(key);
+	public final float getFloat(String key) {
+		Object value = get(key);
 		try {
 			if (value instanceof Float) {
 				return ((Float)value).floatValue();
@@ -205,11 +204,11 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#getDoubleProperty(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#getDouble(java.lang.String)
 	 */
 	@Override
-	public final double getDoubleProperty(String key) {
-		Object value = getProperty(key);
+	public final double getDouble(String key) {
+		Object value = get(key);
 		try {
 			if (value instanceof Double) {
 				return ((Double)value).doubleValue();
@@ -228,97 +227,97 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperties(java.util.Map)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.util.Map)
 	 */
 	@Override
-	public final void setProperties(Map<String, Object> properties) {
-		Assert.isNotNull(properties);
+	public final void set(Map<String, Object> settings) {
+		Assert.isNotNull(settings);
 
-		// Change the properties only if they have changed really
-		if (this.settings.equals(properties)) {
+		// Change the settings only if they have changed really
+		if (this.settings.equals(settings)) {
 			return;
 		}
 
-		// Clear out all old properties
+		// Clear out all old settings
 		this.settings.clear();
-		// Apply everything from the given properties
-		this.settings.putAll(properties);
+		// Apply everything from the given settings
+		this.settings.putAll(settings);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#addProperties(java.util.Map)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#addAll(java.util.Map)
 	 */
 	@Override
-	public final void addProperties(Map<String, ?> properties) {
-		// Apply everything from the given properties
-		this.settings.putAll(properties);
+	public final void addAll(Map<String, ?> settings) {
+		// Apply everything from the given settings
+		this.settings.putAll(settings);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperty(java.lang.String, boolean)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.lang.String, boolean)
 	 */
 	@Override
-	public final boolean setProperty(String key, boolean value) {
-		boolean oldValue = getBooleanProperty(key);
+	public final boolean set(String key, boolean value) {
+		boolean oldValue = getBoolean(key);
 		if (oldValue != value) {
-			return setProperty(key, Boolean.valueOf(value));
+			return set(key, Boolean.valueOf(value));
 		}
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperty(java.lang.String, long)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.lang.String, long)
 	 */
 	@Override
-	public final boolean setProperty(String key, long value) {
-		long oldValue = getLongProperty(key);
+	public final boolean set(String key, long value) {
+		long oldValue = getLong(key);
 		if (oldValue != value) {
-			return setProperty(key, Long.valueOf(value));
+			return set(key, Long.valueOf(value));
 		}
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperty(java.lang.String, int)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.lang.String, int)
 	 */
 	@Override
-	public final boolean setProperty(String key, int value) {
-		int oldValue = getIntProperty(key);
+	public final boolean set(String key, int value) {
+		int oldValue = getInt(key);
 		if (oldValue != value) {
-			return setProperty(key, Integer.valueOf(value));
+			return set(key, Integer.valueOf(value));
 		}
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperty(java.lang.String, float)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.lang.String, float)
 	 */
 	@Override
-	public final boolean setProperty(String key, float value) {
-		float oldValue = getFloatProperty(key);
+	public final boolean set(String key, float value) {
+		float oldValue = getFloat(key);
 		if (oldValue != value) {
-			return setProperty(key, Float.valueOf(value));
+			return set(key, Float.valueOf(value));
 		}
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperty(java.lang.String, double)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.lang.String, double)
 	 */
 	@Override
-	public final boolean setProperty(String key, double value) {
-		double oldValue = getDoubleProperty(key);
+	public final boolean set(String key, double value) {
+		double oldValue = getDouble(key);
 		if (oldValue != value) {
-			return setProperty(key, Double.valueOf(value));
+			return set(key, Double.valueOf(value));
 		}
 		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#setProperty(java.lang.String, java.lang.Object)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#set(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public boolean setProperty(String key, Object value) {
+	public boolean set(String key, Object value) {
 		Assert.isNotNull(key);
 
 		Object oldValue = settings.get(key);
@@ -334,15 +333,15 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#clearProperties()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#clear()
 	 */
 	@Override
-	public final void clearProperties() {
+	public final void clear() {
 		settings.clear();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#isEmpty()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
@@ -350,7 +349,7 @@ public class Settings extends PlatformObject implements ISettings {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore#containsKey(java.lang.String)
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettings#containsKey(java.lang.String)
 	 */
 	@Override
 	public boolean containsKey(String key) {

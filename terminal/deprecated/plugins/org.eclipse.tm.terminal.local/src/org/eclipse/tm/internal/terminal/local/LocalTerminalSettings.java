@@ -46,7 +46,7 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 
 			Field field = declaredField[index];
 			Class<?> type = field.getType();
-			Object value = store.getProperty(field.getName());
+			Object value = store.get(field.getName());
 			if (type.equals(boolean.class)) {
 
 				value = Boolean.valueOf((String)value);
@@ -81,7 +81,7 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 			try {
 
 				field.setAccessible(true);
-				store.setProperty(field.getName(), String.valueOf(field.get(this)));
+				store.set(field.getName(), String.valueOf(field.get(this)));
 			}
 			catch (IllegalAccessException illegalAccess) {
 

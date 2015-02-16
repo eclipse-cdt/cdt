@@ -37,14 +37,14 @@ public class SpeedTestSettings {
 		fInputFile = testFile;
 	}
 	public void load(ISettings store) {
-		fInputFile=store.getStringProperty("inputFile");
-		fBufferSize=store.getStringProperty("bufferSize");
-		fThrottle=store.getStringProperty("throttle");
+		fInputFile=store.getString("inputFile");
+		fBufferSize=store.getString("bufferSize");
+		fThrottle=store.getString("throttle");
 	}
 	public void save(ISettings store) {
-		store.setProperty("inputFile", fInputFile);
-		store.setProperty("bufferSize", fBufferSize);
-		store.setProperty("throttle", fThrottle);
+		store.set("inputFile", fInputFile);
+		store.set("bufferSize", fBufferSize);
+		store.set("throttle", fThrottle);
 	}
 	public String getThrottleString() {
 		return fThrottle;

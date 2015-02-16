@@ -36,11 +36,11 @@ public class PreferenceSettingStore extends org.eclipse.tm.internal.terminal.pro
 		fPrefix=prefix;
 	}
 	
-	public Object getProperty(String key) {
+	public Object get(String key) {
 		return fPreferences.getString(makeKey(key));
 	}
 
-	public boolean setProperty(String key, Object value) {
+	public boolean set(String key, Object value) {
 		if (value instanceof String) {
 			fPreferences.setValue(makeKey(key), (String)value);
 		}

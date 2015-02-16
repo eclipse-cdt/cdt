@@ -49,17 +49,17 @@ class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.Set
 					}
 					if(m!=null) {
 						// cache the value in the map
-						setProperty(key,m.getString(path[path.length-1]));
+						set(key,m.getString(path[path.length-1]));
 					}
 				}
 			}
 		}
 	}
 
-	public boolean setProperty(String key, Object value) {
+	public boolean set(String key, Object value) {
 		if(!key.matches("^[\\w.]+$")) //$NON-NLS-1$
 			throw new IllegalArgumentException("Key '"+key+"' is not alpha numeric or '.'!"); //$NON-NLS-1$ //$NON-NLS-2$
-		return super.setProperty(key, value);
+		return super.set(key, value);
 	}
 	
 	/**
@@ -68,7 +68,7 @@ class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.Set
 	 * @param memento Memento to save state into.
 	 */
 	public void saveState(IMemento memento) {
-		Map map = getProperties();
+		Map map = getAll();
 		String[] keyNames=(String[]) map.keySet().toArray(new String[map.size()]);
 		Arrays.sort(keyNames);
 		StringBuffer buffer=new StringBuffer();

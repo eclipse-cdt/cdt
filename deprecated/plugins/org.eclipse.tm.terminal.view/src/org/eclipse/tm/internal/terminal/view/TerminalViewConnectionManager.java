@@ -109,7 +109,7 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 	}
 
 	public void saveState(ISettings store) {
-		store.setProperty(STORE_SIZE,""+fConnections.size()); //$NON-NLS-1$
+		store.set(STORE_SIZE,""+fConnections.size()); //$NON-NLS-1$
 		// save all connections
 		int n=0;
 		for (Iterator iterator = fConnections.iterator(); iterator.hasNext();) {
@@ -119,7 +119,7 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 			n++;
 			// remember the active connection by its prefix
 			if(connection.equals(fActiveConnection))
-				store.setProperty(STORE_ACTIVE_CONNECTION,prefix);
+				store.set(STORE_ACTIVE_CONNECTION,prefix);
 			connection.saveState(new SettingStorePrefixDecorator(store,prefix)); 
 		}
 	}
@@ -127,13 +127,13 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 	public void loadState(ISettings store,ITerminalViewConnectionFactory factory) {
 		int size=0;
 		try {
-			size=Integer.parseInt(store.getStringProperty(STORE_SIZE));
+			size=Integer.parseInt(store.getString(STORE_SIZE));
 		} catch(Exception e) {
 			// ignore
 		}
 		if(size>0) {
 			// a slot for the connections
-			String active=store.getStringProperty(STORE_ACTIVE_CONNECTION);
+			String active=store.getString(STORE_ACTIVE_CONNECTION);
 			int n=0;
 			for (int i=0;i<size;i++) {
 				// the name under which we stored the connection

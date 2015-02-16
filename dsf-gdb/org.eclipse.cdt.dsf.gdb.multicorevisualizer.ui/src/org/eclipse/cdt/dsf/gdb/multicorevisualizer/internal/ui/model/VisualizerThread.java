@@ -41,7 +41,7 @@ public class VisualizerThread
 	protected VisualizerExecutionState m_threadState;
 
 	/** Location of this Thread, if any, based on his MIFrame */
-    private String m_locInfo;
+    protected String m_locInfo;
 
 	
 	// --- constructors/destructors ---

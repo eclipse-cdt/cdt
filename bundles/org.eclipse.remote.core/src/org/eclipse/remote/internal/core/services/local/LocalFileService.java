@@ -20,13 +20,25 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteConnection.Service;
 
-public class LocalFileManager implements IRemoteFileService {
+public class LocalFileService implements IRemoteFileService {
 
 	private final IRemoteConnection connection;
 
-	public LocalFileManager(IRemoteConnection connection) {
+	public LocalFileService(IRemoteConnection connection) {
 		this.connection = connection;
+	}
+
+	public static class Factory implements IRemoteFileService.Factory {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T extends Service> T getService(IRemoteConnection remoteConnection, Class<T> service) {
+			if (IRemoteFileService.class.equals(service)) {
+				return (T) new LocalFileService(remoteConnection);
+			}
+			return null;
+		}
 	}
 
 	@Override

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_5ae6a5d5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1460,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-16T16:34:54Z",
+      "side": 1,
+      "message": "I believe you should move this to inside the executor below.  \n\nFirst, it will help deal with concurrency.  \n\nSecond, and more important, it will allow to fetch the latest model when the time expires, instead of being stuck using a potentially old model whenever the timer expires, since we use the model available at the creation of the timer, not at each run of it.\n\nNote that the old code used to \"re-fetch\" the model inside updateLoads(), so each time it was called.",
+      "revId": "aa2919055b84d0051edc6e1f6386128c23baee16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

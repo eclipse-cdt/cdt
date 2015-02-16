@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class TerminalViewConnectionManager implements ITerminalViewConnectionManager {
 	private static final String STORE_CONNECTION_PREFIX = "connection"; //$NON-NLS-1$
@@ -108,8 +108,8 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 		}
 	}
 
-	public void saveState(ISettings store) {
-		store.set(STORE_SIZE,""+fConnections.size()); //$NON-NLS-1$
+	public void saveState(ISettingsStore store) {
+		store.put(STORE_SIZE,""+fConnections.size()); //$NON-NLS-1$
 		// save all connections
 		int n=0;
 		for (Iterator iterator = fConnections.iterator(); iterator.hasNext();) {
@@ -119,21 +119,21 @@ public class TerminalViewConnectionManager implements ITerminalViewConnectionMan
 			n++;
 			// remember the active connection by its prefix
 			if(connection.equals(fActiveConnection))
-				store.set(STORE_ACTIVE_CONNECTION,prefix);
+				store.put(STORE_ACTIVE_CONNECTION,prefix);
 			connection.saveState(new SettingStorePrefixDecorator(store,prefix)); 
 		}
 	}
 
-	public void loadState(ISettings store,ITerminalViewConnectionFactory factory) {
+	public void loadState(ISettingsStore store,ITerminalViewConnectionFactory factory) {
 		int size=0;
 		try {
-			size=Integer.parseInt(store.getString(STORE_SIZE));
+			size=Integer.parseInt(store.get(STORE_SIZE));
 		} catch(Exception e) {
 			// ignore
 		}
 		if(size>0) {
 			// a slot for the connections
-			String active=store.getString(STORE_ACTIVE_CONNECTION);
+			String active=store.get(STORE_ACTIVE_CONNECTION);
 			int n=0;
 			for (int i=0;i<size;i++) {
 				// the name under which we stored the connection

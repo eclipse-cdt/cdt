@@ -80,7 +80,6 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 	 * @param launch the {@link ILaunch} object
 	 * @exception CoreException if launching fails
 	 */
-	@SuppressWarnings("deprecation")
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch,
 	IProgressMonitor progressMonitor) throws CoreException {
 
@@ -181,7 +180,7 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 
 		// Use program name as "process type" attribute:
 		//
-		Map<String, String> processAttributes = new HashMap<String, String>();
+		Map processAttributes = new HashMap();
 		String programName = location.lastSegment();
 		String extension = location.getFileExtension();
 		if (extension != null) {

@@ -13,7 +13,7 @@ package org.eclipse.tm.internal.terminal.view;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
@@ -47,9 +47,9 @@ public interface ITerminalViewConnection {
 	 */
 	ITerminalViewControl getCtlTerminal();
 
-	void saveState(ISettings store);
+	void saveState(ISettingsStore store);
 
-	void loadState(ISettings store);
+	void loadState(ISettingsStore store);
 	
 	/**
 	 * @return true if the input field is visible 

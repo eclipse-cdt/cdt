@@ -8,13 +8,10 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.view;
-
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
-import org.eclipse.tm.internal.terminal.provisional.api.Settings;
+package org.eclipse.tm.internal.terminal.provisional.api;
 
 /**
- * Uses an array of {@link ISettings} to find a value.
+ * Uses an array of {@link ISettingsStore} to find a value.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
@@ -22,16 +19,16 @@ import org.eclipse.tm.internal.terminal.provisional.api.Settings;
  * the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
-public class LayeredSettingsStore extends Settings {
+public class LayeredSettingsStore implements ISettingsStore {
 
-	private final ISettings[] fStores;
+	private final ISettingsStore[] fStores;
 
 	/**
 	 * @param stores the stores used to search the values.
-	 * {@link #set(String, Object)} will put the value in the
+	 * {@link #put(String, String)} will put the value in the
 	 * first store in the list.
 	 */
-	public LayeredSettingsStore(ISettings[] stores) {
+	public LayeredSettingsStore(ISettingsStore[] stores) {
 		fStores=stores;
 	}
 	/**
@@ -39,21 +36,27 @@ public class LayeredSettingsStore extends Settings {
 	 * @param s1 first store
 	 * @param s2 second store
 	 */
-	public LayeredSettingsStore(ISettings s1, ISettings s2) {
-		this(new ISettings[]{s1,s2});
+	public LayeredSettingsStore(ISettingsStore s1, ISettingsStore s2) {
+		this(new ISettingsStore[]{s1,s2});
 	}
-	
-	public Object get(String key) {
+	public String get(String key) {
 		for (int i = 0; i < fStores.length; i++) {
-			Object value=fStores[i].get(key);
-			if (value!=null)
+			String value=fStores[i].get(key);
+			if(value!=null)
 				return value;
 		}
 		return null;
 	}
 
-	public boolean set(String key, Object value) {
-		return fStores[0].set(key,value);
+	public String get(String key, String defaultValue) {
+		String value=get(key);
+		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
+			return defaultValue;
+		return value;
+	}
+
+	public void put(String key, String value) {
+		fStores[0].put(key,value);
 	}
 
 }

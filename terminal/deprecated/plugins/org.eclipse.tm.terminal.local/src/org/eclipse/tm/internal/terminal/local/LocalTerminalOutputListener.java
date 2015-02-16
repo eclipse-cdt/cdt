@@ -12,6 +12,7 @@
 package org.eclipse.tm.internal.terminal.local;
 
 import java.io.PrintStream;
+
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;

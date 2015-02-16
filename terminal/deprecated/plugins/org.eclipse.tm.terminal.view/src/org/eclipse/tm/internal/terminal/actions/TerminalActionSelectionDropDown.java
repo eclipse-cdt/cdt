@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnection;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager;
+import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionListener;
 import org.eclipse.tm.internal.terminal.view.ImageConsts;
 import org.eclipse.tm.internal.terminal.view.TerminalViewPlugin;
-import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionListener;
 
 /**
  * Drop down action in the console to select the console to display.

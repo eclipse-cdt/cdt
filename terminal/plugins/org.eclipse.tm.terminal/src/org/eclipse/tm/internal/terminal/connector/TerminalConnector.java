@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -93,7 +93,7 @@ public class TerminalConnector implements ITerminalConnector {
 	 * The store might be set before the real connector is initialized.
 	 * This keeps the value until the connector is created.
 	 */
-	private ISettings fStore;
+	private ISettingsStore fStore;
 	/**
 	 * Constructor for the terminal connector.
 	 *
@@ -173,7 +173,7 @@ public class TerminalConnector implements ITerminalConnector {
 	public boolean isLocalEcho() {
 		return getConnectorImpl().isLocalEcho();
 	}
-	public void load(ISettings store) {
+	public void load(ISettingsStore store) {
 		if(fConnector==null) {
 			fStore=store;
 		} else {
@@ -183,7 +183,7 @@ public class TerminalConnector implements ITerminalConnector {
 	public ISettingsPage makeSettingsPage() {
 		return getConnectorImpl().makeSettingsPage();
 	}
-	public void save(ISettings store) {
+	public void save(ISettingsStore store) {
 		// no need to save the settings: it cannot have changed
 		// because we are not initialized....
 		if(fConnector!=null)

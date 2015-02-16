@@ -66,7 +66,7 @@ public class LocalTerminalLaunchUtilities {
 	private final static String STRING = null;
 	private final static String TERM = "TERM"; //$NON-NLS-1$
 	private final static String ANSI = "ansi"; //$NON-NLS-1$
-	private final static Map<String, String> TERM_ANSI = Collections.singletonMap(TERM, ANSI);
+	private final static Map TERM_ANSI = Collections.singletonMap(TERM, ANSI);
 
 	// These constants were copied from IExternalToolConstants to avoid references to internal API:
 	//
@@ -242,7 +242,7 @@ public class LocalTerminalLaunchUtilities {
 		name = terminalLaunchName.format(new Object[] {name});
 		name = manager.generateLaunchConfigurationName(name);
 		workingCopy = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE.newInstance(null, name);
-		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap<String, String>(TERM_ANSI));
+		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap(TERM_ANSI));
 		workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		workingCopy.setAttribute(ATTR_LOCATION, defaultShell);
 		workingCopy.setAttribute(ATTR_WORKING_DIRECTORY, userHome);

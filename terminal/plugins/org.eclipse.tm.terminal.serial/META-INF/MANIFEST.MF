@@ -12,7 +12,7 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Eclipse-BuddyPolicy: ext
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.tm.internal.terminal.serial.Activator
 Export-Package: org.eclipse.tm.internal.terminal.serial;x-internal:=true

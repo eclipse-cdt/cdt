@@ -12,7 +12,8 @@
 package org.eclipse.tm.internal.terminal.local;
 
 import java.lang.reflect.Field;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
 /**
@@ -38,14 +39,14 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 	 * @param store the {@link ISettings}
 	 * @see ILocalTerminalSettings#load(ISettings)
 	 */
-	public void load(ISettings store) {
+	public void load(ISettingsStore store) {
 
 		Field[] declaredField = getClass().getDeclaredFields();
 		int numberOfFields = declaredField.length;
 		for (int index = 0; index < numberOfFields; index++) {
 
 			Field field = declaredField[index];
-			Class<?> type = field.getType();
+			Class type = field.getType();
 			Object value = store.get(field.getName());
 			if (type.equals(boolean.class)) {
 
@@ -71,7 +72,7 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 	 *
 	 * @see ILocalTerminalSettings#save(ISettings)
 	 */
-	public void save(ISettings store) {
+	public void save(ISettingsStore store) {
 
 		Field[] declaredField = getClass().getDeclaredFields();
 		int numberOfFields = declaredField.length;
@@ -81,7 +82,7 @@ public class LocalTerminalSettings implements ILocalTerminalSettings {
 			try {
 
 				field.setAccessible(true);
-				store.set(field.getName(), String.valueOf(field.get(this)));
+				store.put(field.getName(), String.valueOf(field.get(this)));
 			}
 			catch (IllegalAccessException illegalAccess) {
 

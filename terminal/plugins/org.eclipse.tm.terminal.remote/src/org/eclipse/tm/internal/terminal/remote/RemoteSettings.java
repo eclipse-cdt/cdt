@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.remote;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.terminal.remote.IRemoteSettings;
 
 @SuppressWarnings("restriction")
@@ -38,17 +38,17 @@ public class RemoteSettings implements IRemoteSettings {
 	/**
 	 * Load information into the RemoteSettings object.
 	 */
-	public void load(ISettings store) {
-		fRemoteServices = store.getString(REMOTE_SERVICES);
-		fConnectionName = store.getString(CONNECTION_NAME);
+	public void load(ISettingsStore store) {
+		fRemoteServices = store.get(REMOTE_SERVICES);
+		fConnectionName = store.get(CONNECTION_NAME);
 	}
 
 	/**
 	 * Extract information from the RemoteSettings object.
 	 */
-	public void save(ISettings store) {
-		store.getString(REMOTE_SERVICES, fRemoteServices);
-		store.getString(CONNECTION_NAME, fConnectionName);
+	public void save(ISettingsStore store) {
+		store.put(REMOTE_SERVICES, fRemoteServices);
+		store.put(CONNECTION_NAME, fConnectionName);
 	}
 
 	public void setConnectionName(String name) {

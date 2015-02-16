@@ -16,12 +16,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
+import gnu.io.CommPortIdentifier;
+
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-
-import gnu.io.CommPortIdentifier;
 
 public class SerialProperties {
 	protected List fSerialPortTable;

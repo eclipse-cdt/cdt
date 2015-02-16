@@ -11,14 +11,15 @@
 package org.eclipse.tm.internal.terminal.view;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.ui.IMemento;
 
 /**
- * A {@link IDialogSettings} based {@link ISettings}.
+ * A {@link IDialogSettings} based {@link ISettingsStore}.
  * 
  * Setting Store based on IMemento. IMemento documentations says only alpha numeric
  * values may be used as keys. Therefore the implementation converts dots (.) into
@@ -26,10 +27,10 @@ import org.eclipse.ui.IMemento;
  * 
  * @author Michael Scharf
  */
-class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.Settings {
+class SettingsStore implements ISettingsStore {
 
 	private static final String KEYS = "_keys_"; //$NON-NLS-1$
-	
+	final private Map fMap=new HashMap();
 	public SettingsStore(IMemento memento) {
 		if(memento==null)
 			return;
@@ -49,27 +50,40 @@ class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.Set
 					}
 					if(m!=null) {
 						// cache the value in the map
-						set(key,m.getString(path[path.length-1]));
+						fMap.put(key,m.getString(path[path.length-1]));
 					}
 				}
 			}
 		}
 	}
 
-	public boolean set(String key, Object value) {
+	public String get(String key) {
+		return get(key,null);
+	}
+	public String get(String key, String defaultValue) {
+		String value = (String) fMap.get(key);
+		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
+			return defaultValue;
+
+		return value;
+	}
+
+	public void put(String key, String value) {
 		if(!key.matches("^[\\w.]+$")) //$NON-NLS-1$
 			throw new IllegalArgumentException("Key '"+key+"' is not alpha numeric or '.'!"); //$NON-NLS-1$ //$NON-NLS-2$
-		return super.set(key, value);
+		// null values remove the key from the map
+		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
+			fMap.remove(key);
+		else
+			fMap.put(key, value);
 	}
-	
 	/**
 	 * Save the state into memento.
 	 * 
 	 * @param memento Memento to save state into.
 	 */
 	public void saveState(IMemento memento) {
-		Map map = getAll();
-		String[] keyNames=(String[]) map.keySet().toArray(new String[map.size()]);
+		String[] keyNames=(String[]) fMap.keySet().toArray(new String[fMap.size()]);
 		Arrays.sort(keyNames);
 		StringBuffer buffer=new StringBuffer();
 		for (int i = 0; i < keyNames.length; i++) {
@@ -85,7 +99,7 @@ class SettingsStore extends org.eclipse.tm.internal.terminal.provisional.api.Set
 				m=child;
 			}
 			// use the last element in path as key of the child memento
-			m.putString(path[path.length-1], (String) map.get(key));
+			m.putString(path[path.length-1], (String) fMap.get(key));
 			// construct the string for the keys
 			if(i>0)
 				buffer.append(","); //$NON-NLS-1$

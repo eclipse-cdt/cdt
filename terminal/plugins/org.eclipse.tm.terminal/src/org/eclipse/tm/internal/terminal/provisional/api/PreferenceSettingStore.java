@@ -8,7 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.view;
+package org.eclipse.tm.internal.terminal.provisional.api;
 
 import org.eclipse.core.runtime.Preferences;
 
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Preferences;
  * the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
-public class PreferenceSettingStore extends org.eclipse.tm.internal.terminal.provisional.api.Settings {
+public class PreferenceSettingStore implements ISettingsStore {
 	private final String fPrefix;
 	private final Preferences fPreferences;
 
@@ -35,16 +35,19 @@ public class PreferenceSettingStore extends org.eclipse.tm.internal.terminal.pro
 		fPreferences=preferences;
 		fPrefix=prefix;
 	}
-	
-	public Object get(String key) {
+	public String get(String key) {
 		return fPreferences.getString(makeKey(key));
 	}
+	public String get(String key, String defaultValue) {
+		String value=get(key);
+		if ((value == null) || (value.equals(""))) //$NON-NLS-1$
+			return defaultValue;
 
-	public boolean set(String key, Object value) {
-		if (value instanceof String) {
-			fPreferences.setValue(makeKey(key), (String)value);
-		}
-		return true;
+		return value;
+	}
+
+	public void put(String key, String value) {
+		fPreferences.setValue(makeKey(key), value);
 	}
 	/**
 	 * @param key

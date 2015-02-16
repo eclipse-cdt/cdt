@@ -25,7 +25,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -89,10 +89,10 @@ class TerminalViewConnection implements ITerminalViewConnection {
 	public ITerminalViewControl getCtlTerminal() {
 		return fCtlTerminal;
 	}
-	private ISettingsStore getStore(ISettingsStore store,ITerminalConnector connector) {
+	private ISettings getStore(ISettings store,ITerminalConnector connector) {
 		return new SettingStorePrefixDecorator(store,connector.getId()+"."); //$NON-NLS-1$
 	}
-	public void loadState(ISettingsStore store) {
+	public void loadState(ISettings store) {
 		fPartName=store.getStringProperty(STORE_PART_NAME);
 		fSummary=store.getStringProperty(STORE_SUMMARY);
 		fHistory=store.getStringProperty(STORE_COMMAND_INPUT_FIELD_HISTORY);
@@ -111,7 +111,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 			setCommandInputField(true);
 	}
 
-	public void saveState(ISettingsStore store) {
+	public void saveState(ISettings store) {
 		store.setProperty(STORE_PART_NAME, fPartName);
 		store.setProperty(STORE_SUMMARY,fSummary);
 		store.setProperty(STORE_COMMAND_INPUT_FIELD_HISTORY, fHistory);

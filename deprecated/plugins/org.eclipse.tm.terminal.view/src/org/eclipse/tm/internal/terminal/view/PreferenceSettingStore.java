@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Preferences;
  * the <a href="http://www.eclipse.org/tm/">Target Management</a> team.
  * </p>
  */
-public class PreferenceSettingStore extends org.eclipse.tm.internal.terminal.provisional.api.SettingsStore {
+public class PreferenceSettingStore extends org.eclipse.tm.internal.terminal.provisional.api.Settings {
 	private final String fPrefix;
 	private final Preferences fPreferences;
 

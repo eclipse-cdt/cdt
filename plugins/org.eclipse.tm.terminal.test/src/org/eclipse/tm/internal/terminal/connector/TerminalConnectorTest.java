@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.connector.TerminalConnector.Factory;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.SettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.Settings;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
@@ -86,8 +86,8 @@ public class TerminalConnectorTest extends TestCase {
 		public int fWidth;
 		public int fHeight;
 		public ITerminalControl fControl;
-		public ISettingsStore fSaveStore;
-		public ISettingsStore fLoadStore;
+		public ISettings fSaveStore;
+		public ISettings fLoadStore;
 		public boolean fDisconnect;
 
 		public boolean isLocalEcho() {
@@ -113,7 +113,7 @@ public class TerminalConnectorTest extends TestCase {
 			return "Summary";
 		}
 
-		public void load(ISettingsStore store) {
+		public void load(ISettings store) {
 			fLoadStore=store;
 		}
 
@@ -135,7 +135,7 @@ public class TerminalConnectorTest extends TestCase {
 
 		}
 
-		public void save(ISettingsStore store) {
+		public void save(ISettings store) {
 			fSaveStore=store;
 		}
 	}
@@ -212,7 +212,7 @@ public class TerminalConnectorTest extends TestCase {
 	public void testLoad() {
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
-		ISettingsStore s=new SettingsStore();
+		ISettings s=new Settings();
 		c.load(s);
 		// the load is called after the connect...
 		assertNull(mock.fLoadStore);
@@ -223,7 +223,7 @@ public class TerminalConnectorTest extends TestCase {
 	public void testSave() {
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
-		ISettingsStore s=new SettingsStore();
+		ISettings s=new Settings();
 		c.save(s);
 		assertNull(mock.fSaveStore);
 		c.connect(new TerminalControlMock());

@@ -14,7 +14,7 @@ package org.eclipse.tm.internal.terminal.provisional.api.provider;
 import java.io.OutputStream;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -109,7 +109,7 @@ public abstract class TerminalConnectorImpl {
 	 * <code>null</code> if it cannot be configured.
 	 *
 	 * The dialog should persist its settings with the
-	 * {@link #load(ISettingsStore)} and {@link #save(ISettingsStore)} methods.
+	 * {@link #load(ISettings)} and {@link #save(ISettings)} methods.
 	 *
 	 * @return a new page that can be used in a dialog to setup this connection,
 	 *         or <code>null</code>.
@@ -130,7 +130,7 @@ public abstract class TerminalConnectorImpl {
 	 * @param store a string based data store. Short keys like "foo" can be used
 	 *            to store the state of the connection.
 	 */
-	public void load(ISettingsStore store) {
+	public void load(ISettings store) {
 		// do nothing by default
 	}
 
@@ -143,7 +143,7 @@ public abstract class TerminalConnectorImpl {
 	 *
 	 * @param store the store for persisting settings.
 	 */
-	public void save(ISettingsStore store) {
+	public void save(ISettings store) {
 		// do nothing by default
 	}
 

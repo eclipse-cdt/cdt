@@ -69,7 +69,7 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCut;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
@@ -400,7 +400,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		// sequence.
 
 		fPageBook=new PageBook(wndParent,SWT.NONE);
-		ISettingsStore s=new SettingStorePrefixDecorator(fStore,"connectionManager"); //$NON-NLS-1$
+		ISettings s=new SettingStorePrefixDecorator(fStore,"connectionManager"); //$NON-NLS-1$
 		fMultiConnectionManager.loadState(s,new ITerminalViewConnectionFactory() {
 			public ITerminalViewConnection create() {
 				return makeViewConnection();
@@ -485,7 +485,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 * @param connectors loads the data from store
 	 * @return null or the currently selected connector
 	 */
-	private ITerminalConnector loadSettings(ISettingsStore store, ITerminalConnector[] connectors) {
+	private ITerminalConnector loadSettings(ISettings store, ITerminalConnector[] connectors) {
 		ITerminalConnector connector=null;
 		String connectionType=store.getStringProperty(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
@@ -517,7 +517,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 * @param store the settings will be saved in this store
 	 * @param connector the connector that will be saved. Can be null.
 	 */
-	private void saveSettings(ISettingsStore store, ITerminalConnector connector) {
+	private void saveSettings(ISettings store, ITerminalConnector connector) {
 		if(connector!=null) {
 			connector.save(getStore(store, connector));
 			// the last saved connector becomes the default
@@ -535,7 +535,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		fMultiConnectionManager.saveState(new SettingStorePrefixDecorator(fStore,"connectionManager")); //$NON-NLS-1$
 		fStore.saveState(memento);
 	}
-	private ISettingsStore getStore(ISettingsStore store, ITerminalConnector connector) {
+	private ISettings getStore(ISettings store, ITerminalConnector connector) {
 		return new SettingStorePrefixDecorator(store,connector.getId()+"."); //$NON-NLS-1$
 	}
 

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
 
 public interface ISerialSettings {
 
@@ -23,6 +23,6 @@ public interface ISerialSettings {
 	int getFlowControl();
 	int getTimeout();
 	String getSummary();
-	void load(ISettingsStore store);
-	void save(ISettingsStore store);
+	void load(ISettings store);
+	void save(ISettings store);
 }

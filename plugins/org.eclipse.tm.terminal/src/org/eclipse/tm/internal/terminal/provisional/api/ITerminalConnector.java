@@ -124,14 +124,14 @@ public interface ITerminalConnector extends IAdaptable {
 	 * @param store a string based data store. Short keys like "foo" can be used to
 	 * store the state of the connection.
 	 */
-	void load(ISettings store);
+	void load(ISettingsStore store);
 
 	/**
 	 * When the view or dialog containing the terminal is closed,
 	 * the state of the connection is saved into the settings store <code>store</code>
 	 * @param store
 	 */
-	void save(ISettings store);
+	void save(ISettingsStore store);
 
 	/**
 	 * FIXME should not have UI related stuff in ITerminalConnector, since

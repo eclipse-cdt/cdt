@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class SshSettings implements ISshSettings {
     protected String fHost;
@@ -39,28 +39,28 @@ public class SshSettings implements ISshSettings {
 		return settings;
 	}
 
-	public void load(ISettings store) {
-		fHost = store.getString("Host");//$NON-NLS-1$
-		fUser = store.getString("User");//$NON-NLS-1$
+	public void load(ISettingsStore store) {
+		fHost = store.get("Host");//$NON-NLS-1$
+		fUser = store.get("User");//$NON-NLS-1$
 		// ISettingsStore providers have to make sure that
 		// the password is not saved in some as plain text
 		// on disk. [bug 313991] 
-		fPassword = store.getString("Password");//$NON-NLS-1$
-		fPort = store.getString("Port");//$NON-NLS-1$
-		fTimeout = store.getString("Timeout");//$NON-NLS-1$
-		fKeepalive = store.getString("Keepalive");//$NON-NLS-1$
+		fPassword = store.get("Password");//$NON-NLS-1$
+		fPort = store.get("Port");//$NON-NLS-1$
+		fTimeout = store.get("Timeout");//$NON-NLS-1$
+		fKeepalive = store.get("Keepalive");//$NON-NLS-1$
 	}
 
 
-	public void save(ISettings store) {
-		store.set("Host", fHost);//$NON-NLS-1$
-		store.set("User", fUser);//$NON-NLS-1$
-		store.set("Port", fPort);//$NON-NLS-1$
+	public void save(ISettingsStore store) {
+		store.put("Host", fHost);//$NON-NLS-1$
+		store.put("User", fUser);//$NON-NLS-1$
+		store.put("Port", fPort);//$NON-NLS-1$
 		// We do *not* store the password in the settings because
 		// this can cause the password to be stored as plain text
 		// in some settings file
-		store.set("Timeout", fTimeout);//$NON-NLS-1$
-		store.set("Keepalive", fKeepalive);//$NON-NLS-1$
+		store.put("Timeout", fTimeout);//$NON-NLS-1$
+		store.put("Keepalive", fKeepalive);//$NON-NLS-1$
 	}
 
 

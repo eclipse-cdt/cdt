@@ -41,7 +41,7 @@ import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcess;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessFactory;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessRegistry;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -120,7 +120,7 @@ implements IDebugEventSetListener {
 	 *       by the framework in a uniform way. Maybe a configuration mechanism using attributes
 	 *       (like, for example, ILaunchConfiguration) might be beneficial here.
 	 */
-	public void load(ISettings store) {
+	public void load(ISettingsStore store) {
 
 		settings.load(store);
 	}
@@ -133,7 +133,7 @@ implements IDebugEventSetListener {
 	 *
 	 * @see TerminalConnectorImpl#save(ISettings)
 	 */
-	public void save(ISettings store) {
+	public void save(ISettingsStore store) {
 
 		settings.save(store);
 	}

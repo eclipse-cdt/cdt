@@ -70,7 +70,6 @@ import org.eclipse.debug.core.model.RuntimeProcess;
  * @author Mirko Raner
  * @version $Revision: 1.2 $
  */
-@SuppressWarnings("restriction")
 public final class LocalTerminalProcess extends RuntimeProcess {
 
 	/**
@@ -90,7 +89,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 	 * @param name the process name
 	 * @param attributes additional attributes of the process
 	 */
-	protected LocalTerminalProcess(ILaunch launch, Process process, String name, Map<String, String> attributes) {
+	protected LocalTerminalProcess(ILaunch launch, Process process, String name, Map attributes) {
 
 		super(launch, process, name, setProcessType(attributes));
 		enableStreamsProxy = true;
@@ -174,7 +173,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 
 	//------------------------------------- PRIVATE SECTION --------------------------------------//
 
-	private static Map<String, String> setProcessType(Map<String, String> attributes) {
+	private static Map setProcessType(Map attributes) {
 
 		// The process type used to be set by the LocalTerminalProcessFactory. However, if some
 		// client code managed to instantiate a LocalTerminalProcess directly (instead of going
@@ -184,7 +183,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 		//
 		if (attributes == null) {
 
-			attributes = new HashMap<String, String>(1);
+			attributes = new HashMap(1);
 		}
         attributes.put(IProcess.ATTR_PROCESS_TYPE, PROCESS_TYPE);
         return attributes;

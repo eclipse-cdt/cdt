@@ -14,7 +14,7 @@ package org.eclipse.tm.internal.terminal.provisional.api.provider;
 import java.io.OutputStream;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -130,7 +130,7 @@ public abstract class TerminalConnectorImpl {
 	 * @param store a string based data store. Short keys like "foo" can be used
 	 *            to store the state of the connection.
 	 */
-	public void load(ISettings store) {
+	public void load(ISettingsStore store) {
 		// do nothing by default
 	}
 
@@ -143,7 +143,7 @@ public abstract class TerminalConnectorImpl {
 	 *
 	 * @param store the store for persisting settings.
 	 */
-	public void save(ISettings store) {
+	public void save(ISettingsStore store) {
 		// do nothing by default
 	}
 

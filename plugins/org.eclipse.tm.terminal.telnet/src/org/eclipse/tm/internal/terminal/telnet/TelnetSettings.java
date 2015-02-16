@@ -16,7 +16,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class TelnetSettings implements ITelnetSettings {
     protected String fHost;
@@ -51,16 +51,16 @@ public class TelnetSettings implements ITelnetSettings {
 		return getHost() + ":" + getNetworkPortString(); //$NON-NLS-1$
 	}
 
-	public void load(ISettings store) {
-		fHost = store.getString("Host", fProperties.getDefaultHost());//$NON-NLS-1$
-		fNetworkPort = store.getString("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
-		fTimeout = store.getString("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
+	public void load(ISettingsStore store) {
+		fHost = store.get("Host", fProperties.getDefaultHost());//$NON-NLS-1$
+		fNetworkPort = store.get("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
+		fTimeout = store.get("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void save(ISettings store) {
-		store.set("Host", fHost);//$NON-NLS-1$
-		store.set("NetworkPort", fNetworkPort);//$NON-NLS-1$
-		store.set("Timeout", fTimeout);//$NON-NLS-1$
+	public void save(ISettingsStore store) {
+		store.put("Host", fHost);//$NON-NLS-1$
+		store.put("NetworkPort", fNetworkPort);//$NON-NLS-1$
+		store.put("Timeout", fTimeout);//$NON-NLS-1$
 	}
 
 	public TelnetProperties getProperties() {

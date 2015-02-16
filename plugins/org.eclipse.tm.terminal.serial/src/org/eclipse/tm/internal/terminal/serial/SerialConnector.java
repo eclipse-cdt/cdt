@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -221,10 +221,10 @@ public class SerialConnector extends TerminalConnectorImpl {
 	public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
-	public void load(ISettings store) {
+	public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
-	public void save(ISettings store) {
+	public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
 }

@@ -18,7 +18,7 @@ package org.eclipse.tm.internal.terminal.serial;
 
 import gnu.io.SerialPort;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public class SerialSettings implements ISerialSettings {
     protected String fSerialPort;
@@ -153,23 +153,23 @@ public class SerialSettings implements ISerialSettings {
 			getFlowControlString();
 	}
 
-	public void load(ISettings store) {
-		fSerialPort = store.getString("SerialPort", fProperties.getDefaultSerialPort());//$NON-NLS-1$
-		fBaudRate = store.getString("BaudRate", fProperties.getDefaultBaudRate());//$NON-NLS-1$
-		fDataBits = store.getString("DataBits", fProperties.getDefaultDataBits());//$NON-NLS-1$
-		fStopBits = store.getString("StopBits", fProperties.getDefaultStopBits());//$NON-NLS-1$
-		fParity = store.getString("Parity", fProperties.getDefaultParity());//$NON-NLS-1$
-		fFlowControl = store.getString("FlowControl", fProperties.getDefaultFlowControl());//$NON-NLS-1$
-		fTimeout = store.getString("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
+	public void load(ISettingsStore store) {
+		fSerialPort = store.get("SerialPort", fProperties.getDefaultSerialPort());//$NON-NLS-1$
+		fBaudRate = store.get("BaudRate", fProperties.getDefaultBaudRate());//$NON-NLS-1$
+		fDataBits = store.get("DataBits", fProperties.getDefaultDataBits());//$NON-NLS-1$
+		fStopBits = store.get("StopBits", fProperties.getDefaultStopBits());//$NON-NLS-1$
+		fParity = store.get("Parity", fProperties.getDefaultParity());//$NON-NLS-1$
+		fFlowControl = store.get("FlowControl", fProperties.getDefaultFlowControl());//$NON-NLS-1$
+		fTimeout = store.get("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
 	}
 
-	public void save(ISettings store) {
-		store.set("SerialPort", fSerialPort); //$NON-NLS-1$
-		store.set("BaudRate", fBaudRate); //$NON-NLS-1$
-		store.set("DataBits", fDataBits); //$NON-NLS-1$
-		store.set("StopBits", fStopBits); //$NON-NLS-1$
-		store.set("Parity", fParity); //$NON-NLS-1$
-		store.set("FlowControl", fFlowControl); //$NON-NLS-1$
+	public void save(ISettingsStore store) {
+		store.put("SerialPort", fSerialPort); //$NON-NLS-1$
+		store.put("BaudRate", fBaudRate); //$NON-NLS-1$
+		store.put("DataBits", fDataBits); //$NON-NLS-1$
+		store.put("StopBits", fStopBits); //$NON-NLS-1$
+		store.put("Parity", fParity); //$NON-NLS-1$
+		store.put("FlowControl", fFlowControl); //$NON-NLS-1$
 	}
 
 	public SerialProperties getProperties() {

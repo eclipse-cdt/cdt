@@ -11,7 +11,7 @@
 
 package org.eclipse.tm.internal.terminal.local;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 /**
  * The interface {@link ILocalTerminalSettings} defines the public interface for connector-specific
@@ -47,7 +47,7 @@ public interface ILocalTerminalSettings {
 	 *
 	 * @param store the {@link ISettings} to load the settings from
 	 */
-	public abstract void load(ISettings store);
+	public abstract void load(ISettingsStore store);
 
 	/**
 	 * Saves the settings to a specified {@link ISettings}.
@@ -57,7 +57,7 @@ public interface ILocalTerminalSettings {
 	 *
 	 * @param store the {@link ISettings} for storing the settings
 	 */
-	public abstract void save(ISettings store);
+	public abstract void save(ISettingsStore store);
 
 	/**
 	 * Gets the name of the launch configuration that will be started in the terminal.

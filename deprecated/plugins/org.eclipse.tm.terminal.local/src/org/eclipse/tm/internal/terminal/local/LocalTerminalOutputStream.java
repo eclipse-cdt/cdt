@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.local;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcess;

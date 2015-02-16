@@ -11,8 +11,8 @@
 package org.eclipse.tm.internal.terminal.actions;
 
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager;
-import org.eclipse.tm.internal.terminal.view.ImageConsts;
 import org.eclipse.tm.internal.terminal.view.ITerminalViewConnectionManager.ITerminalViewConnectionListener;
+import org.eclipse.tm.internal.terminal.view.ImageConsts;
 
 public class TerminalActionRemove extends TerminalAction implements ITerminalViewConnectionListener 
 {

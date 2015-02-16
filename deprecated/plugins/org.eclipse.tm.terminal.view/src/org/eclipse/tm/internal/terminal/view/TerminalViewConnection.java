@@ -25,7 +25,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -89,17 +89,17 @@ class TerminalViewConnection implements ITerminalViewConnection {
 	public ITerminalViewControl getCtlTerminal() {
 		return fCtlTerminal;
 	}
-	private ISettings getStore(ISettings store,ITerminalConnector connector) {
+	private ISettingsStore getStore(ISettingsStore store,ITerminalConnector connector) {
 		return new SettingStorePrefixDecorator(store,connector.getId()+"."); //$NON-NLS-1$
 	}
-	public void loadState(ISettings store) {
-		fPartName=store.getString(STORE_PART_NAME);
-		fSummary=store.getString(STORE_SUMMARY);
-		fHistory=store.getString(STORE_COMMAND_INPUT_FIELD_HISTORY);
-		fEncoding=store.getString(STORE_ENCODING);
+	public void loadState(ISettingsStore store) {
+		fPartName=store.get(STORE_PART_NAME);
+		fSummary=store.get(STORE_SUMMARY);
+		fHistory=store.get(STORE_COMMAND_INPUT_FIELD_HISTORY);
+		fEncoding=store.get(STORE_ENCODING);
 		// load the state of the connection types
 		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
-		String connectionType=store.getString(STORE_CONNECTION_TYPE);
+		String connectionType=store.get(STORE_CONNECTION_TYPE);
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].load(getStore(store,connectors[i]));
 			// if this is active connection type
@@ -107,26 +107,26 @@ class TerminalViewConnection implements ITerminalViewConnection {
 				fCtlTerminal.setConnector(connectors[i]);
 		}
 
-		if("true".equals(store.getString(STORE_HAS_COMMAND_INPUT_FIELD))) //$NON-NLS-1$
+		if("true".equals(store.get(STORE_HAS_COMMAND_INPUT_FIELD))) //$NON-NLS-1$
 			setCommandInputField(true);
 	}
 
-	public void saveState(ISettings store) {
-		store.set(STORE_PART_NAME, fPartName);
-		store.set(STORE_SUMMARY,fSummary);
-		store.set(STORE_COMMAND_INPUT_FIELD_HISTORY, fHistory);
-		store.set(STORE_ENCODING, fEncoding);
+	public void saveState(ISettingsStore store) {
+		store.put(STORE_PART_NAME, fPartName);
+		store.put(STORE_SUMMARY,fSummary);
+		store.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fHistory);
+		store.put(STORE_ENCODING, fEncoding);
 		if(fCommandInputField!=null)
-			store.set(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
+			store.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
 		else
-			store.set(STORE_COMMAND_INPUT_FIELD_HISTORY, fHistory);
-		store.set(STORE_HAS_COMMAND_INPUT_FIELD,hasCommandInputField()?"true":"false");   //$NON-NLS-1$//$NON-NLS-2$
+			store.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fHistory);
+		store.put(STORE_HAS_COMMAND_INPUT_FIELD,hasCommandInputField()?"true":"false");   //$NON-NLS-1$//$NON-NLS-2$
 		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
 		for (int i = 0; i < connectors.length; i++) {
 			connectors[i].save(getStore(store,connectors[i]));
 		}
 		if(fCtlTerminal.getTerminalConnector()!=null) {
-			store.set(STORE_CONNECTION_TYPE,fCtlTerminal.getTerminalConnector().getId());
+			store.put(STORE_CONNECTION_TYPE,fCtlTerminal.getTerminalConnector().getId());
 		}
 	}
 	public boolean hasCommandInputField() {

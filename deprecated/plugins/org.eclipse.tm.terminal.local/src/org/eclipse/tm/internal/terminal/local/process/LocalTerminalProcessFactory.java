@@ -34,7 +34,7 @@ public class LocalTerminalProcessFactory implements IProcessFactory {
 	/**
 	 * @see IProcessFactory#newProcess(ILaunch, Process, String, Map)
 	 */
-	public IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes) {
+	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
 
 		return new LocalTerminalProcess(launch, process, label, attributes);
 	}

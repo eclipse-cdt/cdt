@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.local.launch;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -81,7 +82,7 @@ public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 
 			return true;
 		}
-		List<ILaunch> notTerminated = new ArrayList<ILaunch>();
+		List notTerminated = new ArrayList();
 		ILaunch launches[] = LocalTerminalUtilities.LAUNCH_MANAGER.getLaunches();
 		ILaunchConfigurationType configurationType;
 		ILaunchConfiguration configuration;
@@ -109,7 +110,7 @@ public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 		if (!notTerminated.isEmpty()) {
 
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-			ILaunch[] launch = notTerminated.toArray(new ILaunch[notTerminated.size()]);
+			ILaunch[] launch = (ILaunch[])notTerminated.toArray(new ILaunch[notTerminated.size()]);
 			return LocalTerminalStillRunningDialog.openDialog(window.getShell(), launch);
 		}
 		return true;

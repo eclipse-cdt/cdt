@@ -10,21 +10,26 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
-public class SettingStorePrefixDecorator extends org.eclipse.tm.internal.terminal.provisional.api.Settings {
+public class SettingStorePrefixDecorator implements ISettingsStore {
 	private final String fPrefix;
-	private final ISettings fStore;
-	SettingStorePrefixDecorator(ISettings store,String prefix) {
+	private final ISettingsStore fStore;
+	SettingStorePrefixDecorator(ISettingsStore store,String prefix) {
 		fPrefix=prefix;
 		fStore=store;
 	}
 
-	public Object get(String key) {
+	public String get(String key) {
 		return fStore.get(fPrefix+key);
 	}
 
-	public boolean set(String key, Object value) {
-		return super.set(fPrefix+key,value);
+	public String get(String key, String defaultValue) {
+		return fStore.get(fPrefix+key,defaultValue);
 	}
+
+	public void put(String key, String value) {
+		fStore.put(fPrefix+key,value);
+	}
+
 }

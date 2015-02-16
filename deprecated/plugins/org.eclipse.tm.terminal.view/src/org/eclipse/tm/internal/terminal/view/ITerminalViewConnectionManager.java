@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 
 /**
@@ -73,11 +73,11 @@ public interface ITerminalViewConnectionManager {
 	void addListener(ITerminalViewConnectionListener listener);
 	void removeListener(ITerminalViewConnectionListener listener);
 	
-	void saveState(ISettings store);
+	void saveState(ISettingsStore store);
 	/**
 	 * @param store
 	 * @param factory used to create new {@link ITerminalViewConnection}
 	 */
-	void loadState(ISettings store,ITerminalViewConnectionFactory factory);
+	void loadState(ISettingsStore store,ITerminalViewConnectionFactory factory);
 	
 }

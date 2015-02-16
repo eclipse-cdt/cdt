@@ -11,13 +11,13 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.telnet;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettings;
+import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public interface ITelnetSettings {
 	String getHost();
 	int getNetworkPort();
 	int getTimeout();
 	String getSummary();
-	void load(ISettings store);
-	void save(ISettings store);
+	void load(ISettingsStore store);
+	void save(ISettingsStore store);
 }

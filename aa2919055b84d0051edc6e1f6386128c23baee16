@@ -16,6 +16,24 @@
       "revId": "aa2919055b84d0051edc6e1f6386128c23baee16",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_650dce44",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1460,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-16T19:18:41Z",
+      "side": 1,
+      "message": "Good catch Marc, thanks !\nDone in patch set 3",
+      "parentUuid": "070b0362_5ae6a5d5",
+      "revId": "aa2919055b84d0051edc6e1f6386128c23baee16",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

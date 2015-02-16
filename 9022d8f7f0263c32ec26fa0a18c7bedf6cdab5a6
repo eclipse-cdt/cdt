@@ -16,6 +16,24 @@
       "revId": "9022d8f7f0263c32ec26fa0a18c7bedf6cdab5a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_c5259ab4",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-16T19:20:54Z",
+      "side": 1,
+      "message": "Updated as per your suggestion, \nThanks !",
+      "parentUuid": "070b0362_da8e153d",
+      "revId": "9022d8f7f0263c32ec26fa0a18c7bedf6cdab5a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

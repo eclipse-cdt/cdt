@@ -118,17 +118,8 @@
         
         <!-- Deprecated features and plug-ins. Keep them building until removed -->
         <module>terminal/deprecated/plugins/org.eclipse.tm.terminal.view</module>
-        <!--
-        <module>terminal/deprecated/plugins/org.eclipse.tm.terminal.local</module>
-        -->
         <module>terminal/deprecated/features/org.eclipse.tm.terminal.view-feature</module>
-        <!--
-        <module>terminal/deprecated/features/org.eclipse.tm.terminal.core.sdk-feature</module>
-        -->
         <module>terminal/deprecated/features/org.eclipse.tm.terminal.sdk-feature</module>
-        <!--
-        <module>terminal/deprecated/features/org.eclipse.tm.terminal.local-feature</module>
-        <module>terminal/deprecated/features/org.eclipse.tm.terminal.local.sdk-feature</module>
         -->
         
         <module>releng/org.eclipse.tm.repo</module>
@@ -144,9 +135,6 @@
             <module>rse/tests/org.eclipse.rse.tests.framework.examples</module>
 
             <module>terminal/plugins/org.eclipse.tm.terminal.test</module>
-            
-            <!-- Deprecated features and plug-ins. Keep them building until removed -->
-            <module>terminal/deprecated/features/org.eclipse.tm.terminal.test-feature</module>
         </modules>
     </profile>
     </profiles>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,features/org.eclipse.remote-feature"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.core"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.jsch.core"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.jsch.ui"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.ui"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tcf/org.eclipse.tcf.git,master,terminals/plugins/org.eclipse.tcf.te.core.terminals"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tcf/org.eclipse.tcf.git,master,terminals/features/org.eclipse.tcf.te.terminals.feature"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tcf/org.eclipse.tcf.git,master,terminals/features/org.eclipse.tcf.te.terminals.rse.feature"/>
@@ -30,6 +35,15 @@
 <project reference="1.0,http://git.eclipse.org/gitroot/tm/org.eclipse.tm.git,master,terminal/features/org.eclipse.tm.terminal.telnet.sdk.feature"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tm/org.eclipse.tm.git,master,terminal/plugins/org.eclipse.tm.terminal.test"/>
 </provider>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1424180520433_7" label="Remote Services" name="Remote Services">
+<item elementID="=org.eclipse.remote.jsch.ui" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.remote.ui" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.remote.core" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.eclipse.remote.jsch.core" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSets>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1424180691591_8" label="Remote Services (Features)" name="Remote Services (Features)">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/org.eclipse.remote-feature" type="4"/>
+</workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1424167614352_4" label="Terminal Control" name="Terminal Control">
 <item elementID="=org.eclipse.tm.terminal.remote" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.eclipse.tm.terminal.ssh" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>

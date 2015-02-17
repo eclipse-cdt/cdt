@@ -1,0 +1,7 @@
+Verified+1: Hudson CI
+Code-Review+2: Vladimir Prus <vladimir@codesourcery.com>
+Submitted-by: Vladimir Prus <vladimir@codesourcery.com>
+Submitted-at: Tue, 17 Feb 2015 13:59:23 -0500
+Reviewed-on: https://git.eclipse.org/r/41159
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class EvalFixed extends CPPEvaluation {
 	public static final ICPPEvaluation INCOMPLETE =
-			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.UNKNOWN);
+			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.ERROR);
 
 	private final IType fType;
 	private final IValue fValue;
@@ -170,6 +170,10 @@ public class EvalFixed extends CPPEvaluation {
 		IValue value = CPPTemplates.instantiateValue(fValue, tpMap, packOffset, within, maxdepth, point);
 		if (type == fType && value == fValue)
 			return this;
+		// If an error occurred while instantiating the value (such as a substitution failure), 
+		// propagate that error.
+		if (value == Value.ERROR)
+			return EvalFixed.INCOMPLETE;
 		return new EvalFixed(type, fValueCategory, value);
 	}
 

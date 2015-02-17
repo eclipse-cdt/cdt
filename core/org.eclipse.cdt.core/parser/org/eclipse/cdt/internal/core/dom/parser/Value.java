@@ -85,7 +85,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
+	// Value.UNKNOWN indicates general inability to determine a value. It doesn't have to be an error,
+	// it could be that evaluation ran into a performance limit, or that we can't model this kind of
+	// value (such as a pointer to a function).
 	public static final Value UNKNOWN= new Value("<unknown>".toCharArray(), null); //$NON-NLS-1$
+	// Value.ERROR indicates that an error, such as a substitution failure, occurred during evaluation.
+	public static final Value ERROR= new Value("<error>".toCharArray(), null); //$NON-NLS-1$
 	public static final Value NOT_INITIALIZED= new Value("<__>".toCharArray(), null); //$NON-NLS-1$
 	private static final IType INT_TYPE= new CPPBasicType(ICPPBasicType.Kind.eInt, 0);
 

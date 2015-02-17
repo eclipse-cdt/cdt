@@ -111,7 +111,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 				fail("Block " + node + " inconsitent next/prev " + b);
 		}
 		if (node instanceof IDecisionNode && decision) {
-			assertTrue("decision node outgoing size " + node.getOutgoingSize(), node.getOutgoingSize() > 1);
+			assertTrue("decision node outgoing size " + node.getOutgoingSize(), node.getOutgoingSize() > 0);
 			assertNotNull(((IDecisionNode) node).getMergeNode());
 		}
 	}
@@ -570,5 +570,28 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IPlainNode case1Branch = (IPlainNode) swittch.getOutgoingNodes()[0];
 		IJumpNode case1Jump = (IJumpNode) case1Branch.getOutgoing();
 		assertEquals(swittch.getMergeNode(), case1Jump.getJumpNode());
+	}
+
+	//	int main(int a) {
+	//		switch (a) {
+	//		}
+	//	}
+	public void test_empty_switch() {
+		buildAndCheck(getAboveComment());
+		// Decision node should be optimized away entirely
+		assertFalse(graph.getStartNode() instanceof IDecisionNode);
+	}
+
+	//	int main(int a) {
+	//		switch (a) {
+	//			case 1: {
+	//				break;
+	//			}
+	//		}
+	//	}
+	public void test_switch_no_explicit_default() {
+		buildAndCheck(getAboveComment());
+		IDecisionNode swittch = (IDecisionNode) graph.getStartNode().getOutgoing();
+		assertTrue(swittch.getOutgoingSize() == 2);
 	}
 }

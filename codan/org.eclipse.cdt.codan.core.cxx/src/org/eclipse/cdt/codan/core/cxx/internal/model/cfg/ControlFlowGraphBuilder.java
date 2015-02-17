@@ -331,6 +331,7 @@ public class ControlFlowGraphBuilder {
 		IBasicBlock prev = switchNode;
 		IConnectorNode savedBreak = outerBreak;
 		outerBreak = mergeNode;
+		boolean encounteredDefault = false;
 		try {
 			for (IASTStatement statement : comp.getStatements()) {
 				if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
@@ -339,6 +340,7 @@ public class ControlFlowGraphBuilder {
 						lbl = factory.createBranchNode(statement);
 					} else if (statement instanceof IASTDefaultStatement) {
 						lbl = factory.createBranchNode(IBranchNode.DEFAULT);
+						encounteredDefault = true;
 					}
 					if (!(prev instanceof IExitNode) && prev != switchNode) {
 						IConnectorNode here = factory.createConnectorNode();
@@ -355,6 +357,16 @@ public class ControlFlowGraphBuilder {
 			}
 		} finally {
 			outerBreak = savedBreak;
+		}
+		// If the switch didn't have an explicit 'default' case, we still have to
+		// add an edge for the situation where no case was matched.
+		if (!encounteredDefault) {
+			if (!(prev instanceof IExitNode) && prev != switchNode) {
+				addJump(prev, mergeNode);
+			}
+			IBranchNode defaultBranch = factory.createBranchNode(IBranchNode.DEFAULT);
+			addOutgoing(switchNode, defaultBranch);
+			prev = defaultBranch;
 		}
 		addJump(prev, mergeNode);
 	}

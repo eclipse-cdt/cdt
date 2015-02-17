@@ -241,10 +241,20 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	{
 //	    switch (g()) {
 //	      case 1: return 1;
-//	      case 2:
-//	        return 0;
+//	      case 2: return 0;
 //	}
-	public void testBranchesSwitch_Bug343767() {
+	public void testBranchesSwitch_Bug343767a() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
+	}
+//	int f()
+//	{
+//	    switch (g()) {
+//	      case 1: return 1;
+//	      case 2: return 0;
+//	      default: return -1;
+//	}
+	public void testBranchesSwitch_Bug343767b() {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
@@ -428,5 +438,14 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testSelfReferencingVariable_452325() throws Exception {
 		// Just check that codan runs without any exceptions being thrown.
 		loadCodeAndRunCpp(getAboveComment());
+	}
+
+	//	int foo(int x) {  // no warning
+	//	    switch (x) {
+	//	    }
+	//	}
+	public void testEmptySwitch_455828() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
 	}
 }

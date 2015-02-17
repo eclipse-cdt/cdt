@@ -330,6 +330,8 @@ public class ControlFlowGraphBuilder {
 			return; // bad
 		IASTCompoundStatement comp = (IASTCompoundStatement) body;
 		IBasicBlock prev = switchNode;
+		IConnectorNode savedBreak = outerBreak;
+		outerBreak = mergeNode;
 		for (IASTStatement statement : comp.getStatements()) {
 			if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
 				IBranchNode lbl = null;
@@ -349,13 +351,10 @@ public class ControlFlowGraphBuilder {
 				addOutgoing(switchNode, lbl);
 				continue;
 			}
-			if (statement instanceof IASTBreakStatement) {
-				prev = addJump(prev, mergeNode);
-				continue;
-			}
 			IBasicBlock last = createSubGraph(prev, statement);
 			prev = last;
 		}
+		outerBreak = savedBreak;
 		addJump(prev, mergeNode);
 	}
 

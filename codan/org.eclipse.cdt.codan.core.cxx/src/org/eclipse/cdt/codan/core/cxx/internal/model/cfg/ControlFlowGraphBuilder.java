@@ -146,13 +146,11 @@ public class ControlFlowGraphBuilder {
 		return node;
 	}
 
-	private IBasicBlock createSubGraph(IBasicBlock prev, IASTNode body) {
+	private IBasicBlock createSubGraph(IBasicBlock prev, IASTStatement body) {
 		if (body instanceof IASTCompoundStatement) {
 			IASTCompoundStatement comp = (IASTCompoundStatement) body;
-			IASTNode[] children = comp.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				IASTNode node = children[i];
-				IBasicBlock last = createSubGraph(prev, node);
+			for (IASTStatement statement : comp.getStatements()) {
+				IBasicBlock last = createSubGraph(prev, statement);
 				prev = last;
 			}
 		} else if (body instanceof IASTExpressionStatement || body instanceof IASTDeclarationStatement || body instanceof IASTNullStatement) {
@@ -327,20 +325,17 @@ public class ControlFlowGraphBuilder {
 		return conn;
 	}
 
-	private void createSwitchBody(DecisionNode switchNode, IConnectorNode mergeNode, IASTStatement body) {
+	private void createSwitchBody(IDecisionNode switchNode, IConnectorNode mergeNode, IASTStatement body) {
 		if (!(body instanceof IASTCompoundStatement))
 			return; // bad
 		IASTCompoundStatement comp = (IASTCompoundStatement) body;
-		IASTNode[] children = comp.getChildren();
 		IBasicBlock prev = switchNode;
-		for (int i = 0; i < children.length; i++) {
-			IASTNode elem = children[i];
-			if (elem instanceof IASTCaseStatement || elem instanceof IASTDefaultStatement) {
+		for (IASTStatement statement : comp.getStatements()) {
+			if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
 				IBranchNode lbl = null;
-				if (elem instanceof IASTCaseStatement) {
-					IASTCaseStatement caseSt = (IASTCaseStatement) elem;
-					lbl = factory.createBranchNode(caseSt);
-				} else if (elem instanceof IASTDefaultStatement) {
+				if (statement instanceof IASTCaseStatement) {
+					lbl = factory.createBranchNode(statement);
+				} else if (statement instanceof IASTDefaultStatement) {
 					lbl = factory.createBranchNode(IBranchNode.DEFAULT);
 				}
 				if (!(prev instanceof IExitNode) && prev != switchNode) {
@@ -354,11 +349,11 @@ public class ControlFlowGraphBuilder {
 				addOutgoing(switchNode, lbl);
 				continue;
 			}
-			if (elem instanceof IASTBreakStatement) {
+			if (statement instanceof IASTBreakStatement) {
 				prev = addJump(prev, mergeNode);
 				continue;
 			}
-			IBasicBlock last = createSubGraph(prev, elem);
+			IBasicBlock last = createSubGraph(prev, statement);
 			prev = last;
 		}
 		addJump(prev, mergeNode);

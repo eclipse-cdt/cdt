@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+   <context id="LaunchTerminalSettingsDialog">
+      <description>Select the terminal type and specify the connections settings to connect a new terminal.</description>
+   </context>
+   <context id="EncodingSelectionDialog">
+      <description>Select the new encoding for the active terminal.</description>
+   </context>
+</contexts>

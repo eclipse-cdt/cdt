@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.tcf.te.ui.terminals" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.tcf.te.ui.terminals" id="launcherDelegates" name="Terminal Launcher Delegates"/>
+      </appinfo>
+      <documentation>
+         This extension point is used to contribute terminal launcher delegates.
+&lt;p&gt;
+Terminal launcher delegates contributes terminal settings widget to the &lt;code&gt;LaunchTerminalSettingsDialog&lt;/code&gt; required to open a remote terminal through a specific communication channel, like TCF or SSH.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="delegate" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="delegate">
+      <annotation>
+         <documentation>
+            Declares a terminal launcher delegate contribution.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="class" minOccurs="0" maxOccurs="1"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique id of the terminal launcher delegate contribution.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  The label representing the terminal launcher delegate within the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  The class that implements &lt;code&gt;org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate&lt;/code&gt; or extends &lt;code&gt;org.eclipse.tcf.te.ui.terminals.launcher.AbstractLauncherDelegate&lt;/code&gt;.
+&lt;p&gt;
+The terminal launcher delegate implementation class must be specified either by the class attribute or the class child element!
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tcf.te.ui.terminals.launcher.AbstractLauncherDelegate:org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="hidden" type="boolean">
+            <annotation>
+               <documentation>
+                  If &lt;code&gt;true&lt;/code&gt;, than the terminal launcher delegate is not visible in the UI, even if a possible &lt;code&gt;enablement&lt;/code&gt; will evaluate to &lt;code&gt;true&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            A short description of the terminal connector type to be presented in the UI.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="class">
+      <annotation>
+         <documentation>
+            Used when creating an &lt;code&gt;IExecutableExtension&lt;/code&gt; with a named parameter, or more than one.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  The class that implements &lt;code&gt;org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate&lt;/code&gt; or extends &lt;code&gt;org.eclipse.tcf.te.ui.terminals.launcher.AbstractLauncherDelegate&lt;/code&gt;.
+&lt;p&gt;
+The terminal launcher delegate implementation class must be specified either by the class attribute or the class child element!
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tcf.te.ui.terminals.launcher.AbstractLauncherDelegate:org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <annotation>
+         <documentation>
+            A parameter for an &lt;code&gt;IExecutableExtension&lt;/code&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;The parameter name.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;The parameter value.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         Target Explorer 1.0.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         This is an example of the extension point usage:
+&lt;p&gt;
+&lt;pre&gt;&lt;code&gt;
+  &lt;extension point=&quot;org.eclipse.tcf.te.ui.terminals.launcherDelegates&quot;&gt;
+      &lt;delegate
+            id=&quot;org.eclipse.tcf.te.ui.terminals.launcher.tcf&quot;
+            class=&quot;org.eclipse.tcf.te.tcf.terminals.ui.internal.TerminalLauncherDelegate&quot;
+            label=&quot;TCF Terminal&quot;&gt;
+            &lt;enablement&gt;
+               ...
+            &lt;/enablement&gt;
+      &lt;/delegate&gt;
+   &lt;/extension&gt;
+&lt;/code&gt;&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         The provider of a launcher delegate must implement &lt;samp&gt;org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2011 Wind River Systems, Inc. and others.
+
+All rights reserved.
+
+This program and the accompanying materials are made available under the terms
+of the Eclipse Public License v1.0 which accompanies this distribution, and is
+available at http://www.eclipse.org/legal/epl-v10.html.
+      </documentation>
+   </annotation>
+
+</schema>

@@ -120,7 +120,6 @@
         <module>terminal/deprecated/plugins/org.eclipse.tm.terminal.view</module>
         <module>terminal/deprecated/features/org.eclipse.tm.terminal.view-feature</module>
         <module>terminal/deprecated/features/org.eclipse.tm.terminal.sdk-feature</module>
-        -->
         
         <module>releng/org.eclipse.tm.repo</module>
     </modules>

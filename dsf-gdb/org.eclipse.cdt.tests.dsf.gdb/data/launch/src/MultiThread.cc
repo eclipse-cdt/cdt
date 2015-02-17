@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
 		int ret = StartThread(PrintHello, &args[t], &threads[t]); /* Breakpoint LINE_MAIN_BEFORE_THREAD_START */
 
-		if (!ret) /* Breakpoint LINE_MAIN_AFTER_THREAD_START */
+		if (!ret)
 		{
 				printf("Error: StartThread failed.\n");
 				exit(-1);

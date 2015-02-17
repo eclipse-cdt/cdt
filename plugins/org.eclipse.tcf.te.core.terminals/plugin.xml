@@ -3,4 +3,15 @@
 <plugin>
    <extension-point id="contextPropertiesProviders" name="%contextPropertiesProviders" schema="schema/contextPropertiesProviders.exsd"/>
 
+<!-- Property tester contributions -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.tcf.te.core.terminals.internal.PropertyTester"
+            id="org.eclipse.tcf.te.core.terminals.PropertyTester"
+            namespace="org.eclipse.tcf.te.core.terminals"
+            properties="hasContextPropertiesProvider"
+            type="java.lang.Object">
+      </propertyTester>
+   </extension>
+
 </plugin>

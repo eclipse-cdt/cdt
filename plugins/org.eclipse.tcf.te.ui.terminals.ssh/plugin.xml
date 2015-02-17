@@ -14,8 +14,8 @@
                   <iterate operator="and" ifEmpty="false">
                      <test
                            forcePluginActivation="true"
-                           property="org.eclipse.tcf.te.runtime.services.hasService"
-                           value="org.eclipse.tcf.te.runtime.services.interfaces.IPropertiesAccessService"/>
+                           property="org.eclipse.tcf.te.core.terminals.hasContextPropertiesProvider"
+                           value="true"/>
                   </iterate>
                </with>
             </enablement>

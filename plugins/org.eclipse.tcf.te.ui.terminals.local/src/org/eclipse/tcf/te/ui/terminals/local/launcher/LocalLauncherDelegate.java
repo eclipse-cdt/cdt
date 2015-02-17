@@ -173,6 +173,14 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 								break;
 							}
 						}
+
+						if (element instanceof IPath || element instanceof File) {
+							File f = element instanceof IPath ? ((IPath)element).toFile() : (File)element;
+							if (f.isDirectory() && f.canRead()) {
+								dir = f.getAbsolutePath();
+								break;
+							}
+						}
 					}
 				}
 				if (dir != null) {

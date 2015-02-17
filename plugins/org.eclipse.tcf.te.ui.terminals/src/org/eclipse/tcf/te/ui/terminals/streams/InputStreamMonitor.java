@@ -151,7 +151,7 @@ public class InputStreamMonitor extends OutputStream implements IDisposable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tcf.te.runtime.interfaces.IDisposable#dispose()
+	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	@Override
 	public void dispose() {

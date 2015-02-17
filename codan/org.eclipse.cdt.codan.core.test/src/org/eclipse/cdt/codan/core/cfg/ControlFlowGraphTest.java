@@ -617,4 +617,25 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IBranchNode trueBranch = (IBranchNode) graph.getUnconnectedNodeIterator().next();
 		assertEquals("return 1;", data(trueBranch.getOutgoing()));
 	}
+
+	//	int main(int a) {
+	//		switch (a) {
+	//			case 1: {
+	//				break;
+	//			}
+	//			case 2: {
+	//				break;
+	//			}
+	//		}
+	//	}
+	public void test_switch_break_in_compound_statement() {
+		// Test that the target node of the jump for the 'break' in a case
+		// is the connector node at the end of the switch, not the connector
+		// node for the next case.
+		buildAndCheck(getAboveComment());
+		IDecisionNode swittch = (IDecisionNode) graph.getStartNode().getOutgoing();
+		IPlainNode case1Branch = (IPlainNode) swittch.getOutgoingNodes()[0];
+		IJumpNode case1Jump = (IJumpNode) case1Branch.getOutgoing();
+		assertEquals(swittch.getMergeNode(), case1Jump.getJumpNode());
+	}
 }

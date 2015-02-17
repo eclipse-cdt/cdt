@@ -78,7 +78,7 @@ public class CrossEnvironmentVariableSupplier implements
 		}
 
 		public String getValue() {
-			return path.getAbsolutePath();
+			return path.getPath();
 		}
 		
 	}

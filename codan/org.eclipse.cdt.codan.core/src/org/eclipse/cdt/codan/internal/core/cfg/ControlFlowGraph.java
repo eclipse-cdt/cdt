@@ -125,18 +125,11 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
 		getNodes(getStartNode(), result);
-		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
-			IBasicBlock d = iterator.next();
-			getNodes(d, result);
-		}
+		getDeadNodes(result);
 		return result;
 	}
 
-	/**
-	 * @param d
-	 * @param result
-	 */
-	public void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+	private void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
 		if (start == null)
 			return; // huh
 		if (result.contains(start))
@@ -150,6 +143,48 @@ public class ControlFlowGraph implements IControlFlowGraph {
 			for (IBasicBlock bb : start.getIncomingNodes()) {
 				getNodes(bb, result);
 			}
+		}
+	}
+
+	public Collection<IBasicBlock> getDeadNodes() {
+		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		getDeadNodes(result);
+		return result;
+	}
+
+	private void getDeadNodes(Collection<IBasicBlock> result) {
+		Collection<IBasicBlock> liveNodes = new LinkedHashSet<IBasicBlock>();
+		getNodes(getStartNode(), liveNodes);
+
+		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
+			IBasicBlock d = iterator.next();
+			getDeadNodes(d, result, liveNodes);
+		}
+	}
+
+	public void getDeadNodes(IBasicBlock start, Collection<IBasicBlock> result, Collection<IBasicBlock> liveNodes) {
+		if (start == null)
+			return; // huh
+		if (result.contains(start))
+			return;
+		// A connector node is only dead if none of its incoming edges are live nodes.
+		if (start instanceof IConnectorNode) {
+
+			for (IBasicBlock bb : start.getIncomingNodes()) {
+				if (liveNodes.contains(bb)) {
+					// skip node
+					return;
+				} else {
+					// If the incoming edge is not live, mark it as dead.
+					// This is necessary because in some situations (branch node for dead label)
+					// we will never reach it otherwise from a dead starting node.
+					result.add(bb);
+				}
+			}
+		}
+		result.add(start);
+		for (IBasicBlock bb : start.getOutgoingNodes()) {
+			getDeadNodes(bb, result, liveNodes);
 		}
 	}
 }

@@ -1102,38 +1102,27 @@ public class MIVariableManager implements ICommandControl {
 				return;
 			}
 
-			// If the variable is a complex structure, there is no need to ask the back-end for a value,
-			// we can give it the {...} ourselves
-			// Unless we are dealing with an array, in which case, we want to get the address of it
-			if (isComplex() && ! isDynamic()) {
-				if (isArray()) {
-					// Figure out the address
-					IExpressionDMContext exprCxt = DMContexts.getAncestorOfType(dmc, IExpressionDMContext.class);
-					IExpressionDMContext addrCxt = fExpressionService.createExpression(exprCxt, "&(" + exprCxt.getExpression() + ")");  //$NON-NLS-1$//$NON-NLS-2$
+			// If we are dealing with an array, in which case, we want to get the address of it
+			if (isArray()) {
+				// Figure out the address
+				IExpressionDMContext exprCxt = DMContexts.getAncestorOfType(dmc, IExpressionDMContext.class);
+				IExpressionDMContext addrCxt = fExpressionService.createExpression(exprCxt, "&(" + exprCxt.getExpression() + ")");  //$NON-NLS-1$//$NON-NLS-2$
 
-					final FormattedValueDMContext formatCxt = new FormattedValueDMContext(
-							fSession.getId(),
-							addrCxt,
-							dmc.getFormatID()
-					);
+				final FormattedValueDMContext formatCxt = new FormattedValueDMContext(
+						fSession.getId(),
+						addrCxt,
+						dmc.getFormatID()
+				);
 
-					getVariable(
-							addrCxt,
-							new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), rm) {
-								@Override
-								protected void handleSuccess() {
-									getData().getValue(formatCxt, rm);
+				getVariable(
+						addrCxt,
+						new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								getData().getValue(formatCxt, rm);
 
-								}
-							});
-				} else {
-					// Other complex structure
-					String complexValue = "{...}";     //$NON-NLS-1$
-					setValue(dmc.getFormatID(), complexValue);
-					rm.setData(new FormattedValueDMData(complexValue));
-					rm.done();
-				}
-				
+							}
+						});
 				return;
 			}
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_972583b5",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-17T14:20:40Z",
+      "side": 1,
+      "message": "Why we are doing it? We cannot remove decision node unless we replace it with some plain node, otherwise expression reference from that switch would not in cfg",
+      "revId": "8348d59cf2fc4374e9685b9f81eae7b0f058a078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

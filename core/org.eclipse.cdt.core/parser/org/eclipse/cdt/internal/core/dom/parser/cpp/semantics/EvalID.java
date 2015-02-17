@@ -342,7 +342,7 @@ public class EvalID extends CPPDependentEvaluation {
 		}
 
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)
-			return EvalFixed.INCOMPLETE;
+			return this;
 
 		if (templateArgs == fTemplateArgs && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;

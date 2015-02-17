@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_747d7dd4",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/cfg/ControlFlowGraph.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-17T13:21:57Z",
+      "side": 1,
+      "message": "1) You lost comment about why this if was there\n2) I am not sure why you moved it above... Idea was not to recurse into getNotes since outgoing was already traversed (when it was after the loop). This case was to support Label nodes which has there connector not in the graph.\n\nIs the second case to support dead nodes? That will change semantics of dead nodes list, which I don\u0027t want to do in this method. And label nodes now won\u0027t be process correctly now. See my general comment about what I would do.",
+      "revId": "8773e22ef7b24469837551fa859ba493fe6fcac0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

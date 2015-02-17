@@ -125,18 +125,11 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
 		getNodes(getStartNode(), result);
-		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
-			IBasicBlock d = iterator.next();
-			getNodes(d, result);
-		}
+		getDeadNodes(result);
 		return result;
 	}
 
-	/**
-	 * @param d
-	 * @param result
-	 */
-	public void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+	private void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
 		if (start == null)
 			return; // huh
 		if (result.contains(start))
@@ -149,6 +142,42 @@ public class ControlFlowGraph implements IControlFlowGraph {
 			// special case where connect can have some incoming branch nodes not in the graph
 			for (IBasicBlock bb : start.getIncomingNodes()) {
 				getNodes(bb, result);
+			}
+		}
+	}
+
+	public Collection<IBasicBlock> getDeadNodes() {
+		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		getDeadNodes(result);
+		return result;
+	}
+
+	private void getDeadNodes(Collection<IBasicBlock> result) {
+		Collection<IBasicBlock> liveNodes = new LinkedHashSet<IBasicBlock>();
+		getNodes(getStartNode(), liveNodes);
+
+		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
+			IBasicBlock d = iterator.next();
+			getDeadNodes(d, result, liveNodes);
+		}
+	}
+
+	public void getDeadNodes(IBasicBlock start, Collection<IBasicBlock> result, Collection<IBasicBlock> liveNodes) {
+		if (start == null)
+			return; // huh
+		if (result.contains(start))
+			return;
+		if (liveNodes.contains(start))
+			return;  // a live node is by definition not dead
+		result.add(start);
+		for (IBasicBlock bb : start.getOutgoingNodes()) {
+			getDeadNodes(bb, result, liveNodes);
+		}
+		if (start instanceof IConnectorNode) {
+			// Sometimes, a dead connector node can have incoming nodes that are not otherwise reachable
+			// from unconnected nodes (this happens for a branch node for a dead label).
+			for (IBasicBlock bb : start.getIncomingNodes()) {
+				getDeadNodes(bb, result, liveNodes);
 			}
 		}
 	}

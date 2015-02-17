@@ -329,30 +329,32 @@ public class ControlFlowGraphBuilder {
 			return; // bad
 		IASTCompoundStatement comp = (IASTCompoundStatement) body;
 		IBasicBlock prev = switchNode;
-		for (IASTStatement statement : comp.getStatements()) {
-			if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
-				IBranchNode lbl = null;
-				if (statement instanceof IASTCaseStatement) {
-					lbl = factory.createBranchNode(statement);
-				} else if (statement instanceof IASTDefaultStatement) {
-					lbl = factory.createBranchNode(IBranchNode.DEFAULT);
+		IConnectorNode savedBreak = outerBreak;
+		outerBreak = mergeNode;
+		try {
+			for (IASTStatement statement : comp.getStatements()) {
+				if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
+					IBranchNode lbl = null;
+					if (statement instanceof IASTCaseStatement) {
+						lbl = factory.createBranchNode(statement);
+					} else if (statement instanceof IASTDefaultStatement) {
+						lbl = factory.createBranchNode(IBranchNode.DEFAULT);
+					}
+					if (!(prev instanceof IExitNode) && prev != switchNode) {
+						IConnectorNode here = factory.createConnectorNode();
+						addJump(prev, here);
+						addOutgoing(lbl, here);
+						prev = here;
+					} else {
+						prev = lbl;
+					}
+					addOutgoing(switchNode, lbl);
+					continue;
 				}
-				if (!(prev instanceof IExitNode) && prev != switchNode) {
-					IConnectorNode here = factory.createConnectorNode();
-					addJump(prev, here);
-					addOutgoing(lbl, here);
-					prev = here;
-				} else {
-					prev = lbl;
-				}
-				addOutgoing(switchNode, lbl);
-				continue;
+				prev = createSubGraph(prev, statement);
 			}
-			if (statement instanceof IASTBreakStatement) {
-				prev = addJump(prev, mergeNode);
-				continue;
-			}
-			prev = createSubGraph(prev, statement);
+		} finally {
+			outerBreak = savedBreak;
 		}
 		addJump(prev, mergeNode);
 	}

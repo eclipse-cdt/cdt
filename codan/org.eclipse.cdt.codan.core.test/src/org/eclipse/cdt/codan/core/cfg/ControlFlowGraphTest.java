@@ -571,4 +571,27 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IJumpNode case1Jump = (IJumpNode) case1Branch.getOutgoing();
 		assertEquals(swittch.getMergeNode(), case1Jump.getJumpNode());
 	}
+
+	//	int main(int a) {
+	//		switch (a) {
+	//		}
+	//	}
+	public void test_empty_switch() {
+		buildAndCheck(getAboveComment());
+		// Decision node should be optimized away entirely
+		assertFalse(graph.getStartNode() instanceof IDecisionNode);
+	}
+
+	//	int main(int a) {
+	//		switch (a) {
+	//			case 1: {
+	//				break;
+	//			}
+	//		}
+	//	}
+	public void test_switch_no_explicit_default() {
+		buildAndCheck(getAboveComment());
+		IDecisionNode swittch = (IDecisionNode) graph.getStartNode().getOutgoing();
+		assertTrue(swittch.getOutgoingSize() == 2);
+	}
 }

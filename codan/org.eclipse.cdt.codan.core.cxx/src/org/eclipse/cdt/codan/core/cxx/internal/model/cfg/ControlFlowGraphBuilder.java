@@ -318,10 +318,16 @@ public class ControlFlowGraphBuilder {
 
 	private IBasicBlock createSwitch(IBasicBlock prev, IASTSwitchStatement body) {
 		DecisionNode node = factory.createDecisionNode(body.getControllerExpression());
-		addOutgoing(prev, node);
 		IConnectorNode conn = factory.createConnectorNode();
 		node.setMergeNode(conn);
 		createSwitchBody(node, conn, body.getBody());
+		// Optimize away the decision node if it only has one branch (emtpy switch)
+		if (node.getOutgoingSize() == 1) {
+			IBranchNode onlyBranch = (IBranchNode) node.getOutgoingNodes()[0];
+			addOutgoing(prev, onlyBranch.getOutgoing());
+		} else {
+			addOutgoing(prev, node);
+		}
 		return conn;
 	}
 
@@ -332,6 +338,7 @@ public class ControlFlowGraphBuilder {
 		IBasicBlock prev = switchNode;
 		IConnectorNode savedBreak = outerBreak;
 		outerBreak = mergeNode;
+		boolean encounteredDefault = false;
 		for (IASTStatement statement : comp.getStatements()) {
 			if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
 				IBranchNode lbl = null;
@@ -339,6 +346,7 @@ public class ControlFlowGraphBuilder {
 					lbl = factory.createBranchNode(statement);
 				} else if (statement instanceof IASTDefaultStatement) {
 					lbl = factory.createBranchNode(IBranchNode.DEFAULT);
+					encounteredDefault = true;
 				}
 				if (!(prev instanceof IExitNode) && prev != switchNode) {
 					IConnectorNode here = factory.createConnectorNode();
@@ -353,6 +361,16 @@ public class ControlFlowGraphBuilder {
 			}
 			IBasicBlock last = createSubGraph(prev, statement);
 			prev = last;
+		}
+		// If the switch didn't have an explicit 'default' case, we still have to
+		// add an edge for the situation where no case was matched.
+		if (!encounteredDefault) {
+			if (!(prev instanceof IExitNode) && prev != switchNode) {
+				addJump(prev, mergeNode);
+			}
+			IBranchNode defaultBranch = factory.createBranchNode(IBranchNode.DEFAULT);
+			addOutgoing(switchNode, defaultBranch);
+			prev = defaultBranch;
 		}
 		outerBreak = savedBreak;
 		addJump(prev, mergeNode);

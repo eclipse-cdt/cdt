@@ -67,7 +67,7 @@
 <!-- Command contributions -->
    <extension point="org.eclipse.ui.commands">
       <command
-            categoryId="org.eclipse.tcf.te.ui.commands.category"
+            categoryId="org.eclipse.tcf.te.ui.terminals.commands.category"
             helpContextId="org.eclipse.tcf.te.ui.terminals.local.command_Launch"
             id="org.eclipse.tcf.te.ui.terminals.local.command.launch"
             name="%command.launch.name">
@@ -101,7 +101,7 @@
 <!-- Preference page contributions -->
    <extension point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.tcf.te.ui.preferences.general"
+            category="org.eclipse.tm.terminal.TerminalPreferencePage"
             class="org.eclipse.tcf.te.ui.terminals.local.showin.preferences.PreferencePage"
             id="org.eclipse.tcf.te.ui.terminals.local.showin.preferences"
             name="%preference.page.name">

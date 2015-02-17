@@ -7,9 +7,14 @@
 
 <!-- View contributions -->
    <extension point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.tcf.te.ui.terminals.views.category"
+            name="%ViewCategory.name">
+      </category>
+
       <view
             allowMultiple="true"
-            category="org.eclipse.tcf.te.ui.views.category"
+            category="org.eclipse.tcf.te.ui.terminals.views.category"
             class="org.eclipse.tcf.te.ui.terminals.view.TerminalsView"
             icon="icons/eview16/terminal_view.gif"
             id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
@@ -59,6 +64,32 @@
       </perspectiveExtension>
 
       <perspectiveExtension targetID="org.eclipse.cdt.ui.CPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tcf.te.ui.terminals.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tcf.te.ui.terminals.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tcf.te.ui.terminals.TerminalsView"/>
          <!-- Place the Terminals view relative to the Task List view -->
@@ -184,20 +215,25 @@
 
 <!-- Command contributions -->
    <extension point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.tcf.te.ui.terminals.commands.category"
+            name="%command.category.name">
+      </category>
+   
       <command
-            categoryId="org.eclipse.tcf.te.ui.commands.category"
+            categoryId="org.eclipse.tcf.te.ui.terminals.commands.category"
             helpContextId="org.eclipse.tcf.te.ui.terminals.command_Launch"
             id="org.eclipse.tcf.te.ui.terminals.command.launch"
             name="%command.launch.selection.name">
       </command>
       <command
-            categoryId="org.eclipse.tcf.te.ui.commands.category"
+            categoryId="org.eclipse.tcf.te.ui.terminals.commands.category"
             helpContextId="org.eclipse.tcf.te.ui.terminals.command_Launch"
             id="org.eclipse.tcf.te.ui.terminals.command.launchToolbar"
             name="%command.launch.name">
       </command>
       <command
-            categoryId="org.eclipse.tcf.te.ui.commands.category"
+            categoryId="org.eclipse.tcf.te.ui.terminals.commands.category"
             helpContextId="org.eclipse.tcf.te.ui.terminals.command_Disconnect"
             id="org.eclipse.tcf.te.ui.terminals.command.disconnect"
             name="%command.disconnect.name">

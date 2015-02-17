@@ -77,7 +77,7 @@
 <!-- Command contributions -->
    <extension point="org.eclipse.ui.commands">
       <command
-            categoryId="org.eclipse.tcf.te.ui.commands.category"
+            categoryId="org.eclipse.tcf.te.ui.terminals.commands.category"
             helpContextId="org.eclipse.tcf.te.ui.terminals.rse.command_Launch"
             id="org.eclipse.tcf.te.ui.terminals.rse.command.launch"
             name="%command.launch.name">

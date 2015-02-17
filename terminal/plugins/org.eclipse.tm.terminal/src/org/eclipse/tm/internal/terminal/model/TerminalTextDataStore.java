@@ -295,18 +295,18 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	public char[] getChars(int line) {
 		if(fChars[line]==null)
 			return null;
-		return (char[]) fChars[line].clone();
+		return fChars[line].clone();
 	}
 
 	public Style[] getStyles(int line) {
 		if(fStyle[line]==null)
 			return null;
-		return (Style[]) fStyle[line].clone();
+		return fStyle[line].clone();
 	}
 
 	public void setLine(int line, char[] chars, Style[] styles) {
-		fChars[line]=(char[]) chars.clone();
-		fStyle[line]=(Style[]) styles.clone();
+		fChars[line]=chars.clone();
+		fStyle[line]=styles.clone();
 		fWrappedLines.clear(line);
 	}
 

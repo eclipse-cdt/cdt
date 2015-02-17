@@ -473,7 +473,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 
 	/**
 	 * When a new connection is selected, make sure it is open before using it.
-	 * @throws CoreException 
+	 * 
+	 * @throws CoreException
 	 */
 	private void connectionSelected() throws CoreException {
 		/*
@@ -525,19 +526,19 @@ public class RemoteResourceBrowserWidget extends Composite {
 						public void run() {
 							DelayedInputDialog dialog = new DelayedInputDialog(getShell(), Messages.RemoteResourceBrowserWidget_1,
 									Messages.RemoteResourceBrowserWidget_2, basePath.getName(), new IInputValidator() {
-								@Override
-								public String isValid(String newText) {
-									if (!newText.equals("")) { //$NON-NLS-1$
-										IFileStore newPath = path.getChild(newText);
-										if (newPath.fetchInfo().exists()) {
-											return Messages.RemoteResourceBrowserWidget_3;
+										@Override
+										public String isValid(String newText) {
+											if (!newText.equals("")) { //$NON-NLS-1$
+												IFileStore newPath = path.getChild(newText);
+												if (newPath.fetchInfo().exists()) {
+													return Messages.RemoteResourceBrowserWidget_3;
+												}
+											} else {
+												return Messages.RemoteResourceBrowserWidget_4;
+											}
+											return null;
 										}
-									} else {
-										return Messages.RemoteResourceBrowserWidget_4;
-									}
-									return null;
-								}
-							});
+									});
 							fValidateJob.setDialog(dialog);
 							if (dialog.open() == Dialog.OK) {
 								userPath[0] = dialog.getValue();
@@ -654,9 +655,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 * Set the connection for the browser
 	 * 
 	 * @param connection
-	 * @throws CoreException 
 	 */
-	public void setConnection(IRemoteConnection connection) throws CoreException {
+	public void setConnection(IRemoteConnection connection) {
 		changeInput(connection);
 		if (fRemoteConnectionWidget != null) {
 			fRemoteConnectionWidget.setConnection(connection);

@@ -41,7 +41,7 @@ public class DeleteRemoteConnectionHandler extends AbstractHandler {
 			while (i.hasNext()) {
 				Object obj = i.next();
 				if (obj instanceof IRemoteConnection) {
-					IRemoteConnection connection = (IRemoteConnection)obj;
+					IRemoteConnection connection = (IRemoteConnection) obj;
 					IRemoteConnectionType connectionType = connection.getConnectionType();
 					if ((connectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0) {
 						connections.add(connection);
@@ -52,10 +52,11 @@ public class DeleteRemoteConnectionHandler extends AbstractHandler {
 			// Confirm the delete
 			String message = Messages.DeleteRemoteConnectionHandler_ConfirmDeleteMessage;
 			for (IRemoteConnection connection : connections) {
-				message += " " + connection.getName(); //$NON-NLS-1 //$NON-NLS-1$
+				message += " " + connection.getName(); //$NON-NLS-1$
 			}
-			message += "?"; //$NON-NLS-1 //$NON-NLS-1$
-			if (MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.DeleteRemoteConnectionHandler_DeleteConnectionTitle, message)) {
+			message += "?"; //$NON-NLS-1$
+			if (MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+					Messages.DeleteRemoteConnectionHandler_DeleteConnectionTitle, message)) {
 				for (IRemoteConnection connection : connections) {
 					IRemoteConnectionType connectionType = connection.getConnectionType();
 					try {

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -25,7 +24,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.widgets.RemoteResourceBrowserWidget;
 import org.eclipse.swt.SWT;
@@ -122,11 +120,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 			fResourceBrowserWidget.setInitialPath(fInitialPath);
 		}
 		if (fConnection != null) {
-			try {
-				fResourceBrowserWidget.setConnection(fConnection);
-			} catch (CoreException e) {
-				RemoteUIPlugin.log(e.getStatus());
-			}
+			fResourceBrowserWidget.setConnection(fConnection);
 		}
 		updateDialog();
 		return contents;
@@ -187,11 +181,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		});
 		fResourceBrowserWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		if (fConnection != null) {
-			try {
-				fResourceBrowserWidget.setConnection(fConnection);
-			} catch (CoreException e) {
-				RemoteUIPlugin.log(e.getStatus());
-			}
+			fResourceBrowserWidget.setConnection(fConnection);
 		}
 
 		Composite monitorComposite = new Composite(main, SWT.NULL);

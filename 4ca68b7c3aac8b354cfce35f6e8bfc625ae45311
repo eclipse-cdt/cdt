@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_37bf77a9",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-17T14:31:44Z",
+      "side": 1,
+      "message": "inline last var too while you at it...",
+      "revId": "4ca68b7c3aac8b354cfce35f6e8bfc625ae45311",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

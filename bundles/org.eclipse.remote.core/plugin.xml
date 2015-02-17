@@ -23,6 +23,16 @@
             factory="org.eclipse.remote.internal.core.services.local.LocalConnectionPropertyService$Factory"
             service="org.eclipse.remote.core.IRemoteConnectionPropertyService">
       </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalFileService$Factory"
+            service="org.eclipse.remote.core.IRemoteFileService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalProcessService$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessService">
+      </connectionService>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

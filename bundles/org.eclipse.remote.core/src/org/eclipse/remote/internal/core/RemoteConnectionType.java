@@ -196,7 +196,18 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	@Override
 	public IRemoteConnection getConnection(URI uri) {
-		return connections.get(uri.getAuthority());
+		IRemoteConnection connection = connections.get(uri.getAuthority());
+		if (connection != null) {
+			return connection;
+		}
+		
+		// If it's a file: scheme we must be the local connection type, just return our
+		// hopefully one connection, the Local connection.
+		if (uri.getScheme().equals("file") && !connections.isEmpty()) { //$NON-NLS-1$
+			return connections.values().iterator().next();
+		}
+		
+		return null;
 	}
 
 	@Override

@@ -124,32 +124,53 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	@Override
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
-		getNodes(getStartNode(), result);
+		getNodes(getStartNode(), result, true);
+		getDeadNodes(result);
+		return result;
+	}
+
+	public void getDeadNodes(Collection<IBasicBlock> result) {
 		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
 			IBasicBlock d = iterator.next();
-			getNodes(d, result);
+			getNodes(d, result, false);
 		}
+	}
+
+	public Collection<IBasicBlock> getDeadNodes() {
+		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		getDeadNodes(result);
 		return result;
 	}
 
 	/**
-	 * @param d
+	 * @param start
 	 * @param result
+	 * @param eager If true, incoming edges of connector nodes are walked.
+	 *              If false, a connector node is only added to the graph if all its incoming nodes are
+	 *              already there.
 	 */
-	public void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+	public void getNodes(IBasicBlock start, Collection<IBasicBlock> result, boolean eager) {
 		if (start == null)
 			return; // huh
 		if (result.contains(start))
 			return;
+		if (start instanceof IConnectorNode) {
+			if (eager) {
+				for (IBasicBlock bb : start.getIncomingNodes()) {
+					getNodes(bb, result, eager);
+				}
+			} else {
+				for (IBasicBlock bb : start.getIncomingNodes()) {
+					if (!result.contains(bb)) {
+						// skip node
+						return;
+					}
+				}
+			}
+		}
 		result.add(start);
 		for (IBasicBlock bb : start.getOutgoingNodes()) {
-			getNodes(bb, result);
-		}
-		if (start instanceof IConnectorNode) {
-			// special case where connect can have some incoming branch nodes not in the graph
-			for (IBasicBlock bb : start.getIncomingNodes()) {
-				getNodes(bb, result);
-			}
+			getNodes(bb, result, eager);
 		}
 	}
 }

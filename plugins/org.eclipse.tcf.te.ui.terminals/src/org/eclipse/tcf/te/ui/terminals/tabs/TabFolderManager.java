@@ -283,8 +283,6 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			item.setData(terminal);
 			// Associated the custom data node with the tab item (if any)
 			if (data != null) item.setData("customData", data); //$NON-NLS-1$
-			// Set the property that marks the item has a disconnect button or not if selected
-			item.setData(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON, flags != null && flags.containsKey(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON) ? flags.get(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON) : Boolean.FALSE);
 
 			// Overwrite the text canvas help id
 			String contextHelpId = getParentView().getContextHelpId();

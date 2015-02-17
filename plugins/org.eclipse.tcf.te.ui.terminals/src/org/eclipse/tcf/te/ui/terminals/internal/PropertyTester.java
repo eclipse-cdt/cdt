@@ -12,8 +12,9 @@ package org.eclipse.tcf.te.ui.terminals.internal;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.tcf.te.core.terminals.interfaces.constants.ITerminalsConnectorConstants;
+import org.eclipse.tcf.te.ui.terminals.interfaces.ITerminalsView;
 import org.eclipse.tcf.te.ui.terminals.launcher.LauncherDelegateManager;
+import org.eclipse.tcf.te.ui.terminals.tabs.TabFolderManager;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
@@ -34,18 +35,15 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 			return expectedValue.equals(Boolean.valueOf(LauncherDelegateManager.getInstance().getApplicableLauncherDelegates(selection).length > 0));
 		}
 
-		if ("hasDisconnectButton".equals(property) && receiver instanceof CTabItem) { //$NON-NLS-1$
-			CTabItem tabItem = (CTabItem)receiver;
-			if (!tabItem.isDisposed()) {
-	            Boolean hasDisconnectButton = (Boolean) tabItem.getData(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON);
-	            return expectedValue.equals(hasDisconnectButton);
-			}
-			return false;
-		}
+		if ("canDisconnect".equals(property) && receiver instanceof ITerminalsView) { //$NON-NLS-1$
+			CTabItem tabItem = null;
 
-		if ("canDisconnect".equals(property) && receiver instanceof CTabItem) { //$NON-NLS-1$
-			CTabItem tabItem = (CTabItem)receiver;
-			if (!tabItem.isDisposed() && tabItem.getData() instanceof ITerminalViewControl) {
+			TabFolderManager manager = (TabFolderManager) ((ITerminalsView)receiver).getAdapter(TabFolderManager.class);
+			if (manager != null) {
+				tabItem = manager.getActiveTabItem();
+			}
+
+			if (tabItem != null && !tabItem.isDisposed() && tabItem.getData() instanceof ITerminalViewControl) {
 	            ITerminalViewControl terminal = (ITerminalViewControl)tabItem.getData();
 	            TerminalState state = terminal.getState();
 	            return expectedValue.equals(Boolean.valueOf(state != TerminalState.CLOSED));

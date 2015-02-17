@@ -75,11 +75,6 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 			properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, Boolean.TRUE);
 		}
 
-		// SSH terminals do have a disconnect button
-		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON)) {
-			properties.put(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON, Boolean.TRUE);
-		}
-
 		// Get the terminal service
 		ITerminalService terminal = TerminalServiceFactory.getService();
 		// If not available, we cannot fulfill this request

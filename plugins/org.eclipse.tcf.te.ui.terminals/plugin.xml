@@ -128,7 +128,7 @@
             class="org.eclipse.tcf.te.ui.terminals.internal.PropertyTester"
             id="org.eclipse.tcf.te.ui.terminals.PropertyTester"
             namespace="org.eclipse.tcf.te.ui.terminals"
-            properties="hasApplicableLauncherDelegates,hasDisconnectButton,canDisconnect"
+            properties="hasApplicableLauncherDelegates,canDisconnect"
             type="java.lang.Object">
       </propertyTester>
    </extension>
@@ -175,16 +175,6 @@
                label="%command.disconnect.label"
                style="push"
                tooltip="%command.disconnect.tooltip">
-               <visibleWhen checkEnabled="false">
-                  <with variable="selection">
-                     <count value="1"/>
-                     <iterate operator="and" ifEmpty="false">
-                        <adapt type="org.eclipse.swt.custom.CTabItem">
-                           <test property="org.eclipse.tcf.te.ui.terminals.hasDisconnectButton" value="true"/>
-                        </adapt>
-                     </iterate>
-                  </with>
-               </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution locationURI="popup:org.eclipse.tcf.te.ui.terminals.TerminalsView?after=additions">
@@ -263,13 +253,9 @@
             class="org.eclipse.tcf.te.ui.terminals.internal.handler.DisconnectTerminalCommandHandler"
             commandId="org.eclipse.tcf.te.ui.terminals.command.disconnect">
             <enabledWhen>
-               <with variable="selection">
-                  <count value="1"/>
-                  <iterate operator="and" ifEmpty="false">
-                     <adapt type="org.eclipse.swt.custom.CTabItem">
-                        <test property="org.eclipse.tcf.te.ui.terminals.canDisconnect" value="true"/>
-                     </adapt>
-                  </iterate>
+               <with variable="activePart">
+                  <instanceof value="org.eclipse.tcf.te.ui.terminals.interfaces.ITerminalsView"/>
+                  <test property="org.eclipse.tcf.te.ui.terminals.canDisconnect" value="true"/>
                </with>
             </enabledWhen>
       </handler>

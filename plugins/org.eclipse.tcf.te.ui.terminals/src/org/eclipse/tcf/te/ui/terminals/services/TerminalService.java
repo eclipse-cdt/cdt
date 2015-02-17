@@ -302,9 +302,6 @@ public class TerminalService implements ITerminalService {
 				if (properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW) instanceof Boolean) {
 					flags.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, (Boolean)properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW));
 				}
-				if (properties.get(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON) instanceof Boolean) {
-					flags.put(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON, (Boolean)properties.get(ITerminalsConnectorConstants.PROP_HAS_DISCONNECT_BUTTON));
-				}
 				// Open the new console
 				CTabItem item;
 				if (secondaryId != null)

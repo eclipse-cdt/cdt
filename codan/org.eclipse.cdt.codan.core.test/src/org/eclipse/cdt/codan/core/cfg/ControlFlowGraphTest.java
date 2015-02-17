@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cfg;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -562,8 +561,7 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IExitNode ret = (IExitNode) startNode.getOutgoing();
 		assertEquals("return 1;", data(ret));
 		IBranchNode labelB = (IBranchNode) graph.getUnconnectedNodeIterator().next(); // BranchNode: b:
-		ArrayList<IBasicBlock> res = new ArrayList<>();
-		graph.getNodes(labelB, res);
+		Collection<IBasicBlock> res = graph.getDeadNodes();
 		assertEquals(6, res.size());
 
 		IJumpNode gotoA = (IJumpNode) ((IConnectorNode) labelB.getOutgoing()).getOutgoing();
@@ -616,6 +614,21 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		assertEquals(1, graph.getUnconnectedNodeSize());
 		IBranchNode trueBranch = (IBranchNode) graph.getUnconnectedNodeIterator().next();
 		assertEquals("return 1;", data(trueBranch.getOutgoing()));
+	}
+
+	//	int foo(int x) {
+	//	    switch (x) {
+	//	        case 0:
+	//	            return 42;;
+	//	        default:
+	//	    }
+	//	}
+	public void test_dead_statement_in_switch() throws Exception {
+		buildAndCheck(getAboveComment());
+		IDecisionNode swittch = (IDecisionNode) graph.getStartNode().getOutgoing();
+		Collection<IBasicBlock> deadNodes = graph.getDeadNodes();
+		// Make sure the switch statement's merge node has not been marked as dead.
+		assertFalse(deadNodes.contains(swittch.getMergeNode()));
 	}
 
 	//	int main(int a) {

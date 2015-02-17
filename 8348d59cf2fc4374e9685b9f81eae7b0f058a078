@@ -16,6 +16,24 @@
       "revId": "8348d59cf2fc4374e9685b9f81eae7b0f058a078",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_2d9ba880",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-02-17T22:15:16Z",
+      "side": 1,
+      "message": "As I mentioned in https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d455828#c5, I added the optimization because ControlFlowGraphTest was asserting that a decision node must have more than one branch.\n\nI will remove the optimization and adjust the assertion to be more than zero instead.",
+      "parentUuid": "070b0362_972583b5",
+      "revId": "8348d59cf2fc4374e9685b9f81eae7b0f058a078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

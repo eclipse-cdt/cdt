@@ -22,12 +22,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.remote.core.IRemoteCommandShellService;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionManager;
+import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
-import org.eclipse.remote.core.IRemoteServices;
-import org.eclipse.remote.core.RemoteServices;
+import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -65,13 +66,11 @@ public class RemoteConnectionManager extends Job {
 		IRemoteConnection remoteConnection = null;
 
 		try {
-			String remoteServices = connector.getSshSettings().getRemoteServices();
-			IRemoteServices services = RemoteServices.getRemoteServices(remoteServices);
-			if (services != null) {
-				IRemoteConnectionManager connMgr = services.getConnectionManager();
-				if (connMgr != null) {
-					remoteConnection = connMgr.getConnection(connector.getSshSettings().getConnectionName());
-				}
+			IRemoteServicesManager svcMgr = Activator.getService(IRemoteServicesManager.class);
+			String connTypeId = connector.getSshSettings().getRemoteServices();
+			IRemoteConnectionType connType = svcMgr.getConnectionType(connTypeId);
+			if (connType != null) {
+				remoteConnection = connType.getConnection(connector.getSshSettings().getConnectionName());
 			}
 			if (remoteConnection == null) {
 				throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_0, connector.getSshSettings()
@@ -96,14 +95,16 @@ public class RemoteConnectionManager extends Job {
 				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.getUniqueIdentifier());
 				String terminalShellCommand = prefs.get(IRemoteTerminalConstants.PREF_TERMINAL_SHELL_COMMAND, ""); //$NON-NLS-1$
 				if (!("".equals(terminalShellCommand)) //$NON-NLS-1$
-						&& (remoteConnection.getRemoteServices().getCapabilities() & IRemoteServices.CAPABILITY_SUPPORTS_COMMAND_SHELL) != 0) {
-					remoteProcess = remoteConnection.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
+						&& remoteConnection.hasService(IRemoteCommandShellService.class)) {
+					IRemoteCommandShellService cmdShellSvc = remoteConnection.getService(IRemoteCommandShellService.class);
+					remoteProcess = cmdShellSvc.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 				} else {
 					if ("".equals(terminalShellCommand)) { //$NON-NLS-1$
 						terminalShellCommand = "/bin/bash -l"; //$NON-NLS-1$
 					}
-					IRemoteProcessBuilder processBuilder = remoteConnection.getProcessBuilder(new ArgumentParser(
-							terminalShellCommand).getTokenList());
+					IRemoteProcessService procSvc = remoteConnection.getService(IRemoteProcessService.class);
+					IRemoteProcessBuilder processBuilder = procSvc.getProcessBuilder(new ArgumentParser(terminalShellCommand)
+							.getTokenList());
 					remoteProcess = processBuilder.start(IRemoteProcessBuilder.ALLOCATE_PTY);
 				}
 			}

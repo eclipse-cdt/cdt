@@ -23,11 +23,13 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		fTerminalSettings = settings;
 	}
 
+	@Override
 	public void saveSettings() {
-		fTerminalSettings.setRemoteServices(fRemoteConnectionWidget.getConnection().getRemoteServices().getId());
+		fTerminalSettings.setRemoteServices(fRemoteConnectionWidget.getConnection().getConnectionType().getId());
 		fTerminalSettings.setConnectionName(fRemoteConnectionWidget.getConnection().getName());
 	}
 
+	@Override
 	public void loadSettings() {
 		if (fTerminalSettings != null) {
 			fRemoteConnectionWidget.setConnection(fTerminalSettings.getRemoteServices(), fTerminalSettings.getConnectionName());
@@ -41,6 +43,7 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		return value;
 	}
 
+	@Override
 	public boolean validateSettings() {
 		if (fRemoteConnectionWidget.getConnection() == null) {
 			return false;
@@ -48,6 +51,7 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		return true;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);

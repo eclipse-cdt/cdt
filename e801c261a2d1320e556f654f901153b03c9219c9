@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_f7d5efe4",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-17T14:28:38Z",
+      "side": 1,
+      "message": "I would put it in finally block, just in case something got messed up in the middle, we want to leave global state clean",
+      "revId": "e801c261a2d1320e556f654f901153b03c9219c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

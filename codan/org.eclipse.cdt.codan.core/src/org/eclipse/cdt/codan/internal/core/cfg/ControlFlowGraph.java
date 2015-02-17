@@ -125,18 +125,11 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
 		getNodes(getStartNode(), result);
-		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
-			IBasicBlock d = iterator.next();
-			getNodes(d, result);
-		}
+		getDeadNodes(result);
 		return result;
 	}
 
-	/**
-	 * @param d
-	 * @param result
-	 */
-	public void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+	private void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
 		if (start == null)
 			return; // huh
 		if (result.contains(start))
@@ -150,6 +143,39 @@ public class ControlFlowGraph implements IControlFlowGraph {
 			for (IBasicBlock bb : start.getIncomingNodes()) {
 				getNodes(bb, result);
 			}
+		}
+	}
+
+	public Collection<IBasicBlock> getDeadNodes() {
+		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		getDeadNodes(result);
+		return result;
+	}
+
+	private void getDeadNodes(Collection<IBasicBlock> result) {
+		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator.hasNext();) {
+			IBasicBlock d = iterator.next();
+			getNodes(d, result);
+		}
+	}
+
+	private void getDeadNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+		if (start == null)
+			return; // huh
+		if (result.contains(start))
+			return;
+		// A connector node is only dead if all of its incoming edges are from dead nodes.
+		if (start instanceof IConnectorNode) {
+			for (IBasicBlock bb : start.getIncomingNodes()) {
+				if (!result.contains(bb)) {
+					// skip node
+					return;
+				}
+			}
+		}
+		result.add(start);
+		for (IBasicBlock bb : start.getOutgoingNodes()) {
+			getDeadNodes(bb, result);
 		}
 	}
 }

@@ -448,4 +448,16 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(1);
 	}
+
+	//	int foo(int x) {
+	//	    switch (x) {
+	//	        case 0:
+	//	            return 42;;
+	//	        default:
+	//	    }
+	//	}
+	public void testDoubleSemicolonInSwitchCase_455828() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
+	}
 }

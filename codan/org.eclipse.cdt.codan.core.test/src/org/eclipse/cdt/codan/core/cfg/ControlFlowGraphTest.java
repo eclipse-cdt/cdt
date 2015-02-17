@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cfg;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -562,8 +561,8 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		IExitNode ret = (IExitNode) startNode.getOutgoing();
 		assertEquals("return 1;", data(ret));
 		IBranchNode labelB = (IBranchNode) graph.getUnconnectedNodeIterator().next(); // BranchNode: b:
-		ArrayList<IBasicBlock> res = new ArrayList<>();
-		graph.getNodes(labelB, res);
+
+		Collection<IBasicBlock> res = graph.getDeadNodes();
 		assertEquals(6, res.size());
 
 		IJumpNode gotoA = (IJumpNode) ((IConnectorNode) labelB.getOutgoing()).getOutgoing();
@@ -660,5 +659,22 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 		buildAndCheck(getAboveComment());
 		IDecisionNode swittch = (IDecisionNode) graph.getStartNode().getOutgoing();
 		assertTrue(swittch.getOutgoingSize() == 2);
+	}
+
+
+	//	int foo(int x) {
+	//	    switch (x) {
+	//	        case 0:
+	//	            return 42;;
+	//	        default:
+	//	    }
+	//	}
+	public void test_dead_in_case() {
+		buildAndCheck(getAboveComment());
+		assertEquals(1, graph.getUnconnectedNodeSize());
+		IPlainNode node = (IPlainNode) graph.getUnconnectedNodeIterator().next();
+		assertEquals(";", data(node));
+		Collection<IBasicBlock> res = graph.getDeadNodes();
+		assertEquals(1, res.size());
 	}
 }

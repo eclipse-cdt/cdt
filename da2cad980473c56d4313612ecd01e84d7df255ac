@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "070b0362_f9795e6d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryByteBuffer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-18T18:59:43Z",
+      "side": 1,
+      "message": "Yes, they are very needed as Java does not support unsigned variables, when you e.g. want to convert one byte with values over 127 to an integer or long it will overflow and you will get -128.\n  So doing the AND will make sure you assign the result to the long and will not overflow, giving you the proper value.\n  Feel free to try on a regular 8 bit addressable size machine.",
+      "parentUuid": "070b0362_d9f1fa8b",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_79e0ceb5",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-18T17:59:38Z",
       "side": 1,
       "message": "fWordSize: should not be prefixed with f.",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_f9503edd",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-18T18:59:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "070b0362_79e0ceb5",
       "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "070b0362_d9557acc",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-18T18:59:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "070b0362_59dd0aff",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070b0362_f9a79e90",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-02-18T17:59:38Z",
       "side": 1,
       "message": "I might be missing something, but it seems overly complicated. Also, why use \"count\" as the value?\n\nbyte[] pattern \u003d valueToBytes(1);",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_b9e87675",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-18T18:59:43Z",
+      "side": 1,
+      "message": "Done,\nDefinitely over complicated :-)\nChange to your suggestion",
+      "parentUuid": "070b0362_f9a79e90",
       "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

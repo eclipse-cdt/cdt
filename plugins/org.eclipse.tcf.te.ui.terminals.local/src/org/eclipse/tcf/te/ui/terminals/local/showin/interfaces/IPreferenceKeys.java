@@ -19,7 +19,7 @@ public interface IPreferenceKeys {
 	public final String PREF_TERMINAL = "terminals"; //$NON-NLS-1$
 
 	/**
-	 * Preference key: Remove terminated terminals when a new terminal is created.
+	 * Preference key: Local terminal initial working directory.
 	 */
 	public final String PREF_LOCAL_TERMINAL_INITIAL_CWD = PREF_TERMINAL + ".localTerminalInitialCwd"; //$NON-NLS-1$
 
@@ -37,4 +37,14 @@ public interface IPreferenceKeys {
 	 * Preference value: Local terminal initial working directory is "Eclipse workspace"
 	 */
 	public final String PREF_INITIAL_CWD_ECLIPSE_WS = "eclipsews"; //$NON-NLS-1$
+
+	/**
+	 * Preference key: Local terminal default shell command on Unix hosts.
+	 */
+	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX = PREF_TERMINAL + ".localTerminalDefaultShellUnix"; //$NON-NLS-1$
+
+	/**
+	 * Preference key: Local terminal default shell command arguments on Unix hosts.
+	 */
+	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS = PREF_TERMINAL + ".localTerminalDefaultShellUnixArgs"; //$NON-NLS-1$
 }

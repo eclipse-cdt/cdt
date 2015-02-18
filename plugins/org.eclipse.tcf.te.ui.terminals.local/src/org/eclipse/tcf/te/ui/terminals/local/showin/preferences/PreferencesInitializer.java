@@ -33,5 +33,6 @@ public class PreferencesInitializer extends AbstractPreferenceInitializer {
 		ScopedEclipsePreferences prefs = UIPlugin.getScopedPreferences();
 
 		prefs.putDefaultString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME);
+		prefs.putDefaultString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX, null);
 	}
 }

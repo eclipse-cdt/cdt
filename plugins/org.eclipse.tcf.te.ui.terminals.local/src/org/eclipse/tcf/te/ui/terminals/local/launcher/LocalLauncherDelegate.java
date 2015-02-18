@@ -257,10 +257,13 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 			}
 		}
 		if (shell == null) {
-			if (System.getenv("SHELL") != null && !"".equals(System.getenv("SHELL").trim())) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				shell = System.getenv("SHELL").trim(); //$NON-NLS-1$
-			} else {
-				shell = "/bin/sh"; //$NON-NLS-1$
+			shell = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX);
+			if (shell == null || "".equals(shell)) { //$NON-NLS-1$
+				if (System.getenv("SHELL") != null && !"".equals(System.getenv("SHELL").trim())) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					shell = System.getenv("SHELL").trim(); //$NON-NLS-1$
+				} else {
+					shell = "/bin/sh"; //$NON-NLS-1$
+				}
 			}
 		}
 
@@ -286,6 +289,11 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 			image = defaultShell.isAbsolute() ? defaultShell.getAbsolutePath() : defaultShell.getPath();
 		} else {
 			image = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_PATH);
+		}
+
+		String arguments = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS);
+		if (arguments == null && !Platform.OS_WIN32.equals(Platform.getOS())) {
+			arguments = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS);
 		}
 
 		// Determine if a PTY will be used
@@ -314,7 +322,6 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 			lineSeparator = (String)properties.get(ITerminalsConnectorConstants.PROP_LINE_SEPARATOR);
 		}
 
-		String arguments = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_ARGS);
 		Process process = (Process)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_OBJ);
 		PTY pty = (PTY)properties.get(ITerminalsConnectorConstants.PROP_PTY_OBJ);
 		ITerminalServiceOutputStreamMonitorListener[] stdoutListeners = (ITerminalServiceOutputStreamMonitorListener[])properties.get(ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS);

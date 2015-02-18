@@ -48,7 +48,7 @@ public class ContentAssistInvocationContext {
 
 	/**
 	 * For tests only.
-	 * @since 5.9
+	 * @since 5.10
 	 */
 	public static void assertNoUndisposedContexts() {
 		Assert.isTrue(numberOfUndisposedContexts.get() == 0,
@@ -177,7 +177,7 @@ public class ContentAssistInvocationContext {
 	}
 
 	/**
-	 * @since 5.9
+	 * @since 5.10
 	 */
 	protected void assertNotDisposed() {
 		if (fDisposed)

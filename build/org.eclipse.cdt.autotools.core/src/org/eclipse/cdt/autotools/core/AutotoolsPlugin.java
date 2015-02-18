@@ -107,6 +107,7 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 	 * 
 	 * @param service service interface
 	 * @return the specified service or null if it's not registered
+	 * @since 1.5
 	 */
 	public static <T> T getService(Class<T> service) {
 		BundleContext context = plugin.getBundle().getBundleContext();

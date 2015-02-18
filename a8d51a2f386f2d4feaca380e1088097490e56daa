@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_dec600e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIExpressionsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-18T16:09:02Z",
+      "side": 1,
+      "message": "In the previous code, we would expect to have received exactly one IExpressionChangedDMEvent event. However, there was nothing that guaranteed that the event arrived before the assert. Switching to queries changes a bit the scheduling (there is one less layer of callbacks) and uncovers the issue.\n\nInstead we use the ServiceEventWaitor to wait for the event to arrive.\n\nI also added a check that the event is the one we expect, by comparing the expression context. I assumed that this would be different for each event. Is it true, and is this check useful?",
+      "revId": "a8d51a2f386f2d4feaca380e1088097490e56daa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_5eb2107c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIExpressionsTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-18T16:09:02Z",
+      "side": 1,
+      "message": "Because of the race condition described above, checking that the number of event received is 0 is meaningless. It is actually hard to confirm that no event is emitted. How much time should we wait to conclude that it\u0027s ok?\n\nHere I wait 100 ms, for a total of 900 ms (the method is called 9 times). Is it enough? Actually, is it a really import check to have?",
+      "revId": "a8d51a2f386f2d4feaca380e1088097490e56daa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

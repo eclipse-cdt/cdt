@@ -4,12 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson	AB		  - Initial implementation of Test cases
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *     Simon Marchi (Ericsson) - Make canRestart and restart throw Exception instead of Throwable.
  *     Simon Marchi (Ericsson) - Add getThreadData.
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +58,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.IGDBMemory2;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -890,5 +893,35 @@ public class SyncUtil {
 		fMemory.getExecutor().execute(query);
 
 		query.get();
+	}
+
+	/**
+	 * Get the addressable size of a memory context, in octets. The addressable
+	 * size is the number of octets in each memory "cell".
+	 *
+	 * @param dmc
+	 *            the memory data model context
+	 * @return the addressable size, in octets.
+	 */
+	public static int readAddressableSize(final IMemoryDMContext dmc) {
+		assert (fMemory instanceof IGDBMemory2);
+		final IGDBMemory2 memoryService = (IGDBMemory2) fMemory;
+
+		return memoryService.getAddressableSize(dmc);
+	}
+
+	/**
+	 * Get the byte order of a memory context.
+	 *
+	 * @param dmc
+	 *            the memory data model context
+	 * @return the byte order
+	 */
+	public static ByteOrder getMemoryByteOrder(final IMemoryDMContext dmc) {
+		assert (fMemory instanceof IGDBMemory2);
+		final IGDBMemory2 memoryService = (IGDBMemory2) fMemory;
+
+		return memoryService.isBigEndian(dmc) ? ByteOrder.BIG_ENDIAN
+				: ByteOrder.LITTLE_ENDIAN;
 	}
 }

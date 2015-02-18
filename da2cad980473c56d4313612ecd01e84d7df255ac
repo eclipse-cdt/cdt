@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_d9f1fa8b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryByteBuffer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-18T17:59:38Z",
+      "side": 1,
+      "message": "Are the binary ANDs actually useful?\n\nIt seems pointless to do \"\u0026 0xFF\" on an 8-bit variable. Same for the other sizes.",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_79e0ceb5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-18T17:59:38Z",
+      "side": 1,
+      "message": "fWordSize: should not be prefixed with f.",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_59dd0aff",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-18T17:59:38Z",
+      "side": 1,
+      "message": "Same.",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "070b0362_f9a79e90",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-18T17:59:38Z",
+      "side": 1,
+      "message": "I might be missing something, but it seems overly complicated. Also, why use \"count\" as the value?\n\nbyte[] pattern \u003d valueToBytes(1);",
+      "revId": "da2cad980473c56d4313612ecd01e84d7df255ac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

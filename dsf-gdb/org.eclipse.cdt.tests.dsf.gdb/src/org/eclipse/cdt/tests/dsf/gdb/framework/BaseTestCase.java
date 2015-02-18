@@ -260,6 +260,11 @@ public class BaseTestCase {
 			while (line != null) {
 				for (String tag : tagsToFind) {
 					if (line.contains(tag)) {
+						if (fTagLocations.containsKey(tag)) {
+							throw new RuntimeException("Tag " + tag
+									+ " was found twice in " + sourceName);
+						}
+
 						fTagLocations.put(tag, lineNumber);
 						tagsToFind.remove(tag);
 						break;

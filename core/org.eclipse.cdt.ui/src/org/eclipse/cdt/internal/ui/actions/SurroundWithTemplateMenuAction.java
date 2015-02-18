@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -152,8 +151,9 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			menu.add(NONE_APPLICABLE_ACTION);
 		} else {
 			menu.add(new Separator(TEMPLATE_GROUP));
-			for (int i= 0; i < actions.length; i++)
+			for (int i= 0; i < actions.length; i++) {
 				menu.add(actions[i]);
+			}
 		}
 
 		menu.add(new Separator(CONFIG_GROUP));
@@ -221,7 +221,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		CEditor editor= (CEditor) activePart;
 		IAction[] actions= getTemplateActions(editor);
 
-		if ( actions == null || actions.length <= 0) {
+		if (actions == null || actions.length <= 0) {
 			ActionContributionItem item= new ActionContributionItem(NONE_APPLICABLE_ACTION);
 			item.fill(menu, -1);
 		} else {
@@ -236,7 +236,6 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 
 		ActionContributionItem configAction= new ActionContributionItem(new ConfigureTemplatesAction());
 		configAction.fill(menu, -1);
-
 	}
 
 	protected void initMenu() {
@@ -262,7 +261,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 
 	private static IAction[] getTemplateActions(CEditor editor) {
 		ITextSelection textSelection= getTextSelection(editor);
-		if (textSelection == null || textSelection.getLength() == 0)
+		if (textSelection == null || textSelection.isEmpty())
 			return null;
 
 		ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
@@ -270,7 +269,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			return null;
 
 		TemplateCompletionProposalComputer templateComputer = new TemplateCompletionProposalComputer();
-		CContentAssistInvocationContext context = new CContentAssistInvocationContext( editor.getViewer(), textSelection.getOffset(), editor, true, false );
+		CContentAssistInvocationContext context = new CContentAssistInvocationContext(editor.getViewer(), textSelection.getOffset(), editor, true, false);
 
 		try {
 			List<ICompletionProposal> proposals= templateComputer.computeCompletionProposals(context, null);
@@ -295,13 +294,11 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		return (ITextSelection)selection;
 	}
 
-	private static IAction[] getActionsFromProposals(List<ICompletionProposal> proposals, final int offset,
-			final ITextViewer viewer) {
+	private static IAction[] getActionsFromProposals(List<ICompletionProposal> proposals,
+			final int offset, final ITextViewer viewer) {
 		List<Action> result= new ArrayList<>();
 		int j = 1;
-		for (Iterator<ICompletionProposal> it= proposals.iterator(); it.hasNext();) {
-			final ICompletionProposal proposal= it.next();
-
+		for (final ICompletionProposal proposal : proposals) {
 			StringBuilder actionName= new StringBuilder();
 			if (j < 10) {
 				actionName.append('&').append(j).append(' ');
@@ -310,7 +307,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			Action action= new Action(actionName.toString()) {
 				@Override
 				public void run() {
-					applyProposal(proposal, viewer, (char)0, 0, offset);
+					applyProposal(proposal, viewer, (char) 0, 0, offset);
 				}
 			};
 
@@ -357,7 +354,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 				registry.register(helper);
 			}
 
-			((ICompletionProposalExtension2)proposal).apply(viewer, trigger, stateMask, offset);
+			((ICompletionProposalExtension2) proposal).apply(viewer, trigger, stateMask, offset);
 
 			Point selection= proposal.getSelection(document);
 			if (selection != null) {

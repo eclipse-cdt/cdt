@@ -662,7 +662,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 					Object adapted = null;
 
 					Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-					if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 						if (element instanceof org.eclipse.core.resources.IResource) continue;
 
 						adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(org.eclipse.core.resources.IResource.class) : null;

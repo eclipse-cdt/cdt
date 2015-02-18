@@ -45,6 +45,7 @@ public class Messages extends NLS {
 	public static String PreferencePage_workingDir_button_browse;
 	public static String PreferencePage_workingDir_note_label;
 	public static String PreferencePage_workingDir_note_text;
+	public static String PreferencePage_workingDir_button_variables;
 
 	public static String ExternalExecutablesDialog_title_add;
 	public static String ExternalExecutablesDialog_title_edit;

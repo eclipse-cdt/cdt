@@ -18,10 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -39,6 +42,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
@@ -77,6 +82,9 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	/* default */ Combo workingDir;
 	private Button browseButton;
 
+	private Button variablesButton;
+	private boolean hasVariablesButton = false;
+
 	/* default */ final List<Map<String, String>> executables = new ArrayList<Map<String, String>>();
 	/* default */ final Map<String, Image> images = new HashMap<String, Image>();
 
@@ -87,6 +95,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	 */
 	@Override
 	public void init(IWorkbench workbench) {
+		Bundle bundle = Platform.getBundle("org.eclipse.debug.ui"); //$NON-NLS-1$
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+			hasVariablesButton = true;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -108,23 +120,51 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 		Group group = new Group(panel, SWT.NONE);
 		group.setText(Messages.PreferencePage_workingDir_label);
-		group.setLayout(new GridLayout(2, false));
+		group.setLayout(new GridLayout(hasVariablesButton ? 3 : 2, false));
 		group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
 		workingDir = new Combo(group, SWT.DROP_DOWN);
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			workingDir.setItems(new String[] { Messages.PreferencePage_workingDir_userhome_label, Messages.PreferencePage_workingDir_eclipsehome_label, Messages.PreferencePage_workingDir_eclipsews_label });
 		} else {
 			workingDir.setItems(new String[] { Messages.PreferencePage_workingDir_userhome_label, Messages.PreferencePage_workingDir_eclipsehome_label });
 		}
 		workingDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		workingDir.select(0);
+		workingDir.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				boolean valid = true;
+				String message = null;
+
+				String text = workingDir.getText();
+				if (text != null && !"".equals(text.trim()) //$NON-NLS-1$
+							&& !Messages.PreferencePage_workingDir_userhome_label.equals(text)
+							&& !Messages.PreferencePage_workingDir_eclipsehome_label.equals(text)
+							&& !Messages.PreferencePage_workingDir_eclipsews_label.equals(text)) {
+					try {
+						// Resolve possible dynamic variables
+						IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
+						String resolved = vm.performStringSubstitution(text.trim());
+
+						IPath p = new Path(resolved);
+						valid = p.toFile().canRead() && p.toFile().isDirectory();
+					} catch (CoreException ex) {
+						valid = false;
+						message = ex.getLocalizedMessage();
+					}
+				}
+
+				setValid(valid);
+				setErrorMessage(message);
+			}
+		});
 
 		browseButton = new Button(group, SWT.PUSH);
 		browseButton.setText(Messages.PreferencePage_workingDir_button_browse);
 		layoutData = new GridData(SWT.FILL, SWT.CENTER, false, false);
-		layoutData.widthHint = Dialog.convertWidthInCharsToPixels(gc.getFontMetrics(), 10);
+		layoutData.widthHint = Dialog.convertWidthInCharsToPixels(gc.getFontMetrics(), 14);
 		browseButton.setLayoutData(layoutData);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -149,7 +189,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 				// ECLIPSE_WORKSPACE
 				Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-				if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+				if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			        if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
 			        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
 			        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation() != null) {
@@ -168,7 +208,16 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				} else if (Messages.PreferencePage_workingDir_eclipsews_label.equals(text)) {
 					dialog.setFilterPath(ew.toOSString());
 				} else if (text != null && !"".equals(text.trim())) { //$NON-NLS-1$
-					dialog.setFilterPath(text.trim());
+					try {
+						// Resolve possible dynamic variables
+						IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
+						String resolved = vm.performStringSubstitution(text.trim());
+						dialog.setFilterPath(resolved);
+					} catch (CoreException ex) {
+						if (Platform.inDebugMode()) {
+							UIPlugin.getDefault().getLog().log(ex.getStatus());
+						}
+					}
 				}
 
 				String selected = dialog.open();
@@ -188,12 +237,37 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			}
 		});
 
+		if (hasVariablesButton) {
+			variablesButton = new Button(group, SWT.PUSH);
+			variablesButton.setText(Messages.PreferencePage_workingDir_button_variables);
+			layoutData = new GridData(SWT.FILL, SWT.CENTER, false, false);
+			layoutData.widthHint = Dialog.convertWidthInCharsToPixels(gc.getFontMetrics(), 14);
+			variablesButton.setLayoutData(layoutData);
+			variablesButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					org.eclipse.debug.ui.StringVariableSelectionDialog dialog = new org.eclipse.debug.ui.StringVariableSelectionDialog(getShell());
+					dialog.open();
+					String expression = dialog.getVariableExpression();
+					if (expression != null) {
+						if ("${eclipse_home}".equals(expression)) { //$NON-NLS-1$
+							workingDir.select(1);
+						} else if ("${workspace_loc}".equals(expression)) { //$NON-NLS-1$
+							workingDir.select(2);
+						} else {
+							workingDir.setText(expression);
+						}
+					}
+				}
+			});
+		}
+
 		String initialCwd = UIPlugin.getScopedPreferences().getString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
 		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd) || "".equals(initialCwd.trim())) { //$NON-NLS-1$
 			workingDir.select(0);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd)) {
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd) || "${eclipse_home}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(1);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)) {
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd) || "${workspace_loc}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(2);
 		} else {
 			workingDir.setText(new Path(initialCwd).toOSString());
@@ -438,9 +512,9 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		String initialCwd = UIPlugin.getScopedPreferences().getDefaultString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD);
 		if (initialCwd == null || IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME.equals(initialCwd) || "".equals(initialCwd.trim())) { //$NON-NLS-1$
 			workingDir.select(0);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd)) {
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME.equals(initialCwd) || "${eclipse_home}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(1);
-		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)) {
+		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd) || "${workspace_loc}".equals(initialCwd)) { //$NON-NLS-1$
 			workingDir.select(2);
 		} else {
 			workingDir.setText(new Path(initialCwd).toOSString());
@@ -467,8 +541,18 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		} else if (Messages.PreferencePage_workingDir_eclipsews_label.equals(text)) {
 			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS);
 		} else {
-			IPath p = new Path(text.trim());
-			UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, p.toFile().canRead() && p.toFile().isDirectory() ? p.toString() : null);
+			try {
+				// Resolve possible dynamic variables
+				IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
+				String resolved = vm.performStringSubstitution(text.trim());
+
+				IPath p = new Path(resolved);
+				UIPlugin.getScopedPreferences().putString(IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD, p.toFile().canRead() && p.toFile().isDirectory() ? text.trim() : null);
+			} catch (CoreException e) {
+				if (Platform.inDebugMode()) {
+					UIPlugin.getDefault().getLog().log(e.getStatus());
+				}
+			}
 		}
 
 		ExternalExecutablesManager.save(executables);

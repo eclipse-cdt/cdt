@@ -22,11 +22,14 @@ import java.util.Map;
 
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.tcf.te.core.terminals.TerminalServiceFactory;
@@ -125,7 +128,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 			}
 		} else if (IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS.equals(initialCwd)) {
 			Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-			if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+			if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 		        if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
 		        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
 		        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation() != null) {
@@ -133,9 +136,19 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 		        }
 			}
 		} else {
-			IPath p = new Path(initialCwd);
-			if (p.toFile().canRead() && p.toFile().isDirectory()) {
-				cwd = p.toOSString();
+			try {
+				// Resolve possible dynamic variables
+				IStringVariableManager vm = VariablesPlugin.getDefault().getStringVariableManager();
+				String resolved = vm.performStringSubstitution(initialCwd);
+
+				IPath p = new Path(resolved);
+				if (p.toFile().canRead() && p.toFile().isDirectory()) {
+					cwd = p.toOSString();
+				}
+			} catch (CoreException ex) {
+				if (Platform.inDebugMode()) {
+					UIPlugin.getDefault().getLog().log(ex.getStatus());
+				}
 			}
 		}
 
@@ -156,7 +169,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 					Object element = iter.next();
 
 					Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-					if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 						// If the element is not an IResource, try to adapt to IResource
 						if (!(element instanceof org.eclipse.core.resources.IResource)) {
 							Object adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(org.eclipse.core.resources.IResource.class) : null;
@@ -331,7 +344,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 
 		// ECLIPSE_WORKSPACE
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 	        if (org.eclipse.core.resources.ResourcesPlugin.getWorkspace() != null
 	        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot() != null
 	        	            && org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation() != null) {

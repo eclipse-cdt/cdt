@@ -41,6 +41,7 @@
       <import feature="org.eclipse.tm.terminal.serial" version="2.1.300" match="greaterOrEqual"/>
       <import feature="org.eclipse.tm.terminal.ssh" version="2.1.300" match="greaterOrEqual"/>
       <import feature="org.eclipse.tm.terminal.telnet" version="2.1.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.variables" version="3.2.800" match="greaterOrEqual"/>
    </requires>
 
    <plugin

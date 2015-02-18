@@ -149,7 +149,7 @@ public class ProcessSettingsPage extends AbstractSettingsPage {
 			}
 		} else {
 			Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-			if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+			if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 				dialog.setFilterPath(org.eclipse.core.resources.ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
 			}
 		}

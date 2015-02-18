@@ -562,7 +562,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
     private String getResourceEncoding() {
 		String preference = null;
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			preference = org.eclipse.core.resources.ResourcesPlugin.getPlugin().getPluginPreferences().getString(org.eclipse.core.resources.ResourcesPlugin.PREF_ENCODING);
 		}
 

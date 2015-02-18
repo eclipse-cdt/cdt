@@ -77,7 +77,7 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 		label.setLayoutData(layoutData);
 
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			resource = getSelectionResource();
 		}
 
@@ -107,7 +107,7 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
 
 		Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (bundle != null && (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.ACTIVE)) {
+		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
 			// if we have a IResource selection use the location for working directory
 			if (resource instanceof org.eclipse.core.resources.IResource){
 				String dir = ((org.eclipse.core.resources.IResource)resource).getProject().getLocation().toString();

@@ -113,7 +113,7 @@ public class BaseTestCase {
 
 	private static boolean fgStatusHandlersEnabled = true;
 
-	private static HashMap<String, Integer> fTagLocations = new HashMap<>();
+	private HashMap<String, Integer> fTagLocations = new HashMap<>();
 
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
@@ -253,15 +253,19 @@ public class BaseTestCase {
 			Set<String> tagsToFind = new HashSet<>(Arrays.asList(tags));
 			String line;
 			int lineNumber = 1;
-
-			fTagLocations.clear();
+			int numberFound = 0;
 
 			line = reader.readLine();
 			while (line != null) {
 				for (String tag : tagsToFind) {
 					if (line.contains(tag)) {
+						if (fTagLocations.containsKey(tag)) {
+							throw new RuntimeException("Tag " + tag
+									+ " was found twice in " + sourceName);
+						}
+
 						fTagLocations.put(tag, lineNumber);
-						tagsToFind.remove(tag);
+						numberFound++;
 						break;
 					}
 				}
@@ -271,7 +275,7 @@ public class BaseTestCase {
 			}
 
 			/* Make sure all tags have been found */
-			if (tagsToFind.size() > 0) {
+			if (numberFound != tagsToFind.size()) {
 				throw new RuntimeException(
 						"Some tags were not found in " + sourceName);
 			}

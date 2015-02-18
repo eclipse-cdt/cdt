@@ -253,6 +253,7 @@ public class BaseTestCase {
 			Set<String> tagsToFind = new HashSet<>(Arrays.asList(tags));
 			String line;
 			int lineNumber = 1;
+			int numberFound = 0;
 
 			fTagLocations.clear();
 
@@ -260,8 +261,13 @@ public class BaseTestCase {
 			while (line != null) {
 				for (String tag : tagsToFind) {
 					if (line.contains(tag)) {
+						if (fTagLocations.containsKey(tag)) {
+							throw new RuntimeException("Tag " + tag
+									+ " was found twice in " + sourceName);
+						}
+
 						fTagLocations.put(tag, lineNumber);
-						tagsToFind.remove(tag);
+						numberFound++;
 						break;
 					}
 				}
@@ -271,7 +277,7 @@ public class BaseTestCase {
 			}
 
 			/* Make sure all tags have been found */
-			if (tagsToFind.size() > 0) {
+			if (numberFound != tagsToFind.size()) {
 				throw new RuntimeException(
 						"Some tags were not found in " + sourceName);
 			}

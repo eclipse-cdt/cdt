@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.serial;
 
+/**
+ * @since 5.8
+ */
 public enum StopBits {
 
 	S1,

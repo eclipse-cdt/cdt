@@ -28,7 +28,7 @@ public interface IFunctionType extends IType {
     
     /**
      * Whether the function type takes variable number of arguments.
-     * @since 5.9
+     * @since 5.10
      */
     public boolean takesVarArgs();
 }

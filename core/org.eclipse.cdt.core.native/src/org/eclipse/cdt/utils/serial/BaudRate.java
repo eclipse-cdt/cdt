@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.serial;
 
+/**
+ * @since 5.8
+ */
 public enum BaudRate {
 
 	B0(0),

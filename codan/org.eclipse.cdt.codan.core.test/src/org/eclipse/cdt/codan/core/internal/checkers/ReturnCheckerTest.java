@@ -223,6 +223,20 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+	//int bar(int foo)
+	//{
+	//    if(foo)
+	//        return 0;
+	//    else
+	//        return 0;
+	//    foo++;
+	//}
+	public void testBranchesDeadCode_Bug343767() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
 //	int f()
 //	{
 //	    switch (g()) {

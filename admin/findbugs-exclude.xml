@@ -65,6 +65,7 @@
 			<Method name="start" params="org.osgi.framework.BundleContext" returns="void"/>
 			<Method name="stop" params="org.osgi.framework.BundleContext" returns="void"/>
 			<Class name="~.*\.Activator"/>
+			<Class name="~.*\..*Plugin"/>
 		</Or>
 	</Match>
 	

@@ -84,7 +84,7 @@
                id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.views.TaskList"
+               relative="org.eclipse.ui.views.ProblemView"
                visible="false">
          </view>
       </perspectiveExtension>
@@ -97,7 +97,7 @@
                id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.views.TaskList"
+               relative="org.eclipse.ui.views.ProblemView"
                visible="false">
          </view>
       </perspectiveExtension>

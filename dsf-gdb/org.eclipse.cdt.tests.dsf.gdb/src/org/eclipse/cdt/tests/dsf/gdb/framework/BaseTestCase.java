@@ -251,6 +251,7 @@ public class BaseTestCase {
 		try (BufferedReader reader =
 				new BufferedReader(new FileReader(SOURCE_PATH + sourceName))) {
 			Set<String> tagsToFind = new HashSet<>(Arrays.asList(tags));
+			Set<String> tagsFound = new HashSet<>();
 			String line;
 			int lineNumber = 1;
 
@@ -260,8 +261,13 @@ public class BaseTestCase {
 			while (line != null) {
 				for (String tag : tagsToFind) {
 					if (line.contains(tag)) {
+						if (tagsFound.contains(tag)) {
+							throw new RuntimeException("Tag " + tag
+									+ " was found twice in " + sourceName);
+						}
+
 						fTagLocations.put(tag, lineNumber);
-						tagsToFind.remove(tag);
+						tagsFound.add(tag);
 						break;
 					}
 				}
@@ -271,7 +277,7 @@ public class BaseTestCase {
 			}
 
 			/* Make sure all tags have been found */
-			if (tagsToFind.size() > 0) {
+			if (tagsToFind.size() != tagsFound.size()) {
 				throw new RuntimeException(
 						"Some tags were not found in " + sourceName);
 			}

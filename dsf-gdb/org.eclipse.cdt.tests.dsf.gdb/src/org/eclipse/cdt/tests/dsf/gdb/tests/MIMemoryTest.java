@@ -1,19 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Ericsson and others.
+ * Copyright (c) 2007, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson	AB		- Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
@@ -37,6 +42,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.MemoryByteBuffer;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -71,6 +77,8 @@ public class MIMemoryTest extends BaseTestCase {
 	private MIRunControl        fRunControl;
 	private IMemory             fMemoryService;
 	private IExpressions        fExpressionService;
+	private int 				fWordSize = 1 /* Default */;
+	private ByteOrder 			fByteOrder;
 
 	// Keeps track of the MemoryChangedEvents
 	private final int BLOCK_SIZE = 256;
@@ -114,6 +122,9 @@ public class MIMemoryTest extends BaseTestCase {
         		fSession.addServiceEventListener(MIMemoryTest.this, null);
         		fBaseAddress = null;
         		clearEventCounters();
+
+				fWordSize = SyncUtil.readAddressableSize(fMemoryDmc);
+				fByteOrder = SyncUtil.getMemoryByteOrder(fMemoryDmc);
             }
         };
         fSession.getExecutor().submit(runnable).get();
@@ -122,7 +133,7 @@ public class MIMemoryTest extends BaseTestCase {
 	@Override
 	protected void setLaunchAttributes() {
 		super.setLaunchAttributes();
-		
+
 		// Select the binary to run the tests against
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EXEC_PATH + EXEC_NAME);
 	}
@@ -209,16 +220,35 @@ public class MIMemoryTest extends BaseTestCase {
 		 return count;
 	 }
 
+
+	private byte[] valueToBytes(int val) {
+		ByteBuffer buff = ByteBuffer.allocate(fWordSize);
+		switch (fWordSize) {
+		case 1:
+			byte bvalue = (byte) val;
+			return buff.put(bvalue).array();
+		case 2:
+			short svalue = (short) val;
+			return buff.putShort(svalue).array();
+		case 4:
+			return buff.putInt(val).array();
+		case 8:
+			long lvalue = val;
+			return buff.putLong(lvalue).array();
+		default:
+			return null;
+		}
+	}
 	 /* ------------------------------------------------------------------------
 	 * evaluateExpression
 	 * ------------------------------------------------------------------------
 	 * Invokes the ExpressionService to evaluate an expression. In theory, we
 	 * shouldn't rely on another service to test this one but we need a way to
 	 * access a variable from the test application in order verify that the
-	 * memory operations (read/write) are working properly.   
+	 * memory operations (read/write) are working properly.
 	 * ------------------------------------------------------------------------
 	 * @param expression Expression to resolve
-	 * @return Resolved expression  
+	 * @return Resolved expression
 	 * @throws InterruptedException
 	 * ------------------------------------------------------------------------
 	 */
@@ -247,16 +277,19 @@ public class MIMemoryTest extends BaseTestCase {
 	 * ------------------------------------------------------------------------
 	 */
 	private void readMemoryByteAtOffset(final IMemoryDMContext dmc, final IAddress address,
-			final long offset, final int word_size, final int count, final MemoryByte[] result)
+			final long offset, final int wordSize, final int count, final MemoryByte[] result)
 	throws InterruptedException
 	{
 		// Set the Data Request Monitor
-		final DataRequestMonitor<MemoryByte[]> drm = 
+		final DataRequestMonitor<MemoryByte[]> drm =
 			new DataRequestMonitor<MemoryByte[]>(fSession.getExecutor(), null) {
 				@Override
 				protected void handleCompleted() {
 					if (isSuccess()) {
-						result[(int) offset] = getData()[0];
+						// Save the results to the proper location as per address offset and wordSize
+						for (int i=0; i < wordSize; i++) {
+							result[(int) offset*wordSize+i] = getData()[i];
+						}
 					}
 					fWait.waitFinished(getStatus());
 				}
@@ -266,7 +299,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fSession.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
-				fMemoryService.getMemory(dmc, address, offset, word_size, count, drm);
+				fMemoryService.getMemory(dmc, address, offset, wordSize, count, drm);
 			}
 		});
 	}
@@ -290,11 +323,11 @@ public class MIMemoryTest extends BaseTestCase {
 	 * ------------------------------------------------------------------------
 	 */
 	private void writeMemory(final IMemoryDMContext dmc, final IAddress address,
-			final long offset, final int word_size, final int count, final byte[] buffer)
+			final long offset, final int wordSize, final int count, final byte[] buffer)
 	throws InterruptedException
 	{
 		// Set the Data Request Monitor
-		final RequestMonitor rm = 
+		final RequestMonitor rm =
 			new RequestMonitor(fSession.getExecutor(), null) {
 				@Override
 				protected void handleCompleted() {
@@ -306,7 +339,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fSession.getExecutor().submit(new Runnable() {
 			@Override
 			public void run() {
-				fMemoryService.setMemory(dmc, address, offset, word_size, count, buffer, rm);
+				fMemoryService.setMemory(dmc, address, offset, wordSize, count, buffer, rm);
 			}
 		});
 	}
@@ -354,7 +387,6 @@ public class MIMemoryTest extends BaseTestCase {
 		// Setup call parameters
 		IMemoryDMContext dmc = null;
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
@@ -363,7 +395,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.readMemory(dmc, fBaseAddress, offset, word_size, count);
+			SyncUtil.readMemory(dmc, fBaseAddress, offset, fWordSize, count);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -383,16 +415,20 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		fBaseAddress = new Addr64("0");
 
 		// Perform the test
-		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count);
 
-		//	Ensure that we receive a block of invalid memory bytes
-		assertEquals("Wrong value", (byte) 0, buffer[0].getValue());
-		assertEquals("Wrong flags", (byte) 32, buffer[0].getFlags());
+		// Ensure that we receive a block of invalid memory bytes
+		byte flags = MemoryByte.ENDIANESS_KNOWN;
+		if (fByteOrder == ByteOrder.BIG_ENDIAN) {
+			flags |= MemoryByte.BIG_ENDIAN;
+		}
+
+		assertThat(buffer[0].getValue(), is((byte) 0));
+		assertThat(buffer[0].getFlags(), is(flags));
 
 		// Ensure no MemoryChangedEvent event was received
 		assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -441,16 +477,16 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = -1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
+		// Perform the test
 		expectedException.expect(ExecutionException.class);
 		expectedException.expectMessage("Invalid word count (< 0)");
 
 		// Perform the test
 		try {
-			SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+			SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -470,16 +506,15 @@ public class MIMemoryTest extends BaseTestCase {
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Verify that all bytes are '0'
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			IAddress address = fBaseAddress.add(i);
-			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, offset, word_size, count);
-			assertEquals("Wrong value read at offset " + i, (byte) 0, buffer[0].getValue());
+			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, 0, fWordSize, count);
+			MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
+			assertThat(memBuf.getNextWord(), is(0L));
 		}
 
 		// Run to the point where the variable is initialized
@@ -487,10 +522,12 @@ public class MIMemoryTest extends BaseTestCase {
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Verify that all bytes are set
-		for (int i = 0; i < BLOCK_SIZE; i++) {
+		for (long i = 0; i < BLOCK_SIZE; i++) {
 			IAddress address = fBaseAddress.add(i);
-			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, offset, word_size, count);
-			assertEquals("Wrong value read at offset " + i, (byte) i, buffer[0].getValue());
+			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, address, 0, fWordSize, count);
+			MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
+
+			assertThat(memBuf.getNextWord(), is(i));
 		}
 
 		// Ensure no MemoryChangedEvent event was received
@@ -510,15 +547,14 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		int word_size = 1;
 		int count = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Verify that all bytes are '0'
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-			assertEquals("Wrong value read at offset " + offset, (byte) 0, buffer[0].getValue());
-
+			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count);
+			MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
+			assertThat(memBuf.getNextWord(), is(0L));
 		}
 
 		// Run to the point where the array is set
@@ -526,9 +562,10 @@ public class MIMemoryTest extends BaseTestCase {
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Verify that all bytes are set
-		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-			assertEquals("Wrong value read at offset " + offset, (byte) offset, buffer[0].getValue());
+		for (long offset = 0; offset < BLOCK_SIZE; offset++) {
+			MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count);
+			MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
+			assertThat(memBuf.getNextWord(), is(offset));
 		}
 
 		// Ensure no MemoryChangedEvent event was received
@@ -548,18 +585,16 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		long offset = 0;
-		int word_size = 1;
 		int count = BLOCK_SIZE;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Get the memory block
-		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, count);
+		MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
 
 		// Verify that all bytes are '0'
 		for (int i = 0; i < count; i++) {
-			assertEquals("Wrong value read at offset " + i, (byte) 0, buffer[i].getValue());
-
+			assertThat(memBuf.getNextWord(), is(0L));
 		}
 
 		// Run to the point where the variable is initialized
@@ -567,11 +602,12 @@ public class MIMemoryTest extends BaseTestCase {
 		SyncUtil.step(StepType.STEP_RETURN);
 
 		// Get the memory block
-		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+		buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, count);
+		memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
 
 		// Verify that all bytes are '0'
-		for (int i = 0; i < count; i++) {
-			assertEquals("Wrong value read at offset " + i, (byte) i, buffer[i].getValue());
+		for (long i = 0; i < count; i++) {
+			assertThat(memBuf.getNextWord(), is(i));
 
 		}
 
@@ -597,7 +633,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		byte[] buffer = new byte[count];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -607,7 +642,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.writeMemory(null, fBaseAddress, offset, word_size, count, buffer);
+			SyncUtil.writeMemory(null, fBaseAddress, offset, fWordSize, count, buffer);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -627,7 +662,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		byte[] buffer = new byte[count];
 		fBaseAddress = new Addr64("0");
@@ -638,7 +672,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, buffer);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -689,7 +723,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = -1;
 		byte[] buffer = new byte[1];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -699,7 +732,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, buffer);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -720,7 +753,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 10;
 		byte[] buffer = new byte[count - 1];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -730,7 +762,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, buffer);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -751,25 +783,26 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = BLOCK_SIZE;
-		byte[] buffer = new byte[count];
+		//initialize write data buffer
+		byte[] buffer;
+
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		for (int i = 0; i < count; i++) {
-			
+
 			// [1] Ensure that the memory byte = 0
-			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
+			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, fWordSize, 1);
 			assertEquals("Wrong value read at offset " + i, (byte) 0, block[0].getValue());
 
-			
 			// [2] Write a byte value (count - i - 1)
 			IAddress address = fBaseAddress.add(i);
 			fWait.waitReset();
 			byte expected = (byte) (count - i - 1);
+			buffer = valueToBytes(expected);
 			buffer[0] = expected;
-			SyncUtil.writeMemory(fMemoryDmc, address, offset, word_size, 1, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, address, offset, fWordSize, 1, buffer);
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
 			// (I hardly believe there are no synchronization problems here...)
@@ -778,7 +811,7 @@ public class MIMemoryTest extends BaseTestCase {
 			//assertTrue("MemoryChangedEvent problem at offset " + i, fMemoryAddressesChanged[i]);
 
 			// [4] Verify that the memory byte was written correctly
-			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
+			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, fWordSize, 1);
 			assertEquals("Wrong value read at offset " + i, expected, block[0].getValue());
 		}
 
@@ -799,23 +832,23 @@ public class MIMemoryTest extends BaseTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		int word_size = 1;
 		int count = BLOCK_SIZE;
-		byte[] buffer = new byte[count];
+		byte[] buffer;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Perform the test
 		for (int offset = 0; offset < count; offset++) {
-			
+
 			// [1] Ensure that the memory byte = 0
-			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
+			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, 1);
 			assertEquals("Wrong value read at offset " + offset, (byte) 0, block[0].getValue());
-			
+
 			// [2] Write a byte value (count - offset - 1)
 			fWait.waitReset();
 			byte expected = (byte) (count - offset - 1);
+			buffer = valueToBytes(expected);
 			buffer[0] = expected;
-			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, 1, buffer);
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
 			// TODO FOR REVIEW: this fails
@@ -823,7 +856,7 @@ public class MIMemoryTest extends BaseTestCase {
 			//assertTrue("MemoryChangedEvent problem at offset " + offset, fMemoryAddressesChanged[offset]);
 
 			// [4] Verify that the memory byte was written correctly
-			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
+			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, 1);
 			assertEquals("Wrong value read at offset " + offset, expected, block[0].getValue());
 		}
 
@@ -845,28 +878,29 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		long offset = 0;
-		int word_size = 1;
 		int count = BLOCK_SIZE;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Make sure that the memory block is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, count);
+		MemoryByteBuffer memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
 		for (int i = 0; i < count; i++) {
-			assertEquals("Wrong value read at offset " + i, (byte) 0, block[i].getValue());
+			assertThat(memBuf.getNextWord(), is(0L));
 		}
 
 		// Write an initialized memory block
-		byte[] buffer = new byte[count];
+		ByteBuffer buffer = ByteBuffer.allocate(count * fWordSize); 
 		for (int i = 0; i < count; i++) {
-			buffer[i] = (byte) i;
+			buffer.put(valueToBytes(i));
 		}
-		SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+
+		SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, count, buffer.array());
 
 		// Make sure that the memory block is initialized
-		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count);
-		for (int i = 0; i < count; i++) {
-			assertEquals("Wrong value read at offset " + i, (byte) i, block[i].getValue());
+		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, count);
+		memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (long i = 0; i < count; i++) {
+			assertThat(memBuf.getNextWord(), is(i));
 		}
 
 		// Ensure the MemoryChangedEvent events were received
@@ -892,7 +926,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		byte[] pattern = new byte[count];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -902,7 +935,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.fillMemory(null, fBaseAddress, offset, word_size, count, pattern);
+			SyncUtil.fillMemory(null, fBaseAddress, offset, fWordSize, count, pattern);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("Incorrect count of MemoryChangedEvent", 0, getEventCount());
@@ -922,11 +955,10 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
-		byte[] pattern = new byte[count];
-		fBaseAddress = new Addr64("0");
 
+		byte[] pattern = valueToBytes(1);
+		fBaseAddress = new Addr64("0");
 		// Depending on the GDB, a different command can be used.  Both error message are valid.
 		// Error message for -data-write-memory command
 		String expectedStr1 = "Cannot access memory at address";
@@ -939,7 +971,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
+			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, pattern);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -990,7 +1022,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = -1;
 		byte[] pattern = new byte[1];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -1000,7 +1031,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
+			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, pattern);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -1021,7 +1052,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
 		int count = 1;
 		byte[] pattern = new byte[0];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
@@ -1031,7 +1061,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Perform the test
 		try {
-			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
+			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, pattern);
 		} finally {
 			// Ensure no MemoryChangedEvent event was received
 			assertEquals("MemoryChangedEvent problem: expected 0 events", 0, getEventCount());
@@ -1048,37 +1078,44 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		long offset = 0;
-		int word_size = 1;
-		int count = 1;
-		int length = 4;
-		byte[] pattern = new byte[length];
-		for (int i = 0; i < length; i++) pattern[i] = (byte) i;
+		int repetitionCount = 1;
+		int patternLen = 4;
+
+		// Prepare the buffer
+		ByteBuffer patternBuffer = ByteBuffer.allocate(patternLen * fWordSize);
+		for (int i = 0; i < patternLen; i++) {
+			patternBuffer.put(valueToBytes(i));
+		}
+
+		byte[] pattern = patternBuffer.array();
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
-		for (int i = 0; i < (count * length); i++)
-			assertEquals("Wrong value read at offset " + i, (byte) 0, block[i].getValue());
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, repetitionCount * patternLen);
+		MemoryByteBuffer memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (int i = 0; i < (repetitionCount * patternLen); i++) {
+			assertThat(memBuf.getNextWord(), is(0L));
+		}
 
-		for (int i = 0; i < BLOCK_SIZE; i += length) {
+		for (int i = 0; i < BLOCK_SIZE; i += patternLen) {
 			IAddress address = fBaseAddress.add(i);
-			SyncUtil.fillMemory(fMemoryDmc, address, offset, word_size, count, pattern);
+			SyncUtil.fillMemory(fMemoryDmc, address, 0, fWordSize, repetitionCount, pattern);
 		}
 
 		// Verify that the memory is correctly set
-		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, word_size, count * length);
-		for (int i = 0; i < count; i++)
-			for (int j = 0; j < length; j++) {
-				int index = i * length + j;
-				assertEquals("Wrong value read at offset " + index, (byte) j, block[index].getValue());
+		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, repetitionCount * patternLen);
+		memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (long i = 0; i < repetitionCount; i++) {
+			for (long j = 0; j < patternLen; j++) {
+				assertThat(memBuf.getNextWord(), is(j));
 			}
+		}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE / length, getEventCount());
+		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE / patternLen, getEventCount());
 		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
 	}
 
@@ -1096,35 +1133,40 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
-		int count = 64;
-		int length = 4;
-		byte[] pattern = new byte[length];
-		for (int i = 0; i < length; i++) pattern[i] = (byte) i;
+		int patternLength = 4;
+		int patternRepetitionCount = BLOCK_SIZE / patternLength;
+
+		ByteBuffer patternBuf = ByteBuffer.allocate(patternLength * fWordSize);
+		for (int i = 0; i < patternLength; i++) {
+			patternBuf.put(valueToBytes(i));
+		}
+
+		byte[] pattern = patternBuf.array();
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
-		for (int i = 0; i < (count * length); i++)
-			assertEquals("Wrong value read at offset " + i, 0, block[i].getValue());
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, patternRepetitionCount * patternLength);
+		MemoryByteBuffer memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (int i = 0; i < (patternRepetitionCount * patternLength); i++) {
+			assertThat(memBuf.getNextWord(), is(0L));
+		}
 
-		for (int i = 0; i < (BLOCK_SIZE / length); i++) {
-			offset = i * length;
-			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1, pattern);
+		for (int i = 0; i < patternRepetitionCount; i++) {
+			offset = i * patternLength;
+			SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, 1, pattern);
 		}
 
 		// Verify that the memory is correctly set
-		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, word_size, count * length);
-		for (int i = 0; i < count; i++)
-			for (int j = 0; j < length; j++) {
-				int index = i * length + j;
-				assertEquals("Wrong value read at offset " + index, (byte) j, block[index].getValue());
+		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, patternRepetitionCount * patternLength);
+		memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (int i = 0; i < patternRepetitionCount; i++)
+			for (long j = 0; j < patternLength; j++) {
+				assertThat(memBuf.getNextWord(), is(j));
 			}
 
 		// Ensure the MemoryChangedEvent events were received
-		assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE / length, getEventCount());
+		assertEquals("Incorrect count of MemoryChangedEvent", patternRepetitionCount, getEventCount());
 		assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
-
 	}
 
 	// ------------------------------------------------------------------------
@@ -1140,29 +1182,36 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		long offset = 0;
-		int word_size = 1;
-		int count = 64;
-		int length = 4;
-		byte[] pattern = new byte[length];
-		for (int i = 0; i < length; i++) pattern[i] = (byte) i;
+		int maxPatternRepetitionCount = 64;
+		int patternLength = 4;
+
+		ByteBuffer mBuff = ByteBuffer.allocate(patternLength * fWordSize);
+		for (int i = 0; i < patternLength; i++) {
+			mBuff.put(valueToBytes(i));
+		}
+
+		byte[] pattern = mBuff.array();
+
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Ensure that the memory is zeroed
-		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
-		for (int i = 0; i < (count * length); i++)
-			assertEquals("Wrong value read at offset " + i, (byte) 0, block[i].getValue());
-		
+		MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, maxPatternRepetitionCount * patternLength);
+		MemoryByteBuffer memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (int i = 0; i < (maxPatternRepetitionCount * patternLength); i++) {
+			assertThat(memBuf.getNextWord(), is(0L));
+		}
+
 		// Write the pattern [count] times
-		SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, pattern);
+		SyncUtil.fillMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, maxPatternRepetitionCount, pattern);
 
 		// Verify that the memory is correctly set
-		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, count * length);
-		for (int i = 0; i < count; i++)
-			for (int j = 0; j < length; j++) {
-				int index = i * length + j;
-				assertEquals("Wrong value read at offset " + index, (byte) j, block[index].getValue());
+		block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, 0, fWordSize, maxPatternRepetitionCount * patternLength);
+		memBuf = new MemoryByteBuffer(block, fByteOrder, fWordSize);
+		for (int i = 0; i < maxPatternRepetitionCount; i++) {
+			for (long j = 0; j < patternLength; j++) {
+				assertThat(memBuf.getNextWord(), is(j));
 			}
+		}
 
 		// Ensure the MemoryChangedEvent events were received
 		assertEquals("Incorrect count of MemoryChangedEvent", 1, getEventCount());
@@ -1183,7 +1232,6 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		int word_size = 1;
 		int count = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
@@ -1193,21 +1241,25 @@ public class MIMemoryTest extends BaseTestCase {
 		// the waitor went into the 'complete' state before we were done queuing
 		// all the requests. To avoid that, we need to add our own tick and then
 		// clear it once we're done queuing all the requests.
-		
+
 		// Verify asynchronously that all bytes are '0'
 		fWait.waitReset();
 		fWait.increment();	// see "Interesting issue" comment above  
-		MemoryByte[] buffer = new MemoryByte[BLOCK_SIZE];
+		MemoryByte[] buffer = new MemoryByte[BLOCK_SIZE*fWordSize];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
-			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, fWordSize, count, buffer);
 		}
+
 		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
+
+ 		MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + 0 + "', received '" + buffer[offset].getValue() + "'",
-					(buffer[offset].getValue() == (byte) 0));
+			long val = memBuf.getNextWord();
+			assertTrue("Wrong value read at offset " + offset + ": expected '" + 0 + "', received '" + val + "'",
+					(val == 0));
 		}
 
 		// Write asynchronously
@@ -1215,10 +1267,13 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.increment(); 	// see "Interesting issue" comment above		
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
-			byte[] block = new byte[count];
-			block[0] = (byte) offset;
-			writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, block);
+			ByteBuffer mBuff = ByteBuffer.allocate(count* fWordSize);
+			mBuff.put(valueToBytes(offset));
+
+			byte[] block = ByteBuffer.allocate(count* fWordSize).put(valueToBytes(offset)).array();
+			writeMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, count, block);
 		}
+
 		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
@@ -1233,31 +1288,34 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.increment();	// see "Interesting issue" comment above
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
-			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, fWordSize, count, buffer);
 		}
 		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
+
+ 		memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + offset + "', received '" + buffer[offset].getValue() + "'",
-					(buffer[offset].getValue() == (byte) offset));
+			long val = memBuf.getNextWord();
+			assertTrue("Wrong value read at offset " + offset + ": expected '" + offset + "', received '" + val + "'",
+					(val == offset));
 		}
 	}
 
-	private void memoryCacheReadHelper(int offset, int count, int word_size)
+	private void memoryCacheReadHelper(long offset, int count, int wordSize)
 			throws InterruptedException, ExecutionException {
-		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress,
-				offset, word_size, count);
+		MemoryByte[] buffer = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, wordSize, count);
+		MemoryByteBuffer memBuf = new MemoryByteBuffer(buffer, fByteOrder, fWordSize);
 
 		// Verify that all bytes are correctly set
-		for (int i = 0; i < count; i++) {
-			assertEquals("Wrong value read at offset " + i, (byte) (offset + i), buffer[i].getValue());
+		for (long i = 0; i < count; i++) {
+			assertThat("index " + i, memBuf.getNextWord(), is(offset + i));
 		}
 	}
 
 	// ------------------------------------------------------------------------
 	// memoryCacheRead
-	// Get a bunch of blocks to exercise the memory cache 
+	// Get a bunch of blocks to exercise the memory cache
 	// ------------------------------------------------------------------------
 	@Test
 	public void memoryCacheRead() throws Throwable {
@@ -1265,41 +1323,40 @@ public class MIMemoryTest extends BaseTestCase {
 		// Run to the point where the variable is initialized
 		SyncUtil.runToLocation("MemoryTestApp.cc:setBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
-        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		int word_size = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		// Get the 'reference' memory block
-		memoryCacheReadHelper(0, BLOCK_SIZE, word_size);
+		memoryCacheReadHelper(0, BLOCK_SIZE, fWordSize);
 
 		// Clear the cache
 		SyncUtil.step(StepType.STEP_OVER);
 
 		// Get a first block
-		memoryCacheReadHelper(0, 64, word_size);
+		memoryCacheReadHelper(0, 64, fWordSize);
 
 		// Get a second block
-		memoryCacheReadHelper(128, 64, word_size);
+		memoryCacheReadHelper(128, 64, fWordSize);
 
 		// Get a third block between the first 2
-		memoryCacheReadHelper(80, 32, word_size);
+		memoryCacheReadHelper(80, 32, fWordSize);
 
 		// Get a block that is contiguous to the end of an existing block
-		memoryCacheReadHelper(192, 32, word_size);
+		memoryCacheReadHelper(192, 32, fWordSize);
 
 		// Get a block that ends beyond an existing block
-		memoryCacheReadHelper(192, 64, word_size);
+		memoryCacheReadHelper(192, 64, fWordSize);
 
 		// Get a block that will require 2 reads (for the gaps between blocks 1-2 and 2-3)
-		memoryCacheReadHelper(32, 128, word_size);
+		memoryCacheReadHelper(32, 128, fWordSize);
 
 		// Get a block that involves multiple cached blocks
-		memoryCacheReadHelper(48, 192, word_size);
+		memoryCacheReadHelper(48, 192, fWordSize);
 
 		// Get the whole block
-		memoryCacheReadHelper(0, BLOCK_SIZE, word_size);
+		memoryCacheReadHelper(0, BLOCK_SIZE, fWordSize);
 
 		// Ensure no MemoryChangedEvent event was received
 		assertEquals("Incorrect count of MemoryChangedEvent", 0, getEventCount());

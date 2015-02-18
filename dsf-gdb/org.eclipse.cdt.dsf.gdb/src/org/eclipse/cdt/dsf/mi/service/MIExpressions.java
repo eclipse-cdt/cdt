@@ -1177,7 +1177,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	}
 	
 	/**
-	 * @since 4.6
+	 * @since 4.7
 	 */
 	protected IExpressionDMData.BasicType getBasicType(ExprMetaGetVarInfo varInfo) {
 		IExpressionDMData.BasicType basicType = null;

@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * @since 5.8
+ */
 public class SerialPort {
 
 	private final String portName;

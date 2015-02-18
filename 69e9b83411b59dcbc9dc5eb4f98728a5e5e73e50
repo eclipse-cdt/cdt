@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "070b0362_2d2e0846",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/cfg/ControlFlowGraph.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-18T01:26:19Z",
+      "side": 1,
+      "message": "It won\u0027t work for label node. I have to come up with a test but basically if there is code like\n goto b;\n a: something;\nIf something is dead, we need to add a: to dead graph too, but it won\u0027t happen in this case. The other issue technically \"start\" MUST be added to the graph always, because it is a start node. If I am traversing from it, there is nothing in result set yet, and this would just abort...",
+      "revId": "69e9b83411b59dcbc9dc5eb4f98728a5e5e73e50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

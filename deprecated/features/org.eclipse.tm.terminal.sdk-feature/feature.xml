@@ -36,8 +36,11 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
    </url>
 
+   <includes
+         id="org.eclipse.tm.terminal.view"
+         version="0.0.0"/>
+
    <requires>
-      <import feature="org.eclipse.tm.terminal.view" version="4.0.0" match="compatible"/>
       <import feature="org.eclipse.tm.terminal.serial.sdk.feature" version="4.0.0" match="compatible"/>
       <import feature="org.eclipse.tm.terminal.ssh.sdk.feature" version="4.0.0" match="compatible"/>
       <import feature="org.eclipse.tm.terminal.telnet.sdk.feature" version="4.0.0" match="compatible"/>

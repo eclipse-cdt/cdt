@@ -16,6 +16,24 @@
       "revId": "9cc8574a135a4671e7e9487d7a5887d944c3f93a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7f18fa3_f191a224",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-02-19T04:46:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7f18fa3_2ef9078f",
+      "revId": "9cc8574a135a4671e7e9487d7a5887d944c3f93a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

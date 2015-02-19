@@ -36,9 +36,9 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
    </url>
 
-   <requires>
-      <import feature="org.eclipse.tm.terminal.feature" version="4.0.0" match="compatible"/>
-   </requires>
+   <includes
+         id="org.eclipse.tm.terminal.feature"
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.tm.terminal.source"

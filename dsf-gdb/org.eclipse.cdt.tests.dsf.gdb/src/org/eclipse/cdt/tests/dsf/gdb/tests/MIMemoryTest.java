@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -41,7 +43,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -633,8 +634,13 @@ public class MIMemoryTest extends BaseTestCase {
 		fBaseAddress = new Addr64("0");
 
 		expectedException.expect(ExecutionException.class);
-		// Don't test the error message since it changes from one GDB version to another
-		// TODO: there is another test that does it, we could do it.
+		String expectedStr1 = "Cannot access memory at address";
+		// Error message for new -data-write-memory-bytes command
+		String expectedStr2 = "Could not write memory";
+		expectedException.expect(ExecutionException.class);
+		expectedException.expectMessage(anyOf(
+				containsString(expectedStr1),
+				containsString(expectedStr2)));
 
 		// Perform the test
 		try {
@@ -933,9 +939,9 @@ public class MIMemoryTest extends BaseTestCase {
 		// Error message for new -data-write-memory-bytes command
 		String expectedStr2 = "Could not write memory";
 		expectedException.expect(ExecutionException.class);
-		expectedException.expectMessage(CoreMatchers.anyOf(
-				CoreMatchers.containsString(expectedStr1),
-				CoreMatchers.containsString(expectedStr2)));
+		expectedException.expectMessage(anyOf(
+				containsString(expectedStr1),
+				containsString(expectedStr2)));
 
 		// Perform the test
 		try {

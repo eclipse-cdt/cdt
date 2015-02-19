@@ -38,6 +38,7 @@
  * Anton Leherbauer (Wind River) - [434749] UnhandledEventLoopException when copying to clipboard while the selection is empty
  * Martin Oberhuber (Wind River) - [436612] Restore Eclipse 3.4 compatibility by using Reflection
  * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
+ * Anton Leherbauer (Wind River) - [420928] Terminal widget leaks memory
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -96,7 +97,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.tm.internal.terminal.textcanvas.ITextCanvasModel;
 import org.eclipse.tm.internal.terminal.textcanvas.PipedInputStream;
 import org.eclipse.tm.internal.terminal.textcanvas.PollingTextCanvasModel;
 import org.eclipse.tm.internal.terminal.textcanvas.TextCanvas;
@@ -181,6 +181,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 * Is protected by synchronize on this
 	 */
 	volatile private Job fJob;
+
+	private PollingTextCanvasModel fPollingTextCanvasModel;
 
 	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
 		this(target, wndParent, connectors, false);
@@ -387,6 +389,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 		disconnectTerminal();
 		fClipboard.dispose();
+		fPollingTextCanvasModel.stopPolling();
 		getTerminalText().dispose();
 	}
 
@@ -711,8 +714,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		ITerminalTextDataSnapshot snapshot=fTerminalModel.makeSnapshot();
 		// TODO how to get the initial size correctly!
 		snapshot.updateSnapshot(false);
-		ITextCanvasModel canvasModel=new PollingTextCanvasModel(snapshot);
-		fCtlText=new TextCanvas(fWndParent,canvasModel,SWT.NONE,new TextLineRenderer(fCtlText,canvasModel));
+		fPollingTextCanvasModel=new PollingTextCanvasModel(snapshot);
+		fCtlText=new TextCanvas(fWndParent,fPollingTextCanvasModel,SWT.NONE,new TextLineRenderer(fCtlText,fPollingTextCanvasModel));
 
 		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fCtlText.addResizeHandler(new TextCanvas.ResizeListener() {
@@ -1232,10 +1235,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				if(fCtlText!=null && !fCtlText.isDisposed()) {
 					if (isConnected()) {
 						fCtlText.setCursorEnabled(true);
+						fPollingTextCanvasModel.startPolling();
 					} else {
 						fCtlText.setCursorEnabled(false);
 						// Stop capturing all key events
 						fFocusListener.captureKeyEvents(false);
+						fPollingTextCanvasModel.stopPolling();
 					}
 				}
 			}

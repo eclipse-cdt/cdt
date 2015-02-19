@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -41,6 +42,8 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.MemoryReadQuery;
+import org.eclipse.cdt.tests.dsf.gdb.framework.MemoryWriteQuery;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
@@ -68,7 +71,6 @@ import org.junit.runner.RunWith;
 public class MIMemoryTest extends BaseTestCase {
 	private static final String EXEC_NAME = "MemoryTestApp.exe";
 
-	private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession          fSession;
 	private DsfServicesTracker  fServicesTracker;
 	private IMemoryDMContext    fMemoryDmc;
@@ -230,89 +232,6 @@ public class MIMemoryTest extends BaseTestCase {
 	{
 		IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
 		return new Addr64(SyncUtil.getExpressionValue(expressionDMC, IFormattedValues.HEX_FORMAT));
-	}
-
-	/* ------------------------------------------------------------------------
-	 * readMemoryByteAtOffset
-	 * ------------------------------------------------------------------------
-	 * Issues a memory read request. The result is stored in fWait.
-	 * ------------------------------------------------------------------------
-	 * Typical usage:
-	 *  getMemory(dmc, address, offset, count);
-	 *  fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-	 *  assertTrue(fWait.getMessage(), fWait.isOK());
-	 * ------------------------------------------------------------------------
-	 * @param dmc		the data model context
-	 * @param address	the memory block address
-	 * @param offset	the offset in the buffer
-	 * @param count		the number of bytes to read
-	 * @param result	the expected byte
-	 * @throws InterruptedException
-	 * ------------------------------------------------------------------------
-	 */
-	private void readMemoryByteAtOffset(final IMemoryDMContext dmc, final IAddress address,
-			final long offset, final int word_size, final int count, final MemoryByte[] result)
-	throws InterruptedException
-	{
-		// Set the Data Request Monitor
-		final DataRequestMonitor<MemoryByte[]> drm = 
-			new DataRequestMonitor<MemoryByte[]>(fSession.getExecutor(), null) {
-				@Override
-				protected void handleCompleted() {
-					if (isSuccess()) {
-						result[(int) offset] = getData()[0];
-					}
-					fWait.waitFinished(getStatus());
-				}
-			};
-
-		// Issue the get memory request
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fMemoryService.getMemory(dmc, address, offset, word_size, count, drm);
-			}
-		});
-	}
-
-	/* ------------------------------------------------------------------------
-	 * writeMemory
-	 * ------------------------------------------------------------------------
-	 * Issues a memory write request.
-	 * ------------------------------------------------------------------------
-	 * Typical usage:
-	 *  writeMemory(dmc, address, offset, count, buffer);
-	 *  fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-	 *  assertTrue(fWait.getMessage(), fWait.isOK());
-	 * ------------------------------------------------------------------------
-	 * @param dmc		the data model context
-	 * @param address	the memory block address (could be an expression)
-	 * @param offset	the offset from address
-	 * @param count		the number of bytes to write
-	 * @param buffer	the byte buffer to write from
-	 * @throws InterruptedException
-	 * ------------------------------------------------------------------------
-	 */
-	private void writeMemory(final IMemoryDMContext dmc, final IAddress address,
-			final long offset, final int word_size, final int count, final byte[] buffer)
-	throws InterruptedException
-	{
-		// Set the Data Request Monitor
-		final RequestMonitor rm = 
-			new RequestMonitor(fSession.getExecutor(), null) {
-				@Override
-				protected void handleCompleted() {
-					fWait.waitFinished(getStatus());
-				}
-			};
-
-		// Issue the get memory request
-		fSession.getExecutor().submit(new Runnable() {
-			@Override
-			public void run() {
-				fMemoryService.setMemory(dmc, address, offset, word_size, count, buffer, rm);
-			}
-		});
 	}
 
 	// ========================================================================
@@ -777,7 +696,6 @@ public class MIMemoryTest extends BaseTestCase {
 
 			// [2] Write a byte value (count - i - 1)
 			IAddress address = fBaseAddress.add(i);
-			fWait.waitReset();
 			byte expected = (byte) (count - i - 1);
 			buffer[0] = expected;
 			SyncUtil.writeMemory(fMemoryDmc, address, offset, wordSize, 1, buffer);
@@ -825,7 +743,6 @@ public class MIMemoryTest extends BaseTestCase {
 			assertEquals("Wrong value read at offset " + offset, (byte) 0, block[0].getValue());
 			
 			// [2] Write a byte value (count - offset - 1)
-			fWait.waitReset();
 			byte expected = (byte) (count - offset - 1);
 			buffer[0] = expected;
 			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, wordSize, 1, buffer);
@@ -1189,6 +1106,8 @@ public class MIMemoryTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void asynchronousReadWrite() throws Throwable {
+		
+		
 
 		// Run to the point where the array is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
@@ -1196,45 +1115,43 @@ public class MIMemoryTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Setup call parameters
-		int word_size = 1;
-		int count = 1;
+		int wordSize = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
-		// Interesting issue. Believe it or not, requests can get serviced 
-		// faster than we can queue them. E.g., we queue up five, and before we
-		// queue the sixth, the five are serviced. Before, when that happened
-		// the waitor went into the 'complete' state before we were done queuing
-		// all the requests. To avoid that, we need to add our own tick and then
-		// clear it once we're done queuing all the requests.
-		
 		// Verify asynchronously that all bytes are '0'
-		fWait.waitReset();
-		fWait.increment();	// see "Interesting issue" comment above  
+		MemoryReadQuery readQueries[] = new MemoryReadQuery[BLOCK_SIZE];
 		MemoryByte[] buffer = new MemoryByte[BLOCK_SIZE];
+		
+		// Send many read queries
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			fWait.increment();
-			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			readQueries[offset] = new MemoryReadQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, wordSize, 1);
+			fMemoryService.getExecutor().submit(readQueries[offset]);
 		}
-		fWait.waitFinished();	// see "Interesting issue" comment above
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Wait for all the queries to finish
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + 0 + "', received '" + buffer[offset].getValue() + "'",
-					(buffer[offset].getValue() == (byte) 0));
+			MemoryByte[] data = readQueries[offset].get();
+			assertThat(data.length, is(1));
+			assertThat(data[0].getValue(), is((byte) 0));
 		}
 
 		// Write asynchronously
-		fWait.waitReset();
-		fWait.increment(); 	// see "Interesting issue" comment above		
+		MemoryWriteQuery writeQueries[] = new MemoryWriteQuery[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			fWait.increment();
-			byte[] block = new byte[count];
+			byte[] block = new byte[1];
 			block[0] = (byte) offset;
-			writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, block);
+
+			writeQueries[offset] = new MemoryWriteQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, wordSize, 1, block);
+			fMemoryService.getExecutor().submit(writeQueries[offset]);
 		}
-		fWait.waitFinished();	// see "Interesting issue" comment above
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+		
+		// Wait for all the queries to finish
+		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
+			MemoryByte[] data = readQueries[offset].get();
+			assertThat(data.length, is(1));
+			assertThat(data[0].getValue(), is((byte) 0));
+		}
+
 
 		// Ensure the MemoryChangedEvent events were received
 		// TODO FOR REVIEW: This fails
@@ -1246,7 +1163,7 @@ public class MIMemoryTest extends BaseTestCase {
 		fWait.increment();	// see "Interesting issue" comment above
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
-			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
+			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, wordSize, count, buffer);
 		}
 		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);

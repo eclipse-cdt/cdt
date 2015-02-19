@@ -9,6 +9,7 @@
  *     Ericsson	AB		- Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
+ *     Simon Marchi (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.MemoryByteBuffer;
+import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -795,6 +797,9 @@ public class MIMemoryTest extends BaseTestCase {
 
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(
+				fSession, IMemoryChangedEvent.class);
+
 		// Perform the test
 		for (int i = 0; i < count; i++) {
 
@@ -811,10 +816,9 @@ public class MIMemoryTest extends BaseTestCase {
 			SyncUtil.writeMemory(fMemoryDmc, address, offset, fWordSize, 1, buffer);
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
-			// (I hardly believe there are no synchronization problems here...)
-			// TODO FOR REVIEW: This assert fails
-			//assertEquals("Incorrect count of MemoryChangedEvent at offset " + i, i + 1, getEventCount());
-			//assertTrue("MemoryChangedEvent problem at offset " + i, fMemoryAddressesChanged[i]);
+			IMemoryChangedEvent event = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
+			assertThat(event.getAddresses().length, is(1));
+			assertThat(event.getAddresses()[0], is(address));
 
 			// [4] Verify that the memory byte was written correctly
 			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, fWordSize, 1);
@@ -842,6 +846,9 @@ public class MIMemoryTest extends BaseTestCase {
 		byte[] buffer;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(
+				fSession, IMemoryChangedEvent.class);
+
 		// Perform the test
 		for (int offset = 0; offset < count; offset++) {
 
@@ -857,9 +864,9 @@ public class MIMemoryTest extends BaseTestCase {
 			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, 1, buffer);
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
-			// TODO FOR REVIEW: this fails
-			//assertEquals("Incorrect count of MemoryChangedEvent at offset " + offset, offset + 1, getEventCount());
-			//assertTrue("MemoryChangedEvent problem at offset " + offset, fMemoryAddressesChanged[offset]);
+			IMemoryChangedEvent event = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
+			assertThat(event.getAddresses().length, is(1));
+			assertThat(event.getAddresses()[0], is(fBaseAddress.add(offset)));
 
 			// [4] Verify that the memory byte was written correctly
 			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, fWordSize, 1);

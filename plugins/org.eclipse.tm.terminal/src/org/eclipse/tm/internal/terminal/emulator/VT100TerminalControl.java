@@ -403,9 +403,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// we cannot connect because the connector was not initialized
 			return;
 		}
-		getTerminalConnector().connect(this);
 		// clean the error message
 		setMsg(""); //$NON-NLS-1$
+		getTerminalConnector().connect(this);
 		waitForConnect();
 	}
 
@@ -443,25 +443,21 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
         }
 	}
 
-	// TODO
 	private void waitForConnect() {
 		Logger.log("entered."); //$NON-NLS-1$
-		// TODO
-		// Eliminate this code
-		while (getState()==TerminalState.CONNECTING) {
-			if (fDisplay.readAndDispatch())
-				continue;
 
-			fDisplay.sleep();
-		}
-		if(getCtlText().isDisposed()) {
+		// TODO Eliminate the nested dispatch loop
+		do {
+			if (!fDisplay.readAndDispatch())
+				fDisplay.sleep();
+		} while (getState()==TerminalState.CONNECTING);
+		
+		if (getCtlText().isDisposed()) {
 			disconnectTerminal();
 			return;
 		}
-		if (!getMsg().equals("")) //$NON-NLS-1$
-		{
+		if (getMsg().length() > 0) {
 			showErrorMessage(getMsg());
-
 			disconnectTerminal();
 			return;
 		}

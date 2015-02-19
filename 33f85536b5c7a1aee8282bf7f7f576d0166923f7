@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7f18fa3_220e36c5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 906,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-19T18:32:21Z",
+      "side": 1,
+      "message": "Are these two new methods used elsewhere than in MIMemoryTest?  They are just one-liners effectively, so why not put the call to the service directly in the test?\n\nI\u0027m asking because \u0027SyncUtil\u0027 is meant to hold asynchronous calls and make them synchronous.  The two below calls are synchronous already...",
+      "revId": "33f85536b5c7a1aee8282bf7f7f576d0166923f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

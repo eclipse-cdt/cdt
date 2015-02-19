@@ -35,9 +35,12 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
    </url>
 
+   <includes
+         id="org.eclipse.tm.terminal.serial.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.tm.terminal.sdk.feature" version="4.0.0" match="compatible"/>
-      <import feature="org.eclipse.tm.terminal.serial.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

@@ -117,7 +117,9 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos += 1;
 			long rec= getRecordPointer();
 			return (IBinding) PDOMNode.load(fLinkage.getPDOM(), rec);
-		} else if (firstBytes == NULL_TYPE || firstBytes == UNSTORABLE_TYPE) {
+		} else if (firstBytes == NULL_TYPE) {
+			return null;
+		} else if (firstBytes == UNSTORABLE_TYPE) {
 			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 

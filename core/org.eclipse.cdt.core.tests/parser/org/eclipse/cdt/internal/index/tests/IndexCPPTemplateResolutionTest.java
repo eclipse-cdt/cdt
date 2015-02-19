@@ -741,6 +741,40 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		assertEquals(((ICPPBasicType)bar.getType().getReturnType()).getType(), IBasicType.t_void);
  	}
 
+	// 	template<class T>
+	// 	auto trailing_return_type(T& p) -> decltype(p.m());
+
+	// 	template<typename T>
+	// 	struct A {
+	// 	  typedef T type;
+	// 	};
+	//
+	// 	template<typename T>
+	// 	typename A<T>::type declval();
+	//
+	// 	template<class T>
+	// 	class B {};
+	//
+	// 	template <typename T>
+	// 	using C = decltype(trailing_return_type(declval<T&>()));
+	//
+	// 	template <typename T>
+	// 	B<C<T>> waldo(T& q);
+	//
+	// 	template<typename T>
+	// 	struct D {
+	// 	  T* m();
+	// 	};
+	//
+	// 	D<int> b;
+	//
+	// 	void test() {
+	// 	  waldo(b);
+	// 	}
+	public void testTrailingReturnType_460183() throws Exception {
+		checkBindings();
+	}
+
 	// template<typename T> class A {
 	//    public:
     //       typedef T TD;

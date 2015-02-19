@@ -13,6 +13,8 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -39,6 +41,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
@@ -757,34 +760,35 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Setup call parameters
 		long offset = 0;
-		int word_size = 1;
+		int wordSize = 1;
 		int count = BLOCK_SIZE;
 		byte[] buffer = new byte[count];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
+
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(
+				fSession, IMemoryChangedEvent.class);
 
 		// Perform the test
 		for (int i = 0; i < count; i++) {
 			
 			// [1] Ensure that the memory byte = 0
-			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
+			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, wordSize, 1);
 			assertEquals("Wrong value read at offset " + i, (byte) 0, block[0].getValue());
 
-			
 			// [2] Write a byte value (count - i - 1)
 			IAddress address = fBaseAddress.add(i);
 			fWait.waitReset();
 			byte expected = (byte) (count - i - 1);
 			buffer[0] = expected;
-			SyncUtil.writeMemory(fMemoryDmc, address, offset, word_size, 1, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, address, offset, wordSize, 1, buffer);
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
-			// (I hardly believe there are no synchronization problems here...)
-			// TODO FOR REVIEW: This assert fails
-			//assertEquals("Incorrect count of MemoryChangedEvent at offset " + i, i + 1, getEventCount());
-			//assertTrue("MemoryChangedEvent problem at offset " + i, fMemoryAddressesChanged[i]);
+			IMemoryChangedEvent event = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
+			assertThat(event.getAddresses().length, is(1));
+			assertThat(event.getAddresses()[0], is(address));
 
 			// [4] Verify that the memory byte was written correctly
-			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, word_size, 1);
+			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, i, wordSize, 1);
 			assertEquals("Wrong value read at offset " + i, expected, block[0].getValue());
 		}
 
@@ -805,31 +809,34 @@ public class MIMemoryTest extends BaseTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		int word_size = 1;
+		int wordSize = 1;
 		int count = BLOCK_SIZE;
 		byte[] buffer = new byte[count];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
+
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(
+				fSession, IMemoryChangedEvent.class);
 
 		// Perform the test
 		for (int offset = 0; offset < count; offset++) {
 			
 			// [1] Ensure that the memory byte = 0
-			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
+			MemoryByte[] block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, wordSize, 1);
 			assertEquals("Wrong value read at offset " + offset, (byte) 0, block[0].getValue());
 			
 			// [2] Write a byte value (count - offset - 1)
 			fWait.waitReset();
 			byte expected = (byte) (count - offset - 1);
 			buffer[0] = expected;
-			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1, buffer);
+			SyncUtil.writeMemory(fMemoryDmc, fBaseAddress, offset, wordSize, 1, buffer);
 
 			// [3] Verify that the correct MemoryChangedEvent was sent
-			// TODO FOR REVIEW: this fails
-			//assertEquals("Incorrect count of MemoryChangedEvent at offset " + offset, offset + 1, getEventCount());
-			//assertTrue("MemoryChangedEvent problem at offset " + offset, fMemoryAddressesChanged[offset]);
+			IMemoryChangedEvent event = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
+			assertThat(event.getAddresses().length, is(1));
+			assertThat(event.getAddresses()[0], is(fBaseAddress.add(offset)));
 
 			// [4] Verify that the memory byte was written correctly
-			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, word_size, 1);
+			block = SyncUtil.readMemory(fMemoryDmc, fBaseAddress, offset, wordSize, 1);
 			assertEquals("Wrong value read at offset " + offset, expected, block[0].getValue());
 		}
 

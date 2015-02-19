@@ -16,7 +16,7 @@ import org.eclipse.tcf.te.ui.terminals.interfaces.IMementoHandler;
 import org.eclipse.ui.IMemento;
 
 /**
- * SSH terminal connection memento handler implementation.
+ * Local terminal connection memento handler implementation.
  */
 public class LocalMementoHandler implements IMementoHandler {
 

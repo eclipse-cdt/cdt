@@ -25,12 +25,14 @@ import org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate;
 import org.eclipse.tcf.te.ui.terminals.interfaces.IMementoHandler;
 import org.eclipse.tcf.te.ui.terminals.launcher.LauncherDelegateManager;
 import org.eclipse.tcf.te.ui.terminals.tabs.TabFolderToolbarHandler;
+import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Take care of the persisted state handling of the "Terminals" view.
  */
+@SuppressWarnings("restriction")
 public class TerminalsViewMementoHandler {
 	// The list of items to save. See the workbench listener implementation
 	// in o.e.tcf.te.ui.terminals.activator.UIPlugin.
@@ -100,6 +102,14 @@ public class TerminalsViewMementoHandler {
 					connectionMemento.putBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW, ((Boolean)properties.get(ITerminalsConnectorConstants.PROP_FORCE_NEW)).booleanValue());
 				}
 
+				// Store the current encoding
+				ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+				String encoding = terminal != null ? terminal.getEncoding() : null;
+				if (encoding == null || "".equals(encoding)) encoding = (String)properties.get(ITerminalsConnectorConstants.PROP_ENCODING); //$NON-NLS-1$
+				if (encoding != null && !"".equals(encoding)) { //$NON-NLS-1$
+					connectionMemento.putString(ITerminalsConnectorConstants.PROP_ENCODING, encoding);
+				}
+
 				// Pass on to the memento handler
 				mementoHandler.saveState(connectionMemento, properties);
 			}
@@ -164,6 +174,11 @@ public class TerminalsViewMementoHandler {
 				properties.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, connection.getString(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID));
 				if (connection.getBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW) != null) {
 					properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, connection.getBoolean(ITerminalsConnectorConstants.PROP_FORCE_NEW));
+				}
+
+				// Restore the encoding
+				if (connection.getString(ITerminalsConnectorConstants.PROP_ENCODING) != null) {
+					properties.put(ITerminalsConnectorConstants.PROP_ENCODING, connection.getString(ITerminalsConnectorConstants.PROP_ENCODING));
 				}
 
                 // Get the terminal launcher delegate

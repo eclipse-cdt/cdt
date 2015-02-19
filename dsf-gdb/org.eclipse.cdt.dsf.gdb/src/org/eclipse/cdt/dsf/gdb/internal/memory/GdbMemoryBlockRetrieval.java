@@ -172,29 +172,16 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		 * expression and obtain an address)
 		 */
 		try {
-			// First, assume a decimal address
-			int base = 10;
-			int offset = 0;
-
-			// Check for "hexadecimality"
-			if (expression.startsWith("0x") || expression.startsWith("0X")) { //$NON-NLS-1$//$NON-NLS-2$
-				base = 16;
-				offset = 2;
-			}
-			// Check for "binarity"
-			else if (expression.startsWith("0b")) { //$NON-NLS-1$
-				base = 2;
-				offset = 2;
-			}
-			// Check for "octality"
-			else if (expression.startsWith("0")) { //$NON-NLS-1$
-				base = 8;
-				offset = 1;
-			}
+			// TODO : investigate if java 8 can avoid this issue
+			// {@link:long.parseUnsignedLong}
+			
 			// Now, try to parse the expression. If a NumberFormatException is
 			// thrown, then it wasn't a simple numerical expression and we go 
 			// to plan B (attempt an expression evaluation)
-			blockAddress = new BigInteger(expression.substring(offset), base);
+			blockAddress = BigInteger.valueOf(Long.decode(expression));
+			if( blockAddress.compareTo(BigInteger.ZERO)==-1){
+				blockAddress = blockAddress.add(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
+			}
 
 		} catch (NumberFormatException nfexc) {
 			// OK, expression is not a simple, absolute numeric value;

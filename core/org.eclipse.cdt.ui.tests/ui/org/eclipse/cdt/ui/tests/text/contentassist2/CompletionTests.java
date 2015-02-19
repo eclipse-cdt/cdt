@@ -1506,6 +1506,25 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertContentAssistResults(fCursorOffset, expected, true, ID);
 	}
 
+	// template <int T>
+	// struct A {
+	// 	template <int TT>
+	// 	struct AA {
+	// 		template <typename TTT>
+	// 		using Type = TTT;
+	// 	};
+	// };
+	//
+	// struct B{
+	// 	static int i;
+	// };
+	//
+	// A<0>::AA<0>::Type<B>::/*cursor*/
+	public void testNestedTemplateSpecialization_460341() throws Exception {
+		final String[] expected = { "i" };
+		assertContentAssistResults(fCursorOffset, expected, true, ID);
+	}
+
 	//	void foo() { Specialization<int, /*cursor*/
 	public void testTemplateArgumentList() throws Exception {
 		setCommaAfterFunctionParameter(CCorePlugin.INSERT);

@@ -713,6 +713,10 @@ public class CPPTemplates {
 			IASTName templateName = id.getTemplateName();
 			IBinding template = templateName.resolvePreBinding();
 
+			while (template instanceof CPPTypedefSpecialization) {
+				template = ((CPPTypedefSpecialization) template).getSpecializedBinding();
+			}
+
 			// Alias template.
 			if (template instanceof ICPPAliasTemplate) {
 				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) template;

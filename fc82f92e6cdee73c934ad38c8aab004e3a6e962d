@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_b281d809",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1067,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-02-20T13:52:27Z",
+      "side": 1,
+      "message": "This has been there since the beginning but does not seem right to swap the reference to fDataModel before loading data to it.\n  This reference is used e.g. with getLoadTimer and updateLoads, which means an early swap could cause this methods to operate on a possibly empty model.\n\nWhat about setting it in the handleComplete of the top request monitor i.e.  inside getVisualizerModel before calling updateLoads ?",
+      "range": {
+        "startLine": 1067,
+        "startChar": 0,
+        "endLine": 1067,
+        "endChar": 66
+      },
+      "revId": "fc82f92e6cdee73c934ad38c8aab004e3a6e962d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

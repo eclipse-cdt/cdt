@@ -4,7 +4,7 @@
       label="%featureName"
       version="1.3.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tcf.te"
+      plugin="org.eclipse.tcf.te.core.terminals"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
 

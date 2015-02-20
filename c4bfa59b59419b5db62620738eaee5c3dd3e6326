@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_92f2dc0b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-20T14:45:09Z",
+      "side": 1,
+      "message": "Long.decode cannot decode 0xb - so we just lost this?\nLong.decode also states that \"This sequence of characters must represent a positive value\". So am not sure what is \nhandling of negative values is about, since it will throw NumberFormatException.\n\nJunit tests would be nice here. I don\u0027t think we can refactor this code now though because of what I mentioned.\nWe do however have address factories in cdt Addr64 which may be able to deal with parsing of this",
+      "revId": "c4bfa59b59419b5db62620738eaee5c3dd3e6326",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

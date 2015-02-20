@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Ericsson and others.
+ * Copyright (c) 2007, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Simon Marchi (Ericsson) - Move some tests from AsyncCompletionWaitor to Query
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -17,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -361,7 +361,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext exprDmc = SyncUtil.createExpression(
 				frameDmc, "f");
 
-		Query<IExpressionDMData> query = new Query<IExpressions.IExpressionDMData>() {
+		Query<IExpressionDMData> query = new Query<IExpressionDMData>() {
 			@Override
 			protected void execute(DataRequestMonitor<IExpressionDMData> rm) {
 				fExpService.getExpressionData(exprDmc, rm);
@@ -424,7 +424,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
 		// This second child is testing the fact that we could have the child named
 		// the same as its type and we still want to be able to get the details without error.
-		query = new Query<IFormattedValues.FormattedValueDMData>() {
+		query = new Query<FormattedValueDMData>() {
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
 				FormattedValueDMContext dmc = fExpService.getFormattedValueContext(children[1], MIExpressions.DETAILS_FORMAT);
@@ -454,7 +454,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		final IExpressionDMContext[] children = getChildren(children1[0], new String[] { "nested", "pNested" });
 		final IExpressionDMContext[] childOfPointer = getChildren(children[1], new String[] { "*pNested" });
 
-		Query<FormattedValueDMData> query = new Query<IFormattedValues.FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -467,7 +467,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		fExpService.getExecutor().submit(query);
 		query.get();
 
-		query = new Query<IFormattedValues.FormattedValueDMData>() {
+		query = new Query<FormattedValueDMData>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -480,7 +480,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		fExpService.getExecutor().submit(query);
 		query.get();
 
-		query = new Query<IFormattedValues.FormattedValueDMData>() {
+		query = new Query<FormattedValueDMData>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -540,7 +540,7 @@ public class MIExpressionsTest extends BaseTestCase {
 		assertThat(event.getDMContext(), is(exprDmc));
 
 		// Read the new value in decimal and check that it is what we expected
-		Query<FormattedValueDMData> readQuery = new Query<IFormattedValues.FormattedValueDMData>() {
+		Query<FormattedValueDMData> readQuery = new Query<FormattedValueDMData>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<FormattedValueDMData> rm) {
@@ -554,8 +554,6 @@ public class MIExpressionsTest extends BaseTestCase {
 		String actualDecimalValue = readQuery.get().getFormattedValue();
 
 		assertThat(actualDecimalValue.toLowerCase(), is(newValueInDecimal.toLowerCase()));
-		List<IExpressionChangedDMEvent> events = eventWaitor.waitForEvents(100);
-		assertThat(events.size(), is(0));
 	}
 
     /**

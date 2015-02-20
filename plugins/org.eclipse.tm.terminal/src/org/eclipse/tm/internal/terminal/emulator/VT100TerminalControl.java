@@ -578,12 +578,19 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					//
 					// TODO: Make the ESCAPE-vs-highbit behavior user configurable.
 
-					Logger.log("sending ESC + '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					byte[] bytesToSend = String.valueOf(chKey).getBytes(fEncoding);
+					Logger.log("sending ESC "); //$NON-NLS-1$
+					for (int i = 0; i < bytesToSend.length; i++) {
+						Logger.log("+ '" + bytesToSend[i] + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					os.write('\u001b');
-					os.write(byteToSend);
+					os.write(bytesToSend);
 				} else {
-					Logger.log("sending '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-					os.write(byteToSend);
+					byte[] bytesToSend = String.valueOf(chKey).getBytes(fEncoding);
+					for (int i = 0; i < bytesToSend.length; i++) {
+						Logger.log("sending '" + bytesToSend[i] + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					os.write(bytesToSend);
 				}
 				os.flush();
 			}

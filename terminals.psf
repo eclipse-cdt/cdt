@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,features/org.eclipse.remote-feature"/>
-<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.core"/>
-<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.jsch.core"/>
-<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.jsch.ui"/>
-<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,R1_1_maintenance,bundles/org.eclipse.remote.ui"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,master,features/org.eclipse.remote-feature"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,master,bundles/org.eclipse.remote.core"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,master,bundles/org.eclipse.remote.jsch.core"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,master,bundles/org.eclipse.remote.jsch.ui"/>
+<project reference="1.0,http://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git,master,bundles/org.eclipse.remote.ui"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tcf/org.eclipse.tcf.git,master,terminals/plugins/org.eclipse.tcf.te.core.terminals"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tcf/org.eclipse.tcf.git,master,terminals/features/org.eclipse.tcf.te.terminals.feature"/>
 <project reference="1.0,http://git.eclipse.org/gitroot/tcf/org.eclipse.tcf.git,master,terminals/features/org.eclipse.tcf.te.terminals.rse.feature"/>

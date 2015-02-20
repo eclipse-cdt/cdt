@@ -31,7 +31,7 @@
       <import plugin="org.eclipse.rse.subsystems.files.core" version="3.3.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.rse.ui" version="3.3.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tcf.te.ui.terminals" version="1.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.2.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.3.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.forms" version="3.5.200" match="greaterOrEqual"/>
       <import feature="org.eclipse.tcf.te.terminals.feature" version="1.3.0" match="greaterOrEqual"/>

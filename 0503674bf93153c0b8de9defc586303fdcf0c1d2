@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_72349094",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-20T14:27:55Z",
+      "side": 1,
+      "message": "new String() is wastfull allocation of sting\nobject_name.trim()",
+      "revId": "0503674bf93153c0b8de9defc586303fdcf0c1d2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_b22d584b",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-20T14:27:55Z",
+      "side": 1,
+      "message": "size.trim()",
+      "revId": "0503674bf93153c0b8de9defc586303fdcf0c1d2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

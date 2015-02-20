@@ -70,6 +70,30 @@
       "revId": "fc82f92e6cdee73c934ad38c8aab004e3a6e962d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_8089e67c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1067,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-20T20:14:37Z",
+      "side": 1,
+      "message": "You\u0027re right, that should be fixed.\n\nAnd I agree that the proper way to do things would be to buffer events when we\u0027re rebuilding the model.  I don\u0027t think it will be trivial to synchronize things though.  Maybe simply adding the missing protective code would be good enough?  Either way, I suggest we use a different bug for this, since it was there from before.  Or at least a different commit.",
+      "parentUuid": "a7fb1785_40025e81",
+      "range": {
+        "startLine": 1067,
+        "startChar": 0,
+        "endLine": 1067,
+        "endChar": 66
+      },
+      "revId": "fc82f92e6cdee73c934ad38c8aab004e3a6e962d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

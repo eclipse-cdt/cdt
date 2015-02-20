@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_b259d888",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSCustomPageData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-20T14:56:03Z",
+      "side": 1,
+      "message": "Class has to start with capital letter. That really threw me off when I was reading this...\n\nWhy this is class is subclass here? It does not even use MBSCustomPageData class",
+      "revId": "aa8325f2254c69e89d87463e4e82ea3003432fe4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

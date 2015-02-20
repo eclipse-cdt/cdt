@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Ericsson and others.
+ * Copyright (c) 2007, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ericsson	AB		- Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
+ *     Simon Marchi (Ericsson) - Refactoring, remove usage of AsyncCompletionWaitor
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
@@ -16,15 +17,12 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
@@ -39,7 +37,6 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.MemoryReadQuery;
@@ -1106,9 +1103,6 @@ public class MIMemoryTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void asynchronousReadWrite() throws Throwable {
-		
-		
-
 		// Run to the point where the array is zeroed
 		SyncUtil.runToLocation("MemoryTestApp.cc:zeroBlocks");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_RETURN);
@@ -1120,11 +1114,11 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify asynchronously that all bytes are '0'
 		MemoryReadQuery readQueries[] = new MemoryReadQuery[BLOCK_SIZE];
-		MemoryByte[] buffer = new MemoryByte[BLOCK_SIZE];
-		
+
 		// Send many read queries
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			readQueries[offset] = new MemoryReadQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, wordSize, 1);
+			readQueries[offset] = new MemoryReadQuery(fMemoryService,
+					fMemoryDmc, fBaseAddress, offset, wordSize, 1);
 			fMemoryService.getExecutor().submit(readQueries[offset]);
 		}
 
@@ -1136,15 +1130,18 @@ public class MIMemoryTest extends BaseTestCase {
 		}
 
 		// Write asynchronously
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<IMemory.IMemoryChangedEvent>(
+				fSession, IMemoryChangedEvent.class);
 		MemoryWriteQuery writeQueries[] = new MemoryWriteQuery[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			byte[] block = new byte[1];
 			block[0] = (byte) offset;
 
-			writeQueries[offset] = new MemoryWriteQuery(fMemoryService, fMemoryDmc, fBaseAddress, offset, wordSize, 1, block);
+			writeQueries[offset] = new MemoryWriteQuery(fMemoryService,
+					fMemoryDmc, fBaseAddress, offset, wordSize, 1, block);
 			fMemoryService.getExecutor().submit(writeQueries[offset]);
 		}
-		
+
 		// Wait for all the queries to finish
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			MemoryByte[] data = readQueries[offset].get();
@@ -1152,25 +1149,22 @@ public class MIMemoryTest extends BaseTestCase {
 			assertThat(data[0].getValue(), is((byte) 0));
 		}
 
-
-		// Ensure the MemoryChangedEvent events were received
-		// TODO FOR REVIEW: This fails
-		//assertEquals("Incorrect count of MemoryChangedEvent", BLOCK_SIZE, getEventCount());
-		//assertEquals("Incorrect count of events for distinct addresses", BLOCK_SIZE, getAddressCount());
+		List<IMemoryChangedEvent> events = eventWaitor.waitForEvents(TestsPlugin.massageTimeout(2000));
+		assertThat(events.size(), is(BLOCK_SIZE));
 
 		// Verify asynchronously that all bytes are set
-		fWait.waitReset();
-		fWait.increment();	// see "Interesting issue" comment above
+		// Send many read queries
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			fWait.increment();
-			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, wordSize, count, buffer);
+			readQueries[offset] = new MemoryReadQuery(fMemoryService,
+					fMemoryDmc, fBaseAddress, offset, wordSize, 1);
+			fMemoryService.getExecutor().submit(readQueries[offset]);
 		}
-		fWait.waitFinished();	// see "Interesting issue" comment above
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Wait for all the queries to finish
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			assertTrue("Wrong value read at offset " + offset + ": expected '" + offset + "', received '" + buffer[offset].getValue() + "'",
-					(buffer[offset].getValue() == (byte) offset));
+			MemoryByte[] data = readQueries[offset].get();
+			assertThat(data.length, is(1));
+			assertThat(data[0].getValue(), is((byte) offset));
 		}
 	}
 

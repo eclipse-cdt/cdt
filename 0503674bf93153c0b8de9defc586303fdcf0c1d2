@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "a7fb1785_b54f028d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2015-02-20T15:22:07Z",
+      "side": 1,
+      "message": "Maybe this should be renamed? It looks ambiguous... I am not sure if that is not inline with cdt\u0027s coding style. (sincere question)",
+      "range": {
+        "startLine": 109,
+        "startChar": 10,
+        "endLine": 109,
+        "endChar": 21
+      },
+      "revId": "0503674bf93153c0b8de9defc586303fdcf0c1d2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_954c8699",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2015-02-20T15:22:07Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 114,
+        "startChar": 10,
+        "endLine": 114,
+        "endChar": 14
+      },
+      "revId": "0503674bf93153c0b8de9defc586303fdcf0c1d2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_72349094",
         "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/macho/AR.java",
         "patchSetId": 4

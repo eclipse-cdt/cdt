@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_bbf533f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-21T01:56:55Z",
+      "side": 1,
+      "message": "fTagLocations.size() don\u0027t need another counter",
+      "revId": "a9c42d0e9a671e8c2216e4bf039a76fd47c18f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

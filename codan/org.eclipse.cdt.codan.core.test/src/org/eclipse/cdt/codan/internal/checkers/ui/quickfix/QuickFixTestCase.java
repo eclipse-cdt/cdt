@@ -81,11 +81,17 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 
 	@Override
 	public void tearDown() throws CoreException {
-		IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
-		for (IWorkbenchPage page : pages) {
-			page.closeAllEditors(false);
-			dispatch(200);
-		}
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
+				for (IWorkbenchPage page : pages) {
+					page.closeAllEditors(false);
+					dispatch(0);
+				}
+			}
+		});
+
 		super.tearDown();
 	}
 
@@ -107,18 +113,23 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		// need to load before running codan because otherwise marker is lost when doing quick fix 8[]
 		runCodan();
 		doRunQuickFix();
-		dispatch(500);
 		String result = TestUtils.loadFile(currentIFile.getContents());
 		return result;
 	}
 
 	public void doRunQuickFix() {
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
-			quickFix.run(marker);
-			dispatch(200);
-		}
-		PlatformUI.getWorkbench().saveAllEditors(false);
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i < markers.length; i++) {
+					IMarker marker = markers[i];
+					quickFix.run(marker);
+					dispatch(0);
+				}
+				PlatformUI.getWorkbench().saveAllEditors(false);
+			}
+		});
+
 	}
 
 	/**

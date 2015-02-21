@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -245,12 +246,12 @@ public class CodanTestCase extends BaseTestCase {
 		}
 	}
 
+	private static Pattern COMMENT_TAG_PATTERN = Pattern.compile("//\\s*(err|ERR|ERROR|error)\\b");
 	private void loadErrorComments(String trim) {
 		String[] lines = trim.split("\n");
 		for (int i = 0; i < lines.length; i++) {
 			String string = lines[i];
-			if (string.matches(".*//\\s*err\\s*")) {
-
+			if (COMMENT_TAG_PATTERN.matcher(string).find()) {
 				errLines.add(i+1);
 			}
 		}

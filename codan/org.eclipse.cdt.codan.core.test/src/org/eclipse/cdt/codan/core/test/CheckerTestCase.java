@@ -244,4 +244,14 @@ public class CheckerTestCase extends CodanTestCase {
 		}
 		CodanRuntime.getInstance().getCheckersRegistry().updateProfile(cproject.getProject(), profile);
 	}
+
+	protected void checkSampleAbove() {
+		loadCodeAndRun(getAboveComment());
+		checkErrorComments();
+	}
+
+	protected void checkSampleAboveCpp() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorComments();
+	}
 }

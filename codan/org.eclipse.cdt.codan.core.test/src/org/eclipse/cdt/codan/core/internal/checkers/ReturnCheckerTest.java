@@ -27,22 +27,21 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		enableProblems(ReturnChecker.RET_NORET_ID,ReturnChecker.RET_ERR_VALUE_ID,ReturnChecker.RET_NO_VALUE_ID);
 	}
 	//	dummy() {
-	//	  return; // error here on line 2
+	//	  return; // no error here on line 2
 	//	}
 	public void testDummyFunction() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors(); // because return type if not defined, usually people don't care
+		checkSampleAbove();
+		// because return type if not defined, usually people don't care
 	}
 
 	//	void void_function(void) {
 	//	  return; // no error here
 	//	}
 	public void testVoidFunction() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
-	//	int integer_return_function(void) {
+	//	int integer_return_function(void) { // error
 	//	  if (global) {
 	//		if (global == 100) {
 	//			return; // error here on line 4
@@ -50,8 +49,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	  }
 	//	}
 	public void testBasicTypeFunction() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(4);
+		checkSampleAbove();
 	}
 
 	//
@@ -63,8 +61,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	return; // error here on line 6
 	//	}
 	public void testUserDefinedFunction() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(6);
+		checkSampleAbove();
 	}
 
 	//	 typedef unsigned int uint8_t;
@@ -73,9 +70,9 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	return; // error here on line 4
 	//	}
 	public void testTypedefReturnFunction() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(4);
+		checkSampleAbove();
 	}
+
 
 	//	typedef unsigned int uint8_t;
 	//
@@ -84,8 +81,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//			return; // error here on line 5
 	//	}
 	public void testFunctionPointerReturnFunction() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(5);
+		checkSampleAbove();
 	}
 
 	//	void test() {
@@ -97,21 +93,19 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		  };
 	//		}
 	public void testInnerFunction_Bug315525() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//	void test() {
 	//		  class A {
 	//		   public:
 	//		    int m() {
-	//		      return; // should be an error here
+	//		      return; // error here
 	//		    }
 	//		  };
 	//		}
 	public void testInnerFunction_Bug316154() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(5);
+		checkSampleAbove();
 	}
 
 	//	class c {
@@ -149,8 +143,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	    [](int r){return r;}(5);
 	//	}
 	public void testLambda_Bug332285() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 //	void f()
 //	{
@@ -158,37 +151,33 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	        ;
 //	}
 	public void testLambda2_Bug332285() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//	void g()
 	//	{
 	//		int r;
-	//	    ({return r;});
+	//	    ({return r;}); // error
 	//	}
 	public void testGccExtensions() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(4);
+		checkSampleAbove();
 	}
 
 	//	auto f() -> void
 	//	{
 	//	}
 	public void testVoidLateSpecifiedReturnType_Bug337677() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
-	//	auto f() -> void*
+	//	auto f() -> void* // error
 	//	{
 	//	}
 	public void testVoidPointerLateSpecifiedReturnType_Bug337677() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAboveCpp();
 	}
 
-//	int f()
+//	int f() // error
 //	{
 //	    if (g())
 //	        h();
@@ -196,11 +185,10 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	        return 0;
 //	}
 	public void testBranches_Bug342906() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAbove();
 	}
 
-//	int f()
+//	int f() // error
 //	{
 //	    switch (g()) {
 //	      case 1: h(); break;
@@ -208,8 +196,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	        return 0;
 //	}
 	public void testSwitch() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAbove();
 	}
 
 	//int bar(int foo)
@@ -220,8 +207,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//        return 0;
 	//}
 	public void testBranches_Bug343767() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//int bar(int foo)
@@ -233,19 +219,18 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//    foo++;
 	//}
 	public void testBranchesDeadCode_Bug343767() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
-//	int f()
+//	int f() // error
 //	{
 //	    switch (g()) {
 //	      case 1: return 1;
 //	      case 2: return 0;
+//      }
 //	}
 	public void testBranchesSwitch_Bug343767a() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAbove();
 	}
 //	int f()
 //	{
@@ -253,10 +238,10 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	      case 1: return 1;
 //	      case 2: return 0;
 //	      default: return -1;
+//      }
 //	}
 	public void testBranchesSwitch_Bug343767b() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 	//int bar(int foo)
 	//{
@@ -267,18 +252,16 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//        else return 1;
 	//}
 	public void testBranches2_Bug343767() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
-	//int bar(int foo)
+	//int bar(int foo) // error
 	//{
 	//    while(foo) {
 	//        return 0;
 	//    }
 	//}
 	public void testWhile() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAbove();
 	}
 
 	//	int f345687() {
@@ -287,8 +270,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		}
 	//	}
 	public void testNextedBlock_Bug345687() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//	int
@@ -301,8 +283,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	return (a);
 	//	}
 	public void testGoto_Bug346559() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//	int main()
@@ -311,8 +292,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//		// no error since return value in main is optional
 	//	}
 	public void testMainFunction() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	// #include <vector>
@@ -320,8 +300,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//    return {1,2,3};
 	// }
 	public void testReturnInitializerList() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 
@@ -332,8 +311,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //}
 
 	public void testNoReturn() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//	int try1() {
@@ -345,30 +323,27 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	}
 	public void testTryBlock1() throws Exception {
 		// bug 348387
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
-	//	int try2() {
+	//	int try2() { // error
 	//		try {
 	//			return 5;
 	//		} catch (int) {
 	//		}
 	//	}
 	public void testTryBlock2() throws Exception {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAboveCpp();
 	}
 
-	//	int try3() {
+	//	int try3() { // error
 	//		try {
 	//		} catch (int a) {
 	//			return 5;
 	//		}
 	//	}
 	public void testTryBlock3() throws Exception {
-			loadCodeAndRunCpp(getAboveComment());
-			checkErrorLine(1);
+		checkSampleAboveCpp();
 	}
 
 	//	int retindead() {
@@ -377,8 +352,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	}
 	public void testRetInDeadCode1() throws Exception {
 		// bug 348386
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	//	int retindead() {
@@ -387,8 +361,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	}
 	public void testRetInDeadCodeThrow() throws Exception {
 		// bug 356908
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
 //	bool func( int i )
@@ -404,8 +377,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	}
 	public void testRetInDeadCodeCase() throws Exception {
 		// Bug 350168
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
 //	int test1() {
@@ -415,8 +387,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	}
 	public void testNoRetInfinitLoop() throws Exception {
 		// Bug 394521
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 //	int test1_f()    // WARNING HERE: "No return, in function returning non-void"
@@ -427,29 +398,27 @@ public class ReturnCheckerTest extends CheckerTestCase {
 //	}
 	public void testNoRetInfinitLoop2() throws Exception {
 		// Bug 394521
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
-	//	int foo() {
+	//	int foo() { // error
 	//	    int waldo = waldo();
 	//	    if (waldo);
 	//	}
 	public void testSelfReferencingVariable_452325() throws Exception {
 		// Just check that codan runs without any exceptions being thrown.
-		loadCodeAndRunCpp(getAboveComment());
+		checkSampleAbove();
 	}
 
-	//	int foo(int x) {  // no warning
+	//	int foo(int x) {  // error
 	//	    switch (x) {
 	//	    }
 	//	}
 	public void testEmptySwitch_455828() throws Exception {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAbove();
 	}
 
-	//	int foo(int x) {
+	//	int foo(int x) { // error
 	//	    switch (x) {
 	//	        case 0:
 	//	            return 42;;
@@ -457,7 +426,6 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//	    }
 	//	}
 	public void testDoubleSemicolonInSwitchCase_455828() throws Exception {
-		loadCodeAndRunCpp(getAboveComment());
-		checkErrorLine(1);
+		checkSampleAboveCpp();
 	}
 }

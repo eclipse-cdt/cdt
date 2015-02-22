@@ -351,7 +351,7 @@
 		            <adapt type="org.eclipse.core.resources.IProject" >
 		               <test
 		                     property="org.eclipse.core.resources.projectNature"
-		                     value="org.eclipse.cdt.core.cnature"/>
+		                     value="org.eclipse.cdt.core.ccnature"/>
 		            </adapt>
 				</not>
 		 	</and>

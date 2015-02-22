@@ -877,7 +877,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return findBindings(names, true, filter, monitor);
 	}
 
-	public IIndexFragmentBinding[] findBindings(char[][] names, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexFragmentBinding[] findBindings(char[][] names, boolean caseSensitive, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		if (names.length == 0) {
 			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 		}
@@ -885,7 +886,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return findBindings(names[0], true, caseSensitive, filter, monitor);
 		}
 
-		IIndexFragmentBinding[] candidates = findBindings(names[names.length-1], false, caseSensitive, filter, monitor);
+		IIndexFragmentBinding[] candidates = findBindings(names[names.length - 1], false, caseSensitive, filter, monitor);
 		int j= 0;
 		for (int i = 0; i < candidates.length; i++) {
 			IIndexFragmentBinding cand = candidates[i];
@@ -893,12 +894,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 				candidates[j++]= cand;
 			}
 		}
-		return ArrayUtil.trimAt(IIndexFragmentBinding.class, candidates, j-1);
+		return ArrayUtil.trimAt(IIndexFragmentBinding.class, candidates, j - 1);
 	}
 
 	private boolean matches(IIndexFragmentBinding cand, char[][] names, boolean caseSensitive) {
-		int i= names.length-1;
-		while(i >= 0) {
+		for (int i= names.length; --i >= 0; cand= cand.getOwner()) {
 			if (cand == null)
 				return false;
 
@@ -913,8 +913,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 					return false;
 				}
 			}
-			cand= cand.getOwner();
-			i--;
 		}
 		return cand == null;
 	}
@@ -1210,8 +1208,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 					names.add(name);
 				}
 			}
-			IPDOMIterator<PDOMName> iterator = pdomBinding.getExternalReferences();
-			while(iterator.hasNext()) {
+			for (IPDOMIterator<PDOMName> iterator = pdomBinding.getExternalReferences(); iterator.hasNext();) {
 				name = iterator.next();
 				if (isCommitted(name))
 					names.add(name);

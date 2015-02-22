@@ -43,26 +43,27 @@ public class IndexModelUtil {
 
 	/**
 	 * Returns whether the binding is of any of the specified CElement type constants
+	 *
 	 * @param binding
 	 * @param kinds
 	 * @return whether the binding is of any of the specified CElement type constants
 	 */
 	public static boolean bindingHasCElementType(IBinding binding, int[] kinds) {
 		for (int kind : kinds) {
-			switch(kind) {
+			switch (kind) {
 			case ICElement.C_STRUCT:
 				if (binding instanceof ICompositeType
-						&& ((ICompositeType)binding).getKey() == ICompositeType.k_struct)
+						&& ((ICompositeType) binding).getKey() == ICompositeType.k_struct)
 					return true;
 				break;
 			case ICElement.C_UNION:
 				if (binding instanceof ICompositeType
-						&& ((ICompositeType)binding).getKey() == ICompositeType.k_union)
+						&& ((ICompositeType) binding).getKey() == ICompositeType.k_union)
 					return true;
 				break;
 			case ICElement.C_CLASS:
 				if (binding instanceof ICompositeType
-						&& ((ICompositeType)binding).getKey() == ICPPClassType.k_class)
+						&& ((ICompositeType) binding).getKey() == ICPPClassType.k_class)
 					return true;
 				break;
 			case ICElement.C_NAMESPACE:

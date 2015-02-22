@@ -56,19 +56,15 @@ import org.eclipse.cdt.internal.ui.util.StringMatcher;
 public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	private static class TypeFilterMatcher implements FilteredList.FilterMatcher {
-
 		private static final char END_SYMBOL = '<';
 		private static final char ANY_STRING = '*';
 		
-		private StringMatcher fNameMatcher = null;
-		private StringMatcher[] fSegmentMatchers = null;
-		private boolean fMatchGlobalNamespace = false;
+		private StringMatcher fNameMatcher;
+		private StringMatcher[] fSegmentMatchers;
+		private boolean fMatchGlobalNamespace;
 		private Collection<Integer> fVisibleTypes = new HashSet<Integer>();
-		private boolean fShowLowLevelTypes = false;
+		private boolean fShowLowLevelTypes;
 		
-		/*
-		 * @see FilteredList.FilterMatcher#setFilter(String, boolean)
-		 */
 		@Override
 		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
 			// parse pattern into segments
@@ -77,7 +73,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			int length = segments.length;
 
 			// append wildcard to innermost segment
-			segments[length-1] = adjustPattern(segments[length-1]);
+			segments[length - 1] = adjustPattern(segments[length - 1]);
 			
 			fMatchGlobalNamespace = false;
 			fSegmentMatchers = new StringMatcher[length];
@@ -121,9 +117,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			return fShowLowLevelTypes;
 		}
 
-		/*
-		 * @see FilteredList.FilterMatcher#match(Object)
-		 */
 		@Override
 		public boolean match(Object element) {
 			if (!(element instanceof ITypeInfo))
@@ -151,7 +144,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			
 			if (fMatchGlobalNamespace) {
 				// must match global namespace (eg ::foo)
-				if (qualifiedName.segment(0).length() > 0)
+				if (!qualifiedName.segment(0).isEmpty())
 					return false;
 			}
 			
@@ -172,10 +165,10 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			int length = pattern.length();
 			if (length > 0) {
 				switch (pattern.charAt(length - 1)) {
-					case END_SYMBOL:
-						return pattern.substring(0, length - 1);
-					case ANY_STRING:
-						return pattern;
+				case END_SYMBOL:
+					return pattern.substring(0, length - 1);
+				case ANY_STRING:
+					return pattern;
 				}
 			}
 			return pattern + ANY_STRING;
@@ -289,10 +282,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	public void setDialogSettings(String section) {
 		fDialogSection = section + "Settings"; //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#createFilterText(org.eclipse.swt.widgets.Composite)
-	 */
+
  	@Override
 	protected Text createFilterText(Composite parent) {
  		fTextWidget = super.createFilterText(parent);
@@ -303,9 +293,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
  		return fTextWidget;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#createFilteredList(org.eclipse.swt.widgets.Composite)
-	 */
  	@Override
 	protected FilteredList createFilteredList(Composite parent) {
  		fNewFilteredList = super.createFilteredList(parent);
@@ -325,9 +312,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		return fNewFilteredList;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
 	@Override
 	public void create() {
 		super.create();
@@ -335,18 +319,12 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			fTextWidget.selectAll();
 	}
 
-	/*
-	 * @see Window#close()
-	 */
 	@Override
 	public boolean close() {
 		writeSettings(getDialogSettings());
 		return super.close();
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		readSettings(getDialogSettings());
@@ -360,38 +338,38 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		String name;
 		int type = typeObject.intValue();
 		switch (type) {
-			case ICElement.C_NAMESPACE:
-				name = TypeInfoMessages.TypeSelectionDialog_filterNamespaces; 
+		case ICElement.C_NAMESPACE:
+			name = TypeInfoMessages.TypeSelectionDialog_filterNamespaces; 
 			break;
-			case ICElement.C_CLASS:
-				name = TypeInfoMessages.TypeSelectionDialog_filterClasses; 
+		case ICElement.C_CLASS:
+			name = TypeInfoMessages.TypeSelectionDialog_filterClasses; 
 			break;
-			case ICElement.C_STRUCT:
-				name = TypeInfoMessages.TypeSelectionDialog_filterStructs; 
+		case ICElement.C_STRUCT:
+			name = TypeInfoMessages.TypeSelectionDialog_filterStructs; 
 			break;
-			case ICElement.C_TYPEDEF:
-				name = TypeInfoMessages.TypeSelectionDialog_filterTypedefs; 
+		case ICElement.C_TYPEDEF:
+			name = TypeInfoMessages.TypeSelectionDialog_filterTypedefs; 
 			break;
-			case ICElement.C_ENUMERATION:
-				name = TypeInfoMessages.TypeSelectionDialog_filterEnums; 
+		case ICElement.C_ENUMERATION:
+			name = TypeInfoMessages.TypeSelectionDialog_filterEnums; 
 			break;
-			case ICElement.C_UNION:
-				name = TypeInfoMessages.TypeSelectionDialog_filterUnions; 
+		case ICElement.C_UNION:
+			name = TypeInfoMessages.TypeSelectionDialog_filterUnions; 
 			break;
-			case ICElement.C_FUNCTION:
-				name = TypeInfoMessages.TypeSelectionDialog_filterFunctions; 
+		case ICElement.C_FUNCTION:
+			name = TypeInfoMessages.TypeSelectionDialog_filterFunctions; 
 			break;
-			case ICElement.C_VARIABLE:
-				name = TypeInfoMessages.TypeSelectionDialog_filterVariables; 
+		case ICElement.C_VARIABLE:
+			name = TypeInfoMessages.TypeSelectionDialog_filterVariables; 
 			break;
-			case ICElement.C_ENUMERATOR:
-				name = TypeInfoMessages.TypeSelectionDialog_filterEnumerators; 
+		case ICElement.C_ENUMERATOR:
+			name = TypeInfoMessages.TypeSelectionDialog_filterEnumerators; 
 			break;
-			case ICElement.C_MACRO:
-				name = TypeInfoMessages.TypeSelectionDialog_filterMacros; 
+		case ICElement.C_MACRO:
+			name = TypeInfoMessages.TypeSelectionDialog_filterMacros; 
 			break;
-			default:
-				return;
+		default:
+			return;
 		}
 		Image icon = TypeInfoLabelProvider.getTypeIcon(type);
 
@@ -625,9 +603,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		return true;
 	}
 
-	/* (non-Cdoc)
-	 * @see org.eclipse.jface.window.Window#getInitialSize()
-	 */
 	@Override
 	protected Point getInitialSize() {
 		Point result = super.getInitialSize();
@@ -641,9 +616,6 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		return result;
 	}
 	
-	/* (non-Cdoc)
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
 	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = super.getInitialLocation(initialSize);
@@ -663,23 +635,20 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		return result;
 	}	
 	
-	/*
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 		ITypeInfo selection = (ITypeInfo) getLowerSelectedElement();
 		if (selection == null)
 			return;
 			
-		List<ITypeInfo> result = new ArrayList<ITypeInfo>(1);
+		List<ITypeInfo> result = new ArrayList<>(1);
 		result.add(selection);
 		setResult(result);
 	}
 	
     @Override
 	public Object[] getFoldedElements(int index) {
-    	ArrayList<IndexTypeInfo> result= new ArrayList<IndexTypeInfo>();
+    	ArrayList<IndexTypeInfo> result= new ArrayList<>();
     	Object[] typeInfos= super.getFoldedElements(index);
     	if (typeInfos != null) {
     		for (Object typeInfo : typeInfos) {

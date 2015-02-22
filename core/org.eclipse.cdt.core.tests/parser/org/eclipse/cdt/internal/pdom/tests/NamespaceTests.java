@@ -49,7 +49,7 @@ public class NamespaceTests extends PDOMTestBase {
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			project = createProject("namespaceTests", true);
-			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
+			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		}
 		pdom.acquireReadLock();
 	}

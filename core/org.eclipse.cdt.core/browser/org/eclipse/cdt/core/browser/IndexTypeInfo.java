@@ -85,14 +85,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		try {
 			elementType = IndexModelUtil.getElementType(binding);
 			if (binding instanceof ICPPBinding) {
-				fqn= ((ICPPBinding)binding).getQualifiedName();
-			} 
-			else if (binding instanceof IField) {
+				fqn= ((ICPPBinding) binding).getQualifiedName();
+			} else if (binding instanceof IField) {
 				IField field= (IField) binding;
 				ICompositeType owner= field.getCompositeTypeOwner();
 				fqn= new String[] {owner.getName(), field.getName()};	
-			}
-			else {
+			} else {
 				fqn= new String[] {binding.getName()};
 			}
 			try {
@@ -109,7 +107,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				return new IndexTypeInfo(fqn, flsq, elementType, index, paramTypes, returnType, null);
 			}
 		} catch (DOMException e) {
-			// index bindings don't throw DOMExceptions.
+			// Index bindings don't throw DOMExceptions.
 			throw new AssertionError();
 		}
 
@@ -128,12 +126,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		String[] params= null;
 		if (ps != null) {
 			params= new String[ps.length];
-			int i=-1;
+			int i= -1;
 			for (char[] p : ps) {
 				params[++i]= new String(p);
 			}
 		}
-		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, params, null, index);
+		return new IndexTypeInfo(new String[] { new String(name) }, ICElement.C_MACRO, params, null, index);
 	}
 
 	/**
@@ -143,7 +141,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new IndexTypeInfo(rhs, ref);
 	}
 
-	private IndexTypeInfo(String[] fqn, IIndexFileLocation fileLocal, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
+	private IndexTypeInfo(String[] fqn, IIndexFileLocation fileLocal, int elementType, IIndex index,
+			String[] params, String returnType, ITypeReference reference) {
 		Assert.isTrue(index != null);
 		this.fqn= fqn;
 		this.fileLocal= fileLocal;
@@ -169,9 +168,9 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public ICProject getEnclosingProject() {
-		if(getResolvedReference()!=null) {
+		if (getResolvedReference() != null) {
 			IProject project = reference.getProject();
-			if(project!=null) {
+			if (project != null) {
 				return CCorePlugin.getDefault().getCoreModel().getCModel().getCProject(project.getName());
 			}
 		}
@@ -180,7 +179,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public String getName() {
-		return fqn[fqn.length-1];
+		return fqn[fqn.length - 1];
 	}
 
 	@Override
@@ -188,17 +187,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new QualifiedTypeName(fqn);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getParameters()
-	 */
 	@Override
 	public String[] getParameters() {
 		return params;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
-	 */
 	@Override
 	public String getReturnType() {
 		return returnType;
@@ -232,8 +225,9 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		if (fileLocal == null) {
 			if (other.fileLocal != null)
 				return false;
-		} else if (!fileLocal.equals(other.fileLocal))
+		} else if (!fileLocal.equals(other.fileLocal)) {
 			return false;
+		}
 		if (!Arrays.equals(fqn, other.fqn))
 			return false;
 		if (!Arrays.equals(params, other.params))
@@ -250,7 +244,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	@Override
 	public ITypeReference getResolvedReference() {
-		if(reference==null) {
+		if (reference == null) {
 			if (elementType == ICElement.C_MACRO) {
 				return createMacroReference();
 			}
@@ -262,7 +256,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			}
 			try {
 				IIndexBinding[] ibs = findBindings();
-				if(ibs.length>0) {
+				if (ibs.length > 0) {
 					IIndexName[] names;
 					names= index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
 					if (names.length == 0) {
@@ -275,8 +269,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 						}
 					}
 				}
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);				
+			} catch(CoreException e) {
+				CCorePlugin.log(e);				
 			} finally {
 				index.releaseReadLock();
 			}
@@ -286,13 +280,14 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	private IIndexBinding[] findBindings() throws CoreException {
 		char[][] cfqn = new char[fqn.length][];
-		for(int i=0; i<fqn.length; i++)
+		for (int i= 0; i < fqn.length; i++) {
 			cfqn[i] = fqn[i].toCharArray();
+		}
 
 		IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
 			@Override
 			public boolean acceptBinding(IBinding binding) {
-				if (!IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType})) {
+				if (!IndexModelUtil.bindingHasCElementType(binding, new int[] {elementType})) {
 					return false;
 				}
 				try {
@@ -300,22 +295,19 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 						if (((IIndexBinding) binding).isFileLocal()) {
 							return false;
 						}
-					}
-					else {
+					} else {
 						IIndexFile localToFile= ((IIndexBinding) binding).getLocalToFile();
 						if (localToFile == null || !fileLocal.equals(localToFile.getLocation())) {
 							return false;
 						}
 					}
 					if (binding instanceof IFunction && params != null) {
-						String[]otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
+						String[] otherParams= IndexModelUtil.extractParameterTypes((IFunction) binding);
 						if (!Arrays.equals(params, otherParams)) {
 							return false;
 						}
 					}
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
-				} catch (DOMException e) {
+				} catch (CoreException | DOMException e) {
 					CCorePlugin.log(e);
 				}
 				return true;
@@ -333,7 +325,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		}
 		try {
 			IIndexMacro[] macros = index.findMacros(fqn[0].toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
-			if(macros.length>0) {
+			if (macros.length > 0) {
 				for (IIndexMacro macro : macros) {
 					reference= createReference(macro);
 					if (reference != null) {
@@ -341,8 +333,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 					}
 				}
 			}
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);				
+		} catch(CoreException e) {
+			CCorePlugin.log(e);				
 		}  finally {
 			index.releaseReadLock();
 		}
@@ -382,7 +374,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			return getMacroReferences();
 		}
 		
-		List<IndexTypeReference> references= new ArrayList<IndexTypeReference>();
+		List<IndexTypeReference> references= new ArrayList<>();
 		try {
 			index.acquireReadLock();
 		} catch (InterruptedException ie) {
@@ -391,7 +383,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		}
 		try {
 			IIndexBinding[] ibs= findBindings();
-			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
+			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<>();
 			for (IIndexBinding binding : ibs) {
 				IIndexName[] names;
 				names= index.findNames(binding, IIndex.FIND_DEFINITIONS);
@@ -415,9 +407,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return references.toArray(new IndexTypeReference[references.size()]);
 	}
 
-
 	private ITypeReference[] getMacroReferences() {
-		List<IndexTypeReference> references= new ArrayList<IndexTypeReference>();
+		List<IndexTypeReference> references= new ArrayList<>();
 		try {
 			index.acquireReadLock();
 		} catch (InterruptedException e) {
@@ -429,7 +420,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			IIndexMacro[] ibs = index.findMacros(cfn, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 			// in case a file is represented multiple times in the index then we take references from
 			// one of those, only.
-			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
+			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<>();
 			for (IIndexMacro macro : ibs) {
 				if (checkParameters(macro.getParameterList())) {
 					if (checkFile(iflMap, macro.getFile())) {
@@ -440,8 +431,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 					}
 				}
 			}
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);				
+		} catch (CoreException e) {
+			CCorePlugin.log(e);				
 		} finally {
 			index.releaseReadLock();
 		}
@@ -566,7 +557,6 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		throw new UnsupportedOperationException();
 	}
 
-
 	/**
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
@@ -587,7 +577,6 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	public ITypeInfo getEnclosingType(int[] kinds) {
 		throw new UnsupportedOperationException();
 	}
-
 
 	/**
 	 * @deprecated

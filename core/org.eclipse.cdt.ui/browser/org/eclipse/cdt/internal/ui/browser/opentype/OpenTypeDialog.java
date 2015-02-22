@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.browser.opentype;
 
 import org.eclipse.swt.widgets.Shell;
 
-
 /**
  * A dialog to select a type from a list of types.
  * 
@@ -25,7 +24,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 @Deprecated
 public class OpenTypeDialog extends ElementSelectionDialog {
-
 	/**
 	 * Constructs an instance of <code>OpenTypeDialog</code>.
 	 * @param parent  the parent shell.

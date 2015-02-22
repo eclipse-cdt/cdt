@@ -91,7 +91,7 @@ public class PDOMTestBase extends BaseTestCase {
 					try {
 						importOp.run(monitor);
 					} catch (Exception e) {
-						throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
+						throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import interrupted", e));
 					}
 
 					cprojects[0] = cproject;

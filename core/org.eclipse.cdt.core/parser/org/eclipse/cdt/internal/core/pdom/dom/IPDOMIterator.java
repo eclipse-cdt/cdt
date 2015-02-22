@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
  * a way to remove elements.
  */
 public interface IPDOMIterator<T> {
-
 	/**
 	 * Return true if the next call to #next will yield a value and false otherwise.
 	 *

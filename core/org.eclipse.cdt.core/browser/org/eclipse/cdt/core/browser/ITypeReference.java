@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IPath;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITypeReference {
-
 	/**
 	 * Returns the full, absolute path of this reference
 	 * relative to the workspace, or null if no path can be
@@ -30,7 +29,7 @@ public interface ITypeReference {
 	 */
 	public IPath getPath();
 
-	 /**
+	/**
 	 * Returns the absolute path in the local file system
 	 * to this reference, or null if no path can be
 	 * determined. 

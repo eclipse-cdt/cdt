@@ -70,7 +70,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		 * The last used prefix to query the index. <code>null</code> means
 		 * the query result should be empty.
 		 */
-		private volatile char[] fCurrentPrefix = null;
+		private volatile char[] fCurrentPrefix;
 
 		public UpdateElementsJob(String name) {
 			super(name);
@@ -134,7 +134,8 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 						if (!shell.isDisposed() && fDone) {
 							fMonitor.done();
 						}
-					}};
+					}
+				};
 				shell.getDisplay().asyncExec(update);
 			}
 		}
@@ -150,7 +151,8 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 						if (!shell.isDisposed() && !fDone) {
 							fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
 						}
-					}};
+					}
+				};
 				shell.getDisplay().asyncExec(update);
 			}
 		}
@@ -164,7 +166,8 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
-		}};
+		}
+	};
 
 	private UpdateElementsJob fUpdateJob;
 	private boolean fAllowEmptyPrefix= true;
@@ -175,6 +178,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 	/**
 	 * Constructs an instance of <code>OpenTypeDialog</code>.
+	 *
 	 * @param parent  the parent shell.
 	 */
 	public ElementSelectionDialog(Shell parent) {
@@ -185,9 +189,6 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		fUpdateJob.setRule(SINGLE_INSTANCE_RULE);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#create()
-	 */
 	@Override
 	public void create() {
 		super.create();
@@ -195,9 +196,6 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		scheduleUpdate(getFilter());
 	}
 
-	/*
-	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#close()
-	 */
 	@Override
 	public boolean close() {
 		fUpdateJob.cancel();
@@ -205,7 +203,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	/**
-	 * Configure the help context id for this dialog.
+	 * Configures the help context id for this dialog.
 	 * 
 	 * @param helpContextId
 	 */
@@ -214,9 +212,6 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		setHelpAvailable(fHelpContextId != null);
 	}
 
-	/*
-	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#setMatchEmptyString(boolean)
-	 */
 	@Override
 	public void setMatchEmptyString(boolean matchEmptyString) {
 		super.setMatchEmptyString(matchEmptyString);
@@ -227,7 +222,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	/**
-	 * Set whether an empty prefix should be allowed for queries.
+	 * Sets whether an empty prefix should be allowed for queries.
 	 * 
 	 * @param allowEmptyPrefix
 	 */
@@ -235,27 +230,18 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		fAllowEmptyPrefix = allowEmptyPrefix;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog#showLowLevelFilter()
-	 */
 	@Override
 	protected boolean showLowLevelFilter() {
-		// the low-level filter is useless for us
+		// The low-level filter is useless for us.
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, fHelpContextId);
 		return super.createDialogArea(parent);
 	}
 
-	/*
-	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createLowerList(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Table createLowerList(Composite parent) {
 		Table table= super.createLowerList(parent);
@@ -264,8 +250,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	/**
-	 * Create the control for progress reporting.
-	 * @param parent
+	 * Creates the control for progress reporting.
 	 */
 	private void createProgressMonitorPart(Composite parent) {
 		fProgressMonitorPart= new ProgressMonitorPart(parent, new GridLayout(2, false));
@@ -281,16 +266,13 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	/**
-	 * Query the elements for the given prefix.
-	 * 
-	 * @param prefix
-	 * @param monitor
+	 * Queries the elements for the given prefix.
 	 */
 	protected ITypeInfo[] getElementsByPrefix(char[] prefix, IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return null;
 		}
-		HashSet<IndexTypeInfo> types = new HashSet<IndexTypeInfo>();
+		HashSet<IndexTypeInfo> types = new HashSet<>();
 		if (prefix != null) {
 			final IndexFilter filter= new IndexFilter() {
 				@Override
@@ -327,9 +309,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				} finally {
 					index.releaseReadLock();
 				}
-			} catch (CoreException e) {
-				CUIPlugin.log(e);
-			} catch (InterruptedException e) {
+			} catch (CoreException | InterruptedException e) {
 				CUIPlugin.log(e);
 			}
 		}
@@ -345,9 +325,6 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		throw new UnsupportedOperationException();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleElementsChanged()
-	 */
 	@Override
 	protected void handleElementsChanged() {
 		updateOkState();

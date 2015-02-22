@@ -17,9 +17,6 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class OpenTypeMessages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages";//$NON-NLS-1$
-
 	private OpenTypeMessages() {
 		// Do not instantiate
 	}
@@ -33,6 +30,6 @@ public final class OpenTypeMessages extends NLS {
 	public static String ElementSelectionDialog_UpdateElementsJob_inProgress;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, OpenTypeMessages.class);
+		NLS.initializeMessages(OpenTypeMessages.class.getName(), OpenTypeMessages.class);
 	}
 }

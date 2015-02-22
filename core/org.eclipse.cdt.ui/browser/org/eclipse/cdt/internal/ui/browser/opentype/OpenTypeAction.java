@@ -41,18 +41,12 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
-
 	private IWorkbenchWindow fWorkbenchWindow;
 
 	public OpenTypeAction() {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		ElementSelectionDialog dialog = new ElementSelectionDialog(getShell());
@@ -67,12 +61,12 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		
 		ITypeReference location = info.getResolvedReference();
 		if (location == null) {
-			// could not resolve location
+			// Could not resolve location.
 			String title = OpenTypeMessages.OpenTypeAction_errorTitle; 
 			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorTypeNotFound, info.getQualifiedTypeName().toString()); 
 			MessageDialog.openError(getShell(), title, message);
 		} else if (!openTypeInEditor(location)) {
-			// error opening editor
+			// Error opening editor.
 			String title = OpenTypeMessages.OpenTypeAction_errorTitle; 
 			String message = NLS.bind(OpenTypeMessages.OpenTypeAction_errorOpenEditor, location.getPath().toString()); 
 			MessageDialog.openError(getShell(), title, message);
@@ -91,7 +85,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 					ISelection sel= ((ITextEditor) part).getSelectionProvider().getSelection();
 					if (sel instanceof ITextSelection) {
 						String txt= ((ITextSelection) sel).getText();
-						if (txt.length() > 0 && txt.length() < 80) {
+						if (!txt.isEmpty() && txt.length() < 80) {
 							dialog.setFilter(txt, true);
 						}
 					}
@@ -108,7 +102,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * Opens an editor and displays the selected type.
 	 * 
 	 * @param info Type to display.
-	 * @return true if succesfully displayed.
+	 * @return true if successfully displayed.
 	 */
 	private boolean openTypeInEditor(ITypeReference location) {
 		ICElement[] cElements= location.getCElements();
@@ -124,11 +118,11 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			if (unit != null)
 				editorPart = EditorUtility.openInEditor(unit);
 			if (editorPart == null) {
-				// open as external file
+				// Open as external file.
 				editorPart = EditorUtility.openInEditor(location.getLocation(), null);
 			}
 
-			// highlight the type in the editor
+			// Highlight the type in the editor.
 			if (editorPart != null && editorPart instanceof ITextEditor) {
 				ITextEditor editor = (ITextEditor) editorPart;
                 if( location.isLineNumber() )
@@ -160,32 +154,16 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fWorkbenchWindow= null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Intel corporation    - customization for New Project model.
  *     Marc-Andre Laperle (Ericsson) - Bug 394492 Project options not visible
+ *     Marc-Andre Laperle (Ericsson) - Bug 382746 Add C++ nature to C Project
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -16,8 +17,8 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
@@ -250,29 +251,29 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
     /**
      * Method isCandidate returns true for:
      * - non-CDT projects
-     * - old style Make CDT projects
-     * So new model projects and
-     * old style managed projects
-     * are refused.
+     * - C projects, to be potentially converted to C++
      */
     @Override
 	public boolean isCandidate(IProject project) {
-    	boolean a = !AbstractPage.isCDTPrj(project);
-    	boolean b = ManagedBuilderCorePlugin.getDefault().isOldStyleMakeProject(project);
-		return a || b;
+		boolean isCDTProject = AbstractPage.isCDTPrj(project);
+		boolean cOnly = false;
+		try {
+			cOnly = !project.hasNature(CCProjectNature.CC_NATURE_ID);
+		} catch (CoreException e) {
+			// If the project doesn't exist or is not open, it cannot be converted
+			return false;
+		}
+		return !isCDTProject || cOnly;
     }
 
     @Override
 	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException{
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
-			if (ManagedBuilderCorePlugin.getDefault().isOldStyleMakeProject(project)) {
-				ManagedBuilderCorePlugin.getDefault().convertOldStdMakeToNewStyle(project, monitor);
-			} else {
-				super.convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
-				if (isSetProjectType()) {
-					h_selected.convertProject(project, monitor);
-				}
+			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
+			super.convertProject(project, bsId, new SubProgressMonitor(monitor, 1));
+			if (!wasCDTProject && isSetProjectType()) {
+				h_selected.convertProject(project, monitor);
 			}
 		} finally {
 			monitor.done();
@@ -283,13 +284,10 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
-			if (ManagedBuilderCorePlugin.getDefault().isOldStyleMakeProject(project)) {
-				ManagedBuilderCorePlugin.getDefault().convertOldStdMakeToNewStyle(project, monitor);
-			} else {
-				super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
-				if (isSetProjectType()) {
-					h_selected.convertProject(project, monitor);
-				}
+			boolean wasCDTProject = AbstractPage.isCDTPrj(project);
+			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+			if (!wasCDTProject && isSetProjectType()) {
+				h_selected.convertProject(project, monitor);
 			}
 		} finally {
 			monitor.done();

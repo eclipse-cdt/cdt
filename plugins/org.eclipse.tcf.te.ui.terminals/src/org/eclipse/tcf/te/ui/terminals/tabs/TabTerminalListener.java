@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2015 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,9 +23,23 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
  */
 @SuppressWarnings("restriction")
 public class TabTerminalListener implements ITerminalListener {
+	private static final String TAB_TERMINAL_LISTENER = "TabTerminalListener"; //$NON-NLS-1$
 	/* default */ final TabFolderManager tabFolderManager;
-	private final CTabItem tabItem;
+	private CTabItem tabItem;
 	private final String tabItemTitle;
+
+	/**
+	 * Move a TabTerminalListener instance to another item (for DnD).
+	 *
+	 * @param fromItem  item to detach the listener from
+	 * @param toItem    item to attach listener to
+	 */
+	static void move(CTabItem fromItem, CTabItem toItem) {
+		TabTerminalListener listener = (TabTerminalListener) fromItem.getData(TAB_TERMINAL_LISTENER);
+		if (listener != null) {
+			listener.attachTo(toItem);
+		}
+	}
 
 	/**
 	 * Constructor.
@@ -36,12 +50,18 @@ public class TabTerminalListener implements ITerminalListener {
 	public TabTerminalListener(TabFolderManager tabFolderManager, CTabItem tabItem) {
 		super();
 		Assert.isNotNull(tabFolderManager);
-		this.tabFolderManager = tabFolderManager;
 		Assert.isNotNull(tabItem);
-		this.tabItem = tabItem;
-
+		this.tabFolderManager = tabFolderManager;
 		// Remember the original tab item title
 		tabItemTitle = tabItem.getText();
+
+		attachTo(tabItem);
+	}
+
+	private void attachTo(CTabItem item) {
+		if (tabItem != null) tabItem.setData(TAB_TERMINAL_LISTENER, null);
+		item.setData(TAB_TERMINAL_LISTENER, this);
+		tabItem = item;
 	}
 
 	/**

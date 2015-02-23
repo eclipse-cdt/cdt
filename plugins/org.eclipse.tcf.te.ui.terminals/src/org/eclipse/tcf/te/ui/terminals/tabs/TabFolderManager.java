@@ -47,7 +47,6 @@ import org.eclipse.tcf.te.ui.terminals.nls.Messages;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
-import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -364,6 +363,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// Setup the tab item listeners
 			setupTerminalTabListeners(item);
+			// Move the terminal listener to the new item
+			TabTerminalListener.move(oldItem, item);
 
 			// Create the composite to create the terminal control within
 			Composite composite = new Composite(tabFolder, SWT.NONE);
@@ -374,12 +375,12 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			// Refresh the layout
 			tabFolder.getParent().layout(true);
 
+			// Remember terminal state
+			TerminalState oldState = terminal.getState();
+
 			// change the "parent".
-			//
-			// Note: We have to cast to VT100TerminalControl here until setupTerminal is
-			//       re-exposed to clients via the ITerminalControl.
-			Assert.isTrue(terminal instanceof VT100TerminalControl);
-			((VT100TerminalControl)terminal).setupTerminal(composite);
+			Assert.isTrue(terminal instanceof ITerminalControl);
+			((ITerminalControl)terminal).setupTerminal(composite);
 
 			item.setData(terminal);
 
@@ -422,7 +423,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// needed to get the focus and cursor
 			Assert.isTrue(terminal instanceof ITerminalControl);
-			((ITerminalControl)terminal).setState(TerminalState.CONNECTED);
+			((ITerminalControl)terminal).setState(oldState);
 
 			// Fire selection changed event
 			fireSelectionChanged();

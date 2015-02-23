@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 - 2015 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2011, 2015 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.tcf.te.core.terminals.TerminalServiceFactory;
 import org.eclipse.tcf.te.core.terminals.interfaces.ITerminalService;
 import org.eclipse.tcf.te.ui.terminals.services.TerminalService;
@@ -56,6 +57,9 @@ public class TabDisposeListener implements DisposeListener {
 			if (candidate instanceof ITerminalViewControl) ((ITerminalViewControl)candidate).disposeTerminal();
 			// Dispose the command input field handler
 			parentTabFolderManager.disposeTabCommandFieldHandler((CTabItem)e.getSource());
+			// Dispose the tab item control
+			Control control = ((CTabItem) e.getSource()).getControl();
+			if (control != null) control.dispose();
 
 			// If all items got removed, we have to switch back to the empty page control
 			if (parentTabFolderManager.getTabFolder() != null && parentTabFolderManager.getTabFolder().getItemCount() == 0) {

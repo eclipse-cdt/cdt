@@ -302,6 +302,11 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 					tabFolderManager.bringToTop(item);
 					switchToTabFolderControl();
 
+					// dispose tab item control
+					final Control control = draggedItem.getControl();
+					draggedItem.setControl(null);
+					if (control != null) control.dispose();
+
 					// need to remove the dispose listener first
 					DisposeListener disposeListener = (DisposeListener) draggedItem.getData("disposeListener"); //$NON-NLS-1$
 					draggedItem.removeDisposeListener(disposeListener);

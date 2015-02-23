@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/org.eclipse.rse_0.0.0.jar" id="org.eclipse.rse" version="0.0.0">
-      <category name="tm_37_main"/>
+      <category name="rse_37_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.sdk_0.0.0.jar" id="org.eclipse.rse.sdk" version="0.0.0">
-      <category name="tm_37_main"/>
+      <category name="rse_37_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.terminals_0.0.0.jar" id="org.eclipse.rse.terminals" version="0.0.0">
-      <category name="tm_37_main"/>
+      <category name="rse_37_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.terminals.source_0.0.0.jar" id="org.eclipse.rse.terminals.source" version="0.0.0">
-      <category name="tm_37_main"/>
+      <category name="rse_37_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_0.0.0.jar" id="org.eclipse.rse.useractions" version="0.0.0">
-      <category name="tm_37_main"/>
+      <category name="rse_37_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_0.0.0.jar" id="org.eclipse.rse.examples" version="0.0.0">
-      <category name="tm_37_optional"/>
+      <category name="rse_37_optional"/>
    </feature>
    <feature url="features/org.eclipse.rse.scp_0.0.0.jar" id="org.eclipse.rse.scp" version="0.0.0">
-      <category name="tm_37_optional"/>
+      <category name="rse_37_optional"/>
    </feature>
    
    <!-- TM Terminal Features -->

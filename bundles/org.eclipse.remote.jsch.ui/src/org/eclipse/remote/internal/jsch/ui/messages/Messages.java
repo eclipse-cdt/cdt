@@ -24,7 +24,7 @@ public class Messages extends NLS {
 	public static String JSchConnectionPage_A_connection_with_that_name_already_exists;
 	public static String JSchConnectionPage_Edit_Connection;
 	public static String JSchConnectionPage_Edit_properties_of_an_existing_connection;
-	public static String JSchConnectionPage_Please_enter_name_for_connection;
+	public static String JSchConnectionPage_Initial_Message;
 	public static String JSchConnectionPage_Proxy;
 	public static String JSchConnectionPage_Help;
 	public static String JSchConnectionPage_KeysAtSSH2;

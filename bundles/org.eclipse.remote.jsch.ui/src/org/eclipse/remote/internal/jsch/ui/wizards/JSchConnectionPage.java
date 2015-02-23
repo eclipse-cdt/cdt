@@ -232,7 +232,7 @@ public class JSchConnectionPage extends WizardPage {
 		if (fConnection == null) {
 			setDescription(Messages.JSchNewConnectionPage_New_connection_properties);
 			setTitle(Messages.JSchNewConnectionPage_New_Connection);
-			setMessage(Messages.JSchConnectionPage_Please_enter_name_for_connection);
+			setMessage(Messages.JSchConnectionPage_Initial_Message);
 		} else {
 			setDescription(Messages.JSchConnectionPage_Edit_properties_of_an_existing_connection);
 			setTitle(Messages.JSchConnectionPage_Edit_Connection);

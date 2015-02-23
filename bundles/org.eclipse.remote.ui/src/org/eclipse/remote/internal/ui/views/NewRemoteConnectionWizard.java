@@ -55,7 +55,7 @@ public class NewRemoteConnectionWizard extends Wizard {
 
 	@Override
 	public boolean canFinish() {
-		// Need to move onto the new target wizard
+		// don't allow to finish since we need to activate actual connection wizard page
 		return false;
 	}
 

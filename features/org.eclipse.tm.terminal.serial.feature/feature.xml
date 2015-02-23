@@ -15,6 +15,7 @@
       label="%featureName"
       version="4.0.0.qualifier"
       provider-name="%providerName"
+      plugin="org.eclipse.tm.terminal.serial"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
 

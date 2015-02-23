@@ -84,7 +84,7 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	@Override
-	public void tearDown() throws CoreException {
+	public void tearDown() throws Exception {
 		if (cproject != null) {
 			try {
 				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -92,6 +92,7 @@ public class CodanTestCase extends BaseTestCase {
 				throw e;
 			}
 		}
+		super.tearDown();
 	}
 
 	/**

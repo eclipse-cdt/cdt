@@ -80,7 +80,7 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 	}
 
 	@Override
-	public void tearDown() throws CoreException {
+	public void tearDown() throws Exception {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {

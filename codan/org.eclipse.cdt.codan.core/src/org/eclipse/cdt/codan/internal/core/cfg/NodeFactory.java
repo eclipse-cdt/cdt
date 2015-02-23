@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
@@ -24,24 +23,12 @@ import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
  * Factory that creates cfg nodes
  */
 public class NodeFactory implements INodeFactory {
-	IControlFlowGraph graph;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#
-	 * getControlFlowGraph()
-	 */
-	public IControlFlowGraph getControlFlowGraph() {
-		return graph;
-	}
-
 	public NodeFactory() {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createPlainNode ()
 	 */
 	@Override
@@ -51,7 +38,7 @@ public class NodeFactory implements INodeFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createJumpNode ()
 	 */
 	@Override
@@ -61,7 +48,7 @@ public class NodeFactory implements INodeFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#
 	 * createDecisionNode()
 	 */
@@ -72,7 +59,7 @@ public class NodeFactory implements INodeFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#
 	 * createConnectiorNode()
 	 */
@@ -83,7 +70,7 @@ public class NodeFactory implements INodeFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createStartNode ()
 	 */
 	@Override
@@ -93,7 +80,7 @@ public class NodeFactory implements INodeFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createExitNode ()
 	 */
 	@Override

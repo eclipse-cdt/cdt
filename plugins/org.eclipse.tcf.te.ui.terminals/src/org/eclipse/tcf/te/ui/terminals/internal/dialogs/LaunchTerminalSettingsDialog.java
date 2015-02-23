@@ -314,6 +314,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
         		// resize the dialog if needed to show the complete panel
         		getShell().pack();
+        		// validate the settings dialog
+        		validate();
         	}
 		});
 

@@ -97,7 +97,7 @@ public class TerminalConnectorTest extends TestCase {
 		public boolean fEcho;
 		public int fWidth;
 		public int fHeight;
-		public ITerminalControl fControl;
+		public ITerminalControl fTerminalControl;
 		public ISettingsStore fSaveStore;
 		public ISettingsStore fLoadStore;
 		public boolean fDisconnect;
@@ -111,7 +111,7 @@ public class TerminalConnectorTest extends TestCase {
 		}
 		public void connect(ITerminalControl control) {
 			super.connect(control);
-			fControl = control;
+			fTerminalControl = control;
 		}
 		public void doDisconnect() {
 			fDisconnect=true;
@@ -203,7 +203,7 @@ public class TerminalConnectorTest extends TestCase {
 		TerminalConnector c=new TerminalConnector(new SimpleFactory(mock),"xID","xName", false);
 		TerminalControlMock control=new TerminalControlMock();
 		c.connect(control);
-		assertSame(mock.fControl,control);
+		assertSame(mock.fTerminalControl,control);
 	}
 
 	public void testGetSettingsSummary() {

@@ -791,11 +791,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	protected boolean isLogCharEnabled() {
 		return TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_CHAR);
 	}
-	protected boolean isLogBufferSizeEnabled() {
-		return TerminalPlugin
-				.isOptionEnabled(Logger.TRACE_DEBUG_LOG_BUFFER_SIZE);
-	}
-
 
 	public OutputStream getOutputStream() {
 		if(getTerminalConnector()!=null)

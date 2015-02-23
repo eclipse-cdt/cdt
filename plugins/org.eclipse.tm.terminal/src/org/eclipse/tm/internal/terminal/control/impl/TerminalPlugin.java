@@ -61,16 +61,6 @@ public class TerminalPlugin extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
-	public static boolean isLogInfoEnabled() {
-		return isOptionEnabled(Logger.TRACE_DEBUG_LOG_INFO);
-	}
-	public static boolean isLogErrorEnabled() {
-		return isOptionEnabled(Logger.TRACE_DEBUG_LOG_ERROR);
-	}
-	public static boolean isLogEnabled() {
-		return isOptionEnabled(Logger.TRACE_DEBUG_LOG);
-	}
-
 	public static boolean isOptionEnabled(String strOption) {
 		String strEnabled = Platform.getDebugOption(strOption);
 		if (strEnabled == null)

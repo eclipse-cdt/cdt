@@ -103,30 +103,6 @@ public class TerminalViewPlugin extends AbstractUIPlugin {
 		return fDefault;
 	}
 
-	public static boolean isLogInfoEnabled() {
-		return isOptionEnabled(Logger.TRACE_DEBUG_LOG_INFO);
-	}
-	public static boolean isLogErrorEnabled() {
-		return isOptionEnabled(Logger.TRACE_DEBUG_LOG_ERROR);
-	}
-	public static boolean isLogEnabled() {
-		return isOptionEnabled(Logger.TRACE_DEBUG_LOG);
-	}
-
-	public static boolean isOptionEnabled(String strOption) {
-		String strEnabled;
-		Boolean boolEnabled;
-		boolean bEnabled;
-
-		strEnabled = Platform.getDebugOption(strOption);
-		if (strEnabled == null)
-			return false;
-
-		boolEnabled = new Boolean(strEnabled);
-		bEnabled = boolEnabled.booleanValue();
-
-		return bEnabled;
-	}
 	protected void loadImageRegistry(ImageRegistry imageRegistry,
 			String strDir, HashMap map) throws MalformedURLException {
 		URL url;

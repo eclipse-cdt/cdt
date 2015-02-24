@@ -371,6 +371,10 @@ public class TabFolderMenuHandler extends PlatformObject {
 		if (MenuManager.class.isAssignableFrom(adapter)) {
 			return contextMenuManager;
 		} else if (Menu.class.isAssignableFrom(adapter)) {
+			if (contextMenu != null && contextMenu.isDisposed()) {
+				// menu got disposed (should not happen)
+				contextMenu = contextMenuManager.createContextMenu(getTabFolder());
+			}
 			return contextMenu;
 		}
 

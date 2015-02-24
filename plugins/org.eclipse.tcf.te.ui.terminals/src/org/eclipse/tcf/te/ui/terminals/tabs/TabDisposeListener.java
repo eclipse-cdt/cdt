@@ -54,7 +54,12 @@ public class TabDisposeListener implements DisposeListener {
 		if (e.getSource() instanceof CTabItem) {
 			// Get the terminal control (if any) from the tab item
 			Object candidate = ((CTabItem)e.getSource()).getData();
-			if (candidate instanceof ITerminalViewControl) ((ITerminalViewControl)candidate).disposeTerminal();
+			if (candidate instanceof ITerminalViewControl) {
+				ITerminalViewControl terminal = (ITerminalViewControl)candidate;
+				// Keep the context menu from being disposed
+				terminal.getControl().setMenu(null);
+				terminal.disposeTerminal();
+			}
 			// Dispose the command input field handler
 			parentTabFolderManager.disposeTabCommandFieldHandler((CTabItem)e.getSource());
 			// Dispose the tab item control

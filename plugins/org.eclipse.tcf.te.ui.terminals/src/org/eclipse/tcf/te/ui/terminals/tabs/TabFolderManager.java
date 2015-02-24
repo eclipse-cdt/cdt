@@ -378,6 +378,9 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			// Remember terminal state
 			TerminalState oldState = terminal.getState();
 
+			// Keep the context menu from being disposed
+			terminal.getControl().setMenu(null);
+
 			// change the "parent".
 			Assert.isTrue(terminal instanceof ITerminalControl);
 			((ITerminalControl)terminal).setupTerminal(composite);

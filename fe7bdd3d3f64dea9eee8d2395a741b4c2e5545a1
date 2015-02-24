@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_e1c1c277",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/ConvertToMakeWizardPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-02-24T18:39:33Z",
+      "side": 1,
+      "message": "I am talking about this code. Its converting.\nIf this is only intended to add nature it should maybe another wizard?",
+      "revId": "fe7bdd3d3f64dea9eee8d2395a741b4c2e5545a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

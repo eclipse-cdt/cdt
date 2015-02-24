@@ -220,6 +220,10 @@ public class CheckerTestCase extends CodanTestCase {
 		}
 	}
 
+	/**
+	 * Enable given problems and disable the rest
+	 * @param ids
+	 */
 	protected void enableProblems(String... ids) {
 		IProblemProfile profile = CodanRuntime.getInstance().getCheckersRegistry().getWorkspaceProfile();
 		IProblem[] problems = profile.getProblems();

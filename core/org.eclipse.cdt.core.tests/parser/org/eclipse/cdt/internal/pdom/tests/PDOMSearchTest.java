@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -121,6 +122,14 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(offset("Class1.h", "namespace namespace1") + 10, loc.getNodeOffset()); //character offset
 	}
 
+	public void testAnonymousNamespace_460646() throws Exception {
+		char[][] name = new char[][] { "ns1".toCharArray(), "ns2".toCharArray(), "Class3".toCharArray() };
+		IIndexBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
+		assertEquals(1, bindings.length);
+		assertTrue(bindings[0] instanceof ICPPClassType);
+		assertEquals("ns1::ns2::Class3", getQualifiedName(bindings[0]));
+	}
+
 	public void testClasses_160913() throws Exception {
 		// classes and nested classes
 
@@ -134,13 +143,13 @@ public class PDOMSearchTest extends PDOMTestBase {
 
 		/** result #1 * */
 		ICPPClassType class1 = (ICPPClassType) class1s[0];
-		assertEquals("Class1", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(class1)));
+		assertEquals("Class1", getQualifiedName(class1));
 		IBinding[] methods = class1.getDeclaredMethods();
 		assertEquals(0, methods.length);
 
 		/** result #2 * */
 		ICPPClassType class2 = (ICPPClassType) class1s[1];
-		assertEquals("namespace1::Class1", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(class2)));
+		assertEquals("namespace1::Class1", getQualifiedName(class2));
 
 		/* Members in this class */
 
@@ -167,12 +176,12 @@ public class PDOMSearchTest extends PDOMTestBase {
 
 		/** result #3 * */
 		ICPPMethod method3 = (ICPPMethod) class1s[3];
-		assertEquals("namespace1::Class1::Class1", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(method3)));
+		assertEquals("namespace1::Class1::Class1", getQualifiedName(method3));
 		assertEquals(method3, methods[0]);
 
 		/** result #4 * */
 		ICPPClassType class4 = (ICPPClassType) class1s[2];
-		assertEquals("namespace1::namespace2::Class1", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(class4)));
+		assertEquals("namespace1::namespace2::Class1", getQualifiedName(class4));
 		methods = class4.getDeclaredMethods();
 		assertEquals(0, methods.length);
 
@@ -186,7 +195,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 
 		/** result #1 * */
 		ICPPClassType cls1 = (ICPPClassType) class2s[0];
-		assertEquals("Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls1)));
+		assertEquals("Class2", getQualifiedName(cls1));
 		methods = cls1.getDeclaredMethods();
 		assertEquals(3, methods.length);
 		Arrays.sort(methods, BINDING_COMPARATOR);
@@ -196,16 +205,16 @@ public class PDOMSearchTest extends PDOMTestBase {
 
 		/** result #2 * */
 		ICPPMethod meth2 = (ICPPMethod) class2s[3];
-		assertEquals("Class2::Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(meth2)));
+		assertEquals("Class2::Class2", getQualifiedName(meth2));
 		assertEquals(meth2, methods[0]);
 
 		/** result #3 * */
 		ICPPClassType cls3 = (ICPPClassType) class2s[1];
-		assertEquals("namespace1::Class1::Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls3)));
+		assertEquals("namespace1::Class1::Class2", getQualifiedName(cls3));
 
 		/** result #3 * */
 		ICPPClassType cls4 = (ICPPClassType) class2s[2];
-		assertEquals("namespace1::Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(cls4)));
+		assertEquals("namespace1::Class2", getQualifiedName(cls4));
 
 		/* Nested class references - namespace1::Class1::Class2 */
 		IName[] refs = pdom.findNames(cls3, IIndex.FIND_REFERENCES);
@@ -226,38 +235,38 @@ public class PDOMSearchTest extends PDOMTestBase {
 		IBinding[] functions = pdom.findBindings(Pattern.compile("foo2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, functions.length);
 		assertTrue(functions[0] instanceof ICPPFunction);
-		assertEquals("foo2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(functions[0])));
+		assertEquals("foo2", getQualifiedName(functions[0]));
 
 		functions = pdom.findBindings(Pattern.compile("main"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, functions.length);
 		assertTrue(functions[0] instanceof ICPPFunction);
-		assertEquals("main", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(functions[0])));
+		assertEquals("main", getQualifiedName(functions[0]));
 	}
 
 	public void testMethods() throws Exception {
 		IBinding[] methods = pdom.findBindings(Pattern.compile("~Class2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, methods.length);
 		assertTrue(methods[0] instanceof ICPPMethod);
-		assertEquals("Class2::~Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(methods[0])));
+		assertEquals("Class2::~Class2", getQualifiedName(methods[0]));
 	}
 
 	public void testFields() throws Exception {
 		IBinding[] fields = pdom.findBindings(Pattern.compile("class1x"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, fields.length);
 		assertTrue(fields[0] instanceof ICPPField);
-		assertEquals("namespace1::Class1::class1x", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(fields[0])));
+		assertEquals("namespace1::Class1::class1x", getQualifiedName(fields[0]));
 
 		fields = pdom.findBindings(Pattern.compile("class1y"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, fields.length);
 		assertTrue(fields[0] instanceof ICPPField);
-		assertEquals("namespace1::Class1::class1y", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(fields[0])));
+		assertEquals("namespace1::Class1::class1y", getQualifiedName(fields[0]));
 	}
 
 	public void testVariables() throws Exception {
 		IBinding[] variables = pdom.findBindings(Pattern.compile("var"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, variables.length);
 		assertTrue(variables[0] instanceof ICPPVariable);
-		assertEquals("var", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(variables[0])));
+		assertEquals("var", getQualifiedName(variables[0]));
 
 		/* Variable references */
 		IName[] refs = pdom.findNames(variables[0], IIndex.FIND_REFERENCES);
@@ -279,22 +288,10 @@ public class PDOMSearchTest extends PDOMTestBase {
 	}
 
 	/**
-	 * Returns the fully qualified name for a given PDOMBinding
-	 *
-	 * @param pdomBinding
-	 * @return binding's fully qualified name
-	 * @throws CoreException
+	 * Returns the fully qualified name for a given binding.
 	 */
-	private static String getBindingQualifiedName(PDOMBinding pdomBinding) throws CoreException {
-		StringBuilder buf = new StringBuilder(pdomBinding.getName());
-		PDOMNode parent = pdomBinding.getParentNode();
-		while (parent != null) {
-			if (parent instanceof PDOMBinding) {
-				String name = ((PDOMBinding) parent).getName();
-				buf.insert(0, name + "::");
-			}
-			parent = parent.getParentNode();
-		}
-		return buf.toString();
+	private String getQualifiedName(IBinding binding) throws CoreException {
+		PDOMBinding pdomBinding = pdom.getLinkageImpls()[0].adaptBinding(binding);
+		return StringUtil.join(pdomBinding.getQualifiedName(), "::");
 	}
 }

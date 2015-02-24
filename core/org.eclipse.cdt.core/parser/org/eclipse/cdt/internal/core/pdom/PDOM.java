@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 QNX Software Systems and others.
+ * Copyright (c) 2005, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -908,6 +909,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 					if (cand instanceof ICPPEnumeration && ((ICPPEnumeration) cand).isScoped())
 						return false;
 					// Unscoped enumerations are not part of the qualified name.
+					i++;
+				} else if (cand instanceof ICPPNamespace && name.length == 0) {
+					// Anonymous namespaces are not part of the qualified name.
 					i++;
 				} else {
 					return false;

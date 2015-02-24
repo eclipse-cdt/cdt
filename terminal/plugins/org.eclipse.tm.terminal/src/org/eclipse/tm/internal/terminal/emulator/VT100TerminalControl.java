@@ -633,16 +633,33 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	public void setupTerminal(Composite parent) {
 		Assert.isNotNull(parent);
-		fState=TerminalState.CLOSED;
+		boolean wasDisposed = true;
+		TerminalState oldState = fState;
+		fState = TerminalState.CLOSED;
+		if (fClipboard != null && !fClipboard.isDisposed()) {
+			// terminal was not disposed (DnD)
+			wasDisposed = false;
+			fClipboard.dispose();
+			fPollingTextCanvasModel.stopPolling();
+		}
+		if (fWndParent != null && !fWndParent.isDisposed()) {
+			// terminal widget gets a new parent (DnD)
+			fWndParent.dispose();
+		}
 		setupControls(parent);
+		setCommandInputField(fCommandInputField);
 		setupListeners();
-		if (fUseCommonPrefs) {
+		if (fUseCommonPrefs && wasDisposed) {
 			updatePreferences();
 			onTerminalFontChanged();
 			TerminalPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
 			JFaceResources.getFontRegistry().addListener(fFontListener);
 		}
 		setupHelp(fWndParent, TerminalPlugin.HELP_VIEW);
+		
+		if (!wasDisposed) {
+			fState = oldState;
+		}
 	}
 
 	/*
@@ -699,13 +716,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		return fWndParent;
 	}
 	protected void setupControls(Composite parent) {
-		// The Terminal view now aims to be an ANSI-conforming terminal emulator, so it
-		// can't have a horizontal scroll bar (but a vertical one is ok).  Also, do
-		// _not_ make the TextViewer read-only, because that prevents it from seeing a
-		// TAB character when the user presses TAB (instead, the TAB causes focus to
-		// switch to another Workbench control).  We prevent local keyboard input from
-		// modifying the text in method TerminalVerifyKeyListener.verifyKey().
-
 		fWndParent=new Composite(parent,SWT.NONE);
 		GridLayout layout=new GridLayout();
 		layout.marginWidth=0; layout.marginHeight=0; layout.verticalSpacing=0;
@@ -734,8 +744,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 		fDisplay = getCtlText().getDisplay();
 		fClipboard = new Clipboard(fDisplay);
-//		fViewer.setDocument(new TerminalDocument());
-//		setFont(JFaceResources.getTextFont());
 	}
 
 	protected void setupListeners() {

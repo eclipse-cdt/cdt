@@ -39,7 +39,10 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -476,7 +479,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	 *
 	 * @param tabFolder The tab folder control. Must not be <code>null</code>.
 	 */
-	protected void doConfigureTabFolderControl(CTabFolder tabFolder) {
+	protected void doConfigureTabFolderControl(final CTabFolder tabFolder) {
 		Assert.isNotNull(tabFolder);
 
 		// Set the layout data
@@ -494,6 +497,18 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 
 		// Set the tab style from the global preferences
 		tabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+
+		// Attach the mouse listener
+		tabFolder.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if (e.button == 2) {
+					// middle mouse button click - close tab
+					CTabItem item = tabFolder.getItem(new Point(e.x, e.y));
+					if (item != null) item.dispose();
+				}
+			}
+		});
 	}
 
 	/**

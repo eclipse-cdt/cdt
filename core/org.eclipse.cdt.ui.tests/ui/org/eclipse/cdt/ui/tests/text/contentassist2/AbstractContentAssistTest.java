@@ -113,9 +113,9 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
 		long startTime= System.currentTimeMillis();
 		sourceViewer.setSelectedRange(offset, length);
-		Object[] results = isCompletion
-			? (Object[]) processor.computeCompletionProposals(sourceViewer, offset)
-			: (Object[]) processor.computeContextInformation(sourceViewer, offset);
+		Object[] results = isCompletion ?
+				(Object[]) processor.computeCompletionProposals(sourceViewer, offset) :
+				(Object[]) processor.computeContextInformation(sourceViewer, offset);
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
 
@@ -131,13 +131,13 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		Arrays.sort(resultStrings);
 
 		if (CTestPlugin.getDefault().isDebugging())  {
-			System.out.println("Time (ms): " + (endTime-startTime));
+			System.out.println("Time: " + (endTime - startTime) + " ms");
 			for (String proposal : resultStrings) {
 				System.out.println("Result: " + proposal);
 			}
 		}
 
-		boolean allFound = true;  // for the time being, let's be optimistic
+		boolean allFound = true;  // For the time being, let's be optimistic.
 
 		for (String element : expected) {
 			boolean found = false;
@@ -180,14 +180,14 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	 * @return filtered proposals
 	 */
 	private Object[] filterResults(Object[] results, boolean isCodeCompletion) {
-		List<Object> filtered= new ArrayList<Object>();
+		List<Object> filtered= new ArrayList<>();
 		for (Object result : results) {
 			if (result instanceof TemplateProposal) {
 				continue;
 			}
 			if (result instanceof ICCompletionProposal) {
 				if (isCodeCompletion) {
-					// check for keywords proposal
+					// Check for keywords proposal.
 					int relevance = ((ICCompletionProposal)result).getRelevance();
 					if (relevance >= RelevanceConstants.CASE_MATCH_RELEVANCE) {
 						relevance -= RelevanceConstants.CASE_MATCH_RELEVANCE;
@@ -208,7 +208,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	 * Filter out proposals, keep only templates
 	 */
 	private Object[] filterResultsKeepTemplates(Object[] results) {
-		List<Object> filtered= new ArrayList<Object>();
+		List<Object> filtered= new ArrayList<>();
 		for (Object result : results) {
 			if (result instanceof TemplateProposal) {
 				filtered.add(result);
@@ -263,7 +263,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	}
 	
 	private String toString(String[] strings) {
-		StringBuffer buf= new StringBuffer();
+		StringBuilder buf= new StringBuilder();
 		for (String string : strings) {
 			buf.append(string).append('\n');
 		}
@@ -293,11 +293,11 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 	protected void setCommaAfterFunctionParameter(String value) {
 		fCProject.setOption(
-						DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, value);
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS, value);
 	}
 
 	protected void setCommaAfterTemplateParameter(String value) {
 		fCProject.setOption(
-						DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS, value);
+				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS, value);
 	}
 }

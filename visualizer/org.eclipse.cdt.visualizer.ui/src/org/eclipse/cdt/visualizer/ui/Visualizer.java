@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 460737
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui;
@@ -30,7 +31,7 @@ import org.eclipse.swt.widgets.Control;
  * Base class for IVisualizer implementations.
  */
 abstract public class Visualizer
-	implements IVisualizer, ISelectionProvider, ISelectionChangedListener
+	implements IVisualizer2, ISelectionProvider, ISelectionChangedListener
 {
 	// --- members ---
 	
@@ -89,6 +90,13 @@ abstract public class Visualizer
 	 *  Intended to be overridden. Default implementation does nothing.
 	 */
 	public void initializeVisualizer()
+	{
+	}
+	
+	/**
+	 * @since 1.3
+	 */
+	public void initializeVisualizer(String secondaryPartId) 
 	{
 	}
 	

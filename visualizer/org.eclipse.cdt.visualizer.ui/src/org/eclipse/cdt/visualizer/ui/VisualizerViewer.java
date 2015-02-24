@@ -9,6 +9,7 @@
  *     William R. Swanson (Tilera Corporation)
  *     Marc Dumais (Ericsson) - Bug 399281
  *     Marc Dumais (Ericsson) - Bug 441376
+ *     Marc Dumais (Ericsson) - Bug 460737
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui;
@@ -286,7 +287,14 @@ public class VisualizerViewer extends PageBook
 	    		if (id != null && visualizerInstance != null) {
 	    			// Add visualizer's control to viewer's "pagebook" of controls.
 	    			visualizerInstance.setViewer(this);
-	    			visualizerInstance.initializeVisualizer();
+	    			if (visualizerInstance  instanceof IVisualizer2) {
+	    				((IVisualizer2) visualizerInstance).initializeVisualizer(
+	    						m_view.getViewSite().getSecondaryId()
+	    				);
+	    			}
+	    			else if (visualizerInstance  instanceof IVisualizer) {
+	    				visualizerInstance.initializeVisualizer();
+	    			}
 	    			visualizerInstance.createControl(this);
 	    			m_visualizers.put(id, visualizerInstance);
 	    		}

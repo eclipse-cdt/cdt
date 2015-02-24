@@ -573,6 +573,29 @@
       "revId": "f8b0af66bbd73da74b3b01c4e48f172b0f421226",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3e54874b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParsingBasedProposalComputer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T18:37:45Z",
+      "side": 1,
+      "message": "There are no changes in this file except for the copyringht header.",
+      "range": {
+        "startLine": 11,
+        "startChar": 7,
+        "endLine": 11,
+        "endChar": 14
+      },
+      "revId": "f8b0af66bbd73da74b3b01c4e48f172b0f421226",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

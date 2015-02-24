@@ -598,6 +598,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     private long fStepCount;
 
     private boolean fEnableLineBackgroundPainter;
+    private boolean fDisplaySourceImmediately = true;
 
     public DsfSourceDisplayAdapter(DsfSession session, ISourceLookupDirector sourceLocator) {
     	this(session, sourceLocator, null);
@@ -671,7 +672,15 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 				}});
         }
     }
-    
+
+    /**
+     * Controls whether DsfSourceDisplayAdapter should call doDisplaySource by itself
+     * immediately after it receives IRunControl.ISuspendedDMEvent event
+     */
+    public void setDisplaySourceImmediately(boolean displayImmediate) {
+		fDisplaySourceImmediately = displayImmediate;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
@@ -888,20 +897,22 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     	if (e.getReason() == StateChangeReason.STEP || e.getReason() == StateChangeReason.BREAKPOINT) {
     	    if (DEBUG) System.out.println("[DsfSourceDisplayAdapter] eventDispatched e="+e); //$NON-NLS-1$
 	        // trigger source display immediately (should be optional?)
-	        Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-			        Object context = DebugUITools.getDebugContext();
-			        if (context instanceof IDMVMContext) {
-				        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
-				        if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
-				        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-							doDisplaySource((IFrameDMContext) dmc, page, false, true);
-							return;
+			if (fDisplaySourceImmediately) {
+		        Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+				        Object context = DebugUITools.getDebugContext();
+				        if (context instanceof IDMVMContext) {
+					        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
+					        if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
+								IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+								doDisplaySource((IFrameDMContext) dmc, page, false, true);
+								return;
+					        }
 				        }
-			        }
-		    		doneStepping(e.getDMContext());
-				}});
+						doneStepping(e.getDMContext());
+					}});
+			}
     	} else {
     		doneStepping(e.getDMContext());
     	}

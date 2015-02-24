@@ -1,0 +1,245 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_62f2f793",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "endsWith is at least as relevant as startsWith. Please notice that the JDT implementation of the longest common substring algorithm had O(n*m*m) running time. Using a generalized suffix tree the problem can be solved in O(n+m) time (see http://en.wikipedia.org/wiki/Longest_common_substring_problem).",
+      "range": {
+        "startLine": 362,
+        "startChar": 11,
+        "endLine": 362,
+        "endChar": 21
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_e2bee7aa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_8283a3e0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Could you please explain why we use the offset of the statement.",
+      "range": {
+        "startLine": 115,
+        "startChar": 71,
+        "endLine": 115,
+        "endChar": 94
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2292af28",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Simpler: if (params.length() \u003d\u003d 0)",
+      "range": {
+        "startLine": 127,
+        "startChar": 7,
+        "endLine": 127,
+        "endChar": 12
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_42741b75",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "References to overridden methods are useless.",
+      "range": {
+        "startLine": 151,
+        "startChar": 9,
+        "endLine": 151,
+        "endChar": 12
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_626f97a6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Add -\u003e Adds",
+      "range": {
+        "startLine": 153,
+        "startChar": 4,
+        "endLine": 153,
+        "endChar": 7
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_a2797f6e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_827e0353",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Simpler: BadLocationException | BadPositionCategoryException e",
+      "range": {
+        "startLine": 234,
+        "startChar": 11,
+        "endLine": 234,
+        "endChar": 31
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_02b853aa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Too many blank lines.",
+      "range": {
+        "startLine": 347,
+        "startChar": 0,
+        "endLine": 347,
+        "endChar": 1
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6284b7ec",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Better: new ArrayList\u003c\u003e()",
+      "range": {
+        "startLine": 364,
+        "startChar": 36,
+        "endLine": 364,
+        "endChar": 61
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_a27e9f5b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-02-24T01:59:52Z",
+      "side": 1,
+      "message": "Why can\u0027t we use the original context? Use of a brand new context probably triggers re-parsing of the code.",
+      "range": {
+        "startLine": 366,
+        "startChar": 2,
+        "endLine": 366,
+        "endChar": 33
+      },
+      "revId": "c4784be6e853d6efcf9711c79c74eb55b9cfff86",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

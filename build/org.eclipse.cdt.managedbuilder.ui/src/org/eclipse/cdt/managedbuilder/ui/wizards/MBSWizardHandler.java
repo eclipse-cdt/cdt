@@ -1,4 +1,5 @@
 /*******************************************************************************
+
  * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -778,6 +779,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		if(operations != null)
 			for (IRunnableWithProgress op: operations)
 				try {
+					// Notify the operation about the created project if it supports it.
+					if(op instanceof MBSCustomPageData.MBSCustomPageRunnable)
+						((MBSCustomPageData.MBSCustomPageRunnable)op).setProject(newProject);
 					wizard.getContainer().run(false, true, op);
 				} catch (InvocationTargetException e) {
 					ManagedBuilderUIPlugin.log(e);

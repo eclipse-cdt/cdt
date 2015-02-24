@@ -20,8 +20,14 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.managedbuilder.ui.tests.util.TestToolchain;
+import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageData;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
  *   This class is responsible for testing the functionality of the custom page manager (MBSCustomPageManager)
@@ -40,6 +46,7 @@ public class TestCustomPageManager extends TestCase
 {
 
 	private static final String alwaysPresentPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage";
+	private static final String projectStorageInterfacePage = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectStorageInterfacePage";
 	private static final String natureAPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage";
 	private static final String natureBPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage";
 	private static final String toolchainCPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage";
@@ -49,6 +56,7 @@ public class TestCustomPageManager extends TestCase
 	private static final String toolchainCv20PageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage";
 	
 	public static boolean testFlag = false;
+	public static String testProjectName = "";
 	
 	@Override
 	public void setUp() throws Exception
@@ -884,6 +892,37 @@ public class TestCustomPageManager extends TestCase
 		}
 	}
 	
+	public void testOperationProjectInterface() throws Exception
+	{
+		final String projName = "fooBar";
+
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+
+		IProject newProject = root.getProject(projName);
+
+		if(null == newProject)
+		{
+			fail("Unable to create project for operation with project interface test");
+		}
+
+		IRunnableWithProgress operation = MBSCustomPageManager.getPageData(projectStorageInterfacePage).getOperation();
+
+		if(operation instanceof MBSCustomPageData.MBSCustomPageRunnable)
+		{
+			((MBSCustomPageData.MBSCustomPageRunnable) operation).setProject(newProject);
+			operation.run(new NullProgressMonitor());
+			if(!testProjectName.equals(projName))
+			{
+				fail("Operation has not stored the correct name, expected " + projName + " found " + testProjectName);
+			}
+		}
+		else
+		{
+			fail("Operation for project interface test doesn't implement the required interface");
+		}
+	}
+
 	public TestCustomPageManager(String name)
 	{
 		
@@ -892,7 +931,7 @@ public class TestCustomPageManager extends TestCase
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite(TestCustomPageManager.class.getName());
-		
+
 		suite.addTest(new TestCustomPageManager("testOneVisiblePage"));
 		suite.addTest(new TestCustomPageManager("testNatureA"));
 		suite.addTest(new TestCustomPageManager("testNatureB"));
@@ -903,6 +942,7 @@ public class TestCustomPageManager extends TestCase
 		suite.addTest(new TestCustomPageManager("testToolchainF"));
 		suite.addTest(new TestCustomPageManager("testMultiplePages"));
 		suite.addTest(new TestCustomPageManager("testOperation"));
+		suite.addTest(new TestCustomPageManager("testOperationProjectInterface"));
 		return suite;
 	}
 	

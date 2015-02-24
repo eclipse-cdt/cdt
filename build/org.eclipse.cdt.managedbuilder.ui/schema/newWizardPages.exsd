@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui">
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.managedbuilder.ui" id="newWizardPages" name="Custom Wizard Pages for MBS New Project Wizards"/>
@@ -12,6 +12,9 @@
 
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             Extensions to this extension point must contain at least one wizardPage child element.
          </documentation>
@@ -88,6 +91,8 @@ For convenience, there is an org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustom
             <annotation>
                <documentation>
                   Specifies the Java class which implements the operations associated with this page.  The class must implement either the java.lang.Runnable interface, or the org.eclipse.jface.operation.IRunnableWithProgress interface if progress reporting is desired.
+
+The operation can also implement org.eclipse.cdt.managedbuilder.ui.wizards.IMBSWizardOperation which will cause the newly created project to be passed in to the operation before the run method is called.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -412,11 +413,29 @@ public final class MBSCustomPageData
 		if (runnable == null) {
 			return null;
 		}
-		return new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				runnable.run();
+		return new convertedRunnable(runnable);
+
+	}
+
+	/**
+	 * @since 8.3
+	 */
+	public static class convertedRunnable implements IRunnableWithProgress {
+		final Runnable runnable;
+
+		protected convertedRunnable(Runnable r) {
+			runnable = r;
+		}
+
+		@Override
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			runnable.run();
+		}
+
+		public void setProject(IProject proj) {
+			if(runnable instanceof IMBSWizardOperation) {
+				((IMBSWizardOperation) runnable).setProject(proj);
 			}
-		};
+		}
 	}
 }

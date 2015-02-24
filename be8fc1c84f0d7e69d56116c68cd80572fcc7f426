@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_f878569d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 16290
+      },
+      "writtenOn": "2015-02-24T15:55:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_d8f63aca",
+      "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_b8f36ed8",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-24T13:50:10Z",
       "side": 1,
       "message": "I don\u0027t understand what this means. How can Operation store anything?",
+      "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_7883c6e1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 16290
+      },
+      "writtenOn": "2015-02-24T15:55:37Z",
+      "side": 1,
+      "message": "Label was unclear. I\u0027ve updated it.",
+      "parentUuid": "a7fb1785_b8f36ed8",
       "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_7822a662",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/IMBSWizardOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 16290
+      },
+      "writtenOn": "2015-02-24T15:55:37Z",
+      "side": 1,
+      "message": "I\u0027m happy to change the name to whatever you think is best, but I\u0027d called it this to indicate that this particular runnable is the runnable for a MBSWizardPage operation (hence the name) and that still seems best to me. However, I\u0027ve renamed it to IProjectSettable as you suggested.",
+      "parentUuid": "a7fb1785_f86fb6ec",
+      "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_583c0aef",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/IMBSWizardOperation.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2015-02-24T13:50:10Z",
       "side": 1,
       "message": "Is there is setting it should be getter\nInterface methods should be documented usually",
+      "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_f869769a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/IMBSWizardOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 16290
+      },
+      "writtenOn": "2015-02-24T15:55:37Z",
+      "side": 1,
+      "message": "I\u0027ve added comments. I can\u0027t think how a getter would be useful to have in this interface though I\u0027m happy to add one if you think it is best. Implementing this interface just indicates to MBSCustomPageData that this WizardPage operation has a mechanism to keep a reference to the new project. \n\nWhat I\u0027d really like to do use a Java 8 interface with a default method for this so there no need to do anything in the operation runnable at all, just implement this interface and then there will be a member variable containing the project.",
+      "parentUuid": "a7fb1785_583c0aef",
       "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_38a2de83",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSCustomPageData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 16290
+      },
+      "writtenOn": "2015-02-24T15:55:37Z",
+      "side": 1,
+      "message": "Renamed to MBSCustomPageRunnable",
+      "parentUuid": "a7fb1785_38413e63",
+      "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_184a827b",
         "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSCustomPageData.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2015-02-24T13:50:10Z",
       "side": 1,
       "message": "I don\u0027t think it is good idea. Runnables are usually stateless objects (unmodifiable). I still don\u0027t undertstant what you trying to achieve",
+      "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_589d2a46",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSCustomPageData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 16290
+      },
+      "writtenOn": "2015-02-24T15:55:37Z",
+      "side": 1,
+      "message": "MBSCustomPages have a runnable that is called to apply the settings from that page. There is currently no way easy way to get the project to which to apply the settings. Therefore I added an interface which the runnable may implement and if it does so then the MBSCustomPageManager will know it is safe to try to store the project in the runnable. Therefore no changes are required to the runnables associated with older pages and any newer pages get an easy way to access the information they need.",
+      "parentUuid": "a7fb1785_184a827b",
       "revId": "be8fc1c84f0d7e69d56116c68cd80572fcc7f426",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

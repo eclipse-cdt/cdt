@@ -351,7 +351,8 @@ public class CharArrayUtils {
 
     /**
      * Finds an array of chars in an array of arrays of chars.
-     * @return offset where the array was found or <code>-1</code>
+     *
+     * @return offset where the array was found or {@code -1}
      */
     public static int indexOf(final char[] searchFor, final char[][] searchIn) {
 		for (int i = 0; i < searchIn.length; i++) {

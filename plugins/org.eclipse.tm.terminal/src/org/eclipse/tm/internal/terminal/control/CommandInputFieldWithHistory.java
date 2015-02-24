@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,8 @@
  * Anton Leherbauer (Wind River) - [220971] The optional terminal input line has redraw problems when resizing
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
-import java.util.ArrayList;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -58,11 +59,11 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 
 		public IContentProposal[] getProposals(String contents, int position) {
 			String prefix=contents.substring(0, position);
-			List result=new ArrayList();
+			List<Proposal> result=new ArrayList<Proposal>();
 			// show an entry only once
-			Set seen=new HashSet();
-			for (Iterator iterator = fHistory.iterator(); iterator.hasNext();) {
-				String history = (String) iterator.next();
+			Set<String> seen=new HashSet<String>();
+			for (Iterator<String> iterator = fHistory.iterator(); iterator.hasNext();) {
+				String history = iterator.next();
 				if(history.startsWith(prefix) && !seen.contains(history)) {
 					// the content is the rest of the history item
 					String content=history.substring(prefix.length());
@@ -71,7 +72,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 					seen.add(history);
 				}
 			}
-			return (IContentProposal[]) result.toArray(new IContentProposal[result.size()]);
+			return result.toArray(new IContentProposal[result.size()]);
 		}
 
 	}
@@ -100,11 +101,11 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		}
 	}
 
-	final List fHistory=new ArrayList();
+	final List<String> fHistory=new ArrayList<String>();
 	/**
 	 * Keeps a modifiable history while in history editing mode
 	 */
-	List fEditedHistory;
+	List<Object> fEditedHistory;
 	/**
 	 * The current position in the edit history
 	 */
@@ -153,7 +154,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		//<J2ME CDC-1.1 Foundation-1.1 variant>
 		StringTokenizer tok=new StringTokenizer(history,"\n"); //$NON-NLS-1$
 		while(tok.hasMoreElements())
-			fHistory.add(tok.nextElement());
+			fHistory.add((String) tok.nextElement());
 		//</J2ME CDC-1.1 Foundation-1.1 variant>
 	}
 	/**
@@ -162,8 +163,8 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	public String getHistory() {
 		StringBuffer buff=new StringBuffer();
 		boolean sep=false;
-		for (Iterator iterator = fHistory.iterator(); iterator.hasNext();) {
-			String line=(String) iterator.next();
+		for (Iterator<String> iterator = fHistory.iterator(); iterator.hasNext();) {
+			String line=iterator.next();
 			if(line.length()>0) {
 				if(sep)
 					buff.append("\n"); //$NON-NLS-1$
@@ -182,7 +183,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 */
 	public String move(String currLine, int count) {
 		if(!inHistoryMode()) {
-			fEditedHistory=new ArrayList(fHistory.size()+1);
+			fEditedHistory=new ArrayList<Object>(fHistory.size()+1);
 			fEditedHistory.add(currLine);
 			fEditedHistory.addAll(fHistory);
 			fEditHistoryPos=0;
@@ -278,10 +279,10 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 				// ignore it (https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659)
 				if(!e.doit)
 					return;
-				if(e.keyCode=='\n' || e.keyCode=='\r') {
+				if(e.character==SWT.CR || e.character==SWT.LF) {
 					e.doit=false;
 					String line=fInputField.getText();
-					if(!terminal.pasteString(line+"\n")) //$NON-NLS-1$
+					if(!terminal.pasteString(line+'\r'))
 						return;
 					pushLine(line);
 					setCommand("");//$NON-NLS-1$

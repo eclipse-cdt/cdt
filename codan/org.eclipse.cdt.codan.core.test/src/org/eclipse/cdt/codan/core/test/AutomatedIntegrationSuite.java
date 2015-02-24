@@ -21,6 +21,8 @@ import org.eclipse.cdt.codan.core.internal.checkers.AssignmentToItselfCheckerTes
 import org.eclipse.cdt.codan.core.internal.checkers.CaseBreakCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CatchByReferenceTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ClassMembersInitializationCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.CommentCheckerLineTests;
+import org.eclipse.cdt.codan.core.internal.checkers.CommentCheckerNestedTests;
 import org.eclipse.cdt.codan.core.internal.checkers.FormatStringCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.NonVirtualDestructorCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ProblemBindingCheckerTest;
@@ -70,6 +72,8 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		suite.addTestSuite(SuspiciousSemicolonCheckerTest.class);
 		suite.addTestSuite(UnusedSymbolInFileScopeCheckerTest.class);
+		suite.addTestSuite(CommentCheckerLineTests.class);
+		suite.addTestSuite(CommentCheckerNestedTests.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

@@ -637,7 +637,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Setup call parameters
 		long offset = 0;
 		int count = 1;
-		byte[] buffer = new byte[count];
+		byte[] buffer = new byte[count * fWordSize];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		expectedException.expect(ExecutionException.class);
@@ -666,7 +666,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Setup call parameters
 		long offset = 0;
 		int count = 1;
-		byte[] buffer = new byte[count];
+		byte[] buffer = new byte[count * fWordSize];
 		fBaseAddress = new Addr64("0");
 
 		expectedException.expect(ExecutionException.class);
@@ -762,7 +762,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Setup call parameters
 		long offset = 0;
 		int count = 10;
-		byte[] buffer = new byte[count - 1];
+		byte[] buffer = new byte[count * fWordSize - 1];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		expectedException.expect(ExecutionException.class);
@@ -940,7 +940,7 @@ public class MIMemoryTest extends BaseTestCase {
 		// Setup call parameters
 		long offset = 0;
 		int count = 1;
-		byte[] pattern = new byte[count];
+		byte[] pattern = new byte[count * fWordSize];
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
 		expectedException.expect(ExecutionException.class);

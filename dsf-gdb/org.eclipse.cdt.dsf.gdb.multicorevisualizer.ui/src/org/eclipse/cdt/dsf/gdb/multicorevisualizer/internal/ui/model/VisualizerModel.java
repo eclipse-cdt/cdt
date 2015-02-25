@@ -10,6 +10,7 @@
  *     Marc Dumais (Ericsson) - Bug 405390
  *     Marc Dumais (Ericsson) - Bug 407321
  *     Xavier Raynaud (Kalray) - Add tooltip support (Bug 431935)
+ *     Marc Dumais (Ericsson) - Bug 460737
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -55,11 +56,16 @@ public class VisualizerModel
 	/** data source corresponding to this model  */
 	protected String m_sessionId = null;
 	
+	/** Persistent, unique visualizer instance id that corresponds to which 
+	 * cloned visualizer view this instance of the MV serves */
+	protected String m_visualizerInstanceId = null;
+	
 	// --- constructors/destructors ---
 	
 	/** Constructor */
-	public VisualizerModel(String sessionId) {
+	public VisualizerModel(String sessionId, String visualizerInstance) {
 		m_sessionId = sessionId;
+		m_visualizerInstanceId = visualizerInstance;
 		m_cpus = new ArrayList<VisualizerCPU>();
 		m_cpuMap = new Hashtable<Integer, VisualizerCPU>();
 		m_threads = new ArrayList<VisualizerThread>();
@@ -94,6 +100,7 @@ public class VisualizerModel
 			m_loadTodo = null;
 		}
 		m_sessionId = null;
+		m_visualizerInstanceId = null;
 	}
 	
 	
@@ -121,6 +128,13 @@ public class VisualizerModel
 	public String getSessionId() {
 		return m_sessionId;
 	}
+	
+	/** Gets a persistent, unique visualizer instance id that corresponds
+	 *  to which cloned visualizer view this instance of the MV serves */
+	public String getVisualizerInstanceId() {
+		return m_visualizerInstanceId;
+	}
+	
 		
 	// --- methods ---
 	

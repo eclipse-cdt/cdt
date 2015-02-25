@@ -23,6 +23,7 @@
  *     Marc Dumais (Ericsson) - Bug 453206
  *     Marc Dumais (Ericsson) - Bug 458076
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 459114 - override construction of the data model
+ *     Marc Dumais (Ericsson) - Bug 460737
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -144,6 +145,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** Debug view selection changed listener, attached to Debug View. */
 	protected ISelectionChangedListener m_debugViewSelectionChangedListener = null;
 	
+	/** Unique id that differentiates the possible multiple instances of the MV. 
+	 * It's derived from the secondary view Part id of the view associated to the 
+	 * current instance of the MV. */
+	protected String m_visualizerInstanceId = null;
 	
 	// This is used to cache the CPU and core
 	// contexts, each time the model is recreated.  This way
@@ -168,6 +173,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	private static final int LOAD_METER_TIMER_MEDIUM = 1000;
 	/** constant for the long load meters update period */
 	private static final int  LOAD_METER_TIMER_SLOW = 5000;
+	
+	/** The prefix of the secondary View Part id */
+	private static final String SECONDARY_VIEWPART_ID_PREFIX = "PIN_CLONE_VIEW_"; //$NON-NLS-1$
 	
 	/** Currently pinned session id, if any  */
 	private String m_currentPinedSessionId = null;
@@ -261,6 +269,20 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	public void initializeVisualizer() {
 		fEventListener = new MulticoreVisualizerEventListener(this);
 		m_cpuCoreContextsCache = new ArrayList<IDMContext>(); 
+		// The secondary view part id is null for the first instance of the visualizer. 
+		// All other instances will have an id that ends in a number. Something like: 
+		// "PIN_CLONE_VIEW_1". 
+		String secViewPartId = getViewer().getView().getViewSite().getSecondaryId();
+		
+		// The first visualizer view will have a null secondary id
+		if (secViewPartId == null) {
+			m_visualizerInstanceId = "0"; //$NON-NLS-1$
+		}
+		else {
+			// extract the number at the end of the secondary part id
+			int idx = secViewPartId.indexOf(SECONDARY_VIEWPART_ID_PREFIX) + SECONDARY_VIEWPART_ID_PREFIX.length();
+			m_visualizerInstanceId = secViewPartId.substring(idx, secViewPartId.length());
+		}
 	}
 	
 	/**
@@ -1132,7 +1154,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		DsfSession session = DsfSession.getSession(sessionId);
 
 		if (session != null) {
-			final VisualizerModel model = new VisualizerModel(sessionId);
+			final VisualizerModel model = new VisualizerModel(sessionId, m_visualizerInstanceId);
 			fDataModel = model;
 			fTargetData.getCPUs(m_sessionState, new DataRequestMonitor<ICPUDMContext[]>(session.getExecutor(), null) {
 				@Override

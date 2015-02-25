@@ -54,28 +54,27 @@ public class Messages extends NLS {
 	public static String LocalUIConnectionManager_1;
 	public static String LocalUIConnectionManager_2;
 	public static String LocalUIConnectionManager_3;
-	
+
 	public static String PendingUpdateAdapter_Pending;
 
 	public static String PTPRemoteUIPlugin_3;
 	public static String PTPRemoteUIPlugin_4;
-	
+
 	public static String RemoteConnectionWidget_Connection_Type;
-	public static String RemoteConnectionWidget_connectionName;
+	public static String RemoteConnectionWidget_Connection_Name;
 	public static String RemoteConnectionWidget_Local;
-	public static String RemoteConnectionWidget_new;
+	public static String RemoteConnectionWidget_New;
 	public static String RemoteConnectionWidget_Remote;
-	public static String RemoteConnectionWidget_remoteServiceProvider;
 	public static String RemoteConnectionWidget_selectConnection;
 	public static String RemoteConnectionWidget_selectRemoteProvider;
 
-	public static String RemoteDevelopmentPreferencePage_defaultRemoteServicesProvider;
+	public static String RemoteDevelopmentPreferencePage_Default_connection_type;
 
 	public static String RemoteDirectoryWidget_0;
 	public static String RemoteDirectoryWidget_1;
 	public static String RemoteDirectoryWidget_2;
 	public static String RemoteDirectoryWidget_3;
-	
+
 	public static String RemoteFileWidget_Browse;
 
 	public static String RemoteFileWidget_File;
@@ -109,7 +108,7 @@ public class Messages extends NLS {
 	public static String RemoteResourceBrowserWidget_New_Folder;
 
 	public static String RemoteResourceBrowserWidget_Unable_to_create_new_folder;
-	
+
 	public static String RemoteUIServices_Configuring_remote_services;
 
 	public static String RemoteUIServicesProxy_1;

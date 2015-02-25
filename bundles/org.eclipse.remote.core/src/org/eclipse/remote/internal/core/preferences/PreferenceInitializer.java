@@ -23,6 +23,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		Preferences.setDefaultString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID, "org.eclipse.remote.JSch"); //$NON-NLS-1$
+		Preferences.setDefaultString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID, "org.eclipse.remote.JSch"); //$NON-NLS-1$
 	}
 }

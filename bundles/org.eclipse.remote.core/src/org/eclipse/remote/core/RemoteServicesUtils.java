@@ -25,8 +25,8 @@ public class RemoteServicesUtils {
 	 * Convert a UNC path to a URI
 	 * 
 	 * Maps the UNC server component to a connection known by one of the remote service implementations. It is assumed that the
-	 * server component is of the form "[service_id:]connection_name". If the "service_id:" part is omitted then the current
-	 * remote services preference is used by default. If no preference is set, then each implementation is tried until
+	 * server component is of the form "[connection_type_id:]connection_name". If the "connection_type_id:" part is omitted then the
+	 * current connection type preference is used by default. If no preference is set, then each implementation is tried until
 	 * a matching connection name is found.
 	 * 
 	 * @param path
@@ -46,7 +46,7 @@ public class RemoteServicesUtils {
 				services = manager.getConnectionType(parts[0]);
 				connName = parts[1];
 			} else if (parts.length == 1) {
-				String id = Preferences.getString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
+				String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
 				if (id != null) {
 					services = manager.getConnectionType(id);
 				}

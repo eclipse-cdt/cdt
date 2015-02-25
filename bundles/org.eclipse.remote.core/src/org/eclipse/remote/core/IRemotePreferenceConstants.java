@@ -17,8 +17,10 @@ package org.eclipse.remote.core;
  */
 public interface IRemotePreferenceConstants {
 	/**
-	 * Preference setting for the default remote services provider. Clients can check this preference to see if a default provider
+	 * Preference setting for the default connection type. Clients can check this preference to see if a default provider
 	 * has been set, and if so, what the provider ID is.
+	 * 
+	 * @since 2.0
 	 */
-	public static final String PREF_REMOTE_SERVICES_ID = "remoteServicesId"; //$NON-NLS-1$
+	public static final String PREF_CONNECTION_TYPE_ID = "connectionTypeId"; //$NON-NLS-1$
 }

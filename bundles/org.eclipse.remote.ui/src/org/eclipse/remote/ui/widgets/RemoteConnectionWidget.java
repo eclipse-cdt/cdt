@@ -118,16 +118,14 @@ public class RemoteConnectionWidget extends Composite {
 	public static final String DEFAULT_CONNECTION_NAME = "Remote Host"; //$NON-NLS-1$
 
 	/**
-	 * Force the use of a remote provider dialog, regardless of the PRE_REMOTE_SERVICES_ID preference setting.
+	 * Force the use of a remote provider dialog, regardless of the PREF_CONNECTION_TYPE preference setting.
 	 * 
-	 * @since 7.0
+	 * @since 2.0
 	 */
-	public static int FLAG_FORCE_PROVIDER_SELECTION = 1 << 0;
+	public static int FLAG_FORCE_CONNECTION_TYPE_SELECTION = 1 << 0;
 
 	/**
 	 * Do not provide a selection for local services.
-	 * 
-	 * @since 7.0
 	 */
 	public static int FLAG_NO_LOCAL_SELECTION = 1 << 1;
 
@@ -203,10 +201,10 @@ public class RemoteConnectionWidget extends Composite {
 		}
 
 		/*
-		 * Check if we need a remote services combo, or we should just use the default provider
+		 * Check if we need a connection type combo, or we should just use the default provider
 		 */
-		if ((flags & FLAG_FORCE_PROVIDER_SELECTION) == 0) {
-			String id = Preferences.getString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
+		if ((flags & FLAG_FORCE_CONNECTION_TYPE_SELECTION) == 0) {
+			String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
 			if (id != null) {
 				fDefaultConnectionType = fRemoteServicesManager.getConnectionType(id);
 			}
@@ -217,7 +215,7 @@ public class RemoteConnectionWidget extends Composite {
 			 * Remote provider
 			 */
 			Label label = new Label(body, SWT.NONE);
-			label.setText(Messages.RemoteConnectionWidget_remoteServiceProvider);
+			label.setText(Messages.RemoteConnectionWidget_Connection_Type);
 			label.setLayoutData(new GridData());
 
 			fServicesCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -228,7 +226,7 @@ public class RemoteConnectionWidget extends Composite {
 			fServicesCombo.setFocus();
 		}
 
-		if ((flags & FLAG_NO_LOCAL_SELECTION) == 0 && (flags & FLAG_FORCE_PROVIDER_SELECTION) == 0) {
+		if ((flags & FLAG_NO_LOCAL_SELECTION) == 0 && (flags & FLAG_FORCE_CONNECTION_TYPE_SELECTION) == 0) {
 			fLocalButton = new Button(body, SWT.RADIO);
 			fLocalButton.setText(Messages.RemoteConnectionWidget_Local);
 			fLocalButton.setLayoutData(new GridData());
@@ -240,7 +238,7 @@ public class RemoteConnectionWidget extends Composite {
 			fRemoteButton.setLayoutData(new GridData());
 		} else {
 			Label remoteLabel = new Label(body, SWT.NONE);
-			remoteLabel.setText(Messages.RemoteConnectionWidget_connectionName);
+			remoteLabel.setText(Messages.RemoteConnectionWidget_Connection_Name);
 			remoteLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		}
 
@@ -253,7 +251,7 @@ public class RemoteConnectionWidget extends Composite {
 		fConnectionCombo.setEnabled(false);
 
 		fNewConnectionButton = new Button(body, SWT.PUSH);
-		fNewConnectionButton.setText(Messages.RemoteConnectionWidget_new);
+		fNewConnectionButton.setText(Messages.RemoteConnectionWidget_New);
 		fNewConnectionButton.setLayoutData(new GridData());
 		fNewConnectionButton.addSelectionListener(fWidgetListener);
 
@@ -331,7 +329,8 @@ public class RemoteConnectionWidget extends Composite {
 
 	/**
 	 * Handle the section of a new connection. Update connection option buttons appropriately.
-	 * @throws CoreException 
+	 * 
+	 * @throws CoreException
 	 */
 	protected void handleConnectionSelected() {
 		final boolean enabled = fWidgetListener.isEnabled();
@@ -361,7 +360,8 @@ public class RemoteConnectionWidget extends Composite {
 	 * connection combo with the new connection.
 	 * 
 	 * TODO should probably select the new connection
-	 * @throws CoreException 
+	 * 
+	 * @throws CoreException
 	 */
 	protected void handleNewRemoteConnectionSelected() {
 		if (getUIConnectionManager() != null) {
@@ -392,7 +392,7 @@ public class RemoteConnectionWidget extends Composite {
 	 * @param notify
 	 *            if true, notify handlers that the connection has changed. This should only happen if the user changes the
 	 *            connection.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected void handleRemoteServiceSelected(IRemoteConnection conn) {
 		final boolean enabled = fWidgetListener.isEnabled();
@@ -455,7 +455,7 @@ public class RemoteConnectionWidget extends Composite {
 				 * Enable 'new' button if new connections are supported
 				 */
 				fNewConnectionButton
-				.setEnabled((selectedConnectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
+						.setEnabled((selectedConnectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
 			}
 		} finally {
 			fWidgetListener.setEnabled(enabled);
@@ -533,11 +533,12 @@ public class RemoteConnectionWidget extends Composite {
 	 * 
 	 * @param connection
 	 *            connection to select
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public void setConnection(IRemoteConnection connection) {
 		fSelectionListernersEnabled = false;
-		if (fLocalButton != null && connection != null && connection.getConnectionType() == fRemoteServicesManager.getLocalConnectionType()) {
+		if (fLocalButton != null && connection != null
+				&& connection.getConnectionType() == fRemoteServicesManager.getLocalConnectionType()) {
 			fLocalButton.setSelection(true);
 			handleButtonSelected();
 		} else {
@@ -555,7 +556,7 @@ public class RemoteConnectionWidget extends Composite {
 	 *            remote services id
 	 * @param name
 	 *            connection name
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 6.0
 	 */
 	public void setConnection(String id, String name) {

@@ -110,10 +110,10 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open : Messages.ConnectionsPreferencePage_closed;
 			case 1:
 				return connection.getName();
-//			case 2:
-//				return connection.getAttribute(IRemoteConnection.ADDRESS_ATTR);
-//			case 3:
-//				return connection.getAttribute(IRemoteConnection.USERNAME_ATTR);
+				// case 2:
+				// return connection.getAttribute(IRemoteConnection.ADDRESS_ATTR);
+				// case 3:
+				// return connection.getAttribute(IRemoteConnection.USERNAME_ATTR);
 			}
 			return null;
 		}
@@ -212,7 +212,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		if (fIsDirty) {
 			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
 					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION, new String[] {
-				IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+							IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
 			if (dialog.open() == 1) {
 				return;
 			}
@@ -356,7 +356,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fCloseButton.addSelectionListener(fEventHandler);
 		fCloseButton.setEnabled(false);
 
-		String id = Preferences.getString(IRemotePreferenceConstants.PREF_REMOTE_SERVICES_ID);
+		String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
 		if ("".equals(id)) { //$NON-NLS-1$
 			id = fServiceIDs[0];
 		}
@@ -533,8 +533,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		 * Remove any deleted connections
 		 */
 		for (IRemoteConnection conn : fConnectionType.getConnections()) {
-			if (!fWorkingCopies.containsKey(conn.getName()) &&
-					(!conn.hasService(IRemoteConnectionControlService.class) || !conn.isOpen())) {
+			if (!fWorkingCopies.containsKey(conn.getName())
+					&& (!conn.hasService(IRemoteConnectionControlService.class) || !conn.isOpen())) {
 				try {
 					fConnectionType.removeConnection(conn);
 				} catch (RemoteConnectionException e) {
@@ -569,14 +569,17 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			IRemoteConnection conn = getOriginalIfClean(fSelectedConnection);
 			if (conn.hasService(IRemoteConnectionControlService.class)) {
 				if (!conn.isOpen()) {
-					fEditButton.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
-					fRemoveButton.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+					fEditButton
+							.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
+					fRemoveButton
+							.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0);
 					fOpenButton.setEnabled(true);
 				} else {
 					fCloseButton.setEnabled(true);
 				}
 			} else {
-				fEditButton.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
+				fEditButton
+						.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
 			}
 		}
 	}

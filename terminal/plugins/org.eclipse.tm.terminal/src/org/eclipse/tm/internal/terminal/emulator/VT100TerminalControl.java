@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.SocketException;
+import java.nio.charset.Charset;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -144,7 +145,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private boolean connectOnEnterIfClosed	= true;
 
     PipedInputStream fInputStream;
-	private static final String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
+	private static final String defaultEncoding = Charset.defaultCharset().name();
 	private String fEncoding = defaultEncoding;
 	private InputStreamReader fInputStreamReader;
 
@@ -398,6 +399,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		if(getTerminalConnector()==null)
 			return;
 		fTerminalText.resetState();
+		fApplicationCursorKeys = false;
 		if(fConnector.getInitializationErrorMessage()!=null) {
 			showErrorMessage(NLS.bind(
 					TerminalMessages.CannotConnectTo,
@@ -467,8 +469,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		if (getCtlText().isFocusControl()) {
 			if (getState() == TerminalState.CONNECTED)
 				fFocusListener.captureKeyEvents(true);
-		} else {
-			getCtlText().setFocus();
 		}
 		startReaderJob();
 	}

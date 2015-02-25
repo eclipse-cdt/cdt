@@ -152,7 +152,7 @@ public class VT100Emulator implements ControlListener {
 			ansiParameters[i] = new StringBuffer();
 		}
 		setInputStreamReader(reader);
-		if(TerminalPlugin.isOptionEnabled("org.eclipse.tm.terminal/debug/log/VT100Backend")) //$NON-NLS-1$
+		if(TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND)) //$NON-NLS-1$
 			text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
 		else
 			text=new VT100EmulatorBackend(data);

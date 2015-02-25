@@ -16,6 +16,24 @@
       "revId": "c4bfa59b59419b5db62620738eaee5c3dd3e6326",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_b360a82a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 763
+      },
+      "writtenOn": "2015-02-25T22:49:16Z",
+      "side": 1,
+      "message": "That is awesome. would it be OK to modify cdt.utils.addr64() to support octal and binary?",
+      "parentUuid": "a7fb1785_92f2dc0b",
+      "revId": "c4bfa59b59419b5db62620738eaee5c3dd3e6326",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

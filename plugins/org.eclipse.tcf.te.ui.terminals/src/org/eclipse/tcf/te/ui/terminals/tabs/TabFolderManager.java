@@ -29,8 +29,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
@@ -274,6 +278,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 				((ITerminalControl)terminal).setConnectOnEnterIfClosed(!noReconnect);
 			}
 
+			// Add middle mouse button paste support
+			addMiddleMouseButtonPasteSupport(terminal);
 			// Add the "selection" listener to the terminal control
 			new TerminalControlSelectionListener(terminal);
 			// Configure the terminal encoding
@@ -385,6 +391,9 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			Assert.isTrue(terminal instanceof ITerminalControl);
 			((ITerminalControl)terminal).setupTerminal(composite);
 
+			// Add middle mouse button paste support
+			addMiddleMouseButtonPasteSupport(terminal);
+
 			item.setData(terminal);
 
 			// Associate the custom data node with the tab item (if any)
@@ -436,6 +445,26 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 		return item;
 	}
 
+
+	protected void addMiddleMouseButtonPasteSupport(final ITerminalViewControl terminal) {
+		terminal.getControl().addMouseListener(new MouseAdapter(){
+			@Override
+            public void mouseDown(MouseEvent e) {
+				// paste when the middle button is clicked
+				if (e.button == 2) {
+					Clipboard clipboard = terminal.getClipboard();
+					if (clipboard.isDisposed()) return;
+					int clipboardType = DND.SELECTION_CLIPBOARD;
+					if (clipboard.getAvailableTypes(clipboardType).length == 0)
+						// use normal clipboard if selection clipboard is not available
+						clipboardType = DND.CLIPBOARD;
+					String text = (String) clipboard.getContents(TextTransfer.getInstance(), clipboardType);
+					if (text != null && text.length() > 0)
+						terminal.pasteString(text);
+				}
+			}
+		});
+    }
 
 	/**
 	 * Generate a unique title string based on the given proposal.

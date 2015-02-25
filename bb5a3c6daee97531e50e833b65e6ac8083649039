@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_ed81b308",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryReadQuery.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-25T14:33:46Z",
+      "side": 1,
+      "message": "I actually wanted to use it in SyncUtil.readMemory, but I forgot to do it. I agree that it doesn\u0027t save much space, it just seemed more organized like that.",
+      "parentUuid": "a7fb1785_649960d1",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_c48e548b",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryWriteQuery.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-25T03:25:19Z",
       "side": 1,
       "message": "Same suggestion about inlining as previous class.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_cd7e778a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryWriteQuery.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-25T14:33:46Z",
+      "side": 1,
+      "message": "Same answer as previous comment.",
+      "parentUuid": "a7fb1785_c48e548b",
       "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_ad032b19",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-25T14:33:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_c4b7743f",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_a4bce824",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2015-02-25T03:25:19Z",
       "side": 1,
       "message": "Should be writeQueries.\n\nTo be safe, use a single array of type Query\u003c?\u003e name \u0027queries\u0027 and overwrite the ReadQueries with WriteQueries in the second loop.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2d2e1b94",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-25T14:33:46Z",
+      "side": 1,
+      "message": "Hmm, it seems like it will require some @SuppressWarning about unchecked casts, is that ok?",
+      "parentUuid": "a7fb1785_a4bce824",
       "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_4dd0c7f4",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1193,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-25T14:33:46Z",
+      "side": 1,
+      "message": "Yes, done.",
+      "parentUuid": "a7fb1785_44cb84b7",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_84944c9b",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2015-02-25T03:25:19Z",
       "side": 1,
       "message": "I\u0027m not a big fan of this.  The above call will wait a full 2 seconds every time, no matter what.  I would prefer we wait for the number of events we expect, not for a period of time.\n\nI realize this means that extra events will be missed, but I believe that is the case for all our tests.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ede533c9",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1196,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-02-25T14:33:46Z",
+      "side": 1,
+      "message": "I don\u0027t like it either.\n\nIt would be nice if there was a way instead to ask the service \"do you have any events pending in the pipeline?\" to make sure there isn\u0027t.",
+      "parentUuid": "a7fb1785_84944c9b",
       "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

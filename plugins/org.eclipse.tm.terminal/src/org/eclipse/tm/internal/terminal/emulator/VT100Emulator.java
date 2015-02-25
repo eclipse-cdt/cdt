@@ -28,7 +28,6 @@
 package org.eclipse.tm.internal.terminal.emulator;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 
 import org.eclipse.swt.events.ControlEvent;
@@ -1321,6 +1320,8 @@ public class VT100Emulator implements ControlListener {
 	public void resetState() {
 		ansiState=ANSISTATE_INITIAL;
 		text.setStyle(text.getDefaultStyle());
+		text.setScrollRegion(-1, -1);
+		text.setInsertMode(false);
 	}
 
 //	public OutputStream getOutputStream() {

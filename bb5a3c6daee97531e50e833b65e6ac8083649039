@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_649960d1",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryReadQuery.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T03:25:19Z",
+      "side": 1,
+      "message": "Do you expect to use these elsewhere later on?  If not, then I think we can inline them as they don\u0027t save much space in the code and allows to read the logic directly within the test using them.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_c48e548b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryWriteQuery.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T03:25:19Z",
+      "side": 1,
+      "message": "Same suggestion about inlining as previous class.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_c4b7743f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T03:25:19Z",
+      "side": 1,
+      "message": "Remove IMemory prefix",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_a4bce824",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T03:25:19Z",
+      "side": 1,
+      "message": "Should be writeQueries.\n\nTo be safe, use a single array of type Query\u003c?\u003e name \u0027queries\u0027 and overwrite the ReadQueries with WriteQueries in the second loop.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_44cb84b7",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1193,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T03:25:19Z",
+      "side": 1,
+      "message": "Two above lines should be removed, no?",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_84944c9b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1196,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T03:25:19Z",
+      "side": 1,
+      "message": "I\u0027m not a big fan of this.  The above call will wait a full 2 seconds every time, no matter what.  I would prefer we wait for the number of events we expect, not for a period of time.\n\nI realize this means that extra events will be missed, but I believe that is the case for all our tests.",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

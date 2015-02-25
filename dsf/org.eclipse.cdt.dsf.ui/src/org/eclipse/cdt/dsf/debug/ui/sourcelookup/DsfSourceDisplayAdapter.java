@@ -405,9 +405,9 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                                 	if (! input.equals(re.getEditorInput()))
                                 		re.setInput(input);
                                 }
-                            }
-                        	else
-                        		editor[0] = page.openEditor(input, id, false);
+                            } else {
+								editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+							}
                         } catch (PartInitException e) {}
                     }
                 }

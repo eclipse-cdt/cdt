@@ -23,6 +23,7 @@
  *     Marc Dumais (Ericsson) - Bug 453206
  *     Marc Dumais (Ericsson) - Bug 458076
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 459114 - override construction of the data model
+ *     Marc Dumais (Ericsson) - Bug 460737
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -144,6 +145,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** Debug view selection changed listener, attached to Debug View. */
 	protected ISelectionChangedListener m_debugViewSelectionChangedListener = null;
 	
+	/** Unique id that differentiates the possible multiple instances of the MV. 
+	 * It's derived from the secondary view Part id of the view associated to the 
+	 * current instance of the MV. */
+	protected String m_visualizerInstanceId = null;
 	
 	// This is used to cache the CPU and core
 	// contexts, each time the model is recreated.  This way
@@ -261,8 +266,14 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	public void initializeVisualizer() {
 		fEventListener = new MulticoreVisualizerEventListener(this);
 		m_cpuCoreContextsCache = new ArrayList<IDMContext>(); 
+		m_visualizerInstanceId = getViewer().getView().getViewSite().getSecondaryId();
+		
+		// The first visualizer view will have a null secondary id - override that
+		if (m_visualizerInstanceId == null) {
+			m_visualizerInstanceId = "0"; //$NON-NLS-1$
+		}
 	}
-	
+
 	/**
 	 * Sets-up the timer associated to load meters refresh
 	 */

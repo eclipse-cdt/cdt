@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_0db87faa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryReadQuery.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T14:42:08Z",
+      "side": 1,
+      "message": "Maybe I\u0027m too set in my ways...\nI find that since we are testing the DSF services, it helps to see the call to the service in the test or test file directly.  Personally, I\u0027d in-line it, but if you like the class (I tend not to use such constructs enough), you could always keep it but move it to the test file itself.",
+      "parentUuid": "a7fb1785_ed81b308",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_c48e548b",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/MemoryWriteQuery.java",
         "patchSetId": 4
@@ -142,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_2dbbbbaa",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T14:42:08Z",
+      "side": 1,
+      "message": "I\u0027ll have to try it once you post it to understand.",
+      "parentUuid": "a7fb1785_2d2e1b94",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_44cb84b7",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
         "patchSetId": 4
@@ -206,6 +242,24 @@
       "side": 1,
       "message": "I don\u0027t like it either.\n\nIt would be nice if there was a way instead to ask the service \"do you have any events pending in the pipeline?\" to make sure there isn\u0027t.",
       "parentUuid": "a7fb1785_84944c9b",
+      "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_8dac6f77",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIMemoryTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1196,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-02-25T14:42:08Z",
+      "side": 1,
+      "message": "You can maybe use waitForEvent(1) and assert that there is an exception of no events?",
+      "parentUuid": "a7fb1785_ede533c9",
       "revId": "bb5a3c6daee97531e50e833b65e6ac8083649039",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

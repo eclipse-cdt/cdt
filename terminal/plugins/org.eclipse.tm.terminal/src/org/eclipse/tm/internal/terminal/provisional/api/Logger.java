@@ -42,20 +42,30 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  * </p>
  */
 public final class Logger {
-    public static final String  TRACE_DEBUG_LOG_CHAR           = "org.eclipse.tm.terminal/debug/log/char"; //$NON-NLS-1$
+    public static final String TRACE_DEBUG_LOG					= "org.eclipse.tm.terminal/debug/log"; //$NON-NLS-1$
+    public static final String TRACE_DEBUG_LOG_CHAR				= "org.eclipse.tm.terminal/debug/log/char"; //$NON-NLS-1$
+    public static final String TRACE_DEBUG_LOG_VT100BACKEND		= "org.eclipse.tm.terminal/debug/log/VT100Backend"; //$NON-NLS-1$
 
     private static PrintStream logStream;
 
 	static {
-		IPath logFile = Platform.getStateLocation(TerminalPlugin.getDefault().getBundle());
-		if (logFile != null && logFile.toFile().isDirectory()) {
-			logFile = logFile.append("tmterminal.log"); //$NON-NLS-1$
-			try {
-				logStream = new PrintStream(new FileOutputStream(logFile.toFile(), true));
-			} catch (Exception ex) {
-				logStream = System.err;
-				logStream.println("Exception when opening log file -- logging to stderr!"); //$NON-NLS-1$
-				ex.printStackTrace(logStream);
+		// Any of the three known debugging options turns on the creation of the log file
+		boolean createLogFile = TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG)
+									|| TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG_CHAR)
+									|| TerminalPlugin.isOptionEnabled(TRACE_DEBUG_LOG_VT100BACKEND);
+		
+		// Log only if tracing is enabled
+		if (createLogFile && TerminalPlugin.getDefault() != null) {
+			IPath logFile = Platform.getStateLocation(TerminalPlugin.getDefault().getBundle());
+			if (logFile != null && logFile.toFile().isDirectory()) {
+				logFile = logFile.append("tmterminal.log"); //$NON-NLS-1$
+				try {
+					logStream = new PrintStream(new FileOutputStream(logFile.toFile(), true));
+				} catch (Exception ex) {
+					logStream = System.err;
+					logStream.println("Exception when opening log file -- logging to stderr!"); //$NON-NLS-1$
+					ex.printStackTrace(logStream);
+				}
 			}
 		}
 	}

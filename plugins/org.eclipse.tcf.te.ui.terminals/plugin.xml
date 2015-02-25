@@ -196,7 +196,8 @@
       <menuContribution locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?before=group.edit">
          <menu
                id="org.eclipse.tcf.te.ui.terminals.ProjectExplorer.menu.showIn"
-               label="%menu.showIn.label">
+               label="%menu.showIn.label"
+               mnemonic="%menu.showIn.mnemonic">
             <separator name="additions" visible="false"/>
          </menu>
       </menuContribution>

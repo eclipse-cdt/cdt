@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_5851a3af",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-25T18:31:55Z",
+      "side": 1,
+      "message": "n/a - see below",
+      "parentUuid": "a7fb1785_cd095739",
+      "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_cde2f7be",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_b846c7f8",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-25T18:31:55Z",
+      "side": 1,
+      "message": "I think it will be useful eventually, but not immediately, so I have reverted this whole file.",
+      "parentUuid": "a7fb1785_cde2f7be",
+      "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_8d8d8f40",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2015-02-25T14:33:17Z",
       "side": 1,
       "message": "Just mentioning that the old constructor has been removed.  This package is internal so we are allowed, but I wondered if we know of people using this class that might appreciate keeping the old constructor (maybe marking  @deprecated)?",
+      "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_385ad7c9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-25T18:31:55Z",
+      "side": 1,
+      "message": "n/a - see above",
+      "parentUuid": "a7fb1785_8d8d8f40",
       "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -76,6 +130,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_d8a7533e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-25T18:31:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_8ddaaf12",
+      "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_8df10f8d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 2
@@ -87,6 +159,24 @@
       "writtenOn": "2015-02-25T14:33:17Z",
       "side": 1,
       "message": "This new ID is never actually used in the patch, so I\u0027m having trouble understanding how it is meant to be used.  So, I\u0027m thinking that maybe the above extraction is overly complicated.\n\nWhy not keep the full String with the prefix?  If we need a unique ID, it does not have to be an integer, so as long as it is unique, it should be fine.",
+      "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_38b5b764",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-25T18:31:55Z",
+      "side": 1,
+      "message": "The usage of this will come in another patch, where I save settings per-visualizer-instance. \n\nSince for the first instance of the visualizer, the secondary view Part id is null, I wanted to massage the value we use in the visualizer. So if we\u0027re massaging, I figured why not make it a nicer format than \"PIN_CLONE_VIEW_\u003cn\u003e\"?",
+      "parentUuid": "a7fb1785_8df10f8d",
       "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

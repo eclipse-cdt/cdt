@@ -198,6 +198,24 @@
       "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_485712a0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-02-26T12:04:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_38cbf7b8",
+      "revId": "658720ada73586b7238ccbb5bb49048d339d3077",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

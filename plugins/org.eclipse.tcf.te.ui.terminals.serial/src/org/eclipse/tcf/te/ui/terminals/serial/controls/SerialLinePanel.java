@@ -45,7 +45,6 @@ import org.eclipse.tcf.te.ui.terminals.serial.activator.UIPlugin;
 import org.eclipse.tcf.te.ui.terminals.serial.interfaces.ITraceIds;
 import org.eclipse.tcf.te.ui.terminals.serial.nls.Messages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Serial line terminal launcher configuration panel implementation.
@@ -151,14 +150,13 @@ public class SerialLinePanel extends AbstractConfigurationPanel {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-    public void setupPanel(Composite parent, FormToolkit toolkit) {
+    public void setupPanel(Composite parent) {
 		Assert.isNotNull(parent);
-		Assert.isNotNull(toolkit);
 
-		Composite panel = toolkit.createComposite(parent);
+		Composite panel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0; layout.marginWidth = 0;
 		panel.setLayout(layout);
@@ -167,7 +165,7 @@ public class SerialLinePanel extends AbstractConfigurationPanel {
 
 		setControl(panel);
 
-		final Composite client = toolkit.createComposite(panel);
+		final Composite client = new Composite(parent, SWT.NONE);
 		Assert.isNotNull(client);
 		client.setLayout(new GridLayout(2, false));
 		client.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));

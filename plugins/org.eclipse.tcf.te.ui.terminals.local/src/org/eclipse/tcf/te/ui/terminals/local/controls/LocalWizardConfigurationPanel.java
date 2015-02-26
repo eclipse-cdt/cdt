@@ -28,7 +28,6 @@ import org.eclipse.tcf.te.ui.terminals.panels.AbstractExtendedConfigurationPanel
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchEncoding;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.osgi.framework.Bundle;
 
 /**
@@ -48,10 +47,10 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-    public void setupPanel(Composite parent, FormToolkit toolkit) {
+    public void setupPanel(Composite parent) {
     	Composite panel = new Composite(parent, SWT.NONE);
     	panel.setLayout(new GridLayout());
     	panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

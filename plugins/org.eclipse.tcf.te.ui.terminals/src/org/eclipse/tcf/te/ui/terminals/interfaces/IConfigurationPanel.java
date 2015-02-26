@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Terminal launcher configuration panel.
@@ -37,9 +36,8 @@ public interface IConfigurationPanel extends IMessageProvider {
 	 * different panels if the selected terminal launcher changed.
 	 *
 	 * @param parent The parent composite to create the UI elements in. Must not be <code>null</code>.
-	 * @param toolkit The form toolkit. Must not be <code>null</code>.
 	 */
-	public void setupPanel(Composite parent, FormToolkit toolkit);
+	public void setupPanel(Composite parent);
 
 	/**
 	 * Cleanup all resources the wizard configuration panel might have been created.

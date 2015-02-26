@@ -38,7 +38,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.ssh.SshConnector;
 import org.eclipse.tm.internal.terminal.ssh.SshSettings;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * SSH wizard configuration panel implementation.
@@ -64,10 +63,10 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void setupPanel(Composite parent, FormToolkit toolkit) {
+	public void setupPanel(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
 		panel.setLayout(new GridLayout());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);

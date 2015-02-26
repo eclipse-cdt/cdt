@@ -46,7 +46,6 @@ import org.eclipse.tcf.te.ui.terminals.interfaces.tracing.ITraceIds;
 import org.eclipse.tcf.te.ui.terminals.launcher.LauncherDelegateManager;
 import org.eclipse.tcf.te.ui.terminals.nls.Messages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Launch terminal settings dialog implementation.
@@ -60,8 +59,6 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	// The sub controls
 	/* default */ Combo terminals;
 	/* default */ SettingsPanelControl settings;
-
-	private FormToolkit toolkit = null;
 
 	// Map the label added to the combo box to the corresponding launcher delegate.
 	/* default */ final Map<String, ILauncherDelegate> label2delegate = new HashMap<String, ILauncherDelegate>();
@@ -111,7 +108,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
                 	// Push the selection to the configuration panel
                 	configPanel.setSelection(getSelection());
                 	// Create the panel controls
-                	configPanel.setupPanel(getPanel(), getFormToolkit());
+                	configPanel.setupPanel(getPanel());
                 	// Restore widget values
                 	IDialogSettings dialogSettings = LaunchTerminalSettingsDialog.this.settings.getDialogSettings(LaunchTerminalSettingsDialog.this.getDialogSettings());
                 	IDialogSettings configPanelSettings = dialogSettings != null ? dialogSettings.getSection(key) : null;
@@ -189,7 +186,6 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
      */
     protected void dispose() {
     	if (settings != null) { settings.dispose(); settings = null; }
-    	if (toolkit != null) { toolkit.dispose(); toolkit = null; }
     	dialogSettings = null;
     }
 
@@ -342,10 +338,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
        		}
         }
 
-        // Create the toolkit
-        toolkit = new FormToolkit(panel.getDisplay());
 		// Setup the panel control
-		settings.setupPanel(panel, terminals.getItems(), toolkit);
+		settings.setupPanel(panel, terminals.getItems());
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.horizontalSpan = 2;
 		settings.getPanel().setLayoutData(layoutData);

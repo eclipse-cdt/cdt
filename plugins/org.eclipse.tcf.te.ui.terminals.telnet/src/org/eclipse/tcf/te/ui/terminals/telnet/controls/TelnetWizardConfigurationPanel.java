@@ -27,7 +27,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.telnet.NetworkPortMap;
 import org.eclipse.tm.internal.terminal.telnet.TelnetConnector;
 import org.eclipse.tm.internal.terminal.telnet.TelnetSettings;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * telnet wizard configuration panel implementation.
@@ -48,10 +47,10 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void setupPanel(Composite parent, FormToolkit toolkit) {
+	public void setupPanel(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
 		panel.setLayout(new GridLayout());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);

@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tcf.te.core.terminals.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tcf.te.ui.terminals.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tcf.te.ui.terminals.panels.AbstractExtendedConfigurationPanel;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Serial wizard configuration panel implementation.
@@ -39,10 +38,10 @@ public class SerialConfigurationPanel extends AbstractExtendedConfigurationPanel
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tcf.te.ui.terminals.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+	 * @see org.eclipse.tcf.te.ui.terminals.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void setupPanel(Composite parent, FormToolkit toolkit) {
+	public void setupPanel(Composite parent) {
 		Composite panel = new Composite(parent, SWT.NONE);
 		panel.setLayout(new GridLayout());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -52,7 +51,7 @@ public class SerialConfigurationPanel extends AbstractExtendedConfigurationPanel
 		if (isWithoutSelection()) createHostsUI(panel, true);
 
 		serialSettingsPage = new SerialLinePanel(getContainer());
-		serialSettingsPage.setupPanel(panel, toolkit);
+		serialSettingsPage.setupPanel(panel);
 
 		// Create the encoding selection combo
 		createEncodingUI(panel, true);

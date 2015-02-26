@@ -23,7 +23,6 @@ import org.eclipse.tcf.te.ui.terminals.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tcf.te.ui.terminals.nls.Messages;
 import org.eclipse.tcf.te.ui.terminals.panels.AbstractExtendedConfigurationPanel;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * Encoding selection dialog implementation.
@@ -52,10 +51,10 @@ public class EncodingSelectionDialog extends TrayDialog {
         }
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit)
+		 * @see org.eclipse.tcf.te.ui.controls.interfaces.IWizardConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 		 */
         @Override
-        public void setupPanel(Composite parent, FormToolkit toolkit) {
+        public void setupPanel(Composite parent) {
     		Composite panel = new Composite(parent, SWT.NONE);
     		panel.setLayout(new GridLayout());
     		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -179,7 +178,7 @@ public class EncodingSelectionDialog extends TrayDialog {
         panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
         encodingPanel = new EncodingPanel(null);
-        encodingPanel.setupPanel(panel, null);
+        encodingPanel.setupPanel(panel);
 
         applyDialogFont(panel);
     }

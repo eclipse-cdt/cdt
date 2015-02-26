@@ -34,8 +34,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// +a; // error here on line 3
 	// }
 	public void testUnaryExpression() throws IOException {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(3);
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -44,8 +43,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// b+a; // error here on line 4
 	// }
 	public void testBinaryExpression() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(4);
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -54,8 +52,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// a=b+a; // no error here
 	// }
 	public void testNormalAssignment() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -73,8 +70,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// a>>=2;
 	// }
 	public void testFalsePositives() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -82,8 +78,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// a; // error here on line 3
 	// }
 	public void testIdExpression() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(3);
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -91,16 +86,14 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// char *p=({char s[]="Some string";&s[0];}); // no error here on line 3
 	// }
 	public void testGNUExpressionCompoundStmtFalsePositives() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	// main() {
 	// int z=({int a=0; +a; a;}) // error here on line 2
 	// }
 	public void testGNUExpressionCompoundStmtInside() {
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(2);
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -127,8 +120,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// 	for (a=b;a;a=a->next);
 	// }
 	public void testForTestExpression() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	// void main() {
@@ -138,18 +130,16 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// 	 (a = z.foo(1)) || (a = z.foo(2));
 	// }
 	public void testLazyEvalHack() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
 	// main() {
 	// A a,b;
 	//
-	// b+=a; // error here on line 4
+	// b+=a; // no error here on line 4
 	// }
 	public void testOverloadedBinaryExpression() {
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 
 	//#define FUNC(a) a
@@ -160,8 +150,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	public void testInMacro() {
 		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.TRUE);
-		loadCodeAndRun(getAboveComment());
-		checkErrorLine(4);
+		checkSampleAbove();
 	}
 
 	//#define FUNC(a) a
@@ -183,8 +172,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	public void testInMacroParamOff() {
 		IProblemPreference macro = getPreference(StatementHasNoEffectChecker.ER_ID, StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.FALSE);
-		loadCodeAndRun(getAboveComment());
-		checkNoErrors();
+		checkSampleAbove();
 	}
 
 	// main() {
@@ -206,7 +194,6 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	//		*s;
 	//	}
 	public void testOverloadedOperator_bug399146() {
-		loadCodeAndRunCpp(getAboveComment());
-		checkNoErrors();
+		checkSampleAboveCpp();
 	}
 }

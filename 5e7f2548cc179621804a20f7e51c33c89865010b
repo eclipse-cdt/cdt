@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_05bcd3b0",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.4.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-02-26T05:23:50Z",
+      "side": 1,
+      "message": "4.4milestones is gone now, we have to use just 4.4",
+      "range": {
+        "startLine": 31,
+        "startChar": 66,
+        "endLine": 31,
+        "endChar": 79
+      },
+      "revId": "5e7f2548cc179621804a20f7e51c33c89865010b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

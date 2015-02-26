@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     William R. Swanson (Tilera Corporation) - added resource support
+ *     Marc Dumais (Ericsson) - Bug 460837
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui;
 
@@ -16,6 +17,8 @@ import org.eclipse.cdt.visualizer.ui.plugin.CDTVisualizerUIPlugin;
 import org.eclipse.cdt.visualizer.ui.util.UIResourceManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Font;
@@ -282,5 +285,10 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin
 	/** Convenience method for looking up font resources */
 	public static Font getFont(String fontName, int height, int style) {
 		return getDefault().getPluginResources().getFont(fontName, height, style);
+	}
+	
+	/** Get the preference store for this Eclipse plug-in */
+	public static IEclipsePreferences getEclipsePreferenceStore() {
+		return InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 	}
 }

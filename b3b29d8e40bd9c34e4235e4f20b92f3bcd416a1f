@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_99666a47",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-02-26T19:58:03Z",
+      "side": 1,
+      "message": "You probably should spell out this is a C/C++ debugger as others may form their own standalone debuggers.",
+      "revId": "b3b29d8e40bd9c34e4235e4f20b92f3bcd416a1f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_19739a0b",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 8
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-02-26T19:58:03Z",
+      "side": 1,
+      "message": "One of the issues with the standalone debugger was bringing in the right platform-specific fragments.  One way to possibly do this is to include all fragments which will not load on the wrong platform.  Here you have just included x86_64 linux.",
+      "revId": "b3b29d8e40bd9c34e4235e4f20b92f3bcd416a1f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_997f8ad3",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 8
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-02-26T19:58:03Z",
+      "side": 1,
+      "message": "Why are you including the gdb tests fragment?",
+      "revId": "b3b29d8e40bd9c34e4235e4f20b92f3bcd416a1f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_b965263b",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 8
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-02-26T19:58:03Z",
+      "side": 1,
+      "message": "Again the fragments comment above.  Same for any platform-specific fragment.",
+      "revId": "b3b29d8e40bd9c34e4235e4f20b92f3bcd416a1f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_14ecff03",
+        "filename": "debug/org.eclipse.cdt.debug.application/plugin.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-02-26T19:58:03Z",
+      "side": 1,
+      "message": "This and other strings shouldn\u0027t be hard-coded to allow for translation.",
+      "revId": "b3b29d8e40bd9c34e4235e4f20b92f3bcd416a1f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

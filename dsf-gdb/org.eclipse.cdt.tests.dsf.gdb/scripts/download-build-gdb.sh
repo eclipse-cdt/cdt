@@ -56,6 +56,12 @@ function help_and_exit() {
   echo "Supported versions:"
   echo "  ${default_versions}"
   echo ""
+  echo "Examples:"
+  echo "  Build versions 7.7.1 and 7.8.2:"
+  echo "    $ $0 7.7.1 7.8.2"
+  echo "  Build all supported versions:"
+  echo "    $ $0 all"
+  echo ""
 
   exit $1
 }
@@ -80,8 +86,9 @@ function check_supported() {
       # Supported, do nothing.
       ;;
     *)
-      echo "Version ${version} is not supported, sorry."
-      exit 1
+      echo "Error: version ${version} is not supported by this script."
+      echo ""
+      help_and_exit
       ;;
   esac
 }

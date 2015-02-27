@@ -26,7 +26,8 @@ public interface IRemoteServicesManager {
 	/**
 	 * Get the connection type identified by the id
 	 * 
-	 * @param id id of the connection type
+	 * @param id
+	 *            id of the connection type
 	 * @return connection type or null if the service can not be found
 	 */
 	IRemoteConnectionType getConnectionType(String id);
@@ -35,9 +36,10 @@ public interface IRemoteServicesManager {
 	 * Get the connection type that provides connections to locations identified by
 	 * the URI.
 	 * 
-	 * @param uri uri of locations to be accessed
+	 * @param uri
+	 *            uri of locations to be accessed
 	 * @return the connection type that can be used to access the locations
-	 * or null if no connection type is available for the uri.
+	 *         or null if no connection type is available for the uri.
 	 */
 	IRemoteConnectionType getConnectionType(URI uri);
 
@@ -49,16 +51,16 @@ public interface IRemoteServicesManager {
 	IRemoteConnectionType getLocalConnectionType();
 
 	/**
-	 * Returns the list of all connection type including the local services.
+	 * Returns the list of all connection types including the local services.
 	 * 
-	 * @return all remote services
+	 * @return all connection types
 	 */
 	List<IRemoteConnectionType> getAllConnectionTypes();
 
 	/**
-	 * Returns the list of connection types except for the local services.
+	 * Returns the list of connection types except for the local connection type.
 	 * 
-	 * @return all remote services that are really remote
+	 * @return all connection types that are really remote
 	 */
 	List<IRemoteConnectionType> getRemoteConnectionTypes();
 
@@ -72,14 +74,16 @@ public interface IRemoteServicesManager {
 	/**
 	 * Add a global connection change listener that receives events for all connections.
 	 * 
-	 * @param listener global connection change listener to be added
+	 * @param listener
+	 *            global connection change listener to be added
 	 */
 	void addRemoteConnectionChangeListener(IRemoteConnectionChangeListener listener);
 
 	/**
 	 * Remove the global connection change listener.
 	 * 
-	 * @param listener global connection change listener to be removed
+	 * @param listener
+	 *            global connection change listener to be removed
 	 */
 	void removeRemoteConnectionChangeListener(IRemoteConnectionChangeListener listener);
 
@@ -87,7 +91,8 @@ public interface IRemoteServicesManager {
 	 * Used by connections and other components to notify the global connection
 	 * change listeners of events.
 	 * 
-	 * @param event connection change event
+	 * @param event
+	 *            connection change event
 	 */
 	void fireRemoteConnectionChangeEvent(RemoteConnectionChangeEvent event);
 

@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
-
 /**
  * A remote connection type manages a list of connections that implement the same services.
  * Services may be registered on the individual connections, or at the connection type level
@@ -28,11 +27,12 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 public interface IRemoteConnectionType {
 	/**
 	 * The interface that is extend by services provided for this remote services implementation.
+	 * 
 	 * @since 2.0
 	 */
 	interface Service {
 		IRemoteConnectionType getConnectionType();
-	
+
 		interface Factory {
 			<T extends Service> T getService(IRemoteConnectionType connectionType, Class<T> service);
 		}
@@ -84,9 +84,10 @@ public interface IRemoteConnectionType {
 	/**
 	 * Get the service for this remote services implementation that implements the given interface.
 	 * 
-	 * @param service the interface the required service must implements
+	 * @param service
+	 *            the interface the required service must implements
 	 * @return the desired service or null if there is no such service available
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 2.0
 	 */
 	<T extends Service> T getService(Class<T> service);
@@ -94,7 +95,8 @@ public interface IRemoteConnectionType {
 	/**
 	 * Does this connection type support the given service.
 	 * 
-	 * @param service the service to be tested
+	 * @param service
+	 *            the service to be tested
 	 * @return true if this connection type supports this service
 	 */
 	<T extends Service> boolean hasService(Class<T> service);
@@ -106,7 +108,7 @@ public interface IRemoteConnectionType {
 	 *            name of the connection (as returned by {@link IRemoteConnection#getName()})
 	 * @return remote connection or null if no connection exists
 	 */
-	public IRemoteConnection getConnection(String name);
+	IRemoteConnection getConnection(String name);
 
 	/**
 	 * Gets the remote connection corresponding to the supplied URI.
@@ -117,14 +119,14 @@ public interface IRemoteConnectionType {
 	 *         is incorrect
 	 * @since 4.0
 	 */
-	public IRemoteConnection getConnection(URI uri);
+	IRemoteConnection getConnection(URI uri);
 
 	/**
 	 * Get all the connections for this service provider.
 	 * 
 	 * @return connections that we know about
 	 */
-	public List<IRemoteConnection> getConnections();
+	List<IRemoteConnection> getConnections();
 
 	/**
 	 * Creates a new remote connection named with supplied name. The connection attributes will be the default for the
@@ -140,7 +142,7 @@ public interface IRemoteConnectionType {
 	 *             if connection creation failed
 	 * @since 5.0
 	 */
-	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException;
+	IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException;
 
 	/**
 	 * Remove a connection and all resources associated with it.
@@ -150,6 +152,6 @@ public interface IRemoteConnectionType {
 	 * @throws RemoteConnectionException
 	 *             if the connection could not be removed
 	 */
-	public void removeConnection(IRemoteConnection connection) throws RemoteConnectionException;
+	void removeConnection(IRemoteConnection connection) throws RemoteConnectionException;
 
 }

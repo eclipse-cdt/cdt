@@ -11,7 +11,7 @@
 package org.eclipse.remote.core;
 
 /**
- * A connection type service for connectiont types that have automatic means of adding
+ * A connection type service for connection types that have automatic means of adding
  * and removing services. For example, the Local connection type needs to be able
  * to ensure the Local connection is created, or adapters to other target management
  * systems may prefer to let those systems manage the connections.

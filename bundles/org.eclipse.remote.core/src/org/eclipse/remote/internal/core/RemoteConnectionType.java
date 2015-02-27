@@ -42,7 +42,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	private final Map<String, Object> serviceMap = new HashMap<>();
 	private final Map<String, IConfigurationElement> serviceDefinitionMap = new HashMap<>();
-	
+
 	private final Map<String, RemoteConnection> connections = new HashMap<>();
 
 	public RemoteConnectionType(IConfigurationElement ce, RemoteServicesManager manager) {
@@ -57,7 +57,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		} else {
 			capabilities = 0;
 		}
-		
+
 		// load up existing connections
 		try {
 			for (String connectionName : getPreferenceNode().childrenNames()) {
@@ -76,31 +76,61 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return remoteServicesManager.getSecurePreferenceNode().node(id);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getRemoteServicesManager()
+	 */
 	@Override
 	public IRemoteServicesManager getRemoteServicesManager() {
 		return remoteServicesManager;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getId()
+	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getName()
+	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getScheme()
+	 */
 	@Override
 	public String getScheme() {
 		return scheme;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getCapabilities()
+	 */
 	@Override
 	public int getCapabilities() {
 		return capabilities;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getService(java.lang.Class)
+	 */
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
 		String serviceName = service.getName();
@@ -124,6 +154,11 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return obj;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#hasService(java.lang.Class)
+	 */
 	@Override
 	public <T extends Service> boolean hasService(Class<T> service) {
 		String serviceName = service.getName();
@@ -133,8 +168,10 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	/**
 	 * Called from the connection to get a service object for that connection.
 	 * 
-	 * @param connection the connection to which the service applies
-	 * @param service the interface the service must implement
+	 * @param connection
+	 *            the connection to which the service applies
+	 * @param service
+	 *            the interface the service must implement
 	 * @return the service object
 	 * @throws CoreException
 	 */
@@ -144,7 +181,8 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		IConfigurationElement ce = serviceDefinitionMap.get(service.getName());
 		if (ce != null) {
 			try {
-				IRemoteConnection.Service.Factory factory = (IRemoteConnection.Service.Factory) ce.createExecutableExtension("factory"); //$NON-NLS-1$
+				IRemoteConnection.Service.Factory factory = (IRemoteConnection.Service.Factory) ce
+						.createExecutableExtension("factory"); //$NON-NLS-1$
 				if (factory != null) {
 					return factory.getService(connection, service);
 				}
@@ -164,7 +202,8 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 * Called from the remote service manager to register a service extension for
 	 * this remote services implementation
 	 * 
-	 * @param ce the extension element defining the service
+	 * @param ce
+	 *            the extension element defining the service
 	 */
 	public void addService(IConfigurationElement ce) {
 		String service = ce.getAttribute("service"); //$NON-NLS-1$
@@ -173,22 +212,31 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 
 	/**
 	 * Signal connection has been added.
+	 * 
 	 * @since 2.0
 	 */
 	protected void connectionAdded(final IRemoteConnection connection) {
-		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(connection, RemoteConnectionChangeEvent.CONNECTION_ADDED);
+		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(connection,
+				RemoteConnectionChangeEvent.CONNECTION_ADDED);
 		remoteServicesManager.fireRemoteConnectionChangeEvent(event);
 	}
 
 	/**
 	 * Signal a connnection is about to be removed.
+	 * 
 	 * @since 2.0
 	 */
 	protected void connectionRemoved(final IRemoteConnection connection) {
-		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(connection, RemoteConnectionChangeEvent.CONNECTION_ADDED);
+		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(connection,
+				RemoteConnectionChangeEvent.CONNECTION_ADDED);
 		remoteServicesManager.fireRemoteConnectionChangeEvent(event);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getConnection(java.lang.String)
+	 */
 	@Override
 	public IRemoteConnection getConnection(String name) {
 		return connections.get(name);
@@ -200,21 +248,31 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		if (connection != null) {
 			return connection;
 		}
-		
+
 		// If it's a file: scheme we must be the local connection type, just return our
 		// hopefully one connection, the Local connection.
 		if (uri.getScheme().equals("file") && !connections.isEmpty()) { //$NON-NLS-1$
 			return connections.values().iterator().next();
 		}
-		
+
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#getConnections()
+	 */
 	@Override
 	public List<IRemoteConnection> getConnections() {
 		return new ArrayList<IRemoteConnection>(connections.values());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#newConnection(java.lang.String)
+	 */
 	@Override
 	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
 		if (connections.containsKey(name)) {
@@ -231,6 +289,11 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		connections.remove(name);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#removeConnection(org.eclipse.remote.core.IRemoteConnection)
+	 */
 	@Override
 	public void removeConnection(IRemoteConnection connection) throws RemoteConnectionException {
 		if (connection instanceof RemoteConnection) {

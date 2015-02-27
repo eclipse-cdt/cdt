@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -90,6 +89,9 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -109,8 +111,29 @@ public class AST2TestBase extends BaseTestCase {
     protected static final IParserLogService NULL_LOG = new NullLogService();
     protected static boolean sValidateCopy;
 
-    protected static class CommonTypes {
-    	public static IType int_ = new CPPBasicType(Kind.eInt, 0);
+    protected static class CommonCTypes {
+    	public static IType pointerToVoid = pointerTo(CBasicType.VOID);
+    	public static IType pointerToConstVoid = pointerTo(constOf(CBasicType.VOID));
+    	public static IType pointerToConstInt = pointerTo(constOf(CBasicType.INT));
+    	public static IType pointerToVolatileInt = pointerTo(volatileOf(CBasicType.INT));
+    	public static IType pointerToConstVolatileInt = pointerTo(constVolatileOf(CBasicType.INT));
+    	
+    	private static IType pointerTo(IType type) {
+    		return new CPointerType(type, 0);
+    	}
+    	private static IType constOf(IType type) {
+    		return new CQualifierType(type, true, false, false);
+    	}
+    	private static IType volatileOf(IType type) {
+    		return new CQualifierType(type, false, true, false);
+    	}
+    	private static IType constVolatileOf(IType type) {
+    		return new CQualifierType(type, true, true, false);
+    	}
+    }
+    
+    protected static class CommonCPPTypes {
+    	public static IType int_ = CPPBasicType.INT;
     	public static IType pointerToInt = new CPPPointerType(int_);
     	public static IType constInt = new CPPQualifierType(int_, true, false);
     }

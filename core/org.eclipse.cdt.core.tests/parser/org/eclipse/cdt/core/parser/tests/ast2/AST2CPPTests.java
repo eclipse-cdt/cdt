@@ -11052,8 +11052,8 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPVariable waldo1 = helper.assertNonProblem("waldo1");
 		ICPPVariable waldo2 = helper.assertNonProblem("waldo2");
 		// constexpr on a variable *should* make it const
-		assertSameType(waldo1.getType(), CommonTypes.constInt);
-		assertSameType(waldo2.getType(), CommonTypes.constInt);
+		assertSameType(waldo1.getType(), CommonCPPTypes.constInt);
+		assertSameType(waldo2.getType(), CommonCPPTypes.constInt);
 	}
 	
 	//	constexpr int waldo1();
@@ -11065,11 +11065,11 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPFunction waldo2 = helper.assertNonProblem("waldo2");
 		ICPPFunction waldo3 = helper.assertNonProblem("waldo3");
 		// constexpr on a function *should not* make its return type const
-		assertSameType(waldo1.getType().getReturnType(), CommonTypes.int_);
+		assertSameType(waldo1.getType().getReturnType(), CommonCPPTypes.int_);
 		assertSameType(waldo2.getType().getReturnType(),
-				new CPPPointerType(new CPPFunctionType(CommonTypes.int_, new IType[]{ CommonTypes.int_ })));
+				new CPPPointerType(new CPPFunctionType(CommonCPPTypes.int_, new IType[]{ CommonCPPTypes.int_ })));
 		// constexpr on a method *should not* make the method const
-		assertSameType(waldo3.getType(), new CPPFunctionType(CommonTypes.int_, new IType[]{}));
+		assertSameType(waldo3.getType(), new CPPFunctionType(CommonCPPTypes.int_, new IType[]{}));
 	}
 	
 	//	void waldo() noexcept;

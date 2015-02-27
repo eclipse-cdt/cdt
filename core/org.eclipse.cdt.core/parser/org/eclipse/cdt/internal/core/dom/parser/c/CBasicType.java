@@ -23,6 +23,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 public class CBasicType implements ICBasicType, ISerializableType {
+	public static final CBasicType VOID = new CBasicType(Kind.eVoid, 0, null);
+	public static final CBasicType INT = new CBasicType(Kind.eInt, 0, null);
+	
 	private final Kind fKind;
 	private int fModifiers;
 	private IASTExpression value;

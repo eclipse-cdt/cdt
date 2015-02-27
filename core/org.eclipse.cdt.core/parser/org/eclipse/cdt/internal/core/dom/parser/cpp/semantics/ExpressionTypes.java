@@ -15,10 +15,14 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.c.CQualifierType;
 
 /**
  * Methods for computing the type of an expression.
@@ -88,5 +92,55 @@ public class ExpressionTypes {
 				return t;
 		}
 		return type;
+	}
+	
+	private static boolean isConst(IType type) {
+		if (type instanceof IQualifierType) {
+			return ((IQualifierType) type).isConst();
+		} else if (type instanceof IPointerType) {
+			return ((IPointerType) type).isConst();
+		}
+		return false;
+	}
+	
+	private static boolean isVolatile(IType type) {
+		if (type instanceof IQualifierType) {
+			return ((IQualifierType) type).isVolatile();
+		} else if (type instanceof IPointerType) {
+			return ((IPointerType) type).isVolatile();
+		}
+		return false;
+	}
+	
+	private static IType makeConst(IType type) {
+		if (type instanceof ICQualifierType) {
+			ICQualifierType qualifierType = ((ICQualifierType) type);
+			return new CQualifierType(qualifierType.getType(), 
+					true, qualifierType.isVolatile(), qualifierType.isRestrict());
+		}
+		return new CQualifierType(type, true, false, false);
+	}
+	
+	private static IType makeVolatile(IType type) {
+		if (type instanceof ICQualifierType) {
+			ICQualifierType qualifierType = ((ICQualifierType) type);
+			return new CQualifierType(qualifierType.getType(), 
+					qualifierType.isConst(), true, qualifierType.isRestrict());
+		}
+		return new CQualifierType(type, false, true, false);
+	}
+	
+	private static IType restoreCV(IType type, IType originalType) {
+		if (isConst(originalType)) {
+			type = makeConst(type);
+		}
+		if (isVolatile(originalType)) {
+			type = makeVolatile(type);
+		}
+		return type;
+	}
+	
+	public static IType restoreCV(IType type, IType originalType1, IType originalType2) {
+		return restoreCV(restoreCV(type, originalType1), originalType2);
 	}
 }

@@ -16,6 +16,24 @@
       "revId": "fe7bdd3d3f64dea9eee8d2395a741b4c2e5545a1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_af9318ae",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/ConvertToMakeWizardPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-02-27T04:38:44Z",
+      "side": 1,
+      "message": "Right! Thanks for pointing that out.\nThe wizard is called \"Convert to a C/C++ Project (Adds C/C++ Nature)\". I think it might be confusing to have another wizard named \"Convert C Project to C++ (Adds C++ Nature)\". Do you think that would be OK? I\u0027m a bit weary of adding yet another thing in the UI but if we decide that it\u0027s necessary, that\u0027s OK.",
+      "parentUuid": "a7fb1785_e1c1c277",
+      "revId": "fe7bdd3d3f64dea9eee8d2395a741b4c2e5545a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -24,6 +24,7 @@
  *     Marc Dumais (Ericsson) - Bug 458076
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 459114 - override construction of the data model
  *     Marc Dumais (Ericsson) - Bug 460737
+ *     Marc Dumais (Ericsson) - Bug 460837
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -62,6 +63,8 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFDebugModel;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFSessionState;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DebugViewUtils;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.IDSFTargetDataProxy;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.PersistentSettingsManager;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.PersistentSettingsManager.PersistentParameter;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
@@ -158,11 +161,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 
 	
 	/** Main switch that determines if we should display the load meters */
-	protected boolean m_loadMetersEnabled = false;
+	protected PersistentParameter<Boolean> m_loadMetersEnabled;
+	
 	/** Timer used to trigger the update of the CPU/core load meters */
 	protected Timer m_updateLoadMeterTimer = null;
 	/** update period for the load meters */
-	protected int m_loadMeterTimerPeriod = LOAD_METER_TIMER_MEDIUM; // default 1000ms
+	protected PersistentParameter<Integer> m_loadMeterTimerPeriod;
 	
 	// Load meters refresh periods, in ms
 	/** constant for the very short load meters update period */
@@ -233,6 +237,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	
 	/** Menu action */
 	protected PinToDebugSessionAction m_pinToDbgSessionAction = null;
+	
+	/** persistent settings manager */
+	protected PersistentSettingsManager m_persistentSettingsManager = null;
 
 	// --- constructors/destructors ---
 	
@@ -272,14 +279,29 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		if (m_visualizerInstanceId == null) {
 			m_visualizerInstanceId = "0"; //$NON-NLS-1$
 		}
+		initializePersistentParameters();
 	}
 
+	/**
+	 * Initialize the persistent parameters 
+	 */
+	protected void initializePersistentParameters() {
+		// setting managers
+		m_persistentSettingsManager = new PersistentSettingsManager(m_visualizerInstanceId);
+
+		// define persistent parameters:
+		m_loadMetersEnabled = m_persistentSettingsManager.getNewParameter(Boolean.class, 
+				"enableLoadMeters", true, false); //$NON-NLS-1$
+		m_loadMeterTimerPeriod = m_persistentSettingsManager.getNewParameter(Integer.class, 
+				"loadMeterTimerPeriod", true, LOAD_METER_TIMER_MEDIUM); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Sets-up the timer associated to load meters refresh
 	 */
 	protected void initializeLoadMeterTimer() {
-		if (!m_loadMetersEnabled) return;
-		m_updateLoadMeterTimer = getLoadTimer(m_sessionState, m_loadMeterTimerPeriod);		
+		if (!m_loadMetersEnabled.value()) return;
+		m_updateLoadMeterTimer = getLoadTimer(m_sessionState, m_loadMeterTimerPeriod.value());		
 		// one-shot timer (re-scheduled upon successful triggering)
 		m_updateLoadMeterTimer.setRepeating(false); 
 	}
@@ -328,8 +350,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	 */
 	public void setLoadMeterTimerPeriod(int p) {
 		assert (p > LOAD_METER_TIMER_MIN);
-		if (m_loadMeterTimerPeriod == p) return; 
-		m_loadMeterTimerPeriod = p > LOAD_METER_TIMER_MIN ? p : LOAD_METER_TIMER_MIN;
+		if (m_loadMeterTimerPeriod.value() == p) return; 
+		m_loadMeterTimerPeriod.set(p > LOAD_METER_TIMER_MIN ? p : LOAD_METER_TIMER_MIN);
 		disposeLoadMeterTimer();
 		initializeLoadMeterTimer();
 	}
@@ -338,10 +360,10 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	 * enables or disables the load meters
 	 */
 	public void setLoadMetersEnabled(boolean enabled) {
-		if (m_loadMetersEnabled == enabled) return;
-		m_loadMetersEnabled = enabled;
+		if (m_loadMetersEnabled.value() == enabled) return;
+		m_loadMetersEnabled.set(enabled);
 		// save load meter enablement in model
-		fDataModel.setLoadMetersEnabled(m_loadMetersEnabled);
+		fDataModel.setLoadMetersEnabled(m_loadMetersEnabled.value());
 		disposeLoadMeterTimer();
 		initializeLoadMeterTimer();
 	}
@@ -457,7 +479,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		m_loadMetersRefreshSubSubmenu = new MenuManager(MulticoreVisualizerUIPlugin.getString(
 				"MulticoreVisualizer.actions.LoadMetersRefreshSubSubmenu.text")); //$NON-NLS-1$
 		
-		m_enableLoadMetersAction = new EnableLoadMetersAction(m_loadMetersEnabled);
+		m_enableLoadMetersAction = new EnableLoadMetersAction(m_loadMetersEnabled.value());
 		m_enableLoadMetersAction.init(this);
 		// enable the load meter sub-menu 
     	m_enableLoadMetersAction.setEnabled(true);
@@ -467,6 +489,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetLoadMeterPeriod.fast.text"),  //$NON-NLS-1$
 				LOAD_METER_TIMER_FAST));
 		
+		// TODO: the default load meter refresh speed is set here but we could instead rely on the value saved in the data store 
 		SetLoadMeterPeriodAction defaultAction = new SetLoadMeterPeriodAction(
 				MulticoreVisualizerUIPlugin.getString("MulticoreVisualizer.actions.SetLoadMeterPeriod.medium.text"),  //$NON-NLS-1$
 				LOAD_METER_TIMER_MEDIUM);
@@ -520,7 +543,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		
     	// show the load meter refresh speed sub-menu only 
     	// if the load meters are enabled
-    	m_loadMetersRefreshSubSubmenu.setVisible(m_loadMetersEnabled);
+    	m_loadMetersRefreshSubSubmenu.setVisible(m_loadMetersEnabled.value());
     	
     	// Enable pinning menu item when there is a current debug session
     	m_pinToDbgSessionAction.setEnabled(m_sessionState != null);
@@ -1158,7 +1181,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** Invoked when getModel() request completes. */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void getVisualizerModelDone(VisualizerModel model) {
-		model.setLoadMetersEnabled(m_loadMetersEnabled);
+		model.setLoadMetersEnabled(m_loadMetersEnabled.value());
 		updateLoads(model);
 		model.sort();
 		setCanvasModel(model);
@@ -1395,7 +1418,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			return;
 		}
 		// if meters not enabled, do not query backend
-		if (!m_loadMetersEnabled) {
+		if (!m_loadMetersEnabled.value()) {
 			return;
 		}
 		

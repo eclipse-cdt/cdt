@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -174,6 +175,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** constant for the long load meters update period */
 	private static final int  LOAD_METER_TIMER_SLOW = 5000;
 	
+	/** The prefix of the secondary View Part id */
+	private static final String SECONDARY_VIEWPART_ID_PREFIX = PinCloneUtils.PIN_CLONE_VIEW_TAG;
+	
 	/** Currently pinned session id, if any  */
 	private String m_currentPinedSessionId = null;
 	
@@ -266,11 +270,27 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	public void initializeVisualizer() {
 		fEventListener = new MulticoreVisualizerEventListener(this);
 		m_cpuCoreContextsCache = new ArrayList<IDMContext>(); 
+<<<<<<< HEAD   (9382a6 Bug 460737 - [visualizer] enable MV to know which (cloned) i)
 		m_visualizerInstanceId = getViewer().getView().getViewSite().getSecondaryId();
 		
 		// The first visualizer view will have a null secondary id - override that
 		if (m_visualizerInstanceId == null) {
 			m_visualizerInstanceId = "0"; //$NON-NLS-1$
+=======
+		// The secondary view part id is null for the first instance of the visualizer. 
+		// All other instances will have an id that ends in a number. Something like: 
+		// "PIN_CLONE_VIEW_1". 
+		String secViewPartId = getViewer().getView().getViewSite().getSecondaryId();
+		
+		// The first visualizer view will have a null secondary id
+		if (secViewPartId == null) {
+			m_visualizerInstanceId = "0"; //$NON-NLS-1$
+		}
+		else {
+			// extract the number at the end of the secondary part id
+			int idx = secViewPartId.indexOf(SECONDARY_VIEWPART_ID_PREFIX) + SECONDARY_VIEWPART_ID_PREFIX.length();
+			m_visualizerInstanceId = secViewPartId.substring(idx, secViewPartId.length());
+>>>>>>> BRANCH (9e98cc Bug 460837 - [visualizer] Add persistent information storage)
 		}
 	}
 

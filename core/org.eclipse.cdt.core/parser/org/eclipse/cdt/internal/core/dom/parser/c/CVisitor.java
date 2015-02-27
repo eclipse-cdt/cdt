@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -70,12 +72,15 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -105,6 +110,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
@@ -714,6 +720,16 @@ public class CVisitor extends ASTQueries {
 		}
 		return type;
 	}
+	
+	static IType unwrapCV(IType type) {
+		while (type instanceof IQualifierType) {
+			type = ((IQualifierType) type).getType();
+		}
+		if (type instanceof IPointerType) {
+			type = new CPointerType(((IPointerType) type).getType(), 0 /* no qualifiers */);
+		}
+		return type;
+	}
 
 	/**
 	 * @param parent
@@ -1278,6 +1294,9 @@ public class CVisitor extends ASTQueries {
         
 		return type;
 	}
+	private static IType createType(IASTTypeId typeId) {
+		return createType(typeId.getAbstractDeclarator());
+	}
 	
 	public static IType createType(IType baseType, IASTDeclarator declarator) {
 	    if (declarator instanceof IASTFunctionDeclarator)
@@ -1742,4 +1761,39 @@ public class CVisitor extends ASTQueries {
 		
 		return name.resolveBinding();
 	}
+
+	/**
+	 * Determine whether an expression is a null pointer constant.
+	 */
+    public static boolean isNullPointerConstant(IASTExpression expression) {
+    	// [6.3.2.3] p3: An integer constant expression with the value 0, or such an expression cast
+    	// to void*, is called a null pointer constant.
+    	
+    	// Unwrap extra parentheses.
+    	if (expression instanceof IASTUnaryExpression) { 
+    		IASTUnaryExpression unaryExpression = (IASTUnaryExpression) expression;
+    	    if (unaryExpression.getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+    	    	return isNullPointerConstant(unaryExpression.getOperand());
+    	    }
+	    }
+    	
+    	if (expression instanceof IASTCastExpression) {
+    		IASTCastExpression castExpression = (IASTCastExpression) expression;
+			IType castType = createType(castExpression.getTypeId());
+    		if (castType.isSameType(CPointerType.VOID_POINTER)) {
+    			return isNullPointerConstant(castExpression.getOperand());
+    		}
+    	} 
+    	
+		IType expressionType = expression.getExpressionType();
+		if (expressionType instanceof IBasicType) {
+			IValue value = Value.create(expression);
+			if (value != null && value.numericalValue() != null) {
+				return value.numericalValue().longValue() == 0;
+			}
+		}
+		
+		return false;
+    }
+
 }

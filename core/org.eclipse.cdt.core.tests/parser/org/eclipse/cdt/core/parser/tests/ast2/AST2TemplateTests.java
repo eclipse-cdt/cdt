@@ -3280,7 +3280,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentBaseLookup_408314a() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ITypedef waldo = bh.assertNonProblem("waldo");
-		assertSameType(waldo.getType(), CommonTypes.int_);
+		assertSameType(waldo.getType(), CommonCPPTypes.int_);
 	}
 
 	//	template <typename T>
@@ -3302,7 +3302,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentBaseLookup_408314b() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ITypedef waldo = bh.assertNonProblem("waldo");
-		assertSameType(waldo.getType(), CommonTypes.int_);
+		assertSameType(waldo.getType(), CommonCPPTypes.int_);
 	}
 
 	//	template <typename T>
@@ -3324,7 +3324,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentBaseLookup_408314c() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ITypedef waldo = bh.assertNonProblem("waldo");
-		assertSameType(waldo.getType(), CommonTypes.int_);
+		assertSameType(waldo.getType(), CommonCPPTypes.int_);
 	}
 
 	//	template <class T>
@@ -6139,8 +6139,8 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	auto x2 = begin2(v);
 	public void testResolvingAutoTypeWithDependentExpression_402409a() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		helper.assertVariableType("x1", CommonTypes.pointerToInt);
-		helper.assertVariableType("x2", CommonTypes.pointerToInt);
+		helper.assertVariableType("x1", CommonCPPTypes.pointerToInt);
+		helper.assertVariableType("x2", CommonCPPTypes.pointerToInt);
 	}
 
 	//	struct vector {
@@ -6314,7 +6314,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testSpecializationOfBaseClass_409078() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ITypedef waldo = bh.assertNonProblem("waldo");
-		assertSameType(waldo.getType(), CommonTypes.int_);
+		assertSameType(waldo.getType(), CommonCPPTypes.int_);
 	}
 
 	//struct A {
@@ -7836,7 +7836,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testInstantiationOfConstMemberAccess_409107() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		IType waldo = bh.assertNonProblem("waldo");
-		assertSameType(waldo, CommonTypes.int_);
+		assertSameType(waldo, CommonCPPTypes.int_);
 	}
 
 	//    template <typename _Tp>
@@ -8253,7 +8253,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    auto x = foo(N::A());
 	//	}
 	public void testUnqualifiedFunctionCallInTemplate_402498b() throws Exception {
-		new BindingAssertionHelper(getAboveComment(), true).assertVariableType("x", CommonTypes.int_);
+		new BindingAssertionHelper(getAboveComment(), true).assertVariableType("x", CommonCPPTypes.int_);
 	}
 
 	//	template <typename T>
@@ -8275,7 +8275,7 @@ public class AST2TemplateTests extends AST2TestBase {
 		// analyzer is too lenient and makes it a TypeOfDependentExpression if it
 		// can't instantiate the return type of foo() properly.
 		// That's another bug for another day.
-		assertFalse(x.getType().isSameType(CommonTypes.int_));
+		assertFalse(x.getType().isSameType(CommonCPPTypes.int_));
 	}
 
 	//	void bar();
@@ -8326,7 +8326,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	auto b = foo(a);
 	public void testQualifiedNameLookupInTemplate_402854() throws Exception {
 		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), true);
-		helper.assertVariableType("b", CommonTypes.int_);
+		helper.assertVariableType("b", CommonCPPTypes.int_);
 	}
 
 	//	template<typename T> struct A {
@@ -8504,7 +8504,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentDecltypeInNameQualifier_415198() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertNonProblem("decltype(foo(T()))::type");
-		assertSameType((ITypedef) helper.assertNonProblem("U<S>::type"), CommonTypes.int_);
+		assertSameType((ITypedef) helper.assertNonProblem("U<S>::type"), CommonCPPTypes.int_);
 	}
 
 	//	template <typename T>
@@ -8519,7 +8519,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	decltype(B::c)::type x;
 	public void testDependentDecltypeInNameQualifier_429837() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		assertSameType((ITypedef) helper.assertNonProblem("decltype(B::c)::type"), CommonTypes.int_);
+		assertSameType((ITypedef) helper.assertNonProblem("decltype(B::c)::type"), CommonCPPTypes.int_);
 	}
 
 	//	namespace N {

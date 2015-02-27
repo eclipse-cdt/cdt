@@ -7582,4 +7582,17 @@ public class AST2Tests extends AST2TestBase {
 		IFunction waldo = bh.assertNonProblem("waldo");
 		assertTrue(waldo.getType().takesVarArgs());		
     }
+    
+	//	struct Foo {
+	//	  struct Foo* a;
+	//	};
+	//	
+	//	int main() {
+	//	  struct Foo * f = 0;
+	//	  (f ? f->a : ((void*) 0))->a; // second 'a' cannot be resolved
+	//	  return 0;
+	//	}
+    public void testVoidPointerInTernaryOperator_460741() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), C);
+    }
 }

@@ -13,13 +13,18 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes;
 
 /**
  * Conditional expression in C
@@ -151,13 +156,76 @@ public class CASTConditionalExpression extends ASTNode implements
 		if (positiveExpression == null) {
 			positiveExpression= getLogicalConditionExpression();
 		}
-		IType t2 = positiveExpression.getExpressionType();
-		IType t3 = getNegativeResultExpression().getExpressionType();
-		if (t3 instanceof IPointerType || t2 == null)
-			return t3;
-		return t2;
+		IASTExpression negativeExpression = getNegativeResultExpression();
+		IType originalPositiveType = positiveExpression.getExpressionType();
+		IType originalNegativeType = getNegativeResultExpression().getExpressionType();
+		IType positiveType = CVisitor.unwrapTypedefs(originalPositiveType);
+		IType negativeType = CVisitor.unwrapTypedefs(originalNegativeType);
+		IType resultType = computeResultType(positiveExpression, negativeExpression, 
+				                             positiveType, negativeType);
+		if (resultType == null) {
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		}
+		return ExpressionTypes.restoreTypedefs(resultType, originalPositiveType, originalPositiveType);
 	}
     
+    
+	private IType computeResultType(IASTExpression positiveExpression, IASTExpression negativeExpression,
+			                        IType positiveType, IType negativeType) {
+		// [6.5.15] p5: If both the second and third operands have arithmetic type, the result type
+		// that would be determined by the usual arithmetic conversions, were they applied to those
+		// two operands, is the type of the result. If both operands have void type, the result has
+		// void type.
+		if (positiveType instanceof IBasicType && negativeType instanceof IBasicType) {
+			if (((IBasicType) positiveType).getKind() == IBasicType.Kind.eVoid
+			 && ((IBasicType) negativeType).getKind() == IBasicType.Kind.eVoid) {
+				return CBasicType.VOID;
+			}
+			
+			// It doesn't really matter which operator we use here, so we'll use op_plus.
+			return CArithmeticConversion.convertCOperandTypes(IASTBinaryExpression.op_plus, 
+					positiveType, negativeType);
+		}
+		
+		// If both the operands have structure or union type, the result has that type.
+		if (positiveType instanceof ICompositeType && negativeType instanceof ICompositeType) {
+			// Both operands must have the same structure or union type as per p3.
+			if (positiveType.isSameType(negativeType)) {
+				return positiveType;
+			}
+		}
+		
+		// [6.5.15] p6: If both the second and third operands are pointers or one is a null pointer 
+		// constant and the other is a pointer, the result type is a pointer to a type qualified with
+		// all the type qualifiers of the types referenced by both operands. Furthermore, if both 
+		// operands are pointers to compatible types or to differently qualified versions of compatible 
+		// types, the result type is a pointer to an appropriately qualified version of the composite 
+		// type; if one operand is a null pointer constant, the result has the type of the other operand; 
+		// otherwise, one operand is a pointer to void or a qualified version of void, in which case the 
+		// result type is a pointer to an appropriately qualified version of void.
+		if (CVisitor.isNullPointerConstant(positiveExpression) && negativeType instanceof IPointerType) {
+			return negativeType;
+		} else if (CVisitor.isNullPointerConstant(negativeExpression) && positiveType instanceof IPointerType) {
+			return positiveType;
+		} else if (positiveType instanceof IPointerType && negativeType instanceof IPointerType) {
+			IType positivePointeeCV = ((IPointerType) positiveType).getType();
+			IType negativePointeeCV = ((IPointerType) negativeType).getType();
+			IType positivePointee = CVisitor.unwrapCV(positivePointeeCV);
+			IType negativePointee = CVisitor.unwrapCV(negativePointeeCV);
+			IType resultPointee;
+			if (positivePointee.isSameType(CBasicType.VOID) || negativePointee.isSameType(CBasicType.VOID)) {
+				resultPointee = CBasicType.VOID;
+			} else {
+				// TODO: Implement checking for compatible types and computing the composite type.
+				resultPointee = negativePointee;
+			}
+			return new CPointerType(
+					ExpressionTypes.restoreCV(resultPointee, positivePointeeCV, negativePointeeCV), 0);
+		}
+		
+		return null;
+	}
+
 	@Override
 	public boolean isLValue() {
 		return false;

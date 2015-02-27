@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -314,16 +315,35 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	}
 	
 	// /* Start Example(C 6.5.15-8) */
-	// int f() {
-	// const void *c_vp;
-	// void *vp;
-	// const int *c_ip;
-	// volatile int *v_ip;
-	// int *ip;
-	// const char *c_cp;
-	// }
+	//	int f(bool cond) {
+	//		const void *c_vp;
+	//		void *vp;
+	//		const int *c_ip;
+	//		volatile int *v_ip;
+	//		int *ip;
+	//		const char *c_cp;
+	//
+	//		cond ? c_vp : c_ip;
+	//		cond ? v_ip : 0;
+	//		cond ? c_ip : v_ip;
+	//		cond ? vp : c_cp;
+	//		cond ? ip : c_ip;
+	//		cond ? vp : ip;
+	//	}
 	public void test6_5_15s8() throws Exception {
-		parseCandCPP(getAboveComment(), true, 0);
+		BindingAssertionHelper helper = new BindingAssertionHelper(getAboveComment(), ParserLanguage.C);
+		IASTExpression c1 = helper.assertNode("cond ? c_vp : c_ip");
+		IASTExpression c2 = helper.assertNode("cond ? v_ip : 0");
+		IASTExpression c3 = helper.assertNode("cond ? c_ip : v_ip");
+		IASTExpression c4 = helper.assertNode("cond ? vp : c_cp");
+		IASTExpression c5 = helper.assertNode("cond ? ip : c_ip");
+		IASTExpression c6 = helper.assertNode("cond ? vp : ip");
+		assertSameType(CommonCTypes.pointerToConstVoid, c1.getExpressionType());
+		assertSameType(CommonCTypes.pointerToVolatileInt, c2.getExpressionType());
+		assertSameType(CommonCTypes.pointerToConstVolatileInt, c3.getExpressionType());
+		assertSameType(CommonCTypes.pointerToConstVoid, c4.getExpressionType());
+		assertSameType(CommonCTypes.pointerToConstInt, c5.getExpressionType());
+		assertSameType(CommonCTypes.pointerToVoid, c6.getExpressionType());
 	}
 	
 	// /* Start Example(C 6.5.16.1-5) */

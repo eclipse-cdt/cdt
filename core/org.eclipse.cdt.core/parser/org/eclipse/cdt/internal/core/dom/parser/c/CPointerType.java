@@ -20,6 +20,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 public class CPointerType implements ICPointerType, ITypeContainer, ISerializableType {
+	static public final CPointerType VOID_POINTER = new CPointerType(CBasicType.VOID, 0);
+	
 	static public final int IS_CONST    = 1;
 	static public final int IS_RESTRICT = 1 << 1;
 	static public final int IS_VOLATILE = 1 << 2;

@@ -66,7 +66,7 @@ public class Messages extends NLS {
 	public static String RemoteConnectionWidget_New;
 	public static String RemoteConnectionWidget_Remote;
 	public static String RemoteConnectionWidget_selectConnection;
-	public static String RemoteConnectionWidget_selectRemoteProvider;
+	public static String RemoteConnectionWidget_selectConnectionType;
 
 	public static String RemoteDevelopmentPreferencePage_Default_connection_type;
 

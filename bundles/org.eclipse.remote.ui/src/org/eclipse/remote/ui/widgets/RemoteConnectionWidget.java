@@ -101,8 +101,8 @@ public class RemoteConnectionWidget extends Composite {
 		public void widgetSelected(SelectionEvent e) {
 			if (isEnabled()) {
 				Object source = e.getSource();
-				if (source == fServicesCombo) {
-					handleRemoteServiceSelected(null);
+				if (source == fConnectionTypeCombo) {
+					handleConnectionTypeSelected(null);
 				} else if (source == fConnectionCombo) {
 					handleConnectionSelected();
 				} else if (source == fNewConnectionButton) {
@@ -118,7 +118,7 @@ public class RemoteConnectionWidget extends Composite {
 	public static final String DEFAULT_CONNECTION_NAME = "Remote Host"; //$NON-NLS-1$
 
 	/**
-	 * Force the use of a remote provider dialog, regardless of the PREF_CONNECTION_TYPE preference setting.
+	 * Force the use of the connection type combo, regardless of the PREF_CONNECTION_TYPE preference setting.
 	 * 
 	 * @since 2.0
 	 */
@@ -129,13 +129,13 @@ public class RemoteConnectionWidget extends Composite {
 	 */
 	public static int FLAG_NO_LOCAL_SELECTION = 1 << 1;
 
-	private Combo fServicesCombo = null;
+	private Combo fConnectionTypeCombo;
 	private Button fLocalButton;
 	private Button fRemoteButton;
 	private final Combo fConnectionCombo;
 	private final Button fNewConnectionButton;
 
-	private final List<IRemoteConnectionType> fConnectionTypes;
+	private List<IRemoteConnectionType> fConnectionTypes;
 	private IRemoteConnection fSelectedConnection;
 	private IRemoteServicesManager fRemoteServicesManager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
 	private IRemoteConnectionType fDefaultConnectionType;
@@ -200,30 +200,25 @@ public class RemoteConnectionWidget extends Composite {
 			body = group;
 		}
 
+		String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
+		if (id != null) {
+			fDefaultConnectionType = fRemoteServicesManager.getConnectionType(id);
+		}
+
 		/*
 		 * Check if we need a connection type combo, or we should just use the default provider
 		 */
-		if ((flags & FLAG_FORCE_CONNECTION_TYPE_SELECTION) == 0) {
-			String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
-			if (id != null) {
-				fDefaultConnectionType = fRemoteServicesManager.getConnectionType(id);
-			}
-		}
-
-		if (fDefaultConnectionType == null) {
-			/*
-			 * Remote provider
-			 */
+		if ((flags & FLAG_FORCE_CONNECTION_TYPE_SELECTION) != 0) {
 			Label label = new Label(body, SWT.NONE);
 			label.setText(Messages.RemoteConnectionWidget_Connection_Type);
 			label.setLayoutData(new GridData());
 
-			fServicesCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
+			fConnectionTypeCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
 			GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			gd.horizontalSpan = 3;
-			fServicesCombo.setLayoutData(gd);
-			fServicesCombo.addSelectionListener(fWidgetListener);
-			fServicesCombo.setFocus();
+			fConnectionTypeCombo.setLayoutData(gd);
+			fConnectionTypeCombo.addSelectionListener(fWidgetListener);
+			fConnectionTypeCombo.setFocus();
 		}
 
 		if ((flags & FLAG_NO_LOCAL_SELECTION) == 0 && (flags & FLAG_FORCE_CONNECTION_TYPE_SELECTION) == 0) {
@@ -258,11 +253,11 @@ public class RemoteConnectionWidget extends Composite {
 		fRemoteServicesManager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
 		fConnectionTypes = fRemoteServicesManager.getRemoteConnectionTypes();
 
-		if (fServicesCombo != null) {
-			initializeRemoteServicesCombo(null);
+		if (fConnectionTypeCombo != null) {
+			initializeConnectionTypeCombo();
 		}
 
-		handleRemoteServiceSelected(null);
+		handleConnectionTypeSelected(null);
 
 		if (fLocalButton != null) {
 			handleButtonSelected();
@@ -306,9 +301,9 @@ public class RemoteConnectionWidget extends Composite {
 		if (fDefaultConnectionType != null) {
 			return fDefaultConnectionType;
 		}
-		int selectionIndex = fServicesCombo.getSelectionIndex();
+		int selectionIndex = fConnectionTypeCombo.getSelectionIndex();
 		if (fConnectionTypes.size() > 0 && selectionIndex > 0) {
-			return fRemoteServicesManager.getConnectionType(fConnectionTypes.get(selectionIndex - 1).getId());
+			return fConnectionTypes.get(selectionIndex - 1);
 		}
 		return null;
 	}
@@ -371,7 +366,7 @@ public class RemoteConnectionWidget extends Composite {
 				IRemoteConnectionWorkingCopy conn = wizard.open();
 				if (conn != null) {
 					try {
-						handleRemoteServiceSelected(conn.save());
+						handleConnectionTypeSelected(conn.save());
 						handleConnectionSelected();
 					} catch (CoreException e) {
 						RemoteUIPlugin.log(e);
@@ -382,19 +377,17 @@ public class RemoteConnectionWidget extends Composite {
 	}
 
 	/**
-	 * Handle selection of a new remote services provider from the remote services combo. Handles the special case where the
-	 * services combo is null and a local connection is supplied. In this case, the selected services are not changed.
+	 * Handle selection of a new connection type from the connection type combo. Handles the special case where the
+	 * connection type combo is null and a local connection is supplied. In this case, the selected connection type is not changed.
 	 * 
 	 * The assumption is that this will trigger a call to the selection handler for the connection combo.
 	 * 
 	 * @param conn
 	 *            connection to select as current. If conn is null, select the first item in the list.
-	 * @param notify
-	 *            if true, notify handlers that the connection has changed. This should only happen if the user changes the
-	 *            connection.
 	 * @throws CoreException
+	 * @since 2.0
 	 */
-	protected void handleRemoteServiceSelected(IRemoteConnection conn) {
+	protected void handleConnectionTypeSelected(IRemoteConnection conn) {
 		final boolean enabled = fWidgetListener.isEnabled();
 		fWidgetListener.disable();
 		try {
@@ -404,13 +397,13 @@ public class RemoteConnectionWidget extends Composite {
 			}
 
 			/*
-			 * If a connection was supplied, set its remote service provider in the combo. Otherwise use the currently selected
+			 * If a connection was supplied, set its connection type in the combo. Otherwise use the currently selected
 			 * service.
 			 */
 			if (fDefaultConnectionType == null && conn != null) {
 				for (int index = 0; index < fConnectionTypes.size(); index++) {
 					if (fConnectionTypes.get(index).getId().equals(selectedConnectionType.getId())) {
-						fServicesCombo.select(index + 1);
+						fConnectionTypeCombo.select(index + 1);
 						break;
 					}
 				}
@@ -472,30 +465,26 @@ public class RemoteConnectionWidget extends Composite {
 	}
 
 	/**
-	 * Initialize the contents of the remote services combo. Keeps an array of remote services that matches the combo elements.
+	 * Initialize the contents of the connection type combo. Keeps an array of connection types that matches the combo elements.
 	 * Returns the id of the selected element.
 	 * 
-	 * @since 6.0
+	 * @since 2.0
 	 */
-	protected void initializeRemoteServicesCombo(String id) {
+	protected void initializeConnectionTypeCombo() {
 		final boolean enabled = fWidgetListener.isEnabled();
 		fWidgetListener.disable();
-		IRemoteConnectionType defService = null;
-		if (id != null) {
-			defService = fRemoteServicesManager.getConnectionType(id);
-		}
-		fServicesCombo.removeAll();
+		fConnectionTypeCombo.removeAll();
 		int offset = 1;
 		int defIndex = 0;
-		fServicesCombo.add(Messages.RemoteConnectionWidget_selectRemoteProvider);
+		fConnectionTypeCombo.add(Messages.RemoteConnectionWidget_selectConnectionType);
 		for (int i = 0; i < fConnectionTypes.size(); i++) {
-			fServicesCombo.add(fConnectionTypes.get(i).getName());
-			if (defService != null && fConnectionTypes.get(i).equals(defService)) {
+			fConnectionTypeCombo.add(fConnectionTypes.get(i).getName());
+			if (fDefaultConnectionType != null && fConnectionTypes.get(i).equals(fDefaultConnectionType)) {
 				defIndex = i + offset;
 			}
 		}
 		if (fConnectionTypes.size() > 0) {
-			fServicesCombo.select(defIndex);
+			fConnectionTypeCombo.select(defIndex);
 		}
 		fWidgetListener.setEnabled(enabled);
 	}
@@ -542,7 +531,7 @@ public class RemoteConnectionWidget extends Composite {
 			fLocalButton.setSelection(true);
 			handleButtonSelected();
 		} else {
-			handleRemoteServiceSelected(connection);
+			handleConnectionTypeSelected(connection);
 		}
 		handleConnectionSelected();
 		updateEnablement();
@@ -553,7 +542,7 @@ public class RemoteConnectionWidget extends Composite {
 	 * Set the connection that should be selected in the widget.
 	 * 
 	 * @param id
-	 *            remote services id
+	 *            connection type id
 	 * @param name
 	 *            connection name
 	 * @throws CoreException
@@ -596,7 +585,7 @@ public class RemoteConnectionWidget extends Composite {
 			fConnectionCombo.setEnabled(fEnabled && services != null);
 			fNewConnectionButton.setEnabled(fEnabled && services != null
 					&& (services.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
-			fServicesCombo.setEnabled(fEnabled);
+			fConnectionTypeCombo.setEnabled(fEnabled);
 		}
 	}
 }

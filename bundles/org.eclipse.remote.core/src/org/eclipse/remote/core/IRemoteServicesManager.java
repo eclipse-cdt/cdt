@@ -58,6 +58,29 @@ public interface IRemoteServicesManager {
 	List<IRemoteConnectionType> getAllConnectionTypes();
 
 	/**
+	 * Returns the list of all connection types that support connections that provide specific services. The connections
+	 * can provide additional services that are not included in the list, so this just guarantees the minimum set of services that
+	 * will be supported.
+	 * 
+	 * @param services
+	 *            services provided by connections supported by this connection type
+	 * @return compatible connection types
+	 */
+	@SuppressWarnings("unchecked")
+	List<IRemoteConnectionType> getConnectionTypesSupporting(Class<? extends IRemoteConnection.Service>... services);
+
+	/**
+	 * Returns the list of all connection types that provide specific services. The connection types can provide additional services
+	 * that are not included in the list, so this just guarantees the minimum set of services that will be supported.
+	 * 
+	 * @param services
+	 *            services provided by this connection type
+	 * @return compatible connection types
+	 */
+	@SuppressWarnings("unchecked")
+	List<IRemoteConnectionType> getConnectionTypesByService(Class<? extends IRemoteConnectionType.Service>... services);
+
+	/**
 	 * Returns the list of connection types except for the local connection type.
 	 * 
 	 * @return all connection types that are really remote

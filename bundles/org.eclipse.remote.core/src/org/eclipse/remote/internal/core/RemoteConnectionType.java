@@ -194,7 +194,13 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return null;
 	}
 
-	public <T extends IRemoteConnection.Service> boolean hasConnectionService(IRemoteConnection connection, Class<T> service) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#hasConnectionService(java.lang.Class)
+	 */
+	@Override
+	public <T extends IRemoteConnection.Service> boolean hasConnectionService(Class<T> service) {
 		return serviceDefinitionMap.get(service.getName()) != null;
 	}
 

@@ -237,6 +237,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 					}));
 				}
 			});
+			fRemoteConnectionWidget.filterConnections(IRemoteFileService.class);
 		}
 
 		Composite textComp = new Composite(mainComp, SWT.NONE);
@@ -652,16 +653,20 @@ public class RemoteResourceBrowserWidget extends Composite {
 	}
 
 	/**
-	 * Set the connection for the browser
+	 * Set the connection for the browser. The connection must support the IRemoteFileService service or this method will have no
+	 * effect.
 	 * 
 	 * @param connection
+	 *            connection that supports the IRemoteFileService service
 	 */
 	public void setConnection(IRemoteConnection connection) {
-		changeInput(connection);
-		if (fRemoteConnectionWidget != null) {
-			fRemoteConnectionWidget.setConnection(connection);
+		if (connection.hasService(IRemoteFileService.class)) {
+			changeInput(connection);
+			if (fRemoteConnectionWidget != null) {
+				fRemoteConnectionWidget.setConnection(connection);
+			}
+			updateEnablement();
 		}
-		updateEnablement();
 	}
 
 	/**

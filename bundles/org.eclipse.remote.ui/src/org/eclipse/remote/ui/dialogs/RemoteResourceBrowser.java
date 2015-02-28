@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.widgets.RemoteResourceBrowserWidget;
 import org.eclipse.swt.SWT;
@@ -256,12 +257,16 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	}
 
 	/**
-	 * Set the initial connection for the browser.
+	 * Set the connection for the browser. The connection must support the IRemoteFileService service or this method will have no
+	 * effect.
 	 * 
 	 * @param connection
+	 *            connection that supports the IRemoteFileService service
 	 */
 	public void setConnection(IRemoteConnection connection) {
-		fConnection = connection;
+		if (connection.hasService(IRemoteFileService.class)) {
+			fConnection = connection;
+		}
 	}
 
 	/**

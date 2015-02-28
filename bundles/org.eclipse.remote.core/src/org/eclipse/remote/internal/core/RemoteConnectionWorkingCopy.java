@@ -241,7 +241,7 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		if (original != null) {
 			return original.hasService(service);
 		} else {
-			return connectionType.hasConnectionService(this, service);
+			return connectionType.hasConnectionService(service);
 		}
 	}
 

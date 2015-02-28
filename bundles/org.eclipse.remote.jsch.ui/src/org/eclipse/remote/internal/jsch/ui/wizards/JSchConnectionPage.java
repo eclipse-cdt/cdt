@@ -19,8 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionHostService;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
+import org.eclipse.remote.core.IRemotePortForwardingService;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.Activator;
@@ -289,6 +291,7 @@ public class JSchConnectionPage extends WizardPage {
 		lblConnection.setText(Messages.JSchConnectionPage_SelectConnection);
 
 		fProxyConnectionWidget = new RemoteConnectionWidget(proxyComp, SWT.NONE, null, 0, null);
+		fProxyConnectionWidget.filterConnections(IRemoteConnectionHostService.class, IRemotePortForwardingService.class);
 
 		Label lblCommand = new Label(proxyComp, SWT.WRAP);
 		lblCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

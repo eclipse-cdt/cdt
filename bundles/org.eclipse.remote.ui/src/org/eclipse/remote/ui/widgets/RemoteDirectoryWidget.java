@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.remote.ui.IRemoteUIConnectionService;
@@ -84,6 +85,7 @@ public class RemoteDirectoryWidget extends Composite {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		text.setLayoutData(data);
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String path = text.getText();
 				setSavedPath(path);
@@ -172,6 +174,9 @@ public class RemoteDirectoryWidget extends Composite {
 	/**
 	 * Set the remote connection to use for browsing for the remote directory.
 	 * 
+	 * The connection type must provide the IRemoteUIConnectionService and IRemoteUIFileService services and the connection must
+	 * support the IRemoteFileService service. If any of these conditions are not met, this method will do nothing.
+	 * 
 	 * @param conn
 	 *            remote connection
 	 * @since 4.0
@@ -181,7 +186,8 @@ public class RemoteDirectoryWidget extends Composite {
 			throw new NullPointerException();
 		}
 
-		if (!conn.equals(fRemoteConnection)) {
+		if (conn.hasService(IRemoteFileService.class) && conn.getConnectionType().hasService(IRemoteUIConnectionService.class)
+				&& conn.getConnectionType().hasService(IRemoteUIFileService.class) && !conn.equals(fRemoteConnection)) {
 			fRemoteConnection = conn;
 			String path = getSavedPath();
 			restoreDefault(path);

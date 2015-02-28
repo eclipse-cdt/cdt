@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Interface for providing file management operations in the UI. Clients can call these methods to open generic dialogs for
  * operations on remote resources.
+ * 
  * @since 2.0
  */
 public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
@@ -91,7 +92,8 @@ public interface IRemoteUIFileService extends IRemoteConnectionType.Service {
 	public IRemoteConnection getConnection();
 
 	/**
-	 * Set the connection to use for file browsing
+	 * Set the connection to use for file browsing. The connection must support the IRemoteFileService service or it will be
+	 * ignored.
 	 * 
 	 * @param connection
 	 *            connection to use for file browsing

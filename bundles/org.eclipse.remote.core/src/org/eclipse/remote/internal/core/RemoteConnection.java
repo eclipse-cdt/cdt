@@ -88,7 +88,7 @@ public class RemoteConnection implements IRemoteConnection {
 	 */
 	@Override
 	public <T extends Service> boolean hasService(Class<T> service) {
-		return servicesMap.get(service.getName()) != null || connectionType.hasConnectionService(this, service);
+		return servicesMap.get(service.getName()) != null || connectionType.hasConnectionService(service);
 	}
 
 	/*

@@ -279,6 +279,24 @@ public class RemoteConnectionWidget extends Composite {
 	}
 
 	/**
+	 * Limit the connection types that will be used when displaying valid connections. Only connection types that support
+	 * connections with supplied services will be displayed in the connection type combo, and only connections from these connection
+	 * types will be displayed in the connection combo.
+	 * 
+	 * @param services
+	 *            list of services {@link IRemoteConnection.Service}
+	 * @since 2.0
+	 */
+	@SafeVarargs
+	public final void filterConnections(Class<? extends IRemoteConnection.Service>... services) {
+		fConnectionTypes = fRemoteServicesManager.getConnectionTypesSupporting(services);
+		if (fConnectionTypeCombo != null) {
+			initializeConnectionTypeCombo();
+		}
+		handleConnectionTypeSelected(null);
+	}
+
+	/**
 	 * Get the new button from the widget
 	 * 
 	 * @return button

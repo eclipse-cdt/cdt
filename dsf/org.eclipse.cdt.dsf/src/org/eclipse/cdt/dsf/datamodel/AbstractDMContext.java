@@ -106,7 +106,7 @@ abstract public class AbstractDMContext extends PlatformObject
             retVal.append(parent);
             retVal.append(',');
         }
-        if (retVal.length() > 0) {
+		if (retVal.length() > 0) {
         	retVal.deleteCharAt(retVal.length() - 1);	// remove trailing comma
         }
         if (getParents().length > 1) {

@@ -88,7 +88,7 @@ public class CLIInfoSharedLibraryInfo extends MIInfo {
 	}
 
 	void parseShared(String str, List<DsfMISharedInfo> aList) {
-		if (str.length() > 0) {
+		if (!str.isEmpty()) {
 			// Parsing pattern of type ~"0x40000970  0x4001331f  Yes         /lib/ld-linux.so.2\n"
             Pattern pattern = Pattern.compile("(0x.*)(0x.*)(Yes|No)(\\s*)(.*)",  Pattern.MULTILINE); //$NON-NLS-1$
             Matcher matcher = pattern.matcher(str);

@@ -35,7 +35,7 @@ public class REDRun implements CharSequence {
 	/**
 	 * @pre rider != null
 	 * @pre style != null
-	 * @pre str.length() > 0
+	 * @pre !str.isEmpty()
 	 */
 	public REDRun(IFileRider rider, String str) throws IOException {
 		fRider = rider;

@@ -469,7 +469,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     				}
 
     				// Check that we have a process to attach to
-    				if (procList.size() > 0) {
+    				if (!procList.isEmpty()) {
 
     					// Check that we can actually attach to the process.
     					// This is because some backends may not support multi-process.

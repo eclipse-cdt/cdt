@@ -105,7 +105,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		String file = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FILE);
 		String function = (String)properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 		String module = (String)properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
-		if (line != null && line >= 0 && file != null && file.length() > 0)
+		if (line != null && line >= 0 && file != null && !file.isEmpty())
 		{
 			if (function != null && function.contains(")")) //$NON-NLS-1$
 				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__text_format;
@@ -119,7 +119,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
                     ILaunchVMConstants.PROP_FRAME_COLUMN, 
                     ILaunchVMConstants.PROP_FRAME_MODULE};
 		}
-		else if (function != null && function.length() > 0 && module != null && module.length() > 0)
+		else if (function != null && !function.isEmpty() && module != null && !module.isEmpty())
 		{
 			if (function.contains(")")) //$NON-NLS-1$
 				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format;
@@ -130,14 +130,14 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
                     ILaunchVMConstants.PROP_FRAME_FUNCTION, 
                     ILaunchVMConstants.PROP_FRAME_MODULE};
 		}
-		else if (module != null && module.length() > 0)
+		else if (module != null && !module.isEmpty())
 		{
 			formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_function__text_format;
 			propertyNames = new String[] { 
                     ILaunchVMConstants.PROP_FRAME_ADDRESS, 
                     ILaunchVMConstants.PROP_FRAME_MODULE};
 		}
-		else if (function != null && function.length() > 0)
+		else if (function != null && !function.isEmpty())
 		{
 			if (function.contains(")")) //$NON-NLS-1$
 				formatString = MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__text_format;

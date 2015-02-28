@@ -360,7 +360,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     }
 
     private void processNextQueuedCommand() {
-		if (fCommandQueue.size() > 0) {
+		if (!fCommandQueue.isEmpty()) {
 			final CommandHandle handle = fCommandQueue.remove(0);
 			if (handle != null) {
 				processCommandSent(handle);

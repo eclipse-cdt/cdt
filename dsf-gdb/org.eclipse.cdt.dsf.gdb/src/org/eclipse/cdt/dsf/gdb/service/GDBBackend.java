@@ -249,7 +249,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
     		if (location != null) {
     			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
-    			if (expandedLocation.length() > 0) {
+    			if (!expandedLocation.isEmpty()) {
     				path = new Path(expandedLocation);
     			}
     		}

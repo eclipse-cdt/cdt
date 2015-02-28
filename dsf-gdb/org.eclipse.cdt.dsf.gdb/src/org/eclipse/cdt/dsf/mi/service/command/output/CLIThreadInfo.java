@@ -51,7 +51,7 @@ public class CLIThreadInfo extends MIInfo {
 
 	protected void parseThreadInfo(String str) {
 			// Fetch the OS ThreadId & Find the current thread 
-			if(str.length() > 0 ){
+			if(!str.isEmpty() ){
 				Pattern pattern = Pattern.compile("Current thread is (\\d+)",  Pattern.MULTILINE); //$NON-NLS-1$
 				Matcher matcher = pattern.matcher(str);
 				if (matcher.find()) {

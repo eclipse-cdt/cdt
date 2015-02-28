@@ -650,7 +650,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 DsfUIPlugin.debug("cachePartialHitChildren(node = " + node + ", update = " + update + ", missing = " + childrenMissingFromCache + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
             }
             
-            if (childrenMissingFromCache.size() > 0) {
+            if (!childrenMissingFromCache.isEmpty()) {
                 // Note: it is possible that entry.fAllChildrenKnown == true at this point.
                 // This can happen if the node's has children implementation returns true
                 // while the actual children update returns with no elements.  A node 
@@ -662,12 +662,12 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 // proxy updates for the continuous ranges of missing children.
                 List<IChildrenUpdate> partialUpdates = new ArrayList<IChildrenUpdate>(2);
                 final CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getExecutor(), update);
-                while(childrenMissingFromCache.size() > 0)
+                while(!childrenMissingFromCache.isEmpty())
                 {
                     final int offset = childrenMissingFromCache.get(0);
                     childrenMissingFromCache.remove(0);
                     int length = 1;
-                    while(childrenMissingFromCache.size() > 0 && childrenMissingFromCache.get(0) == offset + length)
+                    while(!childrenMissingFromCache.isEmpty() && childrenMissingFromCache.get(0) == offset + length)
                     {
                         length++;
                         childrenMissingFromCache.remove(0);

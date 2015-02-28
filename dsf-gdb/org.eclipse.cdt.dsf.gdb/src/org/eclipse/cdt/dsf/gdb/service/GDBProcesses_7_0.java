@@ -784,7 +784,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
         	        				// append thread details (if any) to the thread ID
         	        				// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
         	        				final String details = thread.getDetails();
-        	        				if (details != null && details.length() > 0) {
+        	        				if (details != null && !details.isEmpty()) {
         	        					if (!id.isEmpty()) id += " "; //$NON-NLS-1$
         	        					id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         	        				}

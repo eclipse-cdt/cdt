@@ -1773,7 +1773,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			int castingIndex = castInfo.getArrayStartIndex();
 		 
 			// cast to type 
-			if (castType != null && castType.length() > 0) {
+			if (castType != null && !castType.isEmpty()) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append('(').append(castType).append(')');
 				buffer.append('(').append(castExpression).append(')');

@@ -1395,7 +1395,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				protected void handleSuccess() {
 					 fOngoingOperation = false;
 					 
-					 if (fOperationsPending.size() > 0) {
+					 if (!fOperationsPending.isEmpty()) {
 						 // Darn, more operations came in.  Trigger their processing
 						 // by calling executeWithTargetAvailable() on the last one
 						 TargetAvailableOperationInfo info = fOperationsPending.removeLast();
@@ -1411,7 +1411,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 					fOngoingOperation = false;
 
 					// Complete each rm of the cancelled operations
-					while (fOperationsPending.size() > 0) {
+					while (!fOperationsPending.isEmpty()) {
 						RequestMonitor rm = fOperationsPending.poll().rm;
 						rm.setStatus(getStatus());
 						rm.done();
@@ -1582,7 +1582,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 						
 			// All pending operations are independent of each other so we can
 			// run them concurrently.
-			while (fOperationsPending.size() > 0) {
+			while (!fOperationsPending.isEmpty()) {
 				executeSteps(fOperationsPending.poll());				
 			}
 		}

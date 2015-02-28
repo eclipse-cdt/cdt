@@ -57,7 +57,7 @@ public class CLIInfoProgramInfo extends MIInfo {
 		// 		Program stopped at 0x4012f5.
 		// 		It stopped at a breakpoint that has since been deleted.
 
-		if (str != null && str.length() > 0) {
+		if (str != null && !str.isEmpty()) {
 			str = str.replace('.', ' ').trim();
 			if (str.startsWith("Using")) { //$NON-NLS-1$
 				StringTokenizer st = new StringTokenizer(str);

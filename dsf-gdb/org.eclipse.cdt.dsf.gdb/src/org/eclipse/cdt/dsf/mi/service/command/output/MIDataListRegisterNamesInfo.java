@@ -67,7 +67,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
                 /* this cannot filter nulls because index is critical in retreival 
                  * and index is assigned in the layers above. The MI spec allows 
                  * empty returns, for some register names. */
-                if (str != null && str.length() > 0) {
+                if (str != null && !str.isEmpty()) {
                     realNameCount++;
                     aList.add(str);
                 } else {

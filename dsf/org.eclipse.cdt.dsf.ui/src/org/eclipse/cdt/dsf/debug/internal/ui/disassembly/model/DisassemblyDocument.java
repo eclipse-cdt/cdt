@@ -1052,7 +1052,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			buf.append(':');
 			buf.append(' ');
 		}
-		if (fShowFunctionOffset && functionOffset != null && functionOffset.length() > 0) {
+		if (fShowFunctionOffset && functionOffset != null && !functionOffset.isEmpty()) {
 			buf.append(functionOffset);
 			int tab = 16;
 			if (functionOffset.length() >= 16) {
@@ -1215,7 +1215,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 //		System.out.println("insertSource at "+getAddressText(pos.fAddressOffset));
 //		System.out.println(source);
 		String sourceLines = source;
-		if (source.length() > 0 && sourceLines.charAt(source.length() - 1) != '\n') {
+		if (!source.isEmpty() && sourceLines.charAt(source.length() - 1) != '\n') {
 			sourceLines += "\n"; //$NON-NLS-1$
 		}
 		try {
@@ -1413,7 +1413,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	
 	public boolean hasInvalidSourcePositions() {
 		assert isGuiThread();
-		return fInvalidSource.size() > 0;		
+		return !fInvalidSource.isEmpty();		
 	}
 
 	public void invalidateDisassemblyWithSource(boolean removeDisassembly) {

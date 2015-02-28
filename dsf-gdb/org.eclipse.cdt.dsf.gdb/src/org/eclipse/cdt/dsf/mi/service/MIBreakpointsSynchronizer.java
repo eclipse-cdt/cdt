@@ -345,7 +345,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 											&& ((IMIExecutionDMContext)c).getThreadId() != threadId)
 											list.add(c);
 									}
-									if (list.size() > 0) {
+									if (!list.isEmpty()) {
 										bpExtension.setThreadFilters(list.toArray(new IExecutionDMContext[list.size()]));
 									}
 									else {

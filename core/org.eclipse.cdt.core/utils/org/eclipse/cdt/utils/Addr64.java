@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 Intel Corporation and others.
+ * Copyright (c) 2004, 2015 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Intel Corporation - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
  *     Mathias Kunter - Bug 370462: View variables in octal format
+ *     Matthew Khouzam - Add handling of additional address formats
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -53,8 +54,8 @@ public class Addr64 implements IAddress, Serializable {
 	}
 
 	/**
-	 * Create an address represented by long bits. 
-	 * Signed bit will be used as unsigned extension, if you don't want it mask it before passing here.
+	 * Create an address represented by long bits. Signed bit will be used as unsigned extension, if you don't
+	 * want it mask it before passing here.
 	 * 
 	 * @since 5.9
 	 */
@@ -67,11 +68,33 @@ public class Addr64 implements IAddress, Serializable {
 
 	public Addr64(String addr, boolean truncate) {
 		addr = addr.toLowerCase();
+		// First, assume a decimal address
+		int base = 10;
+		int offset = 0;
+
+		// Check for "hexadecimality"
 		if (addr.startsWith("0x")) { //$NON-NLS-1$
-			address = checkAddress(new BigInteger(addr.substring(2), 16), truncate);
-		} else {
-			address = checkAddress(new BigInteger(addr, 10), truncate);
+			base = 16;
+			offset = 2;
 		}
+		else if (addr.charAt(0)=='#'){
+			base = 16;
+			offset = 1;
+		}
+		// Check for "binarity"
+		else if (addr.startsWith("0b")) { //$NON-NLS-1$
+			base = 2;
+			offset = 2;
+		}
+		// Check for "octality"
+		else if (addr.charAt(0)=='0') {
+			base = 8;
+			offset = 1;
+		}
+		// Now, try to parse the expression. If a NumberFormatException is
+		// thrown, then it wasn't a simple numerical expression and we go
+		// to plan B (attempt an expression evaluation)
+		address = checkAddress(new BigInteger(addr.substring(offset), base), truncate);
 	}
 
 	public Addr64(String addr, int radix) {
@@ -86,18 +109,16 @@ public class Addr64 implements IAddress, Serializable {
 		if (addr.signum() == -1) {
 			throw new IllegalArgumentException("Invalid Address, must be positive value"); //$NON-NLS-1$
 		}
-		if (addr.bitLength() > 64 ) {
+		if (addr.bitLength() > 64) {
 			if (truncate) {
 				return addr.and(MAX.getValue()); // truncate
-			}
-			else {
+			} else {
 				throw (new NumberFormatException(Messages.Addr_valueOutOfRange));
 			}
 		}
 		return addr;
 	}
-	
-	
+
 	@Override
 	public IAddress add(BigInteger offset) {
 		return new Addr64(this.address.add(offset));
@@ -138,8 +159,8 @@ public class Addr64 implements IAddress, Serializable {
 		if (!(other instanceof IAddress)) {
 			throw new IllegalArgumentException();
 		}
-		
-		return getValue().compareTo(((IAddress)other).getValue());
+
+		return getValue().compareTo(((IAddress) other).getValue());
 	}
 
 	@Override
@@ -148,7 +169,7 @@ public class Addr64 implements IAddress, Serializable {
 			return true;
 		if (!(x instanceof IAddress))
 			return false;
-		return getValue().equals(((IAddress)x).getValue());
+		return getValue().equals(((IAddress) x).getValue());
 	}
 
 	@Override
@@ -178,7 +199,7 @@ public class Addr64 implements IAddress, Serializable {
 		sb.append(addressString);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @since 5.4
 	 */
@@ -193,7 +214,7 @@ public class Addr64 implements IAddress, Serializable {
 		sb.append(addressString);
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String toBinaryAddressString() {
 		String addressString = address.toString(2);
@@ -217,4 +238,3 @@ public class Addr64 implements IAddress, Serializable {
 		return BYTES_NUM;
 	}
 }
-

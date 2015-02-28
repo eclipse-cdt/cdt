@@ -306,7 +306,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 	
 	protected void handleCreate() {
 		String name = nameInput.getText();
-		if (name != null && name.length() > 0) {
+		if (name != null && !name.isEmpty()) {
 			String value = valueInput.getText();
 			if (value != null && value.length() == 0) {
 				value = null; // No value specified

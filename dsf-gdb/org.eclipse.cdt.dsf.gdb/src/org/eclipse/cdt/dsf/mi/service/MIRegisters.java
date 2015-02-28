@@ -481,7 +481,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         List<MIRegisterDMC> regDmcList = new ArrayList<MIRegisters.MIRegisterDMC>( regNames.length );
         int regNo = 0;
         for (String regName : regNames) {
-            if(regName != null && regName.length() > 0) {
+            if(regName != null && !regName.isEmpty()) {
             	if(frameDmc != null)
             		regDmcList.add(new MIRegisterDMC(this, groupDmc, frameDmc, regNo, regName));
             	else

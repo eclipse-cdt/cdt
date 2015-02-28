@@ -336,7 +336,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		try {
 			String gdbinitFile = fGDBBackend.getGDBInitFile();
 
-			if (gdbinitFile != null && gdbinitFile.length() > 0) {
+			if (gdbinitFile != null && !gdbinitFile.isEmpty()) {
 				String projectName = (String) fAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME);
 				final String expandedGDBInitFile = new DebugStringVariableSubstitutor(projectName).performStringSubstitution(gdbinitFile);
 
@@ -439,7 +439,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		try {
 			List<String> p = fGDBBackend.getSharedLibraryPaths();
 
-			if (p.size() > 0) {
+			if (!p.isEmpty()) {
 				String[] paths = p.toArray(new String[p.size()]);
 				fCommandControl.queueCommand(
 						fCommandFactory.createMIGDBSetSolibSearchPath(fCommandControl.getContext(), paths), 

@@ -168,7 +168,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			return;
 		}
 
-		if (clear == true || properties.size() > 0) {
+		if (clear == true || !properties.isEmpty()) {
 			// here we need to pass the proper container context
 			fCommandControl.setEnvironment(properties, clear, rm);
 		} else {
@@ -186,7 +186,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP,
 				IGDBLaunchConfigurationConstants.DEBUGGER_USE_SOLIB_SYMBOLS_FOR_APP_DEFAULT);
 
-		if (!noFileCommand && fBinaryName != null && fBinaryName.length() > 0) {
+		if (!noFileCommand && fBinaryName != null && !fBinaryName.isEmpty()) {
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIFileExecAndSymbols(getContainerContext(), fBinaryName), 
 					new ImmediateDataRequestMonitor<MIInfo>(rm));

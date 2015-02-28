@@ -245,7 +245,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
         		//   The brackets indicate that the startup parameters are not available
         		//   We handle this case by removing the brackets and the core indicator
         		//   since GDB already tells us the core separately.
-        		if (desc.length() > 0 && desc.charAt(0) == '[') {
+        		if (!desc.isEmpty() && desc.charAt(0) == '[') {
         			// Remove brackets
         			name = desc.substring(1, desc.length()-1);
         			

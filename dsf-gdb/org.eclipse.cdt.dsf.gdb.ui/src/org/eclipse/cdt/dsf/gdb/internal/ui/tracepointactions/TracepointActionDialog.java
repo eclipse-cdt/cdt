@@ -157,7 +157,7 @@ public class TracepointActionDialog extends Dialog {
 		actionPages = new IBreakpointActionPage[TRACEPOINT_ACTIONS_COUNT];
 		actionComposites = new Composite[TRACEPOINT_ACTIONS_COUNT];
 
-		if (tracepointActions.size() > 0) {
+		if (!tracepointActions.isEmpty()) {
 
 			String lastTypeName = GdbUIPlugin.getDefault().getPreferenceStore().getString(TRACEPOINT_ACTION_DIALOG_LAST_SELECTED);
 

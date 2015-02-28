@@ -42,7 +42,7 @@ public class MIResult {
         if (value != null) {
             String v = value.toString();
             buffer.append('=');
-            if (v.length() > 0 && (v.charAt(0) == '[' || v.charAt(0) =='{')) {
+            if (!v.isEmpty() && (v.charAt(0) == '[' || v.charAt(0) =='{')) {
                 buffer.append(v); 
             } else {
                 buffer.append("\"" + value.toString() + "\"");  //$NON-NLS-1$ //$NON-NLS-2$

@@ -613,7 +613,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		} else if (!function.equals(NULL_STRING)) {
 			// function location without source
 			location = function;
-		} else if (location.length() > 0) {
+		} else if (!location.isEmpty()) {
 			// address location
 			if (Character.isDigit(location.charAt(0))) {
 				// numeric address needs '*' prefix
@@ -749,7 +749,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		boolean isRead    = (Boolean) getProperty(attributes, READ,    false);
 		boolean isWrite   = (Boolean) getProperty(attributes, WRITE,   false);
 
-		if (expression.length() > 0 && Character.isDigit(expression.charAt(0))) {
+		if (!expression.isEmpty() && Character.isDigit(expression.charAt(0))) {
 			// If expression is an address, we need the '*' prefix.
 			expression = "*" + expression; //$NON-NLS-1$
 		}

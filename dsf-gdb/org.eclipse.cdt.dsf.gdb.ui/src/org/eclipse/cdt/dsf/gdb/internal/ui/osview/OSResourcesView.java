@@ -230,7 +230,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		fWrongType = false;
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) s;
-			if (ss.size() > 0) {
+			if (!ss.isEmpty()) {
 				@SuppressWarnings("rawtypes")
 				Iterator i = ss.iterator();
 				context = getCommandControlContext(i.next());

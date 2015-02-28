@@ -478,7 +478,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
     		
 	        Map<IBreakpoint, List<ITargetBreakpointInfo>> platformBPs = fPlatformBPs.get(bpContext);
 	
-	        if (platformBPs != null && platformBPs.size() > 0)
+	        if (platformBPs != null && !platformBPs.isEmpty())
 	        {
 	            for(Map.Entry<IBreakpoint, List<ITargetBreakpointInfo>> e: platformBPs.entrySet())
 	            {
@@ -531,7 +531,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 			@Override
 			protected void handleCompleted() {
 				// Store successful targetBPs with the platform breakpoint
-				if (targetBPsInstalled.size() > 0)
+				if (!targetBPsInstalled.isEmpty())
 					platformBPs.put(breakpoint, targetBPsInstalled);
 				
 				// Store all targetBPs, success or failure, in the rm.
@@ -871,7 +871,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 						final PlatformBreakpointInfo[] oneBPInfo = new PlatformBreakpointInfo[] {bpinfo};
 						IBreakpoint[] oneBP = new IBreakpoint[] {bpinfo.breakpoint};
 
-						if (reinstallContexts.size() > 0) {
+						if (!reinstallContexts.isEmpty()) {
 							// Check if it's only enablement change (user click enable/disable 
 							// button or "Skip all breakpoints" button), which is common operation.
 							//
@@ -897,7 +897,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 							}
 						}
 						
-						if (updateContexts.size() > 0)
+						if (!updateContexts.isEmpty())
 							modifyTargetBreakpoints(bpinfo.breakpoint, updateContexts, attrDelta);
 	            	}
 	            }
@@ -1101,7 +1101,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 			pendingEventsList = new LinkedList<PendingEventInfo>();
 			fPendingEvents.put(breakpoint, pendingEventsList);
 		}
-		if (pendingEventsList.size() > 0 &&
+		if (!pendingEventsList.isEmpty() &&
 				pendingEventsList.getLast().fEventType == BreakpointEventType.MODIFIED) {
 			pendingEventsList.removeLast();
 		}

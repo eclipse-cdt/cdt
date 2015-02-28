@@ -71,7 +71,7 @@ public class MIDPrintfInsert extends MICommand<MIBreakInsertInfo>
         if (isTemporary) {
             i++;
         }
-        if (condition != null && condition.length() > 0) {
+        if (condition != null && !condition.isEmpty()) {
             i += 2;
         }
         if (ignoreCount > 0) {
@@ -95,7 +95,7 @@ public class MIDPrintfInsert extends MICommand<MIBreakInsertInfo>
             opts[i] = "-t"; //$NON-NLS-1$
             i++;
         } 
-        if (condition != null && condition.length() > 0) {
+        if (condition != null && !condition.isEmpty()) {
             opts[i] = "-c"; //$NON-NLS-1$
             i++;
             opts[i] = condition;

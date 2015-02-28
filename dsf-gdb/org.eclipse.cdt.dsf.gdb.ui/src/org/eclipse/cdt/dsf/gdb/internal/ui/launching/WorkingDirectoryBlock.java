@@ -212,7 +212,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 */
 	protected IContainer getContainer() {
 		String path = fWorkingDirText.getText().trim();
-		if (path.length() > 0) {
+		if (!path.isEmpty()) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IResource res = root.findMember(path);
 			if (res instanceof IContainer) {
@@ -288,7 +288,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 				setErrorMessage(e.getMessage());
 				return false;
 			}
-		} else if (workingDirPath.length() > 0) {
+		} else if (!workingDirPath.isEmpty()) {
 			IContainer container = getContainer();
 			if (container == null) {
 				File dir = new File(workingDirPath);
@@ -358,7 +358,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	 */
 	protected String getAttributeValueFrom(Text text) {
 		String content = text.getText().trim();
-		if (content.length() > 0) {
+		if (!content.isEmpty()) {
 			return content;
 		}
 		return null;

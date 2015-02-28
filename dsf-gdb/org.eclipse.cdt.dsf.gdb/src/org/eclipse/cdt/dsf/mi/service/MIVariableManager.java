@@ -760,7 +760,7 @@ public class MIVariableManager implements ICommandControl {
 		private void unlock() {
 			locked = false;
 
-			while (operationsPending.size() > 0) {
+			while (!operationsPending.isEmpty()) {
 				operationsPending.poll().done();
 			}
 		}
@@ -777,7 +777,7 @@ public class MIVariableManager implements ICommandControl {
 			// can tell any pending monitors that updates are done
 			if (success) {
 				currentState = STATE_READY;
-				while (updatesPending.size() > 0) {
+				while (!updatesPending.isEmpty()) {
 					DataRequestMonitor<Boolean> rm = updatesPending.poll();
 					// Nothing to be re-created
 					rm.setData(false);
@@ -787,7 +787,7 @@ public class MIVariableManager implements ICommandControl {
 				currentState = STATE_CREATION_FAILED;
 
 				// Creation failed, inform anyone waiting.
-				while (updatesPending.size() > 0) {
+				while (!updatesPending.isEmpty()) {
 					RequestMonitor rm = updatesPending.poll();
 		            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, 
 		            		"Unable to create variable object", null)); //$NON-NLS-1$
@@ -828,7 +828,7 @@ public class MIVariableManager implements ICommandControl {
 							
 							// All the other request monitors must be notified but must
 							// not re-create the object, even if it is out-of-scope
-							while (updatesPending.size() > 0) {
+							while (!updatesPending.isEmpty()) {
 								DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
 								pendingRm.setData(false);
 								pendingRm.done();
@@ -837,7 +837,7 @@ public class MIVariableManager implements ICommandControl {
 							rm.setStatus(getStatus());
 							rm.done();
 
-							while (updatesPending.size() > 0) {
+							while (!updatesPending.isEmpty()) {
 								DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
 								pendingRm.setStatus(getStatus());
 								pendingRm.done();
@@ -1274,7 +1274,7 @@ public class MIVariableManager implements ICommandControl {
 							rm.setData(getData());
 							rm.done();
 							
-							while (fetchChildrenPending.size() > 0) {
+							while (!fetchChildrenPending.isEmpty()) {
 								DataRequestMonitor<ChildrenInfo> pendingRm = fetchChildrenPending.poll();
 								pendingRm.setData(getData());
 								pendingRm.done();
@@ -1283,7 +1283,7 @@ public class MIVariableManager implements ICommandControl {
 							rm.setStatus(getStatus());
 							rm.done();
 
-							while (fetchChildrenPending.size() > 0) {
+							while (!fetchChildrenPending.isEmpty()) {
 								DataRequestMonitor<ChildrenInfo> pendingRm = fetchChildrenPending.poll();
 								pendingRm.setStatus(getStatus());
 								pendingRm.done();
@@ -2285,7 +2285,7 @@ public class MIVariableManager implements ICommandControl {
 										rm.setData(true);
 										rm.done();
 										
-										while (updatesPending.size() > 0) {
+										while (!updatesPending.isEmpty()) {
 											DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
 											pendingRm.setData(false);
 											pendingRm.done();
@@ -2309,7 +2309,7 @@ public class MIVariableManager implements ICommandControl {
 												}
 												rm.done();
 
-												while (updatesPending.size() > 0) {
+												while (!updatesPending.isEmpty()) {
 													DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
 													if (isSuccess()) {
 														pendingRm.setData(false);
@@ -2328,7 +2328,7 @@ public class MIVariableManager implements ICommandControl {
 									rm.setData(false);
 									rm.done();
 
-									while (updatesPending.size() > 0) {
+									while (!updatesPending.isEmpty()) {
 										DataRequestMonitor<Boolean> pendingRm = updatesPending.poll();
 										pendingRm.setStatus(getStatus());
 										pendingRm.done();

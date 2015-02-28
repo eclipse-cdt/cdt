@@ -208,7 +208,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		String content = text.getText().trim();
 		// bug #131513 - eliminate Windows \r line delimiter
 		content = content.replaceAll("\r\n", "\n");  //$NON-NLS-1$//$NON-NLS-2$
-		if (content.length() > 0) {
+		if (!content.isEmpty()) {
 			return content;
 		}
 		return null;

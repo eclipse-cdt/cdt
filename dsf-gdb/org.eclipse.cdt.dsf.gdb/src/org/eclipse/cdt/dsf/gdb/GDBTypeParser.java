@@ -439,7 +439,7 @@ public class GDBTypeParser {
 
 		if (tokenType == '(') {
 			dcl();
-			if (tokenType != ')' /*&& name.length() > 0*/) {
+			if (tokenType != ')' /*&& !name.isEmpty()*/) {
 				// Do we throw an exception on unterminated parentheses
 				// It should have been handle by getToken()
 				return;
@@ -451,7 +451,7 @@ public class GDBTypeParser {
 			insertingChild(GDBType.FUNCTION);
 		} else if (tokenType == BRACKETS) {			
 			int len = 0;
-			if (token.length() > 0) {
+			if (!token.isEmpty()) {
 				try {
 					len = Integer.parseInt(token);
 				} catch (NumberFormatException e) {
@@ -470,7 +470,7 @@ public class GDBTypeParser {
 				insertingChild(GDBType.FUNCTION);
 			} else { /* BRACKETS */
 				int len = 0;
-				if (token.length() > 0) {
+				if (!token.isEmpty()) {
 					try {
 						len = Integer.parseInt(token);
 					} catch (NumberFormatException e) {

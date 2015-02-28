@@ -156,7 +156,7 @@ public class ElementNumberFormatProvider implements IElementFormatProvider
         final CountingRequestMonitor crm = new ImmediateCountingRequestMonitor() {
             @Override
             protected void handleCompleted() {
-            	if (elementsToRefresh.size() > 0) {
+            	if (!elementsToRefresh.isEmpty()) {
             		// Send the event to all DSF sessions as they share the same view and the 
             		// change of format will affect them as well.  This is because they key
             		// we use from this implementation of getElementKey() is not specific to

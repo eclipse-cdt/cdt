@@ -69,7 +69,7 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
         		final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
         		if (traceControl != null) {
         			String user = System.getProperty("user.name"); //$NON-NLS-1$
-        			if (user != null && user.length() > 0 && traceControl instanceof IGDBTraceControl2) {
+        			if (user != null && !user.isEmpty() && traceControl instanceof IGDBTraceControl2) {
         				((IGDBTraceControl2)traceControl).setTraceUser(dmc, user, new ImmediateRequestMonitor() {
         					@Override
         					protected void handleCompleted() {

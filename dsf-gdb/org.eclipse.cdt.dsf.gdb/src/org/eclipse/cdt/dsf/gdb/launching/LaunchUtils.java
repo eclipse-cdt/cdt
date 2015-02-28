@@ -86,7 +86,7 @@ public class LaunchUtils {
 			return null;
 		}
 		ICProject cproject = getCProject(configuration);
-		if (cproject == null && name.length() > 0) {
+		if (cproject == null && !name.isEmpty()) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
 				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
@@ -203,7 +203,7 @@ public class LaunchUtils {
 		String projectName = getProjectName(configuration);
 		if (projectName != null) {
 			projectName = projectName.trim();
-			if (projectName.length() > 0) {
+			if (!projectName.isEmpty()) {
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
 				if (cProject != null && cProject.exists()) {

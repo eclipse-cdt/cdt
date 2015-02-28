@@ -298,7 +298,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			if (projectName != null) {
 				projectName = projectName.trim();
-				if (projectName.length() > 0) {
+				if (!projectName.isEmpty()) {
 					project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				}
 			}

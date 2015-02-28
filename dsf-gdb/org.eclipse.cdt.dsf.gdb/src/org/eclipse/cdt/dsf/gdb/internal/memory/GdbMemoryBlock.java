@@ -51,8 +51,8 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 			String modelId, String expression, BigInteger address,
 			int word_size, long length, String memorySpaceID) {
 		super(retrieval, context, modelId, expression, address, word_size, length);
-		fMemorySpaceID = (memorySpaceID != null && memorySpaceID.length() > 0) ? memorySpaceID : null;
-		assert memorySpaceID == null || memorySpaceID.length() > 0;	// callers shouldn't be passing in an empty string
+		fMemorySpaceID = (memorySpaceID != null && !memorySpaceID.isEmpty()) ? memorySpaceID : null;
+		assert memorySpaceID == null || !memorySpaceID.isEmpty();	// callers shouldn't be passing in an empty string
 		
 		//TODO: remove the memorySpaceID parameter from this method 
 		//after making sure it's not used in earlier implementations
@@ -138,7 +138,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	@Override
 	public String getExpression() {
 		if (fMemorySpaceID != null) {
-			assert fMemorySpaceID.length() > 0;
+			assert !fMemorySpaceID.isEmpty();
 			GdbMemoryBlockRetrieval retrieval = (GdbMemoryBlockRetrieval)getMemoryBlockRetrieval();
 			return retrieval.encodeAddress(super.getExpression(), fMemorySpaceID);
 		}

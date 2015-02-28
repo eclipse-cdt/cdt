@@ -2195,7 +2195,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 						bpList.add(bp);
 					}
 				}
-				if (bpList.size() > 0) {
+				if (!bpList.isEmpty()) {
 					return bpList.toArray(new IBreakpoint[bpList.size()]);
 				}
 			}
@@ -2422,7 +2422,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return;
 		}
 		AddressRangePosition first = null;
-		if (fPCHistory.size() > 0) {
+		if (!fPCHistory.isEmpty()) {
 			first = fPCHistory.getFirst();
 			if (first.fAddressOffset == pcPos.fAddressOffset) {
 				if (first.offset != pcPos.offset || first.length != pcPos.length) {
@@ -2898,7 +2898,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 			}
 		}
-		if (styleRanges.size() > 0) {
+		if (!styleRanges.isEmpty()) {
 			for (Iterator<StyleRange> iter = styleRanges.iterator(); iter.hasNext();) {
 				textPresentation.addStyleRange(iter.next());
 			}

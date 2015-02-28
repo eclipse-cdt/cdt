@@ -141,7 +141,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		// The original code favored the format in example A and so we will 
 		// continue to give it precedence. The newly added support for formats 
 		// B and C will have lower precedence.
-		if(str.length() > 0 ){
+		if(!str.isEmpty() ){
 			Matcher matcher = RESULT_PATTERN_LWP.matcher(str);	// example A
 			boolean isCurrentThread = false;
 			if (matcher.find()) {

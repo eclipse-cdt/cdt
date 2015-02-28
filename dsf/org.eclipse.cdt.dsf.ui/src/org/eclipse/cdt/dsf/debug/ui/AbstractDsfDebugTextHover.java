@@ -218,7 +218,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
     	// see also getHoverControlCreator()
     	final String text;
 		text= getExpressionText(textViewer, hoverRegion);
-    	if (text != null && text.length() > 0) {
+    	if (text != null && !text.isEmpty()) {
 			final IFrameDMContext frameDmc = getFrame();
 			if (frameDmc != null) {
 				final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());

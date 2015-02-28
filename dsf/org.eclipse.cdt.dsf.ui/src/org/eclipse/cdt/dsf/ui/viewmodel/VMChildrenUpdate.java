@@ -129,7 +129,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
         if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
         	StringBuilder str = new StringBuilder();
         	str.append(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement())); //$NON-NLS-1$ //$NON-NLS-2$
-        	if (fElements != null && fElements.size() > 0) {
+        	if (fElements != null && !fElements.isEmpty()) {
 	            for (Object element : fElements) {
 	                str.append("   " + LoggingUtils.toString(element) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	            }

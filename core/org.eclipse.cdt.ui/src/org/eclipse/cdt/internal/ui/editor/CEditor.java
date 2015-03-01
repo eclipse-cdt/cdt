@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -374,6 +374,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		// This method is called when the Platform version is 4.5 or higher.
 		// @Override
+		@Override
 		protected IFormattingContext createFormattingContext(int selectionOffset, int selectionLength) {
 			return createFormattingContext(selectionOffset, selectionLength, true);
 		}
@@ -600,8 +601,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		private boolean fCloseAngularBrackets = true;
 		private boolean fCloseBraces = true;
 		private final String CATEGORY = toString();
-		private IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
-		private Deque<BracketLevel> fBracketLevelStack = new ArrayDeque<>();
+		private final IPositionUpdater fUpdater = new ExclusivePositionUpdater(CATEGORY);
+		private final Deque<BracketLevel> fBracketLevelStack = new ArrayDeque<>();
 
 		public void setCloseBracketsEnabled(boolean enabled) {
 			fCloseBrackets = enabled;
@@ -1275,7 +1276,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
     protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
 
 	/** The bracket inserter. */
-	private BracketInserter fBracketInserter = new BracketInserter();
+	private final BracketInserter fBracketInserter = new BracketInserter();
 
 	/** Listener to annotation model changes that updates the error tick in the tab image */
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
@@ -1320,7 +1321,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * AST reconciling listeners.
 	 * @since 4.0
 	 */
-	private ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList fReconcilingListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * Semantic highlighting manager
@@ -3602,7 +3603,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		if (model == null)
 			return;
 
-		fOverrideIndicatorManager= new OverrideIndicatorManager(model);
+		fOverrideIndicatorManager= new OverrideIndicatorManager(model, null);
 		
 		addReconcileListener(fOverrideIndicatorManager);
 

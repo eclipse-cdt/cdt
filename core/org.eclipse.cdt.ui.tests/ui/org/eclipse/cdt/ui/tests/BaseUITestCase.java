@@ -53,7 +53,6 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.testplugin.util.StringAsserts;
 
 public class BaseUITestCase extends BaseTestCase {
-
 	public BaseUITestCase() {
 		super();
 	}
@@ -61,10 +60,11 @@ public class BaseUITestCase extends BaseTestCase {
 	public BaseUITestCase(String name) {
 		super(name);
 	}
-
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
 		final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewPart view= activePage.findView("org.eclipse.cdt.ui.tests.DOMAST.DOMAST");
 		if (view != null) {
@@ -111,8 +111,9 @@ public class BaseUITestCase extends BaseTestCase {
 	protected void runEventQueue(int time) {
 		final long endTime= System.currentTimeMillis() + time;
 		while (true) {
-			while (Display.getCurrent().readAndDispatch())
-				;
+			while (Display.getCurrent().readAndDispatch()) {
+			}
+
 			long diff= endTime - System.currentTimeMillis();
 			if (diff <= 0) {
 				break;
@@ -216,7 +217,7 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected void executeCommand(IViewPart viewPart, String commandID) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		IHandlerService hs= (IHandlerService)viewPart.getSite().getService(IHandlerService.class);
+		IHandlerService hs= viewPart.getSite().getService(IHandlerService.class);
 		assertNotNull(hs);
 		hs.executeCommand(commandID, null);
 	}
@@ -316,7 +317,7 @@ public class BaseUITestCase extends BaseTestCase {
 			try {
 				TreeItem firstItem= i0Node.getItem(0);
 				firstItemText= firstItem.getText();
-				if (firstItemText.length() > 0 && !firstItemText.equals("...")) {
+				if (!firstItemText.isEmpty() && !firstItemText.equals("...")) {
 					TreeItem item = i0Node.getItem(i1);
 					nodePresent = true;
 					if (label != null && label.equals(item.getText())) {
@@ -355,4 +356,4 @@ public class BaseUITestCase extends BaseTestCase {
 // is better than not having that sort of test at all, which some would argue is
 // the better approach. In practice, it takes about 60-150 ms for the item to
 // appear (on my machine), but we give it up to five seconds. Waiting one second
-// for it to not appear should be more than adequate
+// for it to not appear should be more than adequate.

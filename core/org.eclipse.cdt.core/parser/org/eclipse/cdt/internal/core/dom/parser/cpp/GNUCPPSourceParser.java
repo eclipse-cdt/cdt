@@ -1957,7 +1957,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         final int optype= consume().getType();
         consume(IToken.tLT);
         final IASTTypeId typeID = typeId(DeclarationOptions.TYPEID);
-        consumeOrEOC(IToken.tGT);
+        final IToken gt = LA(1);
+        if (gt.getType() == IToken.tGT || gt.getType() == IToken.tGT_in_SHIFTR) {
+        	consume();
+        } else if (gt.getType() != IToken.tEOC) {
+        	throwBacktrack(gt);
+        }
         consumeOrEOC(IToken.tLPAREN);
         IASTExpression operand= null;
         if (LT(1) != IToken.tEOC) {

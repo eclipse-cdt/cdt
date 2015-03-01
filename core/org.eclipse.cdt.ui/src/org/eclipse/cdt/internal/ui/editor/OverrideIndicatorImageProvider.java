@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tomasz Wesolowski and others
+ * Copyright (c) 2010, 2015 Tomasz Wesolowski and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,11 +45,11 @@ public class OverrideIndicatorImageProvider implements
 			return null;
 		}
 		switch (getAnnotationType(annotation)) {
-		case OverrideIndicatorManager.RESULT_OVERRIDES:
+		case OverrideIndicatorManager.ANNOTATION_OVERRIDES:
 			return OVERRIDE_IMG_DESC_ID;
-		case OverrideIndicatorManager.RESULT_IMPLEMENTS:
+		case OverrideIndicatorManager.ANNOTATION_IMPLEMENTS:
 			return IMPLEMENT_IMG_DESC_ID;
-		case OverrideIndicatorManager.RESULT_SHADOWS:
+		case OverrideIndicatorManager.ANNOTATION_SHADOWS:
 			return SHADOW_IMG_DESC_ID;
 		}
 		assert false;

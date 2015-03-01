@@ -3602,7 +3602,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		if (model == null)
 			return;
 
-		fOverrideIndicatorManager= new OverrideIndicatorManager(model);
+		fOverrideIndicatorManager= new OverrideIndicatorManager(model, null);
 		
 		addReconcileListener(fOverrideIndicatorManager);
 

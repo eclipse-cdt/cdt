@@ -11076,4 +11076,10 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testASTCopyForNoexceptDefault_bug456207() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename> struct waldo { waldo(int); };
+	//	auto x = static_cast<waldo<int>>(0);
+	public void testTemplateIdInsideCastOperator_460080() throws Exception {
+		parseAndCheckBindings();
+	}
 }

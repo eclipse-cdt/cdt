@@ -184,8 +184,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		StringBuilder[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        IFile hfile = importFile("test.h", hcode); 
-        IFile file = importFile("test.cpp", scode);
+        IFile hfile = importFile("testTemplateClassMethod.h", hcode); 
+        IFile file = importFile("testTemplateClassMethod.cpp", scode);
         waitUntilFileIsIndexed(index, file);
         
         int hoffset= hcode.indexOf("assign"); 

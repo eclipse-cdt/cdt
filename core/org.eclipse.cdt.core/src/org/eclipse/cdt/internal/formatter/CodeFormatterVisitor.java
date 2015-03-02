@@ -104,6 +104,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -386,6 +387,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		shouldVisitBaseSpecifiers = true;
 		shouldVisitNamespaces = true;
 		shouldVisitTemplateParameters = true;
+		shouldVisitVirtSpecifiers = true;
 	}
 
 	private final Scanner localScanner;
@@ -1826,6 +1828,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (name != null) {
 			scribe.space();
 			name.accept(this);
+		}
+
+		ICPPASTClassVirtSpecifier virtSpecifier = node.getVirtSpecifier();
+		if (virtSpecifier != null) {
+			scribe.space();
+			virtSpecifier.accept(this);
 		}
 
 		// Base specifiers
@@ -3455,6 +3463,14 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.needSpace= false;
 				scribe.pendingSpace= false;
 			}
+		}
+		return PROCESS_SKIP;
+	}
+
+	@Override
+	public int visit(ICPPASTClassVirtSpecifier node) {
+		if (node.getKind() == ICPPASTClassVirtSpecifier.SpecifierKind.Final) {
+			scribe.printNextToken(Token.t_final);
 		}
 		return PROCESS_SKIP;
 	}

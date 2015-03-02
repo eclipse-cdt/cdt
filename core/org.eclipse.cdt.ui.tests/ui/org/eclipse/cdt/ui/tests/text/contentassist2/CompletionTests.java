@@ -1668,4 +1668,22 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expectedDisplay = { "other_tpl<typename T1, typename T2 = tpl<T1>>" };
 		assertContentAssistResults(fCursorOffset, expectedDisplay, true, DISPLAY);
 	}
+	
+	//	struct A {
+	//	    void foo();
+	//	};
+	//
+	//	template <typename>
+	//	struct B {
+	//	    A val;
+	//	};
+	//
+	//	template <typename T>
+	//	void test(B<T> b) {
+	//	    b.val./*cursor*/
+	//	}
+	public void testFieldOfDeferredClassInstance_Bug402617() throws Exception {
+		final String[] expected = { "A", "foo(void)" };
+		assertContentAssistResults(fCursorOffset, expected, true, ID);
+	}
 }

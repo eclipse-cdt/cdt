@@ -25,6 +25,7 @@
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 459114 - override construction of the data model
  *     Marc Dumais (Ericsson) - Bug 460737
  *     Marc Dumais (Ericsson) - Bug 460837
+ *     Marc Dumais (Ericsson) - Bug 460476
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.PinToDebu
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SelectAllAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.SetLoadMeterPeriodAction;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.actions.ShowDebugToolbarAction;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerCPU;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerCore;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
@@ -116,7 +118,6 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	
 	/** Eclipse ID for this view */
 	public static final String ECLIPSE_ID = "org.eclipse.cdt.dsf.gdb.multicorevisualizer.visualizer"; //$NON-NLS-1$
-
 	
 	// --- members ---
 	
@@ -179,6 +180,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/** constant for the long load meters update period */
 	private static final int  LOAD_METER_TIMER_SLOW = 5000;
 	
+	/** Whether to show debug actions in toolbar, by default */
+	private static final boolean SHOW_DEBUG_ACTIONS_IN_MV_TOOLBAR_DEFAULT = true; 
+	
 	/** Currently pinned session id, if any  */
 	private String m_currentPinedSessionId = null;
 	
@@ -238,6 +242,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	
 	/** Menu action */
 	protected PinToDebugSessionAction m_pinToDbgSessionAction = null;
+	
+	/** Menu action */
+	protected ShowDebugToolbarAction m_showDebugToolbarAction = null;
 	
 	/** persistent settings manager */
 	protected PersistentSettingsManager m_persistentSettingsManager = null;
@@ -530,6 +537,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		m_pinToDbgSessionAction.init(this);
 		m_pinToDbgSessionAction.setEnabled(false);
 		
+		// default: do not show debug actions
+		m_showDebugToolbarAction = new ShowDebugToolbarAction(SHOW_DEBUG_ACTIONS_IN_MV_TOOLBAR_DEFAULT, 
+				m_visualizerInstanceId); 
+		m_showDebugToolbarAction.init(this);
+		m_showDebugToolbarAction.setEnabled(true);
+		
 		// Note: debug view may not be initialized at startup,
 		// so we'll pretend the actions are not yet updated,
 		// and reinitialize them later.
@@ -657,7 +670,12 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 			m_pinToDbgSessionAction.dispose();
 			m_pinToDbgSessionAction = null;
 		}
-
+		
+		if (m_showDebugToolbarAction != null) {
+			m_showDebugToolbarAction.dispose();
+			m_showDebugToolbarAction = null;
+		}
+		
 		m_actionsInitialized = false;
 	}
 
@@ -675,16 +693,19 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 		// note: if in the future we want to display the debug buttons even 
 		// when pinned, all that needs to be done it to remove this check.
 		if (!m_pinToDbgSessionAction.isChecked()) {
-			toolBarManager.add(m_resumeAction);
-			toolBarManager.add(m_suspendAction);
-			toolBarManager.add(m_terminateAction);
+			// only show the debug actions in toolbar, if configured to do so
+			if (m_showDebugToolbarAction.isChecked()) {
+				toolBarManager.add(m_resumeAction);
+				toolBarManager.add(m_suspendAction);
+				toolBarManager.add(m_terminateAction);
 
-			toolBarManager.add(m_separatorAction);
+				toolBarManager.add(m_separatorAction);
 
-			toolBarManager.add(m_stepReturnAction);
-			toolBarManager.add(m_stepOverAction);
-			toolBarManager.add(m_stepIntoAction);
-			toolBarManager.add(m_dropToFrameAction);
+				toolBarManager.add(m_stepReturnAction);
+				toolBarManager.add(m_stepOverAction);
+				toolBarManager.add(m_stepIntoAction);
+				toolBarManager.add(m_dropToFrameAction);
+			}
 		}
 		toolBarManager.add(m_pinToDbgSessionAction);
 		
@@ -697,6 +718,8 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	{
 		// initialize menu/toolbar actions, if needed
 		createActions();
+		
+		menuManager.add(m_showDebugToolbarAction);
 
 		// TODO: Anything we want to hide on the toolbar menu?
 		updateActions();

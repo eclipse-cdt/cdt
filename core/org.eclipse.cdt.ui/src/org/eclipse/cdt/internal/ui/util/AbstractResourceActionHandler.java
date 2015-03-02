@@ -55,6 +55,7 @@ public abstract class AbstractResourceActionHandler extends AbstractHandler {
   @Override
   public void setEnabled(Object evaluationContext) {
     this.evaluationContext = (IEvaluationContext) evaluationContext;
+    selection = convertSelection(this.evaluationContext, null);
   }
 
   protected IStructuredSelection getSelection() {

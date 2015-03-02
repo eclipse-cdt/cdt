@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Models the scope represented by an unknown type (e.g.: typeof(template type parameter)).
@@ -147,14 +148,14 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
 	@Override
 	public final IBinding[] getBindings(ScopeLookupData lookup) {
     	if (lookup.isPrefixLookup()) {
-    		if (fScopeType instanceof ICPPDeferredClassInstance) {
-	    		ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) fScopeType;
-				IScope scope = instance.getClassTemplate().getCompositeScope();
-				if (scope != null) {
-					return scope.getBindings(lookup);
-				}
-    		}
-    		return IBinding.EMPTY_BINDING_ARRAY;
+			// If name lookup is performed for the purpose of code completion in a dependent context,
+			// try to give some useful results heuristically.
+			IScope scope = CPPSemantics.heuristicallyFindConcreteScopeForType(fScopeType, 
+					lookup.getLookupPoint());
+			if (scope != null) {
+				return scope.getBindings(lookup);
+			}
+			return IBinding.EMPTY_BINDING_ARRAY;
     	}
     	IASTName lookupName= lookup.getLookupName();
     	if (lookupName != null)

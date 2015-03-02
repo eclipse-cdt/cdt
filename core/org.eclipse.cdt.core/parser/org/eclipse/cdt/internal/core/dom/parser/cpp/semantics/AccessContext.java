@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -278,9 +277,9 @@ public class AccessContext {
 				if (scopeType instanceof ICPPDeferredClassInstance) {
 					return ((ICPPDeferredClassInstance) scopeType).getClassTemplate();
 				}
-			} else {
-				scope = CPPSemantics.getParentScope(scope, data.getTranslationUnit());
 			}
+
+			scope = CPPSemantics.getParentScope(scope, data.getTranslationUnit());
 		}
 		if (scope instanceof ICPPClassScope) {
 			return ((ICPPClassScope) scope).getClassType();

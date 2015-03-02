@@ -186,7 +186,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         String scode= buffers[1].toString();
         IFile hfile = importFile("test.h", hcode); 
         IFile file = importFile("test.cpp", scode);
-        waitUntilFileIsIndexed(index, file);
+        waitForIndexer(fCProject);
         
         int hoffset= hcode.indexOf("assign"); 
         int soffset = scode.indexOf("assign"); 

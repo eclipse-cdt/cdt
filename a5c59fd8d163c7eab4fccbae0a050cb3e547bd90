@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_5f985b4a",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/BaseUITestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T12:47:36Z",
+      "side": 1,
+      "message": "Why project stuff in baseUiTestCase now? It should be its own base class at least",
+      "revId": "a5c59fd8d163c7eab4fccbae0a050cb3e547bd90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

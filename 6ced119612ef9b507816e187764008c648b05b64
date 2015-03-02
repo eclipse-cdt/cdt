@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_2a0eef73",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "don\u0027t use new String, it is not c++",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0a133398",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "remove new String",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6af757c7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "same",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_8afe039f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui.tests/src/org/eclipse/cdt/managedbuilder/ui/tests/wizardPages/PageForRunnableWithProject.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "no new String",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ca2f6bc3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/schema/newWizardPages.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "is this still true?",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2a254fe2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/IProjectSettable.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "interface that has setter should probably have a getter too",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0ad85362",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSCustomPageData.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "What happening with monitor here? You should probably\nstart it at least and when runnable finished .done it\n(in finally block).",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6a1e3799",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/wizards/MBSWizardHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 783,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-02T14:44:13Z",
+      "side": 1,
+      "message": "op should implement IProjectSettable too so you do that\ninterace check and set project",
+      "revId": "6ced119612ef9b507816e187764008c648b05b64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

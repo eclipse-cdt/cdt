@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.internal.core.CheckersTimeStats;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -43,26 +44,31 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 			Job job = new Job(CodanUIMessages.Job_TitleRunningAnalysis) {
 				@Override
 				protected IStatus run(final IProgressMonitor monitor) {
-					int count = ss.size();
-					monitor.beginTask(getName(), count * 100);
-					if (monitor.isCanceled())
-						return Status.CANCEL_STATUS;
-					for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
-						Object o = iterator.next();
-						if (o instanceof IAdaptable) {
-							o = ((IAdaptable) o).getAdapter(IResource.class);
-						}
-						if (o instanceof IResource) {
-							IResource res = (IResource) o;
-							SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
-							CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
-							if (subMon.isCanceled())
-								return Status.CANCEL_STATUS;
-						}
+					try {
+						int count = ss.size();
+						monitor.beginTask(getName(), count * 100);
 						if (monitor.isCanceled())
 							return Status.CANCEL_STATUS;
+						for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
+							Object o = iterator.next();
+							if (o instanceof IAdaptable) {
+								o = ((IAdaptable) o).getAdapter(IResource.class);
+							}
+							if (o instanceof IResource) {
+								IResource res = (IResource) o;
+								SubProgressMonitor subMon = new SubProgressMonitor(monitor, 100);
+								CodanRuntime.getInstance().getBuilder().processResource(res, subMon, CheckerLaunchMode.RUN_ON_DEMAND);
+								if (subMon.isCanceled())
+									return Status.CANCEL_STATUS;
+							}
+							if (monitor.isCanceled())
+								return Status.CANCEL_STATUS;
+						}
+						return Status.OK_STATUS;
+					} finally {
+						CheckersTimeStats.getInstance().traceStats();
+						CheckersTimeStats.getInstance().reset();
 					}
-					return Status.OK_STATUS;
 				}
 			};
 			job.setUser(true);

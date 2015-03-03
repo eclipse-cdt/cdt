@@ -45,7 +45,7 @@
 		</repository>
 		<repository>
 			<id>platform</id>
-			<url>http://download.eclipse.org/eclipse/updates/4.5milestones</url>
+			<url>http://download.eclipse.org/eclipse/updates/4.5milestones/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -60,7 +60,7 @@
 		</repository>
 		<repository>
 			<id>remote</id>
-			<url>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</url>
+			<url>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

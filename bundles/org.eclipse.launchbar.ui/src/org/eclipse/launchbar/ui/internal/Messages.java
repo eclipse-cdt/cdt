@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	public static String LaunchBarControl_Build;
 	public static String LaunchBarControl_Launch;
 	public static String LaunchBarControl_Stop;
+	public static String TargetSelector_CreateNewTarget;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

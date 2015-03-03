@@ -13,6 +13,12 @@ package org.eclipse.launchbar.ui.internal.controls;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -20,6 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -36,12 +43,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 
 public class TargetSelector extends CSelector {
 
 	private final LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
 
-	private static final String[] noTargets = new String[] { "---" };
+	private static final String[] noTargets = new String[] { "---" }; //$NON-NLS-1$
 
 	public TargetSelector(Composite parent, int style) {
 		super(parent, style);
@@ -74,7 +83,7 @@ public class TargetSelector extends CSelector {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof IRemoteConnection) {
-					IRemoteConnection target = (IRemoteConnection) element;
+					//IRemoteConnection target = (IRemoteConnection) element;
 					// TODO need to get icon form ui service
 				}
 				return super.getImage(element);
@@ -141,15 +150,19 @@ public class TargetSelector extends CSelector {
 
 		final Label createLabel = new Label(createButton, SWT.None);
 		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		createLabel.setText("Create New Target...");
+		createLabel.setText(Messages.TargetSelector_CreateNewTarget);
 		createLabel.setBackground(backgroundColor);
 
 		MouseListener mouseListener = new MouseAdapter() {
-			public void mouseUp(org.eclipse.swt.events.MouseEvent e) {
-				// TODO
-				//				NewLaunchTargetWizard wizard = new NewLaunchTargetWizard(uiManager);
-				//				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				//				dialog.open();
+			public void mouseUp(org.eclipse.swt.events.MouseEvent event) {
+				try {
+					ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+					// TODO the command id should be in a remote ui interface
+					Command newConnectionCmd = commandService.getCommand("org.eclipse.remote.ui.command.newConnection"); //$NON-NLS-1$
+					newConnectionCmd.executeWithChecks(new ExecutionEvent());
+				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+					Activator.log(e);
+				}
 			}
 		};
 

@@ -138,6 +138,23 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_2daba60e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:17:07Z",
+      "side": 1,
+      "message": "After thinking about it, I think keeping the Class parameter is better.  If not, it would become tricky in case the defaultValue was null.",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_37c13398",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3

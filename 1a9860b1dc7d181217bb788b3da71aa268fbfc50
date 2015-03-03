@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_97b2a74f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "I think this can be removed and made local where it is used.",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_37f65303",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "This change modifies the API, which I\u0027m sure you had realized.  This is ok since the package is internal.  I wanted to point out however, that if each variable was private and had a getter and setter, we could have made this change without even breaking the API.\n\nShould we take this opportunity to set these modified fields to private and create such getter/setter?  The issue would be that the other methods of PersistentParameter would not be accessible by an extending class, but that might be ok, I\u0027m not sure.\n\nWe should definitely do that (in another patch) for the other fields so that we don\u0027t need to change the API every time we want to make a field persistent.",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_f7b7ab3e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "Pass the visualizerId to the above method.  Doing this will help avoid that method being moved to a place where the visualizerInstanceId is not set yet",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_57c83fb9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "No need for null",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_b794039b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "Move above line to inside below if",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_37c13398",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "Normally, when building such a key, we use a . as a connector instead of a +",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_17beb71a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "Unless it is mandatory to have a default value, I suggestion making sure \u0027defaultValue\u0027 is not null before calling setDefault()",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_77cbbbb7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T04:17:29Z",
+      "side": 1,
+      "message": "I think we should put some unique prefix for those ids.  You can use MulticoreVisualizerUIPlugin.PLUGIN_ID.  I suggest\n\nMulticoreVisualizerUIPlugin.PLUGIN_ID + \".\" + m_category + (perInstance ? \".\" + m_instance : \"\"",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

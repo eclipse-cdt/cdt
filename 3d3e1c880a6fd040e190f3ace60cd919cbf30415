@@ -16,6 +16,24 @@
       "revId": "3d3e1c880a6fd040e190f3ace60cd919cbf30415",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_d0ea7521",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T18:53:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_3092d9da",
+      "revId": "3d3e1c880a6fd040e190f3ace60cd919cbf30415",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -19,10 +19,16 @@
  *     Marc Dumais (Ericsson) - Bug 407321
  *     Xavier Raynaud (Kalray) - Bug 431935
  *     Marc Khouzam (Ericsson) - Bug 454293
+ *     Marc Dumais (Ericsson) - Bug 461295
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -35,6 +41,7 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerC
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerModel;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerThread;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
+import org.eclipse.cdt.visualizer.ui.canvas.GraphicObject;
 import org.eclipse.cdt.visualizer.ui.canvas.IGraphicObject;
 import org.eclipse.cdt.visualizer.ui.plugin.CDTVisualizerUIPlugin;
 import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
@@ -42,6 +49,8 @@ import org.eclipse.cdt.visualizer.ui.util.MouseMonitor;
 import org.eclipse.cdt.visualizer.ui.util.SelectionManager;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.cdt.visualizer.ui.util.Timer;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -50,6 +59,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -70,6 +80,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	
 
 	// --- members ---
+	
+	/** Graphic object on which to display the help banner, when canvas is empty */
+	protected MulticoreVisualizerGraphicObject m_helpBanner;
 	
 	/** Update timer */
 	protected Timer m_updateTimer = null;
@@ -237,6 +250,19 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		
 		// status bar
 		m_statusBar = new MulticoreVisualizerStatusBar();
+		
+		// Help banner
+		m_helpBanner = new MulticoreVisualizerGraphicObject() {
+			@Override 
+			public void paintContent(GC gc) {
+				try {
+					String imagePath = getAbsoluteFilePath(IMulticoreVisualizerConstants.HELP_BANNER_PATH);
+					m_helpBanner.drawImage(gc, imagePath, GraphicObject.ImageSizeAndPosition.MAXSIZE);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		};
 	}
 	
 	/** Cleans up control */
@@ -292,6 +318,10 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
         if (m_statusBar != null) {
         	m_statusBar.dispose();
         	m_statusBar = null;
+        }
+        if (m_helpBanner != null) {
+        	m_helpBanner.dispose();
+        	m_helpBanner = null;
         }
 	}
 	
@@ -500,6 +530,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		if (m_recacheSizes) {
 			// avoid doing resize calculations if the model is not ready
 			if (m_model == null ) {
+				// make help banner same size as canvas 
+				// (we only show the help banner when there is no model information)
+				m_helpBanner.setBounds(getClientArea());
 				m_recacheSizes = false;
 				return;
 			}
@@ -614,6 +647,12 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		
 		// recache/resize tiles & shims if needed
 		recache();
+		
+		// special case : nothing to show - display help banner
+		if (m_model == null) {
+			m_helpBanner.paintContent(gc);
+			return;
+		}
 
 		// do any "per frame" updating/replacement of graphic objects
 		
@@ -732,7 +771,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		// paint drag-selection marquee last, so it's on top.
 		m_marquee.paintContent(gc);
 	}
-	
+
 	
 	// --- mouse event handlers ---
 
@@ -1131,5 +1170,24 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		}
 		return result;
 	}
+	
+	
+	// ---- misc ----
+	
+	/** Get the absolute path of a file, from the path relative to plugin root. */
+	private String getAbsoluteFilePath(String relPath) {
+		Bundle bundle = Platform.getBundle(MulticoreVisualizerUIPlugin.PLUGIN_ID);
+		URL fileURL = bundle.getEntry(relPath);
+		File file = null;
+
+		try {
+			file = new File(FileLocator.resolve(fileURL).toURI());
+		} catch (URISyntaxException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return file.getAbsolutePath();
+	}
+	
 
 }

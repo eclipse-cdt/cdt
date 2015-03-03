@@ -73,6 +73,15 @@ public class GraphicObject
 		LOWER_RIGHT_HEIGHTH(new Rectangle(75, 75, 25, 25)),
 		/** Image occupies upper-left 7/8 of graphic object's area */
 		UPPER_LEFT_SEVENTH_HEIGHTH(new Rectangle(0, 0, 75, 75)),
+		/** Image occupies upper half of graphic object's area */
+		UPPER_HALF(new Rectangle(0, 0, 100, 50)),
+		/** Image occupies lower half of graphic object's area */
+		LOWER_HALF(new Rectangle(0, 50, 100, 50)),
+		/** Image occupies left half of graphic object's area */
+		LEFT_HALF(new Rectangle(0, 0, 50, 100)),
+		/** Image occupies right half of graphic object's area */
+		RIGHT_HALF(new Rectangle(50, 0, 50, 100)),
+		
 		/** Image completely occupies the graphic object's area */
 		MAXSIZE(new Rectangle(0, 0, 100, 100));
 		

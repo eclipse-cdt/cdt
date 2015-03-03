@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_8b83a2a5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHRemoveFromView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-03-03T23:53:54Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "1b9f331219066465a1ed8a2270a164ec5fb8f5e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2b76ee49",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHViewPart.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-03-03T23:53:54Z",
+      "side": 1,
+      "message": "Redundant initialization.",
+      "range": {
+        "startLine": 148,
+        "startChar": 42,
+        "endLine": 148,
+        "endChar": 46
+      },
+      "revId": "1b9f331219066465a1ed8a2270a164ec5fb8f5e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ab513eb2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/callhierarchy/CHViewPart.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-03-03T23:53:54Z",
+      "side": 1,
+      "message": "Break into two lines.",
+      "range": {
+        "startLine": 227,
+        "startChar": 30,
+        "endLine": 227,
+        "endChar": 51
+      },
+      "revId": "1b9f331219066465a1ed8a2270a164ec5fb8f5e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -87,6 +87,57 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_4ddc32dc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:04:02Z",
+      "side": 1,
+      "message": "I don\u0027t understand what this field will be used for?",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_cdd022c5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:04:02Z",
+      "side": 1,
+      "message": "I would make these private.\n\nWe should avoid protected fields.  If we want to provide access, we should use getters/setters.",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2dd566b2",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:04:02Z",
+      "side": 1,
+      "message": "Private",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_37c13398",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3
@@ -98,6 +149,24 @@
       "writtenOn": "2015-03-03T04:17:29Z",
       "side": 1,
       "message": "Normally, when building such a key, we use a . as a connector instead of a +",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0dd22ac9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:04:02Z",
+      "side": 1,
+      "message": "Missing //$NON-NLS-1$",
+      "parentUuid": "a7fb1785_37c13398",
       "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

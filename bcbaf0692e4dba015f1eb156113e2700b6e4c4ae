@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_8de0da43",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:34:28Z",
+      "side": 1,
+      "message": "Please add a comment that banner is only shown when model is null, which is why we only set its size in this case.",
+      "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_4d3b9250",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:34:28Z",
+      "side": 1,
+      "message": "Maybe this can go at the top, just before we already check if m_model !\u003d null and add a return if the model is null?  That we avoid running through all the rest of the code (unless that code has some value even if the model is null?",
+      "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_8d357a63",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1176,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T15:34:28Z",
+      "side": 1,
+      "message": "private",
+      "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

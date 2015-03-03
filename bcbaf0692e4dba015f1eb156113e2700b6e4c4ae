@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_b08ec93b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T16:36:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_8de0da43",
+      "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_4d3b9250",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_702e2195",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T16:36:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_4d3b9250",
+      "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_8d357a63",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2015-03-03T15:34:28Z",
       "side": 1,
       "message": "private",
+      "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_502b2582",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCanvas.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1176,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T16:36:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_8d357a63",
       "revId": "bcbaf0692e4dba015f1eb156113e2700b6e4c4ae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -152,7 +152,7 @@ public class VT100Emulator implements ControlListener {
 			ansiParameters[i] = new StringBuffer();
 		}
 		setInputStreamReader(reader);
-		if(TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND)) //$NON-NLS-1$
+		if(TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_VT100BACKEND))
 			text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
 		else
 			text=new VT100EmulatorBackend(data);
@@ -450,6 +450,9 @@ public class VT100Emulator implements ControlListener {
 		text.eraseAll();
 		text.setCursor(0, 0);
 		text.setStyle(text.getDefaultStyle());
+		text.setScrollRegion(-1, -1);
+		text.setInsertMode(false);
+		terminal.enableApplicationCursorKeys(false);
 	}
 	/**
 	 * This method is called when we have parsed an OS Command escape sequence.
@@ -1039,6 +1042,9 @@ public class VT100Emulator implements ControlListener {
 			terminal.enableApplicationCursorKeys(true);
 			break;
 		case 47:
+		case 1047:
+		case 1048:
+		case 1049:
 			// Use Alternate Screen Buffer (ignored).
 			break;
 		default:
@@ -1055,6 +1061,9 @@ public class VT100Emulator implements ControlListener {
 			terminal.enableApplicationCursorKeys(false);
 			break;
 		case 47:
+		case 1047:
+		case 1048:
+		case 1049:
 			// Use Normal Screen Buffer (ignored, but reset scroll region).
 			text.setScrollRegion(-1, -1);
 			break;

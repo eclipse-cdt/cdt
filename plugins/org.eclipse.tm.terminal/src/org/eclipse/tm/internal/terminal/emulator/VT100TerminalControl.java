@@ -944,9 +944,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			}
 
 			// Manage the Del key
-			if (event.keyCode == 0x000007f)
-				{
+			if (event.keyCode == 0x000007f) {
 				sendString("\u001b[3~"); //$NON-NLS-1$
+				return;
+			}
+			
+			if (event.keyCode == SWT.BS) {
+				sendChar('\u007f', altKeyPressed);
 				return;
 			}
 
@@ -1032,62 +1036,62 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 				case 0x100000a: // F1 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[M"; //$NON-NLS-1$
+						escSeq = "\u001bOP"; //$NON-NLS-1$
 					break;
 
 				case 0x100000b: // F2 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[N"; //$NON-NLS-1$
+						escSeq = "\u001bOQ"; //$NON-NLS-1$
 					break;
 
 				case 0x100000c: // F3 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[O"; //$NON-NLS-1$
+						escSeq = "\u001bOR"; //$NON-NLS-1$
 					break;
 
 				case 0x100000d: // F4 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[P"; //$NON-NLS-1$
+						escSeq = "\u001bOS"; //$NON-NLS-1$
 					break;
 
 				case 0x100000e: // F5 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[Q"; //$NON-NLS-1$
+						escSeq = "\u001b[15~"; //$NON-NLS-1$
 					break;
 
 				case 0x100000f: // F6 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[R"; //$NON-NLS-1$
+						escSeq = "\u001b[17~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000010: // F7 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[S"; //$NON-NLS-1$
+						escSeq = "\u001b[18~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000011: // F8 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[T"; //$NON-NLS-1$
+						escSeq = "\u001b[19~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000012: // F9 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[U"; //$NON-NLS-1$
+						escSeq = "\u001b[20~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000013: // F10 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[V"; //$NON-NLS-1$
+						escSeq = "\u001b[21~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000014: // F11 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[W"; //$NON-NLS-1$
+						escSeq = "\u001b[23~"; //$NON-NLS-1$
 					break;
 
 				case 0x1000015: // F12 key.
 					if (!anyModifierPressed)
-						escSeq = "\u001b[X"; //$NON-NLS-1$
+						escSeq = "\u001b[24~"; //$NON-NLS-1$
 					break;
 
 				default:
@@ -1111,11 +1115,18 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 			Logger.log("stateMask = " + event.stateMask); //$NON-NLS-1$
 
-			if (onlyCtrlKeyPressed && character == ' ') {
-				// Send a NUL character -- many terminal emulators send NUL when
-				// Control-Space is pressed.  This is used to set the mark in Emacs.
-
-				character = '\u0000';
+			if (onlyCtrlKeyPressed) {
+				switch (character) {
+				case ' ':
+					// Send a NUL character -- many terminal emulators send NUL when
+					// Control-Space is pressed.  This is used to set the mark in Emacs.
+					character = '\u0000';
+					break;
+				case '/':
+					// Ctrl+/ is undo in emacs
+					character = '\u001f';
+					break;
+				}
 			}
 
 			//TODO: At this point, Ctrl+M sends the same as Ctrl+Shift+M .

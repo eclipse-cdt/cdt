@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_8d257ab5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "At this point, it\u0027s used in a single place / flow, so that would make sense. \nHowever, I\u0027m already re-using this variable in the other patch you\u0027ll be reviewing  (making debug actions present in the MV toolbar configurable).",
+      "parentUuid": "a7fb1785_97b2a74f",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_37f65303",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-03T04:17:29Z",
       "side": 1,
       "message": "This change modifies the API, which I\u0027m sure you had realized.  This is ok since the package is internal.  I wanted to point out however, that if each variable was private and had a getter and setter, we could have made this change without even breaking the API.\n\nShould we take this opportunity to set these modified fields to private and create such getter/setter?  The issue would be that the other methods of PersistentParameter would not be accessible by an extending class, but that might be ok, I\u0027m not sure.\n\nWe should definitely do that (in another patch) for the other fields so that we don\u0027t need to change the API every time we want to make a field persistent.",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0df98a41",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_37f65303",
       "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_cd1f8263",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_f7b7ab3e",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_57c83fb9",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2015-03-03T04:17:29Z",
       "side": 1,
       "message": "No need for null",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ad3cb6ef",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_57c83fb9",
       "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_8d41fa64",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_b794039b",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_4ddc32dc",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2015-03-03T15:04:02Z",
       "side": 1,
       "message": "I don\u0027t understand what this field will be used for?",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2d4446cf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "The idea I had was to permit having this extra string being used to defined the key under which a parameter is saved. This way, two or more params with the same label could be saved independently, under a different \"category\".  IOW, it permits to have more than one name-space for the persistent parameters, for one given instance / view.\n\nI have updated the creation of the PersistentSettingsManager, in this patch,  to use the class name as category - I think it\u0027s a decent example of usage - this way if we were to have two or more  persistent parameters of the same label, in different classes of the MV, they would not clash. Makes sense?",
+      "parentUuid": "a7fb1785_4ddc32dc",
       "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_2d9286da",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_cdd022c5",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_2dd566b2",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3
@@ -132,6 +258,24 @@
       "writtenOn": "2015-03-03T15:04:02Z",
       "side": 1,
       "message": "Private",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0d8fcab5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_2dd566b2",
       "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -190,6 +334,42 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_6d8c8ebf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_37c13398",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_cd3b02f3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_37c13398",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_17beb71a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3
@@ -207,6 +387,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_0d7fca87",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "It\u0027s meant to be mandatory, since it\u0027s always used until a parameter is assigned a value explicitly. I have modified the JavaDoc to make it clearer it\u0027s mandatory.",
+      "parentUuid": "a7fb1785_17beb71a",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_77cbbbb7",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
         "patchSetId": 3
@@ -218,6 +416,24 @@
       "writtenOn": "2015-03-03T04:17:29Z",
       "side": 1,
       "message": "I think we should put some unique prefix for those ids.  You can use MulticoreVisualizerUIPlugin.PLUGIN_ID.  I suggest\n\nMulticoreVisualizerUIPlugin.PLUGIN_ID + \".\" + m_category + (perInstance ? \".\" + m_instance : \"\"",
+      "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ed035e18",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-03T15:46:52Z",
+      "side": 1,
+      "message": "I had the plugin id in there at the beginning, but then looking at how it\u0027s saved on disk, found it was redundant. \n\nThe settings are saved in a file under \u003cworkspace\u003e/.metadata/.plugins/org.eclipse.core.runtime/ , with a file name that already reflects the plugin id: \"org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.prefs\". Have a look and let me know if you think it\u0027s enough.",
+      "parentUuid": "a7fb1785_77cbbbb7",
       "revId": "1a9860b1dc7d181217bb788b3da71aa268fbfc50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

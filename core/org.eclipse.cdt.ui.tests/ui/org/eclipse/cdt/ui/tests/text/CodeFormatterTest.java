@@ -356,6 +356,33 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//class A final {
+	//public:
+	//A();
+	//};
+
+	//class A final {
+	//public:
+	//	A();
+	//};
+	public void testKeywordFinal_Bug460551() throws Exception {
+		assertFormatterResult();
+	}
+
+	//class A
+	//final : public B {
+	//public:
+	//A();
+	//};
+
+	//class A final : public B {
+	//public:
+	//	A();
+	//};
+	public void testKeywordFinalDerivedClass_Bug460551() throws Exception {
+		assertFormatterResult();
+	}
+
 	//template<typename T> class B {};
 	//template<typename T1,typename T2=B<T1> > class A {};
 

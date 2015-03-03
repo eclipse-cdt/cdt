@@ -84,4 +84,11 @@ public class IMulticoreVisualizerConstants
 	public static final Color COLOR_LOAD_UNDERBAR_FG = Colors.getColor(0,200,0);
 	/** Color used to draw the load meter background */
 	public static final Color COLOR_LOAD_UNDERBAR_BG_DEFAULT = Colors.getColor(0,64,0);
+	
+	
+	// misc
+	
+	/** Banner to display on canvas when there is nothing to show */
+	public static final String HELP_BANNER_PATH = "images/MV_help_banner.png";
+	
 }

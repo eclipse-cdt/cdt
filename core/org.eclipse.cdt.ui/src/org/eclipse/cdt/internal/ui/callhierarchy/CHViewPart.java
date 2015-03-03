@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.bindings.BindingManagerEvent;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -48,6 +50,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -55,8 +58,10 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
@@ -129,8 +134,9 @@ public class CHViewPart extends ViewPart {
 	private Action fShowReference;
 	private Action fOpenElement;
 	private Action fPinViewAction;
+	private Action fRemoveFromViewAction;
 	private CopyTreeAction fCopyAction;
-	
+
 	// action groups
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
@@ -138,7 +144,10 @@ public class CHViewPart extends ViewPart {
 	private IContextActivation fContextActivation;
 	private boolean fIsPinned = false;
 	private IPartListener2 fPartListener;
-    
+
+	private IBindingService bindingService;
+	private IBindingManagerListener bindingManagerListener;
+
     @Override
 	public void setFocus() {
         fPagebook.setFocus();
@@ -208,6 +217,22 @@ public class CHViewPart extends ViewPart {
         createActions();
         createContextMenu();
 
+		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		if (bindingService != null) {
+			bindingManagerListener = new IBindingManagerListener() {
+				@Override
+				public void bindingManagerChanged(BindingManagerEvent event) {
+					if (event.isActiveBindingsChanged()) {
+						String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
+						if (keyBinding != null) {
+							fRemoveFromViewAction.setText(CHMessages.CHViewPart_RemoveFromView_label + '\t'+ keyBinding);
+						}
+					}
+				}
+			};
+			bindingService.addBindingManagerListener(bindingManagerListener);
+		}
+
         setMessage(CHMessages.CHViewPart_emptyPageMessage);
         
         initializeActionStates();
@@ -257,9 +282,14 @@ public class CHViewPart extends ViewPart {
 	public void dispose() {
 		if (fContextActivation != null) {
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
-	    	if (ctxService != null) {
-	    		ctxService.deactivateContext(fContextActivation);
-	    	}
+			if (ctxService != null) {
+				ctxService.deactivateContext(fContextActivation);
+			}
+		}
+
+		if (bindingService != null) {
+			bindingService.removeBindingManagerListener(bindingManagerListener);
+			bindingService = null;
 		}
 
 		if (fOpenViewActionGroup != null) {
@@ -537,6 +567,7 @@ public class CHViewPart extends ViewPart {
 
         fCopyAction= new CopyCallHierarchyAction(this, fTreeViewer);
         fPinViewAction= new CHPinAction(this);
+        fRemoveFromViewAction= new CHRemoveFromView(this);
 
         // setup action bar
         // global action hooks
@@ -550,7 +581,10 @@ public class CHViewPart extends ViewPart {
         actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPreviousAction);
         actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
         actionBars.updateActionBars();
-        
+
+        TextActionHandler textActionHandler = new TextActionHandler(actionBars);
+        textActionHandler.setDeleteAction(fRemoveFromViewAction);
+
         // local toolbar
         IToolBarManager tm = actionBars.getToolBarManager();
         tm.add(fNextAction);
@@ -718,7 +752,7 @@ public class CHViewPart extends ViewPart {
         }
     }
 
-    protected void onContextMenuAboutToShow(IMenuManager menu) {
+	protected void onContextMenuAboutToShow(IMenuManager menu) {
 		CUIPlugin.createStandardGroups(menu);
 		
 		CHNode node= selectionToNode(fTreeViewer.getSelection());
@@ -751,15 +785,18 @@ public class CHViewPart extends ViewPart {
 		}
 
 		if (fCopyAction.canActionBeAdded()) {
-        	menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
+		}
+		if (node != null) {
+			menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fRemoveFromViewAction);
 		}
 
 		if (SelectionSearchGroup.canActionBeAdded(selection)){
 			fSelectionSearchGroup.fillContextMenu(menu);
 		}
 		fRefactoringActionGroup.fillContextMenu(menu);
-    }
-    	    
+	}
+
     private void showReference() {
         if (fNavigationNode != null) {
         	ITranslationUnit file= fNavigationNode.getFileOfReferences();

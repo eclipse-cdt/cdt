@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class CHMessages extends NLS {
 	public static String CHViewPart_PreviousReference_tooltip;
 	public static String CHViewPart_Refresh_label;
 	public static String CHViewPart_Refresh_tooltip;
+	public static String CHViewPart_RemoveFromView_label;
 	public static String CHViewPart_CopyCallHierarchy_label;
 	public static String CHViewPart_ShowCallees_label;
 	public static String CHViewPart_ShowCallees_tooltip;

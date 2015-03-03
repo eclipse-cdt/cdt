@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core;
 
+import org.eclipse.cdt.codan.internal.core.CheckersTimeStats;
 import org.eclipse.cdt.codan.internal.core.CodeAnalysisNature;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugTrace;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -31,6 +36,8 @@ public class CodanCorePlugin extends Plugin {
 	public static final String NATURE_ID = CodeAnalysisNature.NATURE_ID;
 	// The shared instance
 	private static CodanCorePlugin plugin;
+	private static DebugTrace trace;
+	private static DebugOptions debugOptions;
 
 	/**
 	 * The constructor
@@ -55,6 +62,9 @@ public class CodanCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		if (isDebuggingEnabled("/debug/performance")) { //$NON-NLS-1$
+			CheckersTimeStats.getInstance().setEnabled(true);
+		}
 	}
 
 	/*
@@ -119,5 +129,71 @@ public class CodanCorePlugin extends Plugin {
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, null));
+	}
+
+	private final boolean isDebuggingEnabled(final String optionPath) {
+		if (optionPath == null)
+			return true;
+		if (debugOptions==null)
+			getTrace();
+		if (debugOptions==null)
+			return false;
+		boolean debugEnabled = false;
+		if (debugOptions.isDebugEnabled()) {
+			final String option = getDefault().getBundle().getSymbolicName() + optionPath;
+			debugEnabled = debugOptions.getBooleanOption(option, false);
+		}
+		return debugEnabled;
+	}
+
+	/**
+	 * Use a no-op trace when a real one isn't available. Simplifies life for
+	 * clients; no need to check for null.
+	 */
+	private static final DebugTrace NULL_TRACE = new DebugTrace() {
+		@Override
+		public void trace(String option, String message) {}
+		@Override
+		public void trace(String option, String message, Throwable error) {}
+		@Override
+		public void traceDumpStack(String option) {}
+		@Override
+		public void traceEntry(String option) {}
+		@Override
+		public void traceEntry(String option, Object methodArgument) {}
+		@Override
+		public void traceEntry(String option, Object[] methodArguments) {}
+		@Override
+		public void traceExit(String option) {}
+		@Override
+		public void traceExit(String option, Object result) {}
+	};
+
+
+	synchronized private static DebugTrace getTrace() {
+		if (trace == null) {
+			Plugin plugin = getDefault();
+			if (plugin != null) {
+				Bundle bundle = plugin.getBundle();
+				if (bundle != null) {
+					BundleContext context = bundle.getBundleContext();
+					if (context != null) {
+						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(context, DebugOptions.class.getName(), null);
+						try {
+							tracker.open();
+							debugOptions = tracker.getService();
+							if (debugOptions != null) {
+								trace = debugOptions.newDebugTrace(bundle.getSymbolicName());
+							}
+						}
+						finally {
+							tracker.close();
+						}
+					}
+				}
+			}
+
+		}
+		return trace != null ? trace : NULL_TRACE;
 	}
 }

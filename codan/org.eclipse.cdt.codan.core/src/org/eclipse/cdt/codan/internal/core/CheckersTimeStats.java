@@ -21,6 +21,7 @@ public class CheckersTimeStats {
 	public static final String ALL = "ALL"; //$NON-NLS-1$
 	public static final String ELAPSED = "ELAPSED"; //$NON-NLS-1$
 	private static CheckersTimeStats instance = new CheckersTimeStats();
+	private boolean enableStats = false;
 
 	/**
 	 * @return global instance of stats
@@ -44,16 +45,15 @@ public class CheckersTimeStats {
 			current = 0;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
-			if (count != 0)
-				return duration + " " + count + " " + duration / count;  //$NON-NLS-1$//$NON-NLS-2$
-			return ""; //$NON-NLS-1$
+			return String.format("%4d %4d %4.2f", duration, count, count == 0 ? count : (duration / (float) count)); //$NON-NLS-1$
+		}
+
+		public String toString(long total) {
+			float ave = count == 0 ? count : (duration / (float) count);
+			float per = total == 0 ? 100f : (duration * 100 / (float) total);
+			return String.format("%4d %4d %4.2f %4.2f%%", duration, count, ave, per); //$NON-NLS-1$
 		}
 	}
 	private Map<String, TimeRecord> records = new HashMap<String, TimeRecord>();
@@ -87,8 +87,14 @@ public class CheckersTimeStats {
 	 * @param counter
 	 */
 	public void checkerStart(String id, String counter) {
-		TimeRecord record = getTimeRecord(id + ":" + counter); //$NON-NLS-1$
-		record.start();
+		if (enableStats) {
+			TimeRecord record = getTimeRecord(getKey(id, counter));
+			record.start();
+		}
+	}
+
+	private String getKey(String id, String counter) {
+		return id + ":" + counter; //$NON-NLS-1$
 	}
 
 	/**
@@ -96,7 +102,9 @@ public class CheckersTimeStats {
 	 * @param counter
 	 */
 	public void checkerStop(String id, String counter) {
-		getTimeRecord(id + ":" + counter).stop(); //$NON-NLS-1$
+		if (enableStats) {
+			getTimeRecord(getKey(id, counter)).stop();
+		}
 	}
 
 	/**
@@ -107,11 +115,12 @@ public class CheckersTimeStats {
 	}
 
 	/**
-	 *
+	 * Print checker stats to stdout if tracing enabled
 	 */
 	public void traceStats() {
-		// TODO: add check for trace flags
-		printStats();
+		if (enableStats) {
+			printStats();
+		}
 	}
 
 	/**
@@ -119,11 +128,16 @@ public class CheckersTimeStats {
 	 */
 	public void printStats() {
 		System.out.println("---"); //$NON-NLS-1$
+		String totalId = getKey(ALL, ELAPSED);
+		TimeRecord all = records.get(totalId);
 		for (Iterator<String> iterator = records.keySet().iterator(); iterator.hasNext();) {
 			String id = iterator.next();
+			if (id.equals(totalId))
+				continue;
 			TimeRecord timeRecord = getTimeRecord(id);
-			System.out.println(timeRecord.toString() + " " + id); //$NON-NLS-1$
+			System.out.println(timeRecord.toString(all.duration) + " " + id); //$NON-NLS-1$
 		}
+		System.out.println(all.toString() + " " + totalId); //$NON-NLS-1$
 	}
 
 	/**
@@ -131,5 +145,19 @@ public class CheckersTimeStats {
 	 */
 	public void reset() {
 		records.clear();
+	}
+
+	/**
+	 * @return true is stats collection is enabled
+	 */
+	public boolean isEnabled() {
+		return enableStats;
+	}
+
+	/**
+	 * @param set to true to enable stats collection and false to disable
+	 */
+	public void setEnabled(boolean enableStats) {
+		this.enableStats = enableStats;
 	}
 }

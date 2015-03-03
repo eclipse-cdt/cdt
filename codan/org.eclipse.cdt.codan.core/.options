@@ -1,0 +1,4 @@
+org.eclipse.cdt.codan.core/debug=false
+# Reports checkers performance on stdout when calling analysis on demand
+org.eclipse.cdt.codan.core/debug/performance=false
+

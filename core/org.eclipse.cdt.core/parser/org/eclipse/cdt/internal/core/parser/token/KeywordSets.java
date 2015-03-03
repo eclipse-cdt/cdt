@@ -378,6 +378,8 @@ public class KeywordSets {
 	private static final Set<String> ALL_CPP;
 	static {
 		ALL_CPP = new TreeSet<String>(PP_DIRECTIVES_CPP);
+		ALL_CPP.add(Keywords.ALIGNAS);
+		ALL_CPP.add(Keywords.ALIGNOF);
 		ALL_CPP.add(Keywords.AND);
 		ALL_CPP.add(Keywords.AND_EQ);
 		ALL_CPP.add(Keywords.ASM);
@@ -472,6 +474,8 @@ public class KeywordSets {
 	private static final Set<String> KEYWORDS_CPP;
 	static {
 		KEYWORDS_CPP = new TreeSet<String>();
+		KEYWORDS_CPP.add(Keywords.ALIGNAS);
+		KEYWORDS_CPP.add(Keywords.ALIGNOF);
 		KEYWORDS_CPP.add(Keywords.AND);
 		KEYWORDS_CPP.add(Keywords.AND_EQ);
 		KEYWORDS_CPP.add(Keywords.ASM);

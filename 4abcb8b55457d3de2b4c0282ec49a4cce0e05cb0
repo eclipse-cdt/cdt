@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_0d706afb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "Make the below private unless you want it package-private?",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_4ded522d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "No need for null as the compiler does it anyway.\nRemoving it makes debugging faster as the debugger won\u0027t jump to the above line during construction.",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_4d7a72dd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "Private",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ad667646",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "Private",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_8db29a4f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "This string must be translatable, so it should be extracted and put in a new Messages.properties/Messages.java pair, like we have in org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2dc1e697",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "Do we need to set this again or is the super() call enough?\n\nThis string must be externalized as mentioned above",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0dbeaa1a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "Externalize",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ad94b69a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "Don\u0027t need \u0027this\u0027, right?",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6df00e04",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-03T18:21:19Z",
+      "side": 1,
+      "message": "I wonder if we should disable this menu or even hide it when the view is pinned?  I worry that the user will think it is broken if they change the \"show debug toolbar\" setting and nothing happens when pinned.",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "revId": "841d82e0ba94e2341eb11b2e7f9282f7ffc8b06e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3c79123b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-04T18:55:05Z",
+      "side": 1,
+      "message": "I like the additional comment as it will make it very clear to not remove the @Override, \n However suppressing all warnings may not be great as it could potentially hide new warning introduced in later versions of this method.  \n \n  Patch set 2, reflects the additional comment.",
+      "parentUuid": "a7fb1785_3cd592b2",
+      "revId": "841d82e0ba94e2341eb11b2e7f9282f7ffc8b06e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

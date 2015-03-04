@@ -217,7 +217,8 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected void executeCommand(IViewPart viewPart, String commandID) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		IHandlerService hs= viewPart.getSite().getService(IHandlerService.class);
+		// Keeping the cast in order to maintain compatibility with versions earlier than Eclipse 4.5
+		IHandlerService hs= (IHandlerService) viewPart.getSite().getService(IHandlerService.class);
 		assertNotNull(hs);
 		hs.executeCommand(commandID, null);
 	}

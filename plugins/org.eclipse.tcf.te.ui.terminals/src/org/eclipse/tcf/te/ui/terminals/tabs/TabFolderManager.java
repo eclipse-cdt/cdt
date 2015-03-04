@@ -237,7 +237,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 *
 	 * @return The created tab item or <code>null</code> if failed.
 	 */
-	@SuppressWarnings({ "unused", "unchecked" })
+	@SuppressWarnings("unused")
 	public CTabItem createTabItem(String title, String encoding, ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
@@ -272,8 +272,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// Create the terminal control
 			ITerminalViewControl terminal = TerminalViewControlFactory.makeControl(doCreateTerminalTabTerminalListener(this, item), composite, new ITerminalConnector[] { connector }, true);
-			if (terminal instanceof ITerminalControl && data instanceof Map<?,?>) {
-				Object value = ((Map<String, Object>)data).get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT);
+			if (terminal instanceof ITerminalControl && flags.containsKey(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT)) {
+				Object value = flags.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT);
 				boolean noReconnect = value instanceof Boolean ? ((Boolean)value).booleanValue() : false;
 				((ITerminalControl)terminal).setConnectOnEnterIfClosed(!noReconnect);
 			}

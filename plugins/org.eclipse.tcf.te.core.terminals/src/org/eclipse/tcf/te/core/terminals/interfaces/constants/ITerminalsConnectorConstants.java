@@ -105,8 +105,6 @@ public interface ITerminalsConnectorConstants {
 	/**
 	 * Property: Data flag to tell the terminal to not reconnect when hitting enter
 	 *           in a disconnected terminal.
-	 *           The flag can be set by adding an IPropertiesContainer with the set
-	 *           flag as PROP_DATA.
 	 * <p>
 	 * Property Type: {@link Boolean}
 	 */

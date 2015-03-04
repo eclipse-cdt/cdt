@@ -374,7 +374,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		// This method is called when the Platform version is 4.5 or higher.
 		// @Override
-		@Override
 		protected IFormattingContext createFormattingContext(int selectionOffset, int selectionLength) {
 			return createFormattingContext(selectionOffset, selectionLength, true);
 		}

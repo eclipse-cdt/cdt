@@ -20,12 +20,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class AutotoolsToolPropertyOptionPage extends
 		AbstractConfigurePropertyOptionsPage {
 
+	private static final int MARGIN = 3;
 	private ToolListElement element;
 	private String toolName = "";
 	private IAConfiguration cfg;
@@ -84,20 +86,27 @@ public class AutotoolsToolPropertyOptionPage extends
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
 		Composite parent = getFieldEditorParent();
-		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
+		parent.setLayout(new GridLayout(1, false));
+		Composite area = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout(1, false);
+		gl.marginTop = MARGIN;
+		gl.marginLeft = MARGIN;
+		gl.marginRight = MARGIN;
+		area.setLayout(gl);
+		area.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(area);
 		commandStringField = new StringFieldEditor(toolName,
 				ConfigureMessages.getString(COMMAND),
-				parent);
+				area);
 		commandStringField.setEmptyStringAllowed(false);
-		GridData gd = ((GridData)commandStringField.getTextControl(parent).getLayoutData());
+		GridData gd = ((GridData)commandStringField.getTextControl(area).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 3);
 		addField(commandStringField);
 		// Add a field editor that displays overall build options
-		Composite par = getFieldEditorParent();
 		allOptionFieldEditor = new MultiLineTextFieldEditor(AutotoolsConfigurePrefStore.ALL_OPTIONS_ID,
-				ConfigureMessages.getString(ALL_OPTIONS), par);
-		allOptionFieldEditor.getTextControl(par).setEditable(false);
+				ConfigureMessages.getString(ALL_OPTIONS), area);
+		allOptionFieldEditor.getTextControl(area).setEditable(false);
 //		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
 		gd.grabExcessHorizontalSpace = true;
 		gd.minimumWidth = Dialog.convertWidthInCharsToPixels(fm, 20);

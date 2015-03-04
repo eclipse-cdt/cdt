@@ -21,12 +21,14 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 public class AutotoolsCategoryPropertyOptionPage extends
 		AbstractConfigurePropertyOptionsPage {
 
+	private static final int MARGIN = 3;
 	private String catName = "";
 	private IAConfiguration cfg;
 	//  Label class for a preference page.
@@ -81,6 +83,17 @@ public class AutotoolsCategoryPropertyOptionPage extends
 	protected void createFieldEditors() {
 		super.createFieldEditors();
 		Composite parent = getFieldEditorParent();
+		
+		// Add margin
+		parent.setLayout(new GridLayout(1, false));
+		Composite area = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout(1, false);
+		gl.marginTop = MARGIN;
+		gl.marginLeft = MARGIN;
+		gl.marginRight = MARGIN;
+		area.setLayout(gl);
+		area.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		
 //		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
 		AutotoolsConfiguration.Option[] options = AutotoolsConfiguration.getChildOptions(catName);
 		for (int i = 0; i < options.length; ++i) {
@@ -89,23 +102,20 @@ public class AutotoolsCategoryPropertyOptionPage extends
 			case IConfigureOption.STRING:
 			case IConfigureOption.INTERNAL:
 			case IConfigureOption.MULTIARG:
-				parent = getFieldEditorParent();
-				StringFieldEditor f = new StringFieldEditor(option.getName(), option.getDescription(), 20, parent);
-				f.getLabelControl(parent).setToolTipText(option.getToolTip());
+				StringFieldEditor f = new StringFieldEditor(option.getName(), option.getDescription(), area);
+				f.getLabelControl(area).setToolTipText(option.getToolTip());
 				addField(f);
 				fieldEditors.add(f);
 				break;
 			case IConfigureOption.BIN:
 			case IConfigureOption.FLAGVALUE:
-				parent = getFieldEditorParent();
-				BooleanFieldEditor b = new BooleanFieldEditor(option.getName(), option.getDescription(), parent);
-				b.getDescriptionControl(parent).setToolTipText(option.getToolTip());
+				BooleanFieldEditor b = new BooleanFieldEditor(option.getName(), option.getDescription(), area);
+				b.getDescriptionControl(area).setToolTipText(option.getToolTip());
 				addField(b);
 				fieldEditors.add(b);
 				break;
 			case IConfigureOption.FLAG:
-				parent = getFieldEditorParent();
-				FieldEditor l = createLabelEditor(parent, option.getDescription());
+				FieldEditor l = createLabelEditor(area, option.getDescription());
 				addField(l);
 				fieldEditors.add(l);
 				break;

@@ -531,4 +531,17 @@
             </with>
        </definition>
     </extension>
+    <extension
+         point="org.eclipse.ui.importWizards">
+       <wizard
+             category="org.eclipse.cdt.ui.importWizardCategory"
+             class="org.eclipse.cdt.internal.autotools.ui.wizards.AutotoolsProjectImportWizard"
+             icon="icons/ac16/convert_normal.gif"
+             id="org.eclipse.cdt.autotools.ui.wizards.importWizaed"
+             name="Existing code as Autotools project">
+          <description>
+             Create a new Autotools project from existing code in that same directory
+          </description>
+       </wizard>
+    </extension>
 </plugin>

@@ -97,7 +97,7 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
 	 */
 	public boolean canFlipToNextPage() {
-		return validatePage();
+		return validatePage() && getNextPage() != null;
 	}
 
 	private void createConfigSelectionGroup (Composite parent) {

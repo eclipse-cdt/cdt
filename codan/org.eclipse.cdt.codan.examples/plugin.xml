@@ -78,6 +78,21 @@
                name="%problem.name.Cppcheck.Syntax">
          </problem>
       </checker>
+      
+          <checker
+             class="org.eclipse.cdt.codan.examples.checkers.CToolChecker"
+             id="org.eclipse.cdt.codan.examples.checkers.CToolChecker"
+             name="External C Tool">
+          <problem
+                category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+                defaultEnabled="false"
+                defaultSeverity="Info"
+                description="Runs external tool and reports errors that this tool finds"
+                id="org.eclipse.cdt.codan.examples.checkers.CToolChecker.error"
+                messagePattern="{0}"
+                name="External C Tool">
+          </problem>
+       </checker>
    </extension>
        <extension
           point="org.eclipse.cdt.codan.ui.codanProblemDetails">

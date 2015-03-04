@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_3cd592b2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/CEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-04T18:15:30Z",
+      "side": 1,
+      "message": "I think this needs some explanation.  And maybe a suppressWarning to avoid someone adding it again.  How about:\n\n  // We cannot add the @Override tag because it would break compilation on older platforms\n  @SuppressWarnings(\"all\")\n\nThe only way I found to suppress this warning locally with using \"all\".  It is not great, but the best I could find.",
+      "revId": "841d82e0ba94e2341eb11b2e7f9282f7ffc8b06e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

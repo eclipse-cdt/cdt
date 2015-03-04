@@ -372,9 +372,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	/**
 	 * enables or disables the load meters
 	 */
-	public void setLoadMetersEnabled(boolean enabled) {
-		if (m_loadMetersEnabled.value() == enabled) return;
-		m_loadMetersEnabled.set(enabled);
+	public void enableLoadMeters(boolean enabled) {
+		if (getLoadMetersEnabled() == enabled) return;
+		setLoadMetersEnabled(enabled);
 		// save load meter enablement in model
 		fDataModel.setLoadMetersEnabled(getLoadMetersEnabled());
 		disposeLoadMeterTimer();
@@ -385,7 +385,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer implements IPin
 	public boolean getLoadMetersEnabled() {
 		return m_loadMetersEnabled != null? m_loadMetersEnabled.value() : false;
 	}
-	
+
+	public void setLoadMetersEnabled(boolean enabled) {
+		m_loadMetersEnabled.set(enabled);
+	}
+
 	// --- canvas management ---
 	
 	/** Creates and returns visualizer canvas control. */

@@ -69,7 +69,7 @@ public class EnableLoadMetersAction extends VisualizerAction {
 		if (m_visualizer != null) {
 			// toggle enabled state
 			m_enabled = !m_enabled;	
-			m_visualizer.setLoadMetersEnabled(m_enabled);
+			m_visualizer.enableLoadMeters(m_enabled);
 			m_visualizer.refresh();
 			
 			setText(getTextToDisplay());

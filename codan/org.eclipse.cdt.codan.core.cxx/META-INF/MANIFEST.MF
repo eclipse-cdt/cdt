@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.core.cxx;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.3.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.cxx.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core,
@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.core.cxx,
  org.eclipse.cdt.codan.core.cxx.externaltool,
+ org.eclipse.cdt.codan.core.cxx.internal.externaltool,
  org.eclipse.cdt.codan.core.cxx.internal.model;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.ui,org.eclipse.cdt.codan.ui.cxx",
  org.eclipse.cdt.codan.core.cxx.internal.model.cfg;x-friends:="org.eclipse.cdt.codan.core.test",
  org.eclipse.cdt.codan.core.cxx.model

@@ -15,7 +15,6 @@ package org.eclipse.cdt.utils.serial;
  */
 public enum BaudRate {
 
-	B0(0),
 	B50(50),
 	B75(75),
 	B110(110),

@@ -14,7 +14,7 @@ import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
 
 /**
- * Example of codan problem details provider for flexlint integration
+ * Example of codan problem details provider for string search integration
  */
 public class GrepCheckerHelpLink extends AbstractCodanProblemDetailsProvider {
 	@Override

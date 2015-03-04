@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_1c8ff6b5",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/BaseUITestCase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-03-04T19:12:47Z",
+      "side": 1,
+      "message": "Compatibility with earlier versions of Eclipse platform is not required.",
+      "range": {
+        "startLine": 221,
+        "startChar": 2,
+        "endLine": 221,
+        "endChar": 17
+      },
+      "revId": "f17a8bdf7f7fc0eba7018cb8d688f543e8f6ea09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

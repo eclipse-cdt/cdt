@@ -11,14 +11,10 @@
 package org.eclipse.cdt.codan.core.cxx.model;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -26,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * Clients may extend this class.
  */
-public abstract class AbstractCIndexChecker extends AbstractCheckerWithProblemPreferences implements ICIndexChecker {
+public abstract class AbstractCIndexChecker extends AbstractCElementChecker implements ICIndexChecker {
 	private IFile file;
 	protected IIndex index;
 
@@ -34,43 +30,24 @@ public abstract class AbstractCIndexChecker extends AbstractCheckerWithProblemPr
 		return file;
 	}
 
-	void processFile(IFile file) throws CoreException, InterruptedException {
-		// create translation unit and access index
-		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit))
-			return; // not a C/C++ file
-		ITranslationUnit tu = (ITranslationUnit) model;
-		index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
-		// lock the index for read access
-		index.acquireReadLock();
+	@Override
+	protected void processTranslationUnitUnlocked(ITranslationUnit tu) {
 		try {
-			// traverse the translation unit using the visitor pattern.
-			this.file = file;
-			processUnit(tu);
-		} finally {
-			this.file = null;
-			index.releaseReadLock();
-		}
-	}
-
-	@Override
-	public synchronized boolean processResource(IResource resource) {
-		if (resource instanceof IFile) {
-			IFile file = (IFile) resource;
+			index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
+			// lock the index for read access
+			index.acquireReadLock();
 			try {
-				processFile(file);
-			} catch (CoreException e) {
-				CodanCorePlugin.log(e);
-			} catch (InterruptedException e) {
-				// ignore
+				// traverse the translation unit using the visitor pattern.
+				this.file = tu.getFile();
+				processUnit(tu);
+			} finally {
+				this.file = null;
+				index.releaseReadLock();
 			}
-			return false;
+		} catch (CoreException e) {
+			CodanCorePlugin.log(e);
+		} catch (InterruptedException e) {
+			// ignore
 		}
-		return true;
-	}
-
-	@Override
-	public boolean runInEditor() {
-		return false;
 	}
 }

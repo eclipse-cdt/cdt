@@ -15,8 +15,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.internal.core.natives.Messages;
+import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -32,7 +36,8 @@ public class SerialPort {
 	private StopBits stopBits = StopBits.S1;
 	private long handle;
 
-	private static final String PORT_OPEN = "Port is open";
+	private static final String SERIAL_KEY = "HARDWARE\\DEVICEMAP\\SERIALCOMM"; //$NON-NLS-1$
+	private static final String PORT_OPEN = Messages.SerialPort_PORT_IS_OPEN;
 
 	static {
 		System.loadLibrary("serial"); //$NON-NLS-1$
@@ -71,6 +76,22 @@ public class SerialPort {
 				names[i] = files[i].getAbsolutePath();
 			}
 			return names;
+		} else if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			WindowsRegistry reg = WindowsRegistry.getRegistry();
+			if (reg != null) {
+				List<String> ports = new ArrayList<>();
+				int i = 0;
+				String name = reg.getLocalMachineValueName(SERIAL_KEY, i);
+				while (name != null) {
+					String value = reg.getLocalMachineValue(SERIAL_KEY, name);
+					ports.add(value);
+					i++;
+					name = reg.getLocalMachineValueName(SERIAL_KEY, i);
+				}
+				return ports.toArray(new String[ports.size()]);
+			} else {
+				return new String[0];
+			}
 		} else {
 			return new String[0];
 		}
@@ -95,6 +116,7 @@ public class SerialPort {
 	public void close() throws IOException {
 		close0(handle);
 		isOpen = false;
+		handle = 0;
 	}
 
 	private native void close0(long handle) throws IOException;
@@ -136,7 +158,7 @@ public class SerialPort {
 		return parity;
 	}
 
-	public void setStopBit(StopBits stopBits) throws IOException {
+	public void setStopBits(StopBits stopBits) throws IOException {
 		if (isOpen) {
 			throw new IOException(PORT_OPEN);
 		}

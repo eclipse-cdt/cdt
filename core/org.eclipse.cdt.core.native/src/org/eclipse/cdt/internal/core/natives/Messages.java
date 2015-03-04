@@ -17,6 +17,7 @@ public class Messages extends NLS {
 	public static String Util_exception_cannotSetTerminalSize;
 	public static String Util_error_cannotRun;
 	public static String Util_exception_closeError;
+	public static String SerialPort_PORT_IS_OPEN;
 
 	static {
 		// Initialize resource bundle.

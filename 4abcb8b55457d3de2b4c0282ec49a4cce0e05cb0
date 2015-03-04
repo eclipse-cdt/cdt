@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_705aa1ca",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_0d706afb",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_4ded522d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-03T18:21:19Z",
       "side": 1,
       "message": "No need for null as the compiler does it anyway.\nRemoving it makes debugging faster as the debugger won\u0027t jump to the above line during construction.",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_5057a59f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_4ded522d",
       "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_b0b7e971",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_4d7a72dd",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_ad667646",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2015-03-03T18:21:19Z",
       "side": 1,
       "message": "Private",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_90bc6d57",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_ad667646",
       "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_b009a9be",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_8db29a4f",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_2dc1e697",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2015-03-03T18:21:19Z",
       "side": 1,
       "message": "Do we need to set this again or is the super() call enough?\n\nThis string must be externalized as mentioned above",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_10a87d0e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_2dc1e697",
       "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_900e2dc3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_0dbeaa1a",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_ad94b69a",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
         "patchSetId": 3
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_30abf90e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/ShowDebugToolbarAction.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_ad94b69a",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_6df00e04",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 3
@@ -149,6 +293,24 @@
       "writtenOn": "2015-03-03T18:21:19Z",
       "side": 1,
       "message": "I wonder if we should disable this menu or even hide it when the view is pinned?  I worry that the user will think it is broken if they change the \"show debug toolbar\" setting and nothing happens when pinned.",
+      "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_d02f1511",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2015-03-04T12:01:15Z",
+      "side": 1,
+      "message": "I tried both; I prefer to disable the action, when pinned.",
+      "parentUuid": "a7fb1785_6df00e04",
       "revId": "4abcb8b55457d3de2b4c0282ec49a4cce0e05cb0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

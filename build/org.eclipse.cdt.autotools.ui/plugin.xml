@@ -531,4 +531,17 @@
             </with>
        </definition>
     </extension>
+    <extension
+         point="org.eclipse.ui.importWizards">
+       <wizard
+             category="org.eclipse.cdt.ui.importWizardCategory"
+             class="org.eclipse.cdt.internal.autotools.ui.wizards.AutotoolsProjectImportWizard"
+             icon="icons/ac16/convert_normal.gif"
+             id="org.eclipse.cdt.autotools.ui.wizards.importWizaed"
+             name="%Autotools.import.wizard.name">
+          <description>
+             %Autotools.import.wizard.description
+          </description>
+       </wizard>
+    </extension>
 </plugin>

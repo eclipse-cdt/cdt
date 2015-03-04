@@ -363,17 +363,6 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			return super.requestWidgetToken(requester, priority);
 		}
 
-		// This method is called only when the Platform version is below 4.5.
-		// TODO(sprigogin): Remove this override once compatibility with Platform 4.4 is no longer
-		// required.
-		@Override
-		protected IFormattingContext createFormattingContext() {
-			Point selectedRange = getSelectedRange();
-			return createFormattingContext(selectedRange.x, selectedRange.y, false);
-		}
-
-		// This method is called when the Platform version is 4.5 or higher.
-		// @Override
 		@Override
 		protected IFormattingContext createFormattingContext(int selectionOffset, int selectionLength) {
 			return createFormattingContext(selectionOffset, selectionLength, true);

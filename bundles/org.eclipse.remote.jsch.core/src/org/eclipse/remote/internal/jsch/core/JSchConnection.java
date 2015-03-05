@@ -556,7 +556,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	@Override
 	public int getPort() {
 		String portStr = fRemoteConnection.getAttribute(PORT_ATTR);
-		return portStr != null ? Integer.parseInt(portStr) : DEFAULT_PORT;
+		return !portStr.isEmpty() ? Integer.parseInt(portStr) : DEFAULT_PORT;
 	}
 
 	/*
@@ -653,7 +653,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	public int getTimeout() {
 		String str = fRemoteConnection.getAttribute(TIMEOUT_ATTR);
-		return str != null ? Integer.parseInt(str) : DEFAULT_TIMEOUT;
+		return !str.isEmpty() ? Integer.parseInt(str) : DEFAULT_TIMEOUT;
 	}
 
 	/*
@@ -712,7 +712,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 	public boolean isPasswordAuth() {
 		String str = fRemoteConnection.getAttribute(IS_PASSWORD_ATTR);
-		return str != null ? Boolean.parseBoolean(str) : DEFAULT_IS_PASSWORD;
+		return !str.isEmpty() ? Boolean.parseBoolean(str) : DEFAULT_IS_PASSWORD;
 	}
 
 	private void loadEnv(IProgressMonitor monitor) throws RemoteConnectionException {

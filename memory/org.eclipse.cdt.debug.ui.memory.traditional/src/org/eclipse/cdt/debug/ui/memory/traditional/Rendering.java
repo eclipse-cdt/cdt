@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -601,26 +601,27 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 final int kind = events[i].getKind();
                 final int detail = events[i].getDetail();
                 final IDebugElement source = (IDebugElement) events[i].getSource();
-                /*
-                 * We have to make sure we are comparing memory blocks here. It pretty much is now the
-                 * case that the IDebugTarget is always null. Almost no one in the Embedded Space is
-                 * using anything but CDT/DSF or CDT/TCF at this point. The older CDI stuff will still
-                 * be using the old Debug Model API. But this will generate the same memory block  and
-                 * a legitimate IDebugTarget which will match properly.
-                 */
-                if(source.equals( getMemoryBlock() ) && source.getDebugTarget() == getMemoryBlock().getDebugTarget() )
+
+                if(source.getDebugTarget() == getMemoryBlock().getDebugTarget())
                 {
-                	if((detail & DebugEvent.BREAKPOINT) != 0)
-                		isBreakpointHit = true;
-                	if(kind == DebugEvent.SUSPEND)
+                	/* For CDT/DSF or CDT/TCF the IDebugTarget interface is not longer used,
+                	 * and returns null.  In such a case, we should check that we are dealing
+                	 * with the correct memory block instead.
+                	 */
+                	if (source.getDebugTarget() != null || source.equals(getMemoryBlock()))
                 	{
-                		handleSuspendEvent(detail);
-                		isSuspend = true;
-                	}
-                	else if(kind == DebugEvent.CHANGE)
-                	{
-                		handleChangeEvent();
-                		isChangeOnly = true;
+                		if((detail & DebugEvent.BREAKPOINT) != 0)
+                			isBreakpointHit = true;
+                		if(kind == DebugEvent.SUSPEND)
+                		{
+                			handleSuspendEvent(detail);
+                			isSuspend = true;
+                		}
+                		else if(kind == DebugEvent.CHANGE)
+                		{
+                			handleChangeEvent();
+                			isChangeOnly = true;
+                		}
                 	}
                 }
             }

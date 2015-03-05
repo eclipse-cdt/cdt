@@ -608,7 +608,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                  * be using the old Debug Model API. But this will generate the same memory block  and
                  * a legitimate IDebugTarget which will match properly.
                  */
-                if(source.equals( getMemoryBlock() ) && source.getDebugTarget() == getMemoryBlock().getDebugTarget() )
+                if(source.getDebugTarget() == getMemoryBlock().getDebugTarget() )
                 {
                 	if((detail & DebugEvent.BREAKPOINT) != 0)
                 		isBreakpointHit = true;
@@ -617,7 +617,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 		handleSuspendEvent(detail);
                 		isSuspend = true;
                 	}
-                	else if(kind == DebugEvent.CHANGE)
+                	else if(source.equals( getMemoryBlock()) && kind == DebugEvent.CHANGE)
                 	{
                 		handleChangeEvent();
                 		isChangeOnly = true;

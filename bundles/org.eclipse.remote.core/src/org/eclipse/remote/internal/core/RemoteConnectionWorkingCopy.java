@@ -33,7 +33,7 @@ import org.osgi.service.prefs.Preferences;
 public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy {
 
 	private RemoteConnection original;
-	private RemoteConnectionType connectionType;
+	private final RemoteConnectionType connectionType;
 	private String newName;
 	private final Map<String, String> newAttributes = new HashMap<>();
 	private final Map<String, String> newSecureAttributes = new HashMap<>();
@@ -52,6 +52,7 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	 */
 	public RemoteConnectionWorkingCopy(RemoteConnection original) {
 		this.original = original;
+		this.connectionType = (RemoteConnectionType) original.getConnectionType();
 	}
 
 	/*
@@ -63,11 +64,13 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	public String getName() {
 		if (newName != null) {
 			return newName;
-		} else if (original != null) {
-			return original.getName();
-		} else {
-			return null;
 		}
+
+		if (original != null) {
+			return original.getName();
+		}
+
+		return null;
 	}
 
 	/*
@@ -77,7 +80,7 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	 */
 	@Override
 	public void setName(String name) {
-		// set if only if it's changed
+		// set it only if it's changed
 		if (original == null || !name.equals(original.getName())) {
 			newName = name;
 		}
@@ -224,11 +227,7 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	 */
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
-		if (original != null) {
-			return original.getService(service);
-		} else {
-			return connectionType.getConnectionService(this, service);
-		}
+		return connectionType.getConnectionService(this, service);
 	}
 
 	/*
@@ -373,15 +372,15 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	public boolean isOpen() {
 		if (original != null) {
 			return original.isOpen();
-		} else {
-			IRemoteConnectionControlService controlService = connectionType.getConnectionService(this,
-					IRemoteConnectionControlService.class);
-			if (controlService != null) {
-				return controlService.isOpen();
-			} else {
-				return true;
-			}
 		}
+
+		IRemoteConnectionControlService controlService = connectionType.getConnectionService(this,
+				IRemoteConnectionControlService.class);
+		if (controlService != null) {
+			return controlService.isOpen();
+		}
+
+		return true;
 	}
 
 	/*
@@ -393,15 +392,15 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 	public String getProperty(String key) {
 		if (original != null) {
 			return original.getProperty(key);
-		} else {
-			IRemoteConnectionPropertyService propertyService = connectionType.getConnectionService(this,
-					IRemoteConnectionPropertyService.class);
-			if (propertyService != null) {
-				return propertyService.getProperty(key);
-			} else {
-				return null;
-			}
 		}
+
+		IRemoteConnectionPropertyService propertyService = connectionType.getConnectionService(this,
+				IRemoteConnectionPropertyService.class);
+		if (propertyService != null) {
+			return propertyService.getProperty(key);
+		}
+
+		return null;
 	}
 
 }

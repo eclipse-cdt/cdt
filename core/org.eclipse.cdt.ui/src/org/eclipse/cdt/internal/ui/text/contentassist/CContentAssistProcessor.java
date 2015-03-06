@@ -38,10 +38,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
@@ -269,7 +272,8 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 				if (names.length > 0 && names[0].getParent() instanceof IASTFieldReference) {
 					IASTFieldReference ref = (IASTFieldReference) names[0].getParent();
 					IASTExpression ownerExpr = ref.getFieldOwner();
-					if (ownerExpr.getExpressionType() instanceof IPointerType) {
+					IType ownerExprType = SemanticUtil.getNestedType(ownerExpr.getExpressionType(), SemanticUtil.TDEF);
+					if (ownerExprType instanceof IPointerType) {
 						context = replaceDotWithArrow(viewer, offset, isCompletion, context, activationChar);
 					}
 				}

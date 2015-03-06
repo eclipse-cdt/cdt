@@ -38,7 +38,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
@@ -259,19 +258,25 @@ public class CompletionTests extends AbstractContentAssistTest {
 	protected void assertParameterHint(String[] expected) throws Exception {
 		assertContentAssistResults(fCursorOffset, expected, false, CONTEXT);
 	}
+	
+	protected void assertDotReplacedWithArrow() throws Exception {
+		assertEquals("->", getDocument().get(fCursorOffset - 1, 2));
+	}
 
 	private static void setDisplayDefaultArguments(boolean value) {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_ARGUMENTS, value);
 	}
 
+	private void setReplaceDotWithArrow(boolean value) {
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_REPLACE_DOT_WITH_ARROW, value);
+		fProcessorNeedsConfiguring = true;  // to pick up the modified auto-activation preference
+	}
+	
 	private static void setDisplayDefaultedParameters(boolean value) {
 		IPreferenceStore preferenceStore = getPreferenceStore();
 		preferenceStore.setValue(ContentAssistPreference.DEFAULT_ARGUMENT_DISPLAY_PARAMETERS_WITH_DEFAULT_ARGUMENT, value);
-	}
-
-	private static IPreferenceStore getPreferenceStore() {
-		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
 	//void gfunc() {C1 v; v.m/*cursor*/
@@ -1682,8 +1687,23 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	void test(B<T> b) {
 	//	    b.val./*cursor*/
 	//	}
-	public void testFieldOfDeferredClassInstance_Bug402617() throws Exception {
+	public void testFieldOfDeferredClassInstance_bug402617() throws Exception {
 		final String[] expected = { "A", "foo(void)" };
-		assertContentAssistResults(fCursorOffset, expected, true, ID);
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
+	
+	//	struct A {
+	//		int foo;
+	//	};
+	//	typedef A* B;
+	//	int main() {
+	//		B waldo;
+	//		waldo./*cursor*/
+	//	}
+	public void testDotToArrowConversionForTypedef_bug461527() throws Exception {
+		setReplaceDotWithArrow(true);
+		final String[] expected = { "A", "foo : int" };
+		assertCompletionResults(fCursorOffset, expected, DISPLAY);
+		assertDotReplacedWithArrow();
 	}
 }

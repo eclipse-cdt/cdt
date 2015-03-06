@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2015 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Bug 426627
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
@@ -447,6 +448,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file8=ResourceHelper.createFile(project, "file8.cpp");
 		IFile file9=ResourceHelper.createFile(project, "file9.cpp");
 		IFile file10=ResourceHelper.createFile(project, "file10.cpp");
+		IFile file11=ResourceHelper.createFile(project, "file11.cpp");
+		IFile file12=ResourceHelper.createFile(project, "file12.cpp");
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file1.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
 
@@ -465,6 +468,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.processLine("../relative/path/gcc -I/path0 file8.cpp");
 		parser.processLine("clang -I/path0 file9.cpp");
 		parser.processLine("clang++ -I/path0 file10.cpp");
+		parser.processLine("libtool: compile:  gcc -I/path0 file11.cpp");
+		parser.processLine("libtool: compile:  g++ -I/path0 file12.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -506,6 +511,14 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		}
 		{
 			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file10, languageId);
+			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file11, languageId);
+			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file12, languageId);
 			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
 		}
 	}

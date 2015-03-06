@@ -1222,6 +1222,16 @@ public class ToolReference implements IToolReference {
 	@Override
 	public void addOptionCategory(IOptionCategory category) {
 	}
+	
+	@Override
+	public void setHidden(boolean hidden) {
+	}
+	
+	@Override
+	public boolean isHidden() {
+		return false;
+	}	
+	
 
 	/*
 	 * The following methods are added to allow the converter from ToolReference -> Tool

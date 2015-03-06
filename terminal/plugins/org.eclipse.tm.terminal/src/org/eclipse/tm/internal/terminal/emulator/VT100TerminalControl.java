@@ -949,10 +949,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				return;
 			}
 			
-			if (event.keyCode == SWT.BS) {
-				sendChar('\u007f', altKeyPressed);
-				return;
-			}
+			// TODO Linux tty is usually expecting a DEL (^?) character
+			// but this causes issues with some telnet servers and
+			// serial connections. Workaround: stty erase ^H
+			//if (event.keyCode == SWT.BS) {
+			//	sendChar(SWT.DEL, altKeyPressed);
+			//	return;
+			//}
 
 			// If the event character is NUL ('\u0000'), then a special key was pressed
 			// (e.g., PageUp, PageDown, an arrow key, a function key, Shift, Alt,

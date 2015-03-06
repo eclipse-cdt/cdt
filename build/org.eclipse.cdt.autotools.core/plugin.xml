@@ -398,7 +398,7 @@
                   archList="all"
                   configurationEnvironmentSupplier="org.eclipse.cdt.internal.autotools.core.AutotoolsEnvironmentVariableSupplier"
                   id="org.eclipse.linuxtools.cdt.autotools.core.toolChain"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
+                  languageSettingsProviders="org.eclipse.cdt.autotools.core.LibtoolGCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                   name="%Autotools.gnu.toolchain.name"
                   supportsManagedBuild="false"
                   targetTool="org.eclipse.linuxtools.cdt.autotools.core.tool.configure">
@@ -567,4 +567,14 @@
              name="%AutoconfErrorParser.name">
        </errorparser>
     </extension>
+    <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
+            id="org.eclipse.cdt.autotools.core.LibtoolGCCBuildCommandParser"
+            name="%LibtoolGCCBuildOutputParser.name"
+            parameter="(libtool:\s+compile:\s+)?((gcc)|([gc]\+\+)|(clang))"
+            prefer-non-shared="true">
+      </provider>
+   </extension>
 </plugin>

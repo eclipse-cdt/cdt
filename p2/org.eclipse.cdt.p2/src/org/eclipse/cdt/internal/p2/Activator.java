@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.p2;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -23,11 +23,11 @@ import org.osgi.framework.ServiceReference;
 public class Activator extends Plugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.p2";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.p2"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -64,31 +64,37 @@ public class Activator extends Plugin {
 	public static BundleContext getContext() {
 		return plugin.getBundle().getBundleContext();
 	}
-	
+
 	/**
 	 * Return a service from our context.
 	 * 
 	 * @param name name of the service
 	 * @return the service
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T getService(Class<T> clazz) {
 		BundleContext context = plugin.getBundle().getBundleContext();
-		ServiceReference ref = context.getServiceReference(clazz.getName());
-		return (ref != null) ? (T)context.getService(ref) : null;
+		ServiceReference<T> ref = context.getServiceReference(clazz);
+		return (ref != null) ? context.getService(ref) : null;
 	}
-	
-	/**
-	 * Spit out the log.
-	 * 
-	 * @param status
-	 */
-	public static void log(int severity, String message, Throwable exception) {
-		Platform.getLog(plugin.getBundle()).log(new Status(severity, PLUGIN_ID, message, exception));
+
+	public static IStatus getStatus(int severity, String message) {
+		return new Status(severity, PLUGIN_ID, message);
 	}
-	
+
+	public static IStatus getStatus(int severity, Throwable e) {
+		return new Status(severity, PLUGIN_ID, e.getLocalizedMessage(), e);
+	}
+
 	public static void log(IStatus status) {
-		Platform.getLog(plugin.getBundle()).log(status);
+		plugin.getLog().log(status);
+	}
+
+	public static void log(CoreException e) {
+		plugin.getLog().log(e.getStatus());
 	}
 	
+	public static void log(Throwable e) {
+		plugin.getLog().log(getStatus(IStatus.ERROR, e));
+	}
+
 }

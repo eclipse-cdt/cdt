@@ -155,6 +155,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private IOptionPathConverter optionPathConverter = null ;
 	private SupportedProperties supportedProperties;
 	private Boolean supportsManagedBuild;
+	private Boolean isToolDisplayable;
 	private boolean isTest;
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
@@ -442,6 +443,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (tool.announcement != null) {
 			announcement = new String(tool.announcement);
 		}
+		if (tool.isToolDisplayable != null) {
+			isToolDisplayable = new Boolean(tool.isToolDisplayable.booleanValue());
+		}
        	supportsManagedBuild = tool.supportsManagedBuild;
 
 
@@ -579,6 +583,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (announcement == null) {
 			announcement = tool.announcement;
 		}
+		if (isToolDisplayable == null) {
+			isToolDisplayable = tool.isToolDisplayable;
+		}		
 
 		if(supportsManagedBuild == null)
 			supportsManagedBuild = tool.supportsManagedBuild;
@@ -791,6 +798,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
 
+		// isDisplayable
+		String displayable = element.getAttribute(ITool.IS_DISPLAYABLE);
+		if (displayable != null) {
+			isToolDisplayable = Boolean.valueOf(displayable);
+		}
+		
 		scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID));
 
         tmp = element.getAttribute(IS_SYSTEM);
@@ -931,6 +944,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.ANNOUNCEMENT) != null) {
 			announcement = SafeStringInterner.safeIntern(element.getAttribute(ITool.ANNOUNCEMENT));
 		}
+		
+		// Get the tool displayability 
+		if (element.getAttribute(ITool.IS_DISPLAYABLE) != null) {
+			String displayable = SafeStringInterner.safeIntern(element.getAttribute(ITool.IS_DISPLAYABLE));
+			if(displayable != null) {
+				isToolDisplayable = Boolean.valueOf(displayable);
+			}
+		}		
 
 		// icon - was saved as URL in string form
 		if (element.getAttribute(IOptionCategory.ICON) != null) {
@@ -1084,6 +1105,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (announcement != null) {
 				element.setAttribute(ITool.ANNOUNCEMENT, announcement);
 			}
+			
+			// displayable tool
+			if (isToolDisplayable != null) {
+				element.setAttribute(ITool.IS_DISPLAYABLE, isToolDisplayable.toString());
+			}			
 
 			// Serialize elements from my super class
 			super.serialize(element);
@@ -2528,6 +2554,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			setDirty(true);
 		}
 	}
+	
+	@Override
+	public void setToolDisplayable(boolean displayability) {
+		if (isToolDisplayable == null || !(displayability == isToolDisplayable.booleanValue())) {
+			isToolDisplayable = new Boolean(displayability);
+			setDirty(true);
+		}
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandFlags()
@@ -3890,6 +3925,17 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return ((IToolChain)bo).isSystemObject();
 		return false;
 	}
+	
+	@Override
+	public boolean isDisplayable() {
+		if (isToolDisplayable == null) {
+			if (getSuperClass() != null) {
+				return getSuperClass().isDisplayable();
+			}
+			return true; // default is true
+		}
+		return isToolDisplayable.booleanValue();		
+	}	
 
 	@Override
 	public String getUniqueRealName() {
@@ -4032,6 +4078,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 		if(announcement != null && !announcement.equals(superTool.getAnnouncement()))
 			return true;
+		
+		if(isToolDisplayable != null && isToolDisplayable.booleanValue() != superTool.isDisplayable())
+			return true;		
 
 		if(discoveredInfoMap != null && discoveredInfoMap.size() != 0)
 			return true;

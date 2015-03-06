@@ -111,6 +111,15 @@ public interface IRemoteConnectionType {
 	<T extends IRemoteConnection.Service> boolean hasConnectionService(Class<T> service);
 
 	/**
+	 * Do processes created by this connection type support the given service.
+	 * 
+	 * @param service
+	 *            the service to be tested
+	 * @return true if processes created by this connection type support this service
+	 */
+	<T extends IRemoteProcess.Service> boolean hasProcessService(Class<T> service);
+
+	/**
 	 * Gets the remote connection corresponding to the supplied name.
 	 * 
 	 * @param name

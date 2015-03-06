@@ -24,10 +24,12 @@ import java.util.Set;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.core.RemoteDebugOptions;
+import org.eclipse.remote.internal.core.RemoteProcess;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.ChannelExec;
@@ -39,11 +41,13 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 	private final Set<Character> charSet = new HashSet<Character>();
 
-	private Map<String, String> fNewRemoteEnv = null;
+	private ChannelExec fChannel;
+	private Map<String, String> fNewRemoteEnv;
+	private boolean fPreamble = true;
 
-	public JSchProcessBuilder(JSchConnection connection, List<String> command) {
-		super(command);
-		fConnection = connection;
+	public JSchProcessBuilder(IRemoteConnection connection, List<String> command) {
+		super(connection, command);
+		fConnection = connection.getService(JSchConnection.class);
 		fRemoteEnv.putAll(fConnection.getEnv());
 
 		// Create set of characters not to escape
@@ -56,7 +60,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 	}
 
-	public JSchProcessBuilder(JSchConnection connection, String... command) {
+	public JSchProcessBuilder(IRemoteConnection connection, String... command) {
 		this(connection, Arrays.asList(command));
 	}
 
@@ -151,14 +155,14 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 
 		try {
-			ChannelExec exec = fConnection.getExecChannel();
+			fChannel = fConnection.getExecChannel();
 			String command = buildCommand(remoteCmd, env, clearEnv);
-			exec.setCommand(command);
-			exec.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
-			exec.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
-			exec.connect();
+			fChannel.setCommand(command);
+			fChannel.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+			fChannel.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
+			fChannel.connect();
 			RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: " + command); //$NON-NLS-1$
-			return new JSchProcess(exec, redirectErrorStream());
+			return new RemoteProcess(getRemoteConnection(), this);
 		} catch (RemoteConnectionException e) {
 			throw new IOException(e.getMessage());
 		} catch (JSchException e) {
@@ -166,24 +170,34 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 	}
 
+	public ChannelExec getChannel() {
+		return fChannel;
+	}
+
+	public void setPreamble(boolean enable) {
+		fPreamble = enable;
+	}
+
 	private String buildCommand(String cmd, List<String> environment, boolean clearEnv) {
 		StringBuffer sb = new StringBuffer();
-		if (directory() != null) {
-			sb.append("cd " + charEscapify(directory().toURI().getPath(), charSet) + " && "); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (clearEnv) {
-			sb.append("env -i"); //$NON-NLS-1$
-			for (String env : environment) {
-				sb.append(" \"" + env + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fPreamble) {
+			if (directory() != null) {
+				sb.append("cd " + charEscapify(directory().toURI().getPath(), charSet) + " && "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			sb.append(" "); //$NON-NLS-1$
-		} else {
-			for (String env : environment) {
-				sb.append("export \"" + env + "\"; "); //$NON-NLS-1$ //$NON-NLS-2$
+			if (clearEnv) {
+				sb.append("env -i"); //$NON-NLS-1$
+				for (String env : environment) {
+					sb.append(" \"" + env + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				sb.append(" "); //$NON-NLS-1$
+			} else {
+				for (String env : environment) {
+					sb.append("export \"" + env + "\"; "); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 		sb.append(cmd);
-		if (fConnection.useLoginShell()) {
+		if (fPreamble && fConnection.useLoginShell()) {
 			sb.insert(0, "/bin/bash -l -c '"); //$NON-NLS-1$
 			sb.append("'"); //$NON-NLS-1$
 		}

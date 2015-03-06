@@ -46,7 +46,7 @@ public interface IRemoteProcessBuilder {
 	 * 
 	 * @return a list containing the program and arguments
 	 */
-	public List<String> command();
+	List<String> command();
 
 	/**
 	 * Sets this process builder's operating system program and arguments.
@@ -54,7 +54,7 @@ public interface IRemoteProcessBuilder {
 	 * @param command
 	 * @return This process builder
 	 */
-	public IRemoteProcessBuilder command(List<String> command);
+	IRemoteProcessBuilder command(List<String> command);
 
 	/**
 	 * Sets this process builder's operating system program and arguments.
@@ -62,14 +62,14 @@ public interface IRemoteProcessBuilder {
 	 * @param command
 	 * @return this process builder
 	 */
-	public IRemoteProcessBuilder command(String... command);
+	IRemoteProcessBuilder command(String... command);
 
 	/**
 	 * Returns this process builder's working directory.
 	 * 
 	 * @return an IFileStore reference to the working directory
 	 */
-	public IFileStore directory();
+	IFileStore directory();
 
 	/**
 	 * Sets this process builder's working directory.
@@ -77,7 +77,7 @@ public interface IRemoteProcessBuilder {
 	 * @param directory
 	 * @return This process builder
 	 */
-	public IRemoteProcessBuilder directory(IFileStore directory);
+	IRemoteProcessBuilder directory(IFileStore directory);
 
 	/**
 	 * Returns a string map view of this process builder's environment. The
@@ -85,7 +85,7 @@ public interface IRemoteProcessBuilder {
 	 * 
 	 * @return the process builder's environment
 	 */
-	public Map<String, String> environment();
+	Map<String, String> environment();
 
 	/**
 	 * Get the flags that are supported by this process builder.
@@ -93,7 +93,7 @@ public interface IRemoteProcessBuilder {
 	 * @return bitwise-or of the supported flags
 	 * @since 5.0
 	 */
-	public int getSupportedFlags();
+	int getSupportedFlags();
 
 	/**
 	 * Tells whether this process builder merges standard error and standard
@@ -101,7 +101,7 @@ public interface IRemoteProcessBuilder {
 	 * 
 	 * @return true if standard error and standard output will be merged
 	 */
-	public boolean redirectErrorStream();
+	boolean redirectErrorStream();
 
 	/**
 	 * Sets this process builder's redirectErrorStream property.
@@ -109,7 +109,7 @@ public interface IRemoteProcessBuilder {
 	 * @param redirectErrorStream
 	 * @return This process builder
 	 */
-	public IRemoteProcessBuilder redirectErrorStream(boolean redirectErrorStream);
+	IRemoteProcessBuilder redirectErrorStream(boolean redirectErrorStream);
 
 	/**
 	 * Starts a new process using the attributes of this process builder.
@@ -117,7 +117,7 @@ public interface IRemoteProcessBuilder {
 	 * @return remote process object
 	 * @throws IOException
 	 */
-	public IRemoteProcess start() throws IOException;
+	IRemoteProcess start() throws IOException;
 
 	/**
 	 * Starts a new process using the attributes of this process builder. The
@@ -139,5 +139,13 @@ public interface IRemoteProcessBuilder {
 	 * @throws IOException
 	 * @since 5.0
 	 */
-	public IRemoteProcess start(int flags) throws IOException;
+	IRemoteProcess start(int flags) throws IOException;
+
+	/**
+	 * Get the connection that will be used by this process builder to create remote processes.
+	 * 
+	 * @return connection used to create remote processes
+	 * @since 2.0
+	 */
+	IRemoteConnection getRemoteConnection();
 }

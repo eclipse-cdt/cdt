@@ -24,16 +24,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Proxy;
 import com.jcraft.jsch.SocketFactory;
 
@@ -49,12 +46,13 @@ public class JSchConnectionProxyFactory {
 		private String command;
 		private IRemoteProcess process;
 		private JSchConnection connection;
-		private IProgressMonitor monitor;
+		private final IProgressMonitor monitor;
 		private boolean connectCalled = false;
 
 		private CommandProxy(JSchConnection connection, String command, IProgressMonitor monitor) {
-			if (command == null || monitor == null)
+			if (command == null || monitor == null) {
 				throw new IllegalArgumentException();
+			}
 			this.command = command;
 			this.connection = connection;
 			this.monitor = monitor;
@@ -62,7 +60,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#close()
 		 */
 		@Override
@@ -72,12 +70,11 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#connect(com.jcraft.jsch.SocketFactory, java.lang.String, int, int)
 		 */
 		@Override
-		public void connect(SocketFactory socket_factory, String host,
-				int port, int timeout) throws IOException {
+		public void connect(SocketFactory socket_factory, String host, int port, int timeout) throws IOException {
 			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
 			try {
 				if (timeout == 0) {
@@ -88,11 +85,14 @@ public class JSchConnectionProxyFactory {
 				SubMonitor subMon = SubMonitor.convert(monitor, waitSteps * 2);
 				final SubMonitor childMon = subMon.newChild(waitSteps);
 
+				if (connection == null) {
+					IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
+					connection = (JSchConnection) manager.getLocalConnectionType().getConnections().get(0);
+				}
+
 				// Open connection if it isn't already opened
 				try {
-					if (connection != null) {
-						connection.openMinimal(childMon);
-					}
+					connection.openMinimal(childMon);
 				} catch (RemoteConnectionException e) {
 					throw new IOException(e);
 				}
@@ -102,22 +102,11 @@ public class JSchConnectionProxyFactory {
 				command = command.replace("%h", host); //$NON-NLS-1$
 				command = command.replace("%p", Integer.toString(port)); //$NON-NLS-1$
 
-				if (connection != null) {
-					// The process-builder adds unnecessary extra commands (cd, export, ..) and might not work for restricted shells
-					try {
-						ChannelExec exec = connection.getExecChannel();
-						exec.setCommand(command);
-						exec.connect();
-						process = new JSchProcess(exec, false);
-					} catch (JSchException | RemoteConnectionException e) {
-						throw new IOException(e);
-					}
-				} else {
-					List<String> cmd = new ArgumentParser(command).getTokenList();
-					IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
-					IRemoteConnection connection = manager.getLocalConnectionType().getConnections().get(0); 
-					process = connection.getService(IRemoteProcessService.class).getProcessBuilder(cmd).start();
-				}
+				List<String> cmd = new ArgumentParser(command).getTokenList();
+				JSchProcessBuilder processBuilder = (JSchProcessBuilder) connection.getRemoteConnection()
+						.getService(IRemoteProcessService.class).getProcessBuilder(cmd);
+				processBuilder.setPreamble(false);
+				process = processBuilder.start();
 
 				// Wait on command to produce stdout output
 				long endTime = System.currentTimeMillis() + timeout;
@@ -154,8 +143,8 @@ public class JSchConnectionProxyFactory {
 					} else if (bCanceled) {
 						cause = Messages.JSchConnectionProxyFactory_wasCanceled;
 					}
-					throw new IOException(MessageFormat.format(Messages.JSchConnectionProxyFactory_ProxyCommandFailed,
-							command, cause, msg));
+					throw new IOException(MessageFormat.format(Messages.JSchConnectionProxyFactory_ProxyCommandFailed, command,
+							cause, msg));
 				}
 
 				// Dump the stderr to log
@@ -166,8 +155,7 @@ public class JSchConnectionProxyFactory {
 						String line;
 						try {
 							while ((line = bufferedReader.readLine()) != null) {
-								log.log(new Status(IStatus.INFO, Activator.getUniqueIdentifier(),
-										IStatus.OK, line, null));
+								log.log(new Status(IStatus.INFO, Activator.getUniqueIdentifier(), IStatus.OK, line, null));
 							}
 						} catch (IOException e) {
 							Activator.log(e);
@@ -181,7 +169,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#getInputStream()
 		 */
 		@Override
@@ -191,7 +179,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#getOutputStream()
 		 */
 		@Override
@@ -201,7 +189,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#getSocket()
 		 */
 		@Override
@@ -212,20 +200,21 @@ public class JSchConnectionProxyFactory {
 
 	private static class SSHForwardProxy implements Proxy {
 		private Channel channel;
-		private JSchConnection connection;
-		private IProgressMonitor monitor;
+		private final JSchConnection connection;
+		private final IProgressMonitor monitor;
 		private boolean connectCalled = false;
 
 		private SSHForwardProxy(JSchConnection proxyConnection, IProgressMonitor monitor) {
-			if (proxyConnection == null || monitor == null)
+			if (proxyConnection == null || monitor == null) {
 				throw new IllegalArgumentException();
+			}
 			this.connection = proxyConnection;
 			this.monitor = monitor;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#close()
 		 */
 		@Override
@@ -235,12 +224,11 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#connect(com.jcraft.jsch.SocketFactory, java.lang.String, int, int)
 		 */
 		@Override
-		public void connect(SocketFactory socket_factory, String host, int port,
-				int timeout) throws Exception {
+		public void connect(SocketFactory socket_factory, String host, int port, int timeout) throws Exception {
 			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
 			try {
 				if (!connection.hasOpenSession()) {
@@ -258,7 +246,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#getInputStream()
 		 */
 		@Override
@@ -273,7 +261,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#getOutputStream()
 		 */
 		@Override
@@ -288,7 +276,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.jcraft.jsch.Proxy#getSocket()
 		 */
 		@Override

@@ -44,6 +44,26 @@
             factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
             service="org.eclipse.remote.internal.jsch.core.JSchConnection">
       </connectionService>
+      <processService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchProcess$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessControlService">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchProcess$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessSignalService">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchProcess$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessTerminalService">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchProcess$Factory"
+            service="org.eclipse.remote.internal.jsch.core.JSchProcess">
+      </processService>
    </extension>
    <extension
          id="org.eclipse.remote.jsch.filesystem"

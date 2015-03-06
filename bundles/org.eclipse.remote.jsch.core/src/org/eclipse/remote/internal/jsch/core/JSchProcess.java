@@ -16,19 +16,55 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import org.eclipse.remote.core.AbstractRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcessControlService;
+import org.eclipse.remote.core.IRemoteProcessSignalService;
+import org.eclipse.remote.core.IRemoteProcessTerminalService;
+import org.eclipse.remote.core.exception.RemoteConnectionException;
 
 import com.jcraft.jsch.ChannelExec;
 
-public class JSchProcess extends AbstractRemoteProcess {
+public class JSchProcess implements IRemoteProcessControlService, IRemoteProcessSignalService, IRemoteProcessTerminalService {
+	@SuppressWarnings("nls")
+	private final String signals[] = new String[] { "", "HUP", "INT", "QUIT", "ILL", "", "ABRT", "", "FPE", "KILL", "", "SEGV", "",
+			"PIPE", "ALRM", "TERM", "", "STOP", "TSTP", "CONT", "", "", "", "", "", "", "", "", "", "", "USR1", "USR2" };
+
 	private static int WAIT_TIMEOUT = 1000;
 	private static int refCount = 0;
 
 	private final ChannelExec fChannel;
+	private final IRemoteProcess fProcess;
+
 	private InputStream fProcStdout;
 	private InputStream fProcStderr;
 	private Thread fStdoutReader;
 	private Thread fStderrReader;
+
+	public static class Factory implements IRemoteProcess.Service.Factory {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.remote.core.IRemoteProcess.Service.Factory#getService(org.eclipse.remote.core.IRemoteProcess,
+		 * java.lang.Class)
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T extends IRemoteProcess.Service> T getService(IRemoteProcess remoteProcess, Class<T> service) {
+			// This little trick creates an instance of this class
+			// then for each interface it implements, it returns the same object.
+			// This works because the connection caches the service so only one gets created.
+			// As a side effect, it makes this class a service too which can be used
+			// by the this plug-in
+			if (JSchProcess.class.equals(service)) {
+				return (T) new JSchProcess(remoteProcess);
+			}
+			if (IRemoteProcessControlService.class.equals(service) || IRemoteProcessSignalService.class.equals(service)
+					|| IRemoteProcessTerminalService.class.equals(service)) {
+				return (T) remoteProcess.getService(JSchProcess.class);
+			}
+			return null;
+		}
+	}
 
 	private class ProcReader implements Runnable {
 		private final static int BUF_SIZE = 8192;
@@ -44,6 +80,7 @@ public class JSchProcess extends AbstractRemoteProcess {
 			}
 		}
 
+		@Override
 		public void run() {
 			int len;
 			byte b[] = new byte[BUF_SIZE];
@@ -79,23 +116,29 @@ public class JSchProcess extends AbstractRemoteProcess {
 		}
 	}
 
-	public JSchProcess(ChannelExec channel, boolean merge) throws IOException {
-		fChannel = channel;
+	public JSchProcess(IRemoteProcess process) {
+		fProcess = process;
+		fChannel = ((JSchProcessBuilder) process.getProcessBuilder()).getChannel();
 
-		if (merge) {
-			PipedOutputStream pipedOutput = new PipedOutputStream();
+		try {
+			if (process.getProcessBuilder().redirectErrorStream()) {
+				PipedOutputStream pipedOutput = new PipedOutputStream();
 
-			fProcStdout = new PipedInputStream(pipedOutput);
-			fProcStderr = new NullInputStream();
+				fProcStdout = new PipedInputStream(pipedOutput);
+				fProcStderr = new NullInputStream();
 
-			fStderrReader = new Thread(new ProcReader(channel.getErrStream(), pipedOutput));
-			fStdoutReader = new Thread(new ProcReader(channel.getInputStream(), pipedOutput));
+				fStderrReader = new Thread(new ProcReader(fChannel.getErrStream(), pipedOutput));
+				fStdoutReader = new Thread(new ProcReader(fChannel.getInputStream(), pipedOutput));
 
-			fStderrReader.start();
-			fStdoutReader.start();
-		} else {
-			fProcStdout = channel.getInputStream();
-			fProcStderr = channel.getErrStream();
+				fStderrReader.start();
+				fStdoutReader.start();
+			} else {
+				fProcStdout = fChannel.getInputStream();
+				fProcStderr = fChannel.getErrStream();
+			}
+		} catch (IOException e) {
+			Activator.log(e);
+			destroy();
 		}
 
 	}
@@ -170,10 +213,46 @@ public class JSchProcess extends AbstractRemoteProcess {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.remote.core.AbstractRemoteProcess#isCompleted()
+	 * @see org.eclipse.remote.core.RemoteProcess#isCompleted()
 	 */
 	@Override
 	public boolean isCompleted() {
 		return fChannel.isClosed();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteProcess.Service#getRemoteProcess()
+	 */
+	@Override
+	public IRemoteProcess getRemoteProcess() {
+		return fProcess;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteProcessTerminalService#setTerminalSize(int, int, int, int)
+	 */
+	@Override
+	public void setTerminalSize(int cols, int rows, int width, int height) {
+		fChannel.setPtySize(cols, rows, width, height);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteProcessSignalService#sendSignal(int)
+	 */
+	@Override
+	public void sendSignal(int signal) throws RemoteConnectionException {
+		if (signal >= 0 && signal <= USR2) {
+			try {
+				fChannel.sendSignal(signals[signal]);
+			} catch (Exception e) {
+				throw new RemoteConnectionException(e.getMessage());
+			}
+		}
 	}
 }

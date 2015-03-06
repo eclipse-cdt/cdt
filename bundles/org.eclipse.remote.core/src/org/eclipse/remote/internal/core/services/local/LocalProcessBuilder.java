@@ -30,8 +30,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
 import org.eclipse.remote.core.IProcessFactory;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.internal.core.RemoteCorePlugin;
+import org.eclipse.remote.internal.core.RemoteProcess;
 
 public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	private static final String EXTENSION_POINT_ID = "processFactory"; //$NON-NLS-1$
@@ -40,14 +42,16 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final IProcessFactory fProcessFactory;
 	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 
-	public LocalProcessBuilder(List<String> command) {
-		super(command);
+	private Process localProcess;
+
+	public LocalProcessBuilder(IRemoteConnection connection, List<String> command) {
+		super(connection, command);
 		fRemoteEnv.putAll(System.getenv());
 		fProcessFactory = getProcessFactory();
 	}
 
-	public LocalProcessBuilder(String... command) {
-		this(Arrays.asList(command));
+	public LocalProcessBuilder(IRemoteConnection connection, String... command) {
+		this(connection, Arrays.asList(command));
 	}
 
 	/*
@@ -104,18 +108,21 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 		for (Entry<String, String> entry : environment().entrySet()) {
 			environmentArray[index++] = entry.getKey() + "=" + entry.getValue(); //$NON-NLS-1$
 		}
-		Process localProc;
 		if (directory() != null) {
 			try {
-				localProc = fProcessFactory.exec(commandArray, environmentArray,
+				localProcess = fProcessFactory.exec(commandArray, environmentArray,
 						directory().toLocalFile(EFS.NONE, new NullProgressMonitor()));
 			} catch (CoreException e) {
 				throw new IOException(e.getMessage());
 			}
 		} else {
-			localProc = fProcessFactory.exec(commandArray, environmentArray);
+			localProcess = fProcessFactory.exec(commandArray, environmentArray);
 		}
-		return new LocalProcess(localProc, redirectErrorStream());
+		return new RemoteProcess(getRemoteConnection(), this);
+	}
+
+	public Process getProcess() {
+		return localProcess;
 	}
 
 	private IProcessFactory getProcessFactory() {

@@ -25,15 +25,24 @@ import org.eclipse.core.filesystem.IFileStore;
  */
 public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuilder {
 	private List<String> fCommandArgs;
-	private IFileStore fRemoteDir = null;
-	private boolean fRedirectErrorStream = false;
+	private IFileStore fRemoteDir;
+	private boolean fRedirectErrorStream;
 
-	public AbstractRemoteProcessBuilder(List<String> command) {
+	private final IRemoteConnection fConnection;
+
+	/**
+	 * @since 2.0
+	 */
+	public AbstractRemoteProcessBuilder(IRemoteConnection connection, List<String> command) {
 		fCommandArgs = command;
+		fConnection = connection;
 	}
 
-	public AbstractRemoteProcessBuilder(String... command) {
-		this(Arrays.asList(command));
+	/**
+	 * @since 2.0
+	 */
+	public AbstractRemoteProcessBuilder(IRemoteConnection connection, String... command) {
+		this(connection, Arrays.asList(command));
 	}
 
 	/*
@@ -172,5 +181,18 @@ public abstract class AbstractRemoteProcessBuilder implements IRemoteProcessBuil
 			res.append(" "); //$NON-NLS-1$
 		}
 		return res.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteProcessBuilder#getRemoteConnection()
+	 */
+	/**
+	 * @since 2.0
+	 */
+	@Override
+	public IRemoteConnection getRemoteConnection() {
+		return fConnection;
 	}
 }

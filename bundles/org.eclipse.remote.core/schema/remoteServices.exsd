@@ -21,6 +21,7 @@
             <element ref="connectionType" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="connectionTypeService" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="connectionService" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="processService" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -167,6 +168,46 @@
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteConnection$Service$Factory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="processService">
+      <annotation>
+         <documentation>
+            This is a service that implements the given service interface for processes of a given connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="connectionTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The connection type for the connections that this service applies to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="service" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The interface class that this service implements. The service is found by calling the getService() method on the IRemoteProcess object with this interface class as the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory class used to instantiate the service.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteProcess$Service$Factory"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -16,11 +16,13 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import org.eclipse.remote.core.AbstractRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcessControlService;
 
-public class LocalProcess extends AbstractRemoteProcess {
+public class LocalProcess implements IRemoteProcessControlService {
 	private static int refCount = 0;
 
+	private final IRemoteProcess remoteProcess;
 	private final Process localProcess;
 	private InputStream procStdout;
 	private InputStream procStderr;
@@ -29,11 +31,34 @@ public class LocalProcess extends AbstractRemoteProcess {
 	private final Thread completedChecker;
 	private volatile boolean isCompleted;
 
+	public static class Factory implements IRemoteProcess.Service.Factory {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.remote.core.IRemoteProcess.Service.Factory#getService(org.eclipse.remote.core.IRemoteProcess,
+		 * java.lang.Class)
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T extends IRemoteProcess.Service> T getService(IRemoteProcess remoteProcess, Class<T> service) {
+			// This little trick creates an instance of this class
+			// then for each interface it implements, it returns the same object.
+			// This works because the connection caches the service so only one gets created.
+			// As a side effect, it makes this class a service too which can be used
+			// by the this plug-in
+			if (LocalProcess.class.equals(service)) {
+				return (T) new LocalProcess(remoteProcess);
+			}
+			if (IRemoteProcessControlService.class.equals(service)) {
+				return (T) remoteProcess.getService(LocalProcess.class);
+			}
+			return null;
+		}
+	}
+
 	/**
 	 * Thread to merge stdout and stderr. Keeps refcount so that output stream
 	 * is not closed too early.
-	 * 
-	 * @author greg
 	 * 
 	 */
 	private class ProcOutputMerger implements Runnable {
@@ -86,23 +111,28 @@ public class LocalProcess extends AbstractRemoteProcess {
 		}
 	}
 
-	public LocalProcess(Process proc, boolean merge) throws IOException {
-		localProcess = proc;
+	public LocalProcess(IRemoteProcess process) {
+		remoteProcess = process;
+		localProcess = ((LocalProcessBuilder) process.getProcessBuilder()).getProcess();
 
-		if (merge) {
-			PipedOutputStream pipedOutput = new PipedOutputStream();
+		try {
+			if (process.getProcessBuilder().redirectErrorStream()) {
+				PipedOutputStream pipedOutput = new PipedOutputStream();
 
-			procStderr = new NullInputStream();
-			procStdout = new PipedInputStream(pipedOutput);
+				procStderr = new NullInputStream();
+				procStdout = new PipedInputStream(pipedOutput);
 
-			stderrReader = new Thread(new ProcOutputMerger(proc.getErrorStream(), pipedOutput));
-			stdoutReader = new Thread(new ProcOutputMerger(proc.getInputStream(), pipedOutput));
+				stderrReader = new Thread(new ProcOutputMerger(localProcess.getErrorStream(), pipedOutput));
+				stdoutReader = new Thread(new ProcOutputMerger(localProcess.getInputStream(), pipedOutput));
 
-			stderrReader.start();
-			stdoutReader.start();
-		} else {
-			procStderr = localProcess.getErrorStream();
-			procStdout = localProcess.getInputStream();
+				stderrReader.start();
+				stdoutReader.start();
+			} else {
+				procStderr = localProcess.getErrorStream();
+				procStdout = localProcess.getInputStream();
+			}
+		} catch (IOException e) {
+			localProcess.destroy();
 		}
 
 		completedChecker = new Thread(new Runnable() {
@@ -185,10 +215,15 @@ public class LocalProcess extends AbstractRemoteProcess {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.remote.core.AbstractRemoteProcess#isCompleted()
+	 * @see org.eclipse.remote.core.RemoteProcess#isCompleted()
 	 */
 	@Override
 	public boolean isCompleted() {
 		return isCompleted;
+	}
+
+	@Override
+	public IRemoteProcess getRemoteProcess() {
+		return remoteProcess;
 	}
 }

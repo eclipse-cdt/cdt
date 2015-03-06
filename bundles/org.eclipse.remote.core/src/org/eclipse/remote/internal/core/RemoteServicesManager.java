@@ -83,7 +83,7 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		for (IExtension ext : point.getExtensions()) {
 			for (IConfigurationElement ce : ext.getConfigurationElements()) {
 				String name = ce.getName();
-				if (name.equals("connectionTypeService") || name.equals("connectionService")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (name.equals("connectionTypeService") || name.equals("connectionService") || name.equals("processService")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					String id = ce.getAttribute("connectionTypeId"); //$NON-NLS-1$
 					RemoteConnectionType services = connectionTypeMap.get(id);
 					if (services != null) {

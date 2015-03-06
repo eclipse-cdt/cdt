@@ -22,6 +22,7 @@ import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
+import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 import org.eclipse.remote.core.exception.ConnectionExistsException;
@@ -201,6 +202,44 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public <T extends IRemoteConnection.Service> boolean hasConnectionService(Class<T> service) {
+		return serviceDefinitionMap.get(service.getName()) != null;
+	}
+
+	/**
+	 * Called from the remote process to get a service object for that process.
+	 * 
+	 * @param process
+	 *            the process to which the service applies
+	 * @param service
+	 *            the interface the service must implement
+	 * @return the service object
+	 * @throws CoreException
+	 */
+	public <T extends IRemoteProcess.Service> T getProcessService(IRemoteProcess process, Class<T> service) {
+		// Both top level and connection services are stored in the serviceDefinitionMap.
+		// In theory the two sets of interfaces can't collide.
+		IConfigurationElement ce = serviceDefinitionMap.get(service.getName());
+		if (ce != null) {
+			try {
+				IRemoteProcess.Service.Factory factory = (IRemoteProcess.Service.Factory) ce.createExecutableExtension("factory"); //$NON-NLS-1$
+				if (factory != null) {
+					return factory.getService(process, service);
+				}
+			} catch (CoreException e) {
+				RemoteCorePlugin.log(e.getStatus());
+			}
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionType#hasProcessService(java.lang.Class)
+	 */
+	@Override
+	public <T extends IRemoteProcess.Service> boolean hasProcessService(Class<T> service) {
 		return serviceDefinitionMap.get(service.getName()) != null;
 	}
 

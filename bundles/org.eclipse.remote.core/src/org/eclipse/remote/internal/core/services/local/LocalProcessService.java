@@ -46,12 +46,12 @@ public class LocalProcessService implements IRemoteProcessService {
 
 	@Override
 	public IRemoteProcessBuilder getProcessBuilder(List<String> command) {
-		return new LocalProcessBuilder(command);
+		return new LocalProcessBuilder(remoteConnection, command);
 	}
 
 	@Override
 	public IRemoteProcessBuilder getProcessBuilder(String... command) {
-		return new LocalProcessBuilder(command);
+		return new LocalProcessBuilder(remoteConnection, command);
 	}
 
 	@Override

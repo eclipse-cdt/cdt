@@ -810,6 +810,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isDisplayable" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether or not the tool is displayable within the setting tab of the user interface. This attribute should be set to false when a tool is internal to the toolchain and options cannot be changed by the user. Default value is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -1618,12 +1625,14 @@ If no order is defined a default order is assumed, see &quot;org.eclipse.cdt.man
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
@@ -2576,15 +2585,6 @@ The only difference between this element and the resourceConfiguration is that r
 
    <annotation>
       <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -2598,6 +2598,15 @@ The only difference between this element and the resourceConfiguration is that r
       </appInfo>
       <documentation>
          [Enter examples here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
       </documentation>
    </annotation>
 

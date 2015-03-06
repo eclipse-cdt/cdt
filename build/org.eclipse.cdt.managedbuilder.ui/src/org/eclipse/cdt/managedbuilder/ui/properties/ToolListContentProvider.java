@@ -67,9 +67,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			filteredTools = config.getFilteredTools();
 			//  Create an element for each one
 			for (int i=0; i<filteredTools.length; i++) {
-				ToolListElement e = new ToolListElement(filteredTools[i]);
-				elementList.add(e);
-				createChildElements(e,config);
+				if(!filteredTools[i].isHidden()) {
+					ToolListElement e = new ToolListElement(filteredTools[i]);
+					elementList.add(e);
+					createChildElements(e,config);
+				}
 			}
 		}
 		return elementList.toArray(new ToolListElement[elementList.size()]);

@@ -2,6 +2,7 @@
 <?pde version="3.8"?><target name="cdt_e4.5" sequenceNumber="22">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.apache.commons.compress" version="0.0.0"/>
 <unit id="org.apache.log4j" version="0.0.0"/>
 <unit id="org.apache.log4j.source" version="0.0.0"/>
 <unit id="net.sourceforge.lpg.lpgjavaruntime" version="0.0.0"/>

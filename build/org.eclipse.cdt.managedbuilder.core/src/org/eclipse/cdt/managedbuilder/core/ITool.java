@@ -47,6 +47,10 @@ public interface ITool extends IHoldsOptions {
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 	public static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	public static final String IS_SYSTEM = "isSystem";							//$NON-NLS-1$
+	/**
+	 * @since 8.4
+	 */
+	public static final String IS_HIDDEN = "isHidden";	//$NON-NLS-1$	
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
@@ -696,6 +700,16 @@ public interface ITool extends IHoldsOptions {
 	boolean matches(ITool tool);
 	
 	boolean isSystemObject();
+	
+	/**
+	 * @since 8.4
+	 */
+	boolean isHidden();
+	
+	/**
+	 * @since 8.4
+	 */
+	void setToolHidden(boolean hidden);
 	
 	String getUniqueRealName();
 }

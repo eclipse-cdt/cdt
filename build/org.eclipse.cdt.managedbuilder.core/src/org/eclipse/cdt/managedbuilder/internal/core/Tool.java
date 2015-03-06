@@ -155,6 +155,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private IOptionPathConverter optionPathConverter = null ;
 	private SupportedProperties supportedProperties;
 	private Boolean supportsManagedBuild;
+	private Boolean isToolHidden = null;
 	private boolean isTest;
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
@@ -442,6 +443,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (tool.announcement != null) {
 			announcement = new String(tool.announcement);
 		}
+		if (tool.isToolHidden != null) {
+			isToolHidden = new Boolean(tool.isToolHidden.booleanValue());
+		}
        	supportsManagedBuild = tool.supportsManagedBuild;
 
 
@@ -579,6 +583,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (announcement == null) {
 			announcement = tool.announcement;
 		}
+		if (isToolHidden == null) {
+			isToolHidden = tool.isToolHidden;
+		}		
 
 		if(supportsManagedBuild == null)
 			supportsManagedBuild = tool.supportsManagedBuild;
@@ -791,6 +798,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
 
+		// isHidden
+		String hidden = element.getAttribute(ITool.IS_HIDDEN);
+		if (hidden != null) {
+			isToolHidden = Boolean.valueOf(hidden);
+		}
+		
 		scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID));
 
         tmp = element.getAttribute(IS_SYSTEM);
@@ -931,6 +944,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.ANNOUNCEMENT) != null) {
 			announcement = SafeStringInterner.safeIntern(element.getAttribute(ITool.ANNOUNCEMENT));
 		}
+		
+		// Get the tool hidden setting 
+		if (element.getAttribute(ITool.IS_HIDDEN) != null) {
+			String hidden = SafeStringInterner.safeIntern(element.getAttribute(ITool.IS_HIDDEN));
+			if(hidden != null) {
+				isToolHidden = Boolean.valueOf(hidden);
+			}
+		}		
 
 		// icon - was saved as URL in string form
 		if (element.getAttribute(IOptionCategory.ICON) != null) {
@@ -1084,6 +1105,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (announcement != null) {
 				element.setAttribute(ITool.ANNOUNCEMENT, announcement);
 			}
+			
+			// hidden tool
+			if (isToolHidden != null) {
+				element.setAttribute(ITool.IS_HIDDEN, isToolHidden.toString());
+			}			
 
 			// Serialize elements from my super class
 			super.serialize(element);
@@ -2528,6 +2554,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			setDirty(true);
 		}
 	}
+	
+	@Override
+	public void setToolHidden(boolean hidden) {
+		if (isToolHidden == null || !(hidden == isToolHidden.booleanValue())) {
+			isToolHidden = new Boolean(hidden);
+			setDirty(true);
+		}
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandFlags()
@@ -3890,6 +3925,17 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return ((IToolChain)bo).isSystemObject();
 		return false;
 	}
+	
+	@Override
+	public boolean isHidden() {
+		if (isToolHidden == null) {
+			if (getSuperClass() != null) {
+				return getSuperClass().isHidden();
+			}
+			return false; // default is false
+		}
+		return isToolHidden.booleanValue();		
+	}	
 
 	@Override
 	public String getUniqueRealName() {
@@ -4032,6 +4078,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 		if(announcement != null && !announcement.equals(superTool.getAnnouncement()))
 			return true;
+		
+		if(isToolHidden != null && isToolHidden.booleanValue() != superTool.isHidden())
+			return true;		
 
 		if(discoveredInfoMap != null && discoveredInfoMap.size() != 0)
 			return true;

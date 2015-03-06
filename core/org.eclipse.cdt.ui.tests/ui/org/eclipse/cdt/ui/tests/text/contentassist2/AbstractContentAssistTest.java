@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
@@ -46,6 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
@@ -57,6 +60,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	private IFile fCFile;
 	protected ITextEditor fEditor;
 	private final boolean fIsCpp;
+	protected boolean fProcessorNeedsConfiguring;
 
 	public AbstractContentAssistTest(String name, boolean isCpp) {
 		super(name);
@@ -99,6 +103,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		super.tearDown();
 	}
 
+	protected static IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
+	}
+
 	protected void assertContentAssistResults(int offset, int length, String[] expected,
 			boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
@@ -111,6 +119,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		boolean isCode= IDocument.DEFAULT_CONTENT_TYPE.equals(contentType);
 		ContentAssistant assistant = new ContentAssistant();
 		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
+		assistant.setContentAssistProcessor(processor, contentType);
+		if (fProcessorNeedsConfiguring) {
+			ContentAssistPreference.configure(assistant, getPreferenceStore());
+		}
 		long startTime= System.currentTimeMillis();
 		sourceViewer.setSelectedRange(offset, length);
 		Object[] results = isCompletion ?

@@ -51,7 +51,7 @@ public class GrepChecker extends AbstractCheckerWithProblemPreferences {
 		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
 			IProblem checkerProblem = iterator.next();
 			IProblem problem = getProblemById(checkerProblem.getId(), file);
-			if (shouldProduceProblem(problem, file.getLocation())) {
+			if (shouldProduceProblem(problem, file.getFullPath())) {
 				// do something
 				Object[] values = (Object[]) getPreference(problem, PARAM_STRING_LIST);
 				if (values.length == 0)

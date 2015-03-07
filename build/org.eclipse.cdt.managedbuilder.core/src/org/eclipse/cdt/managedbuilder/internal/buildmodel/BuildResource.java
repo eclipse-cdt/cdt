@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -143,6 +144,13 @@ public class BuildResource implements IBuildResource {
 				inStep.removeResource(fProducerArg, this, true);
 				fProducerArg = arg;
 			} else {
+				// Check if this resource is an output produced by a Tool that support merging in which case
+				// a producer can already be defined by a previous step.
+				IBuildStep step = fProducerArg.getStep();
+				ITool tool = step instanceof BuildStep ? ((BuildStep)(step)).getTool() : null;
+				if(tool != null && tool.isSupportsMergeOutput() && !arg.isInput()) {
+					return;
+				}
 				String err = "ProducerArgument not null!!!\n";	//$NON-NLS-1$
 
 				String rcName = DbgUtil.resourceName(this);
@@ -155,8 +163,6 @@ public class BuildResource implements IBuildResource {
 				if(DbgUtil.DEBUG){
 					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
 				}
-
-
 				throw new IllegalArgumentException(externalizedErr);
 			}
 		}

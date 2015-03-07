@@ -155,6 +155,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	private IOptionPathConverter optionPathConverter = null ;
 	private SupportedProperties supportedProperties;
 	private Boolean supportsManagedBuild;
+	private Boolean supportsMergeOutput;
 	private boolean isTest;
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
@@ -442,6 +443,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (tool.announcement != null) {
 			announcement = new String(tool.announcement);
 		}
+		if (tool.supportsMergeOutput != null) {
+			supportsMergeOutput = new Boolean(tool.supportsMergeOutput.booleanValue());
+		}
        	supportsManagedBuild = tool.supportsManagedBuild;
 
 
@@ -579,6 +583,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (announcement == null) {
 			announcement = tool.announcement;
 		}
+		if (supportsMergeOutput == null) {
+			supportsMergeOutput = tool.supportsMergeOutput;
+		}		
 
 		if(supportsManagedBuild == null)
 			supportsManagedBuild = tool.supportsManagedBuild;
@@ -791,6 +798,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
 
+		// Does Tool support merge output 
+		String mergeOutput = element.getAttribute(ITool.SUPPORTS_MERGE_OUTPUT);
+		if (mergeOutput != null) {
+			supportsMergeOutput = Boolean.valueOf(mergeOutput);
+		}
+		
 		scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.SCANNER_CONFIG_PROFILE_ID));
 
         tmp = element.getAttribute(IS_SYSTEM);
@@ -931,6 +944,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		if (element.getAttribute(ITool.ANNOUNCEMENT) != null) {
 			announcement = SafeStringInterner.safeIntern(element.getAttribute(ITool.ANNOUNCEMENT));
 		}
+		
+		// Get the tool merging support
+		if (element.getAttribute(ITool.SUPPORTS_MERGE_OUTPUT) != null) {
+			String mergeOutput = SafeStringInterner.safeIntern(element.getAttribute(ITool.SUPPORTS_MERGE_OUTPUT));
+			if(mergeOutput != null) {
+				supportsMergeOutput = Boolean.valueOf(mergeOutput);
+			}
+		}		
 
 		// icon - was saved as URL in string form
 		if (element.getAttribute(IOptionCategory.ICON) != null) {
@@ -1084,6 +1105,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			if (announcement != null) {
 				element.setAttribute(ITool.ANNOUNCEMENT, announcement);
 			}
+			
+			// support merge output tool
+			if (supportsMergeOutput != null) {
+				element.setAttribute(ITool.SUPPORTS_MERGE_OUTPUT, supportsMergeOutput.toString());
+			}			
 
 			// Serialize elements from my super class
 			super.serialize(element);
@@ -2528,6 +2554,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			setDirty(true);
 		}
 	}
+	
+	@Override
+	public void setSupportsMergeOutput(boolean mergeOutput) {
+		if (supportsMergeOutput == null || !(mergeOutput == supportsMergeOutput.booleanValue())) {
+			supportsMergeOutput = new Boolean(mergeOutput);
+			setDirty(true);
+		}
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandFlags()
@@ -3890,6 +3925,17 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return ((IToolChain)bo).isSystemObject();
 		return false;
 	}
+	
+	@Override
+	public boolean isSupportsMergeOutput() {
+		if (supportsMergeOutput == null) {
+			if (getSuperClass() != null) {
+				return getSuperClass().isSupportsMergeOutput();
+			}
+			return false; // default is false
+		}
+		return supportsMergeOutput.booleanValue();		
+	}	
 
 	@Override
 	public String getUniqueRealName() {
@@ -4032,6 +4078,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 		if(announcement != null && !announcement.equals(superTool.getAnnouncement()))
 			return true;
+		
+		if(supportsMergeOutput != null && supportsMergeOutput.booleanValue() != superTool.isSupportsMergeOutput())
+			return true;		
 
 		if(discoveredInfoMap != null && discoveredInfoMap.size() != 0)
 			return true;

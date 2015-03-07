@@ -810,6 +810,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="supportsMergeOutput" type="boolean">
+            <annotation>
+               <documentation>
+                  Usually a tool from a toolchain should produce unique output resource names from unique input resource names . Otherwise output resource would be overwritten every time the tool is called as compilation proceed. For example a C/C++ compiler should produce unique object file name from unique input C/C++ source file name. There is however some exceptions when a tool might reuse the same output file and do a merge operation as the same tool is successively called by the Build Manager. This is the behavior for example of the Microsoft C/C++ compiler which merge generated symbols from every C/C++ compiled source to a unique symbol file named VCx.pdb. (x) being the version of the compiler.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

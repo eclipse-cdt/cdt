@@ -79,7 +79,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 		Collection<IProblem> refProblems = getRuntime().getCheckersRegistry().getRefProblems(this);
 		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
 			IProblem checkerProblem = iterator.next();
-			if (shouldProduceProblem(getProblemById(checkerProblem.getId(), res), res.getLocation()))
+			if (shouldProduceProblem(getProblemById(checkerProblem.getId(), res), res.getFullPath()))
 				return true;
 		}
 		return false;
@@ -110,7 +110,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	@Override
 	public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
 		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()),
-				loc.getFile().getLocation())) {
+				loc.getFile().getFullPath())) {
 			super.reportProblem(problemId, loc, args);
 		}
 	}
@@ -125,7 +125,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	 * @since 2.0
 	 */
 	public void reportProblem(IProblem pr, IProblemLocation loc, Object... args) {
-		if (shouldProduceProblem(pr, loc.getFile().getLocation()))
+		if (shouldProduceProblem(pr, loc.getFile().getFullPath()))
 			super.reportProblem(pr.getId(), loc, args);
 	}
 

@@ -48,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.index.IIndex;
@@ -56,6 +55,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -82,7 +82,7 @@ public final class CxxAstUtils {
 		
 		@Override
 		public int visit(IASTExpression expression) {
-			if(expression instanceof IASTFieldReference) {
+			if (expression instanceof IASTFieldReference) {
 				this.name = ((IASTFieldReference) expression).getFieldName();
 				return PROCESS_ABORT;
 			}
@@ -95,23 +95,7 @@ public final class CxxAstUtils {
 	}
 
 	public static IType unwindTypedef(IType type) {
-		if (!(type instanceof IBinding))
-			return type;
-		IBinding typeName = (IBinding) type;
-		// unwind typedef chain
-		try {
-			while (typeName instanceof ITypedef) {
-				IType t = ((ITypedef) typeName).getType();
-				if (t instanceof IBinding) {
-					typeName = (IBinding) t;
-				} else {
-					return t;
-				}
-			}
-		} catch (Exception e) { // in CDT 6.0 getType throws DOMException
-			Activator.log(e);
-		}
-		return (IType) typeName;
+		return SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 	}
 
 	public static boolean isInMacro(IASTNode node) {

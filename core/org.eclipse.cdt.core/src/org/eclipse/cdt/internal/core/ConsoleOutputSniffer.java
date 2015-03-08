@@ -90,6 +90,21 @@ public class ConsoleOutputSniffer {
 			String buffer = currentLine.toString();
 			int i = 0;
 			while ((i = buffer.indexOf('\n')) != -1) {
+				// Handle line continuation character before the newline.
+				int j = 0;
+				if ((j = buffer.indexOf('\\')) != -1 && j < i) {
+					boolean haveNonWhitespace = false;
+					for (int cur = j + 1; cur < i; ++cur) {
+						if (!Character.isWhitespace(buffer.charAt(cur))) {
+							haveNonWhitespace = true;
+							break;
+						}
+					}
+					if (!haveNonWhitespace) {
+						buffer = buffer.substring(0, j) + buffer.substring(i + 1);
+						continue;
+					}
+				}
 				int eol = i;
 				if (i > 0 && buffer.charAt(i-1) == '\r') {
 					// also get rid of trailing \r in case of Windows line delimiter "\r\n"
@@ -97,7 +112,6 @@ public class ConsoleOutputSniffer {
 				}
 				String line = buffer.substring(0, eol);
 				processLine(line);
-
 				buffer = buffer.substring(i + 1); // skip the \n and advance
 			}
 			currentLine.setLength(0);

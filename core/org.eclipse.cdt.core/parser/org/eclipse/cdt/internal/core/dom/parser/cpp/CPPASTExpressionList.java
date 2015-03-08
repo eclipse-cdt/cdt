@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM) - implicit names
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -16,6 +17,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -25,18 +27,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
-
     private IASTExpression[] expressions = new IASTExpression[2];
     
 	/**
 	 * Caution: may contain nulls. 
-	 * @see CPPASTExpressionList#computeImplicitNames
+	 * @see #computeImplicitNames
 	 */
-	private IASTImplicitName[] implicitNames;
+	private IASTImplicitName[] fImplicitNames;
+
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
 	private ICPPEvaluation fEvaluation;
 
@@ -48,8 +52,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	@Override
 	public CPPASTExpressionList copy(CopyStyle style) {
 		CPPASTExpressionList copy = new CPPASTExpressionList();
-		for(IASTExpression expr : getExpressions())
+		for (IASTExpression expr : getExpressions()) {
 			copy.addExpression(expr == null ? null : expr.copy(style));
+		}
 		return copy(copy, style);
 	}
 	
@@ -92,6 +97,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
         		}
         	}
         }
+
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
+        	return false;
         
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
@@ -104,38 +112,46 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     }
 
     /**
-     * Returns an array of implicit names where each element of the array
-     * represents a comma between the expression in the same index and the
-     * next expression. This array contains null elements as placeholders
-     * for commas that do not resolve to overloaded operators.
+     * Returns an array of implicit names where each element of the array represents a comma between
+     * the expression in the same index and the next expression. This array contains null elements
+     * as placeholders for commas that do not resolve to overloaded operators.
      */
     private IASTImplicitName[] computeImplicitNames() {
-		if (implicitNames == null) {
+		if (fImplicitNames == null) {
 			IASTExpression[] exprs = getExpressions(); // has to be at least two
 			if (exprs.length < 2)
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
-			implicitNames = new IASTImplicitName[exprs.length - 1];
+			fImplicitNames = new IASTImplicitName[exprs.length - 1];
 			
 			ICPPFunction[] overloads = getOverloads();
-			for(int i = 0; i < overloads.length; i++) {
+			for (int i = 0; i < overloads.length; i++) {
 				ICPPFunction overload = overloads[i];
 				if (overload != null && !(overload instanceof CPPImplicitFunction)) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.COMMA, this);
 					operatorName.setBinding(overload);
 					operatorName.computeOperatorOffsets(exprs[i], true);
-					implicitNames[i] = operatorName;
+					fImplicitNames[i] = operatorName;
 				}
 			}
 		}
 		
-		return implicitNames;
+		return fImplicitNames;
 	}
 
     @Override
 	public IASTImplicitName[] getImplicitNames() {
     	return ArrayUtil.removeNulls(IASTImplicitName.class, computeImplicitNames());
     }
+
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
 
     private ICPPFunction[] getOverloads() {
     	ICPPEvaluation eval = getEvaluation();

@@ -18,27 +18,27 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTWhileStatement extends IASTStatement {
 	/**
-	 * <code>CONDITIONEXPRESSION</code> represents the relationship between an <code>IASTWhileStatement</code> and
-	 * it's nested <code>IASTExpression</code>.
+	 * {@code CONDITIONEXPRESSION} represents the relationship between an {@code IASTWhileStatement} and
+	 * it's nested {@code IASTExpression}.
 	 */
 	public static final ASTNodeProperty CONDITIONEXPRESSION = new ASTNodeProperty(
 			"IASTWhileStatement.CONDITIONEXPRESSION - IASTExpression (condition) for IASTWhileStatement"); //$NON-NLS-1$
 
 	/**
-	 * <code>BODY</code> represents the relationship between an <code>IASTWhileStatement</code> and
-	 * it's nested <code>IASTStatement</code>.
+	 * {@code BODY} represents the relationship between an {@code IASTWhileStatement} and
+	 * it's nested {@code IASTStatement}.
 	 */
 	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTWhileStatement.BODY - IASTStatement (body) for IASTWhileStatement"); //$NON-NLS-1$
 
 	/**
-	 * Get the condition on the while loop
+	 * Returns the condition on the while loop
 	 * 
 	 * @return expression for the condition
 	 */
 	public IASTExpression getCondition();
 
 	/**
-	 * Set the condition of the while loop.
+	 * Sets the condition of the while loop.
 	 * 
 	 * @param condition
 	 */
@@ -52,7 +52,7 @@ public interface IASTWhileStatement extends IASTStatement {
 	public IASTStatement getBody();
 
 	/**
-	 * Set the body of the while loop.
+	 * Sets the body of the while loop.
 	 * 
 	 * @param body
 	 */

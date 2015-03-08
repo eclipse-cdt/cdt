@@ -1,31 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Mike Kucera (IBM) - Initial API and implementation
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.ast.cpp;
-
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @since 5.1
- * 
+ * An implicit name corresponding to a destructor call for a temporary or a variable going out of scope.
+ *
+ * @since 5.11
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTExpressionList extends IASTExpressionList, ICPPASTExpression, IASTImplicitNameOwner {
-	@Override
-	public ICPPASTExpressionList copy();
+public interface IASTImplicitDestructorName extends IASTImplicitName {
+	public static final IASTImplicitDestructorName[] EMPTY_NAME_ARRAY = {}; 
 
 	/**
-	 * @since 5.3
+	 * Returns the name corresponding to the constructor call.
 	 */
-	@Override
-	public ICPPASTExpressionList copy(CopyStyle style);
+	IASTImplicitName getConstructionPoint();
 }

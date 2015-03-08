@@ -22,25 +22,25 @@ public interface IASTReturnStatement extends IASTStatement {
 	/**
 	 * This is the optional return value for this function.
 	 * 
-	 * @return the return expression or null.
+	 * @return the return expression or {@code null}.
 	 */
 	public IASTExpression getReturnValue();
 
 	/**
-	 * Returns the return value as {@link IASTInitializerClause}, or <code>null</code>.
-	 * In c++ this can be an braced initializer list.
+	 * Returns the return value as {@link IASTInitializerClause}, or {@code null}.
+	 * In C++ this can be an braced initializer list.
 	 * @since 5.2
 	 */
 	public IASTInitializerClause getReturnArgument();
 
 	/**
-	 * Not allowed on frozen ast.
+	 * Not allowed on frozen AST.
 	 * @since 5.2
 	 */
 	public void setReturnArgument(IASTInitializerClause returnValue);
 
 	/**
-	 * Not allowed on frozen ast.
+	 * Not allowed on frozen AST.
 	 */
 	public void setReturnValue(IASTExpression returnValue);
 

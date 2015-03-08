@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -27,6 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 
@@ -38,6 +41,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     private boolean isVectored;
 
     private IASTImplicitName[] implicitNames;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTDeleteExpression() {
 	}
@@ -102,12 +106,12 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     }
 
     /**
-     * Try to resolve both the destructor and operator delete.
+     * Tries to resolve both the destructor and operator delete.
      */
     @Override
 	public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
-	    	List<IASTImplicitName> names = new ArrayList<IASTImplicitName>();
+	    	List<IASTImplicitName> names = new ArrayList<>();
 	    	
 	    	if (!isVectored) {
 		    	ICPPFunction destructor = CPPSemantics.findImplicitlyCalledDestructor(this);
@@ -140,6 +144,15 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     	return implicitNames;    	
 	}
 
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -158,6 +171,9 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
         }
 
         if (operand != null && !operand.accept(action))
+        	return false;
+
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
         	return false;
 
         if (action.shouldVisitExpressions) {

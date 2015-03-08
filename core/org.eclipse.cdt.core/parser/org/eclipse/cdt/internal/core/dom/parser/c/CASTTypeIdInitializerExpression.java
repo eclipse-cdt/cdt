@@ -1,35 +1,106 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
-import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * C-specific implementation adds nothing but the c-specific interface.
+ * Type id initializer expression for C, type-id { initializer }
  */
-public class CASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression implements
-        ICASTTypeIdInitializerExpression {
+public class CASTTypeIdInitializerExpression extends ASTNode implements ICASTTypeIdInitializerExpression {
+    private IASTTypeId fTypeId;
+    private IASTInitializer fInitializer;
 
-	private CASTTypeIdInitializerExpression() {
-		super();
+    public CASTTypeIdInitializerExpression() {
 	}
 
-	public CASTTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
-		super(typeId, initializer);
+	public CASTTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i) {
+		setTypeId(t);
+		fInitializer = i;
+	}
+
+	@Override
+	public IASTTypeId getTypeId() {
+        return fTypeId;
+    }
+
+    @Override
+	public void setTypeId(IASTTypeId typeId) {
+        assertNotFrozen();
+        this.fTypeId = typeId;
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
+    }
+
+    @Override
+	public IASTInitializer getInitializer() {
+        return fInitializer;
+    }
+
+    @Override
+	public void setInitializer(IASTInitializer initializer) {
+        assertNotFrozen();
+        this.fInitializer = initializer;
+        if (initializer != null) {
+			initializer.setParent(this);
+			initializer.setPropertyInParent(INITIALIZER);
+		}
+    }
+
+    @Override
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
+	        }
+		}
+        
+        if (fTypeId != null && !fTypeId.accept(action)) return false;
+        if (fInitializer != null && !fInitializer.accept(action)) return false;
+
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
+	        }
+		}
+        return true;
+    }
+
+	@Override
+	public final boolean isLValue() {
+		return false;
+	}
+	
+	@Override
+	public ValueCategory getValueCategory() {
+		return ValueCategory.PRVALUE;
+	}
+
+	@Override
+	public IType getExpressionType() {
+		return CVisitor.createType(getTypeId().getAbstractDeclarator());
 	}
 
 	@Override
@@ -39,13 +110,9 @@ public class CASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpress
 
 	@Override
 	public CASTTypeIdInitializerExpression copy(CopyStyle style) {
-		CASTTypeIdInitializerExpression copy = new CASTTypeIdInitializerExpression();
-		initializeCopy(copy, style);
-		return copy;
-	}
-
-	@Override
-	public IType getExpressionType() {
-		return CVisitor.createType(getTypeId().getAbstractDeclarator());
+		CASTTypeIdInitializerExpression copy = new CASTTypeIdInitializerExpression(
+				fTypeId == null ? null : fTypeId.copy(style),
+				fInitializer == null ? null : fInitializer.copy(style));
+		return copy(copy, style);
 	}
 }

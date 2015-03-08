@@ -18,24 +18,24 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTFunctionDefinition extends IASTDeclaration {
 	/**
-	 * <code>DECL_SPECIFIER</code> represents the relationship between a
-	 * <code>IASTFunctionDefinition</code> and its
-	 * <code>IASTDeclSpecifier</code>.
+	 * {@code DECL_SPECIFIER} represents the relationship between a
+	 * {@code IASTFunctionDefinition} and its
+	 * {@code IASTDeclSpecifier}.
 	 */
 	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty(
 			"IASTFunctionDefinition.DECL_SPECIFIER - IASTDeclSpecifier for IASTFunctionDefinition"); //$NON-NLS-1$
 
 	/**
-	 * <code>DECLARATOR</code> represents the relationship between a
-	 * <code>IASTFunctionDefinition</code> and its
-	 * <code>IASTFunctionDeclarator</code>.
+	 * {@code DECLARATOR} represents the relationship between a
+	 * {@code IASTFunctionDefinition} and its
+	 * {@code IASTFunctionDeclarator}.
 	 */
 	public static final ASTNodeProperty DECLARATOR = new ASTNodeProperty(
 			"IASTFunctionDefinition.DECLARATOR - IASTFunctionDeclarator for IASTFunctionDefinition"); //$NON-NLS-1$
 
 	/**
-	 * <code>FUNCTION_BODY</code> represents the relationship between a
-	 * <code>IASTFunctionDefinition</code> and its <code>IASTStatement</code>.
+	 * {@code FUNCTION_BODY} represents the relationship between a
+	 * {@code IASTFunctionDefinition} and its {@code IASTStatement}.
 	 */
 	public static final ASTNodeProperty FUNCTION_BODY = new ASTNodeProperty(
 			"IASTFunctionDefinition.FUNCTION_BODY - Function Body for IASTFunctionDefinition"); //$NON-NLS-1$
@@ -73,6 +73,7 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * void (f)(int a); // has nested declarator
 	 * void (f(int a)); // is nested in another declarator
 	 * </pre>
+	 *
 	 * @param declarator
 	 */
 	public void setDeclarator(IASTFunctionDeclarator declarator);
@@ -80,7 +81,6 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	/**
 	 * Returns the body of the function. This is usually a compound statement but
 	 * C++ also has a function try block.
-	 * 
 	 */
 	public IASTStatement getBody();
 
@@ -94,7 +94,7 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	/**
 	 * Get the logical IScope that the function definition body represents.
 	 * 
-	 * @return <code>IScope</code> representing function body.
+	 * @return {@code IScope} representing function body.
 	 */
 	public IScope getScope();
 	

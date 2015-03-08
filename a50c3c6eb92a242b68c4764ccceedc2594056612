@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_c9a2c8f5",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/param/FileScopeProblemPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-03-08T18:36:06Z",
+      "side": 1,
+      "message": "It makes sense to change CharOperation.pathMatch method to take CharSequence\u0027s instead of char arrays.",
+      "range": {
+        "startLine": 264,
+        "startChar": 21,
+        "endLine": 264,
+        "endChar": 30
+      },
+      "revId": "a50c3c6eb92a242b68c4764ccceedc2594056612",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

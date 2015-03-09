@@ -1362,9 +1362,10 @@ public final class CharOperation {
 	 *            if array is null
 	 */
 	public static final int indexOf(char toBeFound, char[] array) {
-		for (int i = 0; i < array.length; i++)
+		for (int i = 0; i < array.length; i++) {
 			if (toBeFound == array[i])
 				return i;
+		}
 		return -1;
 	}
 
@@ -1414,9 +1415,9 @@ public final class CharOperation {
 	 * @exception ArrayIndexOutOfBoundsException
 	 *            if start is lower than 0
 	 */
-	public static final int indexOf(char toBeFound, char[] array, int start) {
-		for (int i = start; i < array.length; i++)
-			if (toBeFound == array[i])
+	public static final int indexOf(char toBeFound, CharSequence array, int start) {
+		for (int i = start; i < array.length(); i++)
+			if (toBeFound == array.charAt(i))
 				return i;
 		return -1;
 	}
@@ -1645,12 +1646,12 @@ public final class CharOperation {
 	 *        sensitive
 	 * @return true if the pattern matches the given name, false otherwise
 	 */
-	public static final boolean match(char[] pattern, char[] name, boolean isCaseSensitive) {
+	public static final boolean match(CharSequence pattern, CharSequence name, boolean isCaseSensitive) {
 		if (name == null)
 			return false; // null name cannot match
 		if (pattern == null)
 			return true; // null pattern is equivalent to '*'
-		return match(pattern, 0, pattern.length, name, 0, name.length, isCaseSensitive, true);
+		return match(pattern, 0, pattern.length(), name, 0, name.length(), isCaseSensitive, true);
 	}
 
 	/**
@@ -1708,13 +1709,13 @@ public final class CharOperation {
 	 * @return true if the a sub-pattern matches the subpart of the given name,
 	 *         false otherwise
 	 */
-	public static final boolean match(char[] pattern, int patternStart, int patternEnd, char[] name, int nameStart, int nameEnd,
-			boolean isCaseSensitive) {
+	public static final boolean match(CharSequence pattern, int patternStart, int patternEnd,
+			CharSequence name, int nameStart, int nameEnd, boolean isCaseSensitive) {
 		return match(pattern, patternStart, patternEnd, name, nameStart, nameEnd, isCaseSensitive, false);
 	}
 
-	public static final boolean match(char[] pattern, int patternStart, int patternEnd, char[] name, int nameStart, int nameEnd,
-			boolean isCaseSensitive, boolean allowEscaping) {
+	public static final boolean match(CharSequence pattern, int patternStart, int patternEnd,
+			CharSequence name, int nameStart, int nameEnd, boolean isCaseSensitive, boolean allowEscaping) {
 		if (name == null)
 			return false; // null name cannot match
 		if (pattern == null)
@@ -1722,14 +1723,14 @@ public final class CharOperation {
 		int iPattern = patternStart;
 		int iName = nameStart;
 		if (patternEnd < 0)
-			patternEnd = pattern.length;
+			patternEnd = pattern.length();
 		if (nameEnd < 0)
-			nameEnd = name.length;
+			nameEnd = name.length();
 		/* check first segment */
 		char patternChar = 0;
 		boolean isEscaped = false;
-		while ((iPattern < patternEnd) && ((patternChar = pattern[iPattern]) != '*' || (patternChar == '*' && isEscaped))) {
-			if (allowEscaping && pattern[iPattern] == '\\' && !isEscaped) {
+		while ((iPattern < patternEnd) && ((patternChar = pattern.charAt(iPattern)) != '*' || (patternChar == '*' && isEscaped))) {
+			if (allowEscaping && pattern.charAt(iPattern) == '\\' && !isEscaped) {
 				iPattern++;
 				isEscaped = true;
 				continue;
@@ -1737,7 +1738,8 @@ public final class CharOperation {
 				isEscaped = false;
 			if (iName == nameEnd)
 				return false;
-			if (patternChar != (isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) && patternChar != '?') {
+			if (patternChar != (isCaseSensitive ? name.charAt(iName) : Character.toLowerCase(name.charAt(iName))) &&
+			    patternChar != '?') {
 				return false;
 			}
 			iName++;
@@ -1759,7 +1761,7 @@ public final class CharOperation {
 				continue checkSegment;
 			}
 			/* segment is ending */
-			if ((patternChar = pattern[iPattern]) == '*') {
+			if ((patternChar = pattern.charAt(iPattern)) == '*') {
 				segmentStart = ++iPattern; // skip start
 				if (segmentStart == patternEnd) {
 					return true;
@@ -1768,7 +1770,8 @@ public final class CharOperation {
 				continue checkSegment;
 			}
 			/* check current name character */
-			if ((isCaseSensitive ? name[iName] : Character.toLowerCase(name[iName])) != patternChar && patternChar != '?') {
+			if ((isCaseSensitive ? name.charAt(iName) : Character.toLowerCase(name.charAt(iName))) != patternChar &&
+			    patternChar != '?') {
 				iPattern = segmentStart; // mismatch - restart current segment
 				iName = ++prefixStart;
 				continue checkSegment;
@@ -1777,7 +1780,7 @@ public final class CharOperation {
 			iPattern++;
 		}
 		return (segmentStart == patternEnd) || (iName == nameEnd && iPattern == patternEnd)
-				|| (iPattern == patternEnd - 1 && pattern[iPattern] == '*');
+				|| (iPattern == patternEnd - 1 && pattern.charAt(iPattern) == '*');
 	}
 
 	/**
@@ -1810,7 +1813,7 @@ public final class CharOperation {
 	 * @return true if the pattern matches the filepath using the pathSepatator,
 	 *         false otherwise
 	 */
-	public static final boolean pathMatch(char[] pattern, char[] filepath, boolean isCaseSensitive, char pathSeparator) {
+	public static final boolean pathMatch(CharSequence pattern, CharSequence filepath, boolean isCaseSensitive, char pathSeparator) {
 		if (filepath == null)
 			return false; // null name cannot match
 		if (pattern == null)
@@ -1818,8 +1821,8 @@ public final class CharOperation {
 		// special case: pattern foo is equivalent to **\foo (not absolute)
 		boolean freeLeadingDoubleStar;
 		// offsets inside pattern
-		int pSegmentStart, pLength = pattern.length;
-		freeLeadingDoubleStar = (pattern[0] != pathSeparator);
+		int pSegmentStart, pLength = pattern.length();
+		freeLeadingDoubleStar = (pattern.charAt(0) != pathSeparator);
 		if (freeLeadingDoubleStar) {
 			pSegmentStart = 0;
 		} else {
@@ -1829,10 +1832,10 @@ public final class CharOperation {
 		if (pSegmentEnd < 0)
 			pSegmentEnd = pLength;
 		// special case: pattern foo\ is equivalent to foo\**
-		boolean freeTrailingDoubleStar = pattern[pLength - 1] == pathSeparator;
+		boolean freeTrailingDoubleStar = pattern.charAt(pLength - 1) == pathSeparator;
 		// offsets inside filepath
-		int fSegmentStart, fLength = filepath.length;
-		if (filepath[0] != pathSeparator) {
+		int fSegmentStart, fLength = filepath.length();
+		if (filepath.charAt(0) != pathSeparator) {
 			fSegmentStart = 0;
 		} else {
 			fSegmentStart = 1;
@@ -1846,7 +1849,9 @@ public final class CharOperation {
 		// first segments
 		while (pSegmentStart < pLength
 				&& !freeLeadingDoubleStar
-				&& !(pSegmentEnd == pLength && freeTrailingDoubleStar || (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*'))) {
+				&& !(pSegmentEnd == pLength && freeTrailingDoubleStar ||
+				     (pSegmentEnd == pSegmentStart + 2 && pattern.charAt(pSegmentStart) == '*' &&
+				      pattern.charAt(pSegmentStart + 1) == '*'))) {
 			if (fSegmentStart >= fLength)
 				return false;
 			if (!CharOperation.match(pattern, pSegmentStart, pSegmentEnd, filepath, fSegmentStart, fSegmentEnd, isCaseSensitive)) {
@@ -1865,7 +1870,8 @@ public final class CharOperation {
 		/* check sequence of doubleStar+segment */
 		int pSegmentRestart;
 		if ((pSegmentStart >= pLength && freeTrailingDoubleStar)
-				|| (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')) {
+				|| (pSegmentEnd == pSegmentStart + 2 && pattern.charAt(pSegmentStart) == '*' &&
+				    pattern.charAt(pSegmentStart + 1) == '*')) {
 			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
@@ -1898,7 +1904,8 @@ public final class CharOperation {
 				continue checkSegment;
 			}
 			/* path segment is ending */
-			if (pSegmentEnd == pSegmentStart + 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*') {
+			if (pSegmentEnd == pSegmentStart + 2 && pattern.charAt(pSegmentStart) == '*' &&
+			    pattern.charAt(pSegmentStart + 1) == '*') {
 				pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 				// skip separator
 				if (pSegmentEnd < 0)
@@ -1938,7 +1945,8 @@ public final class CharOperation {
 				fSegmentEnd = fLength;
 		}
 		return (pSegmentRestart >= pSegmentEnd) || (fSegmentStart >= fLength && pSegmentStart >= pLength)
-				|| (pSegmentStart == pLength - 2 && pattern[pSegmentStart] == '*' && pattern[pSegmentStart + 1] == '*')
+				|| (pSegmentStart == pLength - 2 && pattern.charAt(pSegmentStart) == '*' &&
+				    pattern.charAt(pSegmentStart + 1) == '*')
 				|| (pSegmentStart == pLength && freeTrailingDoubleStar);
 	}
 

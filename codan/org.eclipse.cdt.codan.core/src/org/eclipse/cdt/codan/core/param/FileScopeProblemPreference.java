@@ -258,9 +258,9 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	 * @return true if matches with at least one pattern in the array
 	 */
 	public boolean matchesFilter(IPath resourcePath, IPath[] paths) {
-		char[] path = resourcePath.makeRelative().toString().toCharArray();
+		String path = resourcePath.makeRelative().toString();
 		for (int i = 0, length = paths.length; i < length; i++) {
-			char[] pattern = paths[i].toString().toCharArray();
+			String pattern = paths[i].toString();
 			if (CharOperation.pathMatch(pattern, path, true, '/')) {
 				return true;
 			}

@@ -22,6 +22,24 @@
       "revId": "a50c3c6eb92a242b68c4764ccceedc2594056612",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_4c89c631",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/param/FileScopeProblemPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-03-09T00:49:10Z",
+      "side": 1,
+      "message": "I pushed a new change for this: https://git.eclipse.org/r/#/c/43378/.",
+      "parentUuid": "a7fb1785_c9a2c8f5",
+      "revId": "a50c3c6eb92a242b68c4764ccceedc2594056612",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

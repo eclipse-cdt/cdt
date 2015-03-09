@@ -65,9 +65,9 @@
       xsi:type="pde:APIBaselineTask"
       id="baseline"
       name="CDT"
-      version="8.5"
+      version="8.6"
       location="${workspace.location/../api.baseline}"
-      remoteURI="http://download.eclipse.org/tools/cdt/releases/8.5/cdt-8.5.0.zip"/>
+      remoteURI="http://download.eclipse.org/tools/cdt/releases/8.6/cdt-8.6.0.zip"/>
   <stream name="master">
     <setupTask
         xsi:type="git:GitCloneTask"
@@ -101,8 +101,6 @@
         <requirement
             name="org.eclipse.platform.ide"/>
         <requirement
-            name="org.eclipse.jetty.bundles.f.feature.group"/>
-        <requirement
             name="org.apache.log4j"/>
         <requirement
             name="org.apache.log4j.source"/>
@@ -134,26 +132,7 @@
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="Luna">
-          <repository
-              url="http://download.eclipse.org/jetty/updates/jetty-bundles-8.x"/>
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
-          <repository
-              url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
-          <repository
-              url="http://download.eclipse.org/tm/updates/3.6milestones"/>
-          <repository
-              url="http://download.eclipse.org/eclipse/updates/4.4milestones/"/>
-          <repository
-              url="http://download.eclipse.org/tools/ptp/updates/luna"/>
-          <repository
-              url="http://download.eclipse.org/cbi/updates/license"/>
-        </repositoryList>
-        <repositoryList
             name="Mars">
-          <repository
-              url="http://download.eclipse.org/jetty/updates/jetty-bundles-8.x"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
           <repository
@@ -163,7 +142,7 @@
           <repository
               url="http://download.eclipse.org/eclipse/updates/4.5milestones/"/>
           <repository
-              url="http://download.eclipse.org/tools/ptp/updates/luna"/>
+              url="http://download.eclipse.org/tools/ptp/builds/remote/2.0.0"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
         </repositoryList>

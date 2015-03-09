@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_ccf65650",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/CharOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1418,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-03-09T05:37:10Z",
+      "side": 1,
+      "message": "Please add curly braces around the body of the \"for\u0027 statement.",
+      "range": {
+        "startLine": 1418,
+        "startChar": 45,
+        "endLine": 1418,
+        "endChar": 46
+      },
+      "revId": "f6c41b5c5d092cc6e9468046e878e5707515eece",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

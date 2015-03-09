@@ -83,6 +83,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	protected String parsedResourceName = null;
 	protected boolean isResolvingPaths = true;
+	
+	// Used to handle line continuations in the build output.
+	private String partialLine;
 
 	/** @since 8.2 */
 	protected EFSExtensionProvider efsProvider = null;
@@ -413,6 +416,13 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	@Override
 	public void shutdown() {
+		// If there's an unprocessed partial line (because the last line of the build output ended
+		// in a line-continuation character), process it.
+		if (partialLine != null) {
+			processLine(partialLine);
+			partialLine = null;
+		}
+		
 		// release resources for garbage collector
 		// but keep currentCfgDescription for AbstractBuiltinSpecsDetector flow
 		parsedResourceName = null;
@@ -423,6 +433,36 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	@Override
 	public boolean processLine(String line) {
+		// Handle line continuations ('\' at the end of a line, indicating that the next line is a
+		// continuation of this one).
+		int lineContinuation = line == null ? -1 : line.lastIndexOf('\\');
+		boolean haveLineContinuation = false;
+		// If the character preceding the '\' is also '\', it's not a line continuation - the first '\'
+		// escapes the second.
+		if (lineContinuation != -1 && (lineContinuation == 0 || line.charAt(lineContinuation - 1)  != '\\')) {
+			haveLineContinuation = true;
+			for (int cur = lineContinuation + 1; cur < line.length(); ++cur) {
+				if (!Character.isWhitespace(line.charAt(cur))) {
+					haveLineContinuation = false; 
+					break;
+				}
+			}
+		}
+		if (haveLineContinuation) {
+			// Line ends in line continuation - save it for later.
+			String fragment = line.substring(0, lineContinuation);
+			if (partialLine == null) {
+				partialLine = fragment;
+			} else {
+				partialLine += fragment;
+			}
+			return false;
+		} else if (partialLine != null && line != null) {
+			// Line doesn't end in continuation but previous lines did - use their contents.
+			line = partialLine + line;
+			partialLine = null;
+		}
+		
 		parsedResourceName = parseResourceName(line);
 		currentResource = findResource(parsedResourceName);
 

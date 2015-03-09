@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,6 +125,12 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {
+		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBBreakpointsManager_7_2(session, CDebugCorePlugin.PLUGIN_ID);
+		}
+		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBBreakpointsManager_7_0(session, CDebugCorePlugin.PLUGIN_ID);
+		}
 		return new MIBreakpointsManager(session, CDebugCorePlugin.PLUGIN_ID);
 	}
 

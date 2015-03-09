@@ -70,6 +70,9 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	// cached value from properties, do not need to use in equals() and hashCode()
 	private ResourceScope resourceScope = null;
+	
+	// Used to handle line continuations in the build output.
+	private String partialLine;
 
 	/**
 	 * The compiler command pattern without specifying compiler options.
@@ -241,8 +244,49 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	@Override
 	public void shutdown() {
+		// If there's an unprocessed partial line (because the last line of the build output ended
+		// in a line-continuation character), process it.
+		if (partialLine != null) {
+			processLine(partialLine);
+			partialLine = null;
+		}
+		
 		serializeLanguageSettingsInBackground();
 		super.shutdown();
+	}
+	
+	@Override
+	public boolean processLine(String line) {
+		line = handleLineContinuation(line);
+		return super.processLine(line);
+	}
+	
+	/**
+	 * Handle line continuations ('\' at the end of a line, indicating that the next line is a
+	 * continuation of this one).
+	 */
+	private String handleLineContinuation(String line) {
+		if (line == null) 
+			return null;
+
+		// If the character preceding the '\' is also '\', it's not a line continuation - 
+		// the first '\' escapes the second.
+		if (line.length() > 0 && line.charAt(line.length() - 1) == '\\' &&
+				(line.length() == 1 || line.charAt(line.length() - 2) != '\\')) {
+			// Line ends in line continuation - save it for later.
+			String fragment = line.substring(0, line.length() - 1);
+			if (partialLine == null) {
+				partialLine = fragment;
+			} else {
+				partialLine += fragment;
+			}
+			return null;  // line will not be processed now
+		} else if (partialLine != null) {
+			// Line doesn't end in continuation but previous lines did - use their contents.
+			line = partialLine + line;
+			partialLine = null;
+		}
+		return line;
 	}
 
 	/**

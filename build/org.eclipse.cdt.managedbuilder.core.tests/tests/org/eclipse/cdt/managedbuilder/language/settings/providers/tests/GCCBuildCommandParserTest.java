@@ -1131,6 +1131,51 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test use of a line-continuation character ('\') in build output.
+	 */
+	public void testLineContinuation() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		
+		IFile file0=ResourceHelper.createFile(project, "file0.cpp");
+		IFile file1=ResourceHelper.createFile(project, "file1.cpp");
+		IFile file2=ResourceHelper.createFile(project, "file2.cpp");
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file0.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+		
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+		
+		// parse line
+		parser.startup(cfgDescription, null);
+		parser.processLine("gcc file0.cpp -I/path0 \\");
+		parser.processLine("              -I/path1");
+		parser.processLine("gcc file1.cpp -I/path0 \\\\");       // not a continuation, '\' is escaped!
+		parser.processLine("              -I/path1");  
+		parser.processLine("gcc file2.cpp -I/path0 \\");         // continuation at end of last line
+		parser.shutdown();
+		
+		// check populated entries
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file0, languageId);
+			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+			assertEquals(new CIncludePathEntry("/path1", 0), entries.get(1));
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file1, languageId);
+			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+			assertEquals(1, entries.size());
+		}
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file2, languageId);
+			assertEquals(new CIncludePathEntry("/path0", 0), entries.get(0));
+		}
+	}
+	
+	/**
 	 * Test parsing of paths located on a different drive on Windows.
 	 */
 	public void testPathEntry_DriveLetter() throws Exception {

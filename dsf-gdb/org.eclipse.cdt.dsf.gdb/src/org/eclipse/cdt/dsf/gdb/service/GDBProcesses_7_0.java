@@ -328,9 +328,9 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			}
 
 			// Now that we know neither is null, check for UNKNOWN_PROCESS_ID wildcard
-			if (fId.equals(MIProcesses.UNKNOWN_PROCESS_ID) || other.fId.equals(MIProcesses.UNKNOWN_PROCESS_ID)) {
-				return true;
-			}
+//			if (fId.equals(MIProcesses.UNKNOWN_PROCESS_ID) || other.fId.equals(MIProcesses.UNKNOWN_PROCESS_ID)) {
+//				return true;
+//			}
 			
 			return fId.equals(other.fId);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.bindings.BindingManagerEvent;
+import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -61,6 +63,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
@@ -68,8 +71,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.OpenFileAction;
+import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -95,6 +101,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
 import org.eclipse.cdt.internal.ui.navigator.OpenCElementAction;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
@@ -149,11 +156,15 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
     private Action fPreviousAction;
     private Action fRefreshAction;
 	private Action fHistoryAction;
+	private Action fRemoveFromViewAction;
+	private CopyTreeAction fCopyAction;
 	private IContextActivation fContextActivation;
 	private WorkingSetFilterUI fWorkingSetFilterUI;
 	private IBSetInputJob fSetInputJob;
 
-    
+	private IBindingService bindingService;
+	private IBindingManagerListener bindingManagerListener;
+
     @Override
 	public void setFocus() {
         fPagebook.setFocus();
@@ -280,6 +291,22 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         createActions();
         createContextMenu();
 
+		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		if (bindingService != null) {
+			bindingManagerListener = new IBindingManagerListener() {
+				@Override
+				public void bindingManagerChanged(BindingManagerEvent event) {
+					if (event.isActiveBindingsChanged()) {
+						String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
+						if (keyBinding != null) {
+							fRemoveFromViewAction.setText(IBMessages.IBViewPart_RemoveFromView_label + '\t'+ keyBinding);
+						}
+					}
+				}
+			};
+			bindingService.addBindingManagerListener(bindingManagerListener);
+		}
+
         getSite().setSelectionProvider(fTreeViewer);
         setMessage(IBMessages.IBViewPart_instructionMessage);
         
@@ -300,10 +327,16 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 		putDialogSettings();
 		if (fContextActivation != null) {
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
-	    	if (ctxService != null) {
-	    		ctxService.deactivateContext(fContextActivation);
-	    	}
+			if (ctxService != null) {
+				ctxService.deactivateContext(fContextActivation);
+			}
 		}
+
+		if (bindingService != null) {
+			bindingService.removeBindingManagerListener(bindingManagerListener);
+			bindingService = null;
+		}
+
 		if (fWorkingSetFilterUI != null) {
 			fWorkingSetFilterUI.dispose();
 		}
@@ -594,7 +627,10 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
 
         fHistoryAction= new IBHistoryDropDownAction(this);
-        
+
+        fCopyAction= new CopyCallHierarchyAction(this, fTreeViewer);
+        fRemoveFromViewAction= new IBRemoveFromView(this);
+
         // setup action bar
         // global action hooks
         IActionBars actionBars = getViewSite().getActionBars();
@@ -602,7 +638,10 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPreviousAction);
         actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
         actionBars.updateActionBars();
-        
+
+        TextActionHandler textActionHandler = new TextActionHandler(actionBars);
+        textActionHandler.setDeleteAction(fRemoveFromViewAction);
+
         // local toolbar
         IToolBarManager tm = actionBars.getToolBarManager();
         tm.add(fNextAction);
@@ -763,7 +802,6 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
                 submenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getSite().getWorkbenchWindow()));
                 m.add(submenu);
             	if (node.getParent() != null) {
-                    m.add(new Separator());
             		m.add(new Action(Messages.format(IBMessages.IBViewPart_FocusOn_label, tu.getPath().lastSegment())) {
             			@Override
 						public void run() {
@@ -772,6 +810,13 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
             		});
             	}
             }
+
+			m.add(new Separator(IContextMenuConstants.GROUP_EDIT));
+			if (fCopyAction.canActionBeAdded()) {
+				m.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
+			}
+			m.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fRemoveFromViewAction);
+
         }
         m.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
     }
@@ -844,6 +889,12 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
     // access for tests
 	public TreeViewer getTreeViewer() {
 		return fTreeViewer;
+	}
+
+	private static class CopyCallHierarchyAction extends CopyTreeAction {
+		public CopyCallHierarchyAction(ViewPart view, TreeViewer viewer) {
+			super(IBMessages.IBViewPart_CopyIncludeHierarchy_label, view, viewer);
+		}
 	}
 
 	public ITranslationUnit[] getHistoryEntries() {

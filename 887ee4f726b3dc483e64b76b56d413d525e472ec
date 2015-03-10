@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_6efc7233",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/language/settings/providers/tests/GCCBuildCommandParserTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1157,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-03-10T14:17:01Z",
+      "side": 1,
+      "message": "I don\u0027t think this should be treated as line continuation as the backslash is not the last character on the line.",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0e568ed7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-03-10T14:17:01Z",
+      "side": 1,
+      "message": "I am not quite sure where is the best place in class hierarchy to put this functionality. The choice is this class or AbstractBuildCommandParser. The difference is whether it should affect \"built-in spec detectors\". I think I\u0027d rather prefer AbstractBuildCommandParser so the spec detectors would get unmodified console output. Any thoughts on that?",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2ecc2a32",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-03-10T14:17:01Z",
+      "side": 1,
+      "message": "Normally for the backslash to indicate line continuation it must be the last character on the line. Any character following backslash including white spaces will cancel line continuation.",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ae113a0d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-03-10T14:17:01Z",
+      "side": 1,
+      "message": "Can this new block of code be extracted into a private function? That would improve readability of the code.",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

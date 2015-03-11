@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_c7746843",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/language/settings/providers/tests/GCCBuildCommandParserTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1157,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-03-11T01:26:39Z",
+      "side": 1,
+      "message": "Hmm, you\u0027re right. I double-checked and \u0027make\u0027 does indeed enforce that the line continuation must be the last character on the line.",
+      "parentUuid": "a7fb1785_6efc7233",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_0e568ed7",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-10T14:17:01Z",
       "side": 1,
       "message": "I am not quite sure where is the best place in class hierarchy to put this functionality. The choice is this class or AbstractBuildCommandParser. The difference is whether it should affect \"built-in spec detectors\". I think I\u0027d rather prefer AbstractBuildCommandParser so the spec detectors would get unmodified console output. Any thoughts on that?",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_a7479cf5",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-03-11T01:26:39Z",
+      "side": 1,
+      "message": "That sounds reasonable. I\u0027ll move it to AbstractBuildCommandParser.",
+      "parentUuid": "a7fb1785_0e568ed7",
       "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -64,6 +100,24 @@
       "writtenOn": "2015-03-10T14:17:01Z",
       "side": 1,
       "message": "Can this new block of code be extracted into a private function? That would improve readability of the code.",
+      "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_c75bc8cc",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2015-03-11T01:26:39Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "a7fb1785_ae113a0d",
       "revId": "887ee4f726b3dc483e64b76b56d413d525e472ec",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

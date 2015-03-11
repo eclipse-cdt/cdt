@@ -78,11 +78,11 @@
           source="http://www.eclipse.org/oomph/setup/InducedChoices">
         <detail
             key="inherit">
-          <value>eclipse.git.remoteURIs</value>
+          <value>eclipse.git.gerrit.remoteURIs</value>
         </detail>
         <detail
             key="label">
-          <value>${scope.project.label} Git repository</value>
+          <value>${scope.project.label} Git or Gerrit Repository</value>
         </detail>
         <detail
             key="target">

@@ -2211,19 +2211,22 @@ public class SystemTableView
 			}
 			*/
 		}
-		else if (event.stateMask == 0){ 
+		else if (event.stateMask == 0){
 			// now that we use SWT.VIRTUAL, quick search does not automatically work
 			// instead we have to implement this ourselves
 			int sel = getTable().getSelectionIndex();
 			
 			
 			char c = event.character;
+			String lowerMatch = new String(""+c).toLowerCase();  //$NON-NLS-1$
+			String upperMatch = new String(""+c).toUpperCase();  //$NON-NLS-1$
+			
 			TableItem[] items = getTable().getItems();
 			TableItem found = null;
 			for (int i = sel+1; i < items.length && found == null; i++){
-				TableItem item = items[i]; 
+				TableItem item = items[i];
 				String text = item.getText();
-				if (text.startsWith(""+c)){ //$NON-NLS-1$
+				if (text.startsWith(lowerMatch) || text.startsWith(upperMatch)){
 					found = item;
 				}
 			}
@@ -2232,7 +2235,7 @@ public class SystemTableView
 				for (int i = 0; i < sel && found == null; i++){
 					TableItem item = items[i];
 					String text = item.getText();
-					if (text.startsWith(""+c)){ //$NON-NLS-1$
+					if (text.startsWith(lowerMatch) || text.startsWith(upperMatch)){
 						found = item;
 					}
 				}

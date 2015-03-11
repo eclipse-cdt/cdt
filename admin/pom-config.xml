@@ -65,7 +65,7 @@
         <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones</remote-site>
         <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
-        <tm-luna-site>http://download.eclipse.org/tm/builds/luna/nightly<tm-luna-site>
+        <tm-luna-site>http://download.eclipse.org/tm/builds/luna/nightly</tm-luna-site>
       </properties>
 
     <repositories>

@@ -146,7 +146,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-
+ 
 
 /**
  * This subclass of the standard JFace table viewer is used to

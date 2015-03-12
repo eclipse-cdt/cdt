@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,14 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 
 /**
- * The inteface that all DSF services must implement.  It only privides a 
- * few features to help manage and identify the servies using the OSGI services 
+ * The interface that all DSF services must implement.  It only provides a 
+ * few features to help manage and identify the services using the OSGI services 
  * framework.
  * <p>
  * Each service should register itself with OSGI services framework using
  * the BundleContext.registerService() method.  And each service should use the 
  * session ID that it is registering with as one of the service properties.  If there
- * is more than one instance of the service to be instanciated for a given session, 
+ * is more than one instance of the service to be instantiated for a given session, 
  * additional properties should be used when registering the service to allow clients 
  * to uniquely identify the services.
  * <p>
@@ -75,10 +75,10 @@ public interface IDsfService {
      * Performs initialization and registration of the given service.  Implementation 
      * should initialize the service, so that all methods and events belonging to this 
      * service can be used  following the initialization.  
-     * <br>Note: Since service initializaiton should be performed by an external
-     * logic, if this service depends on other services, the implementaion should 
+     * <br>Note: Since service initialization should be performed by an external
+     * logic, if this service depends on other services, the implementation should 
      * assume that these services are already present, and if they are not, the 
-     * initializaiton should fail.  
+     * initialization should fail.  
      * @param requestMonitor callback to be submitted when the initialization is complete
      */
     public void initialize(RequestMonitor requestMonitor);

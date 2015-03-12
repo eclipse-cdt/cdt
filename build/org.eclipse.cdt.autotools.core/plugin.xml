@@ -390,7 +390,7 @@
          <configuration
                buildProperties="org.eclipse.linuxtools.cdt.autotools.core.buildType.default"
                cleanCommand="rm -rf"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="org.eclipse.linuxtools.cdt.autotools.core.configuration.build"
                languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain}"
                name="%Configuration.build.name">

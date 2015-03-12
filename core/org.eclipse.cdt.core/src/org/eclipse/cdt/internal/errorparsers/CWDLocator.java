@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation adapted from MakeErrorParser
+ *     Marc-Andre Laperle (Ericsson) - Bug 462036
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.errorparsers;
@@ -54,7 +55,7 @@ public class CWDLocator extends AbstractErrorParser {
 				return false;
 			}
 		},
-		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1$
+		new ErrorPattern("make\\[(.*)\\]: Entering directory [`'](.*)'", 0, 0) { //$NON-NLS-1$
 			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				int level;
@@ -77,7 +78,7 @@ public class CWDLocator extends AbstractErrorParser {
 			}
 		},
 		// This is emitted by GNU make using options -w or --print-directory.
-		new ErrorPattern("make: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1$
+		new ErrorPattern("make: Entering directory [`'](.*)'", 0, 0) { //$NON-NLS-1$
 			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				String dir = matcher.group(1);

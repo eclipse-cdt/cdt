@@ -1103,42 +1103,47 @@ public class BuildDescription implements IBuildDescription {
 		//      use artifact name & extension
 		if (fTargetStep == action){
 			String artifactName = fCfg.getArtifactName();
-			try {
-				String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactName, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-				if((tmp = tmp.trim()).length() > 0)
-					artifactName = tmp;
-			} catch (BuildMacroException e){
-			}
-
-			String artifactExt = fCfg.getArtifactExtension();
-			try {
-				String tmp = ManagedBuildManager.getBuildMacroProvider()
-								.resolveValue(artifactExt, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
-				if((tmp = tmp.trim()).length() > 0)
-					artifactExt = tmp;
-			} catch (BuildMacroException e) {
-			}
-
-			String artifactPrefix = tool.getOutputPrefix();
-			if(artifactPrefix != null && artifactPrefix.length() != 0){
+			if (artifactName != null && ! artifactName.trim().isEmpty()) {
 				try {
-					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactName, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
 					if((tmp = tmp.trim()).length() > 0)
-						artifactPrefix = tmp;
+						artifactName = tmp;
 				} catch (BuildMacroException e){
 				}
-				artifactName = artifactPrefix + artifactName;
+	
+				String artifactExt = fCfg.getArtifactExtension();
+				try {
+					String tmp = ManagedBuildManager.getBuildMacroProvider()
+									.resolveValue(artifactExt, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+					if((tmp = tmp.trim()).length() > 0)
+						artifactExt = tmp;
+				} catch (BuildMacroException e) {
+				}
+	
+				String artifactPrefix = tool.getOutputPrefix();
+				if(artifactPrefix != null && artifactPrefix.length() != 0){
+					try {
+						String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+						if((tmp = tmp.trim()).length() > 0)
+							artifactPrefix = tmp;
+					} catch (BuildMacroException e){
+					}
+					artifactName = artifactPrefix + artifactName;
+				}
+	
+				IPath path = new Path(artifactName);
+				if(artifactExt != null && artifactExt.length() != 0)
+					path = path.addFileExtension(artifactExt);
+	
+				IOutputType type = action.getTool().getPrimaryOutputType();
+				BuildIOType ioType = action.getIOTypeForType(type, false);
+				if(ioType == null)
+					ioType = action.createIOType(false, true, type);
+				addOutputs(new IPath[]{path}, ioType, outDirPath);
+			} else {
+				String msg = BuildModelMessages.getFormattedString("BuildDescription.MissingArtifact", new String[] {fProject.getName(), fCfg.getName()}); //$NON-NLS-1$
+				ManagedBuilderCorePlugin.log(new Status(IStatus.WARNING, ManagedBuilderCorePlugin.PLUGIN_ID, msg));
 			}
-
-			IPath path = new Path(artifactName);
-			if(artifactExt != null && artifactExt.length() != 0)
-				path = path.addFileExtension(artifactExt);
-
-			IOutputType type = action.getTool().getPrimaryOutputType();
-			BuildIOType ioType = action.getIOTypeForType(type, false);
-			if(ioType == null)
-				ioType = action.createIOType(false, true, type);
-			addOutputs(new IPath[]{path}, ioType, outDirPath);
 		} else if (outTypes != null && outTypes.length > 0) {
 			for (IOutputType type : outTypes) {
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -40,7 +41,11 @@ public class SerialPort {
 	private static final String PORT_OPEN = Messages.SerialPort_PORT_IS_OPEN;
 
 	static {
-		System.loadLibrary("serial"); //$NON-NLS-1$
+		try {
+			System.loadLibrary("serial"); //$NON-NLS-1$
+		} catch (Exception e) {
+			CNativePlugin.log(e);
+		}
 	}
 
 	/**

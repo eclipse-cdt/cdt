@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2015 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Bug 462036
  *******************************************************************************/
 
 package org.eclipse.cdt.core.internal.errorparsers.tests;
@@ -1140,6 +1141,31 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
 
 		String lines = "make[0]: Entering directory `Folder'\n"
+			+ fileName+":1:error\n";
+
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
+	 * Checks if a file from error output can be found. Using new single quote
+	 * in Gnu Make 4.0.
+	 *
+	 * @throws Exception...
+	 */
+	public void testPushDirectorySingleQuote() throws Exception {
+		String fileName = "testPushDirectory.c";
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+
+		String lines = "make[0]: Entering directory 'Folder'\n"
 			+ fileName+":1:error\n";
 
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Norbert Ploett (Siemens AG) - externalized strings
+ *     Marc-Andre Laperle (Ericsson) - Bug 462036
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.errorparsers;
@@ -27,7 +28,7 @@ import org.eclipse.core.runtime.Path;
 @Deprecated
 public class MakeErrorParser extends AbstractErrorParser {
 	private static final ErrorPattern[] patterns = {
-		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) {  //$NON-NLS-1$
+		new ErrorPattern("make\\[(.*)\\]: Entering directory [`'](.*)'", 0, 0) {  //$NON-NLS-1$
 			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				int level;

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
@@ -1153,6 +1154,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression unaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException;
     protected abstract IASTExpression primaryExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException;
     protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException, BacktrackException;
+    
+    // Methods for parsing a type-id and an expression with an optional trailing ellipsis.
+    // The optional trailing ellipsis can only appear in C++ code, and only the C++ parser
+    // allows it, but being able to invoke this from here allows reusing more productions
+    // between C and C++, such as alignmentSpecifier().
+	protected abstract IASTExpression expressionWithOptionalTrailingEllipsis() throws BacktrackException, EndOfFileException;
+    protected abstract IASTTypeId typeIdWithOptionalTrailingEllipsis(DeclarationOptions option) throws EndOfFileException, BacktrackException;
 
 	private final static class CastAmbiguityMarker extends ASTNode implements IASTExpression {
 		private IASTExpression fExpression;
@@ -2668,5 +2676,69 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				}
 			}
 		}
+	}
+
+	protected abstract IASTAlignmentSpecifier createAmbiguousAlignmentSpecifier(IASTAlignmentSpecifier expression,
+			IASTAlignmentSpecifier typeId);
+	
+	protected IASTAlignmentSpecifier alignmentSpecifier() throws BacktrackException, EndOfFileException {
+		int startOffset = consume(IToken.t_alignas, IToken.t__Alignas).getOffset();
+		
+		consume(IToken.tLPAREN);
+		
+		IASTTypeId typeId = null;
+		IASTExpression expression = null;
+		
+		// Try parsing a type-id.
+		IToken beginning = mark();
+		IToken typeIdEnd = null;
+		try {
+			typeId = typeIdWithOptionalTrailingEllipsis(DeclarationOptions.TYPEID);
+			typeIdEnd = mark();
+		} catch (BacktrackException e) {
+		}
+		
+		// Back up and try parsing an expression.
+		backup(beginning);
+		try {
+			expression = expressionWithOptionalTrailingEllipsis();
+		} catch (BacktrackException e) {
+			// If neither parses successfully, throw.
+			if (typeId == null) {
+				throw e;
+			}
+		}
+		
+		IASTAlignmentSpecifier result;
+		if (typeId == null) {
+			// No type id - use the expression.
+			result = nodeFactory.newAlignmentSpecifier(expression);
+		} else if (expression == null) {
+			// No expression - use the type id.
+			backup(typeIdEnd);
+			result = nodeFactory.newAlignmentSpecifier(typeId);
+		} else if (expression.contains(typeId)) {  // otherwise, pick the longer one
+			if (typeId.contains(expression)) {
+				// They are both the same length - ambiguous.
+				int endOffset = consume(IToken.tRPAREN).getEndOffset();
+				IASTAlignmentSpecifier expressionAlternative = nodeFactory.newAlignmentSpecifier(expression);
+				IASTAlignmentSpecifier typeIdAlternative = nodeFactory.newAlignmentSpecifier(typeId);
+				setRange(expressionAlternative, startOffset, endOffset);
+				setRange(typeIdAlternative, startOffset, endOffset);
+				return createAmbiguousAlignmentSpecifier(expressionAlternative, typeIdAlternative);
+			} else {
+				// Expression is longer - use it.
+				result = nodeFactory.newAlignmentSpecifier(expression);
+			}
+		} else {
+			// Type-id is longer - use it.
+			backup(typeIdEnd);
+			result = nodeFactory.newAlignmentSpecifier(typeId);
+		}
+		
+		int endOffset = consume(IToken.tRPAREN).getEndOffset();
+
+		setRange(result, startOffset, endOffset);
+		return result;
 	}
 }

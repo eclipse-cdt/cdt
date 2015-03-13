@@ -30,6 +30,10 @@ public interface IASTDeclSpecifier extends IASTNode {
 	/** @since 5.2 */
 	public static final int sc_mutable = 6;
 
+	/** @since 5.10 */
+	public static final ASTNodeProperty ALIGNMENT_SPECIFIER = new ASTNodeProperty(
+			"IASTDeclSpecifier.ALIGNMENT_SPECIFIER - Alignment specifier");  //$NON-NLS-1$
+	
 	/**
 	 * Returns the storage class, which is one of the constants sc_...
 	 */
@@ -46,6 +50,12 @@ public interface IASTDeclSpecifier extends IASTNode {
 
 	// Function specifier
 	public boolean isInline();
+	
+	/**
+	 * Get any alignment-specifiers in this decl-specifier sequence.
+	 * @since 5.10
+	 */
+	public IASTAlignmentSpecifier[] getAlignmentSpecifiers();
 	
 	/**
 	 * @since 5.1
@@ -84,6 +94,12 @@ public interface IASTDeclSpecifier extends IASTNode {
 	 * Not allowed on frozen ast.
 	 */
 	public void setInline(boolean value);
+	
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.10
+	 */
+	public void setAlignmentSpecifiers(IASTAlignmentSpecifier[] alignmentSpecifiers);
 	
 	/**
 	 * @deprecated All constants must be defined in this interface.

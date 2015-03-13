@@ -11082,4 +11082,26 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testTemplateIdInsideCastOperator_460080() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	alignas(8) int x;
+	//	alignas(int) char y;
+	//	alignas(16) struct { int x; int y; };
+	//	alignas(8) enum { A, B, C };
+	//	struct S {
+	//		alignas(long long) int x;
+	//		alignas(decltype(x)) int y;
+	//	};
+	//	alignas(32) S s;
+	//	template <typename... T>
+	//	struct U {
+	//		alignas(S) int x;
+	//		alignas(T...) char y;
+	//	};
+	//	template <int... N>
+	//	struct Y {
+	//		alignas(N...) char x;
+	//	};
+	public void testAlignas_451082() throws Exception {
+		parseAndCheckBindings();
+	}
 }

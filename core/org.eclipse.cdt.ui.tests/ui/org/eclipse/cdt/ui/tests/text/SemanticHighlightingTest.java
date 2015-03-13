@@ -151,7 +151,7 @@ public class SemanticHighlightingTest extends TestCase {
 		BaseTestCase.waitForIndexer(fCProject);
 		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile("/SHTest/" + sourceFileName), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 1000000, 1000));
 		EditorTestHelper.joinBackgroundActivities();
 		
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -432,6 +432,12 @@ public class SemanticHighlightingTest extends TestCase {
     //		bar(t);                                      //$function,parameterVariable
     //	}
     public void testNPE_458317() throws Exception {
+    	makeAssertions();
+    }
+    
+    //	struct S { };                                    //$class
+    //	alignas(S) int x;                                //$class,globalVariable
+    public void testHighlightingInsideAlignmentSpecifier_451082() throws Exception {
     	makeAssertions();
     }
 }

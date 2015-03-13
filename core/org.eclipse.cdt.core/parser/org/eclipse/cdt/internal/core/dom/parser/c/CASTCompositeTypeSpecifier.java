@@ -20,13 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Implementation for C composite specifiers.
  */
 public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
-        ICASTCompositeTypeSpecifier, IASTAmbiguityParent {
+        ICASTCompositeTypeSpecifier {
     private int fKey;
     private IASTName fName;
     private IASTDeclaration[] fActiveDeclarations;
@@ -141,6 +140,10 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 	            default: break;
 	        }
 		}
+		if (!visitAlignmentSpecifiers(action)) {
+			return false;
+		}
+
 		if (fName != null && !fName.accept(action))
 			return false;
            
@@ -149,7 +152,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 			if (!decls[i].accept(action))
 				return false;
 		}
-        
+
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.leave(this)) {
 			    case ASTVisitor.PROCESS_ABORT: return false;
@@ -179,5 +182,6 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 				return;
 			}
 		}
+		super.replace(child, other);
     }
 }

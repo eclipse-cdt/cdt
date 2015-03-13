@@ -31,6 +31,10 @@ public class Keywords {
 	public static final String _BOOL = "_Bool";
 	public static final String _COMPLEX = "_Complex";
 	public static final String _IMAGINARY = "_Imaginary";
+	/** @since 5.10 */
+	public static final String _ALIGNAS = "_Alignas";
+	/** @since 5.10 */
+	public static final String _ALIGNOF = "_Alignof";
 	public static final String AND = "and";
 	public static final String AND_EQ = "and_eq";
 	public static final String ASM = "asm";
@@ -132,6 +136,10 @@ public class Keywords {
 	public static final char[] c_BOOL = "_Bool".toCharArray();
 	public static final char[] c_COMPLEX = "_Complex".toCharArray();
 	public static final char[] c_IMAGINARY = "_Imaginary".toCharArray();
+	/** @since 5.10 */
+	public static final char[] c_ALIGNAS = _ALIGNAS.toCharArray();
+	/** @since 5.10 */
+	public static final char[] c_ALIGNOF = _ALIGNOF.toCharArray();
 	/** @since 5.4 */
 	public static final char[] cALIGNAS = "alignas".toCharArray();
 	/** @since 5.3 */
@@ -328,8 +336,6 @@ public class Keywords {
 
 	private static void addCommon(CharArrayIntMap words) {
 		words.put(Keywords._Pragma, IToken.t_PRAGMA);
-		words.put(Keywords.cALIGNAS, IToken.t_alignas);
-		words.put(Keywords.cALIGNOF, IToken.t_alignof);
         words.put(Keywords.cAUTO, IToken.t_auto);
         words.put(Keywords.cBREAK, IToken.t_break);
         words.put(Keywords.cCASE, IToken.t_case);
@@ -369,12 +375,16 @@ public class Keywords {
     // ANSI C keywords
 	private static void addC(CharArrayIntMap ckeywords) {
         ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict);
+		ckeywords.put(Keywords.c_ALIGNAS, IToken.t__Alignas);
+		ckeywords.put(Keywords.c_ALIGNOF, IToken.t__Alignof);
         ckeywords.put(Keywords.c_BOOL, IToken.t__Bool);
         ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex);
         ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary);
 	}
 
 	private static void addCpp(CharArrayIntMap cppkeywords) {
+		cppkeywords.put(Keywords.cALIGNAS, IToken.t_alignas);
+		cppkeywords.put(Keywords.cALIGNOF, IToken.t_alignof);
         cppkeywords.put(Keywords.cBOOL, IToken.t_bool);
         cppkeywords.put(Keywords.cCATCH, IToken.t_catch);
         cppkeywords.put(Keywords.cCHAR16_T, IToken.t_char16_t);

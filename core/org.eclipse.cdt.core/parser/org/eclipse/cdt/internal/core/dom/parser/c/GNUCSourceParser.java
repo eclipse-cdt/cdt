@@ -612,7 +612,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_sizeof:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_sizeof, IASTUnaryExpression.op_sizeof, ctx, strat);
-        case IToken.t_alignof:
+        case IToken.t__Alignof:
         case IGCCToken.t___alignof__:
         	return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(), 
         			IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx, strat);

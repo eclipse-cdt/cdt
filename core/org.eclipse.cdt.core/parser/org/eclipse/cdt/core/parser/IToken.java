@@ -194,6 +194,8 @@ public interface IToken {
 	/** @since 5.1 */ int tUTF16CHAR = 5002;
 	/** @since 5.1 */ int tUTF32CHAR = 5003;
 
+	/** @since 5.10 */ int t__Alignas = 51000;
+	/** @since 5.10 */ int t__Alignof = 51001;
 	int t__Bool = 134;
 	int t__Complex = 135;
 	int t__Imaginary = 136;

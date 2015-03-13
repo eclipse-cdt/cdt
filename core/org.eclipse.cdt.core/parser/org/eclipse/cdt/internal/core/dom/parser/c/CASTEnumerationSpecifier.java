@@ -114,6 +114,9 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 	            default: break;
 	        }
 		}
+        if (!visitAlignmentSpecifiers(action)) {
+        	return false;
+        }
         if (fName != null && !fName.accept(action))
         	return false;
         IASTEnumerator[] etors = getEnumerators();

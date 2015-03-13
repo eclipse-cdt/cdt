@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -2897,6 +2898,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	ICPPASTDeclSpecifier result= null;
     	ICPPASTDeclSpecifier altResult= null;
     	List<IASTAttributeSpecifier> attributes = null;
+    	IASTAlignmentSpecifier[] alignmentSpecifiers = IASTAlignmentSpecifier.EMPTY_ALIGNMENT_SPECIFIER_ARRAY;
         try {
         	IASTName identifier= null;
         	IASTExpression typeofExpression= null;
@@ -3163,6 +3165,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			endOffset= calculateEndOffset(result);
         			encounteredTypename= true;
         			break;
+        			
+        		case IToken.t_alignas:
+        			alignmentSpecifiers = ArrayUtil.append(alignmentSpecifiers, alignmentSpecifier());
+        			break;
 
         		case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
 	        		if (!supportAttributeSpecifiers)
@@ -3263,6 +3269,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		result= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
         	}
         	addAttributeSpecifiers(attributes, result);
+        	result.setAlignmentSpecifiers(ArrayUtil.trim(alignmentSpecifiers));
         } catch (BacktrackException e) {
         	if (returnToken != null) {
         		backup(returnToken);
@@ -5120,4 +5127,30 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         return setRange(nodeFactory.newReturnStatement(expr), offset, endOffset);
     }
+
+	@Override
+	protected IASTExpression expressionWithOptionalTrailingEllipsis() throws BacktrackException,
+			EndOfFileException {
+		IASTExpression result = expression();
+		if (LT(1) == IToken.tELLIPSIS) {
+			result = addPackExpansion(result, consume());
+		}
+		return result;
+	}
+
+	@Override
+	protected IASTTypeId typeIdWithOptionalTrailingEllipsis(DeclarationOptions option)
+			throws EndOfFileException, BacktrackException {
+		ICPPASTTypeId result = typeId(option);
+		if (LT(1) == IToken.tELLIPSIS) {
+			addPackExpansion(result, consume());
+		}
+		return result;
+	}
+
+	@Override
+	protected IASTAlignmentSpecifier createAmbiguousAlignmentSpecifier(IASTAlignmentSpecifier expression,
+			IASTAlignmentSpecifier typeId) {
+		return new CPPASTAmbiguousAlignmentSpecifier(expression, typeId);
+	}
 }

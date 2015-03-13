@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -143,6 +144,16 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return DEFAULT_INSTANCE;
 	}
 	
+	@Override
+	public IASTAlignmentSpecifier newAlignmentSpecifier(IASTExpression expression) {
+		return new CPPASTAlignmentSpecifier(expression);
+	}
+
+	@Override
+	public IASTAlignmentSpecifier newAlignmentSpecifier(IASTTypeId typeId) {
+		return new CPPASTAlignmentSpecifier(typeId);
+	}
+
 	@Override
 	public ICPPASTArrayDeclarator newArrayDeclarator(IASTName name) {
 		return new CPPASTArrayDeclarator(name);

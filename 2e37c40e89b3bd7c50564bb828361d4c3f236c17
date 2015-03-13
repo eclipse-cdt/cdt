@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_da0ef272",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/BuildDescription.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1144,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-03-13T20:49:57Z",
+      "side": 1,
+      "message": "I think NLS should be a separate effort here. I see ManagedMakeMessages from another package is used for some messages as well as CCorePlugin messages and also there is a whole bunch of not externalized strings. Perhaps a good candidate for a hackathon?",
+      "parentUuid": "a7fb1785_01c01522",
+      "range": {
+        "startLine": 1144,
+        "startChar": 17,
+        "endLine": 1144,
+        "endChar": 35
+      },
+      "revId": "2e37c40e89b3bd7c50564bb828361d4c3f236c17",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_a1d94121",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/buildmodel/BuildModelMessages.properties",
         "patchSetId": 1

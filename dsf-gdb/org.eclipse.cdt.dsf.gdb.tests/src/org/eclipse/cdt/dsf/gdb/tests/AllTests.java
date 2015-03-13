@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
     MIStringHandlerTests.class,
     ProcStatParserTest.class,
     VisualizerVirtualBoundsGraphicObjectTest.class,
+    PersistentSettingsManagerTest.class,
 })	
 public class AllTests {
 	// Often overriding BeforeClass method here

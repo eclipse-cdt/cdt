@@ -37,20 +37,19 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /** encodes and decodes memento to and from different data types; list, map, String*/
 public class MementoUtils {
-
 	protected static final String ROOT_ELEMENT_TAGNAME = "root_element"; //$NON-NLS-1$
 	protected static final String ELEMENT_TAGNAME = "elem"; //$NON-NLS-1$
-	protected static final String ATTRIBUTE_NAME = "value"; //$NON-NLS-1$
-
+	protected static final String ATTRIBUTE_KEY = "key"; //$NON-NLS-1$
+	protected static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+	
 
 	/** Returns a XML memento, that encodes a single String parameter */
 	public static String encodeStringIntoMemento(String str) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add(str);
 		return encodeListIntoMemento(list);
 	}
-	
-	
+
 	/** Returns a single String parameter, decoded from a XML memento */
 	public static String decodeStringFromMemento(String memento) {
 		return decodeListFromMemento(memento).get(0);
@@ -71,7 +70,9 @@ public class MementoUtils {
 			// create one XML element per map entry
 			for (String key : keyPairValues.keySet()) {
 				Element elem = doc.createElement(ELEMENT_TAGNAME);
-				elem.setAttribute(key, keyPairValues.get(key));
+				// store key and value as values of 2 attributes
+				elem.setAttribute(ATTRIBUTE_KEY, key);
+				elem.setAttribute(ATTRIBUTE_VALUE, keyPairValues.get(key));
 				rootElement.appendChild(elem);
 			}
 
@@ -96,7 +97,7 @@ public class MementoUtils {
 	
 	/** Returns a Map of Strings, decoded from a XML memento */
 	public static Map<String, String> decodeMapFromMemento(String memento) {
-		Map<String, String> keyPairValues = new HashMap<String, String>();
+		Map<String, String> keyPairValues = new HashMap<>();
 
 		Element root = null;
 		DocumentBuilder parser;
@@ -110,19 +111,25 @@ public class MementoUtils {
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element elem = (Element) node;
 					NamedNodeMap nodeMap = elem.getAttributes();
+					String key = null;
+					String value = null;
 					for(int idx = 0; idx < nodeMap.getLength(); idx++) {
 						Node attrNode = nodeMap.item(idx);
 						if (attrNode.getNodeType() == Node.ATTRIBUTE_NODE) {
 							Attr attr = (Attr) attrNode;
-							String key = attr.getName();
-							String value = attr.getValue(); 
-							if (key != null && value != null) {
-								keyPairValues.put(key, value);
+							if (attr.getName().equals(ATTRIBUTE_KEY)) {
+								key = attr.getValue();
 							}
-							else {
-								throw new Exception();
+							else if (attr.getName().equals(ATTRIBUTE_VALUE)) {
+								value = attr.getValue();
 							}
 						}
+					}
+					if (key != null && value != null) {
+						keyPairValues.put(key, value);
+					}
+					else {
+						throw new Exception();
 					}
 				}
 			}
@@ -148,7 +155,7 @@ public class MementoUtils {
 			// create one XML element per list entry to save
 			for (String lbl : labels) {
 				Element elem = doc.createElement(ELEMENT_TAGNAME);
-				elem.setAttribute(ATTRIBUTE_NAME, lbl);
+				elem.setAttribute(ATTRIBUTE_VALUE, lbl);
 				rootElement.appendChild(elem);
 			}
 
@@ -172,7 +179,7 @@ public class MementoUtils {
 
 	/** Returns a List of Strings, decoded from a XML memento */
 	public static List<String> decodeListFromMemento(String memento) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		Element root = null;
 		DocumentBuilder parser;
@@ -185,7 +192,7 @@ public class MementoUtils {
 				Node node = nodeList.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
 					Element elem = (Element) node;
-					String value = elem.getAttribute(ATTRIBUTE_NAME);
+					String value = elem.getAttribute(ATTRIBUTE_VALUE);
 					if (value != null) {
 						list.add(value);
 					}

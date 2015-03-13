@@ -9,7 +9,7 @@
             id="org.eclipse.cdt.cdi.launch.localCLaunch"
             type="org.eclipse.cdt.launch.applicationLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
-            modes="run,debug"
+            modes="debug"
             name="%LocalCDTLaunch.name"
             delegateDescription="%LocalCDTLaunch.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"

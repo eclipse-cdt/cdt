@@ -42,7 +42,13 @@ import org.eclipse.cdt.core.parser.IToken;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface INodeFactory {
-
+	
+	/** @since 5.10 */
+	public IASTAlignmentSpecifier newAlignmentSpecifier(IASTExpression expression);
+	
+	/** @since 5.10 */
+	public IASTAlignmentSpecifier newAlignmentSpecifier(IASTTypeId typeId);
+	
 	public IASTArrayDeclarator newArrayDeclarator(IASTName name);
 	
 	public IASTArrayModifier newArrayModifier(IASTExpression expr);

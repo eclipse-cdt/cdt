@@ -22,13 +22,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * c++ specific composite type specifier
  */
 public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
-        implements ICPPASTCompositeTypeSpecifier, IASTAmbiguityParent {
+        implements ICPPASTCompositeTypeSpecifier {
     private int fKey;
     private IASTName fName;
     private CPPClassScope fScope;
@@ -182,6 +181,10 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 		if (!acceptByAttributeSpecifiers(action))
 			return false;
+		
+		if (!visitAlignmentSpecifiers(action)) {
+			return false;
+		}
 
 		if (fName != null && !fName.accept(action))
 			return false;
@@ -223,8 +226,10 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 				other.setPropertyInParent(child.getPropertyInParent());
 				fAllDeclarations[i] = (IASTDeclaration) other;
 				fActiveDeclarations= null;
+				return;
 			}
 		}
+		super.replace(child, other);
 	}
 
 	@Override

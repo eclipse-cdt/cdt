@@ -1,0 +1,55 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Nathan Ridge.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Nathan Ridge - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.core.dom.ast;
+
+/**
+ * Represents an alignment specifier.
+ * 
+ * Grammatically, this is a decl-specifier.
+ * 
+ * Possible forms are:
+ *   C++:
+ *     alignas(<type-id>)
+ *     alignas(<expression>)
+ *   C:
+ *     _Alignas(<type-id>)
+ *     _Alignas(<expression>)
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ * @since 5.10
+ */
+public interface IASTAlignmentSpecifier extends IASTNode {
+	public static final IASTAlignmentSpecifier[] EMPTY_ALIGNMENT_SPECIFIER_ARRAY = {};
+	
+	public static final ASTNodeProperty ALIGNMENT_EXPRESSION = new ASTNodeProperty(
+			"IASTAlignmentSpecifier.ALIGNMENT_EXPRESSION - Expression in alignment specifier");  //$NON-NLS-1$
+	
+	public static final ASTNodeProperty ALIGNMENT_TYPEID = new ASTNodeProperty(
+			"IASTAlignmentSpecifier.ALIGNMENT_TYPEID - Type-id in alignment specifier");  //$NON-NLS-1$
+	
+	/**
+	 * If the specifier is of the form 'alignas(<expression>)' or '_Alignas(<expression>)',
+	 * return the enclosed expression. Otherwise, return null.
+	 */
+	IASTExpression getExpression();
+	
+	/**
+	 * If the specifier is of the form 'alignas(<type-id>)' or '_Alignas(<type-id>)',
+	 * return the enclosed type-id. Otherwise, return null.
+	 */
+	IASTTypeId getTypeId();
+	
+	@Override
+	public IASTAlignmentSpecifier copy();
+	
+	@Override
+	public IASTAlignmentSpecifier copy(CopyStyle style);
+}

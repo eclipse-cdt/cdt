@@ -7595,4 +7595,18 @@ public class AST2Tests extends AST2TestBase {
     public void testVoidPointerInTernaryOperator_460741() throws Exception {
     	parseAndCheckBindings(getAboveComment(), C);
     }
+    
+    //	_Alignas(8) int x;
+    //	_Alignas(int) char y;
+	//	_Alignas(16) struct { int x; int y; };
+	//	_Alignas(8) enum { A, B, C };
+	//	struct S {
+	//		int x;
+	//		_Alignas(8) int y;
+	//	};
+	//	_Alignas(32) struct S s;
+    //	_Alignas(struct S) int t;
+    public void testAlignas_451082() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), C);
+    }
 }

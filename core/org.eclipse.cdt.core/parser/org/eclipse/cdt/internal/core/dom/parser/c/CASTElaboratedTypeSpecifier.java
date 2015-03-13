@@ -90,6 +90,9 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 	            default : break;
 	        }
 		}
+        if (!visitAlignmentSpecifiers(action)) {
+        	return false;
+        }
         if( name != null ) if( !name.accept( action ) ) return false;
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){

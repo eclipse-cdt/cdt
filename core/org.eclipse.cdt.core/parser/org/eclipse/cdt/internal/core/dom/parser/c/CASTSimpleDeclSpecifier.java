@@ -17,10 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
-		implements ICASTSimpleDeclSpecifier, IASTAmbiguityParent {
+		implements ICASTSimpleDeclSpecifier {
     private int simpleType;
     private boolean isSigned;
     private boolean isUnsigned;
@@ -167,10 +166,14 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
 	            default : break;
 	        }
 		}
+        
+        if (!visitAlignmentSpecifiers(action)) {
+        	return false;
+        }
 
         if (fDeclTypeExpression != null && !fDeclTypeExpression.accept(action))
 			return false;
-
+        
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -224,6 +227,8 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
 			fDeclTypeExpression= (IASTExpression) other;
+			return;
 		}
+		super.replace(child, other);
 	}
 }

@@ -101,7 +101,7 @@ public class TriggerCellModifier implements ICellModifier {
         Shell shell = getShell();
         if (shell == null) return;
         
-        Integer intValue = null;
+        Integer intValue = 0;
         if (value instanceof String) {
             try {
                 intValue = new Integer(((String)value).trim());

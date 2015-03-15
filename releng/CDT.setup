@@ -105,6 +105,8 @@
         <requirement
             name="org.apache.log4j.source"/>
         <requirement
+            name="org.apache.commons.compress"/>
+        <requirement
             name="net.sourceforge.lpg.lpgjavaruntime"/>
         <requirement
             name="org.junit"/>

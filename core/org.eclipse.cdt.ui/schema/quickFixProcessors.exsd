@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+
+<include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.ui" id="quickFixProcessors" name="Quick Fix Processor"/>
@@ -19,8 +22,6 @@ This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Prope
 &lt;/p&gt;
       </documentation>
    </annotation>
-
-   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <annotation>

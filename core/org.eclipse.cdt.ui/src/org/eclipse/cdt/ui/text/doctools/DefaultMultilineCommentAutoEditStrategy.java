@@ -32,12 +32,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -248,7 +250,20 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		final ITranslationUnit unit= getTranslationUnit();
 		try {
 			if (unit != null) {
-				IASTTranslationUnit ast= unit.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+				IASTTranslationUnit ast = null;
+				IIndex index = CCorePlugin.getIndexManager().getIndex(unit.getCProject());
+				try {
+					index.acquireReadLock();
+				} catch (InterruptedException e) {
+					index = null;
+				}
+				try {
+					ast= unit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+				} finally {
+					if (index != null) {
+						index.releaseReadLock();
+					}
+				}
 				return ast;
 			}
 		} catch (CModelException e) {

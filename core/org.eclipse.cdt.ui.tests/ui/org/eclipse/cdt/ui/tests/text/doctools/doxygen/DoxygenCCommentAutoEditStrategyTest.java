@@ -23,9 +23,9 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -689,12 +689,12 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 		
 		DoxygenMultilineAutoEditStrategy ds= new DoxygenMultilineAutoEditStrategy() {
 			@Override
-			public IASTTranslationUnit getAST() {
+			public ITranslationUnit getTranslationUnitForActiveEditor() {
 				final IFile file= fCProject.getProject().getFile("testContent.cpp");
 				try {
 					TestSourceReader.createFile(fCProject.getProject(), "testContent.cpp", doc.get());
 					String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
-					return new TranslationUnit(fCProject, file, id).getAST();
+					return new TranslationUnit(fCProject, file, id);
 				} catch(CoreException ce) {
 					assertTrue("Could not get test content AST", false);
 					return null;

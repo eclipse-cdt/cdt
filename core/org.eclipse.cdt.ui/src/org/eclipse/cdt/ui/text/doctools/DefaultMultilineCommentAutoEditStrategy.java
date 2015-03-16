@@ -32,12 +32,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -148,27 +150,44 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 
 					// as we are auto-closing, the comment becomes eligible for auto-doc'ing
 					IASTDeclaration dec= null;
-					IASTTranslationUnit ast= getAST();
-					
-					if (ast != null) {
-						dec= findFollowingDeclaration(ast, offset);
-						if (dec == null) {
-							IASTNodeSelector ans= ast.getNodeSelector(ast.getFilePath());
-							IASTNode node= ans.findEnclosingNode(offset, 0);
-							if (node instanceof IASTDeclaration) {
-								dec= (IASTDeclaration) node;
-							}
+					IIndex index = null;
+					ITranslationUnit unit = getTranslationUnitForActiveEditor();
+					if (unit != null) {
+						index = CCorePlugin.getIndexManager().getIndex(unit.getCProject());
+						try {
+							index.acquireReadLock();
+						} catch (InterruptedException e) {
+							index = null;
 						}
 					}
-										
-					if (dec != null) {
-						ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset, false);
-						StringBuilder content= customizeAfterNewLineForDeclaration(doc, dec, partition);
-						buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
+					try {
+						IASTTranslationUnit ast = getAST(unit, index);
+						
+						if (ast != null) {
+							dec= findFollowingDeclaration(ast, offset);
+							if (dec == null) {
+								IASTNodeSelector ans= ast.getNodeSelector(ast.getFilePath());
+								IASTNode node= ans.findEnclosingNode(offset, 0);
+								if (node instanceof IASTDeclaration) {
+									dec= (IASTDeclaration) node;
+								}
+							}
+						}
+											
+						if (dec != null) {
+							ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset, false);
+							StringBuilder content= customizeAfterNewLineForDeclaration(doc, dec, partition);
+							buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
+						}
+					} finally {
+						if (index != null) {
+							index.releaseReadLock();
+						}
 					}
-
 				} catch(BadLocationException ble) {
 					ble.printStackTrace();
+				} catch(CoreException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -241,14 +260,22 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	}
 	
 	/**
-	 * @return the AST unit for the active editor, or <code>null</code> if there is no active editor, or
-	 * the AST could not be obtained.
+	 * @return the AST unit for the active editor, not based on an index, or <code>null</code> if there
+	 * is no active editor, or the AST could not be obtained.
 	 */
 	public IASTTranslationUnit getAST() {
-		final ITranslationUnit unit= getTranslationUnit();
+		return getAST(getTranslationUnitForActiveEditor(), null);
+	}
+	
+	/**
+	 * @return the AST for the given translation unit, based on the given index, or <code>null</code> if 
+	 * the translation unit is <code>null</code>, or the AST could not be obtained.
+	 * @since 5.10
+	 */
+	public IASTTranslationUnit getAST(ITranslationUnit unit, IIndex index) {
 		try {
 			if (unit != null) {
-				IASTTranslationUnit ast= unit.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+				IASTTranslationUnit ast= unit.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
 				return ast;
 			}
 		} catch (CModelException e) {
@@ -297,10 +324,12 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	/**
 	 * @return the ITranslationUnit for the active editor, or null if no active
 	 * editor could be found.
+	 * @deprecated use getTranslationUnitForActiveEditor() instead
 	 */
 	/*
 	 * Cloned from JDT
 	 */
+	@Deprecated
 	protected static ITranslationUnit getTranslationUnit() {
 		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null)
@@ -320,6 +349,14 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 			return null;
 
 		return unit;
+	}
+	
+	/**
+	 * Same as above, but nonstatic so derived classes can override it.
+	 * @since 5.10
+	 */
+	protected ITranslationUnit getTranslationUnitForActiveEditor() {
+		return getTranslationUnit();
 	}
 	
 	/**

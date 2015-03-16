@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 IBM Corporation.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - Initial Implementation
- *
+ *     Patrick Tasse - [461541] fix handling of default attributes
  */
 package org.eclipse.remote.internal.jsch.ui.wizards;
 
@@ -224,8 +224,8 @@ public class JSchConnectionPage extends WizardPage {
 		fPasswordText = new Text(controls, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
 		fPasswordText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		fPasswordButton.setSelection(false);
-		fPublicKeyButton.setSelection(true);
+		fPasswordButton.setSelection(JSchConnection.DEFAULT_IS_PASSWORD);
+		fPublicKeyButton.setSelection(!JSchConnection.DEFAULT_IS_PASSWORD);
 		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton, fPasswordText });
 	}
 
@@ -348,17 +348,16 @@ public class JSchConnectionPage extends WizardPage {
 			fConnectionName.setText(fConnection.getName());
 			fHostText.setText(fConnection.getAttribute(JSchConnection.ADDRESS_ATTR));
 			fUserText.setText(fConnection.getAttribute(JSchConnection.USERNAME_ATTR));
-			fPortText.setText(fConnection.getAttribute(JSchConnection.PORT_ATTR));
-			fTimeoutText.setText(fConnection.getAttribute(JSchConnection.TIMEOUT_ATTR));
+			String portStr = fConnection.getAttribute(JSchConnection.PORT_ATTR);
+			fPortText.setText(portStr.isEmpty() ? Integer.toString(JSchConnection.DEFAULT_PORT) : portStr);
+			String timeoutStr = fConnection.getAttribute(JSchConnection.TIMEOUT_ATTR);
+			fTimeoutText.setText(timeoutStr.isEmpty() ? Integer.toString(JSchConnection.DEFAULT_TIMEOUT) : timeoutStr);
 			String isPwdStr = fConnection.getAttribute(JSchConnection.IS_PASSWORD_ATTR);
-			boolean isPwd = isPwdStr != null && Boolean.parseBoolean(isPwdStr);
+			boolean isPwd = isPwdStr.isEmpty() ? JSchConnection.DEFAULT_IS_PASSWORD : Boolean.parseBoolean(isPwdStr);
 			fPasswordButton.setSelection(isPwd);
 			fPublicKeyButton.setSelection(!isPwd);
-			if (isPwd) {
-				fPasswordText.setText(fConnection.getSecureAttribute(JSchConnection.PASSWORD_ATTR));
-			} else {
-				fPassphraseText.setText(fConnection.getSecureAttribute(JSchConnection.PASSPHRASE_ATTR));
-			}
+			fPasswordText.setText(fConnection.getSecureAttribute(JSchConnection.PASSWORD_ATTR));
+			fPassphraseText.setText(fConnection.getSecureAttribute(JSchConnection.PASSPHRASE_ATTR));
 			fProxyCommandText.setText(fConnection.getAttribute(JSchConnection.PROXYCOMMAND_ATTR));
 			JSchConnection proxyConn = fConnection.getService(JSchConnection.class).getProxyConnection();
 			if (proxyConn == null) {

@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.internal.model;
 
-import org.eclipse.cdt.codan.internal.core.CodanRunner;
+import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -33,7 +34,7 @@ public class CxxCodanReconciler {
 			return;
 		try {
 			if (project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				CodanRunner.runInEditor(ast, resource, monitor);
+				CodanRuntime.getInstance().getBuilder().processResource(resource, monitor, CheckerLaunchMode.RUN_AS_YOU_TYPE, ast);
 			}
 		} catch (CoreException e) {
 			// ignore

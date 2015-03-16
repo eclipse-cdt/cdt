@@ -26,6 +26,10 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Collection of methods for running checkers.
+ *
+ * Clients: this should not be called directly, use ICodanBuilder interface instead
+ *
+ * CodanRuntime.getInstance().getBuilder()
  */
 public class CodanRunner {
 	/** Do not instantiate. All methods are static */
@@ -39,7 +43,7 @@ public class CodanRunner {
 	 * @param monitor - the progress monitor
 	 */
 	public static void runInEditor(Object model, IResource resource, IProgressMonitor monitor) {
-		CodanRunner.processResource(resource, model, CheckerLaunchMode.RUN_AS_YOU_TYPE, monitor);
+		processResource(resource, model, CheckerLaunchMode.RUN_AS_YOU_TYPE, monitor);
 	}
 
 	/**

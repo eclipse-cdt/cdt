@@ -31,6 +31,13 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	 * Codan builder id
 	 */
 	public static final String BUILDER_ID = "org.eclipse.cdt.codan.core.codanBuilder"; //$NON-NLS-1$
+	private boolean enabled = true;
+
+	{
+		if (Boolean.valueOf(System.getProperty("codan.disabled"))) { //$NON-NLS-1$
+			enabled = false;
+		}
+	}
 
 	private class CodanDeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -63,6 +70,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (!enabled)
+			return null;
 		if (kind == FULL_BUILD) {
 			fullBuild(monitor);
 		} else {
@@ -78,7 +87,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 
 	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor) {
-		CodanRunner.processResource(resource, CheckerLaunchMode.RUN_ON_FULL_BUILD, monitor);
+		processResource(resource, monitor, CheckerLaunchMode.RUN_ON_FULL_BUILD);
 	}
 
 	/**
@@ -91,6 +100,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	 */
 	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode) {
+		if (!enabled)
+			return;
 		CodanRunner.processResource(resource, mode, monitor);
 	}
 
@@ -105,5 +116,33 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
 		// The visitor does the work.
 		delta.accept(new CodanDeltaVisitor(monitor));
+	}
+
+	@Override
+	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode, Object model) {
+		if (!enabled) return;
+		if (model != null) {
+			if (mode == CheckerLaunchMode.RUN_AS_YOU_TYPE)
+				CodanRunner.runInEditor(model, resource, monitor);
+			else
+				throw new IllegalArgumentException("This mode is not supported"); //$NON-NLS-1$
+		} else {
+			processResource(resource, monitor, mode);
+		}
+	}
+
+	/**
+	 * @return true if build is enable, i.e. running codan
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Globally disable/enable of running codan
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

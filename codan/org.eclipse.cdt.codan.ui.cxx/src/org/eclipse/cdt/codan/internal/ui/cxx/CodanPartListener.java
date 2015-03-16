@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
-import org.eclipse.cdt.codan.internal.core.CodanRunner;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.IPostSaveListener;
@@ -71,7 +71,7 @@ class CodanPartListener implements IPartListener2 {
 			Job job = new Job(NLS.bind(Messages.Startup_AnalyzingFile, resource.getName())) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					CodanRunner.processResource(resource, launchMode, monitor);
+					CodanRuntime.getInstance().getBuilder().processResource(resource, monitor, launchMode);
 					return Status.OK_STATUS;
 				}
 			};

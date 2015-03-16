@@ -40,4 +40,15 @@ public interface ICodanBuilder {
 	 * @since 2.0
 	 */
 	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode);
+
+	/**
+	 * Run code analysis on given resource in a given mode
+	 *
+	 * @param resource - resource to process
+	 * @param monitor - progress monitor
+	 * @param mode - launch mode, @see {@link CheckerLaunchMode}
+	 * @param model - runtime code model, such as AST, used when model is not in sync with resource
+	 * @since 3.3
+	 */
+	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode, Object model);
 }

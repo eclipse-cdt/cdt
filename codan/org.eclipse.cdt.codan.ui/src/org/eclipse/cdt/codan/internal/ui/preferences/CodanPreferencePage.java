@@ -23,11 +23,11 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
+import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
-import org.eclipse.cdt.codan.internal.core.CodanRunner;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
@@ -281,11 +281,11 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 								new ASTRunnable() {
 									@Override
 									public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+										ICodanBuilder builder = CodanRuntime.getInstance().getBuilder();
 										if (ast != null) {
-											CodanRunner.runInEditor(ast, file, submonitor.newChild(1));
+											builder.processResource(file, submonitor.newChild(1), CheckerLaunchMode.RUN_AS_YOU_TYPE, ast);
 										} else {
-											CodanRunner.processResource(file, CheckerLaunchMode.RUN_ON_FILE_OPEN,
-													submonitor.newChild(1));
+											builder.processResource(file, submonitor.newChild(1), CheckerLaunchMode.RUN_ON_FILE_OPEN, null);
 										}
 										return Status.OK_STATUS;
 									}

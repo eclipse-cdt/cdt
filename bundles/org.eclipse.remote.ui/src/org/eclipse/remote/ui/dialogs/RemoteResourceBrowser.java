@@ -264,7 +264,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 	 *            connection that supports the IRemoteFileService service
 	 */
 	public void setConnection(IRemoteConnection connection) {
-		if (connection.hasService(IRemoteFileService.class)) {
+		if (connection != null && connection.hasService(IRemoteFileService.class)) {
 			fConnection = connection;
 		}
 	}

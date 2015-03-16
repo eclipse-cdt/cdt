@@ -220,6 +220,8 @@ public class RemoteResourceBrowserWidget extends Composite {
 			fRemoteConnectionWidget = new RemoteConnectionWidget(mainComp, SWT.NONE, "", //$NON-NLS-1$
 					(fOptionFlags & SHOW_LOCAL_SELECTION) == 0 ? RemoteConnectionWidget.FLAG_NO_LOCAL_SELECTION : 0);
 			fRemoteConnectionWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			// Must happen before adding selection listener as this will trigger selection event
+			fRemoteConnectionWidget.filterConnections(IRemoteFileService.class);
 			fRemoteConnectionWidget.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
@@ -237,7 +239,6 @@ public class RemoteResourceBrowserWidget extends Composite {
 					}));
 				}
 			});
-			fRemoteConnectionWidget.filterConnections(IRemoteFileService.class);
 		}
 
 		Composite textComp = new Composite(mainComp, SWT.NONE);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - Initial API and implementation
+ * Bernd Hufmann - Implement IRemoteConnection.Service.Factory
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.ui;
 
@@ -104,5 +105,17 @@ public class JSchUserAuthenticator implements IUserAuthenticatorService {
 			display = Display.getDefault();
 		}
 		return display;
+	}
+	
+	public static class Factory implements IRemoteConnection.Service.Factory {
+		@Override
+		@SuppressWarnings("unchecked")
+		public <T extends IRemoteConnection.Service> T getService(IRemoteConnection connection, Class<T> service) {
+			if (IUserAuthenticatorService.class.equals(service)) {
+				return (T) new JSchUserAuthenticator(connection);
+			} else {
+				return null;
+			}
+		}
 	}
 }

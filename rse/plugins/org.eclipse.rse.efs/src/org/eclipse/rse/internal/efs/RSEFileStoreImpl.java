@@ -340,7 +340,7 @@ public class RSEFileStoreImpl extends FileStore
 			} else {
 				//need to re-initialize cache
 				remoteFile=null;
-				cacheRemoteFile(null);
+				cacheRemoteFile(null); 
 			}
 		}
 

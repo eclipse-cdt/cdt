@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -37,6 +37,7 @@
  * Martin Oberhuber (Wind River) - [314496] [efs] Symlink target not reported
  * Martin Oberhuber (Wind River) - [314433] [efs] NPE on openOutputStream to broken symlink
  * David McKnight  (IBM)         - [398006] [efs] cached remote file should be cleared if exists() is false
+ * David McKnight  (IBM)         - [461940]  RSEFileStoreImpl.getRemoteFileObject doesn't check whether the cashed file is marked as stale
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -334,7 +335,7 @@ public class RSEFileStoreImpl extends FileStore
 	private IRemoteFile getRemoteFileObject(IProgressMonitor monitor, boolean forceExists) throws CoreException {
 		IRemoteFile remoteFile = getCachedRemoteFile();
 		if (remoteFile!=null) {
-			if (remoteFile.getParentRemoteFileSubSystem().isConnected() && remoteFile.exists()) {
+			if (remoteFile.getParentRemoteFileSubSystem().isConnected() && remoteFile.exists() && !remoteFile.isStale()) {
 				return remoteFile;
 			} else {
 				//need to re-initialize cache
@@ -342,6 +343,7 @@ public class RSEFileStoreImpl extends FileStore
 				cacheRemoteFile(null);
 			}
 		}
+
 
 		RSEFileStore parentStore = _store.getParentStore();
 		if (parentStore!=null) {

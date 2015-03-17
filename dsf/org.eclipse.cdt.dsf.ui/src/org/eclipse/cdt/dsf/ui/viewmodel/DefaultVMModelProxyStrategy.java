@@ -855,7 +855,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     }
 
     /**
-     * Returns whether DefaultVMModelProxyStrategy allows to handles recursive VMNdoes hierarchy.
+     * Returns whether DefaultVMModelProxyStrategy allows to handle recursive VMNodes hierarchy.
      *  
      * @see setAllowRecursiveVMNodes()
      * @return true if this DefaultVMModelProxyStrategy allows recursive containers.  
@@ -865,7 +865,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     }
     
     /**
-     * Allow DefaultVMModelProxyStrategy to handles recursive VMNdoes hierarchy.
+     * Allow DefaultVMModelProxyStrategy to handle recursive VMNodes hierarchy.
      * 	
      * For example if the client wants the debug view to display container nodes that  
      * have containers this flag has to be set.  
@@ -881,9 +881,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * This will allow the client to setup a VMNode to be in the list of its children. 
      * 		addChildNodes(containerNode, new IVMNode[] { containerNode, threadsNode });
      * 
-     * The client also need to make sure the recursive VMNodes and their immediate children: 
-     * 1. Handles buildDelta() by building one level at a time by examining the delta passed as parameter.   
-     * 2. Returns the correct level container inside getContextsForEvent() based on the delta passed. 
+     * The client also needs to make sure the recursive VMNodes and their immediate children: 
+     * 1. Handle buildDelta() by building one level at a time by examining the delta passed as parameter.   
+     * 2. Return the correct level container inside getContextsForEvent() based on the delta passed. 
      * 
      * See org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch.ContainerVMNode for sample implementation. 
      * 

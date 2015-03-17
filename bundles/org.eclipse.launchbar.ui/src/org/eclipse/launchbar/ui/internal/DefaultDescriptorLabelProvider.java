@@ -11,7 +11,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.Activator;
-import org.eclipse.launchbar.core.internal.DefaultLaunchDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 public class DefaultDescriptorLabelProvider extends LabelProvider {

@@ -145,4 +145,8 @@ public class LaunchBarControl implements Listener {
 		// TODO Auto-generated method stub
 
 	}
+
+	public ConfigSelector getConfigSelector() {
+		return configSelector;
+	}
 }

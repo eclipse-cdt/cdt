@@ -17,14 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchMode;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.ui.ILaunchGroup;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -32,13 +25,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
-import org.eclipse.launchbar.ui.internal.dialogs.LaunchConfigurationEditDialog;
+import org.eclipse.launchbar.ui.internal.commands.ConfigureActiveLaunchHandler;
 import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigWizard;
-import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -54,8 +45,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 @SuppressWarnings("restriction")
 public class ConfigSelector extends CSelector {
@@ -164,39 +153,7 @@ public class ConfigSelector extends CSelector {
 
 	@Override
 	public void handleEdit(Object element) {
-		try {
-			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-			LaunchBarManager manager = uiManager.getManager();
-			ILaunchDescriptor desc = (ILaunchDescriptor) element;
-			ILaunchMode mode = manager.getActiveLaunchMode();
-			IRemoteConnection target = manager.getActiveLaunchTarget();
-			if (target == null) {
-				MessageDialog.openError(shell, "No Active Target", "You must create a target to edit this launch configuration.");
-				return;
-			}
-			ILaunchConfigurationType configType = manager.getLaunchConfigurationType(desc, target);
-			if (configType == null) {
-				MessageDialog.openError(shell, "No launch configuration type", "Cannot edit this configuration");
-				return;
-			}
-			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configType, mode.getIdentifier());
-			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(group.getIdentifier());
-			if (groupExt != null) {
-				ILaunchConfiguration config = manager.getLaunchConfiguration(desc, target);
-				if (config == null) {
-					MessageDialog.openError(shell, "No launch configuration", "Cannot edit this configuration");
-					return;
-				}
-				if (config.isWorkingCopy() && ((ILaunchConfigurationWorkingCopy) config).isDirty()) {
-					config = ((ILaunchConfigurationWorkingCopy) config).doSave();
-				}
-				final LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, config, groupExt);
-				dialog.setInitialStatus(Status.OK_STATUS);
-				dialog.open();
-			}
-		} catch (CoreException e2) {
-			Activator.log(e2);
-		}
+		ConfigureActiveLaunchHandler.openConfigurationEditor((ILaunchDescriptor) element);
 	}
 
 	@Override
@@ -283,6 +240,10 @@ public class ConfigSelector extends CSelector {
 		if (element == null)
 			element = noConfigs[0];
 		super.setSelection(element);
+	}
+	
+	public void openPopup() {
+		super.openPopup();
 	}
 	
 }

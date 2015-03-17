@@ -21,13 +21,13 @@
             categoryId="org.eclipse.launchbar.ui.category.launchBar"
             defaultHandler="org.eclipse.launchbar.ui.internal.commands.BuildActiveCommandHandler"
             id="org.eclipse.launchbar.ui.command.buildActive"
-            name="Build for Active Launch Configuration">
+            name="Build Active Launch Configuration">
       </command>
       <command
             categoryId="org.eclipse.launchbar.ui.category.launchBar"
             defaultHandler="org.eclipse.launchbar.ui.internal.commands.LaunchActiveCommandHandler"
             id="org.eclipse.launchbar.ui.command.launchActive"
-            name="Launch Active Configuration">
+            name="Launch Active Launch Configuration">
       </command>
       <command
             categoryId="org.eclipse.launchbar.ui.category.launchBar"
@@ -36,9 +36,16 @@
             name="Stop">
       </command>
       <command
+            categoryId="org.eclipse.launchbar.ui.category.launchBar"
             defaultHandler="org.eclipse.launchbar.ui.internal.commands.ConfigureActiveLaunchHandler"
             id="org.eclipse.launchbar.ui.command.configureActiveLaunch"
-            name="Configure Active Launch Configuration">
+            name="Edit Active Launch Configuration">
+      </command>
+      <command
+            categoryId="org.eclipse.launchbar.ui.category.launchBar"
+            defaultHandler="org.eclipse.launchbar.ui.internal.commands.OpenLaunchSelector"
+            id="org.eclipse.launchbar.ui.command.openLaunchSelector"
+            name="Open Launch Bar Config Selector">
       </command>
    </extension>
    <extension

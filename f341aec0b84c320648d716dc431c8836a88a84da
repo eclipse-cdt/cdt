@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_2bdc0392",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "commmon (3 m)",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0b066793",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Should this be protected, or do we really want to allow to call it outside this class?",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2b036385",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Should this be protected, or do we really want to allow to call it outside this class?",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6bfd6be0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Could you check for null instead of !null so it uses the same logic as the new class PersistentListParameter?",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ebd95b9d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "You can remove the one line above and rely on the below one.",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_4b006f74",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "You can remove the one line above and rely on the below one.",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0bb1474c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/PersistentSettingsManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "No need for super",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_dd69c2ed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/AllTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "2014, 2015",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6b8a8b70",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/PersistentSettingsManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "\"Boolean Parameter\" should be \"Integer Parameter\"",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_9d0e1a72",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/PersistentSettingsManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Should the default value be different for each of the three above?  I realize it does not matter, but it makes it look like a typo...",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_fde11e09",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/PersistentSettingsManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Add above:\n\t@SuppressWarnings(\"unused\")",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_1de7ca1f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/PersistentSettingsManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Add above:\n\t@SuppressWarnings(\"unused\")",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_eb7ddbd5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/PersistentSettingsManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "You can add to the top of the file (note the \u0027static\u0027)\n  import static org.junit.Assert.assertEquals;\n\nand then remove org.junit.Assert everywhere in the file",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ddec2207",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/PersistentSettingsManagerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-03-18T12:28:12Z",
+      "side": 1,
+      "message": "Could simplify with single line\n  return getRandomInt() % 2 \u003d\u003d 0;",
+      "revId": "f341aec0b84c320648d716dc431c8836a88a84da",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

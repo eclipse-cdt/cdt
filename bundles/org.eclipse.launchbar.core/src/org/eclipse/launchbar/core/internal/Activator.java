@@ -62,7 +62,7 @@ public class Activator extends Plugin {
 			System.err.println(status.getMessage());
 	}
 
-	public static void log(Exception exception) {
+	public static void log(Throwable exception) {
 		if (exception instanceof CoreException) {
 			log(((CoreException) exception).getStatus());
 		} else {

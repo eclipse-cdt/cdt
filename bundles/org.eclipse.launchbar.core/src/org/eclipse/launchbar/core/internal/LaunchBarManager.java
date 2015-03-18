@@ -411,7 +411,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private ILaunchConfigurationProvider getConfigProvider(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
-		if (descriptor == null) {
+		if (descriptor == null || target==null) {
 			return null;
 		}
 
@@ -457,8 +457,12 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		// to prevent unnecessary plug-in loading
 		for (LaunchDescriptorTypeInfo descriptorInfo : orderedDescriptorTypes) {
 			ILaunchDescriptorType descriptorType = descriptorInfo.getType();
-			if (descriptorType.ownsLaunchObject(launchObject)) {
-				return descriptorType;
+			try {
+				if (descriptorType.ownsLaunchObject(launchObject)) {
+					return descriptorType;
+				}
+			} catch (Throwable e) {
+				Activator.log(e); // one of used defined launch types is misbehaving
 			}
 		}
 		return null;
@@ -479,8 +483,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 					addDescriptor(launchObject, desc);
 				}
 			}
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
+		} catch (Throwable e) {
+			Activator.log(e);
 		}
 
 		return desc;
@@ -655,7 +659,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		return getPreferenceStore().node(toString(getDescriptorId(activeLaunchDesc)));
 	}
 
-	private IEclipsePreferences getPreferenceStore() {
+	// package private so tests can access it
+	IEclipsePreferences getPreferenceStore() {
 		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 	}
 
@@ -725,7 +730,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			}			
 		}
 
-		if (targetTypeIds != null) {
+		return getLaunchTargets(targetTypeIds);
+	}
+
+	List<IRemoteConnection> getLaunchTargets(List<String> targetTypeIds) {
+		if (targetTypeIds != null && targetTypeIds.size() > 0) {
 			List<IRemoteConnection> targetList = new ArrayList<>();
 			for (IRemoteConnection connection : remoteServicesManager.getAllRemoteConnections()) {
 				for (String targetTypeId : targetTypeIds) {
@@ -738,7 +747,6 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			}
 			return targetList;
 		}
-
 		// Nope, return the local target, the default default
 		IRemoteConnectionType localServices = remoteServicesManager.getLocalConnectionType();
 		return localServices.getConnections();
@@ -783,7 +791,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		return targets.isEmpty() ? null : targets.get(0);
 	}
 
-	private boolean supportsTargetType(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+	boolean supportsTargetType(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 		return getConfigProvider(descriptor, target) != null;
 	}
 
@@ -791,6 +799,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		ILaunchConfiguration activeConfig = getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
 		if (activeConfig != null) {
 			// Save the config -> target mapping
+			// TODO: seems to be weird place for setting this
 			remoteLaunchConfigService.setActiveConnection(activeConfig, activeLaunchTarget);
 		}
 		return activeConfig;
@@ -859,8 +868,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 					return;
 				}
 			}
-		} catch (CoreException e) {
-			Activator.log(e.getStatus());
+		} catch (Throwable e) {
+			// catching throwable here because provider is user class and it can do nasty things :)
+			Activator.log(e);
 		}
 
 		Activator.trace("launch config not claimed");
@@ -888,8 +898,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 						return;
 					}
 				}
-			} catch (CoreException e) {
-				Activator.log(e.getStatus());
+			} catch (Throwable e) {
+				Activator.log(e);
 			}
 		}
 
@@ -905,11 +915,32 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 					while (iter2.hasNext()) {
 						Entry<ILaunchConfigurationProvider, ILaunchConfiguration> e2 = iter2.next();
 						if (e2.getValue().equals(configuration)) {
-							e1.getValue().remove((ILaunchConfigurationProvider) e2.getKey());
+							final ILaunchConfigurationProvider provider = e2.getKey();
+							try {
+								provider.launchConfigurationRemoved(e2.getValue());
+								Activator.trace("launch config removed by " + provider);
+							} catch (Throwable e) {
+								Activator.log(e);
+							}
+							e1.getValue().remove((ILaunchConfigurationProvider) provider);
 							return;
 						}
 					}
 					break;
+				}
+			}
+		} else {
+			Map<ILaunchConfigurationProvider, ILaunchConfiguration> configMap = configs.get(desc);
+			if (configMap != null) {
+				for (ILaunchConfigurationProvider provider : configMap.keySet()) {
+					try {
+						if (provider.launchConfigurationRemoved(configuration)) {
+							Activator.trace("launch config removed by " + provider);
+							return;
+						}
+					} catch (Throwable e) {
+						Activator.log(e);
+					}
 				}
 			}
 		}

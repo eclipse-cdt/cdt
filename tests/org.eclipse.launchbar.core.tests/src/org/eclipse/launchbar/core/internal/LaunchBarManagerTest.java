@@ -3,6 +3,7 @@ package org.eclipse.launchbar.core.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -23,6 +24,7 @@ import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.core.launch.IRemoteLaunchConfigService;
 import org.junit.Test;
 
 
@@ -52,7 +54,11 @@ public class LaunchBarManagerTest {
 		doReturn(true).when(launchConfigType).supportsMode("debug");
 
 		// Inject the launch config
-		LaunchBarManager manager = new LaunchBarManager(false);
+		LaunchBarManager manager = new LaunchBarManager(false) {
+			IRemoteLaunchConfigService getRemoteLaunchConfigService() {
+				return mock(IRemoteLaunchConfigService.class);
+			}
+		};
 		manager.init();
 		manager.launchConfigurationAdded(launchConfig);
 
@@ -93,7 +99,7 @@ public class LaunchBarManagerTest {
 		doReturn("targetType").when(element).getName();
 		String targetTypeId = "org.eclipse.launchbar.core.targetType.local";
 		doReturn(targetTypeId).when(element).getAttribute("id");
-		doReturn("org.eclipse.remote.LocalServices").when(element).getAttribute("remoteServicesId");
+		doReturn("org.eclipse.remote.LocalServices").when(element).getAttribute("connectionTypeId");
 		
 		// fake launch object
 		String launchObject = "fakeObject";
@@ -163,6 +169,10 @@ public class LaunchBarManagerTest {
 			@Override
 			ILaunchManager getLaunchManager() {
 				return launchManager;
+			}
+			@Override
+			IRemoteLaunchConfigService getRemoteLaunchConfigService() {
+				return mock(IRemoteLaunchConfigService.class);
 			}
 		};
 		manager.init();

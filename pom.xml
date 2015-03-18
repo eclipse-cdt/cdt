@@ -69,7 +69,7 @@
 		<module>bundles/org.eclipse.launchbar.core</module>
 		<module>bundles/org.eclipse.launchbar.ui</module>
 		<module>features/org.eclipse.launchbar</module>
-		<!-- module>tests/org.eclipse.launchbar.core.tests</module-->
+		<module>tests/org.eclipse.launchbar.core.tests</module>
 		<module>repo</module>
 	</modules>
 

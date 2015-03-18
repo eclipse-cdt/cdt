@@ -17,7 +17,10 @@ import org.eclipse.debug.core.ILaunchManager;
 
 /**
  * The provider of launch configurations of a given type for a given descriptor type
- * and a given target type.
+ * and a given target type. 
+ * 
+ * It is recommended to extend {@link LaunchConfigurationProvider}
+ * instead of implementing this directly.
  */
 public interface ILaunchConfigurationProvider {
 
@@ -27,16 +30,19 @@ public interface ILaunchConfigurationProvider {
 	 * And return that object.
 	 * 
 	 * @param configuration
-	 * @return launch object that relates to this config
+	 * @return launch object that relates to this config or null it does not own it. 
 	 * @throws CoreException
 	 */
 	Object launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException;
 
 	/**
-	 * A launch configuration has been removed.
+	 * A launch configuration has been removed. 
+	 * It it fired after launch configuration has been removed from file system, so accessing its attributes won't work.
+	 * This notification can be used to purge internal cache for example. 
+	 * If provider cannot determine if it owns it it should return false. 
 	 * 
 	 * @param configuration
-	 * @return was the launch configuration removed by this provider?
+	 * @return true if provider owns this launch configuration
 	 * @throws CoreException
 	 */
 	boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException;

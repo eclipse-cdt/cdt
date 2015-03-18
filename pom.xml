@@ -116,11 +116,7 @@
         <module>terminal/features/org.eclipse.tm.terminal.remote.feature</module>
         <module>terminal/features/org.eclipse.tm.terminal.remote.sdk.feature</module>
         
-        <!-- Deprecated features and plug-ins. Keep them building until removed -->
-        <module>terminal/deprecated/plugins/org.eclipse.tm.terminal.view</module>
-        <module>terminal/deprecated/features/org.eclipse.tm.terminal.view-feature</module>
-        <module>terminal/deprecated/features/org.eclipse.tm.terminal.sdk-feature</module>
-        
+        <module>releng/org.eclipse.tm.repo</module>
         <module>releng/org.eclipse.tm.repo</module>
     </modules>
 

@@ -41,7 +41,6 @@
       <import plugin="org.eclipse.remote.core"/>
       <import plugin="org.eclipse.remote.ui"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.tm.terminal.view"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.ide"/>

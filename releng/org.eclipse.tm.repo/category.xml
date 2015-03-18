@@ -54,22 +54,9 @@
       <category name="tm_40_main"/>
    </feature>
    
-   <!-- Deprecated TM Terminal Features -->
-   <feature url="features/org.eclipse.tm.terminal.view_0.0.0.jar" id="org.eclipse.tm.terminal.view" version="0.0.0">
-      <category name="tm_40_deprecated"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_0.0.0.jar" id="org.eclipse.tm.terminal.sdk" version="0.0.0">
-      <category name="tm_40_deprecated"/>
-   </feature>
-
    <category-def name="tm_40_main" label="TM Terminal 4.0 Main Features">
       <description>
          TM Terminal Main Features
-      </description>
-   </category-def>
-   <category-def name="tm_40_deprecated" label="TM Terminal 4.0 Deprecated Features">
-      <description>
-         TM Terminal Deprecated Features
       </description>
    </category-def>
    <category-def name="rse_37_main" label="RSE 3.7 Main Features">

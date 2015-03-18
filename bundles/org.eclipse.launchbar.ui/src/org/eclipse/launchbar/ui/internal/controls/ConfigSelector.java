@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
+import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
@@ -198,9 +199,11 @@ public class ConfigSelector extends CSelector {
 					new Job("Create Launch Configuration") {
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
-								wizard.getWorkingCopy().doSave();
-								ILaunchMode lm = wizard.getLaunchMode();
-								uiManager.getManager().setActiveLaunchMode(lm);
+								ILaunchConfiguration config = wizard.getWorkingCopy().doSave();
+								final LaunchBarManager barManager = uiManager.getManager();
+								final ILaunchDescriptor desc = barManager.getDefaultDescriptorType().getDescriptor(config);
+								barManager.setLaunchMode(desc, wizard.getLaunchMode());
+								barManager.setActiveLaunchDescriptor(desc);
 								return Status.OK_STATUS;
 							} catch (CoreException e) {
 								return e.getStatus();

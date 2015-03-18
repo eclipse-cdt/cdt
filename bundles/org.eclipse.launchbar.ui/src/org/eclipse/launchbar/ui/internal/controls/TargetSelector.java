@@ -68,12 +68,12 @@ public class TargetSelector extends CSelector {
 			public Object[] getElements(Object inputElement) {
 				LaunchBarManager manager = uiManager.getManager();
 				try {
-					List<IRemoteConnection> targets;
-					targets = manager.getLaunchTargets(manager.getActiveLaunchDescriptor());
+					List<IRemoteConnection> targets = manager.getLaunchTargets(manager.getActiveLaunchDescriptor());
 					if (!targets.isEmpty()) {
 						return targets.toArray();
 					}
 				} catch (CoreException e) {
+					Activator.log(e);
 				}
 				return noTargets;
 			}
@@ -103,7 +103,9 @@ public class TargetSelector extends CSelector {
 			@Override
 			public int compare(Object o1, Object o2) {
 				// Sort by name
-				return 0;
+				String s1 = String.valueOf(o1);
+				String s2 = String.valueOf(o2);
+				return s1.compareTo(s2);
 			}
 		});
 	}
@@ -193,7 +195,7 @@ public class TargetSelector extends CSelector {
 			try {
 				uiManager.getManager().setActiveLaunchTarget(target);
 			} catch (CoreException e) {
-				Activator.log(e.getStatus());
+				Activator.log(e);
 			}
 		}
 	}

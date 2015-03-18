@@ -558,24 +558,28 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			descriptors.put(id, descriptor);
 		}
 		// store in persistent storage
+		storeActiveDescriptor(activeLaunchDesc);
+
+		// Send notifications
+		fireActiveLaunchDescriptorChanged();
+		// Set active target
+		syncActiveTarget();
+		// Set active mode
+		syncActiveMode();
+	}
+
+	private void storeActiveDescriptor(ILaunchDescriptor descriptor) {
 		Activator.trace("new active config is stored " + descriptor);
 
-		// Store the desc order
+		// Store the desc order, active one is the last one
 		StringBuffer buff = new StringBuffer();
-		for (Pair<String, String> key : descriptors.keySet()) {
+		for (Pair<String, String> key : descriptors.keySet()) {// TODO: this can be very long string
 			if (buff.length() > 0) {
 				buff.append(',');
 			}
 			buff.append(toString(key));
 		}
 		setPreference(getPreferenceStore(), PREF_CONFIG_DESC_ORDER, buff.toString());
-
-		// Send notifications
-		updateLaunchDescriptor(activeLaunchDesc);
-		// Set active target
-		syncActiveTarget();
-		// Set active mode
-		syncActiveMode();
 	}
 
 	private void syncActiveTarget() throws CoreException {
@@ -602,7 +606,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private void syncActiveMode() throws CoreException {
-		if (activeLaunchDesc == null) {
+		if (activeLaunchDesc == null || activeLaunchTarget == null) {
 			setActiveLaunchMode(null);
 			return;
 		}
@@ -652,11 +656,22 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			Activator.log(e);
 		}
 	}
-
+	
 	private Preferences getPerDescriptorStore() {
-		if (activeLaunchDesc == null)
+		return getPerDescriptorStore(activeLaunchDesc);
+	}
+
+	private Preferences getPerDescriptorStore(ILaunchDescriptor launchDesc) {
+		if (launchDesc == null)
 			return getPreferenceStore();
-		return getPreferenceStore().node(toString(getDescriptorId(activeLaunchDesc)));
+		String string;
+		try {
+			string = toString(getDescriptorId(launchDesc));
+		} catch (Exception e) {
+			Activator.log(e);
+			string = launchDesc.getName();
+		}
+		return getPreferenceStore().node(string);
 	}
 
 	// package private so tests can access it
@@ -664,7 +679,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		return InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
 	}
 
-	private void updateLaunchDescriptor(ILaunchDescriptor configDesc) {
+	private void fireActiveLaunchDescriptorChanged() {
 		for (Listener listener : listeners) {
 			try {
 				listener.activeLaunchDescriptorChanged();
@@ -695,6 +710,21 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		return activeLaunchMode;
 	}
 
+	/**
+	 * Sets the preferred mode for the given descriptor
+	 * 
+	 * @param desc
+	 * @param mode
+	 * @throws CoreException
+	 */
+	public void setLaunchMode(ILaunchDescriptor desc, ILaunchMode mode) throws CoreException {
+		if (desc == activeLaunchDesc) {
+			setActiveLaunchMode(mode);
+		} else {
+			storeLaunchMode(desc, mode);
+		}
+	}
+
 	public void setActiveLaunchMode(ILaunchMode mode) throws CoreException {
 		if (activeLaunchMode == mode)
 			return;
@@ -702,7 +732,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			throw new IllegalStateException("Mode is not supported by descriptor");
 		// change mode
 		activeLaunchMode = mode;
-		// notify listeners
+		storeLaunchMode(activeLaunchDesc, mode);
+		fireActiveLaunchModeChanged(); // notify listeners
+	}
+
+	private void fireActiveLaunchModeChanged() {
 		for (Listener listener : listeners) {
 			try {
 				listener.activeLaunchModeChanged();
@@ -710,10 +744,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 				Activator.log(e);
 			}
 		}
-		if (mode == null)
-			return;
-		// store mode
-		setPreference(getPerDescriptorStore(), PREF_ACTIVE_LAUNCH_MODE, mode.getIdentifier()); // per desc store
+	}
+	
+
+	private void storeLaunchMode(ILaunchDescriptor desc, ILaunchMode mode) {
+		if (mode != null) {
+			// per desc store, desc can null if will be stored globally
+			setPreference(getPerDescriptorStore(desc), PREF_ACTIVE_LAUNCH_MODE, mode.getIdentifier());
+		}
 	}
 
 	public List<IRemoteConnection> getLaunchTargets(ILaunchDescriptor descriptor) throws CoreException {
@@ -755,28 +793,39 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	public IRemoteConnection getActiveLaunchTarget() {
 		return activeLaunchTarget;
 	}
+	
+	/**
+	 * Sets preferred target for launch descriptor
+	 * @param desc
+	 * @param target
+	 * @throws CoreException
+	 */
+	public void setLaunchTarget(ILaunchDescriptor desc, IRemoteConnection target) throws CoreException {
+		if (desc == activeLaunchDesc) {
+			setActiveLaunchTarget(target);
+		} else {
+			storeLaunchTarget(desc, target);
+		}
+	}
 
 	public void setActiveLaunchTarget(IRemoteConnection target) throws CoreException {
 		if (activeLaunchTarget == target) {
 			return;
 		}
-
 		activeLaunchTarget = target;
-		launchTargetChanged(activeLaunchTarget);
+		storeLaunchTarget(activeLaunchDesc, target);
+		fireActiveLaunchTargetChanged(); // notify listeners
+	}
+
+	private void storeLaunchTarget(ILaunchDescriptor desc, IRemoteConnection target) {
 		if (target == null) {
 			return; // no point storing null, if stored id is invalid it won't be used anyway
 		}
-
-		if (activeLaunchDesc == null)
-			return;
-
-		// per desc store
-		if (supportsTargetType(activeLaunchDesc, target))
-			setPreference(getPerDescriptorStore(),
-					PREF_ACTIVE_LAUNCH_TARGET, toString(getTargetId(target)));
+		// per desc store, desc can be null means it store globally
+		setPreference(getPerDescriptorStore(desc), PREF_ACTIVE_LAUNCH_TARGET, toString(getTargetId(target)));
 	}
 
-	private void launchTargetChanged(IRemoteConnection target) {
+	private void fireActiveLaunchTargetChanged() {
 		for (Listener listener : listeners) {
 			try {
 				listener.activeLaunchTargetChanged();
@@ -1015,4 +1064,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		}
 	}
 
+	public DefaultLaunchDescriptorType getDefaultDescriptorType(){
+		return defaultDescriptorType;
+	}
 }

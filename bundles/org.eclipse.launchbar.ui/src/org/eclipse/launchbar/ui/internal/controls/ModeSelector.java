@@ -154,6 +154,9 @@ public class ModeSelector extends CSelector {
 				manager.setActiveLaunchMode(mode);
 			} catch (CoreException e) {
 				Activator.log(e.getStatus());
+			} catch (Exception e) {
+				// manager can throw illegal state exception hopefully we never get it
+				Activator.log(e);
 			}
 		}
 	}

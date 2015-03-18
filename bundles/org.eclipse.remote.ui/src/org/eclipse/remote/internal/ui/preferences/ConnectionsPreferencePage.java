@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Tasse - [462499] set viewer comparator
  *******************************************************************************/
 package org.eclipse.remote.internal.ui.preferences;
 
@@ -21,12 +22,14 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionControlService;
 import org.eclipse.remote.core.IRemoteConnectionType;
@@ -85,7 +88,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 
 	}
 
-	private class ConnectionLabelProvider implements ITableLabelProvider {
+	private class ConnectionLabelProvider implements ITableLabelProvider, ILabelProvider {
 
 		@Override
 		public void addListener(ILabelProviderListener listener) {
@@ -121,6 +124,20 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			return null;
+		}
+
+		@Override
+		public String getText(Object element) {
+			/*
+			 * This interface is used by the default ViewerComparator.
+			 */
+			IRemoteConnection connection = (IRemoteConnection) element;
+			return connection.getName();
 		}
 
 		@Override
@@ -324,6 +341,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 		fConnectionViewer = new TableViewer(fConnectionTable);
 		fConnectionViewer.setContentProvider(new ConnectionContentProvider());
 		fConnectionViewer.setLabelProvider(new ConnectionLabelProvider());
+		fConnectionViewer.setComparator(new ViewerComparator());
 		fConnectionViewer.setInput(this);
 
 		Composite buttonPane = new Composite(preferencePane, SWT.NONE);

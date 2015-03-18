@@ -54,7 +54,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.JVM)
-public class LaunchBarManagerTest2 {
+public class LaunchBarManager2Test {
 	private LaunchBarManager manager;
 	private ILaunchConfigurationProvider provider;
 	private ILaunchDescriptor descriptor;
@@ -68,10 +68,14 @@ public class LaunchBarManagerTest2 {
 	IEclipsePreferences store = new EclipsePreferences();
 	private ArrayList<Object> elements;
 	private IExtension extension;
-	private String targetTypeId;
+	private String localTargetTypeId;
 	private String descriptorTypeId;
-	private IRemoteConnection localtarget;
+	private IRemoteConnection localTarget;
 	private String launchObject;
+	private IRemoteServicesManager remoteServiceManager;
+	private IRemoteConnection otherTarget;
+	private String otherTargetTypeId;
+	private List<IRemoteConnection> targets;
 
 	public class FixedLaunchBarManager extends LaunchBarManager {
 		public FixedLaunchBarManager() throws CoreException {
@@ -96,6 +100,11 @@ public class LaunchBarManagerTest2 {
 		@Override
 		IRemoteLaunchConfigService getRemoteLaunchConfigService() {
 			return mock(IRemoteLaunchConfigService.class);
+		}
+
+		@Override
+		IRemoteServicesManager getRemoteServicesManager() {
+			return remoteServiceManager;
 		}
 	};
 
@@ -133,7 +142,7 @@ public class LaunchBarManagerTest2 {
 
 	protected void init() throws CoreException {
 		doReturn(elements.toArray(new IConfigurationElement[0])).when(extension).getConfigurationElements();
-		// Now inject the launch object
+		doReturn(targets).when(remoteServiceManager).getAllRemoteConnections();
 		manager.init();
 	}
 
@@ -157,24 +166,6 @@ public class LaunchBarManagerTest2 {
 		doReturn(id).when(element).getAttribute("id");
 		doReturn(id).when(element).getAttribute("connectionTypeId");
 		return element;
-	}
-
-	@Test
-	public void testDescriptor() throws Exception {
-		// Create a descriptor type and inject an associated object
-		// Make sure the descriptor is active with the local target and proper mode
-		// Make sure the associated launch config is active too
-		// Mocking
-		manager.launchObjectAdded(launchObject);
-		assertEquals(descriptor, manager.getActiveLaunchDescriptor());
-		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
-		IRemoteConnectionType localServices = remoteManager.getLocalConnectionType();
-		IRemoteConnection localConnection = localServices.getConnections().get(0);
-		assertNotNull(localConnection);
-		assertEquals(localConnection, manager.getActiveLaunchTarget());
-		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
-		assertNotNull(manager.getActiveLaunchMode());
-		assertEquals("run", manager.getActiveLaunchMode().getIdentifier());
 	}
 
 	protected void mockLaunchObjectOnDescriptor(Object launchObject) throws CoreException {
@@ -275,6 +266,7 @@ public class LaunchBarManagerTest2 {
 		lman = mock(ILaunchManager.class);
 		doReturn(globalmodes.toArray(new ILaunchMode[globalmodes.size()])).when(lman).getLaunchModes();
 		doReturn(new ILaunchConfiguration[] {}).when(lman).getLaunchConfigurations();
+		remoteServiceManager = spy(Activator.getService(IRemoteServicesManager.class));
 		manager = new FixedLaunchBarManager();
 		// mock
 		// lc
@@ -283,7 +275,7 @@ public class LaunchBarManagerTest2 {
 		// launch config type
 		mockLaunchModes(launchConfigType, "run", "debug");
 		// target
-		targetTypeId = mockLocalTargetElement();
+		localTargetTypeId = mockLocalTargetElement();
 		// launch descriptor and type
 		descriptorType = mock(ILaunchDescriptorType.class);
 		descriptorTypeId = "descType";
@@ -294,11 +286,33 @@ public class LaunchBarManagerTest2 {
 		provider = mock(ILaunchConfigurationProvider.class);
 		mockProviderElement(provider);
 		mockProviderTypes(provider);
-		// configType
-		mockConfigTypeElement(targetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
+
 		launchObject = "test";
 		mockLaunchObjectOnDescriptor(launchObject);
-		localtarget = manager.getRemoteServicesManager().getLocalConnectionType().getConnections().get(0);
+		localTarget = manager.getRemoteServicesManager().getLocalConnectionType().getConnections().get(0);
+		otherTargetTypeId = "target2";
+		mockTargetElement(otherTargetTypeId);
+		otherTarget = mock(IRemoteConnection.class);
+		IRemoteConnectionType rtype = mock(IRemoteConnectionType.class);
+		doReturn(rtype).when(otherTarget).getConnectionType();
+		doReturn(otherTargetTypeId).when(rtype).getId();
+		targets = Arrays.asList(new IRemoteConnection[] { otherTarget, localTarget });
+		// configType
+		mockConfigTypeElement(otherTargetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
+	}
+
+	@Test
+	public void testDescriptor() throws Exception {
+		// Create a descriptor type and inject an associated object
+		// Make sure the descriptor is active with the local target and proper mode
+		// Make sure the associated launch config is active too
+		// Mocking
+		manager.launchObjectAdded(launchObject);
+		assertEquals(descriptor, manager.getActiveLaunchDescriptor());
+		assertEquals(otherTarget, manager.getActiveLaunchTarget());
+		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
+		assertNotNull(manager.getActiveLaunchMode());
+		assertEquals("run", manager.getActiveLaunchMode().getIdentifier());
 	}
 
 	@Test
@@ -384,7 +398,7 @@ public class LaunchBarManagerTest2 {
 		manager.setActiveLaunchDescriptor(descriptor);
 		List<IRemoteConnection> launchTargets = manager.getLaunchTargets(descriptor);
 		assertEquals(1, launchTargets.size());
-		assertEquals(localtarget, launchTargets.get(0));
+		assertEquals(otherTarget, launchTargets.get(0));
 	}
 
 	@Test
@@ -406,7 +420,7 @@ public class LaunchBarManagerTest2 {
 		elements.clear();
 		mockLocalTargetElement();
 		mockDescriptorTypeElement(descriptorTypeId, descriptorType);
-		mockConfigTypeElement(targetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
+		mockConfigTypeElement(localTargetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
 		init();
 		manager.launchObjectAdded(launchObject);
 		ILaunchDescriptor desc = manager.getActiveLaunchDescriptor();
@@ -579,10 +593,10 @@ public class LaunchBarManagerTest2 {
 		aaa = mockProject("aaa");
 		descriptor = new ProjectLaunchDescriptor(descriptorType, aaa);
 		// setup some stuff
-		targetTypeId = mockLocalTargetElement();
+		localTargetTypeId = mockLocalTargetElement();
 		IConfigurationElement element = mockDescriptorTypeElement(descriptorTypeId, descriptorType);
 		// configType
-		mockConfigTypeElement(targetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
+		mockConfigTypeElement(localTargetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
 		//lc = provider.createLaunchConfiguration(lman, descType.getDescriptor(aaa));
 		mockLCProject(launchConfig, aaa);
 		String ORIGINAL_NAME = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".originalName";
@@ -593,7 +607,7 @@ public class LaunchBarManagerTest2 {
 	}
 
 	/**
-	 * This scenario when provider will change mapping element->descriptor, depending on other objects involved
+	 * Test duplicating a config. make sure it's default desc and same targets
 	 */
 	@Test
 	public void testLaunchObjectAddedRemapping() throws CoreException {
@@ -806,11 +820,11 @@ public class LaunchBarManagerTest2 {
 
 	@Test
 	public void testGetActiveLaunchModeFromDescActive() throws CoreException {
-		mockLaunchModes(launchConfigType, "run");
-		ILaunchMode mode = mockLaunchModes(launchConfigType, "foo")[0];
+		globalmodes.clear();
+		ILaunchMode mode = mockLaunchModes(launchConfigType, "foo","run")[0];
 		manager.launchObjectAdded(launchObject);
-		manager.setActiveLaunchMode(mode);
 		manager.setActiveLaunchDescriptor(descriptor);
+		manager.setActiveLaunchMode(mode);
 		ILaunchMode resmode = manager.getActiveLaunchMode();
 		assertNotNull(resmode);
 		assertEquals("foo", resmode.getIdentifier());
@@ -818,15 +832,15 @@ public class LaunchBarManagerTest2 {
 
 	@Test
 	public void testGetActiveLaunchTarget() throws CoreException {
-		manager.setActiveLaunchTarget(localtarget);
-		assertEquals(localtarget, manager.getActiveLaunchTarget());
+		manager.setActiveLaunchTarget(localTarget);
+		assertEquals(localTarget, manager.getActiveLaunchTarget());
 	}
 
 	@Test
 	public void testGetLaunchTarget() throws CoreException {
-		final List<IRemoteConnection> list = manager.getLaunchTargets(Collections.singletonList(targetTypeId));
+		final List<IRemoteConnection> list = manager.getLaunchTargets(Collections.singletonList(localTargetTypeId));
 		assertEquals(1, list.size());
-		assertEquals(localtarget, list.get(0));
+		assertEquals(localTarget, list.get(0));
 	}
 
 	@Test
@@ -837,12 +851,12 @@ public class LaunchBarManagerTest2 {
 
 	@Test
 	public void testGetLaunchConfigurationType() throws CoreException {
-		assertNotNull(manager.getLaunchConfigurationType(descriptor, localtarget));
+		assertNotNull(manager.getLaunchConfigurationType(descriptor, otherTarget));
 	}
 
 	@Test
 	public void testGetLaunchConfigurationNull() throws CoreException {
-		assertNull(manager.getLaunchConfiguration(null, localtarget));
+		assertNull(manager.getLaunchConfiguration(null, otherTarget));
 	}
 
 	@Test
@@ -853,8 +867,8 @@ public class LaunchBarManagerTest2 {
 	@Test
 	public void testGetLaunchConfiguration() throws CoreException {
 		basicSetup();
-		assertTrue(manager.supportsTargetType(descriptor, localtarget));
-		assertNotNull(manager.getLaunchConfiguration(descriptor, localtarget));
+		assertTrue(manager.supportsTargetType(descriptor, otherTarget));
+		assertNotNull(manager.getLaunchConfiguration(descriptor, otherTarget));
 	}
 
 	@Test
@@ -899,7 +913,7 @@ public class LaunchBarManagerTest2 {
 		assertNotNull(launchDescriptors[0]);
 		assertEquals(launchConfig.getName(), launchDescriptors[0].getName());
 		manager.setActiveLaunchDescriptor(launchDescriptors[0]);
-		assertEquals(localtarget, manager.getActiveLaunchTarget());
+		assertEquals(otherTarget, manager.getActiveLaunchTarget());
 		assertEquals(mode, manager.getActiveLaunchMode());
 	}
 
@@ -916,7 +930,7 @@ public class LaunchBarManagerTest2 {
 		assertNotNull(launchDescriptors[0]);
 		assertEquals(lc2.getName(), launchDescriptors[0].getName());
 		manager.setActiveLaunchDescriptor(launchDescriptors[0]);
-		assertEquals(localtarget, manager.getActiveLaunchTarget());
+		assertEquals(localTarget, manager.getActiveLaunchTarget());
 	}
 
 	@Test
@@ -955,9 +969,9 @@ public class LaunchBarManagerTest2 {
 		elements.clear();
 		IConfigurationElement element = mockElementAndAdd("defaultConfigTarget");
 		doReturn(launchConfigType.getIdentifier()).when(element).getAttribute("launchConfigurationType");
-		targetTypeId = "x2";
-		mockTargetElement(targetTypeId);
-		doReturn(targetTypeId).when(element).getAttribute("targetType");
+		localTargetTypeId = "x2";
+		mockTargetElement(localTargetTypeId);
+		doReturn(localTargetTypeId).when(element).getAttribute("targetType");
 		init();
 		manager.launchConfigurationAdded(launchConfig);
 		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
@@ -974,7 +988,7 @@ public class LaunchBarManagerTest2 {
 		IConfigurationElement element = mockDescriptorTypeElement("d1", descriptorType = mock(ILaunchDescriptorType.class));
 		doThrow(new CoreException(new Status(1, "a", "n"))).when(element).createExecutableExtension("class");
 		doReturn(new ILaunchConfiguration[] { launchConfig }).when(lman).getLaunchConfigurations();
-		mockConfigTypeElement(targetTypeId, "d1", launchConfigType.getIdentifier());
+		mockConfigTypeElement(localTargetTypeId, "d1", launchConfigType.getIdentifier());
 		init();
 		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length); // XXX should be 0

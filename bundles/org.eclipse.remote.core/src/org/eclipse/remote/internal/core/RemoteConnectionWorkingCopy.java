@@ -298,7 +298,6 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		} catch (BackingStoreException e1) {
 			throw new RemoteConnectionException(e1);
 		}
-		newAttributes.clear();
 
 		ISecurePreferences securePrefs = original.getSecurePreferences();
 		for (Map.Entry<String, String> entry : newSecureAttributes.entrySet()) {
@@ -318,7 +317,13 @@ public class RemoteConnectionWorkingCopy implements IRemoteConnectionWorkingCopy
 		} catch (IOException e) {
 			throw new RemoteConnectionException(e);
 		}
+
+		/*
+		 * Reset state for isDirty()
+		 */
+		newAttributes.clear();
 		newSecureAttributes.clear();
+		newName = null;
 
 		connectionType.addConnection(original);
 		if (added) {

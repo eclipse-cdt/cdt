@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     private List<IVMModelProxy> fActiveModelProxies = new LinkedList<IVMModelProxy>();
 
     /**
-     * Convencience constant.
+     * Convenience constant.
      */
     private static final IVMNode[] EMPTY_NODES_ARRAY = new IVMNode[0];
     
@@ -131,7 +131,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         new HashMap<IVMNode,IVMNode[]>();
         
     /** 
-     * Cached array of all the configued view model nodes.  It is generated 
+     * Cached array of all the configured view model nodes.  It is generated 
      * based on the child nodes map.
      */
     private IVMNode[] fNodesListCache = null;
@@ -143,7 +143,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 
     /**
      * The root node for this model provider.  The root layout node could be 
-     * null when first created, to allow sub-classes to prorperly configure the 
+     * null when first created, to allow sub-classes to properly configure the 
      * root node in the sub-class constructor.  
      */
     private IRootVMNode fRootNode;
@@ -482,7 +482,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     /**
      * Adds the given node to configured nodes, without creating any 
      * parent-child relationship for it.  It is useful for providers which do have 
-     * a strict tree hierarchy of ndoes.
+     * a strict tree hierarchy of nodes.
      */
     protected void addNode(IVMNode node) {
         if (!fChildNodesMap.containsKey(node)) {
@@ -619,7 +619,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * Calls the given view model node to perform the given updates.  This 
      * method is called by view model provider and it's helper classes instead
      * of calling the IVMNode method directly, in order to allow additional
-     * processing of the udpate.  For example the AbstractCachingVMProvider 
+     * processing of the update.  For example the AbstractCachingVMProvider 
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
@@ -669,7 +669,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * Calls the given view model node to perform the given updates.  This 
      * method is called by view model provider and it's helper classes instead
      * of calling the IVMNode method directly, in order to allow additional
-     * processing of the udpate.  For example the AbstractCachingVMProvider 
+     * processing of the update.  For example the AbstractCachingVMProvider 
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
@@ -819,7 +819,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 * @param proxy
 	 *            the target proxy; n/a (null) for a 'received' action.
 	 * @param action
-	 *            what phased of the event handling has beeb reached
+	 *            what phased of the event handling has been reached
 	 */
     private void trace(Object event, Object skippedOrCanceledEvent, IVMModelProxy proxy, EventHandlerAction action) {
     	assert DEBUG_DELTA;

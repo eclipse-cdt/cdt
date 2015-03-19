@@ -32,6 +32,7 @@ import org.eclipse.cdt.codan.internal.ui.ImageConstants;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -39,12 +40,15 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 
 public class ProblemsTreeEditor extends CheckedTreeEditor {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -381,5 +385,19 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 		}
 		return message;
+	}
+
+	@Override
+	protected CheckboxTreeViewer doCreateTreeViewer(Composite parent, int style) {
+		PatternFilter filter = new PatternFilter();
+		filter.setIncludeLeadingWildcard(true);
+		FilteredTree filteredTree = new FilteredTree(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION,
+				filter, true) {
+			@Override
+			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
+				return new CheckboxTreeViewer(parent, style);
+			}
+		};
+		return (CheckboxTreeViewer) filteredTree.getViewer();
 	}
 }

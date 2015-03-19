@@ -153,7 +153,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			profile = getRegistry().getWorkspaceProfile();
 		}
 		Composite comp = (Composite) super.createContents(parent);
-		createInfoControl(comp);
+		createInfoControl(parent);
 		return comp;
 	}
 
@@ -256,7 +256,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		for (IEditorReference partRef : page.getEditorReferences()) {
 			IEditorPart editor = partRef.getEditor(false);
 			if (editor instanceof ICEditor) {
-				IFile file = (IFile) editor.getEditorInput().getAdapter(IFile.class);
+				IFile file = editor.getEditorInput().getAdapter(IFile.class);
 				if (file != null && resource.getFullPath().isPrefixOf(file.getFullPath())) {
 					filesToUpdate.add(file);
 				}

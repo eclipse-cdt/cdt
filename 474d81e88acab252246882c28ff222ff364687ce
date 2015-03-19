@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_e2e17509",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-19T21:19:16Z",
+      "side": 1,
+      "message": "In your commit comment, you say use ./cdtDebug (note the capital D).  I assume, that is mistaken and this is the correct name here.",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_4204c953",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 10
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-19T21:19:16Z",
+      "side": 1,
+      "message": "This support Linux x86 and x86_64.  What about other platforms that the normal CDT runs under? (ia64, ppc??)",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_82d35147",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-19T21:19:16Z",
+      "side": 1,
+      "message": "Probably should be Stand-Alone C/C++ Debugger Product",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_62d62539",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/messages.properties",
+        "patchSetId": 10
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-19T21:19:16Z",
+      "side": 1,
+      "message": "doesn\u0027t exist.",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_b645f31c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-19T01:34:43Z",
+      "side": 1,
+      "message": "please log it, and one above\n\tCUIPlugin.log(e);",
+      "revId": "d168dccb5af585097eefc5b2b2aa38db35200911",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_1645e719",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/text/doctools/DefaultMultilineCommentAutoEditStrategy.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-19T01:34:43Z",
+      "side": 1,
+      "message": "can you remove this comment? I don\u0027t think it applies",
+      "revId": "d168dccb5af585097eefc5b2b2aa38db35200911",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

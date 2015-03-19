@@ -153,7 +153,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			profile = getRegistry().getWorkspaceProfile();
 		}
 		Composite comp = (Composite) super.createContents(parent);
-		createInfoControl(comp);
+		createInfoControl(parent);
 		return comp;
 	}
 

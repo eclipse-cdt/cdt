@@ -16,6 +16,24 @@
       "revId": "a9c42d0e9a671e8c2216e4bf039a76fd47c18f92",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3b94a399",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-03-19T03:09:55Z",
+      "side": 1,
+      "message": "The idea is that you can call resolveLineTagLocations multiple times if there are multiple source files. Then, fTagLocations.size() will be different from numberFound.\n\nFor example: https://git.eclipse.org/r/#/c/40822/6/dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/StepIntoSelectionTest.java\n\n(note that in that patch, the fTagLocations.clear() is removed and fTagLocations is made non-static)",
+      "parentUuid": "a7fb1785_bbf533f8",
+      "revId": "a9c42d0e9a671e8c2216e4bf039a76fd47c18f92",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

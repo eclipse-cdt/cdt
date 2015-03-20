@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrick Tasse - [462499] set viewer comparator
+ *     Bernd Hufmann - [462709] Display Host and User per connection
  *******************************************************************************/
 package org.eclipse.remote.internal.ui.preferences;
 
@@ -32,6 +33,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionControlService;
+import org.eclipse.remote.core.IRemoteConnectionHostService;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.IRemotePreferenceConstants;
@@ -113,10 +115,16 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 				return connection.isOpen() ? Messages.ConnectionsPreferencePage_open : Messages.ConnectionsPreferencePage_closed;
 			case 1:
 				return connection.getName();
-				// case 2:
-				// return connection.getAttribute(IRemoteConnection.ADDRESS_ATTR);
-				// case 3:
-				// return connection.getAttribute(IRemoteConnection.USERNAME_ATTR);
+			case 2:
+				if (connection.hasService(IRemoteConnectionHostService.class)) {
+					return connection.getService(IRemoteConnectionHostService.class).getHostname();
+				}
+				break;
+			case 3:
+				if (connection.hasService(IRemoteConnectionHostService.class)) {
+					return connection.getService(IRemoteConnectionHostService.class).getUsername();
+				}
+				break;
 			}
 			return null;
 		}

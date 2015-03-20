@@ -8762,4 +8762,16 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testClassSpecializationInEnumerator_457511() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename> struct TypeTemplate {};
+	//	template <int> struct Size_tTemplate {};
+	//
+	//	template <typename... ParameterPack> struct Test {
+	//	  static constexpr int packSize() { return sizeof...(ParameterPack); }
+	//
+	//	  using type = TypeTemplate<Size_tTemplate<packSize()>>;
+	//	};
+	public void testAmbiguityResolutionOrder_462348() throws Exception {
+		parseAndCheckBindings();
+	}
 }

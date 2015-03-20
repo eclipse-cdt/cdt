@@ -680,6 +680,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 
 	static ICPPEvaluation getReturnExpression(IASTFunctionDefinition functionDefinition) {
 		IASTReturnStatement returnStatement = null;
+		// Make sure ambiguity resolution has been performed on the function body, even
+		// if it's a class method and we're still processing the class declaration.
+		((ASTNode) functionDefinition).resolvePendingAmbiguities();
 	    IASTStatement body = functionDefinition.getBody();
 	    if (body instanceof IASTReturnStatement) {
 	    	returnStatement = (IASTReturnStatement) body;

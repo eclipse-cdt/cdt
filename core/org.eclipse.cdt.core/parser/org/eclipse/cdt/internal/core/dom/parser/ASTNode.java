@@ -394,4 +394,12 @@ public abstract class ASTNode implements IASTNode {
 		}
 		return node;
 	}
+
+	/**
+	 * If ambiguity resolution is in progress, and procesing of this node has been deferred,
+	 * process it now. Has no effect if ambiguity resolution is not in progress.
+	 */
+	public void resolvePendingAmbiguities() {
+		((ASTTranslationUnit) getTranslationUnit()).resolvePendingAmbiguities(this);
+	}
 }

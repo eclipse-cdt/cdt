@@ -19,8 +19,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.debug.core.model.IConnectHandler;
-import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
 import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
@@ -239,7 +237,7 @@ public class GdbLaunch extends DsfLaunch
  		// Execute asynchronously to avoid potential deadlocks
  		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=434645
 
- 		ITerminateHandler handler = (ITerminateHandler) getAdapter(ITerminateHandler.class);
+ 		ITerminateHandler handler = getAdapter(ITerminateHandler.class);
  		if (handler == null) {
  			super.terminate();
  			return;
@@ -266,7 +264,7 @@ public class GdbLaunch extends DsfLaunch
 
     @Override
     public void disconnect() throws DebugException {
- 		IDisconnectHandler handler = (IDisconnectHandler)getAdapter(IDisconnectHandler.class);
+ 		IDisconnectHandler handler = getAdapter(IDisconnectHandler.class);
  		if (handler == null) {
  			super.disconnect();
  			return;
@@ -363,25 +361,16 @@ public class GdbLaunch extends DsfLaunch
             });
     }
     
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Object getAdapter(Class adapter) {
-    	// We replace the standard terminate handler by DsfTerminateHandler
-    	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=377447.
-    	if (adapter.equals(ITerminateHandler.class))
-    		return getSession().getModelAdapter(adapter);
-    	if (adapter.equals(IDisconnectHandler.class))
-    		return getSession().getModelAdapter(adapter);
-
-    	// Allow to call the connect handler when the launch is selected
-    	if (adapter.equals(IConnectHandler.class))
-    		return getSession().getModelAdapter(adapter);
-    	
-    	if (adapter.equals(IDebugNewExecutableHandler.class))
-    		return getSession().getModelAdapter(adapter);
-
-        // Must force adapters to be loaded.
-        Platform.getAdapterManager().loadAdapter(this, adapter.getName());
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+    	if (adapter.equals(ITerminateHandler.class) == false) {
+    		// Must force adapters to be loaded.
+    		// Except in the case of terminate.  Terminate can be used
+    		// when running headless (no UI) and therefore we should not
+    		// for the loading of UI plugins in this case.
+    		// This can happen when running JUnit tests for example
+    		Platform.getAdapterManager().loadAdapter(this, adapter.getName());
+    	}
         return super.getAdapter(adapter);
     }
     

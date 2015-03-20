@@ -159,6 +159,10 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
+         <adapter type="org.eclipse.debug.core.commands.ITerminateHandler"/>
+         <adapter type="org.eclipse.cdt.debug.core.model.IConnectHandler"/>
+         <adapter type="org.eclipse.debug.core.commands.IDisconnectHandler"/>
+         <adapter type="org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler"/>
 	  </factory>         
    </extension>	
    

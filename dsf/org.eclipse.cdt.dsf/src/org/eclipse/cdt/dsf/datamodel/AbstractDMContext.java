@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ abstract public class AbstractDMContext extends PlatformObject
         this(service.getSession(), parents);
     }
     
-    /** Backward compatiblity constructor */
+    /** Backward compatibility constructor */
     public AbstractDMContext(String fSessionId, IDMContext[] parents) {
     	this(DsfSession.getSession(fSessionId), parents);
     }
@@ -132,7 +132,7 @@ abstract public class AbstractDMContext extends PlatformObject
      * standard platform <code>IAdapterManager</code> is not sufficient in 
      * handling adapters for the model context object.  This is because 
      * <code>IAdapterManager</code> uses only the class of the adaptable to 
-     * select the correct adapter factoru, while for model context, the 
+     * select the correct adapter factory, while for model context, the 
      * session is equally important. 
      * @see org.eclipse.runtime.IAdapterManager 
      */

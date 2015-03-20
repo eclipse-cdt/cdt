@@ -1,7 +1,5 @@
-package org.eclipse.cdt.dsf.concurrent;
-
 /******************************************************************************* 
- * Copyright (c) 2008 Wind River Systems, Inc. and others. 
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others. 
  * All rights reserved. This program and the accompanying materials  
  * are made available under the terms of the Eclipse Public License v1.0  
  * which accompanies this distribution, and is available at  
@@ -10,6 +8,7 @@ package org.eclipse.cdt.dsf.concurrent;
  * Contributors: 
  *     Wind River Systems - initial API and implementation 
  *******************************************************************************/ 
+package org.eclipse.cdt.dsf.concurrent;
  
 import org.eclipse.core.runtime.IStatus;
 
@@ -49,7 +48,7 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
             protected void handleCompleted() {
                 if (this == fRm) {
                     fRm = null;
-					// If the requestor canceled the request, then leave the
+					// If the requester canceled the request, then leave the
 					// cache as is, regardless of how the retrieval completes.
 					// We want the cache to stay in the invalid state so that
 					// it remains functional. The request may have completed

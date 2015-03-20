@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.concurrent;
 
 
 /**
- * Untility class for easy pretty-printing stack traces.  Local to the 
+ * Utility class for easy pretty-printing stack traces.  Local to the 
  * concurrent package.
  * 
  * @since 1.0

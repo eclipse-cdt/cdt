@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation idicating that given package, class, method, or field can be 
+ * Annotation indicating that given package, class, method, or field can be 
  * access safely from any thread.  If declared on package or type, a field 
  * or method could still be declared with an annotation indicating that it's
  * not thread-safe.

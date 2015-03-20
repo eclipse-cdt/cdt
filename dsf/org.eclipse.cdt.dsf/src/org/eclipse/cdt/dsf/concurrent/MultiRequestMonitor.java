@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
      * unnecessary cast by the client.
      * @param rm Request monitor object to add to the tracker
      * @return The request monitor that was just added, it allows this method to be used 
-     * inlined in service method calls
+     * in-lined in service method calls
      */
     public synchronized <T extends V> T add(T rm) {
         assert !fStatusMap.containsKey(rm);

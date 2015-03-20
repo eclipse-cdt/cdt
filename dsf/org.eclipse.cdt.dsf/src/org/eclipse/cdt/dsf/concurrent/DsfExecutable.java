@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,7 +181,7 @@ public class DsfExecutable {
 
 // Bug 306982
 //  Disable the use of finalize() method in DSF runnables tracing to avoid 
-//  a performance penalty in garbage colleciton.
+//  a performance penalty in garbage collection.
 //
 //	/**
 //	 * Checks to see if the object was executed before being garbage collected.

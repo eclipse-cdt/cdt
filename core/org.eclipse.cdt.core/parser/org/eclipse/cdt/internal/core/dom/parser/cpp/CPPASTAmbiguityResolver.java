@@ -218,4 +218,26 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 			CPPSemantics.populateCache((ICPPASTInternalScope) scope, declaration);
 		}
 	}
+
+	/**
+	 * If 'node' has been deferred for later processing, process it now. 
+	 */
+	public void resolvePendingAmbiguities(IASTNode node) {
+		if (!fDeferredNodes.isEmpty()) {
+			Deque<IASTNode> deferred = fDeferredNodes.getLast();
+			for (IASTNode deferredNode : deferred) {
+				if (deferredNode == node) {
+					int deferFunctions = fDeferFunctions;
+					fDeferFunctions = 0;
+					try {
+						deferredNode.accept(this);
+					} finally {
+						fDeferFunctions = deferFunctions;
+					}
+					deferred.remove(deferredNode);
+					break;
+				}
+			}
+		}
+	}
 }

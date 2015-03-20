@@ -522,4 +522,10 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		assertNotFrozen();
 		fNodesOmitted = hasNodesOmitted;
 	}
+
+	/**
+	 * If ambiguity resolution is in progress, and processing of 'node' has been deferred, 
+	 * process it now. Has no effect if ambiguity resolution is not in progress.
+	 */
+	public void resolvePendingAmbiguities(IASTNode node) {}
 }

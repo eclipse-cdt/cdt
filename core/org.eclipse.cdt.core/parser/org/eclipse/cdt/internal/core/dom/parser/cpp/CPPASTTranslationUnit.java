@@ -44,6 +44,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
     private CPPNamespaceScope fScope;
     private ICPPNamespace fBinding;
 	private final CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
+	private CPPASTAmbiguityResolver fAmbiguityResolver;
 	
 	public CPPASTTranslationUnit() {
 	}
@@ -190,11 +191,20 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	@Override
 	public void resolveAmbiguities() {
-		accept(new CPPASTAmbiguityResolver()); 
+		fAmbiguityResolver = new CPPASTAmbiguityResolver();
+		accept(fAmbiguityResolver); 
+		fAmbiguityResolver = null;
 	}
 	
 	@Override
 	protected IType createType(IASTTypeId typeid) {
 		return CPPVisitor.createType(typeid);
+	}
+	
+	@Override
+	public void resolvePendingAmbiguities(IASTNode node) {
+		if (fAmbiguityResolver != null) {
+			fAmbiguityResolver.resolvePendingAmbiguities(node);
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River and others.
+ * Copyright (c) 2007, 2015 Wind River and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,8 +158,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // - Augmented on breakpointAdded()
     // - Modified on breakpointChanged()
     // - Diminished on breakpointRemoved()
-    private Map<IBreakpointsTargetDMContext, Map<ICBreakpoint, Map<String, Object>>> fPlatformBPs =
-        new HashMap<IBreakpointsTargetDMContext, Map<ICBreakpoint, Map<String, Object>>>();
+    private Map<IBreakpointsTargetDMContext, Map<ICBreakpoint, Map<String, Object>>> fPlatformBPs = new HashMap<>();
 
     // Holds the set of target breakpoints, per execution context, and their
     // mapping to the corresponding platform breakpoint. In a given execution
@@ -170,8 +169,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // - We start/stop tracking an execution context
     // - A platform breakpoint is added/removed
     // - A thread filter is applied/removed
-    private Map<IBreakpointsTargetDMContext, Map<IBreakpointDMContext, ICBreakpoint>> fTargetBPs =
-        new HashMap<IBreakpointsTargetDMContext, Map<IBreakpointDMContext, ICBreakpoint>>();
+    private Map<IBreakpointsTargetDMContext, Map<IBreakpointDMContext, ICBreakpoint>> fTargetBPs = new HashMap<>();
 
     // Holds the mapping from platform breakpoint to the corresponding target
     // breakpoint(s), per context. There can be multiple back-end BPs for a
@@ -181,8 +179,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // - We start/stop tracking an execution context
     // - A platform breakpoint is added/removed
     // - A thread filter is applied/removed
-    private Map<IBreakpointsTargetDMContext, Map<ICBreakpoint, Vector<IBreakpointDMContext>>> fBreakpointIDs =
-        new HashMap<IBreakpointsTargetDMContext, Map<ICBreakpoint, Vector<IBreakpointDMContext>>>();
+    private Map<IBreakpointsTargetDMContext, Map<ICBreakpoint, Vector<IBreakpointDMContext>>> fBreakpointIDs = new HashMap<>();
 
     // Holds the mapping from platform breakpoint to the corresponding target
     // breakpoint threads, per context.
@@ -190,17 +187,15 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // - We start/stop tracking an execution context
     // - A platform breakpoint is added/removed
     // - A thread filter is applied/removed
-    private Map<IBreakpointsTargetDMContext, Map<ICBreakpoint, Set<String>>> fBreakpointThreads =
-        new HashMap<IBreakpointsTargetDMContext, Map<ICBreakpoint, Set<String>>>();
+    private Map<IBreakpointsTargetDMContext, Map<ICBreakpoint, Set<String>>> fBreakpointThreads = new HashMap<>();
 
     // Due to the very asynchronous nature of DSF, a new breakpoint request can
     // pop up at any time before an ongoing one is completed. The following set
     // is used to store requests until the ongoing operation completes.
-    private Set<IBreakpoint> fPendingRequests    = new HashSet<IBreakpoint>();
-    private Set<IBreakpoint> fPendingBreakpoints = new HashSet<IBreakpoint>();
+    private Set<IBreakpoint> fPendingRequests    = new HashSet<>();
+    private Set<IBreakpoint> fPendingBreakpoints = new HashSet<>();
 
-    private Map<ICBreakpoint, IMarker> fBreakpointMarkerProblems =
-        new HashMap<ICBreakpoint, IMarker>();
+    private Map<ICBreakpoint, IMarker> fBreakpointMarkerProblems = new HashMap<>();
 
     private ListenerList fTrackingListeners = new ListenerList();
 
@@ -324,7 +319,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             }
         };
 
-        List<IBreakpointsTargetDMContext> targetBPKeys = new ArrayList<IBreakpointsTargetDMContext>(fTargetBPs.size());
+        List<IBreakpointsTargetDMContext> targetBPKeys = new ArrayList<>(fTargetBPs.size());
         targetBPKeys.addAll(0, fTargetBPs.keySet());
         for (IBreakpointsTargetDMContext dmc : targetBPKeys) {
             stopTrackingBreakpoints(dmc, countingRm);
@@ -625,8 +620,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     protected void handleSuccess() {
                         // Add the new back-end breakpoint to the map
                         Vector<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
-                        if (list == null)
-                            list = new Vector<IBreakpointDMContext>();
+                        if (list == null) list = new Vector<>();
+                        
                         IBreakpointDMContext targetBP = getData();
                         list.add(targetBP);
                         breakpointIDs.put(breakpoint, list);
@@ -636,8 +631,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                         // And update the corresponding thread list
                         Set<String> thrds = threadsIDs.get(breakpoint);
-                        if (thrds == null)
-                            thrds = new HashSet<String>();
+                        if (thrds == null) thrds = new HashSet<>();
+                        
                         thrds.add(thread);
                         threadsIDs.put(breakpoint, thrds);
 
@@ -939,17 +934,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
 
         // Determine the attributes delta
-        final Map<String,Object> oldAttributes = new HashMap<String,Object>(original_attributes);
+        final Map<String,Object> oldAttributes = new HashMap<>(original_attributes);
         oldAttributes.put(ATTR_THREAD_FILTER, threadsIDs.get(breakpoint));
 
         final Set<String> newThreads = extractThreads(dmc, breakpoint);
-        Map<String,Object> newAttributes = new HashMap<String,Object>(attributes);
+        Map<String,Object> newAttributes = new HashMap<>(attributes);
         newAttributes.put(ATTR_THREAD_FILTER, newThreads);
 
         final Map<String,Object> attributesDelta = determineAttributesDelta(oldAttributes, newAttributes);
 
         // Get the list of back-end breakpoints
-        final Vector<IBreakpointDMContext> oldTargetBPs = new Vector<IBreakpointDMContext>(breakpointIDs.get(breakpoint));
+        final Vector<IBreakpointDMContext> oldTargetBPs = new Vector<>(breakpointIDs.get(breakpoint));
         if (oldTargetBPs.isEmpty()) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, INVALID_BREAKPOINT, null));
             rm.done();
@@ -998,7 +993,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         };
 
         // Everything OK: remove the old back-end breakpoints
-        final Vector<IBreakpointDMContext> newTargetBPs = new Vector<IBreakpointDMContext>();
+        final Vector<IBreakpointDMContext> newTargetBPs = new Vector<>();
         final CountingRequestMonitor removeRM = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
             protected void handleSuccess() {
@@ -1080,7 +1075,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             final Map<String,Object> attributes, Set<String> threads, final DataRequestMonitor<Vector<IBreakpointDMContext>> drm)
     {
         // Our new list of back-end breakpoints. Built as we go.
-        final Vector<IBreakpointDMContext> breakpointList = new Vector<IBreakpointDMContext>();
+        final Vector<IBreakpointDMContext> breakpointList = new Vector<>();
 
         // Counting monitor for the new back-end breakpoints to install
         // Once we're done, return the new list of back-end breakpoints contexts
@@ -1167,7 +1162,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     if (!(breakpoint instanceof ICTracepoint) && !(breakpoint instanceof ICDynamicPrintf)
                     		&& breakpoint.isEnabled()) {
                         for (IBreakpointDMContext ref : fBreakpointIDs.get(context).get(breakpoint)) {
-                            Map<String,Object> delta = new HashMap<String,Object>();
+                            Map<String,Object> delta = new HashMap<>();
                             delta.put(MIBreakpoints.IS_ENABLED, enabled);
                             fBreakpoints.updateBreakpoint(ref, delta, new RequestMonitor(getExecutor(), null));
                         }
@@ -1618,7 +1613,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         // Create the scheduling rule to clear all bp planted.
         ISchedulingRule rule = null;
-        List<ISchedulingRule> markerRules = new ArrayList<ISchedulingRule>();
+        List<ISchedulingRule> markerRules = new ArrayList<>();
         for (ICBreakpoint bp : bps) {
             IMarker marker = bp.getMarker();
             if (marker != null) {
@@ -1751,14 +1746,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     private Map<String, Object> determineAttributesDelta(Map<String, Object> oldAttributes, Map<String, Object> newAttributes) {
 
-        Map<String, Object> delta = new HashMap<String,Object>();
+        Map<String, Object> delta = new HashMap<>();
 
         Set<String> oldKeySet = oldAttributes.keySet();
         Set<String> newKeySet = newAttributes.keySet();
 
-        Set<String> commonKeys  = new HashSet<String>(newKeySet); commonKeys.retainAll(oldKeySet);
-        Set<String> addedKeys   = new HashSet<String>(newKeySet); addedKeys.removeAll(oldKeySet);
-        Set<String> removedKeys = new HashSet<String>(oldKeySet); removedKeys.removeAll(newKeySet);
+        Set<String> commonKeys  = new HashSet<>(newKeySet); commonKeys.retainAll(oldKeySet);
+        Set<String> addedKeys   = new HashSet<>(newKeySet); addedKeys.removeAll(oldKeySet);
+        Set<String> removedKeys = new HashSet<>(oldKeySet); removedKeys.removeAll(newKeySet);
 
         // Add the modified attributes
         for (String key : commonKeys) {
@@ -1855,7 +1850,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     private Set<String> getThreads(Map<String, Object> attributes) {
         Set<String> threads = (Set<String>) attributes.get(ATTR_THREAD_FILTER);
         if (threads == null) {
-            threads = new HashSet<String>();
+            threads = new HashSet<>();
             threads.add("0");    // Thread 0 means all threads //$NON-NLS-1$
         }
         return threads;
@@ -1868,10 +1863,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * @return
      */
     private Set<String> extractThreads(IBreakpointsTargetDMContext bpTargetDmc, ICBreakpoint breakpoint) {
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
 
         if (supportsThreads(breakpoint)) {
-        	List<IExecutionDMContext[]> threads = new ArrayList<IExecutionDMContext[]>(1);
+        	List<IExecutionDMContext[]> threads = new ArrayList<>(1);
 
         	try {
         		// Retrieve all existing targets.
@@ -1961,7 +1956,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 	 */
     protected Map<String,Object> convertToTargetBreakpoint(ICBreakpoint breakpoint, Map<String,Object> attributes) {
 
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
 
         if (breakpoint instanceof ICWatchpoint) {
             properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.WATCHPOINT);

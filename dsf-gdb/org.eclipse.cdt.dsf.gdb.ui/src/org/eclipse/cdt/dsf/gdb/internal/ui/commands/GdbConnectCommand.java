@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
@@ -71,7 +72,7 @@ import org.eclipse.ui.progress.UIJob;
 
 public class GdbConnectCommand extends RefreshableDebugCommand implements IConnectHandler, IConnect {
 
-	private final GdbLaunch fLaunch;
+	private final ILaunch fLaunch;
 	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
     
@@ -85,7 +86,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
     // the binary location for a local attach session.
     private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
     
-    public GdbConnectCommand(DsfSession session, GdbLaunch launch) {
+    public GdbConnectCommand(DsfSession session, ILaunch launch) {
     	fLaunch = launch;
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());

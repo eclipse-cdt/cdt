@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,12 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.IRestartHandler;
@@ -33,9 +33,9 @@ import org.eclipse.debug.core.commands.IRestartHandler;
 public class GdbRestartCommand implements IRestartHandler {
     private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
-    private final GdbLaunch fLaunch;
+    private final ILaunch fLaunch;
     
-    public GdbRestartCommand(DsfSession session, GdbLaunch launch) {
+    public GdbRestartCommand(DsfSession session, ILaunch launch) {
         fExecutor = session.getExecutor();
         fLaunch = launch;
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());

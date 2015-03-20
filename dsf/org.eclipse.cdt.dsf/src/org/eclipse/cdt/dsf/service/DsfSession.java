@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -585,7 +585,7 @@ public class DsfSession
     }
     
     /**
-     * Class to be instanciated only using startSession()
+     * Class to be instantiated only using startSession()
      */
     @ThreadSafe
     private DsfSession(DsfExecutor executor, String ownerId, String id) {

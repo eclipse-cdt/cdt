@@ -69,7 +69,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
     /**
      * The attribute translator that this service will use to map the platform
-     * breakpiont attributes to the corresponding target attributes, and vice
+     * breakpoint attributes to the corresponding target attributes, and vice
      * versa.
      */
     private IBreakpointAttributeTranslator fAttributeTranslator;
@@ -582,7 +582,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
         }
         oldAttrsList.removeAll(commonAttrsList);
         
-        // Create a list of attribute changes.  The lenghth of this list will
+        // Create a list of attribute changes.  The length of this list will
         // always be max(oldAttrList.size(), newAttrsList.size()), padded with
         // null's if oldAttrsList was longer.
         final List<Map<String, Object>> attrDeltasList = getAttributesDeltas(oldAttrsList, newAttrsList);

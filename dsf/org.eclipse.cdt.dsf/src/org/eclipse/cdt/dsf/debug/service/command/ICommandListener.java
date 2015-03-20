@@ -48,7 +48,7 @@ public interface ICommandListener {
 	 * Command Queue. This notification means that the command has
 	 * been removed from the queue and not sent to the backend. The
 	 * user has specifically removed it, perhaps because it has been
-	 * combined with another. Or some state change has occured and 
+	 * combined with another. Or some state change has occurred and 
 	 * there is no longer a need to get this particular set of data.
 	 * 
 	 * @return None

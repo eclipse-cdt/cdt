@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Freescale Semiconductor, Inc. and others.
+ * Copyright (c) 2009, 2015 Freescale Semiconductor, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class LoggingUtils {
 	 * form "classname@id", where 'classname' is the simple or package qualified
 	 * name of the object's class, and 'id' is the hash code.
 	 * 
-	 * Why not just use obj.toString()? That method is often overriden, and so
+	 * Why not just use obj.toString()? That method is often overridden, and so
 	 * cannot be relied on for a representation that uniquely identifies the
 	 * object in the VM space.
 	 * 

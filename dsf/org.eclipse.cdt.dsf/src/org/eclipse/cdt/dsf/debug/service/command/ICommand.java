@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 
 /**
  * Command interface for creating and manipulating GDB/MI commands
- * for the DSF GDB reference implemenation. The command represents
+ * for the DSF GDB reference implementation. The command represents
  * the GDB/MI request which will be put on the wire to the GDB
  * backend. 
  * 
@@ -29,7 +29,7 @@ public interface ICommand<V extends ICommandResult> {
      * Takes the supplied command and coalesces it with this one.
      * The result is a new third command which represent the two
      * original commands.
-     * <br>Note: the result type associated with the resurned command may be 
+     * <br>Note: the result type associated with the returned command may be 
      * different than the result type associated with either of the commands
      * being coalesced.
      * 

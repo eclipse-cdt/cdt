@@ -260,7 +260,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 		} else {
 	    	fType= CPPArithmeticConversion.convertCppOperandTypes(IASTBinaryExpression.op_plus, t2, t3);
 	    	if (fType == null) {
-	    		fType= Conversions.compositePointerType(t2, t3);
+	    		fType= Conversions.compositePointerType(t2, t3, point);
 		    	if (fType == null) {
 					fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 		    	}

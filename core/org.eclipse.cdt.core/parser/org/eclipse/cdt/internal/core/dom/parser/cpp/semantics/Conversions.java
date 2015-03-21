@@ -1180,7 +1180,7 @@ public class Conversions {
 	 * Composite pointer type computed as described in 5.9-2 except that if the conversion to
 	 * the pointer is not possible, the method returns {@code null}.
 	 */
-	public static IType compositePointerType(IType t1, IType t2) {
+	public static IType compositePointerType(IType t1, IType t2, IASTNode point) {
 		final boolean isPtr1 = t1 instanceof IPointerType;
 		if (isPtr1 || isNullPtr(t1)) {
 			if (isNullPointerConstant(t2)) {
@@ -1210,7 +1210,7 @@ public class Conversions {
 			return addQualifiers(p2, p1.isConst(), p1.isVolatile(), p1.isRestrict());
 		}
 		
-		IType t= mergePointers(target1, target2, true);
+		IType t= mergePointers(target1, target2, point, true, true);
 		if (t == null)
 			return null;
 		if (t == target1)
@@ -1220,7 +1220,7 @@ public class Conversions {
 		return copyPointer(p1, t, false, false);
 	}
 
-	private static IType mergePointers(IType t1, IType t2, boolean allcq) {
+	private static IType mergePointers(IType t1, IType t2, IASTNode point, boolean allcq, boolean allowInheritance) {
 		t1= getNestedType(t1, TDEF | REF);
 		t2= getNestedType(t2, TDEF | REF);
 		if (t1 instanceof IPointerType && t2 instanceof IPointerType) {
@@ -1234,7 +1234,7 @@ public class Conversions {
 				return null;
 
 			final IType p1target = p1.getType();
-			IType merged= mergePointers(p1target, p2.getType(), allcq && (cv1.isConst() || cv2.isConst()));
+			IType merged= mergePointers(p1target, p2.getType(), point, allcq && (cv1.isConst() || cv2.isConst()), false);
 			if (merged == null)
 				return null;
 			if (p1target == merged && cv1.isAtLeastAsQualifiedAs(cv2))
@@ -1247,27 +1247,47 @@ public class Conversions {
 		
 		final IType uq1= getNestedType(t1, TDEF|REF|CVTYPE);
 		final IType uq2= getNestedType(t2, TDEF|REF|CVTYPE);
-		if (uq1 == null || ! uq1.isSameType(uq2))
+		if (uq1 == null) {
 			return null;
-
-		if (uq1 == t1 && uq2 == t2)
-			return t1;
-
-		CVQualifier cv1= getCVQualifier(t1);
-		CVQualifier cv2= getCVQualifier(t2);
-		if (cv1 == cv2) 
-			return t1;
+		} 
 		
-		if (!allcq)
-			return null;
+		if (uq1.isSameType(uq2)) {
+			if (uq1 == t1 && uq2 == t2)
+				return t1;
 
-		if (cv1.isAtLeastAsQualifiedAs(cv2))
-			return t1;
-		if (cv2.isAtLeastAsQualifiedAs(cv1)) 
-			return t2;
+			CVQualifier cv1= getCVQualifier(t1);
+			CVQualifier cv2= getCVQualifier(t2);
+			if (cv1 == cv2) 
+				return t1;
+			
+			if (!allcq)
+				return null;
 
-		// One type is const the other is volatile.
-		return new CPPQualifierType(uq1, true, true);
+			if (cv1.isAtLeastAsQualifiedAs(cv2))
+				return t1;
+			if (cv2.isAtLeastAsQualifiedAs(cv1)) 
+				return t2;
+
+			// One type is const the other is volatile.
+			return new CPPQualifierType(uq1, true, true);
+		} else if (allowInheritance) {
+			// Allow for conversion from pointer-to-derived to pointer-to-base as per [conv.ptr] p3.
+			IType base;
+			if (SemanticUtil.calculateInheritanceDepth(uq1, uq2, point) > 0) {
+				base = uq2;
+			} else if (SemanticUtil.calculateInheritanceDepth(uq2, uq1, point) > 0) {
+				base = uq1;
+			} else {
+				return null;
+			}
+			CVQualifier cv1= getCVQualifier(t1);
+			CVQualifier cv2= getCVQualifier(t2);
+			if (cv1 == CVQualifier.NONE && cv2 == CVQualifier.NONE) {
+				return base;
+			}
+			return new CPPQualifierType(base, cv1.isConst() || cv2.isConst(), cv1.isVolatile() || cv2.isVolatile());
+		}
+		return null;
 	}
 
 	public static IType copyPointer(final IPointerType p1, IType target, final boolean isConst,

@@ -10651,6 +10651,19 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testThrowExpressionInConditional_396663() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	struct A {};
+	//
+	//	struct B : A {};
+	//
+	//	void foo(A*);
+	//
+	//	int main() {
+	//	    foo(true ? new A() : new B());
+	//	}
+	public void testBasePointerConverstionInConditional_462705() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <bool>
 	//	struct enable_if {

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_5152d2e4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-03-21T17:46:29Z",
+      "side": 1,
+      "message": "Guy, perhaps you missed my question on the first patch? I\u0027ll copied it here:\n\n\"Why the toOSString? Sorry I\u0027m not very familiar with this code and I don\u0027t see it getting called in the CDT code. Does the path parameter always have the os separators? It sounds like this would make it host dependent. I\u0027m thinking of a case where the host is Windows and the toolchain works remotely on Linux.\"",
+      "range": {
+        "startLine": 769,
+        "startChar": 44,
+        "endLine": 769,
+        "endChar": 54
+      },
+      "revId": "04e3a762e3666064401ebeb27bb282819cb3b2e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

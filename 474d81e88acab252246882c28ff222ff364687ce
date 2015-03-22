@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_11816a53",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 10
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-03-22T05:17:04Z",
+      "side": 1,
+      "message": "I think the other architectures are a bit uncommon. I think it would be too much to provide downloads for all these platforms so I omitted them. I could add them in the .product but they won\u0027t get built anyway because they are not in the target environments in the pom.xml. Do you prefer to have them?",
+      "parentUuid": "a7fb1785_4204c953",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_82d35147",
         "filename": "debug/org.eclipse.cdt.debug.application.product/pom.xml",
         "patchSetId": 10

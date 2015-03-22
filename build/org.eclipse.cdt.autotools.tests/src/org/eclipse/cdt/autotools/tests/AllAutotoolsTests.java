@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Red Hat Inc..
+ * Copyright (c) 2008, 2015 Red Hat Inc..
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class AllAutotoolsTests {
 		suite.addTestSuite(AutotoolsProjectTest1.class);
 		suite.addTestSuite(AutotoolsProjectTest2.class);
 		suite.addTestSuite(AutotoolsVirtualFolderTest.class);
+		suite.addTestSuite(AutotoolsEnvironmentVarTest.class);
 		suite.addTestSuite(UpdateConfigureTest.class);
 		suite.addTest(AutoconfTests.suite());
 		suite.addTest(EditorTests.suite());

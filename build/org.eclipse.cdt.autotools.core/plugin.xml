@@ -396,6 +396,7 @@
                name="%Configuration.build.name">
             <toolChain
                   archList="all"
+                  configurationEnvironmentSupplier="org.eclipse.cdt.internal.autotools.core.AutotoolsEnvironmentVariableSupplier"
                   id="org.eclipse.linuxtools.cdt.autotools.core.toolChain"
                   languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                   name="%Autotools.gnu.toolchain.name"

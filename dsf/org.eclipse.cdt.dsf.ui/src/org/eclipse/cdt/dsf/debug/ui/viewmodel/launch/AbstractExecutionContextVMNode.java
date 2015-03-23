@@ -51,7 +51,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * generating deltas, even though they are accepted and supported by
  * AbstractDMVMProvider for viewing. 
  * The approach I took to support recursive containers for delta generation is to have 
- * the VMNodes generate their deltas  level by level, instead of one whole delta at once. 
+ * the VMNodes generate their deltas level by level, instead of one whole delta at once. 
  * That required changes in identifying which is the correct context for each of the events. 
  *
  * See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=240208
@@ -193,7 +193,7 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
     	}
 		
 		if (triggeringContext != null && triggeringContext.length > 0){
-			leafEC =  triggeringContext[0];
+			leafEC = triggeringContext[0];
 		}
 		
 		return leafEC;
@@ -231,8 +231,9 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode
 			
 			// It is possible for a thread node to be an immediate child of a launch node
 			// with no container node in between.  
-			if (topContainer != null)
+			if (topContainer != null) {
 				parentDelta.addNode(createVMContext(topContainer), 0, IModelDelta.NO_CHANGE);
+			}
 		}
 		else if (parentDelta.getElement() instanceof IDMVMContext) {
 			IDMVMContext vmContext = (IDMVMContext)parentDelta.getElement();

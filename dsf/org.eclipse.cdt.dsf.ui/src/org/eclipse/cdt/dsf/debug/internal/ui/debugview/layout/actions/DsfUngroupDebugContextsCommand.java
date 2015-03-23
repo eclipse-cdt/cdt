@@ -20,7 +20,6 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 /**
  * @since 2.2
  */
-@SuppressWarnings("restriction")
 public class DsfUngroupDebugContextsCommand extends DsfDebugViewLayoutCommand implements IDebugCommandHandler {
 	
     public DsfUngroupDebugContextsCommand(DsfSession session) {

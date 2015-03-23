@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_a27ac62c",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 10
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-23T16:35:43Z",
+      "side": 1,
+      "message": "Ok, as long as documentation including README should state that the RCP is just for x86/x86_64 Linux.",
+      "parentUuid": "a7fb1785_11816a53",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_82d35147",
         "filename": "debug/org.eclipse.cdt.debug.application.product/pom.xml",
         "patchSetId": 10

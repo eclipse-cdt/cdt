@@ -56,31 +56,34 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
      */
     protected IExecutionDMContext[] getDMContexts(IDebugCommandRequest request) {
     	
-    	HashSet<IExecutionDMContext> ret = new HashSet<IExecutionDMContext>();
+    	HashSet<IExecutionDMContext> ret = new HashSet<>();
     	String sessionId = null; 
     	
     	for (Object obj : request.getElements()) {
-    		if (!(obj instanceof IDMVMContext))
+    		if (!(obj instanceof IDMVMContext)) {
     			return EMPTY_ARRAY;
+    		}
     		
     		IDMContext dmContext = ((IDMVMContext)obj).getDMContext(); 
     		IExecutionDMContext exeContext = DMContexts.getAncestorOfType(dmContext, IExecutionDMContext.class);
     		
-    		if (exeContext == null)
+    		if (exeContext == null) {
     			return EMPTY_ARRAY;
+    		}
 
     		// make sure all elements are from the same DSF session. 
     		if (sessionId == null) {
     			sessionId = dmContext.getSessionId();
     		}
     		else {
-    			if (!sessionId.equals(dmContext.getSessionId()))
+    			if (!sessionId.equals(dmContext.getSessionId())) {
     				return EMPTY_ARRAY;
+    			}
     		}
     		
     		ret.add(exeContext);	
     	}
-    	return ret.toArray(new IExecutionDMContext[0]);
+    	return ret.toArray(new IExecutionDMContext[ret.size()]);
     }
     
 	@Override
@@ -101,7 +104,6 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
 			                    	request.done();
 			                    }
 			                });
-						
 					} else {
 						request.setEnabled(false);
 						request.done();
@@ -132,8 +134,9 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
 			                    }
 			                });
 					}
-					else
+					else {
 						request.done();
+					}
 				} 
 	        });
 			return false;

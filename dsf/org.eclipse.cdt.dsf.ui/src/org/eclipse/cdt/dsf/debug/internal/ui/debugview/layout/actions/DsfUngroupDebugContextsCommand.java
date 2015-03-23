@@ -28,8 +28,8 @@ public class DsfUngroupDebugContextsCommand extends DsfDebugViewLayoutCommand im
     }
 
 	@Override
-	void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor requestMonitor) {
-		translator.ungroup(contexts, requestMonitor);
+	void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor rm) {
+		translator.ungroup(contexts, rm);
 	}
 
 	@Override

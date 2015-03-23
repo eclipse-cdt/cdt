@@ -28,8 +28,8 @@ public class DsfGroupDebugContextsCommand extends DsfDebugViewLayoutCommand impl
 	}    
 
 	@Override
-	void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor requestMonitor) {
-		translator.group(contexts, requestMonitor);
+	void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor rm) {
+		translator.group(contexts, rm);
 	}
 	
 	@Override

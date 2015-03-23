@@ -1007,7 +1007,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
         // Create the meta command cache which will use the variable manager
         // to actually send MI commands to the back-end
-        fExpressionCache = new CommandCache(getSession(), varManager);
+        fExpressionCache = new MICommandCache(getSession(), varManager, getServicesTracker());
         ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
         fExpressionCache.setContextAvailable(commandControl.getContext(), true);
         

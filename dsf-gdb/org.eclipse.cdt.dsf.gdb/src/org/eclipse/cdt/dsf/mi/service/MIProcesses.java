@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
@@ -444,6 +445,13 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     public IMIExecutionDMContext createExecutionContext(IContainerDMContext containerDmc, 
                                                         IThreadDMContext threadDmc, 
                                                         String threadId) {
+
+    	// user groups support 
+    	// insert all level of containers between the process and the thread.  
+    	IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+    	if( translator != null) 
+    		containerDmc = translator.createContainerPath(containerDmc, threadDmc);
+
     	return new MIExecutionDMC(getSession().getId(), containerDmc, threadDmc, threadId);
     }
 

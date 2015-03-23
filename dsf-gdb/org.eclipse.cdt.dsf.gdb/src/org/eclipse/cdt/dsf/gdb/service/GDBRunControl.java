@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl3;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionActiveOperation;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionUtils;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -208,6 +209,14 @@ public class GDBRunControl extends MIRunControl {
 	 */
 	@Override
     public void getExecutionContexts(IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
+		// user groups support 
+		IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+		if( translator != null) {
+			translator.getExecutionContexts(containerDmc,rm);
+			return;
+		}
+		// end user group support
+		
 		fProcService.getProcessesBeingDebugged(
 				containerDmc,
 				new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {

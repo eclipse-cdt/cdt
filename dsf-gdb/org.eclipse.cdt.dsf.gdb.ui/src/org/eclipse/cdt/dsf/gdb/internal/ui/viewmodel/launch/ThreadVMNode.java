@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for multi threaded functionality	
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
+ *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 336876)   
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -30,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.FullStackRefreshEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
@@ -39,6 +42,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -454,4 +458,35 @@ public class ThreadVMNode extends AbstractThreadVMNode
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode#getContextsForEvent(org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, java.lang.Object, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+     */
+    @Override
+    public void getContextsForEvent(VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
+   		if (getContextsForRecursiveVMNode( parentDelta, e, rm)) {
+   			return;
+   		}
+    	
+   		super.getContextsForEvent(parentDelta, e, rm);
+    }
+    
+    /**
+     * user groups support.
+     *  
+     * If a FullStackRefreshEvent is fired with a container DM context we need to 
+     * let the default implementation handle the case. 
+     * This will happen is stop mode GDB.
+     * 
+     * In that case all thread will be requested for their content.
+     *      
+     */
+    @Override
+	protected IExecutionDMContext getLeafContextForLeafEvent( Object event) {
+    	if (event instanceof FullStackRefreshEvent &&
+    		((FullStackRefreshEvent)event).getDMContext() instanceof IContainerDMContext) {
+    		return null;
+    	}
+    	return super.getLeafContextForLeafEvent( event);
+    }
 }

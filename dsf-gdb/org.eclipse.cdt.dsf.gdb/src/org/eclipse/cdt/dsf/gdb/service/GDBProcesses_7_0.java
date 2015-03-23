@@ -68,6 +68,7 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -854,6 +855,13 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public IMIExecutionDMContext createExecutionContext(IContainerDMContext containerDmc, 
                                                         IThreadDMContext threadDmc, 
                                                         String threadId) {
+    	// user groups support 
+    	// insert all level of containers between the process and the thread.  
+    	IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+    	if( translator != null ) 
+    		containerDmc = translator.createContainerPath(containerDmc, threadDmc);
+    	// end user groups support
+    	
     	return new MIExecutionDMC(getSession().getId(), containerDmc, threadDmc, threadId);
     }
 

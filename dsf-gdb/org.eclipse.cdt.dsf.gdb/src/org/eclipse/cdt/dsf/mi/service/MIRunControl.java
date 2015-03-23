@@ -56,6 +56,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -534,7 +535,17 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     	
     	IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
-        final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
+
+    	// user groups support - ignore the user groups, suspend the whole process.
+    	IContainerDMContext containerDmcNonFinal = null; 
+    	IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+    	if( translator != null) 
+    		containerDmcNonFinal = DMContexts.getTopMostAncestorOfType(e.getDMContext(), IContainerDMContext.class);
+    	else
+    		containerDmcNonFinal = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
+    	final IContainerDMContext containerDmc = containerDmcNonFinal;
+    	// end user groups support
+        
         if (containerDmc != null) {
             // Set the triggering context only if it's not the container context, since we are looking for a thread.
             IExecutionDMContext triggeringCtx = !e.getDMContext().equals(containerDmc) ? e.getDMContext() : null;

@@ -58,6 +58,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl3;
+import org.eclipse.cdt.dsf.debug.service.IRunControlAsync;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -65,6 +66,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionActiveOperation;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionUtils;
@@ -124,7 +126,9 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3 {
+//TODO not updated, to many conflicts with Dobrin's patch
+public class GDBRunControl_7_0_NS extends AbstractDsfService 
+implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3, IRunControlAsync {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTANTS
 	// /////////////////////////////////////////////////////////////////////////
@@ -364,8 +368,47 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	private boolean fTerminated = false;
 
 	// ThreadStates indexed by the execution context
-	protected Map<IMIExecutionDMContext, MIThreadRunState> fThreadRunStates = new HashMap<IMIExecutionDMContext, MIThreadRunState>();
+	/**
+	 * The running sate information is no longer cached with the execution context
+	 * because the execution object can be inserted inside a group and its identity will change
+	 * to reflect the new parent-child relationship in the new debug view layout.
+	 */
+	class ThreadRunStateMap {
 
+		private HashMap<IDMContext, MIThreadRunState> map = new HashMap<IDMContext, MIThreadRunState>();
+
+		MIThreadRunState get(IExecutionDMContext context) {
+			return map.get(getKey(context));
+		}
+		void remove( IExecutionDMContext context) {
+			map.remove(getKey( context));
+		}
+		void put( IMIExecutionDMContext context, MIThreadRunState state) {
+			IDMContext key = getKey( context);
+			if( key != null)
+				map.put(key, state);
+		}
+		private IDMContext getKey(IExecutionDMContext context) {
+			IMIExecutionContextTranslator translator =
+					getServicesTracker().getService(IMIExecutionContextTranslator.class);
+
+			if(translator != null)
+				return translator.getStableContext(context);
+			else
+				return context;
+		}
+	};
+
+	enum ThreadStateRequest {
+		isSuspended,
+		canSuspend,
+		canResume
+	}
+
+	protected Map<IMIExecutionDMContext, MIThreadRunState> fThreadRunStates = new HashMap<IMIExecutionDMContext, MIThreadRunState>();
+//	protected ThreadRunStateMap fThreadRunStates = new ThreadRunStateMap();
+
+	
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 	
 	private StepIntoSelectionActiveOperation fStepInToSelectionActiveOperation = null;
@@ -424,7 +467,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         					   IRunControl2.class.getName(),
         					   IMIRunControl.class.getName(),
         					   IMultiRunControl.class.getName(),
-        					   IRunControl3.class.getName()}, 
+        					   IRunControl3.class.getName(),
+        					   IRunControlAsync.class.getName() }, 
         	     new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
@@ -495,6 +539,15 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		// Default case
 		return false;
 	}
+	
+	/**
+	 * @since 4.7
+	 */
+	@Override
+	public void isSuspended(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		rm.done(isSuspended(context));
+	}
+
 
 	@Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
@@ -802,6 +855,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		// Default case
 		return false;
 	}
+	
+	/**
+	 * @since 4.7
+	 */
+	@Override
+	public void isStepping(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+		rm.done(isStepping(context));
+	}
 
 	@Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
@@ -1108,6 +1169,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	@Override
 	public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
+		IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+		if (translator != null) {
+			translator.getExecutionContexts(containerDmc, rm);
+			return;
+		}
+
         IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
 		procService.getProcessesBeingDebugged(
 				containerDmc,
@@ -2634,4 +2701,92 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			rm.done();
 		}
 	}
+	
+	/**
+	 * @since 4.7
+	 */
+	protected void getExecutionAndContainerContexts(
+			final IContainerDMContext containerDmc,final DataRequestMonitor<IExecutionDMContext[]> rm){
+
+		IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+		if( translator != null)
+			translator.getExecutionAndContainerContexts( containerDmc,rm);
+		else
+			getExecutionContexts(containerDmc, rm);
+	}
+
+	private boolean doThreadIsSuspended( IExecutionDMContext context) {
+		MIThreadRunState threadState = fThreadRunStates.get(context);
+		return (threadState == null) ? false : !fTerminated && threadState.fSuspended;
+	}
+
+	private void checkState(final IExecutionDMContext context, final boolean all,
+			final ThreadStateRequest stateRequset, final DataRequestMonitor<Boolean> rm) {
+
+		// if this is a leaf execution context, check if there is a state for it in the map.
+		if( !(context instanceof IContainerDMContext)) {
+			boolean state = false;
+			switch( stateRequset) {
+			case isSuspended:
+				state = doThreadIsSuspended(context);
+				break;
+			case canResume:
+				state = doCanResume(context);
+				break;
+			case canSuspend:
+				state = doCanSuspend(context);
+				break;
+			}
+			rm.setData(state);
+			rm.done();
+			return;
+		}
+
+		getExecutionAndContainerContexts((IContainerDMContext)context,
+				new DataRequestMonitor<IExecutionDMContext[]>(getExecutor(), rm)    {
+					@Override
+					protected void handleCompleted() {
+						IExecutionDMContext[] children = getData();
+
+						if( children == null || children.length == 0) {
+							// empty container - assume it is running.
+							rm.setData(new Boolean(false));
+							rm.done();
+							return;
+						}
+
+						final Boolean[] state = new Boolean[children.length];
+						final CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								boolean ret = state[0];
+								for( int i = 1; i < state.length; ++i)
+									if( all)
+										ret &= state[i];
+									else
+										ret |= state[i];
+
+								rm.setData(new Boolean(ret));
+								rm.done();
+							}
+						};
+						int countRM = 0;
+
+						for ( int i = 0; i < children.length; ++i ) {
+							final int nodeIndex = i;
+							checkState( children[i], all, stateRequset,
+									new DataRequestMonitor<Boolean>(getExecutor(), crm) {
+								@Override
+								protected void handleSuccess() {
+									state[nodeIndex] = getData();
+									crm.done();
+								}
+							});
+							countRM++;
+						}
+						crm.setDoneCount(countRM);
+					}
+				});
+	}
+
 }

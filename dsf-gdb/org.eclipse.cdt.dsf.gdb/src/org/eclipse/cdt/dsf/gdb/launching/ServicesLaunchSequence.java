@@ -17,6 +17,7 @@ package org.eclipse.cdt.dsf.gdb.launching;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.debug.internal.provisional.service.IExecutionContextTranslator;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -114,6 +115,15 @@ public class ServicesLaunchSequence extends Sequence {
         public void execute(RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(IDisassembly.class, fSession).initialize(requestMonitor);
         }},
+        new Step() { @Override
+            public void execute(RequestMonitor requestMonitor) {
+        		IExecutionContextTranslator transator = fLaunch.getServiceFactory().createService(IExecutionContextTranslator.class, fSession);
+        		if (transator != null) {
+        			transator.initialize(requestMonitor);
+        		} else {
+        			requestMonitor.done();
+        		}
+            }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
            	IGDBTraceControl traceService = fLaunch.getServiceFactory().createService(IGDBTraceControl.class, fSession, fLaunch.getLaunchConfiguration());

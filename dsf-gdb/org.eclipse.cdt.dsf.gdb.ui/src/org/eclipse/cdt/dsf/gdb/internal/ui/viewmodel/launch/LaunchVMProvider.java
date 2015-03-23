@@ -34,7 +34,9 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingSupportedChangeD
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
+import org.eclipse.cdt.dsf.ui.viewmodel.DefaultVMModelProxyStrategy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -71,7 +73,8 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode});
         
         IVMNode threadsNode = new ThreadVMNode(this, getSession());
-        addChildNodes(containerNode, new IVMNode[] { threadsNode });
+      
+       	addChildNodes(containerNode, new IVMNode[] { containerNode, threadsNode });
         
         IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
         addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
@@ -170,5 +173,13 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         } catch (RejectedExecutionException e) {
             // Session disposed, ignore.
         }
+    }
+    
+    @Override
+    protected IVMModelProxy createModelProxyStrategy(Object rootElement) {
+    	// user groups support
+       	DefaultVMModelProxyStrategy proxy = new DefaultVMModelProxyStrategy(this, rootElement);
+//TODO khou       	proxy.setAllowRecursiveVMNodes(true);
+       	return proxy;
     }
 }

@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -149,6 +150,15 @@ public class GDBRunControl_7_0 extends GDBRunControl implements IReverseRunContr
 
 	@Override
     public void getExecutionContexts(IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
+		
+    	// user groups support 
+    	IMIExecutionContextTranslator translator = getServicesTracker().getService(IMIExecutionContextTranslator.class);
+    	if( translator != null ) {
+    		translator.getExecutionContexts(containerDmc,rm);
+    		return;
+    	}
+    	// end user group support
+		
 		fProcService.getProcessesBeingDebugged(
 				containerDmc,
 				new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {

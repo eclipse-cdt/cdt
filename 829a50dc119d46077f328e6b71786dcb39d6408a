@@ -22,6 +22,30 @@
       "revId": "829a50dc119d46077f328e6b71786dcb39d6408a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_827eaa88",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/rename/HeaderFileReferenceAdjuster.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2015-03-23T15:23:46Z",
+      "side": 1,
+      "message": "There is already code to handle that I think. Except that it currently always makes operation fail on windows as this map is constructed using OS style paths.\n\n(Line 258)\nif (File.separatorChar \u003d\u003d \u0027\\\\\u0027) {\n\t// Normalize path separators on Windows.\n\tlocation \u003d new Path(location).toString();\n}",
+      "parentUuid": "a7fb1785_423b22f4",
+      "range": {
+        "startLine": 122,
+        "startChar": 62,
+        "endLine": 122,
+        "endChar": 70
+      },
+      "revId": "829a50dc119d46077f328e6b71786dcb39d6408a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

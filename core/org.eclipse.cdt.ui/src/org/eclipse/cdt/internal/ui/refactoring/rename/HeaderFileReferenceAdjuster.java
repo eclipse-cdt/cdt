@@ -118,7 +118,8 @@ public class HeaderFileReferenceAdjuster {
 		this.movedFiles = movedFiles;
 		this.movedFilesByLocation = new HashMap<>();
 		for (Entry<IFile, IFile> entry : movedFiles.entrySet()) {
-			this.movedFilesByLocation.put(entry.getKey().getLocation().toOSString(),
+			//Construct map using normalised file paths
+			this.movedFilesByLocation.put(entry.getKey().getLocation().toString(),
 					entry.getValue().getLocation());
 		}
 		this.renamedContainers = renamedContainers;

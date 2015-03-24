@@ -33,6 +33,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.dsf.mi.service.IMIRegisters;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -105,6 +106,10 @@ public class ServicesLaunchSequence extends Sequence {
             // Create high-level breakpoint service and install breakpoints 
             // for the GDB debug context.
         	fLaunch.getServiceFactory().createService(MIBreakpointsManager.class, fSession).initialize(requestMonitor); 
+        }},
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+        	fLaunch.getServiceFactory().createService(IMIRegisters.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {

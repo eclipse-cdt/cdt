@@ -16,4 +16,9 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.remote.internal.terminal.actions;x-internal:=true,
- org.eclipse.remote.internal.terminal.view;x-internal:=true
+ org.eclipse.remote.internal.terminal.connector;x-internal:=true,
+ org.eclipse.remote.internal.terminal.messages;x-internal:=true,
+ org.eclipse.remote.internal.terminal.preferences;x-internal:=true,
+ org.eclipse.remote.internal.terminal.settings;x-internal:=true,
+ org.eclipse.remote.internal.terminal.view;x-internal:=true,
+ org.eclipse.remote.terminal

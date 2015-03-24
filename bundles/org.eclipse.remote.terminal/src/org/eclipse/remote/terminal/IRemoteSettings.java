@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html 
  *******************************************************************************/
-package org.eclipse.remote.internal.terminal.settings;
+package org.eclipse.remote.terminal;
 
 public interface IRemoteSettings {
 	public static final String CONNECTION_NAME = "ConnectionName"; //$NON-NLS-1$

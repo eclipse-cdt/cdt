@@ -10,10 +10,10 @@ package org.eclipse.remote.internal.terminal.connector;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.remote.internal.terminal.settings.IRemoteSettings;
 import org.eclipse.remote.internal.terminal.settings.RemoteSettings;
 import org.eclipse.remote.internal.terminal.settings.RemoteSettingsPage;
 import org.eclipse.remote.internal.terminal.view.TerminalViewPlugin;
+import org.eclipse.remote.terminal.IRemoteSettings;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;

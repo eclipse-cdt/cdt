@@ -1384,8 +1384,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
      * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
      */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter)
+	@SuppressWarnings({ "unchecked" })
+	public <T> T getAdapter(Class<T> adapter)
 	{
         if(adapter == IWorkbenchAdapter.class)
         {
@@ -1415,7 +1415,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     }
                 };
             }
-            return this.fWorkbenchAdapter;
+            return (T) this.fWorkbenchAdapter;
         }
         
         if (adapter == IMemoryBlockConnection.class) 
@@ -1447,7 +1447,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 					}
 				};
 			}
-			return fConnection;
+			return (T) fConnection;
         }
 
         return super.getAdapter(adapter);

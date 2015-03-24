@@ -24,7 +24,6 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.tm.terminal.core.sdk" version="3.7.1" match="greaterOrEqual"/>
       <import feature="org.eclipse.tcf.te.terminals.feature" version="1.3.0" match="greaterOrEqual"/>
    </requires>
 

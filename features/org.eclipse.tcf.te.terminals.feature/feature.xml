@@ -37,10 +37,6 @@
       <import plugin="org.eclipse.tm.terminal.serial" version="2.1.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.ssh" version="2.1.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.telnet" version="2.1.400" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal" version="3.7.1" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.serial" version="3.7.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.ssh" version="3.7.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.telnet" version="3.7.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

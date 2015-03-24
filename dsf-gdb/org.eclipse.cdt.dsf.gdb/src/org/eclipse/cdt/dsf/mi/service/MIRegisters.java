@@ -64,10 +64,9 @@ import org.osgi.framework.BundleContext;
  * events being issued.  Doing this in the handlers as opposed to when 
  * the events are generated, guarantees that the state of the service will
  * always be consistent with the events.
- * @since 4.7
  */
 
-public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICachingService {
+public class MIRegisters extends AbstractDsfService implements IRegisters, ICachingService {
 	/**
 	 * @since 4.6
 	 */
@@ -84,7 +83,7 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
      * Support class used to construct Register Group DMCs.
      */
 	
-    public static class MIRegisterGroupDMC extends AbstractDMContext implements IMIRegisterGroupDMContext {
+    public static class MIRegisterGroupDMC extends AbstractDMContext implements IRegisterGroupDMContext {
         private int fGroupNo;
         private String fGroupName;
 
@@ -94,16 +93,11 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
             fGroupName = groupName;
         }
 
-        @Override
-		public int getGroupNo() { return fGroupNo; }
-        
-        @Override
-		public String getName() { return fGroupName; }
-
+        public int getGroupNo() { return fGroupNo; }
+        public String getName() { return fGroupName; }
         /**
 		 * @since 4.6
 		 */
-		@Override
 		public void setName(String groupName) {
 			fGroupName = groupName;
 		}
@@ -116,7 +110,6 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
         
         @Override
         public int hashCode() { return super.baseHashCode() ^ fGroupNo; }
-
         @Override
         public String toString() { return baseToString() + ".group[" + fGroupNo + "," + fGroupName + "]"; }             //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
@@ -125,7 +118,7 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
      * Support class used to construct Register DMCs.
      */
     
-    public static class MIRegisterDMC extends AbstractDMContext implements IMIRegisterDMContext {
+    public static class MIRegisterDMC extends AbstractDMContext implements IRegisterDMContext {
         private int fRegNo;
         private String fRegName;
 
@@ -165,11 +158,8 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
 			fRegName = regName;
 		}
         
-        @Override
-		public int getRegNo() { return fRegNo; }
-        
-        @Override
-		public String getName() { return fRegName; }
+        public int getRegNo() { return fRegNo; }
+        public String getName() { return fRegName; }
 
         @Override
         public boolean equals(Object other) {
@@ -288,12 +278,7 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
         /*
          * Make ourselves known so clients can use us.
          */
-        register(
-        	new String[]{
-	        	IMIRegisters.class.getName(), 
-	        	MIRegisters.class.getName()
-        	}, 
-        	new Hashtable<String,String>());
+        register(new String[]{IRegisters.class.getName(), MIRegisters.class.getName()}, new Hashtable<String,String>());
 
         requestMonitor.done();
     }
@@ -817,46 +802,4 @@ public class MIRegisters extends AbstractDsfService implements IMIRegisters, ICa
         fRegisterNameCache.reset(context);
         fRegisterValueCache.reset(context);
     }
-
-	/**
-	 * @since 4.7
-	 */
-	@Override
-	public IMIRegisterGroupDMContext createRegisterGroupDMC(IContainerDMContext contDmc, int groupNo, String groupName) {
-		return new MIRegisterGroupDMC(this, contDmc, groupNo, groupName);
-	}
-
-	/**
-	 * @since 4.7
-	 */
-	@Override
-	public IMIRegisterDMContext createRegisterDMC(IMIRegisterGroupDMContext groupDmc, int regNo, String regName) {
-		assert (groupDmc instanceof MIRegisterGroupDMC);
-		return new MIRegisterDMC(this, (MIRegisterGroupDMC)groupDmc, regNo, regName);
-	}
-
-	/**
-	 * @since 4.7
-	 */
-	@Override
-	public IMIRegisterDMContext createRegisterDMC(IMIRegisterGroupDMContext groupDmc, IFrameDMContext frameDmc, int regNo, String regName) {
-		assert (groupDmc instanceof MIRegisterGroupDMC);
-		return new MIRegisterDMC(this, (MIRegisterGroupDMC)groupDmc, frameDmc, regNo, regName);
-	}
-
-	/**
-	 * @since 4.7
-	 */
-	@Override
-	public String getRootRegisterGroupName() {
-		return ROOT_GROUP_NAME;
-	}
-
-	/**
-	 * @since 4.7
-	 */
-	@Override
-	public String getRootRegisterGroupDescription() {
-		return ROOT_GROUP_DESCRIPTION;
-	}
 }

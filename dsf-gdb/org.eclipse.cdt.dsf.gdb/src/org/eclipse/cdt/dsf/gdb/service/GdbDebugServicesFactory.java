@@ -43,14 +43,12 @@ import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
-import org.eclipse.cdt.dsf.mi.service.IMIRegisters;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIModules;
-import org.eclipse.cdt.dsf.mi.service.MIRegisters;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -121,9 +119,6 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		}
 		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
 			return (V)createBreakpointsSynchronizerService(session);
-		} 
-		else if (IMIRegisters.class.isAssignableFrom(clazz)) {
-			return (V)createMIRegistersService(session);
 		} 
 
         return super.createService(clazz, session, optionalArguments);
@@ -236,7 +231,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRegisters createRegistersService(DsfSession session) {
-		return new GDBManagedRegisterGroups(session);
+		return new GDBRegisters(session);
 	}
 
 	@Override
@@ -290,12 +285,5 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
-	}
-	
-	/**
-	 * @since 4.7
-	 */
-	protected IMIRegisters createMIRegistersService(DsfSession session) {
-		return new MIRegisters(session);
 	}
 }

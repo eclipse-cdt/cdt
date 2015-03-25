@@ -131,7 +131,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
         // Add a listener for PDA events to track the started/terminated state.
         addEventListener(new IEventListener() {
-            public void eventReceived(Object output) {
+            @Override
+	    public void eventReceived(Object output) {
                 if ("started 1".equals(output)) {
                     setStarted();
                 } else if ("terminated".equals(output)) {
@@ -222,7 +223,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                             // Process the reply in the executor thread.
                             try {
                                 getExecutor().execute(new DsfRunnable() {
-                                    public void run() {
+                                    @Override
+				    public void run() {
                                         processCommandDone(commandHandle, response);
                                     }
                                 });
@@ -238,7 +240,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                             // Process error it in the executor thread
                             try {
                                 getExecutor().execute(new DsfRunnable() {
-                                    public void run() {
+                                    @Override
+				    public void run() {
                                         processCommandException(commandHandle, e);
                                     }
                                 });
@@ -278,7 +281,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                         try {
                             // Process the event in executor thread.
                             getExecutor().execute(new DsfRunnable() {
-                                public void run() {
+                                @Override
+				public void run() {
                                     processEventReceived(event);
                                 }
                             });
@@ -295,7 +299,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
                 // has exited.  Call setTerminated() in executor thread.
                 try {
                     getExecutor().execute(new DsfRunnable() {
-                        public void run() {
+                        @Override
+			public void run() {
                             setTerminated();
                         }
                     });
@@ -306,9 +311,11 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         
     }
     
+    @Override
     public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
         ICommandToken token = new ICommandToken() {
-            public ICommand<?> getCommand() {
+            @Override
+	    public ICommand<?> getCommand() {
                 return command;
             }
         };
@@ -332,7 +339,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
             // In a separate dispatch cycle.  This allows command listeners to respond to the 
             // command queued event.  
             getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+		public void run() {
                     processQueues();
                 }
             });
@@ -342,6 +350,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         return token;
     }
 
+    @Override
     public void removeCommand(ICommandToken token) {
         // Removes given command from the queue and notify the listeners
         for (Iterator<CommandHandle> itr = fCommandQueue.iterator(); itr.hasNext();) {
@@ -355,18 +364,22 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
         }
     }
     
+    @Override
     public void addCommandListener(ICommandListener processor) { 
         fCommandListeners.add(processor); 
     }
     
+    @Override
     public void removeCommandListener(ICommandListener processor) { 
         fCommandListeners.remove(processor); 
     }
     
+    @Override
     public void addEventListener(IEventListener processor) { 
         fEventListeners.add(processor); 
     }
     
+    @Override
     public void removeEventListener(IEventListener processor) { 
         fEventListeners.remove(processor); 
     }
@@ -456,11 +469,13 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
      * Return the PDA Debugger top-level Data Model context. 
      * @see PDAVirtualMachineDMContext
      */
+    @Override
     @ThreadSafe
     public PDAVirtualMachineDMContext getContext() {
         return fDMContext;
     }
 
+    @Override
     public String getId() {
         return fBackend.getPorgramName();
     }
@@ -479,6 +494,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
     /**
      * Returns whether the PDA debugger has started and is processing commands.
      */
+    @Override
     public boolean isActive() {
         return fStarted && !isTerminated();
     }

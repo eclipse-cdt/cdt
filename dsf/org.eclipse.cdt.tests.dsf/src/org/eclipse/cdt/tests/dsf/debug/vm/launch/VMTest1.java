@@ -64,9 +64,11 @@ public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstan
         final boolean[] containerExpandReceived = new boolean[1];
         containerExpandReceived[0] = false;
         dv.addModelChangedListener(new IModelChangedListener() {
-            public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+            @Override
+	    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
                 delta.accept(new IModelDeltaVisitor() {
-                    public boolean visit(IModelDelta delta, int depth) {
+                    @Override
+		    public boolean visit(IModelDelta delta, int depth) {
                         if (delta.getElement() instanceof IDMVMContext &&
                             ((IDMVMContext)delta.getElement()).getDMContext() instanceof IContainerDMContext &&
                             (delta.getFlags() & IModelDelta.EXPAND) != 0) 

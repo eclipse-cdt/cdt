@@ -31,10 +31,12 @@ abstract public class AbstractPDACommand<V extends PDACommandResult> implements 
         fRequest = request;
     }
     
+    @Override
     public IDMContext getContext() {
         return fContext;
     }
     
+    @Override
     public ICommand<? extends ICommandResult> coalesceWith(ICommand<? extends ICommandResult> command) {
         return null;
     }

@@ -67,10 +67,12 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 
     // PDA breakpoints translator doesn't keep any state and it doesn't 
     // need to initialize or clean up.
+    @Override
     public void initialize(BreakpointsMediator2 mediator) {
     }
 
 
+    @Override
     public void dispose() {
     }
 
@@ -208,6 +210,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         }
     }
 
+    @Override
     public boolean canUpdateAttributes(IBreakpoint bp, IBreakpointsTargetDMContext context, 
         Map<String, Object> attributes) 
     {
@@ -222,11 +225,13 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         return false;
     }
 
+    @Override
     public boolean supportsBreakpoint(IBreakpoint bp) {
         return bp.getModelIdentifier().equals(PDAPlugin.ID_PDA_DEBUG_MODEL) ||
             bp instanceof ICLineBreakpoint || bp instanceof ICWatchpoint;
     }
 
+    @Override
     public void updateBreakpointsStatus(
         Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> bpsInfo,
         BreakpointEventType eventType) 
@@ -251,6 +256,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         }
     }
 
+    @Override
     public void resolveBreakpoint(IBreakpointsTargetDMContext context, IBreakpoint breakpoint,
         Map<String, Object> bpAttributes, DataRequestMonitor<List<Map<String, Object>>> drm) 
     {
@@ -262,6 +268,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         drm.done();
     }
 
+    @Override
     public Map<String, Object> getAllBreakpointAttributes(IBreakpoint platformBP, boolean bpManagerEnabled)
         throws CoreException 
     {
@@ -272,6 +279,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         return marker.getAttributes();
     }
 
+    @Override
     public Map<String, Object> convertAttributes(Map<String, Object> platformBPAttr) {
         return platformBPAttr;
     }

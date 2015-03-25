@@ -51,6 +51,7 @@ public class PDAVirtualMachineDMContext extends PlatformObject
         fProgram = program;
     }
 
+    @Override
     public String getSessionId() {
         return fSessionId;
     }
@@ -59,6 +60,7 @@ public class PDAVirtualMachineDMContext extends PlatformObject
         return fProgram;
     }
     
+    @Override
     public IDMContext[] getParents() {
         return EMPTY_PARENTS_ARRAY;
     }
@@ -68,6 +70,7 @@ public class PDAVirtualMachineDMContext extends PlatformObject
         return "pda[" + getSessionId() + "]";
     }
 
+    @Override
     public String getCommandControlId() {
         return getProgram();
     }

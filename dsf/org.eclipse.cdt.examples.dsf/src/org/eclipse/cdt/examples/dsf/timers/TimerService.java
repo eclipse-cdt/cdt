@@ -158,7 +158,8 @@ public class TimerService extends AbstractDsfService
         // for canceling the scheduling of the runnable.
         Future<?> timerFuture = getExecutor().scheduleAtFixedRate(
             new Runnable() {
-                public void run() {
+                @Override
+		public void run() {
                     fTimers.put(newTimer, fTimers.get(newTimer) + 1);
                     getSession().dispatchEvent(new TimerTickDMEvent(newTimer), getProperties());
                 }

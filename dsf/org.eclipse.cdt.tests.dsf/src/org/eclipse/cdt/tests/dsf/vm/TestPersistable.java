@@ -27,6 +27,7 @@ class TestPersistable implements IPersistableElement, IAdaptable {
 
 	HashMap<String, String> map = new HashMap<String, String>();
 
+	@Override
 	public void saveState(IMemento memento) {
 		HashMap<String, String> clone = null;
 		synchronized (map) {
@@ -70,10 +71,12 @@ class TestPersistable implements IPersistableElement, IAdaptable {
 		}
 	}
 
+	@Override
 	public String getFactoryId() {
 		return TestPersistableFactory.factoryId;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.isInstance(this)) {
 			return this;

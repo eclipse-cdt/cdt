@@ -52,6 +52,7 @@ public class PDALineBreakpoint extends LineBreakpoint {
 	 */
 	public PDALineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IMarker marker = resource.createMarker("org.eclipse.cdt.examples.dsf.pda.markerType.lineBreakpoint");
 				setMarker(marker);
@@ -67,6 +68,7 @@ public class PDALineBreakpoint extends LineBreakpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IBreakpoint#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return PDAPlugin.ID_PDA_DEBUG_MODEL;
 	}

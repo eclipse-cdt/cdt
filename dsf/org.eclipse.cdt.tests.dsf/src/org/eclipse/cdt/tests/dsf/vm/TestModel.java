@@ -177,7 +177,8 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
     }
     
     private static final IFormattedValuesListener NULL_LISTENER = new IFormattedValuesListener() {
-        public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc) {}
+        @Override
+	public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc) {}
     };
     
     private TestElement fRoot;
@@ -583,11 +584,13 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
         return null;
     }
     
+    @Override
     public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
         rm.setData(new String[] { HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT, NATURAL_FORMAT });
         rm.done();
     }
     
+    @Override
     public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
         TestElement te = DMContexts.getAncestorOfType(dmc, TestElement.class);
         rm.setData(new FormattedValueDMData( getFormattedValueText(te, dmc.getFormatID())));
@@ -595,6 +598,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
         fListener.formattedValueUpdated(dmc);
     }
     
+    @Override
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
         // Creates a context that can be used to retrieve a formatted value.
         return new FormattedValueDMContext(this, dmc, formatId);

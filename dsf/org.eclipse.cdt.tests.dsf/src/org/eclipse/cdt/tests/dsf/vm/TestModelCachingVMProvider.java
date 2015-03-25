@@ -36,32 +36,41 @@ public class TestModelCachingVMProvider extends AbstractDMVMProvider {
     private static final String[] COLUMNS = new String[] { COLUMN_ID, COLUMN_FORMATTED_VALUE, COLUMN_DUMMY_VALUE }; 
     
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+	public void propertyChange(PropertyChangeEvent event) {
             handleEvent(event);
         }        
     };
 
     private static IColumnPresentation COLUMN_PRESENTATION = new IColumnPresentation() {
-        public void init(IPresentationContext context) {}
-        public void dispose() {};
+        @Override
+	public void init(IPresentationContext context) {}
+        @Override
+	public void dispose() {};
         
-        public String[] getAvailableColumns() {
+        @Override
+	public String[] getAvailableColumns() {
             return COLUMNS;
         };
         
-        public String getHeader(String id) {
+        @Override
+	public String getHeader(String id) {
             return id;
         };
         
-        public String getId() { return "ID"; }
+        @Override
+	public String getId() { return "ID"; }
         
-        public ImageDescriptor getImageDescriptor(String id) {
+        @Override
+	public ImageDescriptor getImageDescriptor(String id) {
             return null;
         }
-        public String[] getInitialColumns() {
+        @Override
+	public String[] getInitialColumns() {
             return COLUMNS;
         }
-        public boolean isOptional() {
+        @Override
+	public boolean isOptional() {
             return false;
         }
     };

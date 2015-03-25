@@ -35,7 +35,8 @@ public class FileBrowserVMProvider extends AbstractVMProvider
             /**
              * The input object provides the viewer access to the viewer model adapter.
              */
-            @SuppressWarnings("unchecked")
+            @Override
+	    @SuppressWarnings("unchecked")
             public Object getAdapter(Class adapter) {
                 if ( adapter.isInstance(getVMAdapter()) ) {
                     return getVMAdapter();
@@ -87,7 +88,8 @@ public class FileBrowserVMProvider extends AbstractVMProvider
         // and then call root layout node.
         try {
             getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+		public void run() {
                     if (isDisposed()) return;
                     handleEvent(text);
                 }});

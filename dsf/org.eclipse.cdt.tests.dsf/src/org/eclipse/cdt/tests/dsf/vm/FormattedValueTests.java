@@ -842,7 +842,8 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
         fModel.validateData(
             fViewer, TreePath.EMPTY, 
             new TestElementValidator() {
-                public void validate(TestElement modelElement, TestElement viewerElement, TreePath viewerPath) {
+                @Override
+		public void validate(TestElement modelElement, TestElement viewerElement, TreePath viewerPath) {
                     ViewerLabel label = fViewer.getElementLabel(viewerPath, TestModelCachingVMProvider.COLUMN_ID);
                     assertEquals(modelElement.getID(), label.getText());
                     ElementFormatSetting elementFormat = null;

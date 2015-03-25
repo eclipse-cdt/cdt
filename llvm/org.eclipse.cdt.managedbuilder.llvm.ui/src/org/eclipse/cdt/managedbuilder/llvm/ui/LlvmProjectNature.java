@@ -26,6 +26,7 @@ public class LlvmProjectNature implements IProjectNature {
 	/**
 	 * Configure the project which have this project nature.
 	 */
+	@Override
 	public void configure() throws CoreException {
 		// Add nature-specific information
         // for the project, such as adding a builder
@@ -35,6 +36,7 @@ public class LlvmProjectNature implements IProjectNature {
 	/**
 	 * Deconfigure those projects which have this project nature.
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		// Remove the nature-specific information.
 	}
@@ -44,6 +46,7 @@ public class LlvmProjectNature implements IProjectNature {
 	 * 
 	 * @return IProject
 	 */
+	@Override
 	public IProject getProject() {
 		return this.project;
 	}
@@ -53,6 +56,7 @@ public class LlvmProjectNature implements IProjectNature {
 	 * 
 	 * @param proj IProject
 	 */
+	@Override
 	public void setProject(IProject proj) {
 		this.project = proj;
 	}

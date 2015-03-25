@@ -109,6 +109,7 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
         return fLabelProvider;
     }
     
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -165,6 +166,7 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
         
     }
     
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         fViewerUpdateListener.propertiesUpdatesStarted(updates);
         if (fFormattedValuesListener != null) fFormattedValuesListener.propertiesUpdatesStarted(updates);
@@ -209,6 +211,7 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
+    @Override
     public int getDeltaFlags(Object e) {
         if ( e instanceof PropertyChangeEvent &&
              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) 
@@ -226,6 +229,7 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(Object e, VMDelta parent, int nodeOffset, RequestMonitor rm) {
         if ( e instanceof PropertyChangeEvent &&
             ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) 
@@ -244,10 +248,12 @@ public class TestModelDMVMNode extends AbstractDMVMNode implements IRootVMNode, 
     }
 
 
+    @Override
     public boolean isDeltaEvent(Object rootObject, Object event) {
         return getDeltaFlags(event) != IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm) {
         int flags = IModelDelta.NO_CHANGE;
         if ( event instanceof PropertyChangeEvent &&

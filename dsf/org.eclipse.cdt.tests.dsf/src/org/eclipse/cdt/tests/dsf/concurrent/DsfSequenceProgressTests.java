@@ -45,7 +45,8 @@ public class DsfSequenceProgressTests {
     
     @After 
     public void shutdownExecutor() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { public void run() {
+        fExecutor.submit(new DsfRunnable() { @Override
+	public void run() {
             fExecutor.shutdown();
         }}).get();
         if (fExecutor.exceptionsCaught()) {

@@ -109,7 +109,8 @@ public class CacheTests {
     
     @After 
     public void shutdownExecutor() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { public void run() {
+        fExecutor.submit(new DsfRunnable() { @Override
+	public void run() {
             fExecutor.shutdown();
         }}).get();
         if (fExecutor.exceptionsCaught()) {
@@ -189,7 +190,8 @@ public class CacheTests {
         assertFalse(fTestCache.isValid());
 
         // Complete the cache's retrieve data request.
-        fExecutor.submit(new Callable<Object>() { public Object call() {
+        fExecutor.submit(new Callable<Object>() { @Override
+	public Object call() {
             fRetrieveRm.setData(1);
             fRetrieveRm.done();
 
@@ -318,7 +320,8 @@ public class CacheTests {
     public void disableBeforeRequestTest() throws InterruptedException, ExecutionException {
         // Disable the cache
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.set(null, STATUS_TARGET_RUNNING);
             }
         }).get();
@@ -356,7 +359,8 @@ public class CacheTests {
 
         // Disable the cache
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.set(null, STATUS_TARGET_RUNNING);
             }
         }).get();
@@ -367,7 +371,8 @@ public class CacheTests {
 		// disassociates it from its retrieval RM. Thus regardless of how that
 		// request completes, it does not affect the cache.
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.setData(1);
                 fRetrieveRm.done();
             }
@@ -399,7 +404,8 @@ public class CacheTests {
         
         // Disable the cache
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.set(null, STATUS_TARGET_RUNNING);
             }
         }).get();
@@ -412,7 +418,8 @@ public class CacheTests {
     public void setWithValueTest() throws InterruptedException, ExecutionException {
         // Disable the cache
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.set(2, Status.OK_STATUS);
             }
         }).get();
@@ -444,7 +451,8 @@ public class CacheTests {
 		// request. Perhaps the retrieval logic isn't checking the RM status.
 		// Even if it is checking, it may have gotten passed its last checkpoint
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.setData(1);
                 fRetrieveRm.done();
             }
@@ -481,7 +489,8 @@ public class CacheTests {
 		// completing the RM. Note that it hasn't provided the data to the
 		// cache. 
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.done();
             }
         }).get();
@@ -512,7 +521,8 @@ public class CacheTests {
 		// aborts its processing, sets STATUS.CANCEL_STATUS in the RM and
 		// completes it. 
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
             	fRetrieveRm.setStatus(Status.CANCEL_STATUS);
                 fRetrieveRm.done();
             }
@@ -568,7 +578,8 @@ public class CacheTests {
         // called in a separate dispatch cycle, so we have to wait one cycle of the executor 
         // after is canceled is called.
         fRetrieveRm.isCanceled();
-        fExecutor.submit(new Runnable() { public void run() {} }).get(); 
+        fExecutor.submit(new Runnable() { @Override
+	public void run() {} }).get(); 
         assertTrue(canceledCalled[0]);        
 
         try {
@@ -579,7 +590,8 @@ public class CacheTests {
 
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.setData(1);
                 fRetrieveRm.done();
             }
@@ -645,7 +657,8 @@ public class CacheTests {
 
         // Reset the cache
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm = null;
                 fTestCache.set(null, Status.OK_STATUS);
                 fTestCache.reset();
@@ -665,7 +678,8 @@ public class CacheTests {
         
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.setData(1);
                 fRetrieveRm.done();
             }
@@ -711,7 +725,8 @@ public class CacheTests {
 
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.setData(1);
                 fRetrieveRm.done();
             }
@@ -769,7 +784,8 @@ public class CacheTests {
 
         // Completed the retrieve RM
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRetrieveRm.setData(1);
                 fRetrieveRm.done();
             }
@@ -796,7 +812,8 @@ public class CacheTests {
         
         // Disable cache
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.reset();
             }
         }).get();

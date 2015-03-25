@@ -46,7 +46,8 @@ public class DsfTestBreakpoint extends Breakpoint {
     {
         final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
         IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) throws CoreException {
+            @Override
+	    public void run(IProgressMonitor monitor) throws CoreException {
                 IMarker marker = resource.createMarker("org.eclipse.cdt.tests.dsf.markerType.breakpoint");
                 setMarker(marker);
                 marker.setAttribute(IBreakpoint.ENABLED, enabled);
@@ -65,6 +66,7 @@ public class DsfTestBreakpoint extends Breakpoint {
         return (Integer)ensureMarker().getAttribute(ATTR_ID);
     }
     
+    @Override
     public String getModelIdentifier() {
         return DSF_TEST_BREAKPOINT_MODEL_ID;
     }

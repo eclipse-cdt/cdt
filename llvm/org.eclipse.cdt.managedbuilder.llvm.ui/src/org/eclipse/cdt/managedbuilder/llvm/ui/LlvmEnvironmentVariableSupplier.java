@@ -424,11 +424,13 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		return ""; //$NON-NLS-1$
 	}
 	
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return llvmEnvironmentVariables.get(variableName);
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		return llvmEnvironmentVariables.values().toArray(new IBuildEnvironmentVariable[0]);

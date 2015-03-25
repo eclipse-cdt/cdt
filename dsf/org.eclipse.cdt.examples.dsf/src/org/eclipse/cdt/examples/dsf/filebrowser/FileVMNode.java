@@ -67,6 +67,7 @@ class FileVMNode
     }
 
 
+    @Override
     public void dispose() {
         // All resources garbage collected.
     }
@@ -84,6 +85,7 @@ class FileVMNode
         return fChildNodes;
     }
     
+    @Override
     public void update(final IHasChildrenUpdate[] updates) {
         new Job("") { //$NON-NLS-1$
             {
@@ -109,6 +111,7 @@ class FileVMNode
         }.schedule();
     }
     
+    @Override
     public void update(final IChildrenCountUpdate[] updates) {
         new Job("") { //$NON-NLS-1$
             {
@@ -127,6 +130,7 @@ class FileVMNode
         }.schedule();
     }
     
+    @Override
     public void update(final IChildrenUpdate[] updates) {
         new Job("") { //$NON-NLS-1$
             {
@@ -150,6 +154,7 @@ class FileVMNode
         }.schedule();
     }
     
+    @Override
     public void update(final ILabelUpdate[] updates) {
         new Job("") { //$NON-NLS-1$
             {
@@ -195,11 +200,13 @@ class FileVMNode
         return vmc.getFile().getName();     
     }
 
+    @Override
     public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
         rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
         rm.done();
     }
     
+    @Override
     public int getDeltaFlags(Object e) {
         /*
          * @see buildDelta()
@@ -212,6 +219,7 @@ class FileVMNode
         return retVal;
     }
 
+    @Override
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         /*
          * The FileLayoutNode is recursive, with itself as the only child.  In this 
@@ -306,6 +314,7 @@ class FileVMNode
         return nodes;
     }
 
+    @Override
     public IVMProvider getVMProvider() {
         return fProvider;
     }

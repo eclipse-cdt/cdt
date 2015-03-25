@@ -54,6 +54,7 @@ public class FormattedValuesListener implements IFormattedValuesListener, IPrope
         fCachedFormats.addAll(Arrays.asList(cachedFormats));
     }
     
+    @Override
     public void propertiesUpdatesStarted(IPropertiesUpdate[] updates) {
         fPropertiesUpdates.addAll(Arrays.asList(updates));
         List<FormattedValueDMContext> pending = new ArrayList<FormattedValueDMContext>(updates.length);
@@ -122,15 +123,18 @@ public class FormattedValuesListener implements IFormattedValuesListener, IPrope
         return true;
     }
     
+    @Override
     public void propertiesUpdateCompleted(IPropertiesUpdate update) {}
 
+    @Override
     public void formattedValueUpdated(FormattedValueDMContext formattedValueDmc) {
         Assert.assertFalse("Expected values with formats " + fCachedFormats + " to be cached.", 
                            fCachedFormats.contains(formattedValueDmc.getFormatID()));
         
         if (fProcessUpdatedFormattedValuesRunnable == null) {
             fProcessUpdatedFormattedValuesRunnable = new DsfRunnable() {
-                public void run() {
+                @Override
+		public void run() {
                     fProcessUpdatedFormattedValuesRunnable = null;
                     processFormattedValuesInProgress();
                 }

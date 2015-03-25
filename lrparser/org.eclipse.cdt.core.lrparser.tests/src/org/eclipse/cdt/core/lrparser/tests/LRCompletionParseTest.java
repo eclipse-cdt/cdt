@@ -50,6 +50,7 @@ public class LRCompletionParseTest extends TestCase {
 
 
 	private static final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<IBinding>() {
+		@Override
 		public int compare(IBinding b1, IBinding b2) {
 			return b1.getName().compareTo(b2.getName());
 		}

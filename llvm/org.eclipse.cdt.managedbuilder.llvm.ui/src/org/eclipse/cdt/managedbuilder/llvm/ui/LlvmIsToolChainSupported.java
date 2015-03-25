@@ -39,6 +39,7 @@ public class LlvmIsToolChainSupported implements IManagedIsToolChainSupported {
 	/**
 	 * Return a boolean value that informs if the LLVM Toolchain is supported.
 	 */
+	@Override
 	public boolean isSupported(IToolChain toolChain,
 			/*
 			 * Version is supported from CDT 7.1.0.

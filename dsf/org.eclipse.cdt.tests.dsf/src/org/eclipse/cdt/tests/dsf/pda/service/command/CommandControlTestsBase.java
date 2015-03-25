@@ -76,7 +76,8 @@ public class CommandControlTestsBase {
         fCommandControl = new PDACommandControl(fSession);
 
         fCommandControl.addEventListener(new IEventListener() {
-            public void eventReceived(Object output) {
+            @Override
+	    public void eventReceived(Object output) {
                 fEventsQueue.add(output);
             }
         });

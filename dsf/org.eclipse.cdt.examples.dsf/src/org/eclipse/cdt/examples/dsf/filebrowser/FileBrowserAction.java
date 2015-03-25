@@ -33,6 +33,7 @@ public class FileBrowserAction extends ActionDelegate
         }
     }
 
+    @Override
     public void init(IWorkbenchWindow window) {
         fWindow = window;
     }

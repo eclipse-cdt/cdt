@@ -18,6 +18,7 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
  * PDA source lookup director.
  */
 public class PDASourceLookupDirector extends AbstractSourceLookupDirector {
+	@Override
 	public void initializeParticipants() {
 	    // No need to add participants here, the source display adapter will
 	    // add the participant with the correct session ID.

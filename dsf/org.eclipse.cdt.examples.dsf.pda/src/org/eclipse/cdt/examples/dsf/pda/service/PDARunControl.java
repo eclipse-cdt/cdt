@@ -76,7 +76,8 @@ public class PDARunControl extends AbstractDsfService
             fReason = reason;
         }
         
-        public StateChangeReason getReason() {
+        @Override
+	public StateChangeReason getReason() {
             return fReason;
         }
         
@@ -97,11 +98,13 @@ public class PDARunControl extends AbstractDsfService
             fReason = reason;
         }
 
-        public StateChangeReason getReason() {
+        @Override
+	public StateChangeReason getReason() {
             return fReason;
         }
 
-        public IExecutionDMContext[] getTriggeringContexts() {
+        @Override
+	public IExecutionDMContext[] getTriggeringContexts() {
             return EMPTY_TRIGGERING_CONTEXTS_ARRAY;
         }
         
@@ -122,7 +125,8 @@ public class PDARunControl extends AbstractDsfService
             fReason = reason;
         }
         
-        public StateChangeReason getReason() {
+        @Override
+	public StateChangeReason getReason() {
             return fReason;
         }
 
@@ -150,11 +154,13 @@ public class PDARunControl extends AbstractDsfService
             }
         }
     
-        public StateChangeReason getReason() {
+        @Override
+	public StateChangeReason getReason() {
             return fReason;
         }
 
-        public IExecutionDMContext[] getTriggeringContexts() {
+        @Override
+	public IExecutionDMContext[] getTriggeringContexts() {
             return fTriggeringThreads;
         }
 
@@ -174,7 +180,8 @@ public class PDARunControl extends AbstractDsfService
         ExecutionDMData(StateChangeReason reason) {
             fReason = reason;
         }
-        public StateChangeReason getStateChangeReason() { return fReason; }
+        @Override
+	public StateChangeReason getStateChangeReason() { return fReason; }
     }
     
     private static class ThreadStartedEvent extends AbstractDMEvent<IExecutionDMContext> 
@@ -285,6 +292,7 @@ public class PDARunControl extends AbstractDsfService
         super.shutdown(rm);
     }
     
+    @Override
     public void eventReceived(Object output) {
         if (!(output instanceof String)) return;
         String event = (String)output;
@@ -421,6 +429,7 @@ public class PDARunControl extends AbstractDsfService
         fThreads.remove(threadCtx.getID());
     }    
     
+    @Override
     public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
         rm.setData(doCanResume(context));
         rm.done();
@@ -457,6 +466,7 @@ public class PDARunControl extends AbstractDsfService
         return false;        
     }
 
+    @Override
     public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
         rm.setData(doCanSuspend(context));
         rm.done();
@@ -478,6 +488,7 @@ public class PDARunControl extends AbstractDsfService
         return false;
     }
 
+	@Override
 	public boolean isSuspended(IExecutionDMContext context) {
         if (context instanceof PDAThreadDMContext) {
             PDAThreadDMContext threadContext = (PDAThreadDMContext)context; 
@@ -492,6 +503,7 @@ public class PDARunControl extends AbstractDsfService
 		return fVMSuspended;
 	}
 
+	@Override
 	public boolean isStepping(IExecutionDMContext context) {
 	    if (!isSuspended(context)) {
             if (context instanceof PDAThreadDMContext) {
@@ -509,6 +521,7 @@ public class PDARunControl extends AbstractDsfService
 	    return false;
     }
 
+	@Override
 	public void resume(IExecutionDMContext context, final RequestMonitor rm) {
 		assert context != null;
 
@@ -547,6 +560,7 @@ public class PDARunControl extends AbstractDsfService
         }
 	}
 	
+	@Override
 	public void suspend(IExecutionDMContext context, final RequestMonitor rm){
 		assert context != null;
 
@@ -585,11 +599,13 @@ public class PDARunControl extends AbstractDsfService
         }
     }
     
+    @Override
     public void canStep(IExecutionDMContext context, StepType stepType, DataRequestMonitor<Boolean> rm) {
         rm.setData(doCanStep(context, stepType));
         rm.done();
     }
     
+    @Override
     public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
     	
@@ -633,6 +649,7 @@ public class PDARunControl extends AbstractDsfService
         }
     }
 
+    @Override
     public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
         IExecutionDMContext[] threads = new IExecutionDMContext[fThreads.size()];
         int i = 0;
@@ -643,6 +660,7 @@ public class PDARunControl extends AbstractDsfService
         rm.done();
     }
     
+	@Override
 	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm) {
 	    if (dmc instanceof PDAThreadDMContext) {
 	        ThreadInfo info = fThreads.get(((PDAThreadDMContext)dmc).getID());

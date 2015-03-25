@@ -80,6 +80,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
         return null;
     }
 
+    @Override
     public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
         String program = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
         if (program == null) {

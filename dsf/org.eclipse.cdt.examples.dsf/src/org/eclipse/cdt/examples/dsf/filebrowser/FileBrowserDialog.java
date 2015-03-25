@@ -70,7 +70,8 @@ public class FileBrowserDialog extends Dialog {
         text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
+            @Override
+	    public void selectionChanged(SelectionChangedEvent event) {
                 /*
                  * Update the file name in the text control, to match the 
                  * selection in the tree.  Do this only if the user is not
@@ -90,7 +91,8 @@ public class FileBrowserDialog extends Dialog {
         });
         
         text.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+	    public void modifyText(ModifyEvent e) {
                 if (!fDisableTextChangeNotifications) {
                     fModelAdapter.getVMProvider().selectionTextChanged(text.getText());
                 }

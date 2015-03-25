@@ -51,7 +51,8 @@ public class TimersVMProvider extends AbstractDMVMProvider {
         // Add ourselves as listener for DM events events.
         try {
             session.getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+		public void run() {
                     if (DsfSession.isSessionActive(getSession().getId())) {
                         getSession().addServiceEventListener(TimersVMProvider.this, null);
                         fRegisteredEventListener = true;
@@ -77,7 +78,8 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 		// completeness sake.
         try {
             getSession().getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+		public void run() {
                     if (fRegisteredEventListener && DsfSession.isSessionActive(getSession().getId())) {
                         getSession().removeServiceEventListener(TimersVMProvider.this);
                         fRegisteredEventListener = false;
@@ -140,7 +142,8 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 
         try {
             getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+		public void run() {
                     if (isDisposed()) return;
                     handleEvent(event);
                 }
@@ -154,7 +157,8 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 
         try {
             getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+		public void run() {
                     if (isDisposed()) return;
                     handleEvent(event);
                 }

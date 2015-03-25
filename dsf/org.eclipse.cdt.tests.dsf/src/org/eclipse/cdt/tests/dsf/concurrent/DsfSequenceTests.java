@@ -46,7 +46,8 @@ public class DsfSequenceTests {
         if (!fExecutor.isShutdown()) {
             // Some tests shut down the executor deliberatly)
             
-            fExecutor.submit(new DsfRunnable() { public void run() {
+            fExecutor.submit(new DsfRunnable() { @Override
+	    public void run() {
                 fExecutor.shutdown();
             }}).get();
         }

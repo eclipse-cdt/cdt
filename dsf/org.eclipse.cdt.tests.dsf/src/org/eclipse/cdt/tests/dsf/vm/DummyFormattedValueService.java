@@ -41,15 +41,18 @@ public class DummyFormattedValueService extends AbstractDsfService implements IF
         return DsfTestPlugin.getBundleContext();
     }
     
+    @Override
     public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
         rm.setData(AVAILABLE_FORMATS);
         rm.done();
     }
 
+    @Override
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
         return new FormattedValueDMContext(this, dmc, formatId);
     }
     
+    @Override
     public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
         rm.setData(new FormattedValueDMData(dmc.getFormatID()));
         rm.done();

@@ -67,7 +67,8 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
             fLevel = level;
         }
 
-        public int getLevel() { return fLevel; }
+        @Override
+	public int getLevel() { return fLevel; }
 
         @Override
         public boolean equals(Object other) {
@@ -97,26 +98,32 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
             fFrame = frame;
         }
 
-        public String getFile() {
+        @Override
+	public String getFile() {
             return fFrame.fFilePath.lastSegment();
         }
 
-        public String getFunction() {
+        @Override
+	public String getFunction() {
             return fFrame.fFunction;
         }
 
-        public int getLine() {
+        @Override
+	public int getLine() {
             return fFrame.fLine + 1;
         }
 
-        public int getColumn() {
+        @Override
+	public int getColumn() {
             return 0;
         }
 
-        public IAddress getAddress() {
+        @Override
+	public IAddress getAddress() {
             return null;
         }
 
+		@Override
 		public String getModule() {
 			return "";//$NON-NLS-1$
 		}
@@ -165,11 +172,13 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
             fVariable = variable;
         }
 
-        public String getName() {
+        @Override
+	public String getName() {
             return fVariable;
         }
 
-        public String getValue() {
+        @Override
+	public String getValue() {
             return null;
         }
     }
@@ -226,10 +235,12 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
     }
 
 
+    @Override
     public void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm) {
         PDAPlugin.failRequest(rm, IDsfStatusConstants.NOT_SUPPORTED, "PDA debugger does not support function arguments.");
     }
 
+    @Override
     public void getFrameData(final IFrameDMContext frameCtx, final DataRequestMonitor<IFrameDMData> rm) {
         final PDAThreadDMContext threadCtx = 
             DMContexts.getAncestorOfType(frameCtx, PDAThreadDMContext.class);
@@ -269,6 +280,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
     }
 
 
+    @Override
     public void getFrames(IDMContext context, final DataRequestMonitor<IFrameDMContext[]> rm) {
         // Can only create stack frames for an execution context as a parent, 
         // however the argument context is a generic context type, so it could 
@@ -299,6 +311,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
             });
     }
 
+    @Override
     public void getFrames(IDMContext context, final int startIndex, final int endIndex, final DataRequestMonitor<IFrameDMContext[]> rm) {
         // Validate index range.
         assert startIndex >=0 && (endIndex < 0 || startIndex <= endIndex);
@@ -331,6 +344,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
             });
     }
     
+    @Override
     public void getLocals(IFrameDMContext context, final DataRequestMonitor<IVariableDMContext[]> rm) {
         if (!(context instanceof FrameDMContext)) {
             rm.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context" + context, null));
@@ -373,6 +387,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 
     }
 
+    @Override
     public void getStackDepth(IDMContext context, final int maxDepth, final DataRequestMonitor<Integer> rm) {
         final PDAThreadDMContext threadCtx = 
             DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
@@ -399,6 +414,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
             });
     }
 
+    @Override
     public void getTopFrame(IDMContext context, final DataRequestMonitor<IFrameDMContext> rm) {
         // Can only create stack frames for an execution context as a parent, 
         // however the argument context is a generic context type, so it could 
@@ -416,6 +432,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
         rm.done();
     }
 
+    @Override
     public void getVariableData(IVariableDMContext variableCtx, DataRequestMonitor<IVariableDMData> rm) {
         if ( !(variableCtx instanceof VariableDMContext) ) {
             PDAPlugin.failRequest(rm, IDsfStatusConstants.INVALID_HANDLE, "Invalid context " + variableCtx);
@@ -461,6 +478,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
         fCommandCache.reset(e.getDMContext());
     }
 
+	@Override
 	public void flushCache(IDMContext context) {
         fCommandCache.reset(context);	
 	}

@@ -137,7 +137,8 @@ public class TimersView extends ViewPart {
                 /**
                  * The input object provides the viewer access to the viewer model adapter.
                  */
-                @SuppressWarnings("unchecked")
+                @Override
+		@SuppressWarnings("unchecked")
                 public Object getAdapter(Class adapter) {
                     if ( adapter.isInstance(fTimersVMAdapter) ) {
                         return fTimersVMAdapter;
@@ -163,7 +164,8 @@ public class TimersView extends ViewPart {
             // This operation needs to be performed in the session executor 
             // thread.  Block using Future.get() until this call completes.
             fSession.getExecutor().submit(new Runnable() { 
-                public void run() {
+                @Override
+		public void run() {
                     fSession.unregisterModelAdapter(IElementContentProvider.class);
                     fSession.unregisterModelAdapter(IModelProxyFactory.class);
                     fSession.unregisterModelAdapter(IColumnPresentationFactory.class);
@@ -186,7 +188,8 @@ public class TimersView extends ViewPart {
             
             // Finally end the session and the executor.
             fSession.getExecutor().submit(new Runnable() { 
-                public void run() {
+                @Override
+		public void run() {
                     DsfSession.endSession(fSession);
                     fSession = null;
                     fExecutor.shutdown();
@@ -230,7 +233,8 @@ public class TimersView extends ViewPart {
 			@Override
             public void run() {
                 fExecutor.execute(new Runnable() { 
-                    public void run() {
+                    @Override
+		    public void run() {
                         // Only need to create the new timer, the events will 
                         // cause the view to refresh.
                         fServices.getService(TimerService.class).startTimer();
@@ -252,7 +256,8 @@ public class TimersView extends ViewPart {
                     "Please enter trigger value", 
                     "", 
                     new IInputValidator() {
-                        public String isValid(String input) {
+                        @Override
+			public String isValid(String input) {
                             try {
                                 int i= Integer.parseInt(input);
                                 if (i <= 0)
@@ -272,7 +277,8 @@ public class TimersView extends ViewPart {
                 } catch (NumberFormatException x) { assert false; }
                 final int triggerValue = tmpTriggerValue;
                 fExecutor.execute(new Runnable() { 
-                    public void run() {
+                    @Override
+		    public void run() {
                         // Create the new trigger
                         fServices.getService(AlarmService.class).
                             createTrigger(triggerValue);
@@ -295,12 +301,14 @@ public class TimersView extends ViewPart {
                 // Based on the context from the selection, call the 
                 // appropriate service to remove the item.
                 if (selectedCtx instanceof TimerDMContext) {
-                    fExecutor.execute(new Runnable() { public void run() {
+                    fExecutor.execute(new Runnable() { @Override
+		    public void run() {
                         fServices.getService(TimerService.class).killTimer(
                             ((TimerDMContext)selectedCtx));
                     }});
                 } else if (selectedCtx instanceof AlarmService.TriggerDMContext) {
-                    fExecutor.execute(new Runnable() { public void run() {
+                    fExecutor.execute(new Runnable() { @Override
+		    public void run() {
                         fServices.getService(AlarmService.class).deleteTrigger(
                             (AlarmService.TriggerDMContext)selectedCtx);
                     }});

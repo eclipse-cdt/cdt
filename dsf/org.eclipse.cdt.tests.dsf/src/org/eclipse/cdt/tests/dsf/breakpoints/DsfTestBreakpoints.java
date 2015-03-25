@@ -114,16 +114,25 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
             fAttributes = Collections.unmodifiableMap( new HashMap<String, Object>(attributes) );
         }
         
-        public IAddress[] getAddresses() { return null; }
-        public String getBreakpointType() { return null; }
-        public String getFileName() { return null; }
-        public int getLineNumber() { return 0; }
-        public String getFunctionName() { return null; }
-        public String getCondition() { return null; }
-        public int getIgnoreCount() { return 0; }
-        public String getExpression() { return null; }
+        @Override
+	public IAddress[] getAddresses() { return null; }
+        @Override
+	public String getBreakpointType() { return null; }
+        @Override
+	public String getFileName() { return null; }
+        @Override
+	public int getLineNumber() { return 0; }
+        @Override
+	public String getFunctionName() { return null; }
+        @Override
+	public String getCondition() { return null; }
+        @Override
+	public int getIgnoreCount() { return 0; }
+        @Override
+	public String getExpression() { return null; }
         
-        public boolean isEnabled() { return (Boolean)getAttributes().get(ATTR_ENABLED); }
+        @Override
+	public boolean isEnabled() { return (Boolean)getAttributes().get(ATTR_ENABLED); }
         public Map<String, Object> getAttributes() { return fAttributes; }
     }
     
@@ -136,11 +145,13 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
             fBreakpointArray = new IBreakpointDMContext[] { bp };
         }
 
-        public IBreakpointsTargetDMContext getDMContext() {
+        @Override
+	public IBreakpointsTargetDMContext getDMContext() {
             return DMContexts.getAncestorOfType(fBreakpoint, IBreakpointsTargetDMContext.class);
         }
         
-        public IBreakpointDMContext[] getBreakpoints() {
+        @Override
+	public IBreakpointDMContext[] getBreakpoints() {
             return fBreakpointArray; 
         }
     }
@@ -205,6 +216,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
         return DsfTestPlugin.getBundleContext();
     }
 
+    @Override
     public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> rm) {
         // Validate the context
         // TODO: check the target context
@@ -217,10 +229,12 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
         rm.done();
     }
 
+    @Override
     public void getBreakpointDMData(IBreakpointDMContext dmc, DataRequestMonitor<IBreakpointDMData> rm) {
         DsfTestPlugin.failRequest(rm, NOT_SUPPORTED, "Retrieving breakpoint data is not supported");
     }
 
+    @Override
     public void insertBreakpoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes, 
         DataRequestMonitor<IBreakpointDMContext> rm) 
     {
@@ -275,6 +289,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
     }
 
 
+    @Override
     public void removeBreakpoint(IBreakpointDMContext bpCtx, RequestMonitor rm) {
         if (!fBreakpoints.containsKey(bpCtx)) {
             DsfTestPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint already removed");
@@ -294,6 +309,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
         }
     }
 
+    @Override
     public void updateBreakpoint(final IBreakpointDMContext bpCtx, Map<String, Object> attributes, final RequestMonitor rm) {
         if (!fBreakpoints.containsKey(bpCtx)) {
             DsfTestPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint not installed");

@@ -42,6 +42,7 @@ public class TestElementVMContext extends AbstractVMContext implements IDMVMCont
         return fElement;
     }
 
+    @Override
     public IDMContext getDMContext() {
         return getElement();
     }

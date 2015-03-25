@@ -36,6 +36,7 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 		super(adapter, context, session);
 	}
 
+	@Override
 	public void getActiveFormat(IPresentationContext context, IVMNode node,
 			Object viewerInput, TreePath elementPath, DataRequestMonitor<String> rm) {
 		Object p = context.getProperty(myPersistId);
@@ -70,6 +71,7 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 		rm.done();
 	}
 
+	@Override
 	public void setActiveFormat(IPresentationContext context, IVMNode[] node,
 			Object viewerInput, TreePath[] elementPath, String format) {
 		Object p = context.getProperty(myPersistId);
@@ -95,6 +97,7 @@ class TestElementFormatVMProvider extends TestModelCachingVMProvider implements 
 		}
 	}
 
+	@Override
 	public boolean supportFormat(IVMContext context) {
 		return true;
 	}

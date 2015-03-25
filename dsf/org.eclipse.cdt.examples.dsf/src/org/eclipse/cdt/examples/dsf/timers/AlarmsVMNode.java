@@ -73,6 +73,7 @@ class AlarmsVMNode extends AbstractDMVMNode
         update.done();
     }
 
+    @Override
     public void update(ILabelUpdate[] updates) {
         for (ILabelUpdate update : updates) {
             update.setLabel("ALARM TRIGGERED", 0);
@@ -85,6 +86,7 @@ class AlarmsVMNode extends AbstractDMVMNode
     }
     
     
+    @Override
     public int getDeltaFlags(Object e) {
         if (e instanceof AlarmService.AlarmTriggeredDMEvent) {
             return IModelDelta.ADDED | IModelDelta.SELECT | IModelDelta.EXPAND;
@@ -92,6 +94,7 @@ class AlarmsVMNode extends AbstractDMVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor requestMonitor) {
         // The alarm element is added when and selected upon a triggered event.  
         // Parent element is also expanded allow the alarm to be selected.

@@ -33,7 +33,8 @@ public class DMContextsTest {
     
     @Before public void startExecutor() throws ExecutionException, InterruptedException {
         fExecutor = new TestDsfExecutor();
-        fExecutor.submit(new DsfRunnable() { public void run() {
+        fExecutor.submit(new DsfRunnable() { @Override
+	public void run() {
             fSession = DsfSession.startSession(fExecutor, "DMContextsTest"); //$NON-NLS-1$
         }}).get();
 
@@ -64,7 +65,8 @@ public class DMContextsTest {
         DsfSession.endSession(fSession);
         fSession = null;
         
-        fExecutor.submit(new DsfRunnable() { public void run() {
+        fExecutor.submit(new DsfRunnable() { @Override
+	public void run() {
             fExecutor.shutdown();
         }}).get();
         if (fExecutor.exceptionsCaught()) {

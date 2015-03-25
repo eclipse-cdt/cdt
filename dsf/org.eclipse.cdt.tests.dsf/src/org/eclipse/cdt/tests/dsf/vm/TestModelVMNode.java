@@ -55,6 +55,7 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
             }));
     }
     
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -68,9 +69,11 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
            
     }
     
+    @Override
     public void update(final IHasChildrenUpdate[] updates) {
         getTestProvider().getDsfExecutor().execute(new Runnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 for (IHasChildrenUpdate update : updates) {
                     if (update.getElement() instanceof TestElementVMContext) {
                         TestElement element = ((TestElementVMContext)update.getElement()).getElement();
@@ -82,9 +85,11 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
         });
     }
     
+    @Override
     public void update(final IChildrenCountUpdate[] updates) {
         getTestProvider().getDsfExecutor().execute(new Runnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 for (IChildrenCountUpdate update : updates) {
                     if (update.getElement() instanceof TestElementVMContext) {
                         TestElement element = ((TestElementVMContext)update.getElement()).getElement();
@@ -96,9 +101,11 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
         });
     }
 
+    @Override
     public void update(final IChildrenUpdate[] updates) {
         getTestProvider().getDsfExecutor().execute(new Runnable() {
-            public void run() {        
+            @Override
+	    public void run() {        
                 for (IChildrenUpdate update : updates) {
                     if (update.getElement() instanceof TestElementVMContext) {
                         TestElement element = ((TestElementVMContext)update.getElement()).getElement();
@@ -110,9 +117,11 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
         });
     }
     
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         getTestProvider().getDsfExecutor().execute(new Runnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 for (IPropertiesUpdate update : updates) {
                     if (update.getElement() instanceof TestElementVMContext) {
                         TestElement element = ((TestElementVMContext)update.getElement()).getElement();
@@ -137,19 +146,23 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
         return new TestElementVMContext(this, element);
     }
 
+    @Override
     public int getDeltaFlags(Object event) {
         return 0;
     }
 
+    @Override
     public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
         rm.done();
     }
 
 
+    @Override
     public boolean isDeltaEvent(Object rootObject, Object event) {
         return false;
     }
 
+    @Override
     public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm) {
         rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED,  "Not implemented", null));
         rm.done();

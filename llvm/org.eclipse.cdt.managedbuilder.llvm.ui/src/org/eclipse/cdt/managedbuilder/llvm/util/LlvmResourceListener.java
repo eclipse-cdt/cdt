@@ -26,6 +26,7 @@ public class LlvmResourceListener implements IResourceChangeListener {
 	 * 
 	 * @param event IResourceChangeEvent
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 
 		if (event.getType() == IResourceChangeEvent.POST_BUILD) { //refresh every project after build

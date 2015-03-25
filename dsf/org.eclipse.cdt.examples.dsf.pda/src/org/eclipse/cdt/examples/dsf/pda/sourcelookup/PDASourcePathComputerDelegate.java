@@ -40,6 +40,7 @@ import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
  */
 public class PDASourcePathComputerDelegate implements ISourcePathComputerDelegate {
 	
+	@Override
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String path = configuration.getAttribute(PDAPlugin.ATTR_PDA_PROGRAM, (String)null);
 		ISourceContainer sourceContainer = null;

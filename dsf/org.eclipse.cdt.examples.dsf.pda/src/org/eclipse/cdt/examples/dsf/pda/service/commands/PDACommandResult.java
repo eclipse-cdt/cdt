@@ -29,6 +29,7 @@ public class PDACommandResult implements ICommandResult {
         fResponseText = response;
     }
     
+    @Override
     public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
         return null;
     }

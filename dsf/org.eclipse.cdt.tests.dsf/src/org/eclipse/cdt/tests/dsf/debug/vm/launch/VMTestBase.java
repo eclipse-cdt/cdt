@@ -83,7 +83,8 @@ public class VMTestBase {
         final ServiceEventWaitor<?> eventWaitor[] = new ServiceEventWaitor<?>[1];
         
         SessionStartedListener newSessionListener = new SessionStartedListener() {
-            public void sessionStarted(DsfSession session) {
+            @Override
+	    public void sessionStarted(DsfSession session) {
                 eventWaitor[0] = new ServiceEventWaitor<IStartedDMEvent>(session, IStartedDMEvent.class);
             }
         };

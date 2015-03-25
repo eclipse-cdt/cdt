@@ -97,7 +97,8 @@ public class RangeCacheTests {
             fRm = rm;
         }
         
-        public int compareTo(RetrieveInfo o) {
+        @Override
+	public int compareTo(RetrieveInfo o) {
             if (fOffset > o.fOffset) {
                 return 1;
             } else if (fOffset == o.fOffset) {
@@ -148,7 +149,8 @@ public class RangeCacheTests {
     
     @After 
     public void shutdownExecutor() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { public void run() {
+        fExecutor.submit(new DsfRunnable() { @Override
+	public void run() {
             fExecutor.shutdown();
         }}).get();
         if (fExecutor.exceptionsCaught()) {
@@ -314,7 +316,8 @@ public class RangeCacheTests {
         getRange(0, 100, new long[] { 0 }, new int[] { 100 });
         
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.reset();
             };
         }).get();
@@ -341,7 +344,8 @@ public class RangeCacheTests {
         getRange(2050, 50, new long[] {}, new int[] {});
         
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.reset();
             };
         }).get();
@@ -379,7 +383,8 @@ public class RangeCacheTests {
         assertCacheWaiting(fRangeCache);
         
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.reset();
             };
         }).get();
@@ -403,7 +408,8 @@ public class RangeCacheTests {
         
         // Force an error status into the range cache.
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fTestCache.set(0, 100, null, new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Cache invalid", null));
             };
         }).get();
@@ -411,7 +417,8 @@ public class RangeCacheTests {
         // Retrieve a range cache and check that it immediately contains the error status in it.
         fRangeCache = null;
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRangeCache = fTestCache.getRange(0, 100);
             }
         }).get();
@@ -453,7 +460,8 @@ public class RangeCacheTests {
         completeInfo(info, 0, 100);
 
         fExecutor.submit(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fRangeCache = fTestCache.getRange(0, 100);
             }
         }).get();

@@ -127,8 +127,10 @@ public class PDARegisters extends AbstractDsfService
         public RegisterGroupDMData(String name) {
             fName = name;
         }
-        public String getName() { return fName; }
-        public String getDescription() { return "Description of the " + fName + " register group"; }
+        @Override
+	public String getName() { return fName; }
+        @Override
+	public String getDescription() { return "Description of the " + fName + " register group"; }
     }
     
     private static class RegisterDMData implements IRegisterDMData {
@@ -139,16 +141,25 @@ public class PDARegisters extends AbstractDsfService
             fRegister = reg;
         }
         
-        public boolean isReadable() { return true; }
-        public boolean isReadOnce() { return false; }
-        public boolean isWriteable() { return fRegister.fWritable; }
-        public boolean isWriteOnce() { return false; }
-        public boolean hasSideEffects() { return false; }
-        public boolean isVolatile() { return true; }
+        @Override
+	public boolean isReadable() { return true; }
+        @Override
+	public boolean isReadOnce() { return false; }
+        @Override
+	public boolean isWriteable() { return fRegister.fWritable; }
+        @Override
+	public boolean isWriteOnce() { return false; }
+        @Override
+	public boolean hasSideEffects() { return false; }
+        @Override
+	public boolean isVolatile() { return true; }
 
-        public boolean isFloat() { return false; }
-        public String getName() { return fRegister.fName; }
-        public String getDescription() { return "Description of the " + fRegister.fName + " register"; }
+        @Override
+	public boolean isFloat() { return false; }
+        @Override
+	public String getName() { return fRegister.fName; }
+        @Override
+	public String getDescription() { return "Description of the " + fRegister.fName + " register"; }
     }
     
     private static class Mnemonic implements IMnemonic {
@@ -161,8 +172,10 @@ public class PDARegisters extends AbstractDsfService
         final private BigInteger fValue;
         final private int fNumBits;
         
-        public String getShortName() { return fName; }
-        public String getLongName()  { return fName; }
+        @Override
+	public String getShortName() { return fName; }
+        @Override
+	public String getLongName()  { return fName; }
         
         public BigInteger getValue() { return fValue; }
         public int getBitCount() { return fNumBits; }
@@ -193,8 +206,10 @@ public class PDARegisters extends AbstractDsfService
             
             fBitGroups = new IBitGroup[] { 
                 new IBitGroup() {
-                    public int startBit() { return fBitField.fOffset; }
-                    public int bitCount() { return fBitField.fCount; }
+                    @Override
+		    public int startBit() { return fBitField.fOffset; }
+                    @Override
+		    public int bitCount() { return fBitField.fCount; }
                 }
             };
 
@@ -212,22 +227,34 @@ public class PDARegisters extends AbstractDsfService
         }
         
         
-        public IBitGroup[] getBitGroup()      { return fBitGroups;  }
-        public IMnemonic[] getMnemonics()     { return fMnemonics;  }
+        @Override
+	public IBitGroup[] getBitGroup()      { return fBitGroups;  }
+        @Override
+	public IMnemonic[] getMnemonics()     { return fMnemonics;  }
         
-        public boolean isZeroBasedNumbering() { return true; }
-        public boolean isZeroBitLeftMost()    { return true; }
-        public boolean isReadable()           { return true; }
-        public boolean isReadOnce()           { return false; }
-        public boolean isWriteable()          { return true; }
-        public boolean isWriteOnce()          { return false; }
-        public boolean hasSideEffects()       { return false; }
+        @Override
+	public boolean isZeroBasedNumbering() { return true; }
+        @Override
+	public boolean isZeroBitLeftMost()    { return true; }
+        @Override
+	public boolean isReadable()           { return true; }
+        @Override
+	public boolean isReadOnce()           { return false; }
+        @Override
+	public boolean isWriteable()          { return true; }
+        @Override
+	public boolean isWriteOnce()          { return false; }
+        @Override
+	public boolean hasSideEffects()       { return false; }
         public boolean isFloat()              { return false; }
         
-        public String  getName()         { return fBitField.fName; }
-        public String  getDescription()  { return "Description of the " + fBitField.fName + " bit field"; }
+        @Override
+	public String  getName()         { return fBitField.fName; }
+        @Override
+	public String  getDescription()  { return "Description of the " + fBitField.fName + " bit field"; }
 
-        public IMnemonic getCurrentMnemonicValue() { return fMnemonicValue; }
+        @Override
+	public IMnemonic getCurrentMnemonicValue() { return fMnemonicValue; }
     }
     
     private static class RegisterChangedDMEvent extends AbstractDMEvent<IRegisterDMContext> implements IRegisterChangedDMEvent {
@@ -296,6 +323,7 @@ public class PDARegisters extends AbstractDsfService
         super.shutdown(requestMonitor);
     }
     
+    @Override
     public void getRegisterGroups(IDMContext ctx, final DataRequestMonitor<IRegisterGroupDMContext[]> rm ) {
     	final PDAVirtualMachineDMContext dmc = DMContexts.getAncestorOfType(ctx, PDAVirtualMachineDMContext.class);
         if (dmc == null) {
@@ -318,6 +346,7 @@ public class PDARegisters extends AbstractDsfService
             }); 
     }
     
+    @Override
     public void getRegisters(final IDMContext ctx, final DataRequestMonitor<IRegisterDMContext[]> rm) {
         final PDAThreadDMContext execDmc = DMContexts.getAncestorOfType(ctx, PDAThreadDMContext.class);
         if ( execDmc == null ) { 
@@ -347,6 +376,7 @@ public class PDARegisters extends AbstractDsfService
         
     }
     
+    @Override
     public void getBitFields( IDMContext dmc , DataRequestMonitor<IBitFieldDMContext[]> rm ) {
     	
     	RegisterDMContext registerDmc = DMContexts.getAncestorOfType(dmc, RegisterDMContext.class);
@@ -367,6 +397,7 @@ public class PDARegisters extends AbstractDsfService
         rm.done();
     }
 
+    @Override
     public void writeRegister(final IRegisterDMContext regCtx, String regValue, String formatId, final RequestMonitor rm) {
         if (regCtx instanceof RegisterDMContext) {
             IExpressionDMContext exprCtx = createRegisterExpressionDmc( (RegisterDMContext)regCtx );
@@ -386,6 +417,7 @@ public class PDARegisters extends AbstractDsfService
         
     }
 
+    @Override
     public void writeBitField(final IBitFieldDMContext bitFieldCtx, String bitFieldValue, String formatId, final RequestMonitor rm) {
         if (bitFieldCtx instanceof BitFieldDMContext) {
             IExpressionDMContext exprCtx = createBitFieldExpressionDmc( (BitFieldDMContext)bitFieldCtx );
@@ -404,6 +436,7 @@ public class PDARegisters extends AbstractDsfService
         }
     }
     
+    @Override
     public void writeBitField(IBitFieldDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm) {
         if (mnemonic instanceof Mnemonic) {
             writeBitField(bitFieldCtx, ((Mnemonic)mnemonic).fValue.toString(), NATURAL_FORMAT, rm);
@@ -412,6 +445,7 @@ public class PDARegisters extends AbstractDsfService
         }
     }
 
+    @Override
     public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
         IExpressionDMContext exprCtx = null;
         if ( dmc instanceof RegisterDMContext ) {
@@ -426,6 +460,7 @@ public class PDARegisters extends AbstractDsfService
         }
     }
 
+    @Override
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
         IExpressionDMContext exprCtx = null;
         if ( dmc instanceof RegisterDMContext ) {
@@ -440,22 +475,27 @@ public class PDARegisters extends AbstractDsfService
         }
     }
 
+    @Override
     public void findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor<IRegisterGroupDMContext> rm) {
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Finding context not supported"); //$NON-NLS-1$
     }
     
+    @Override
     public void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm) {
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Finding context not supported"); //$NON-NLS-1$
     }
 
+    @Override
     public void findBitField(IDMContext ctx, String name, DataRequestMonitor<IBitFieldDMContext> rm) {
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Finding context not supported"); //$NON-NLS-1$
     }
     
+    @Override
     public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
         fExpressions.getFormattedExpressionValue(dmc, rm);
     }
     
+    @Override
     public void getRegisterGroupData(IRegisterGroupDMContext regGroupDmc, DataRequestMonitor<IRegisterGroupDMData> rm) {
         if (regGroupDmc instanceof RegisterGroupDMContext) {
             rm.setData(new RegisterGroupDMData( ((RegisterGroupDMContext)regGroupDmc).fName ));
@@ -465,6 +505,7 @@ public class PDARegisters extends AbstractDsfService
         }
     }
 
+    @Override
     public void getRegisterData(IRegisterDMContext regDmc , DataRequestMonitor<IRegisterDMData> rm) {
         if (regDmc instanceof RegisterDMContext) {
             rm.setData(new RegisterDMData( ((RegisterDMContext)regDmc).fRegister ));
@@ -474,6 +515,7 @@ public class PDARegisters extends AbstractDsfService
         }
     }
     
+    @Override
     public void getBitFieldData(IBitFieldDMContext dmc, final DataRequestMonitor<IBitFieldDMData> rm) {
         if ( !(dmc instanceof BitFieldDMContext) ) {
             PDAPlugin.failRequest(rm, INVALID_HANDLE, "Invalid context");  //$NON-NLS-1$
@@ -521,6 +563,7 @@ public class PDARegisters extends AbstractDsfService
         getSession().dispatchEvent(new RegisterChangedDMEvent(dmc), getProperties());
     }
 
+    @Override
     public void eventReceived(Object output) {
         if (!(output instanceof String)) return;
         if ("registers".equals(output)) {
@@ -528,6 +571,7 @@ public class PDARegisters extends AbstractDsfService
         }
     }
     
+    @Override
     public void flushCache(IDMContext context) {
         fExpressions.flushCache(context);
     }

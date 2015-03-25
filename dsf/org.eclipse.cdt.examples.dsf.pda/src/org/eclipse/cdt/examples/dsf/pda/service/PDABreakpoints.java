@@ -162,6 +162,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         return PDAPlugin.getBundleContext();
     }
 
+    @Override
     public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> rm) {
         // Validate the context
         if (!fCommandControl.getContext().equals(context)) {
@@ -173,10 +174,12 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
         rm.done();
     }
 
+    @Override
     public void getBreakpointDMData(IBreakpointDMContext dmc, DataRequestMonitor<IBreakpointDMData> rm) {
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Retrieving breakpoint data is not supported");
     }
 
+    @Override
     public void insertBreakpoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes, 
         DataRequestMonitor<IBreakpointDMContext> rm) 
     {
@@ -328,6 +331,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
             });
     }
 
+    @Override
     public void removeBreakpoint(IBreakpointDMContext bpCtx, RequestMonitor rm) {
         if (!fBreakpoints.contains(bpCtx)) {
             PDAPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint already removed");
@@ -364,6 +368,7 @@ public class PDABreakpoints extends AbstractDsfService implements IBreakpoints
                 new DataRequestMonitor<PDACommandResult>(getExecutor(), rm));        
     }
 
+    @Override
     public void updateBreakpoint(final IBreakpointDMContext bpCtx, Map<String, Object> attributes, final RequestMonitor rm) {
         if (!fBreakpoints.contains(bpCtx)) {
             PDAPlugin.failRequest(rm, REQUEST_FAILED, "Breakpoint not installed");

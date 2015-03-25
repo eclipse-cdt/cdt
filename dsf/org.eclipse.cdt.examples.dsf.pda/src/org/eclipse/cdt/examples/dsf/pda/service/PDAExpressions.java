@@ -56,7 +56,8 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
             fExpression = expressin;
         }
 
-        public String getExpression() { 
+        @Override
+	public String getExpression() { 
             return fExpression;
         }
         
@@ -89,31 +90,38 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
             fExpression = expression;
         }
         
-        public BasicType getBasicType() {
+        @Override
+	public BasicType getBasicType() {
             return BasicType.basic;
         }
 
-        public String getEncoding() {
+        @Override
+	public String getEncoding() {
             return null;
         }
 
-        public Map<String, Integer> getEnumerations() {
+        @Override
+	public Map<String, Integer> getEnumerations() {
             return null;
         }
 
-        public String getName() {
+        @Override
+	public String getName() {
             return fExpression;
         }
 
-        public IRegisterDMContext getRegister() {
+        @Override
+	public IRegisterDMContext getRegister() {
             return null;
         }
 
-        public String getTypeId() {
+        @Override
+	public String getTypeId() {
             return null;
         }
 
-        public String getTypeName() {
+        @Override
+	public String getTypeName() {
             return null;
         }
 
@@ -147,7 +155,8 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
             return baseToString() + ".invalid_expr[" + fExpression + "]"; 
         }
     
-        public String getExpression() {
+        @Override
+	public String getExpression() {
             return fExpression;
         }
     }
@@ -206,11 +215,13 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         super.shutdown(rm);
     }
 
+    @Override
     public void canWriteExpression(IExpressionDMContext expressionContext, DataRequestMonitor<Boolean> rm) {
         rm.setData(true);
         rm.done();
     }
 
+    @Override
     public IExpressionDMContext createExpression(IDMContext ctx, String expression) {
         // Create an expression based on the given context and string expression.  
         PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(ctx, PDAThreadDMContext.class);
@@ -232,14 +243,17 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         return new InvalidExpressionDMContext(getSession().getId(), ctx, expression);
     }
 
+    @Override
     public void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm) {
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Not supported");
     }
 
+    @Override
     public void getExpressionAddressData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMAddress> rm) {
         PDAPlugin.failRequest(rm, NOT_SUPPORTED, "Not supported");
     }
 
+    @Override
     public void getExpressionData(final IExpressionDMContext exprCtx, final DataRequestMonitor<IExpressionDMData> rm) {
         // Since expression data doesn't contain any more information than the 
         // context, it doesn't require any debugger commmands.
@@ -251,6 +265,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         }
     }
 
+    @Override
     public void getSubExpressionCount(final IExpressionDMContext exprCtx, final DataRequestMonitor<Integer> rm) {
         if (exprCtx instanceof ExpressionDMContext) {
             final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
@@ -283,10 +298,12 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         }
     }
 
+    @Override
     public void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<IExpressionDMContext[]> rm) {
         getSubExpressions(exprCtx, -1, -1, rm);
     }
 
+    @Override
     public void getSubExpressions(final IExpressionDMContext exprCtx, final int startIndexArg, final int lengthArg,
         final DataRequestMonitor<IExpressionDMContext[]> rm) 
     {
@@ -328,6 +345,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         }
     }
 
+    @Override
     public void getAvailableFormats(IFormattedDataDMContext dmc, final DataRequestMonitor<String[]> rm) {
         getFormattedExpressionValue(
             new FormattedValueDMContext(this, dmc, NATURAL_FORMAT),
@@ -352,11 +370,13 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
             });
     }
 
+    @Override
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext exprCtx, String formatId) {
         // Creates a context that can be used to retrieve a formatted value.
         return new FormattedValueDMContext(this, exprCtx, formatId);
     }
 
+    @Override
     public void getFormattedExpressionValue(FormattedValueDMContext formattedCtx, 
         final DataRequestMonitor<FormattedValueDMData> rm) 
     {
@@ -436,6 +456,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
     }
 
     
+    @Override
     public void writeExpression(final IExpressionDMContext exprCtx, final String exprValue, String formatId, 
         final RequestMonitor rm) 
     {
@@ -535,6 +556,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
         fCommandCache.reset(DMContexts.getAncestorOfType(e.getDMContext(), PDAThreadDMContext.class));
     }    
 
+    @Override
     public void flushCache(IDMContext context) {
         fCommandCache.reset(context);
     }

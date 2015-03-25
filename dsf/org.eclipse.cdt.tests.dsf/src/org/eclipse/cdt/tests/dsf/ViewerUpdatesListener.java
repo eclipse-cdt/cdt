@@ -325,6 +325,7 @@ public class ViewerUpdatesListener
         return true;
     }
     
+    @Override
     public void updateStarted(IViewerUpdate update) {
         synchronized (this) {
         	fContentUpdatesCounter++;
@@ -338,6 +339,7 @@ public class ViewerUpdatesListener
         }
     }
     
+    @Override
     public void updateComplete(IViewerUpdate update) {
         synchronized (this) {
         	fContentUpdatesCounter--;
@@ -378,6 +380,7 @@ public class ViewerUpdatesListener
         }
     }
     
+    @Override
     public void viewerUpdatesBegin() {
         if (fFailOnMultipleModelUpdateSequences && fContentSequenceComplete) {
             fMultipleModelUpdateSequencesObserved = true;
@@ -385,10 +388,12 @@ public class ViewerUpdatesListener
         fContentSequenceStarted = true;
     }
     
+    @Override
     public void viewerUpdatesComplete() {
         fContentSequenceComplete = true;
     }
 
+    @Override
     public void labelUpdateComplete(ILabelUpdate update) {
         synchronized (this) {
             fLabelUpdatesRunning.remove(update);
@@ -400,6 +405,7 @@ public class ViewerUpdatesListener
         }
     }
 
+    @Override
     public void labelUpdateStarted(ILabelUpdate update) {
         synchronized (this) {
             fLabelUpdatesRunning.add(update);
@@ -407,6 +413,7 @@ public class ViewerUpdatesListener
         }
     }
 
+    @Override
     public void labelUpdatesBegin() {
         if (fFailOnMultipleLabelUpdateSequences && fLabelSequenceComplete) {
             fMultipleLabelUpdateSequencesObserved = true;
@@ -414,10 +421,12 @@ public class ViewerUpdatesListener
         fLabelUpdatesStarted = true;
     }
 
+    @Override
     public void labelUpdatesComplete() {
         fLabelSequenceComplete = true;
     }
 
+    @Override
     public void propertiesUpdatesStarted(IPropertiesUpdate[] updates) {
         for (IPropertiesUpdate update : updates) {
             fPropertiesUpdatesRunning.add(update);
@@ -425,6 +434,7 @@ public class ViewerUpdatesListener
         }
     }
 
+    @Override
     public void propertiesUpdateCompleted(IPropertiesUpdate update) {
         synchronized (this) {
             fPropertiesUpdatesRunning.remove(update);
@@ -437,29 +447,36 @@ public class ViewerUpdatesListener
 
     }
     
+    @Override
     public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         fModelChangedComplete = true;
     }
     
+    @Override
     public void stateRestoreUpdatesBegin(Object input) {
         fStateRestoreStarted = true;
     }
     
+    @Override
     public void stateRestoreUpdatesComplete(Object input) {
         fStateRestoreComplete = true;
     }
     
+    @Override
     public void stateSaveUpdatesBegin(Object input) {
         fStateSaveStarted = true;
     }
 
+    @Override
     public void stateSaveUpdatesComplete(Object input) {
         fStateSaveComplete = true;
     }
     
+    @Override
     public void stateUpdateComplete(Object input, IViewerUpdate update) {
     }
     
+    @Override
     public void stateUpdateStarted(Object input, IViewerUpdate update) {
     }
     

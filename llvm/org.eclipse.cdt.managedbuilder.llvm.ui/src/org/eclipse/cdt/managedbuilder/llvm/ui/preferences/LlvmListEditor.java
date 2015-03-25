@@ -188,7 +188,8 @@ public abstract class LlvmListEditor extends ListEditor {
             this.buttonBox.setLayout(layout);
             createButtons(this.buttonBox);
             this.buttonBox.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+		public void widgetDisposed(DisposeEvent event) {
                     LlvmListEditor.this.addButton = null;
                     LlvmListEditor.this.removeButton = null;
                     LlvmListEditor.this.upButton = null;
@@ -219,7 +220,8 @@ public abstract class LlvmListEditor extends ListEditor {
             this.list.setFont(parent.getFont());
             this.list.addSelectionListener(getSelectionListener());
             this.list.addDisposeListener(new DisposeListener() {
-                public void widgetDisposed(DisposeEvent event) {
+                @Override
+		public void widgetDisposed(DisposeEvent event) {
                     LlvmListEditor.this.list = null;
                 }
             });

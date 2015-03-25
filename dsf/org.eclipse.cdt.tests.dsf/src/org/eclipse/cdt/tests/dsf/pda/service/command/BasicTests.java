@@ -59,16 +59,20 @@ public class BasicTests extends CommandControlTestsBase {
             List<CommandInfo> fRemovedCommands = new LinkedList<CommandInfo>(); 
             List<CommandInfo> fSentCommands = new LinkedList<CommandInfo>(); 
             
-            public void commandDone(ICommandToken token, ICommandResult result) { 
+            @Override
+	    public void commandDone(ICommandToken token, ICommandResult result) { 
                 fDoneCommands.add(new CommandInfo(token.getCommand(), result));
             }
-            public void commandQueued(ICommandToken token) {
+            @Override
+	    public void commandQueued(ICommandToken token) {
                 fQueuedCommands.add(new CommandInfo(token.getCommand(), null));
             }
-            public void commandRemoved(ICommandToken token) {
+            @Override
+	    public void commandRemoved(ICommandToken token) {
                 fRemovedCommands.add(new CommandInfo(token.getCommand(), null));
             }
-            public void commandSent(ICommandToken token) {
+            @Override
+	    public void commandSent(ICommandToken token) {
                 fSentCommands.add(new CommandInfo(token.getCommand(), null));
             }
             
@@ -82,7 +86,8 @@ public class BasicTests extends CommandControlTestsBase {
         
         final CommandListener listener = new CommandListener();
         fExecutor.execute(new DsfRunnable() {
-            public void run() {
+            @Override
+	    public void run() {
                 fCommandControl.addCommandListener(listener);
             }
         });

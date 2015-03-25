@@ -29,16 +29,20 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttributeTranslator2 {
 
+    @Override
     public void initialize(BreakpointsMediator2 mediator) {
     }
 
+    @Override
     public void dispose() {
     }
 
+    @Override
     public boolean supportsBreakpoint(IBreakpoint bp) {
         return DsfTestBreakpoint.DSF_TEST_BREAKPOINT_MODEL_ID.equals(bp.getModelIdentifier());
     }
 
+    @Override
     public void resolveBreakpoint(IBreakpointsTargetDMContext context, IBreakpoint breakpoint,
         Map<String, Object> bpAttrs, DataRequestMonitor<List<Map<String, Object>>> drm) 
     {
@@ -56,6 +60,7 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
         drm.done();
     }
 
+    @Override
     public Map<String, Object> getAllBreakpointAttributes(IBreakpoint platformBP, boolean bpManagerEnabled)
         throws CoreException 
     {
@@ -67,6 +72,7 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
         return convertAttributes(platformBPAttr);
     }
 
+    @Override
     public Map<String, Object> convertAttributes(Map<String, Object> platformBPAttr) {
         Map<String, Object> debugAttrs = new HashMap<String, Object>(platformBPAttr.size());
         for (Map.Entry<String, Object> entry : platformBPAttr.entrySet()) {
@@ -82,6 +88,7 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
         return debugAttrs;
     }
 
+    @Override
     public void updateBreakpointsStatus(
         Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> bpsInfo,
         BreakpointEventType eventType) 
@@ -89,6 +96,7 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
         
     }
 
+    @Override
     public boolean canUpdateAttributes(IBreakpoint bp, IBreakpointsTargetDMContext context,
         Map<String, Object> attributes) 
     {

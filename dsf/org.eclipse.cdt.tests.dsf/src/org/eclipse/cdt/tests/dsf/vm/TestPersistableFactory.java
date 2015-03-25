@@ -21,6 +21,7 @@ public class TestPersistableFactory implements IElementFactory {
 
 	static String factoryId = "org.eclipse.cdt.tests.dsf.vm.testPersistableFactory";
 
+	@Override
 	public IAdaptable createElement(IMemento memento) {
 		TestPersistable x = new TestPersistable();
 		x.restore(memento);

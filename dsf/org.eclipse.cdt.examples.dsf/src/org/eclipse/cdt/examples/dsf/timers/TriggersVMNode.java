@@ -101,15 +101,18 @@ class TriggersVMNode extends AbstractDMVMNode
         update.done();
     }
 
+    @Override
     public void update(ILabelUpdate[] updates) {
         fgLabelProvider.update(updates);
     }
     
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         // Switch to the session thread before processing the updates.
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+		public void run() {
                     for (IPropertiesUpdate update : updates) {
                         updatePropertiesInSessionThread(update);
                     }
@@ -147,6 +150,7 @@ class TriggersVMNode extends AbstractDMVMNode
         update.done();
     }
     
+    @Override
     public CellEditor getCellEditor(IPresentationContext context, String columnId, 
         Object element, Composite parent) 
     {
@@ -159,6 +163,7 @@ class TriggersVMNode extends AbstractDMVMNode
 
     // Note: this method is synchronized because IElementEditor.getCellModifier can be called
     // on any thread, even though in practice it should be only called on the UI thread.
+    @Override
     public ICellModifier getCellModifier(IPresentationContext context, 
         Object element) 
     {
@@ -169,6 +174,7 @@ class TriggersVMNode extends AbstractDMVMNode
         return fAlarmCellModifier; 
     }
     
+    @Override
     public int getDeltaFlags(Object e) {
         // Since the label for triggers doesn't change, this node will generate 
         // delta info only if the list of alarms is changed.
@@ -179,6 +185,7 @@ class TriggersVMNode extends AbstractDMVMNode
     }
     
     
+    @Override
     public void buildDelta(Object event, VMDelta parentDelta, int nodeOffset, 
         RequestMonitor requestMonitor) 
     {

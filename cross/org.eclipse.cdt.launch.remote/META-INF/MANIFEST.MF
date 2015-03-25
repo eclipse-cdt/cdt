@@ -29,7 +29,7 @@ Require-Bundle: org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)",
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.cdt.internal.launch.remote;x-internal:=true,
  org.eclipse.cdt.launch.remote;x-internal:=true,
  org.eclipse.cdt.launch.remote.launching;x-internal:=true,

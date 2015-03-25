@@ -83,6 +83,7 @@ class TimersVMNode extends AbstractDMVMNode
         return "TimersVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     }
     
+    @Override
     public void update(ILabelUpdate[] updates) {
         fgLabelProvider.update(updates);
     }
@@ -103,11 +104,13 @@ class TimersVMNode extends AbstractDMVMNode
     }
 
 
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         // Switch to the session thread before processing the updates.
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+		public void run() {
                     for (IPropertiesUpdate update : updates) {
                         updatePropertiesInSessionThread(update);
                     }
@@ -143,6 +146,7 @@ class TimersVMNode extends AbstractDMVMNode
         update.done();
     }
 
+    @Override
     public int getDeltaFlags(Object e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
@@ -154,6 +158,7 @@ class TimersVMNode extends AbstractDMVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor requestMonitor) {
         if (e instanceof TimerService.TimerTickDMEvent) {
             // Add delta indicating that the given timer has changed.

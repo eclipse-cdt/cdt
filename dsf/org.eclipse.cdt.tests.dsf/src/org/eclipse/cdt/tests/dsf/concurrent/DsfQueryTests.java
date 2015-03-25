@@ -44,7 +44,8 @@ public class DsfQueryTests {
     
     @After 
     public void shutdownServices() throws ExecutionException, InterruptedException {
-        fExecutor.submit(new DsfRunnable() { public void run() {
+        fExecutor.submit(new DsfRunnable() { @Override
+	public void run() {
             fExecutor.shutdown();
         }}).get();
         if (fExecutor.exceptionsCaught()) {
@@ -142,7 +143,8 @@ public class DsfQueryTests {
             @Override
             protected void execute(final DataRequestMonitor<Integer> rm) {
                 fExecutor.execute(new DsfRunnable() { 
-                    public void run() {
+                    @Override
+		    public void run() {
                         rm.setData(1);
                         rm.done();
                     }
@@ -236,7 +238,8 @@ public class DsfQueryTests {
         // Add a cancel listener to the query RM
         rmHolder[0].addCancelListener(new ICanceledListener() {
             
-            public void requestCanceled(RequestMonitor rm) {
+            @Override
+	    public void requestCanceled(RequestMonitor rm) {
                 cancelCalled[0] = Boolean.TRUE;
             }
         });
@@ -289,7 +292,8 @@ public class DsfQueryTests {
                 // Call done with a delay of 1 second, to avoid stalling the tests.
                 fExecutor.schedule(
                     new DsfRunnable() {
-                        public void run() { rm.done(); }
+                        @Override
+			public void run() { rm.done(); }
                     }, 
                     60, TimeUnit.SECONDS);
             }

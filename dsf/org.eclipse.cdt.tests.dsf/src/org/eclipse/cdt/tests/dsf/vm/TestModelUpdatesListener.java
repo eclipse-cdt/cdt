@@ -30,7 +30,8 @@ public class TestModelUpdatesListener extends ViewerUpdatesListener
     
     private final static Comparator<String> fStringComparator = new Comparator<String>() {
         
-        public int compare(String s1, String s2) {
+        @Override
+	public int compare(String s1, String s2) {
             int l1 = s1.length();
             int l2 = s2.length();
             int lmin = l1;
@@ -61,7 +62,8 @@ public class TestModelUpdatesListener extends ViewerUpdatesListener
     };
     
     private final static Comparator<TreePath> fTestElementVMCComparator = new Comparator<TreePath>() {
-        public int compare(TreePath p1, TreePath p2) {
+        @Override
+	public int compare(TreePath p1, TreePath p2) {
             int l1 = p1.getSegmentCount();
             int l2 = p2.getSegmentCount();
             int lmin = l1;

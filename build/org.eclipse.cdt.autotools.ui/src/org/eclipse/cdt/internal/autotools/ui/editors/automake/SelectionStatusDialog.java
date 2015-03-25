@@ -91,7 +91,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * if there isn't any initial selection.
 	 * @return the first element of the initial selection.
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	protected Object getPrimaryInitialSelection() {
 		List result= getInitialElementSelections();
 		if (result == null || result.size() == 0)

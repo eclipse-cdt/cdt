@@ -62,7 +62,6 @@ public class BuildGroup extends CViewActionGroup {
 	        super(shell, kind);
 	    }
 	    @Override
-	    @SuppressWarnings("unchecked")
 	    public void run() {
 	    	// Ensure we correctly save files in all referenced projects before build
 	    	Set<IProject> prjs = new HashSet<IProject>();

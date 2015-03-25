@@ -359,7 +359,7 @@ public class DisassemblyPane implements IPropertyChangeListener {
         return EditorsUI.getSharedTextColors();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     protected IVerticalRuler createCompositeRuler() {
         CompositeRuler ruler = new CompositeRuler();
         ruler.addDecorator( 0, new AnnotationRulerColumn( VERTICAL_RULER_WIDTH, getAnnotationAccess() ) );

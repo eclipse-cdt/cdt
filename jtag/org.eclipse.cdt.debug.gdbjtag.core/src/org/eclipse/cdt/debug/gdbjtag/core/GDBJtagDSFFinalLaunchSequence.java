@@ -113,13 +113,12 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		this(launch.getSession(), getAttributes(launch), rm);
     }
 
-	@SuppressWarnings("unchecked")
 	private static Map<String, Object> getAttributes(GdbLaunch launch) {
-		try {
-			return launch.getLaunchConfiguration().getAttributes();
-		} catch (CoreException e) {
-		}
-		return new HashMap<String, Object>();
+	    try {
+		return launch.getLaunchConfiguration().getAttributes();
+	    } catch (CoreException e) {
+	    }
+	    return new HashMap<String, Object>();
 	}
     
 	/** @since 8.2 */

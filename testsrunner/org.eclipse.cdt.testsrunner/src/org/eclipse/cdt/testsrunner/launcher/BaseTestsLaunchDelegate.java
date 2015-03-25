@@ -211,7 +211,6 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * @param mode mode
 	 * @return launch delegate
 	 */
-	@SuppressWarnings("unchecked")
 	private ILaunchConfigurationDelegate2 getPreferredDelegate(ILaunchConfiguration config, String mode) throws CoreException {
 	    ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
 	    ILaunchConfigurationType localCfg =

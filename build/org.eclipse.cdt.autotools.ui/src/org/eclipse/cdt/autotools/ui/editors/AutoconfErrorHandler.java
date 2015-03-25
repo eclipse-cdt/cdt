@@ -86,7 +86,7 @@ public class AutoconfErrorHandler implements IAutoconfErrorHandler {
 
 	public void removeExistingMarkers(int offset, int length)
 	{	
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator i = fAnnotationModel.getAnnotationIterator();
 		while (i.hasNext()) {
 			Annotation annotation = (Annotation)i.next();

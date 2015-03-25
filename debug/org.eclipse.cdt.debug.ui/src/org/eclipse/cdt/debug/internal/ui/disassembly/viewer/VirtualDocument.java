@@ -196,7 +196,7 @@ public class VirtualDocument extends Document {
         getAnnotationProvider().update( getContentProvider().getInput(), element, index, getPresentationContext() );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     protected void updateAnnotations( int lineNumber, Annotation[] annotations ) {
         IAnnotationModel annotationModel = getAnnotationModel();
         try {

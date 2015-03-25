@@ -45,7 +45,7 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 	protected ISelection updateSelection(ISelection sel) {
 		ArrayList<AutoconfElement> newSelection= new ArrayList<AutoconfElement>();
 		if (sel instanceof IStructuredSelection) {
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings("rawtypes")
 			Iterator iter= ((IStructuredSelection)sel).iterator();
 			for (;iter.hasNext();) {
 				//ICElement elem= fInput.findEqualMember((ICElement)iter.next());

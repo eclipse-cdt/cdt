@@ -49,7 +49,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 				
 		int yoursStart= offset;
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator e= presentation.getAllStyleRangeIterator();
 		while (e.hasNext()) {
 			

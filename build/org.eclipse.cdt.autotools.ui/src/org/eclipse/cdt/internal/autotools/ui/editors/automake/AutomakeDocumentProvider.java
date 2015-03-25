@@ -97,7 +97,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IMakefileDocumentProvider#shutdown()
 	 */
 	public void shutdown() {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator e= getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());

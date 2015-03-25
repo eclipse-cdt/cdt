@@ -151,7 +151,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			if (fInput != null) {
 				ProjectionAnnotationModel model= (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
 				if (model != null) {
-					@SuppressWarnings("unchecked")
+					@SuppressWarnings("rawtypes")
 					Map additions= computeAdditions((IParent) fInput);
 					model.removeAllAnnotations();
 					model.replaceAnnotations(null, additions);
@@ -371,7 +371,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 
 	private Map<IDirective, List<MakefileProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
 		Map<IDirective, List<MakefileProjectionAnnotation>> map= new HashMap<IDirective, List<MakefileProjectionAnnotation>>();
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object annotation= e.next();

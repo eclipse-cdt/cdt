@@ -68,7 +68,7 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
      * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
      */
     @Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
     public void updateElement( UIElement element, Map parameters ) {
         String param = (String)parameters.get( ID_PARAMETER_MODE );
         if ( param != null ) {

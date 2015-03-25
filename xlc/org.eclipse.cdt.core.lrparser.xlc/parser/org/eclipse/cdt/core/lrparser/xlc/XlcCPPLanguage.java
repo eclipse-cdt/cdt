@@ -87,7 +87,7 @@ public class XlcCPPLanguage extends GPPLanguage {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if(ICLanguageKeywords.class.equals(adapter))

@@ -59,7 +59,6 @@ public class DsfTestBreakpointAttributeTranslator2 implements IBreakpointAttribu
     public Map<String, Object> getAllBreakpointAttributes(IBreakpoint platformBP, boolean bpManagerEnabled)
         throws CoreException 
     {
-        @SuppressWarnings("unchecked")
         Map<String, Object> platformBPAttr = platformBP.getMarker().getAttributes();
         if (!bpManagerEnabled) {
             platformBPAttr.put(IBreakpoint.ENABLED, Boolean.FALSE);

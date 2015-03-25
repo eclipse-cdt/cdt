@@ -59,7 +59,7 @@ public class XlcCLanguage extends GCCLanguage {
 	}
 
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if(ICLanguageKeywords.class.equals(adapter))

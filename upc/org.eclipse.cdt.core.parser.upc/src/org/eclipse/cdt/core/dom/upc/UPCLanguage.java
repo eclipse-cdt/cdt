@@ -64,7 +64,7 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 
 	private static final ICLanguageKeywords upcKeywords = new UPCLanguageKeywords(ScannerExtensionConfiguration.createC());
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if(ICLanguageKeywords.class.equals(adapter))

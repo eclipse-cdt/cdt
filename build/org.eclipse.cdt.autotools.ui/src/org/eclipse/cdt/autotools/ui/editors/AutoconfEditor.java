@@ -185,7 +185,7 @@ public class AutoconfEditor extends TextEditor implements IAutotoolsEditor, IPro
 		}
 	}
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
 	public Object getAdapter(Class required) {
 		if (ProjectionAnnotationModel.class.equals(required)) {
 			if (fProjectionSupport != null) {

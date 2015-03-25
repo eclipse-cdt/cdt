@@ -103,7 +103,7 @@ public class AutomakeEditor extends MakefileEditor {
 	/* (non-Javadoc)
 	 * Method declared on IAdaptable
 	 */
-	public Object getAdapter(@SuppressWarnings("unchecked") Class key) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			return getAutomakeOutlinePage();
 		}

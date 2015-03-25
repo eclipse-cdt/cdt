@@ -92,7 +92,7 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 		List<Annotation> exact= new ArrayList<Annotation>();
 		List<Annotation> including= new ArrayList<Annotation>();
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object o= e.next();

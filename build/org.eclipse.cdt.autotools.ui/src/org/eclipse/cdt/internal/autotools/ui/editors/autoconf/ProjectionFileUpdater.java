@@ -404,7 +404,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 
 	private Map<AutoconfElement, List<AutoconfProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
 		Map<AutoconfElement, List<AutoconfProjectionAnnotation>> map= new HashMap<AutoconfElement, List<AutoconfProjectionAnnotation>>();
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object annotation= e.next();

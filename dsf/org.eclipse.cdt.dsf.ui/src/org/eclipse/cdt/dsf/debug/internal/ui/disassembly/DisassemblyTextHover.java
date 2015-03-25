@@ -27,7 +27,6 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * A text hover to evaluate registers and variables under the cursor.
  */
-@SuppressWarnings("restriction")
 public class DisassemblyTextHover implements ITextHover {
 
 	private final DisassemblyPart fDisassemblyPart;

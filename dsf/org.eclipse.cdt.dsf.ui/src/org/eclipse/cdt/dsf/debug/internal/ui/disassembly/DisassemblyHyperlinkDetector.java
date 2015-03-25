@@ -22,7 +22,6 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
  * A hyperlink detector detecting words and numbers to support navigation
  * to a symbolic address.
  */
-@SuppressWarnings("restriction")
 class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 
 	public class DisassemblyHyperlink implements IHyperlink {

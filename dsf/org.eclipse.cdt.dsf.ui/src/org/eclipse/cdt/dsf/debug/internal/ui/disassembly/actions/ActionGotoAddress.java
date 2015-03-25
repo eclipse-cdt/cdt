@@ -22,7 +22,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.widgets.Shell;
 
-@SuppressWarnings("restriction")
 public final class ActionGotoAddress extends AbstractDisassemblyAction {
 	public ActionGotoAddress(IDisassemblyPart disassemblyPart) {
 		super(disassemblyPart);

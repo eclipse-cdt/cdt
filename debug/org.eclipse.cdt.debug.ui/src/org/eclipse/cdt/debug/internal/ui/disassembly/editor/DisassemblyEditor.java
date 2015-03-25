@@ -77,7 +77,6 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
      */
-    @SuppressWarnings("restriction")
     @Override
     public void init( IEditorSite site, IEditorInput input ) throws PartInitException {
         setSite( site );
@@ -146,7 +145,6 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.WorkbenchPart#dispose()
      */
-    @SuppressWarnings("restriction")
     @Override
     public void dispose() {
         DebugUITools.getDebugContextManager().removeDebugContextListener( this );

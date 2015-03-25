@@ -29,7 +29,6 @@ import org.eclipse.ui.editors.text.StorageDocumentProvider;
 /**
  * SourceDocumentProvider
  */
-@SuppressWarnings("restriction")
 public class SourceDocumentProvider extends StorageDocumentProvider {
 
 	public SourceDocumentProvider() {

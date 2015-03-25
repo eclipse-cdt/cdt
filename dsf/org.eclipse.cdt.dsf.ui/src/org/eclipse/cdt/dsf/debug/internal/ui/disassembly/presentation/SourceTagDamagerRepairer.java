@@ -39,7 +39,6 @@ import org.eclipse.swt.graphics.RGB;
 /**
  *
  */
-@SuppressWarnings("restriction")
 public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements ISourceTagListener {
 
 	private ISourceTagProvider fSourceTagProvider;

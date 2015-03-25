@@ -19,9 +19,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
 
 /**
  * org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyEditorPresentation: 
- * //TODO Add description.
  */
-@SuppressWarnings("restriction")
 public class DisassemblyEditorPresentation extends PresentationContext implements IDocumentPresentation {
 
     public static final String PROPERTY_SHOW_INSTRUCTIONS = "PROPERTY_SHOW_INSTRUCTIONS"; //$NON-NLS-1$

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - Initial API and implementation
+ * Patrick Tasse - [462418] use stored password on non-preferred password based authentication
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
@@ -828,9 +829,12 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 			session.setUserInfo(new JSchUserInfo());
 			if (isPasswordAuth()) {
 				session.setConfig("PreferredAuthentications", "password,keyboard-interactive,gssapi-with-mic,publickey"); //$NON-NLS-1$ //$NON-NLS-2$
-				session.setPassword(getPassword());
 			} else {
 				session.setConfig("PreferredAuthentications", "publickey,gssapi-with-mic,password,keyboard-interactive"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			String password = getPassword();
+			if (!password.isEmpty()) {
+				session.setPassword(password);
 			}
 			if (getProxyCommand().isEmpty() && getProxyConnectionName().isEmpty()) {
 				fJSchService.connect(session, getTimeout() * 1000, progress.newChild(10)); // connect without proxy

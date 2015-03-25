@@ -59,7 +59,7 @@ public class OptionsPropertyPage extends PropertyPage {
 
 	private void initialize() {
 		boolean solibUpdate = true;
-		ICDISession session = (ICDISession)getElement().getAdapter( ICDISession.class );
+		ICDISession session = getElement().getAdapter( ICDISession.class );
 		if ( session instanceof Session ) {
 			solibUpdate = ((Session)session).getSharedLibraryManager().isAutoUpdate();
 		}
@@ -80,8 +80,8 @@ public class OptionsPropertyPage extends PropertyPage {
 	}
 
 	private void storeValues() {
-		ICDISession session = (ICDISession)getElement().getAdapter( ICDISession.class );
-		final ICDITarget target = (ICDITarget)getElement().getAdapter( ICDITarget.class );
+		ICDISession session = getElement().getAdapter( ICDISession.class );
+		final ICDITarget target = getElement().getAdapter( ICDITarget.class );
 		if ( session instanceof Session ) {
 			final boolean solibUpdate = fRefreshSolibsButton.getSelection();
 			final Session miSession = ((Session)session);

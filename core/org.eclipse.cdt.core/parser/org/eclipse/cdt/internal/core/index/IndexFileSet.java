@@ -145,7 +145,7 @@ public class IndexFileSet implements IIndexFileSet {
 				if (binding instanceof IIndexFragmentBinding) {
 					fb= (IIndexFragmentBinding) binding;
 				} else {
-					fb= (IIndexFragmentBinding) binding.getAdapter(IIndexFragmentBinding.class);
+					fb= binding.getAdapter(IIndexFragmentBinding.class);
 				}
 				try {
 					if (fb != null && fb.isFileLocal()) {

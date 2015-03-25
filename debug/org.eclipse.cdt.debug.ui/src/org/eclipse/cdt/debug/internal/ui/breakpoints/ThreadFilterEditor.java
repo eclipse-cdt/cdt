@@ -138,7 +138,7 @@ public class ThreadFilterEditor {
 		@Override
 		public Object[] getChildren( Object parent ) {
 			if ( parent instanceof IDebugTarget ) {
-				ICDebugTarget target = (ICDebugTarget)((IDebugTarget)parent).getAdapter( ICDebugTarget.class );
+				ICDebugTarget target = ((IDebugTarget)parent).getAdapter( ICDebugTarget.class );
 				if ( target != null ) {
 					try {
 						return ((ICDebugTarget)parent).getThreads();
@@ -156,7 +156,7 @@ public class ThreadFilterEditor {
 				for( int i = 0, numLaunches = launches.length; i < numLaunches; i++ ) {
 					targets = launches[i].getDebugTargets();
 					for( int j = 0, numTargets = targets.length; j < numTargets; j++ ) {
-						target = (ICDebugTarget)targets[j].getAdapter( ICDebugTarget.class );
+						target = targets[j].getAdapter( ICDebugTarget.class );
 						if ( target != null && !target.isDisconnected() && !target.isTerminated() ) {
 							children.add( target );
 						}

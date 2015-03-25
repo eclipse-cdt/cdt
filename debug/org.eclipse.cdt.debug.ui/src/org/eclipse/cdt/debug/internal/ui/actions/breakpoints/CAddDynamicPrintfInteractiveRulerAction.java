@@ -145,7 +145,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 				return provider.getDocument(editor.getEditorInput());
 		}
 		
-		IDocument doc = (IDocument) fPart.getAdapter(IDocument.class);
+		IDocument doc = fPart.getAdapter(IDocument.class);
 		if (doc != null) {
 			return doc;
 		}

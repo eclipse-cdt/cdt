@@ -684,7 +684,7 @@ public class FileListControl {
 
 		// Add command handlers for undo to the control
 		try {
-			IFocusService fs = (IFocusService)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+			IFocusService fs = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 								.getActivePart().getSite().getService(IFocusService.class);
 			fs.addFocusTracker(list, "org.eclipse.cdt.ui.FileListControl"); //$NON-NLS-1$
 		} catch (Exception e) {

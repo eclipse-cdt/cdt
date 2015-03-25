@@ -60,7 +60,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	@Override
 	public void run( IAction action ) {
 		final StructuredViewer viewer = getStructuredViewer();
-		IDebugView view = (IDebugView)getView().getAdapter( IDebugView.class );
+		IDebugView view = getView().getAdapter( IDebugView.class );
 		if (view != null) {
 			IDebugModelPresentation pres = view.getPresentation( CDIDebugModel.getPluginIdentifier() );
 			if ( pres != null ) {
@@ -92,7 +92,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	 /** @since 7.0 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
+		IDebugView view = getView().getAdapter(IDebugView.class);
 		
 		// Debug view
 		if (view instanceof LaunchView) {

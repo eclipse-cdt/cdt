@@ -58,7 +58,7 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
         CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_STEP_MODE, fCurrentValue );
 
         IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked( event );
-        ICommandService service = (ICommandService)window.getService( ICommandService.class );
+        ICommandService service = window.getService( ICommandService.class );
         service.refreshElements( event.getCommand().getId(), null );
 
         return null;
@@ -99,7 +99,7 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
         if ( selection instanceof IStructuredSelection ) {
             Object element = ((IStructuredSelection)selection).getFirstElement();
             if ( element instanceof IAdaptable )
-                return (ISteppingModeTarget)((IAdaptable)element).getAdapter( ISteppingModeTarget.class );
+                return ((IAdaptable)element).getAdapter( ISteppingModeTarget.class );
         }
         return null;
     }

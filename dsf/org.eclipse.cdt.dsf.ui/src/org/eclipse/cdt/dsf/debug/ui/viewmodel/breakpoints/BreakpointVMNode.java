@@ -55,7 +55,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
         
         for (final ILabelUpdate update : updates) {
             final IBreakpoint bp = ((BreakpointVMContext)update.getElement()).getBreakpoint();
-            IElementLabelProvider provider = (IElementLabelProvider)bp.getAdapter(IElementLabelProvider.class);
+            IElementLabelProvider provider = bp.getAdapter(IElementLabelProvider.class);
             if (provider == null) {
                 update.done();
                 continue;
@@ -120,7 +120,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
         
         for (final IElementMementoRequest update : updates) {
             final IBreakpoint bp = ((BreakpointVMContext)update.getElement()).getBreakpoint();
-            IElementMementoProvider provider = (IElementMementoProvider)bp.getAdapter(IElementMementoProvider.class);
+            IElementMementoProvider provider = bp.getAdapter(IElementMementoProvider.class);
             if (provider == null) {
                 update.done();
                 continue;
@@ -167,7 +167,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
         
         for (final IElementCompareRequest update : updates) {
             final IBreakpoint bp = ((BreakpointVMContext)update.getElement()).getBreakpoint();
-            IElementMementoProvider provider = (IElementMementoProvider)bp.getAdapter(IElementMementoProvider.class);
+            IElementMementoProvider provider = bp.getAdapter(IElementMementoProvider.class);
             if (provider == null) {
                 update.done();
                 continue;

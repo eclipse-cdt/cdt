@@ -67,7 +67,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			GNUElfParser binParser = new GNUElfParser();
 			IBinaryFile bf = binParser
 					.getBinary(new Path(executable));
-			ISymbolReader reader = (ISymbolReader)bf.getAdapter(ISymbolReader.class);
+			ISymbolReader reader = bf.getAdapter(ISymbolReader.class);
 			String[] sourceFiles = reader
 					.getSourceFiles();
 			monitor.beginTask(Messages.GetCompilerOptions, sourceFiles.length * 2 + 1);

@@ -71,7 +71,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private boolean determineShowInBinaryContainer(IBinaryObject bin) {
-		BinaryFilePresentation presentation= (BinaryFilePresentation) bin.getAdapter(BinaryFilePresentation.class);
+		BinaryFilePresentation presentation= bin.getAdapter(BinaryFilePresentation.class);
 		if (presentation != null) {
 			return presentation.showInBinaryContainer();
 		}
@@ -314,7 +314,7 @@ public class Binary extends Openable implements IBinary {
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
-		ISymbolReader symbolreader = (ISymbolReader)obj.getAdapter(ISymbolReader.class);
+		ISymbolReader symbolreader = obj.getAdapter(ISymbolReader.class);
 		if (symbolreader == null)
 			return false;
 

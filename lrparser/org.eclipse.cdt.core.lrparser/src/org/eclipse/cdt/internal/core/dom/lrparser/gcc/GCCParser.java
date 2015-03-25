@@ -110,7 +110,7 @@ public class GCCParser extends PrsStream implements RuleAction, ITokenStream,
     public String[] orderedTerminalSymbols() { return GCCParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return GCCParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return GCCParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -149,7 +149,7 @@ public class GCCParser extends PrsStream implements RuleAction, ITokenStream,
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

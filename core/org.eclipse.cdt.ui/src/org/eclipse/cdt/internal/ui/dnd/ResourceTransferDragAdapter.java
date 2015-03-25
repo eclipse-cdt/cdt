@@ -114,7 +114,7 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 					resource = (IResource)element;
 				} else if (element instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) element;
-					resource = (IResource) adaptable.getAdapter(IResource.class);
+					resource = adaptable.getAdapter(IResource.class);
 				}
 				if (resource != null) {
 					resources.add(resource);

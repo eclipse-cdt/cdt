@@ -21,7 +21,7 @@ public class StandardSourceFileRemapping implements ISourceFileRemapping {
 	ISourceFinder srcFinder;
 
 	public StandardSourceFileRemapping(IBinary binary) {
-		srcFinder = (ISourceFinder) binary.getAdapter(ISourceFinder.class);
+		srcFinder = binary.getAdapter(ISourceFinder.class);
 	}
 	
 	@Override

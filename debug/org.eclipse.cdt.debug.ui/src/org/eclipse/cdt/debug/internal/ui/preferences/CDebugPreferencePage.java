@@ -375,7 +375,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	protected void refreshViews( IWorkbenchPage page, String viewID ) {
 		IViewPart part = page.findView( viewID );
 		if ( part != null ) {
-			IDebugView adapter = (IDebugView)part.getAdapter( IDebugView.class );
+			IDebugView adapter = part.getAdapter( IDebugView.class );
 			if ( adapter != null ) {
 				Viewer viewer = adapter.getViewer();
 				if ( viewer instanceof StructuredViewer ) {

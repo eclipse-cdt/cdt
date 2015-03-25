@@ -111,14 +111,14 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to - from), 
 						refs.toArray(new IASTName[refs.size()]), fMacroLocations,
 						fFilePath, refLoc.getStartingLineNumber(), isPPCond, 
-						(LexerOptions) tu.getAdapter(LexerOptions.class));
+						tu.getAdapter(LexerOptions.class));
 			}
 		}
 		fBoundaries[++bidx]= fSource.length;
 	}
 
 	private ILocationResolver getResolver(IASTTranslationUnit tu) {
-		final ILocationResolver resolver = (ILocationResolver) tu.getAdapter(ILocationResolver.class);
+		final ILocationResolver resolver = tu.getAdapter(ILocationResolver.class);
 		if (resolver == null) {
 			throw new IllegalArgumentException();
 		}

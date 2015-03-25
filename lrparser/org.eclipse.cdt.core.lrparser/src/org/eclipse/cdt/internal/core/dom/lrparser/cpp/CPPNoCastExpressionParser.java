@@ -110,7 +110,7 @@ public class CPPNoCastExpressionParser extends PrsStream implements RuleAction, 
     public String[] orderedTerminalSymbols() { return CPPNoCastExpressionParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPNoCastExpressionParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPNoCastExpressionParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -149,7 +149,7 @@ public class CPPNoCastExpressionParser extends PrsStream implements RuleAction, 
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

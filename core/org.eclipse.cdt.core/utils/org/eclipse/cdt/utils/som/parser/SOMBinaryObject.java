@@ -287,7 +287,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	 * @return
 	 */
 	private Addr2line getAddr2line() {
-		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		IGnuToolFactory factory = getBinaryParser().getAdapter(IGnuToolFactory.class);
 		if (factory != null) {
 			return factory.getAddr2line(getPath());
 		}
@@ -295,7 +295,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected CPPFilt getCPPFilt() {
-		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		IGnuToolFactory factory = getBinaryParser().getAdapter(IGnuToolFactory.class);
 		if (factory != null) {
 			return factory.getCPPFilt();
 		}
@@ -303,7 +303,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected Objdump getObjdump() {
-		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		IGnuToolFactory factory = getBinaryParser().getAdapter(IGnuToolFactory.class);
 		if (factory != null) {
 			return factory.getObjdump(getPath());
 		}

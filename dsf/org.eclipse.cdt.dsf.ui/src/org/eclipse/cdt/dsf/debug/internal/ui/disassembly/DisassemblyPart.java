@@ -816,7 +816,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	        fDebugContextListener = null;
 	    }
 		if (fHandlerActivations != null) {
-			IHandlerService handlerService = (IHandlerService)site.getService(IHandlerService.class);
+			IHandlerService handlerService = site.getService(IHandlerService.class);
 			handlerService.deactivateHandlers(fHandlerActivations);
 			fHandlerActivations = null;
 		}
@@ -1317,7 +1317,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			@Override
 			public void mouseDoubleClick(final MouseEvent e) {
 				// invoke toggle breakpoint
-				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				IHandlerService handlerService = getSite().getService(IHandlerService.class);
 				if (handlerService != null) {
 					try {
 					    Event event= new Event();
@@ -1360,7 +1360,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fHandlerActivations == null) {
 			fHandlerActivations = new ArrayList<IHandlerActivation>(5);
 		}
-		IHandlerService handlerService = (IHandlerService)getSite().getService(IHandlerService.class);
+		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		fHandlerActivations.add(handlerService.activateHandler(action.getActionDefinitionId(), new ActionHandler(action)));
 	}
 
@@ -1892,14 +1892,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fDebugSessionId = null;
 		boolean needUpdate = false;
 		if (fDebugContext != null) {
-			IDisassemblyBackend contextBackend = (IDisassemblyBackend)fDebugContext.getAdapter(IDisassemblyBackend.class);
+			IDisassemblyBackend contextBackend = fDebugContext.getAdapter(IDisassemblyBackend.class);
 			// Need to compare the backend classes to prevent reusing the same backend object.
 			// sub class can overwrite the standard disassembly backend to provide its own customization.
 			if ((prevBackend != null) && (contextBackend != null) && prevBackend.getClass().equals(contextBackend.getClass()) && prevBackend.supportsDebugContext(fDebugContext)) {
 				newBackend = prevBackend;
 			} else {
 				needUpdate = true;
-				newBackend = (IDisassemblyBackend)fDebugContext.getAdapter(IDisassemblyBackend.class);
+				newBackend = fDebugContext.getAdapter(IDisassemblyBackend.class);
 				if (newBackend != null) {
 					if (newBackend.supportsDebugContext(fDebugContext)) {
 						newBackend.init(this);
@@ -3003,14 +3003,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 	
 	public void activateDisassemblyContext() {
-		IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+		IContextService ctxService = getSite().getService(IContextService.class);
 		if (ctxService!=null)
 			fContextActivation = ctxService.activateContext(KEY_BINDING_CONTEXT_DISASSEMBLY);
 	}
 	
 	public void deactivateDisassemblyContext() {
 		if (fContextActivation != null) {
-			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+			IContextService ctxService = getSite().getService(IContextService.class);
 			ctxService.deactivateContext(fContextActivation);
 		}
 	}

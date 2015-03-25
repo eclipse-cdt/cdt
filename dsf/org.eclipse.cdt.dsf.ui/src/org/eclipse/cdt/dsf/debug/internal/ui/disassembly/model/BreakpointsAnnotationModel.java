@@ -160,7 +160,7 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 	}
 	
 	private Position createPositionFromBreakpoint(IBreakpoint breakpoint) throws CoreException {
-		IBreakpointLocationProvider locationProvider = (IBreakpointLocationProvider) breakpoint.getAdapter(IBreakpointLocationProvider.class);
+		IBreakpointLocationProvider locationProvider = breakpoint.getAdapter(IBreakpointLocationProvider.class);
 			
 		/* if there is a location provider, than use the provider to retrieve the location */
 		if (locationProvider != null) {

@@ -80,7 +80,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 			return ((IResource) element).getFullPath().makeRelative().toString();
 		} else if (element instanceof ICElement) {
 			ICElement celement = (ICElement) element;
-			IResource res = (IResource) celement.getAdapter(IResource.class);
+			IResource res = celement.getAdapter(IResource.class);
 			if (res != null) {
 				return res.getFullPath().toString();
 			} else if (celement.getElementType() == ICElement.C_VCONTAINER) {

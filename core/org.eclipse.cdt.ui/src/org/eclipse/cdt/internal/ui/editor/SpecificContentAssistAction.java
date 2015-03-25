@@ -98,7 +98,7 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	private boolean computeEnablement(ITextEditor editor) {
 		if (editor == null)
 			return false;
-		ITextOperationTarget target= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+		ITextOperationTarget target= editor.getAdapter(ITextOperationTarget.class);
 		boolean hasContentAssist= target != null && target.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 		if (!hasContentAssist)
 			return false;

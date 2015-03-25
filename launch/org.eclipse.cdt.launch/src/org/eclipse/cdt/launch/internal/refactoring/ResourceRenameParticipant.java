@@ -59,7 +59,7 @@ public class ResourceRenameParticipant extends RenameParticipant implements IExe
 		if (element instanceof IResource) {
 			resourceBeingRenamed = (IResource) element;
 		} else if (element instanceof IAdaptable) {
-			resourceBeingRenamed = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+			resourceBeingRenamed = ((IAdaptable) element).getAdapter(IResource.class);
 		}
 
 		return true;

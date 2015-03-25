@@ -175,7 +175,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		if (element instanceof IResource) {
 			return (IResource)element;
 		}
-		return (IResource)element.getAdapter(IResource.class);
+		return element.getAdapter(IResource.class);
 	}
 
 	@Override

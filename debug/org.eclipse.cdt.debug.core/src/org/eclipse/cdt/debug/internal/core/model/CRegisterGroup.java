@@ -251,7 +251,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	}
 
 	private CRegisterManager getRegisterManager() {
-		return (CRegisterManager)getDebugTarget().getAdapter( CRegisterManager.class );
+		return getDebugTarget().getAdapter( CRegisterManager.class );
 	}
 
 	private void invalidate() {

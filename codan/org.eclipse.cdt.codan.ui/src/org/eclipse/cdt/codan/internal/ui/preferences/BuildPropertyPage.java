@@ -72,7 +72,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 	@Override
 	public IAdaptable getElement() {
 		if (element.getAdapter(IProject.class) != null)
-			return (IProject) element.getAdapter(IProject.class);
+			return element.getAdapter(IProject.class);
 		return null;
 	}
 

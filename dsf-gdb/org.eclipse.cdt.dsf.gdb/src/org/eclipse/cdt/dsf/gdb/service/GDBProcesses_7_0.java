@@ -937,7 +937,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    					public void execute(RequestMonitor rm) {								
 								IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
 								if (reverseService != null) {
-									ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
+									ILaunch launch = procCtx.getAdapter(ILaunch.class);
 									if (launch != null) {
 										try {
 											boolean reverseEnabled = 

@@ -53,7 +53,7 @@ public class WorkingSetPropertyTester extends PropertyTester {
 		if (object instanceof IWorkingSet) {
 			result = (IWorkingSet) object;
 		} else if (object instanceof IAdaptable) {
-			result = (IWorkingSet) ((IAdaptable) object).getAdapter(IWorkingSet.class);
+			result = ((IAdaptable) object).getAdapter(IWorkingSet.class);
 		}
 		
 		return result;
@@ -66,7 +66,7 @@ public class WorkingSetPropertyTester extends PropertyTester {
 			IAdaptable[] members = workingSet.getElements();
 			
 			for (IAdaptable next : members) {
-				IProject project = (IProject) next.getAdapter(IProject.class);
+				IProject project = next.getAdapter(IProject.class);
 				
 				if ((project != null) && CoreModel.hasCNature(project)) {
 					result = true;

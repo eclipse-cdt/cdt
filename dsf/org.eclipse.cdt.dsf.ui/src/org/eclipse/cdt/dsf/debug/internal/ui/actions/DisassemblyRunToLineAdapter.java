@@ -52,7 +52,7 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 			final IAddress address = disassemblySelection.getStartAddress();
 
 			if (address != null && target instanceof IAdaptable) {
-				final IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter(IRunToAddress.class);
+				final IRunToAddress runToAddress = ((IAdaptable)target).getAdapter(IRunToAddress.class);
 				if (runToAddress != null && runToAddress.canRunToAddress(address)) {
 					try {
 						boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
@@ -72,7 +72,7 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
-			IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter(IRunToAddress.class);
+			IRunToAddress runToAddress = ((IAdaptable)target).getAdapter(IRunToAddress.class);
 			if (runToAddress == null) {
 				return false;
 			}

@@ -1128,7 +1128,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (binding == null) {
 			return null;
 		}
-		PDOMNode pdomNode= (PDOMNode) binding.getAdapter(PDOMNode.class);
+		PDOMNode pdomNode= binding.getAdapter(PDOMNode.class);
 		if (pdomNode instanceof IIndexFragmentBinding && pdomNode.getPDOM() == this) {
 			return (IIndexFragmentBinding) pdomNode;
 		}

@@ -367,7 +367,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 		} else {
 			IEditorInput input= CDTUITools.getEditorInputForLocation(storage.getFullPath(), null);
 			if (input != null) {
-				tUnit= (ITranslationUnit) input.getAdapter(ITranslationUnit.class);
+				tUnit= input.getAdapter(ITranslationUnit.class);
 			}
 		}
 		if (tUnit != null) {

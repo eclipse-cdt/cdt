@@ -47,7 +47,7 @@ public class DisassemblyResumeAtLineAdapter implements IResumeAtLineTarget {
 			final IAddress address = disassemblySelection.getStartAddress();
 
 	    	if (address != null && target instanceof IAdaptable) {
-	    		final IResumeAtAddress resumeAtAddress = (IResumeAtAddress)((IAdaptable)target).getAdapter(IResumeAtAddress.class);
+	    		final IResumeAtAddress resumeAtAddress = ((IAdaptable)target).getAdapter(IResumeAtAddress.class);
 	    		if (resumeAtAddress != null && resumeAtAddress.canResumeAtAddress(address)) {
 	    			try {
 	    				resumeAtAddress.resumeAtAddress(address);								
@@ -63,7 +63,7 @@ public class DisassemblyResumeAtLineAdapter implements IResumeAtLineTarget {
 	@Override
 	public boolean canResumeAtLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
-			IResumeAtAddress resumeAtAddress = (IResumeAtAddress)((IAdaptable)target).getAdapter(IResumeAtAddress.class);
+			IResumeAtAddress resumeAtAddress = ((IAdaptable)target).getAdapter(IResumeAtAddress.class);
 			if (resumeAtAddress == null) {
 				return false;
 			}

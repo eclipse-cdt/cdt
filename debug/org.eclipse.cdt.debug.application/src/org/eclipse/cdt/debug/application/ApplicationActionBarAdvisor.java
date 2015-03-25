@@ -268,7 +268,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		 ISharedImages sharedImages = getWindow().getWorkbench()
 				 .getSharedImages();
 
-		 IActionCommandMappingService acms = (IActionCommandMappingService) getWindow()
+		 IActionCommandMappingService acms = getWindow()
 				 .getService(IActionCommandMappingService.class);
 		 acms.map(actionId, commandId);
 

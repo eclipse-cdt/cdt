@@ -211,7 +211,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 					presentation = (ISourcePresentation) fSourceLookup;
 				} else {
 				    if (dmc != null) {
-				        presentation = (ISourcePresentation) dmc.getAdapter(ISourcePresentation.class);
+				        presentation = dmc.getAdapter(ISourcePresentation.class);
 				    }
 				}
 	            if (presentation != null) {
@@ -327,7 +327,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
                 if (editor instanceof ITextEditor) {                    
                     textEditor = (ITextEditor)editor;
                 } else {
-                    textEditor = (ITextEditor) editor.getAdapter(ITextEditor.class);
+                    textEditor = editor.getAdapter(ITextEditor.class);
                 }
                 if (textEditor != null) {
                     if (positionEditor(textEditor, fFrameData)) {

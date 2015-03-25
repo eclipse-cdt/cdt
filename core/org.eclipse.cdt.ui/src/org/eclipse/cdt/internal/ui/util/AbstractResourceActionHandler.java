@@ -120,7 +120,7 @@ public abstract class AbstractResourceActionHandler extends AbstractHandler {
     if (activeWindow == null) {
       return null;
     }
-    IHandlerService service = (IHandlerService) activeWindow.getService(IHandlerService.class);
+    IHandlerService service = activeWindow.getService(IHandlerService.class);
     return service.getCurrentState();
   }
 

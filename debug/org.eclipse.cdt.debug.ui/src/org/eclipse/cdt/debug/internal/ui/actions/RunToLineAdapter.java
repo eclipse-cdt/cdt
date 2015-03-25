@@ -75,7 +75,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					ITextSelection textSelection = (ITextSelection)selection;
 					final int lineNumber = textSelection.getStartLine() + 1;
 					if ( target instanceof IAdaptable ) {
-						final IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
+						final IRunToLine runToLine = ((IAdaptable)target).getAdapter( IRunToLine.class );
 						if ( runToLine != null && runToLine.canRunToLine( path.toPortableString(), lineNumber ) ) {
 							Runnable r = new Runnable() {
 								
@@ -109,7 +109,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	public boolean canRunToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( target instanceof IAdaptable ) {			
 			if ( part instanceof IEditorPart ) {
-				IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
+				IRunToLine runToLine = ((IAdaptable)target).getAdapter( IRunToLine.class );
 				if ( runToLine == null )
 					return false;
 				IEditorPart editorPart = (IEditorPart)part;

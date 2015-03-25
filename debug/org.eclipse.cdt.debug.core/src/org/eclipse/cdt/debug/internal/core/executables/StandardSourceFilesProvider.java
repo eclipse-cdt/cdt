@@ -117,7 +117,7 @@ public class StandardSourceFilesProvider extends PlatformObject implements ISour
 
 		IBinaryFile bin = createBinaryFile(executable);
 		if (bin != null) {
-			ISymbolReader symbolreader = (ISymbolReader) bin.getAdapter(ISymbolReader.class);
+			ISymbolReader symbolreader = bin.getAdapter(ISymbolReader.class);
 			if (symbolreader != null) {
 				return symbolreader.getSourceFiles(monitor);
 			}

@@ -155,10 +155,10 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 
 		if (context != null) {
 			// Look for the process that this context refers to, so we can select its console
-			IDMContext dmc = (IDMContext)context.getAdapter(IDMContext.class);
+			IDMContext dmc = context.getAdapter(IDMContext.class);
 			IMIContainerDMContext container = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 			if (container != null) {
-				ILaunch launch = (ILaunch)context.getAdapter(ILaunch.class);
+				ILaunch launch = context.getAdapter(ILaunch.class);
 				if (launch != null) {
 		        	IProcess[] processes = launch.getProcesses();
 		        	if (processes != null && processes.length > 0) {

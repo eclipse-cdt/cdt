@@ -727,7 +727,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	protected synchronized void preserveStackFrames() {
 		Iterator it = fStackFrames.iterator();
 		while( it.hasNext() ) {
-			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
+			CStackFrame frame = (((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
 			if ( frame != null ) {
 				frame.preserve();
 			}
@@ -758,7 +758,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		Iterator it = fStackFrames.iterator();
 		int counter = 0;
 		while( it.hasNext() ) {
-			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
+			CStackFrame frame = (((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
 			if ( frame != null && counter >= index && counter < index + length ) {
 				frame.dispose();
 				removeList.add( frame );

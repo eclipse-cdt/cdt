@@ -177,7 +177,7 @@ public class MoveToLineActionDelegate implements IEditorActionDelegate, IActionD
 			IWorkbenchWindow workbenchWindow = part.getSite().getWorkbenchWindow();
 			IDebugContextService service = manager.getContextService(workbenchWindow);
 			service.addDebugContextListener(fContextListener);
-			fPartTarget  = (IMoveToLineTarget) part.getAdapter(IMoveToLineTarget.class);
+			fPartTarget  = part.getAdapter(IMoveToLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on

@@ -110,7 +110,7 @@ public class CPPNoFunctionDeclaratorParser extends PrsStream implements RuleActi
     public String[] orderedTerminalSymbols() { return CPPNoFunctionDeclaratorParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPNoFunctionDeclaratorParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPNoFunctionDeclaratorParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -149,7 +149,7 @@ public class CPPNoFunctionDeclaratorParser extends PrsStream implements RuleActi
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

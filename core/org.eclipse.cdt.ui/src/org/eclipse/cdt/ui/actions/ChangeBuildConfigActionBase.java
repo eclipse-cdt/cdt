@@ -256,7 +256,7 @@ public class ChangeBuildConfigActionBase {
 						IWorkbenchPart part = page.getActivePart();
 						if (part instanceof IEditorPart) {
 							IEditorPart epart = (IEditorPart) part;
-							IResource resource = (IResource) epart.getEditorInput().getAdapter(IResource.class);
+							IResource resource = epart.getEditorInput().getAdapter(IResource.class);
 							if (resource != null)
 							{
 								IProject project = resource.getProject();

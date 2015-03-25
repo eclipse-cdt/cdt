@@ -93,7 +93,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		ISelectionService service = (ISelectionService) fServiceLocator.getService(ISelectionService.class);
+		ISelectionService service = fServiceLocator.getService(ISelectionService.class);
 		ISelection selection = service.getSelection();
 
 

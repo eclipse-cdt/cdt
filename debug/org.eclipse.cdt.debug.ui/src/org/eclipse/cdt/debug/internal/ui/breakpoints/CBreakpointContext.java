@@ -146,7 +146,7 @@ class CBreakpointContextActionFilter implements IActionFilter {
             Object debugElement = ((IStructuredSelection)debugContext).getFirstElement();
             if (debugElement instanceof IAdaptable) {
                 IDebugModelProvider debugModelProvider = 
-                    (IDebugModelProvider)((IAdaptable)debugElement).getAdapter(IDebugModelProvider.class);
+                    ((IAdaptable)debugElement).getAdapter(IDebugModelProvider.class);
                 if (debugModelProvider != null) {
                     return debugModelProvider.getModelIdentifiers();
                 } else if (debugElement instanceof IDebugElement) {

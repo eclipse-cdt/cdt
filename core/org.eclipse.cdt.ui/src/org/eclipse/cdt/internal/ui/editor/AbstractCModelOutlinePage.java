@@ -526,7 +526,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 		fTreeViewer.setInput(fInput);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
 		
-		IHandlerService handlerService= (IHandlerService) site.getService(IHandlerService.class);
+		IHandlerService handlerService= site.getService(IHandlerService.class);
 		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(fCollapseAllAction));
 	}
 

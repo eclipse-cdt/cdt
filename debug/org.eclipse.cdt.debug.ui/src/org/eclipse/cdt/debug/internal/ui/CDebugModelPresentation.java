@@ -168,7 +168,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if (marker == null || !marker.exists())
 				return null;
 			// If the BP's marker is on an IFile, job done
-			IFile file = (IFile)marker.getResource().getAdapter(IFile.class);
+			IFile file = marker.getResource().getAdapter(IFile.class);
 			if (file == null) {
 				try {
 					// Not backed by an IFile, try its source handle (may be workspace / project based)
@@ -204,7 +204,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if ( file != null )
 				return new FileEditorInput( file );
 			// There is no file associated with this breakpoint. See if another editor is available from an adapter
-			ISourcePresentation srcPres = (ISourcePresentation) Platform.getAdapterManager().getAdapter(b, ISourcePresentation.class);
+			ISourcePresentation srcPres = Platform.getAdapterManager().getAdapter(b, ISourcePresentation.class);
 			if ( srcPres != null ) {
 				IEditorInput editor = srcPres.getEditorInput(b);
 				if ( editor != null ) {
@@ -243,7 +243,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			}
 			else if ( element instanceof ICBreakpoint ) {
 				// There is no associated editor ID for this breakpoint, see if an alternative can be supplied from an adapter.
-				ISourcePresentation sourcePres = (ISourcePresentation) Platform.getAdapterManager().getAdapter(element, ISourcePresentation.class);
+				ISourcePresentation sourcePres = Platform.getAdapterManager().getAdapter(element, ISourcePresentation.class);
 				if ( sourcePres != null ) {
 					String lid = sourcePres.getEditorId(input, element);
 					if ( lid != null ) {
@@ -343,7 +343,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected Image getRegisterGroupImage( IRegisterGroup element ) {
-		IEnableDisableTarget target = (IEnableDisableTarget)element.getAdapter( IEnableDisableTarget.class );
+		IEnableDisableTarget target = element.getAdapter( IEnableDisableTarget.class );
 		if ( target != null && !target.isEnabled() )
 			return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_GROUP_DISABLED );
 		return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_GROUP );
@@ -351,7 +351,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	protected Image getBreakpointImage( ICBreakpoint breakpoint ) {
 		// if adapter installed for breakpoint, call the adapter
-		ILabelProvider adapter = (ILabelProvider) Platform.getAdapterManager().getAdapter(breakpoint, ILabelProvider.class);
+		ILabelProvider adapter = Platform.getAdapterManager().getAdapter(breakpoint, ILabelProvider.class);
 		if (adapter!=null) { 
 			Image image = adapter.getImage(breakpoint);
 			if (image!=null) return image;
@@ -509,7 +509,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			}
 			if ( element instanceof IBreakpoint ) {
 				// if adapter installed for breakpoint, call adapter
-				ILabelProvider adapter = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+				ILabelProvider adapter = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
 				if (adapter!=null) { 
 					String text = adapter.getText(element);
 					if (text!=null) return text;
@@ -739,7 +739,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected String getTargetText( IDebugTarget target, boolean qualified ) throws DebugException {
-		ICDebugTarget t = (ICDebugTarget)target.getAdapter( ICDebugTarget.class );
+		ICDebugTarget t = target.getAdapter( ICDebugTarget.class );
 		if ( t != null ) {
 			if ( !t.isPostMortem() ) {
 				CDebugElementState state = t.getState();
@@ -765,7 +765,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException {
-		ICDebugTarget target = (ICDebugTarget)thread.getDebugTarget().getAdapter( ICDebugTarget.class );
+		ICDebugTarget target = thread.getDebugTarget().getAdapter( ICDebugTarget.class );
 		if ( target.isPostMortem() ) {
 			return getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.8" ), thread.getName() ); //$NON-NLS-1$
 		}
@@ -780,7 +780,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		}
 		if ( thread.isSuspended() ) {
 			String reason = ""; //$NON-NLS-1$
-			ICDebugElement element = (ICDebugElement)thread.getAdapter( ICDebugElement.class );
+			ICDebugElement element = thread.getAdapter( ICDebugElement.class );
 			if ( element != null ) {
 				Object info = element.getCurrentStateInfo();
 				if ( info instanceof ICDISignalReceived ) {
@@ -862,7 +862,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	@Override
 	public Color getForeground(Object element) {
-		IColorProvider colorProv = (IColorProvider) Platform.getAdapterManager().getAdapter(element, IColorProvider.class);
+		IColorProvider colorProv = Platform.getAdapterManager().getAdapter(element, IColorProvider.class);
 		if ( colorProv != null ) {
 			return colorProv.getForeground(element);
 		}
@@ -871,7 +871,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 
 	@Override
 	public Color getBackground(Object element) {
-		IColorProvider colorProv = (IColorProvider) Platform.getAdapterManager().getAdapter(element, IColorProvider.class);
+		IColorProvider colorProv = Platform.getAdapterManager().getAdapter(element, IColorProvider.class);
 		if ( colorProv != null ) {
 			return colorProv.getBackground(element);
 		}

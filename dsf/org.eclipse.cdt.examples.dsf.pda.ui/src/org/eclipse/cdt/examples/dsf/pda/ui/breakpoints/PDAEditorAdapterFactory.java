@@ -32,7 +32,7 @@ public class PDAEditorAdapterFactory implements IAdapterFactory {
     public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof PDAEditor) {
 			ITextEditor editorPart = (ITextEditor) adaptableObject;
-			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
+			IResource resource = editorPart.getEditorInput().getAdapter(IResource.class);
 			if (resource != null) {
 				String extension = resource.getFileExtension();
 				if (extension != null && extension.equals("pda")) {

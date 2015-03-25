@@ -468,7 +468,7 @@ public class BuildConsolePage extends Page
 			if (input instanceof IResource) {
 				resource = (IResource)input;
 			} else {
-				resource = (IResource)input.getAdapter(IResource.class);
+				resource = input.getAdapter(IResource.class);
 			}
 			if (resource != null) {
 				project = resource.getProject();

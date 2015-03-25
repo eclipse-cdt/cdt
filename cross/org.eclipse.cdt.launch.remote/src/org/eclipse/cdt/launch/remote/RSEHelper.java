@@ -96,7 +96,7 @@ public class RSEHelper {
 			if (!subsystem.isConnected())
 				throw new Exception(Messages.RemoteRunLaunchDelegate_5);
 
-			return (IShellService) subsystem.getSubSystemConfiguration()
+			return subsystem.getSubSystemConfiguration()
 					.getService(currentConnection).getAdapter(
 							IShellService.class);
 		} else {
@@ -114,7 +114,7 @@ public class RSEHelper {
 	public static IShellService getShellService(IHost host) {
 		ISubSystem ss = getSubSystemWithShellService(host);
 		if (ss != null) {
-			return (IShellService) ss.getSubSystemConfiguration().getService(
+			return ss.getSubSystemConfiguration().getService(
 					host).getAdapter(IShellService.class);
 		}
 		return null;
@@ -136,7 +136,7 @@ public class RSEHelper {
 			IService svc = subSystems[i].getSubSystemConfiguration()
 					.getService(host);
 			if (svc != null) {
-				ssvc = (IShellService) svc.getAdapter(IShellService.class);
+				ssvc = svc.getAdapter(IShellService.class);
 				if (ssvc != null) {
 					return subSystems[i];
 				}

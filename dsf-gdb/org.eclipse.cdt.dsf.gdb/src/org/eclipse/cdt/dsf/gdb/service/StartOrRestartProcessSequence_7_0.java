@@ -311,7 +311,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		}
 
 		final Process inferior = inferiorProcess;
-		final ILaunch launch = (ILaunch)getContainerContext().getAdapter(ILaunch.class);
+		final ILaunch launch = getContainerContext().getAdapter(ILaunch.class);
 
 		// This is the groupId of the new process that will be started, even in the
 		// case of a restart.

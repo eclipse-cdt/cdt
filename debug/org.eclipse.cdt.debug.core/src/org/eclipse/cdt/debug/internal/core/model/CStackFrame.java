@@ -201,7 +201,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		if ( isSuspended() ) {
 			ISourceLocator locator = ((CDebugTarget)getDebugTarget()).getSourceLocator();
 			if ( locator != null && locator instanceof IAdaptable && ((IAdaptable)locator).getAdapter( ICSourceLocator.class ) != null )
-				return ((ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class )).getLineNumber( this );
+				return ((IAdaptable)locator).getAdapter( ICSourceLocator.class ).getLineNumber( this );
 			
 			final ICDIStackFrame cdiFrame = getCDIStackFrame();
 			if ( cdiFrame != null && cdiFrame.getLocator() != null )

@@ -138,7 +138,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 			if (ss.size() == 1) {
 				Object element = ss.getFirstElement();
 				if (element instanceof IAdaptable) {
-					ICDebugTarget target = (ICDebugTarget)((IAdaptable)element).getAdapter(ICDebugTarget.class);
+					ICDebugTarget target = ((IAdaptable)element).getAdapter(ICDebugTarget.class);
 					if (target != null) {
 						setContext(page, target);
 						return;

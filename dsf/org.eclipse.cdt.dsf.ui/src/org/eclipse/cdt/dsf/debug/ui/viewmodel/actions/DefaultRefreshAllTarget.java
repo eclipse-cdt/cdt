@@ -47,7 +47,7 @@ public class DefaultRefreshAllTarget implements IRefreshAllTarget {
         if (debugContext instanceof IStructuredSelection) {
             Object activeElement = ((IStructuredSelection)debugContext).getFirstElement();
             if (activeElement instanceof IAdaptable) {
-                return (IVMAdapter)((IAdaptable)activeElement).getAdapter(IVMAdapter.class);
+                return ((IAdaptable)activeElement).getAdapter(IVMAdapter.class);
             }
         }
         return null;

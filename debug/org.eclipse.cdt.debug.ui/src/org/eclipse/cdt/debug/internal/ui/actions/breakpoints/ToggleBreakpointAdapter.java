@@ -118,10 +118,10 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
         ICDIMemorySpaceManagement memMgr = null;
         
         if ( debugViewElement != null ) {
-            ICDebugTarget debugTarget = (ICDebugTarget)debugViewElement.getAdapter(ICDebugTarget.class);
+            ICDebugTarget debugTarget = debugViewElement.getAdapter(ICDebugTarget.class);
             
             if ( debugTarget != null ){
-                ICDITarget target = (ICDITarget)debugTarget.getAdapter(ICDITarget.class);
+                ICDITarget target = debugTarget.getAdapter(ICDITarget.class);
             
                 if (target instanceof ICDIMemorySpaceManagement)
                     memMgr = (ICDIMemorySpaceManagement)target;

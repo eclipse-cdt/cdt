@@ -56,7 +56,7 @@ public class SessionManager implements IDebugEventSetListener {
 			if ( event.getKind() == DebugEvent.TERMINATE ) {
 				Object element = event.getSource();
 				if ( element instanceof IDebugTarget && ((IDebugTarget)element).getAdapter( ICDITarget.class ) != null ) {
-					handleTerminateEvent( ((IDebugTarget)element).getLaunch(), ((ICDITarget)((IDebugTarget)element).getAdapter( ICDITarget.class )).getSession() );
+					handleTerminateEvent( ((IDebugTarget)element).getLaunch(), ((IDebugTarget)element).getAdapter( ICDITarget.class ).getSession() );
 				}
 			}
 		}
@@ -66,7 +66,7 @@ public class SessionManager implements IDebugEventSetListener {
 		IDebugTarget[] targets = launch.getDebugTargets();
 		boolean terminate = true;
 		for( int i = 0; i < targets.length; ++i ) {
-			if ( targets[i].getAdapter( ICDITarget.class ) != null && session.equals( ((ICDITarget)targets[i].getAdapter( ICDITarget.class )).getSession() ) && !targets[i].isTerminated() && !targets[i].isDisconnected() )
+			if ( targets[i].getAdapter( ICDITarget.class ) != null && session.equals( targets[i].getAdapter( ICDITarget.class ).getSession() ) && !targets[i].isTerminated() && !targets[i].isDisconnected() )
 				terminate = false;
 		}
 		if ( terminate ) {

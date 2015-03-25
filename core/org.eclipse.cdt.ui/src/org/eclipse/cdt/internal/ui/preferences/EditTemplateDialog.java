@@ -479,7 +479,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	private void initializeActions() {
 		final ArrayList<IHandlerActivation> handlerActivations= new ArrayList<IHandlerActivation>(3);
-		final IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		final IHandlerService handlerService= PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		getShell().addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {

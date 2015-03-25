@@ -153,7 +153,7 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 				return provider.getDocument(editor.getEditorInput());
 		}
 		
-		IDocument doc = (IDocument) fPart.getAdapter(IDocument.class);
+		IDocument doc = fPart.getAdapter(IDocument.class);
 		if (doc != null) {
 			return doc;
 		}

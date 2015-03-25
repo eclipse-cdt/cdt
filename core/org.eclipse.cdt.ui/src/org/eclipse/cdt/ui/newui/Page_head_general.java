@@ -70,7 +70,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		if (elem instanceof IProject) {
 			project= (IProject) elem;
 		} else if (elem != null) {
-			project= (IProject) elem.getAdapter(IProject.class);
+			project= elem.getAdapter(IProject.class);
 		}
 		return project;
 	}

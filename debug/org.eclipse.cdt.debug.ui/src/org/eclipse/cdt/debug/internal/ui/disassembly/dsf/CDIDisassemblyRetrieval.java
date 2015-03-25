@@ -52,7 +52,7 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 		Runnable op= new Runnable() {
 			@Override
 			public void run() {
-				ICDITarget cdiTarget= (ICDITarget) fDebugTarget.getAdapter(ICDITarget.class);
+				ICDITarget cdiTarget= fDebugTarget.getAdapter(ICDITarget.class);
 				try {
 					ICDIMixedInstruction[] mixedInstructions= null;
 					ICDIInstruction[] asmInstructions= null;

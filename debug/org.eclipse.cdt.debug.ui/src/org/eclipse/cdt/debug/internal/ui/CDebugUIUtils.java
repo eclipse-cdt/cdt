@@ -245,7 +245,7 @@ public class CDebugUIUtils {
 			baseText.append( MessageFormat.format( " <{0}>", new Object[] { ((ICDebugElementStatus)element).getMessage() } ) ); //$NON-NLS-1$
 		}
 		if ( element instanceof IAdaptable ) {
-			IEnableDisableTarget target = (IEnableDisableTarget)((IAdaptable)element).getAdapter( IEnableDisableTarget.class );
+			IEnableDisableTarget target = ((IAdaptable)element).getAdapter( IEnableDisableTarget.class );
 			if ( target != null ) {
 				if ( !target.isEnabled() ) {
 					baseText.append( ' ' );

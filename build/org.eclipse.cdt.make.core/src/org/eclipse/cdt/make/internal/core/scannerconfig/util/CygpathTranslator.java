@@ -53,7 +53,7 @@ public class CygpathTranslator {
 			for (int i = 0; i < parserRef.length; i++) {
 				try {
 					IBinaryParser parser = CoreModelUtil.getBinaryParser(parserRef[i]);
-					ICygwinToolsFactroy cygwinToolFactory = (ICygwinToolsFactroy) parser.getAdapter(ICygwinToolsFactroy.class);
+					ICygwinToolsFactroy cygwinToolFactory = parser.getAdapter(ICygwinToolsFactroy.class);
 					if (cygwinToolFactory != null) {
 						cygPath = cygwinToolFactory.getCygPath();
 					}

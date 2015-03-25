@@ -267,7 +267,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		if (fSelection instanceof IStructuredSelection) {
 			Object sel = ((IStructuredSelection) fSelection).getFirstElement();
 			if (sel instanceof IAdaptable) {
-				IResource res = (IResource) ((IAdaptable) sel).getAdapter(IResource.class);
+				IResource res = ((IAdaptable) sel).getAdapter(IResource.class);
 				try {
 					if (res instanceof IProject && isOldProject((IProject) res)) {
 						enabled = true;

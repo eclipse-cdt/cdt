@@ -53,7 +53,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
 		long endTime = System.currentTimeMillis() + getPauseTime()*1000;
-		IResumeActionEnabler enabler = (IResumeActionEnabler) context.getAdapter(IResumeActionEnabler.class);
+		IResumeActionEnabler enabler = context.getAdapter(IResumeActionEnabler.class);
 
 		if (enabler != null) {
 			try {

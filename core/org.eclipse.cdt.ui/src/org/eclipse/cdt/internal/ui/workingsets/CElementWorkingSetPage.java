@@ -200,7 +200,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 				if (oldItem instanceof IResource) {
 					oldResource= (IResource)oldItem;
 				} else {
-					oldResource= (IResource)oldItem.getAdapter(IResource.class);
+					oldResource= oldItem.getAdapter(IResource.class);
 				}
 				if (oldResource != null && oldResource.isAccessible() == false) {
 					IProject project= oldResource.getProject();
@@ -256,7 +256,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		if (child == null)
 			return;
 		if (child instanceof IAdaptable) {
-			IResource resource= (IResource)((IAdaptable)child).getAdapter(IResource.class);
+			IResource resource= ((IAdaptable)child).getAdapter(IResource.class);
 			if (resource != null && !resource.isAccessible())
 				return;
 		}
@@ -308,7 +308,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 						elements= SelectionConverter.getStructuredSelection(part).toArray();
 						for (int i= 0; i < elements.length; i++) {
 							if (elements[i] instanceof IResource) {
-								ICElement ce= (ICElement)((IResource)elements[i]).getAdapter(ICElement.class);
+								ICElement ce= ((IResource)elements[i]).getAdapter(ICElement.class);
 								if (ce != null && ce.exists() &&  ce.getCProject().isOnSourceRoot((IResource)elements[i]))
 									elements[i]= ce;
 							}
@@ -348,7 +348,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 						setSubtreeChecked(element, true, true);
 						
 					if (element instanceof IAdaptable) {
-						IResource resource= (IResource) ((IAdaptable)element).getAdapter(IResource.class);
+						IResource resource= ((IAdaptable)element).getAdapter(IResource.class);
 						if (resource != null && !resource.isAccessible())
 							continue;
 					}
@@ -391,7 +391,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	private void setSubtreeChecked(Object parent, boolean state, boolean checkExpandedState) {
 		if (!(parent instanceof IAdaptable))
 			return;
-		IContainer container= (IContainer)((IAdaptable)parent).getAdapter(IContainer.class);
+		IContainer container= ((IAdaptable)parent).getAdapter(IContainer.class);
 		if ((!fTree.getExpandedState(parent) && checkExpandedState) || (container != null && !container.isAccessible()))
 			return;
 		

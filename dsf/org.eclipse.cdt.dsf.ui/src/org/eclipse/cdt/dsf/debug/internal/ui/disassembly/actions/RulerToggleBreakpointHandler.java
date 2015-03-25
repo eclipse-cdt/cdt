@@ -35,7 +35,7 @@ public class RulerToggleBreakpointHandler extends AbstractHandler {
 		if (part instanceof IDisassemblyPart) {
 			IDisassemblyPart disassemblyPart = (IDisassemblyPart) part;
 			IDocument document = disassemblyPart.getTextViewer().getDocument();
-			final IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) part.getAdapter(IVerticalRulerInfo.class);
+			final IVerticalRulerInfo rulerInfo= part.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				final ToggleBreakpointAction toggleBpAction= new ToggleBreakpointAction(part, document, rulerInfo);
 				try {

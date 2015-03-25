@@ -133,7 +133,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		if (page instanceof CContentOutlinePage) {
 			if (!fActivationPerOutline.containsKey(outline)){
 				// cdt outline activated for the first time
-				IContextService ctxtService = (IContextService)outline.getViewSite().getService(IContextService.class);
+				IContextService ctxtService = outline.getViewSite().getService(IContextService.class);
 				IContextActivation activateContext = ctxtService.activateContext(CUIPlugin.CVIEWS_SCOPE);
 				fActivationPerOutline.put(outline,activateContext);
 			}
@@ -142,7 +142,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 			IContextActivation activation = fActivationPerOutline.remove(outline); 
 			if (activation != null) {
 				// other outline page brought to front
-				IContextService ctxtService = (IContextService)outline.getViewSite().getService(IContextService.class);
+				IContextService ctxtService = outline.getViewSite().getService(IContextService.class);
 				ctxtService.deactivateContext(activation);
 			}
 		}
@@ -155,7 +155,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 
 		public SelectionListener(IWorkbenchPartSite site) {
 			fSite= site;
-			fCtxService= (IContextService)fSite.getService(IContextService.class);
+			fCtxService= fSite.getService(IContextService.class);
 			ISelectionProvider sp= site.getSelectionProvider();
 			
 			if (sp != null && fCtxService != null) {

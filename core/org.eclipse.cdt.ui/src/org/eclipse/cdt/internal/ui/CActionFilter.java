@@ -30,7 +30,7 @@ public class CActionFilter implements IActionFilter {
 		ICElement element = (ICElement) target;
 		IResource resource = element.getResource();
 		if (resource != null) {
-			IActionFilter filter = (IActionFilter) resource.getAdapter(IActionFilter.class);
+			IActionFilter filter = resource.getAdapter(IActionFilter.class);
 			if (filter != null) {
 				return filter.testAttribute(resource, name, value);
 			}

@@ -802,7 +802,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("T", tpars[0].getName());
 			assertNull(tpars[0].getDefaultValue());
-			pdomid= ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getRecord();
+			pdomid= ((IAdaptable) tpars[0]).getAdapter(PDOMNode.class).getRecord();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -902,7 +902,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("U", tpars[0].getName());
-			assertEquals(pdomid, ((PDOMNode)((IAdaptable) tpars[0]).getAdapter(PDOMNode.class)).getBindingID());
+			assertEquals(pdomid, ((IAdaptable) tpars[0]).getAdapter(PDOMNode.class).getBindingID());
 		} finally {
 			fIndex.releaseReadLock();
 		}

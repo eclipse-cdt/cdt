@@ -125,7 +125,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 			for (Object element : ((IStructuredSelection)selection).toList()) {
 				IPinProvider pinProvider = null;
 				if (element instanceof IAdaptable) {
-					pinProvider = (IPinProvider) ((IAdaptable)element).getAdapter(IPinProvider.class);					
+					pinProvider = ((IAdaptable)element).getAdapter(IPinProvider.class);					
 				}
 				
 				if (pinProvider != null) {

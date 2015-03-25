@@ -197,7 +197,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	public String toLocalPath(IAdaptable _launch, String compilationPath) {
 		Object foundElement = null;
 		
-		ILaunch launch = (ILaunch)_launch.getAdapter(ILaunch.class);
+		ILaunch launch = _launch.getAdapter(ILaunch.class);
 		if (launch != null) {
 			ISourceLocator locator = launch.getSourceLocator();
 			// in practice, a launch locator is always an ISourceLookupDirector
@@ -268,7 +268,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 * @return true if the launch config targets our binary, false otherwise
 	 */
 	private boolean isMatch(ILaunchConfiguration config) {
-		IResource resource = (IResource)fBinary.getAdapter(IResource.class);
+		IResource resource = fBinary.getAdapter(IResource.class);
 		if (resource != null) {
 			String binaryPath = resource.getFullPath().toString();
 			try {

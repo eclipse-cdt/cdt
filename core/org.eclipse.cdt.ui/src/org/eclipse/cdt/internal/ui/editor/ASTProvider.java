@@ -237,7 +237,7 @@ public final class ASTProvider {
 	private void activeEditorChanged(IWorkbenchPart editor) {
 		ITranslationUnit tu = null;
 		if (editor != null) {
-			ITranslationUnitHolder provider = (ITranslationUnitHolder) editor.getAdapter(ITranslationUnitHolder.class);
+			ITranslationUnitHolder provider = editor.getAdapter(ITranslationUnitHolder.class);
 			if (provider != null)
 				tu = provider.getTranslationUnit();
 		}

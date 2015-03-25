@@ -115,7 +115,7 @@ public class IndentAction extends TextEditorAction {
 			Runnable runnable= new Runnable() {
 				@Override
 				public void run() {
-					IRewriteTarget target= (IRewriteTarget) getTextEditor().getAdapter(IRewriteTarget.class);
+					IRewriteTarget target= getTextEditor().getAdapter(IRewriteTarget.class);
 					if (target != null)
 						target.beginCompoundChange();
 

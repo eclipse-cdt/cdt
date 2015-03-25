@@ -243,7 +243,7 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	}
 
 	private String getDynamicPrintfMainLabel(ICDynamicPrintf dprintf) {
-	    IWorkbenchAdapter labelProvider = (IWorkbenchAdapter)getElement().getAdapter(IWorkbenchAdapter.class);
+	    IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
 	    if (labelProvider != null) {
 	        return labelProvider.getLabel(getElement());
 	    }
@@ -330,11 +330,11 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 			assert false : "Should always have a dprintf"; //$NON-NLS-1$
 		}
 
-		return (ICDynamicPrintf)element.getAdapter(ICDynamicPrintf.class);
+		return element.getAdapter(ICDynamicPrintf.class);
 	}
 
 	protected Object getDebugContext() {
-        IDebugContextProvider provider = (IDebugContextProvider)getElement().getAdapter(IDebugContextProvider.class);
+        IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
         if (provider != null) {
             ISelection selection = provider.getActiveContext();
             if (selection instanceof IStructuredSelection) {

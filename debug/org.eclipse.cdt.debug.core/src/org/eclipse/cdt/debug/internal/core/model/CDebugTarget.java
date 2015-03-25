@@ -363,13 +363,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	protected void initializeSourceManager() {
 		ISourceLocator locator = getLaunch().getSourceLocator();
 		if (locator instanceof IAdaptable) {
-			ICSourceLocator clocator = (ICSourceLocator)((IAdaptable)locator).getAdapter(ICSourceLocator.class);
+			ICSourceLocator clocator = ((IAdaptable)locator).getAdapter(ICSourceLocator.class);
 			if (clocator instanceof IAdaptable) {
-				CSourceManager sm = (CSourceManager)((IAdaptable)clocator).getAdapter(CSourceManager.class);
+				CSourceManager sm = ((IAdaptable)clocator).getAdapter(CSourceManager.class);
 				if (sm != null)
 					sm.setDebugTarget(this);
 			}
-			IResourceChangeListener listener = (IResourceChangeListener)((IAdaptable)locator).getAdapter(IResourceChangeListener.class);
+			IResourceChangeListener listener = ((IAdaptable)locator).getAdapter(IResourceChangeListener.class);
 			if (listener != null)
 				CCorePlugin.getWorkspace().addResourceChangeListener(listener);
 		}
@@ -1600,7 +1600,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	protected void disposeSourceManager() {
 		ISourceLocator locator = getSourceLocator();
 		if (locator instanceof IAdaptable) {
-			IResourceChangeListener listener = (IResourceChangeListener)((IAdaptable)locator).getAdapter(IResourceChangeListener.class);
+			IResourceChangeListener listener = ((IAdaptable)locator).getAdapter(IResourceChangeListener.class);
 			if (listener != null)
 				CCorePlugin.getWorkspace().removeResourceChangeListener(listener);
 		}

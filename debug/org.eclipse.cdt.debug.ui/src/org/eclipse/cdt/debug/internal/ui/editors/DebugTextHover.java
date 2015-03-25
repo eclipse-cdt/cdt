@@ -31,7 +31,7 @@ public class DebugTextHover extends AbstractDebugTextHover {
 	protected ICStackFrame getFrame() {
         IAdaptable adaptable = getSelectionAdaptable();
         if (adaptable != null) {
-            return (ICStackFrame) adaptable.getAdapter(ICStackFrame.class);
+            return adaptable.getAdapter(ICStackFrame.class);
         }
         return null;
 	}

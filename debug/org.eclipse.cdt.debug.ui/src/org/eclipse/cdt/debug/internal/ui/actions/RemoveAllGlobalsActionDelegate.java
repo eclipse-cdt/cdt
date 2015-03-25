@@ -76,7 +76,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	public void run( IAction action ) {
 		IAdaptable context = DebugUITools.getDebugContext();
 		if ( context instanceof IDebugElement ) {
-			final ICGlobalVariableManager gvm = (ICGlobalVariableManager)((IDebugElement)context).getDebugTarget().getAdapter( ICGlobalVariableManager.class );
+			final ICGlobalVariableManager gvm = ((IDebugElement)context).getDebugTarget().getAdapter( ICGlobalVariableManager.class );
 			if ( gvm != null ) {
 				DebugPlugin.getDefault().asyncExec( 
 						new Runnable() {
@@ -99,7 +99,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 			final IAdaptable context = DebugUITools.getDebugContext();
 			boolean enabled = false;
 			if (context instanceof IDebugElement) {
-				final ICGlobalVariableManager gvm = (ICGlobalVariableManager) ((IDebugElement) context)
+				final ICGlobalVariableManager gvm = ((IDebugElement) context)
 						.getDebugTarget().getAdapter(
 								ICGlobalVariableManager.class);
 				if (gvm != null) {

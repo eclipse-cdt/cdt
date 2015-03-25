@@ -35,9 +35,9 @@ public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
         if ( IDebugUIConstants.ID_MODULE_VIEW.equals( context.getId() ) ) {
             IModuleRetrieval mr = null;
             if ( element instanceof IAdaptable ) {
-                ICDebugTarget target = (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
+                ICDebugTarget target = ((IAdaptable)element).getAdapter( ICDebugTarget.class );
                 if ( target != null )
-                    mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+                    mr = target.getAdapter( IModuleRetrieval.class );
             }
             if ( mr != null ) {
                 return new ModulesViewModelProxy( mr );

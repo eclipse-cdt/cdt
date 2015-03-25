@@ -109,7 +109,7 @@ public class C99SizeofExpressionParser extends PrsStream implements RuleAction, 
     public String[] orderedTerminalSymbols() { return C99SizeofExpressionParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return C99SizeofExpressionParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return C99SizeofExpressionParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -148,7 +148,7 @@ public class C99SizeofExpressionParser extends PrsStream implements RuleAction, 
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

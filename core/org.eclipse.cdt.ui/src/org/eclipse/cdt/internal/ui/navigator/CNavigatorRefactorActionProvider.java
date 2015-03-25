@@ -50,7 +50,7 @@ public class CNavigatorRefactorActionProvider extends CommonActionProvider {
 		if (workbenchSite != null) {
 			final IWorkbenchPartSite partSite= workbenchSite.getSite();
 			resourceRefactorGroup= new CNavigatorRefactorActionGroup(partSite, (Tree)actionSite.getStructuredViewer().getControl());
-			IUndoContext workspaceContext= (IUndoContext) ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+			IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 			undoRedoGroup = new UndoRedoActionGroup(partSite, workspaceContext, true);
 			cElementRefactorGroup= new CRefactoringActionGroup(workbenchSite.getPart());
 		}

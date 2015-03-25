@@ -38,7 +38,7 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
      */
     private IExpressionDMContext getVariableDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (IExpressionDMContext)((IAdaptable)element).getAdapter(IExpressionDMContext.class);
+            return ((IAdaptable)element).getAdapter(IExpressionDMContext.class);
         }
         return null;
     }

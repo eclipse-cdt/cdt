@@ -41,7 +41,7 @@ public class CBreakpointFilteringPage extends PropertyPage {
 	}
 
     public ICBreakpoint getBreakpoint() {
-        return (ICBreakpoint)getElement().getAdapter(ICBreakpoint.class);
+        return getElement().getAdapter(ICBreakpoint.class);
     }
 
 	public ICBreakpointFilterExtension getFilterExtension() {

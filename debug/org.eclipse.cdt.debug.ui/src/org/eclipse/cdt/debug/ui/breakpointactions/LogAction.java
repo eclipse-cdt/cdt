@@ -66,7 +66,7 @@ public class LogAction extends AbstractBreakpointAction {
 			String logMessage = getMessage();
 
 			if (isEvaluateExpression()) {
-				ILogActionEnabler enabler = (ILogActionEnabler) context.getAdapter(ILogActionEnabler.class);
+				ILogActionEnabler enabler = context.getAdapter(ILogActionEnabler.class);
 				if (enabler != null)
 					logMessage = enabler.evaluateExpression(logMessage);
 			}

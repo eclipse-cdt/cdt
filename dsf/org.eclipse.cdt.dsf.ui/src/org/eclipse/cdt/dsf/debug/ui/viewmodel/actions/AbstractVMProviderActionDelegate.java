@@ -91,7 +91,7 @@ abstract public class AbstractVMProviderActionDelegate implements IViewActionDel
 	    IPresentationContext presentationContext = getPresentationContext();
 	    
         if (viewerInput instanceof IAdaptable && presentationContext != null) {
-            IVMAdapter adapter = (IVMAdapter) ((IAdaptable)viewerInput).getAdapter(IVMAdapter.class);
+            IVMAdapter adapter = ((IAdaptable)viewerInput).getAdapter(IVMAdapter.class);
 
             if ( adapter != null ) {
                 return adapter.getVMProvider(presentationContext);

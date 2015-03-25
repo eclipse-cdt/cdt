@@ -122,7 +122,7 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
        	setBaseEnabled(enabled);
         
         if (fCommandId != null) {
-        	ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+        	ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
         	if (commandService != null) {
         		commandService.refreshElements(fCommandId, null);
         	}

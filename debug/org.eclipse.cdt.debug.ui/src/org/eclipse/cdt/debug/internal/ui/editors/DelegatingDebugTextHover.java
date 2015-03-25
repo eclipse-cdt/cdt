@@ -95,7 +95,7 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
     private ICEditorTextHover getDelegate() {
         IAdaptable context = DebugUITools.getDebugContext();
         if (context != null) {
-            ICEditorTextHover hover = (ICEditorTextHover) context.getAdapter(ICEditorTextHover.class);
+            ICEditorTextHover hover = context.getAdapter(ICEditorTextHover.class);
             if (hover != null) {
                 hover.setEditor(fEditor);
             }

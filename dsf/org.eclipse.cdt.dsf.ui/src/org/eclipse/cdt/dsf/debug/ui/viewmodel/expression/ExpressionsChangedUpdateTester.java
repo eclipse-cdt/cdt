@@ -46,7 +46,7 @@ class ExpressionsChangedUpdateTester implements IElementUpdateTester {
     
     private boolean eventContainsElement(Object element) {
         if (element instanceof IAdaptable) {
-            IExpression expression = (IExpression)((IAdaptable)element).getAdapter(IExpression.class);
+            IExpression expression = ((IAdaptable)element).getAdapter(IExpression.class);
             if (expression != null) {
                 for (int i = 0; i < fEvent.getExpressions().length; i++) {
                     if (expression.equals(fEvent.getExpressions()[i])) {

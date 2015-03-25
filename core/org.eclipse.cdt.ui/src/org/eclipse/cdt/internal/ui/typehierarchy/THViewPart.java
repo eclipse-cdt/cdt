@@ -239,7 +239,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         setMessage(Messages.THViewPart_instruction);
         initializeActionStates();
         
-    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	IContextService ctxService = getSite().getService(IContextService.class);
     	if (ctxService != null) {
     		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
     	}
@@ -250,7 +250,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
-			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+			IContextService ctxService = getSite().getService(IContextService.class);
 	    	if (ctxService != null) {
 	    		ctxService.deactivateContext(fContextActivation);
 	    	}
@@ -998,7 +998,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 					return (ICElement) cand;
 				}
 				if (cand instanceof IAdaptable) {
-					ICElement elem= (ICElement) ((IAdaptable) cand).getAdapter(ICElement.class);
+					ICElement elem= ((IAdaptable) cand).getAdapter(ICElement.class);
 					if (elem != null) {
 						return elem;
 					}
@@ -1133,7 +1133,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
 	@Override
 	public IWorkbenchSiteProgressService getProgressService() {
-		return (IWorkbenchSiteProgressService) getSite().getAdapter(IWorkbenchSiteProgressService.class);	
+		return getSite().getAdapter(IWorkbenchSiteProgressService.class);	
 	}
 
 	private static class CopyTypeHierarchyAction extends CopyTreeAction {

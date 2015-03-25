@@ -99,7 +99,7 @@ public class GotoActionGroup extends CViewActionGroup {
 			if (selection.size() == 1) {
 				Object object = selection.getFirstElement();
 				if (object instanceof IAdaptable) {
-					IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
+					IResource resource = ((IAdaptable)object).getAdapter(IResource.class);
 					if (resource instanceof IProject) {
 						enable = ((IProject) resource).isOpen();
 					} else if (resource instanceof IFolder) {

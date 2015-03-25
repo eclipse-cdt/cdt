@@ -54,7 +54,7 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
 	 */
     public SteppingController getSteppingController() {
     	if (fContexts != null && fContexts.length > 0) {
-    		return (SteppingController) fContexts[0].getAdapter(SteppingController.class);
+    		return fContexts[0].getAdapter(SteppingController.class);
     	}
     	return null;
     }

@@ -152,7 +152,7 @@ public class MakeView extends ViewPart {
 
 		updateActions((IStructuredSelection)fViewer.getSelection());
 
-		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
 			bindingService.addBindingManagerListener(bindingManagerListener);
 		}

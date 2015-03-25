@@ -314,12 +314,12 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     		if (selectedElement instanceof IAdaptable) {
     			IAdaptable adaptable = (IAdaptable) selectedElement;
 
-    			celem = (ICElement) adaptable.getAdapter(ICElement.class);
+    			celem = adaptable.getAdapter(ICElement.class);
     			if (celem == null) {
-    				IResource resource = (IResource) adaptable.getAdapter(IResource.class);
+    				IResource resource = adaptable.getAdapter(IResource.class);
     				if (resource != null && resource.getType() != IResource.ROOT) {
     					while (celem == null && resource.getType() != IResource.PROJECT) {
-    						celem = (ICElement) resource.getAdapter(ICElement.class);
+    						celem = resource.getAdapter(ICElement.class);
     						resource = resource.getParent();
     					}
     					if (celem == null) {
@@ -345,7 +345,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     		if (celem == null && part instanceof CEditor) {
 		    	IEditorInput input = ((IEditorPart)part).getEditorInput();
 		    	if (input != null) {
-					final IResource res = (IResource) input.getAdapter(IResource.class);
+					final IResource res = input.getAdapter(IResource.class);
 					if (res != null && res instanceof IFile) {
 					    celem = CoreModel.getDefault().create((IFile)res);
 					}

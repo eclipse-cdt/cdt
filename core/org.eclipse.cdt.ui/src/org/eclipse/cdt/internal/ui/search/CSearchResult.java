@@ -89,7 +89,7 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 		} else if (input instanceof IPathEditorInput) {
 			path= ((IPathEditorInput) input).getPath();
 		} else {
-			ILocationProvider provider= (ILocationProvider) input.getAdapter(ILocationProvider.class);
+			ILocationProvider provider= input.getAdapter(ILocationProvider.class);
 			if (provider != null) {
 				path= provider.getPath(input);
 			}

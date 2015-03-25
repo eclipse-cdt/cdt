@@ -217,7 +217,7 @@ public class CHViewPart extends ViewPart {
         createActions();
         createContextMenu();
 
-		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
 			bindingManagerListener = new IBindingManagerListener() {
 				@Override
@@ -237,7 +237,7 @@ public class CHViewPart extends ViewPart {
         
         initializeActionStates();
         
-    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	IContextService ctxService = getSite().getService(IContextService.class);
     	if (ctxService != null) {
     		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
     	}
@@ -281,7 +281,7 @@ public class CHViewPart extends ViewPart {
 	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
-			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+			IContextService ctxService = getSite().getService(IContextService.class);
 			if (ctxService != null) {
 				ctxService.deactivateContext(fContextActivation);
 			}

@@ -151,7 +151,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	@Override
 	public IFile getSourceFile() {
 		if (fSourceFile != null) {
-			IResource resource = (IResource) fSourceFile.getAdapter(IResource.class);
+			IResource resource = fSourceFile.getAdapter(IResource.class);
 			if (resource instanceof IFile) {
 				return (IFile) resource;
 			}
@@ -176,7 +176,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	@Override
 	public URI getSourceLocationURI() {
 		if (fSourceFile != null) {
-			IResource resource = (IResource) fSourceFile.getAdapter(IResource.class);
+			IResource resource = fSourceFile.getAdapter(IResource.class);
 			if (resource instanceof IFile) {
 				return resource.getLocationURI();
 			} else {

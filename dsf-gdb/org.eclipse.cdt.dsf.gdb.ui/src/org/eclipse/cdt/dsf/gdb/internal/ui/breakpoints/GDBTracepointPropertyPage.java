@@ -251,7 +251,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	}
 
 	private String getTracepointMainLabel(ICTracepoint tracepoint) {
-	    IWorkbenchAdapter labelProvider = (IWorkbenchAdapter)getElement().getAdapter(IWorkbenchAdapter.class);
+	    IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
 	    if (labelProvider != null) {
 	        return labelProvider.getLabel(getElement());
 	    }
@@ -328,11 +328,11 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 			assert false : "Should always have a tracepoint"; //$NON-NLS-1$
 		}
 
-		return (ICTracepoint)element.getAdapter(ICTracepoint.class);
+		return element.getAdapter(ICTracepoint.class);
 	}
 
 	protected Object getDebugContext() {
-        IDebugContextProvider provider = (IDebugContextProvider)getElement().getAdapter(IDebugContextProvider.class);
+        IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
         if (provider != null) {
             ISelection selection = provider.getActiveContext();
             if (selection instanceof IStructuredSelection) {

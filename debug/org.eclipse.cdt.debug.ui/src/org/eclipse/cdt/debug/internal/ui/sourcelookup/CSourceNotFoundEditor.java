@@ -131,7 +131,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			if (context == null)
 				return super.getText();
 			String contextDescription;
-			ICSourceNotFoundDescription description = (ICSourceNotFoundDescription) context.getAdapter(ICSourceNotFoundDescription.class);
+			ICSourceNotFoundDescription description = context.getAdapter(ICSourceNotFoundDescription.class);
 			if (description != null)
 				contextDescription = description.getDescription();
 			else
@@ -295,7 +295,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				IWorkbenchPage page = getEditorSite().getPage();
 				
 				if (isDebugElement) {
-					ISourceDisplay adapter = (ISourceDisplay)context.getAdapter(ISourceDisplay.class);
+					ISourceDisplay adapter = context.getAdapter(ISourceDisplay.class);
 					if (adapter != null) {						
 						adapter.displaySource(context, page, true);
 					}					

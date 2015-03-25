@@ -112,7 +112,7 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
     public String[] orderedTerminalSymbols() { return CPPTemplateTypeParameterParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPTemplateTypeParameterParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPTemplateTypeParameterParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -151,7 +151,7 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

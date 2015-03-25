@@ -97,7 +97,7 @@ public class DocumentContentProvider implements IModelChangedListener {
         }
         else if ( element instanceof IAdaptable ) {
             IAdaptable adaptable = (IAdaptable)element;
-            adapter = (IDocumentElementContentProvider)adaptable.getAdapter( IDocumentElementContentProvider.class );
+            adapter = adaptable.getAdapter( IDocumentElementContentProvider.class );
         }
         return adapter;
     }
@@ -381,7 +381,7 @@ public class DocumentContentProvider implements IModelChangedListener {
         }
         else if ( element instanceof IAdaptable ) {
             IAdaptable adaptable = (IAdaptable)element;
-            adapter = (IModelProxyFactory)adaptable.getAdapter( IModelProxyFactory.class );
+            adapter = adaptable.getAdapter( IModelProxyFactory.class );
         }
         return adapter;
     }

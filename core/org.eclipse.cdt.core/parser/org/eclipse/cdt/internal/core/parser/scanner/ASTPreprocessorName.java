@@ -229,7 +229,7 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 		if (fImageLocationInfo != null) {
 			IASTTranslationUnit tu= getTranslationUnit();
 			if (tu != null) {
-				LocationMap lr= (LocationMap) tu.getAdapter(LocationMap.class);
+				LocationMap lr= tu.getAdapter(LocationMap.class);
 				if (lr != null) {
 					return fImageLocationInfo.createLocation(lr, fImageLocationInfo);
 				}

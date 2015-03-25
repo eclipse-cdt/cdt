@@ -64,7 +64,7 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 			// register and bit field context are covered here.
 			// When these show up in expression view, the register/bit field vm node's associateExpression has called
 			// RegisterVMC/BitFieldVMC's setExpression
-			IExpression y = (IExpression) ((IVMContext) x).getAdapter(IExpression.class);
+			IExpression y = ((IVMContext) x).getAdapter(IExpression.class);
 			if (y == null) {
 				rm.setData(null);
 			} else {
@@ -98,7 +98,7 @@ public class PDAExpressionVMProvider extends ExpressionVMProvider implements IEl
 				persistable.setValue(ctx.getExpression(), format);
 				changed.add((IDMVMContext) x);
 			} else if (x instanceof IDMVMContext) {
-				IExpression y = (IExpression) ((IVMContext) x).getAdapter(IExpression.class);
+				IExpression y = ((IVMContext) x).getAdapter(IExpression.class);
 				if (y == null)
 					continue;
 				persistable.setValue(y.getExpressionText(), format);

@@ -120,7 +120,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 			dmc = (IDMContext) context;
 		} else {
 	        if (context instanceof IAdaptable) {
-	        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+	        	dmc = ((IAdaptable)context).getAdapter(IDMContext.class);
 	        }
 		}
 		
@@ -142,7 +142,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
         IMemoryDMContext memoryDmc = null;
         IDMContext dmc = null;
         if (context instanceof IAdaptable) {
-        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+        	dmc = ((IAdaptable)context).getAdapter(IDMContext.class);
             if (dmc != null) {
                 memoryDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
             }
@@ -243,7 +243,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 			public void run() {
 		        IDMContext dmc = null;
 		        if (context instanceof IAdaptable) {
-		        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+		        	dmc = ((IAdaptable)context).getAdapter(IDMContext.class);
 		            if (dmc != null) {
 		        		IMemorySpaces service = fMemorySpaceServiceTracker.getService();
 		                if (service != null) {

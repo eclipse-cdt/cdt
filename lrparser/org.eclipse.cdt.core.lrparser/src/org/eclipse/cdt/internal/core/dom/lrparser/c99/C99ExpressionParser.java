@@ -109,7 +109,7 @@ public class C99ExpressionParser extends PrsStream implements RuleAction, IToken
     public String[] orderedTerminalSymbols() { return C99ExpressionParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return C99ExpressionParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return C99ExpressionParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -148,7 +148,7 @@ public class C99ExpressionParser extends PrsStream implements RuleAction, IToken
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

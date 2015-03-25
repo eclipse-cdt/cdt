@@ -74,7 +74,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 		for (int i = 0; i < fWorkingSets.length; ++i) {
 			IAdaptable[] elements = fWorkingSets[i].getElements();
 			for (int j = 0; j < elements.length; ++j) {
-				ICElement element = (ICElement)elements[j].getAdapter(ICElement.class);
+				ICElement element = elements[j].getAdapter(ICElement.class);
 				if (element != null)
 					scope.add(element);
 			}

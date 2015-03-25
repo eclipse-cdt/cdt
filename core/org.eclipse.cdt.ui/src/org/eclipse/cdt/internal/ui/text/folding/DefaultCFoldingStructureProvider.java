@@ -1783,7 +1783,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 	
 	private ProjectionAnnotationModel getModel() {
-		return (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+		return fEditor.getAdapter(ProjectionAnnotationModel.class);
 	}
 
 	private IDocument getDocument() {

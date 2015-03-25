@@ -324,7 +324,7 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
         }
         else if ( element instanceof IAdaptable ) {
             IAdaptable adaptable = (IAdaptable)element;
-            adapter = (IDisassemblyContextProvider)adaptable.getAdapter( IDisassemblyContextProvider.class );
+            adapter = adaptable.getAdapter( IDisassemblyContextProvider.class );
         }
         return adapter;
     }
@@ -333,7 +333,7 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
         if ( debugContext instanceof ISteppingModeTarget )
             return (ISteppingModeTarget)debugContext;
         if ( debugContext instanceof IAdaptable )
-            return (ISteppingModeTarget)((IAdaptable)debugContext).getAdapter( ISteppingModeTarget.class );
+            return ((IAdaptable)debugContext).getAdapter( ISteppingModeTarget.class );
         return null;
     }
 }

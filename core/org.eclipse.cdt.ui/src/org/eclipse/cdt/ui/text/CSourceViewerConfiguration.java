@@ -393,12 +393,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		RuleBasedScanner scanner= null;
 		
 		if(language != null) {
-			ICLanguageKeywords keywords = (ICLanguageKeywords) language.getAdapter(ICLanguageKeywords.class);
+			ICLanguageKeywords keywords = language.getAdapter(ICLanguageKeywords.class);
 			if(keywords != null) {
 				scanner = new CCodeScanner(getTokenStoreFactory(), keywords);
 			}
 			else {
-				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+				ILanguageUI languageUI = language.getAdapter(ILanguageUI.class);
 				if (languageUI != null)
 					scanner = languageUI.getCodeScanner();
 			}
@@ -958,7 +958,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 				IPath path = ((IPathEditorInput)input).getPath();
 				contentType = CCorePlugin.getContentType(path.lastSegment());
 			} else {
-				ILocationProvider locationProvider = (ILocationProvider)input.getAdapter(ILocationProvider.class);
+				ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
 				if (locationProvider != null) {
 					IPath path = locationProvider.getPath(input);
 					if (path != null) {

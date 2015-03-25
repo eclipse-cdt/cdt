@@ -76,7 +76,7 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 	        Object element = getDebugContext(part).getFirstElement();
 	        if (element instanceof IAdaptable) {
 	            IDebugModelProvider modelProvider = 
-	                (IDebugModelProvider)((IAdaptable)element).getAdapter(IDebugModelProvider.class);
+	                ((IAdaptable)element).getAdapter(IDebugModelProvider.class);
 	            if (modelProvider != null) {
 	                String[] models = modelProvider.getModelIdentifiers();
 	                for (String model : models) {

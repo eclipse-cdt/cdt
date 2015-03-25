@@ -105,7 +105,7 @@ public class ProblemDetails extends ViewPart {
 		description = new Link(area, SWT.WRAP);
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.addSelectionListener(linkSelAdapter);
-		ISelectionService ser = (ISelectionService) getSite().getService(ISelectionService.class);
+		ISelectionService ser = getSite().getService(ISelectionService.class);
 		ser.addSelectionListener(new ISelectionListener() {
 			@Override
 			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -125,7 +125,7 @@ public class ProblemDetails extends ViewPart {
 			Object firstElement = ((IStructuredSelection) selection).getFirstElement();
 			IMarker marker = null;
 			if (firstElement instanceof IAdaptable) {
-				marker = (IMarker) ((IAdaptable) firstElement).getAdapter(IMarker.class);
+				marker = ((IAdaptable) firstElement).getAdapter(IMarker.class);
 			} else if (firstElement instanceof IMarker) {
 				marker = (IMarker) firstElement;
 			}

@@ -198,7 +198,7 @@ public abstract class BlockCommentAction extends TextEditorAction {
 		else
 			return;
 		
-		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
+		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.beginCompoundChange();
 		}

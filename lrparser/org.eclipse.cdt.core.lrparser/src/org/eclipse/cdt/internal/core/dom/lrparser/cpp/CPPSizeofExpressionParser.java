@@ -110,7 +110,7 @@ public class CPPSizeofExpressionParser extends PrsStream implements RuleAction, 
     public String[] orderedTerminalSymbols() { return CPPSizeofExpressionParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPSizeofExpressionParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPSizeofExpressionParserprs.EOFT_SYMBOL; }
-    public PrsStream getParseStream() { return (PrsStream) this; }
+    public PrsStream getParseStream() { return this; }
     
     //
     // Report error message for given error_token.
@@ -149,7 +149,7 @@ public class CPPSizeofExpressionParser extends PrsStream implements RuleAction, 
     {
         try
         {
-            btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+            btParser = new FixedBacktrackingParser(monitor, this, prs, this);
         }
         catch (NotBacktrackParseTableException e)
         {

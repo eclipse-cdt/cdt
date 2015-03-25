@@ -520,7 +520,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				selectedResources.add(o);
 			} else if (o instanceof IAdaptable) {
 				IAdaptable a = (IAdaptable) o;
-				IResource r = (IResource) a.getAdapter(IResource.class);
+				IResource r = a.getAdapter(IResource.class);
 				if (r != null) {
 					selectedResources.add(r);
 				}

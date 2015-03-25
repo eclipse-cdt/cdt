@@ -100,10 +100,10 @@ public class CommitWorkingCopyOperation extends CModelOperation {
             ITextFileBuffer tuFileBuffer= null;
             ITextFileBuffer wcFileBuffer= null;
             if (tuBuffer instanceof IAdaptable) {
-                tuFileBuffer= (ITextFileBuffer) ((IAdaptable) tuBuffer).getAdapter(ITextFileBuffer.class);
+                tuFileBuffer= ((IAdaptable) tuBuffer).getAdapter(ITextFileBuffer.class);
             }
             if (wcBuffer instanceof IAdaptable) {
-                wcFileBuffer= (ITextFileBuffer) ((IAdaptable) wcBuffer).getAdapter(ITextFileBuffer.class);
+                wcFileBuffer= ((IAdaptable) wcBuffer).getAdapter(ITextFileBuffer.class);
             }
             
             if (wcFileBuffer != null) {

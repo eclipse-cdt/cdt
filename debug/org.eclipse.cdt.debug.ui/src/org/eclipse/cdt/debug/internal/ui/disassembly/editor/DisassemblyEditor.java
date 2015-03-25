@@ -212,7 +212,7 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
         }
         else if ( element instanceof IAdaptable ) {
             IAdaptable adaptable = (IAdaptable)element;
-            adapter = (IDisassemblyContextProvider)adaptable.getAdapter( IDisassemblyContextProvider.class );
+            adapter = adaptable.getAdapter( IDisassemblyContextProvider.class );
         }
         return adapter;
     }

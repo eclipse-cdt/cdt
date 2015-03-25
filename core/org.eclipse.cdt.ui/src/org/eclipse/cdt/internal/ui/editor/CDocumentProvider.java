@@ -776,7 +776,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			original = input.getTranslationUnit();
 		} else if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) element;
-			ILocationProvider locationProvider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			ILocationProvider locationProvider= adaptable.getAdapter(ILocationProvider.class);
 			if (locationProvider instanceof ILocationProviderExtension) {
 				URI uri= ((ILocationProviderExtension) locationProvider).getURI(element);
 				original= createTranslationUnit(uri);

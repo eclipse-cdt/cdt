@@ -81,7 +81,7 @@ public class ReverseDebugAction extends AbstractBreakpointAction{
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
 		
-		IReverseDebugEnabler enabler = (IReverseDebugEnabler) context.getAdapter(IReverseDebugEnabler.class);
+		IReverseDebugEnabler enabler = context.getAdapter(IReverseDebugEnabler.class);
 		if (enabler != null) {
 			try {
 				switch (fOperation) {

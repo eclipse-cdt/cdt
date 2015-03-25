@@ -100,7 +100,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	}
 
 	private Addr2line getAddr2line() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getAddr2line(getPath());
 		}
@@ -113,7 +113,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPPFilt()
 	 */
 	protected CPPFilt getCPPFilt() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getCPPFilt();
 		}
@@ -126,7 +126,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getObjdump()
 	 */
 	protected Objdump getObjdump() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getObjdump(getPath());
 		}
@@ -134,7 +134,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	}
 
 	protected CygPath getCygPath() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getCygPath();
 		}
@@ -144,7 +144,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	/**
 	 */
 	protected NM getNM() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getNM(getPath());
 		}

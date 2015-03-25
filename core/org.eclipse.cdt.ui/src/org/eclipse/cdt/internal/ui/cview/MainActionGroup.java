@@ -263,7 +263,7 @@ public class MainActionGroup extends CViewActionGroup {
 		Object obj = selection.getFirstElement();
 		if (obj instanceof IAdaptable) {
 			IAdaptable element = (IAdaptable) obj;
-			IResource resource = (IResource) element.getAdapter(IResource.class);
+			IResource resource = element.getAdapter(IResource.class);
 			if (resource instanceof IFile) {
 				addBookmarkAction.selectionChanged(selection);
 				menu.add(addBookmarkAction);

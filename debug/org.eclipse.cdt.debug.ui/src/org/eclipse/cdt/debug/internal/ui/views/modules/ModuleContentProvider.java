@@ -56,13 +56,13 @@ public class ModuleContentProvider extends ElementContentProvider {
 			return ((IModuleRetrieval)parent).getModules();
 		}
 		else if ( parent instanceof ICThread || parent instanceof ICStackFrame ) {
-			IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)parent).getAdapter( IModuleRetrieval.class );
+			IModuleRetrieval mr = ((IAdaptable)parent).getAdapter( IModuleRetrieval.class );
 			if ( mr != null ) {
 				return mr.getModules();
 			}
 		}
 		else if ( parent instanceof ICModule ) {
-			IBinary binary = (IBinary)((ICModule)parent).getAdapter( IBinary.class );
+			IBinary binary = ((ICModule)parent).getAdapter( IBinary.class );
 			if ( binary != null ) {
 				try {
 					return binary.getChildren();

@@ -68,7 +68,7 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	protected char[] getSource(int offset, int length) {
 		final IASTTranslationUnit ast= getTranslationUnit();
         if (ast != null) {
-        	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+        	ILocationResolver lr= ast.getAdapter(ILocationResolver.class);
         	if (lr != null) {
         		final IASTFileLocation loc= lr.getMappedFileLocation(offset, length);
         		if (loc != null) {
@@ -126,7 +126,7 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 	public int getOffset() {
 		if (fFilePath != null) {
 			// Perform lazy conversion to sequence number.
-			ILocationResolver lr= (ILocationResolver) getTranslationUnit().getAdapter(ILocationResolver.class);
+			ILocationResolver lr= getTranslationUnit().getAdapter(ILocationResolver.class);
 			if (lr != null) {
 				setOffset(lr.getSequenceNumberForFileOffset(fFilePath, super.getOffset()));
 				fFilePath= null;
@@ -552,7 +552,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 		if (fExpansionNumber >= 0) {
 			IASTTranslationUnit ast = getTranslationUnit();
 			if (ast != null) {
-				ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+				ILocationResolver lr= ast.getAdapter(ILocationResolver.class);
 				if (lr != null) {
 					return lr.getMappedFileLocation(fExpansionNumber, getOffset() + getLength() - fExpansionNumber);
 				}

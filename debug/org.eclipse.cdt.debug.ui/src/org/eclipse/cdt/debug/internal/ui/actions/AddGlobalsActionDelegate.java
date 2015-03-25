@@ -293,8 +293,8 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 		if ( getView() == null )
 			return;
 		if ( element != null && element instanceof IDebugElement ) {
-			IExecFileInfo info = (IExecFileInfo)((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class );
-			ICGlobalVariableManager gvm = (ICGlobalVariableManager)((IDebugElement)element).getDebugTarget().getAdapter( ICGlobalVariableManager.class );
+			IExecFileInfo info = ((IDebugElement)element).getDebugTarget().getAdapter( IExecFileInfo.class );
+			ICGlobalVariableManager gvm = ((IDebugElement)element).getDebugTarget().getAdapter( ICGlobalVariableManager.class );
 			if ( info != null && gvm != null ) {
 				fGlobals = info.getGlobals();
 				ListSelectionDialog dlg = createDialog();

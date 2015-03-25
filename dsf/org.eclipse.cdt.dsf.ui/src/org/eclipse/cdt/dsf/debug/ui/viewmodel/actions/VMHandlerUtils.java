@@ -56,7 +56,7 @@ public class VMHandlerUtils {
         ISelection selection = null;
         
         ISelectionService selectionService = 
-            (ISelectionService)serviceLocator.getService(ISelectionService.class);
+            serviceLocator.getService(ISelectionService.class);
         if (selectionService != null) {
             selection = selectionService.getSelection();
         }
@@ -66,7 +66,7 @@ public class VMHandlerUtils {
         }
         else {
             IWorkbenchPart part = null;        
-            IPartService partService = (IPartService)serviceLocator.getService(IPartService.class);
+            IPartService partService = serviceLocator.getService(IPartService.class);
             if (partService != null) {
                 part = partService.getActivePart();
                 return getVMProviderForPart(part);
@@ -103,7 +103,7 @@ public class VMHandlerUtils {
      */
     static public ISelection getSelection(IServiceLocator serviceLocator) {
         ISelectionService selectionService = 
-            (ISelectionService)serviceLocator.getService(ISelectionService.class);
+            serviceLocator.getService(ISelectionService.class);
         if (selectionService != null) {
             return selectionService.getSelection();
         }
@@ -128,7 +128,7 @@ public class VMHandlerUtils {
             Viewer viewer = ((IDebugView)part).getViewer();
             if (input instanceof IAdaptable && viewer instanceof TreeModelViewer) {
                 IPresentationContext presContext = ((TreeModelViewer)viewer).getPresentationContext();
-                IVMAdapter vmAdapter = (IVMAdapter)((IAdaptable)input).getAdapter(IVMAdapter.class);
+                IVMAdapter vmAdapter = ((IAdaptable)input).getAdapter(IVMAdapter.class);
                 if (vmAdapter != null) {
                     return vmAdapter.getVMProvider(presContext);
                 }

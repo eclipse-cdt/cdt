@@ -178,7 +178,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	@Override
 	public void viewerUpdatesBegin() {
         IWorkbenchSiteProgressService progressService = 
-            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+            getSite().getAdapter(IWorkbenchSiteProgressService.class);
         if (progressService != null) {
             progressService.incrementBusy();
         }
@@ -190,7 +190,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	@Override
 	public void viewerUpdatesComplete() {
         IWorkbenchSiteProgressService progressService = 
-            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+            getSite().getAdapter(IWorkbenchSiteProgressService.class);
         if (progressService != null) {
             progressService.decrementBusy();
         }       

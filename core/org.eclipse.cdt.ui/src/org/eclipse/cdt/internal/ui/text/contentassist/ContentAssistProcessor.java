@@ -555,7 +555,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	private KeySequence getIterationBinding() {
-	    final IBindingService bindingSvc= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+	    final IBindingService bindingSvc= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		TriggerSequence binding= bindingSvc.getBestActiveBindingFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		if (binding instanceof KeySequence)
 			return (KeySequence) binding;

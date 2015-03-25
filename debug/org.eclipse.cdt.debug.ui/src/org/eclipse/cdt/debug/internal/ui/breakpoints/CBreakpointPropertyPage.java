@@ -417,7 +417,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
             ICDebugTarget debugTarget = (ICDebugTarget)DebugPlugin.getAdapter(debugViewElement, ICDebugTarget.class);
             
             if ( debugTarget != null ){
-                ICDITarget target = (ICDITarget)debugTarget.getAdapter(ICDITarget.class);
+                ICDITarget target = debugTarget.getAdapter(ICDITarget.class);
             
                 if (target instanceof ICDIMemorySpaceManagement)
                     memMgr = (ICDIMemorySpaceManagement)target;
@@ -572,7 +572,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
             }
 	    }
 	    
-	    IWorkbenchAdapter labelProvider = (IWorkbenchAdapter)getElement().getAdapter(IWorkbenchAdapter.class);
+	    IWorkbenchAdapter labelProvider = getElement().getAdapter(IWorkbenchAdapter.class);
 	    if (labelProvider != null) {
 	        return labelProvider.getLabel(getElement());
 	    }
@@ -710,12 +710,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		} else if (element instanceof ICBreakpointContext) {
 		    return ((ICBreakpointContext)element).getBreakpoint();
 		} else {
-		    return (ICBreakpoint)element.getAdapter(ICBreakpoint.class);
+		    return element.getAdapter(ICBreakpoint.class);
 		}
 	}
 
 	protected Object getDebugContext() {
-        IDebugContextProvider provider = (IDebugContextProvider)getElement().getAdapter(IDebugContextProvider.class);
+        IDebugContextProvider provider = getElement().getAdapter(IDebugContextProvider.class);
         if (provider != null) {
             ISelection selection = provider.getActiveContext();
             if (selection instanceof IStructuredSelection) {

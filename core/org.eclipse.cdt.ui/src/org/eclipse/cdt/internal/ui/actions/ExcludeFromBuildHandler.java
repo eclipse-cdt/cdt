@@ -153,7 +153,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 				if (editor != null) {
 					IEditorInput input = editor.getEditorInput();
 					if (input != null)
-						return (IFile) input.getAdapter(IFile.class);
+						return input.getAdapter(IFile.class);
 				}
 			}
 		}

@@ -234,7 +234,7 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
 
     private IDisassemblyLine[] disassemble( BigInteger startAddress, BigInteger endAddress, boolean mixed ) throws DebugException {
         List<IDisassemblyLine> list = new ArrayList<IDisassemblyLine>();
-        ICDITarget cdiTarget = (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
+        ICDITarget cdiTarget = getDebugTarget().getAdapter( ICDITarget.class );
         try {
             ICDIMixedInstruction[] mixedInstructions = null;
             ICDIInstruction[] asmInstructions = null;

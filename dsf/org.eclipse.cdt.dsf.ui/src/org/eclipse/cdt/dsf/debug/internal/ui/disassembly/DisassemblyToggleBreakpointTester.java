@@ -41,7 +41,7 @@ public class DisassemblyToggleBreakpointTester extends PropertyTester {
 			
 			IAdaptable element = DebugUITools.getPartDebugContext(view.getSite());			
 	        if (element != null) {
-	            IDebugModelProvider modelProvider = (IDebugModelProvider)element.getAdapter(IDebugModelProvider.class);
+	            IDebugModelProvider modelProvider = element.getAdapter(IDebugModelProvider.class);
 	            if (modelProvider != null) {
 	                String[] models = modelProvider.getModelIdentifiers();
 	                for (String model : models) {

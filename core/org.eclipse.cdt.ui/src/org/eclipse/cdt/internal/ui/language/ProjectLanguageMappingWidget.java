@@ -115,7 +115,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		addButton.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				IProject project = (IProject) getElement().getAdapter(IProject.class);
+				IProject project = getElement().getAdapter(IProject.class);
 				ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
 				ICConfigurationDescription[] configurations = description.getConfigurations();
 				ProjectContentTypeMappingDialog dialog = new ProjectContentTypeMappingDialog(fContents.getShell(), configurations);
@@ -213,7 +213,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
-		IProject project = (IProject) getElement().getAdapter(IProject.class);
+		IProject project = getElement().getAdapter(IProject.class);
 		ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
 
 		while (mappings.hasNext()) {

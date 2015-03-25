@@ -41,7 +41,7 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 			return presentation.getText( element );
 		}
 		if ( element instanceof IAdaptable ) {
-			IWorkbenchAdapter adapter = (IWorkbenchAdapter)(((IAdaptable)element).getAdapter( IWorkbenchAdapter.class ));
+			IWorkbenchAdapter adapter = (((IAdaptable)element).getAdapter( IWorkbenchAdapter.class ));
 			if ( adapter != null )
 				return adapter.getLabel( element );
 		}
@@ -70,7 +70,7 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 			}
 		}
 		if ( element instanceof ICElement ) {
-			IWorkbenchAdapter adapter = (IWorkbenchAdapter)(((IAdaptable)element).getAdapter( IWorkbenchAdapter.class ));
+			IWorkbenchAdapter adapter = (((IAdaptable)element).getAdapter( IWorkbenchAdapter.class ));
 			if ( adapter != null )
 				return adapter.getImageDescriptor( element );
 		}

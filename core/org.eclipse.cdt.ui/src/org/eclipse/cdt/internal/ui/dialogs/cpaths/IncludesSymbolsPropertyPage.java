@@ -167,7 +167,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	private IProject getProject() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
-			IResource resource = (IResource)adaptable.getAdapter(IResource.class);
+			IResource resource = adaptable.getAdapter(IResource.class);
 			return resource.getProject();
 		}
 		return null;
@@ -176,7 +176,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	protected ICElement getCElement() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
-			ICElement elem = (ICElement)adaptable.getAdapter(ICElement.class);
+			ICElement elem = adaptable.getAdapter(ICElement.class);
 			return elem;
 		}
 		return null;

@@ -400,7 +400,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
         IMemoryDMContext memoryDmc = null;
         IDMContext dmc = null;
         if (context instanceof IAdaptable) {
-        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
+        	dmc = ((IAdaptable)context).getAdapter(IDMContext.class);
             if (dmc != null) {
                 memoryDmc = DMContexts.getAncestorOfType(dmc, IMemoryDMContext.class);
             }

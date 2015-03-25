@@ -83,7 +83,7 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 		}
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) element;
-			ILocationProvider provider = (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			ILocationProvider provider = adaptable.getAdapter(ILocationProvider.class);
 			if (provider != null) {
 				IPath location = provider.getPath(element);
 				if (location != null) {

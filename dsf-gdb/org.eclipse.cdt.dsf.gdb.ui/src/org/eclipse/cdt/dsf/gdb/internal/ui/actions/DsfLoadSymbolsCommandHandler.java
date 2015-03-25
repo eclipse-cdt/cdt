@@ -99,7 +99,7 @@ public class DsfLoadSymbolsCommandHandler extends AbstractHandler {
 	@ConfinedToDsfExecutor("session.getExecutor()")
 	private void queueLoadAllSymbols(final DsfSession session) {
 		IAdaptable debugContext = DebugUITools.getDebugContext();
-		IDMContext dmcontext = (IDMContext) debugContext.getAdapter(IDMContext.class);
+		IDMContext dmcontext = debugContext.getAdapter(IDMContext.class);
 		ISymbolDMContext symDmc = DMContexts.getAncestorOfType(dmcontext, ISymbolDMContext.class);
 		if (symDmc != null) {
 			DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());

@@ -82,7 +82,7 @@ public class WorkingSetFilter {
             fResourceFilter = new HashMap<IPath, Object>();
             for (int i = 0; i < input.length; i++) {
                 IAdaptable adaptable = input[i];
-                IResource res = (IResource) adaptable.getAdapter(IResource.class);
+                IResource res = adaptable.getAdapter(IResource.class);
                 if (res != null) {
                     fResourceFilter.put(res.getFullPath(), ACCEPT);
                 }

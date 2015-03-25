@@ -220,7 +220,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @return the underlying CDI target
 	 */
 	public ICDITarget getCDITarget() {
-		return (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
+		return getDebugTarget().getAdapter( ICDITarget.class );
 	}
 
 	/**

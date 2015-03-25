@@ -276,7 +276,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	}
 
 	private boolean isBigEndian() {
-		IExecFileInfo info = (IExecFileInfo)getDebugTarget().getAdapter( IExecFileInfo.class );
+		IExecFileInfo info = getDebugTarget().getAdapter( IExecFileInfo.class );
 		if ( info != null ) {
 			return !info.isLittleEndian();
 		}
@@ -288,7 +288,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	 */
 	@Override
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval() {
-		return (IMemoryBlockRetrieval)getDebugTarget().getAdapter( IMemoryBlockRetrieval.class );
+		return getDebugTarget().getAdapter( IMemoryBlockRetrieval.class );
 	}
 
 	/* (non-Javadoc)

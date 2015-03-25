@@ -40,7 +40,7 @@ public class ModuleMementoProvider extends ElementMementoProvider {
 	@Override
 	protected boolean encodeElement( Object element, IMemento memento, IPresentationContext context ) throws CoreException {
 		if ( element instanceof ICDebugTarget || element instanceof ICThread || element instanceof ICStackFrame ) {
-			IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)element).getAdapter( IModuleRetrieval.class );
+			IModuleRetrieval mr = ((IAdaptable)element).getAdapter( IModuleRetrieval.class );
 			if ( mr != null ) {
 				memento.putString( ELEMENT_NAME, mr.toString() );
 			}
@@ -70,7 +70,7 @@ public class ModuleMementoProvider extends ElementMementoProvider {
 		if ( mementoName != null ) {
 			String elementName = null;
 			if ( element instanceof ICDebugTarget || element instanceof ICThread || element instanceof ICStackFrame ) {
-				IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)element).getAdapter( IModuleRetrieval.class );
+				IModuleRetrieval mr = ((IAdaptable)element).getAdapter( IModuleRetrieval.class );
 				elementName = ( mr != null ) ? mr.toString() : CDIDebugModel.getPluginIdentifier();
 			}
 			else if ( element instanceof ICModule ) {

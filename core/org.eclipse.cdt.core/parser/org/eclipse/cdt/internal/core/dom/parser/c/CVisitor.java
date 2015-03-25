@@ -1093,7 +1093,7 @@ public class CVisitor extends ASTQueries {
 			tu= ((IASTInternalScope) scope).getPhysicalNode().getTranslationUnit();
 		}
 		if (tu != null) {
-			final IIndexFileSet fs= (IIndexFileSet) tu.getAdapter(IIndexFileSet.class);
+			final IIndexFileSet fs= tu.getAdapter(IIndexFileSet.class);
 			if (fs != null) {
 				fileSet= fs;
 			}

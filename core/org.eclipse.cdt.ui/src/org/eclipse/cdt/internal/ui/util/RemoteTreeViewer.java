@@ -331,7 +331,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
     private void addAllParents(List<Object> list, Object element) {
     	if (element instanceof IAdaptable) {
     		IAdaptable adaptable = (IAdaptable) element;
-    		IWorkbenchAdapter adapter = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
+    		IWorkbenchAdapter adapter = adaptable.getAdapter(IWorkbenchAdapter.class);
     		if (adapter != null) {
     			Object parent = adapter.getParent(element);
     			if (parent != null) {

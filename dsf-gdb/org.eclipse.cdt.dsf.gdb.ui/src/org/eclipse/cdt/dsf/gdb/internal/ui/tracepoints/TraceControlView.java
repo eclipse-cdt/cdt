@@ -273,7 +273,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Run action
-				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+				IHandlerService handlerService = getSite().getService(IHandlerService.class);
 				if (handlerService == null) {
 		    		GdbUIPlugin.log(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Missing command handler service")); //$NON-NLS-1$
 		    		return;
@@ -498,7 +498,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-    			IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+    			IHandlerService handlerService = getSite().getService(IHandlerService.class);
     			if (e.detail == SWT.ARROW_DOWN) {
         			try {
     					handlerService.executeCommand("org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord", null); //$NON-NLS-1$

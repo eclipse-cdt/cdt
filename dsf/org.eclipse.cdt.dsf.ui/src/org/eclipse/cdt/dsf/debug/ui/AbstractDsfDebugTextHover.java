@@ -99,7 +99,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	protected IFrameDMContext getFrame() {
 	    IAdaptable adaptable = getSelectionAdaptable();
 	    if (adaptable != null) {
-	        return (IFrameDMContext) adaptable.getAdapter(IFrameDMContext.class);
+	        return adaptable.getAdapter(IFrameDMContext.class);
 		}
 		return null;
 	}
@@ -112,7 +112,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	    
 		IAdaptable adaptable = getSelectionAdaptable();
 		if (adaptable != null) {
-		    IDebugModelProvider modelProvider = (IDebugModelProvider)adaptable.getAdapter(IDebugModelProvider.class);
+		    IDebugModelProvider modelProvider = adaptable.getAdapter(IDebugModelProvider.class);
 		    if (modelProvider != null) {
 		        String[] models = modelProvider.getModelIdentifiers();
 		        String myModel = getModelId();

@@ -61,7 +61,7 @@ class CodanPartListener implements IPartListener2 {
 				};
 			}
 			editor.addPostSaveListener(postSaveListener);
-			IResource resource = (IResource) editor.getEditorInput().getAdapter(IResource.class);
+			IResource resource = editor.getEditorInput().getAdapter(IResource.class);
 			processResource(resource, CheckerLaunchMode.RUN_ON_FILE_OPEN);
 		}
 	}

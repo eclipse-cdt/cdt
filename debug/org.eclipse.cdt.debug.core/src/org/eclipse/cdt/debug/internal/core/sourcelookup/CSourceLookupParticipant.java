@@ -65,7 +65,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 			return (String)object;
 		}
 		if (object instanceof IAdaptable) {
-			ICStackFrame frame = (ICStackFrame)((IAdaptable)object).getAdapter(ICStackFrame.class);
+			ICStackFrame frame = ((IAdaptable)object).getAdapter(ICStackFrame.class);
 			if (frame != null) {
 				String name = frame.getFile();
 				return (name != null && name.trim().length() > 0) ? name : null;
@@ -88,7 +88,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		String name = null;
 		IBreakpoint breakpoint = null;
 		if (object instanceof IAdaptable) {
-			ICStackFrame frame = (ICStackFrame)((IAdaptable)object).getAdapter(ICStackFrame.class);
+			ICStackFrame frame = ((IAdaptable)object).getAdapter(ICStackFrame.class);
 			if (frame != null) {
 				name = frame.getFile().trim();
 				if (name == null || name.length() == 0)
@@ -102,9 +102,9 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 				}
 			}
 			// See if findSourceElements(...) is the result of a Breakpoint Hit Event
-			ICDebugTarget target =  (ICDebugTarget)((IAdaptable)object).getAdapter(ICDebugTarget.class);
+			ICDebugTarget target =  ((IAdaptable)object).getAdapter(ICDebugTarget.class);
 			if (target != null) {
-				CBreakpointManager bmanager = (CBreakpointManager)target.getAdapter(CBreakpointManager.class);
+				CBreakpointManager bmanager = target.getAdapter(CBreakpointManager.class);
 				Object stateInfo = target.getCurrentStateInfo();
 				if (bmanager != null && stateInfo instanceof ICDIBreakpointHit) {
 					breakpoint = bmanager.getBreakpoint(((ICDIBreakpointHit)stateInfo).getBreakpoint());

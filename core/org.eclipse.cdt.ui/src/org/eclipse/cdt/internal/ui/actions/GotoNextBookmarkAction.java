@@ -77,7 +77,7 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 		if (input == null)
 			return;
 
-		IResource resource = (IResource)(input).getAdapter(IResource.class);
+		IResource resource = (input).getAdapter(IResource.class);
 		if (resource == null || !(resource instanceof IFile))
 			return;
 

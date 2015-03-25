@@ -32,7 +32,7 @@ public class AdapterUtil {
 			return (T) object;
 
 		if (object instanceof IAdaptable)
-			return (T) ((IAdaptable) object).getAdapter(type);
+			return ((IAdaptable) object).getAdapter(type);
 
 		return null;
 	}

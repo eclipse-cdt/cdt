@@ -71,7 +71,7 @@ public class WorkingSetConfigurationsPage extends PropertyPage {
 
 	private IWorkingSetProxy.ISnapshot getWorkingSet(WorkspaceSnapshot workspace) {
 		IWorkingSetProxy.ISnapshot result = null;
-		IWorkingSet realWorkingSet = (IWorkingSet) getElement().getAdapter(IWorkingSet.class);
+		IWorkingSet realWorkingSet = getElement().getAdapter(IWorkingSet.class);
 
 		if (realWorkingSet != null) {
 			result = workspace.getWorkingSet(realWorkingSet.getName());

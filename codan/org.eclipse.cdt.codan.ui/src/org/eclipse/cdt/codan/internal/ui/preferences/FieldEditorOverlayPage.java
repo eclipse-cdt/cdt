@@ -125,7 +125,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 		if (element == null)
 			return element;
 		if (!(element instanceof IProject))
-			return (IAdaptable) element.getAdapter(IProject.class);
+			return element.getAdapter(IProject.class);
 		return element;
 	}
 

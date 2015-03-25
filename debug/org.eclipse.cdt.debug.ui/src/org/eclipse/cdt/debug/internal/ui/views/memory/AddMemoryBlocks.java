@@ -97,7 +97,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		final IAdaptable debugViewElement = DebugUITools.getDebugContext();
 
 
-		IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
+		IMemoryBlockRetrieval retrieval = debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
 		if (retrieval == null && debugViewElement instanceof IDebugElement) {
 			// Added logic for CDI (which is based on the standard debug model)
 			retrieval = ((IDebugElement)debugViewElement).getDebugTarget();
@@ -363,7 +363,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		CMemoryBlockRetrievalExtension cdtRetrieval = null;
 
 		{
-			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
+			IMemoryBlockRetrieval retrieval = debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
 
 			if (retrieval == null && debugViewElement instanceof IDebugElement)
 				retrieval = ((IDebugElement)debugViewElement).getDebugTarget();

@@ -350,7 +350,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	}
 	
 	private IFile getFile() {
-		return (IFile) getElement().getAdapter(IFile.class);
+		return getElement().getAdapter(IFile.class);
 	}
 
 	@Override

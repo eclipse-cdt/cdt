@@ -60,7 +60,7 @@ public class CHDropTargetListener implements DropTargetListener {
 					return (ICElement) element;
 				}
 				if (element instanceof IAdaptable) {
-					ICElement adapter= (ICElement) ((IAdaptable) element).getAdapter(ICElement.class);
+					ICElement adapter= ((IAdaptable) element).getAdapter(ICElement.class);
 					if (adapter != null) {
 						return adapter;
 					}

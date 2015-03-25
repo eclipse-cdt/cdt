@@ -44,7 +44,7 @@ public class BuildTargetAction extends AbstractTargetAction {
 
 	@Override
 	public void init(IAction action) {
-		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
+		bindingService = PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
 			bindingService.addBindingManagerListener(bindingManagerListener);
 			String keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_COMMAND);

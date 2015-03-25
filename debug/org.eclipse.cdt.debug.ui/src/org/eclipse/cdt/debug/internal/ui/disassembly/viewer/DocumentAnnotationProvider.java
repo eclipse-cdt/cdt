@@ -89,7 +89,7 @@ public class DocumentAnnotationProvider {
         }
         else if ( element instanceof IAdaptable ) {
             IAdaptable adaptable = (IAdaptable)element;
-            adapter = (IDocumentElementAnnotationProvider)adaptable.getAdapter( IDocumentElementAnnotationProvider.class );
+            adapter = adaptable.getAdapter( IDocumentElementAnnotationProvider.class );
         }
         return adapter;
     }

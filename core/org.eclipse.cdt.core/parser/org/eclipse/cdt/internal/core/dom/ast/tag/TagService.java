@@ -27,7 +27,7 @@ public class TagService implements ITagService {
 			return null;
 
 		// Let the binding adapt to its own tag reader
-		ITagReader tagReader = (ITagReader) binding.getAdapter(ITagReader.class);
+		ITagReader tagReader = binding.getAdapter(ITagReader.class);
 		if (tagReader != null)
 			return tagReader;
 

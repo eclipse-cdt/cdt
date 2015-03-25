@@ -249,7 +249,7 @@ abstract public class AbstractToggleBreakpointAdapter
     private boolean hasBreakpoint(IWorkbenchPart part) {
     	if (part instanceof ITextEditor) {
     		ITextEditor textEditor = (ITextEditor) part;
-    		IVerticalRulerInfo rulerInfo = (IVerticalRulerInfo) textEditor.getAdapter(IVerticalRulerInfo.class);
+    		IVerticalRulerInfo rulerInfo = textEditor.getAdapter(IVerticalRulerInfo.class);
 	        IBreakpoint breakpoint = CDebugUIUtils.getBreakpointFromEditor(textEditor, rulerInfo);
 	        return breakpoint != null;
     	}
@@ -634,7 +634,7 @@ abstract public class AbstractToggleBreakpointAdapter
             Object obj = ((IStructuredSelection)selection).getFirstElement();
             if (obj != null) {
                 if (obj instanceof IAdaptable) {
-                    return (IRepositionableMemoryRendering) ((IAdaptable)obj).getAdapter(IRepositionableMemoryRendering.class);
+                    return ((IAdaptable)obj).getAdapter(IRepositionableMemoryRendering.class);
                 }
             }
         }
@@ -647,9 +647,9 @@ abstract public class AbstractToggleBreakpointAdapter
             Object obj = ((IStructuredSelection)selection).getFirstElement();
             if (obj != null) {
                 if (obj instanceof IAdaptable) {
-                    ICWatchpointTarget target = (ICWatchpointTarget) ((IAdaptable)obj).getAdapter(ICWatchpointTarget.class);
+                    ICWatchpointTarget target = ((IAdaptable)obj).getAdapter(ICWatchpointTarget.class);
                     if (target == null) {
-                        target = (ICWatchpointTarget) ((IAdaptable)obj).getAdapter(
+                        target = ((IAdaptable)obj).getAdapter(
                             org.eclipse.cdt.debug.internal.core.ICWatchpointTarget.class);
                     }
                     return target;
@@ -666,7 +666,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	 * @param part Workbench part where action was invoked.
 	 */
 	protected void report( String message, IWorkbenchPart part ) {
-		IEditorStatusLine statusLine = (IEditorStatusLine)part.getAdapter( IEditorStatusLine.class );
+		IEditorStatusLine statusLine = part.getAdapter( IEditorStatusLine.class );
 		if ( statusLine != null ) {
 			if ( message != null ) {
 				statusLine.setMessage( true, message, null );
@@ -706,7 +706,7 @@ abstract public class AbstractToggleBreakpointAdapter
 		if ( resource != null )
 			return resource;
 		/* This file is not in a project, let default case handle it */
-		ILocationProvider provider = (ILocationProvider)editorInput.getAdapter( ILocationProvider.class );
+		ILocationProvider provider = editorInput.getAdapter( ILocationProvider.class );
 		if ( provider != null ) {
 			IPath location = provider.getPath( editorInput );
 			if ( location != null ) {
@@ -805,7 +805,7 @@ abstract public class AbstractToggleBreakpointAdapter
 	private boolean toggleBreakpointEnable(IWorkbenchPart part) {
         ITextEditor textEditor = getTextEditor(part);
         if(textEditor != null) {
-            IVerticalRulerInfo info = (IVerticalRulerInfo) textEditor.getAdapter(IVerticalRulerInfo.class);
+            IVerticalRulerInfo info = textEditor.getAdapter(IVerticalRulerInfo.class);
             if(info != null) {
                 EnableDisableBreakpointRulerAction enableAction = new EnableDisableBreakpointRulerAction(part, info);
                 enableAction.update();
@@ -827,7 +827,7 @@ abstract public class AbstractToggleBreakpointAdapter
         if (part instanceof ITextEditor) {
             return (ITextEditor) part;
         }
-        return (ITextEditor) part.getAdapter(ITextEditor.class);
+        return part.getAdapter(ITextEditor.class);
     }
 
     /**

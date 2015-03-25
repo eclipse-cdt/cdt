@@ -352,7 +352,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	}
 
 	private void installQuickAccessAction() {
-		fHandlerService= (IHandlerService)fSite.getService(IHandlerService.class);
+		fHandlerService= fSite.getService(IHandlerService.class);
 		if (fHandlerService != null) {
 			IHandler handler= new CDTQuickMenuCreator(fEditor) {
 				@Override

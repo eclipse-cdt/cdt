@@ -63,7 +63,7 @@ public final class SpecificContentAssistExecutor {
 		}
 		
 		try {
-			ITextOperationTarget target= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+			ITextOperationTarget target= editor.getAdapter(ITextOperationTarget.class);
 			if (target != null && target.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS))
 				target.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 		} finally {

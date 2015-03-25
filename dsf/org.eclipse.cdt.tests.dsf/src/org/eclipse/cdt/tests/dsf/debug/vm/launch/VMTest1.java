@@ -113,7 +113,7 @@ public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstan
         final IDMVMContext containerVMC = _containerVMC;
         final TreePath containerPath = launchPath.createChildPath(containerVMC);
         final IElementPropertiesProvider containerPropProvider = 
-            (IElementPropertiesProvider)containerVMC.getAdapter(IElementPropertiesProvider.class);
+            containerVMC.getAdapter(IElementPropertiesProvider.class);
         Assert.assertNotNull(containerPropProvider);
         
         // Check if container is suspended.

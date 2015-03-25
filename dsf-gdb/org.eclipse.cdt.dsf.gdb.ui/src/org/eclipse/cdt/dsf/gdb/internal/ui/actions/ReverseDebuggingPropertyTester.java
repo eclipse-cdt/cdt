@@ -45,7 +45,7 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
     	boolean result = false;
 		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(), ICommandControlDMContext.class);
 		if (controlDmc != null) {
-			IReverseToggleHandler toggle = (IReverseToggleHandler)(controlDmc.getAdapter(IReverseToggleHandler.class));
+			IReverseToggleHandler toggle = (controlDmc.getAdapter(IReverseToggleHandler.class));
 			if (toggle != null) {
 				result = toggle.isReverseToggled(controlDmc);
 			}

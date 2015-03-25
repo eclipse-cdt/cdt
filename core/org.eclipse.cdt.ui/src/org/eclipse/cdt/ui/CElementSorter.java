@@ -280,8 +280,8 @@ public class CElementSorter extends ViewerSorter {
 		@SuppressWarnings("unchecked")
 		final Comparator<Object> comparator = getComparator();
 		if (cat1 == PROJECTS) {
-			IWorkbenchAdapter a1= (IWorkbenchAdapter)((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
-			IWorkbenchAdapter a2= (IWorkbenchAdapter)((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter a1= ((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter a2= ((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
 			return comparator.compare(a1.getLabel(e1), a2.getLabel(e2));
 		}
 

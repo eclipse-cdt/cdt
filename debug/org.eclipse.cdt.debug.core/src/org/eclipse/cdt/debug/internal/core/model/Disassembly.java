@@ -62,7 +62,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 	}
 
 	private DisassemblyBlock createBlock( ICStackFrame frame ) throws DebugException {
-		ICDITarget target = (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
+		ICDITarget target = getDebugTarget().getAdapter( ICDITarget.class );
 		if ( target != null ) {
 			String fileName = frame.getFile();
 			int lineNumber = frame.getLineNumber();
@@ -111,7 +111,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 	}
 	
 	private DisassemblyBlock createBlock( IAddress startAddress, IAddress endAddress) throws DebugException {
-		ICDITarget target = (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
+		ICDITarget target = getDebugTarget().getAdapter( ICDITarget.class );
 		if ( target != null ) {
 			ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
 			if ( mixedInstrs.length == 0 ||

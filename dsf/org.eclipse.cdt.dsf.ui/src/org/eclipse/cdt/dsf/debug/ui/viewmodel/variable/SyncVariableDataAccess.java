@@ -93,7 +93,7 @@ public class SyncVariableDataAccess {
     
     public IExpressionDMContext getVariableDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (IExpressionDMContext) ((IAdaptable) element).getAdapter(IExpressionDMContext.class);
+            return ((IAdaptable) element).getAdapter(IExpressionDMContext.class);
         }
         return null;
     }
@@ -145,7 +145,7 @@ public class SyncVariableDataAccess {
 
     public IExpressionDMContext getExpressionDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (IExpressionDMContext) ((IAdaptable) element).getAdapter(IExpressionDMContext.class);
+            return ((IAdaptable) element).getAdapter(IExpressionDMContext.class);
         }
         return null;
     }
@@ -280,7 +280,7 @@ public class SyncVariableDataAccess {
 
     public IFormattedDataDMContext getFormattedDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (IFormattedDataDMContext) ((IAdaptable) element).getAdapter(IFormattedDataDMContext.class);
+            return ((IAdaptable) element).getAdapter(IFormattedDataDMContext.class);
         }
         return null;
     }

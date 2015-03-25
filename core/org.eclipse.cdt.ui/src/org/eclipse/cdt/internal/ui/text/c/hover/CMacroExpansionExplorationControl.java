@@ -314,8 +314,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
         };
 
         IWorkbench workbench= PlatformUI.getWorkbench();
-        fHandlerService= (IHandlerService) workbench.getService(IHandlerService.class);
-        fContextService= (IContextService) workbench.getService(IContextService.class);
+        fHandlerService= workbench.getService(IHandlerService.class);
+        fContextService= workbench.getService(IContextService.class);
         fContextActivation= fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
         fHandlerActivations= new ArrayList<IHandlerActivation>();
         fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
@@ -399,7 +399,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 */
 	private String getInfoText() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
-		IBindingService bindingService= (IBindingService) workbench.getService(IBindingService.class);
+		IBindingService bindingService= workbench.getService(IBindingService.class);
 		String formattedBindingBack= bindingService.getBestActiveBindingFormattedFor(COMMAND_ID_EXPANSION_BACK);
 		String formattedBindingForward= bindingService.getBestActiveBindingFormattedFor(COMMAND_ID_EXPANSION_FORWARD);
 

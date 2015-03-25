@@ -621,7 +621,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
         Object firstElement = selection.getFirstElement();
         if (firstElement instanceof IAdaptable) {
             IDebugModelProvider debugModelProvider = 
-                (IDebugModelProvider)((IAdaptable)firstElement).getAdapter(IDebugModelProvider.class);
+                ((IAdaptable)firstElement).getAdapter(IDebugModelProvider.class);
             if (debugModelProvider != null) {
                 String[] ids = debugModelProvider.getModelIdentifiers();
                 if (ids != null && ids.length > 0) {

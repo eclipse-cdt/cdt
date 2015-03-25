@@ -517,7 +517,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
 	protected final boolean isOnSameLine(int offset1, int offset2) {
-		ILocationResolver lr= (ILocationResolver) getTranslationUnit().getAdapter(ILocationResolver.class);
+		ILocationResolver lr= getTranslationUnit().getAdapter(ILocationResolver.class);
 		IASTFileLocation floc= lr.getMappedFileLocation(offset1, offset2-offset1+1);
 		return floc.getFileName().equals(lr.getContainingFilePath(offset1)) &&
 			floc.getStartingLineNumber() == floc.getEndingLineNumber();

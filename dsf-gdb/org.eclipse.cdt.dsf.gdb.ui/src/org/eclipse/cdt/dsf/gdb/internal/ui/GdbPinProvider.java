@@ -214,7 +214,7 @@ public class GdbPinProvider implements IPinProvider {
 		
 		IDMContext dmc = null;
 		if (debugContext instanceof IAdaptable) {
-			dmc = (IDMContext) ((IAdaptable) debugContext).getAdapter(IDMContext.class);
+			dmc = ((IAdaptable) debugContext).getAdapter(IDMContext.class);
 			
 			if (dmc != null) {
 				sessionId = dmc.getSessionId() + "."; //$NON-NLS-1$
@@ -256,7 +256,7 @@ public class GdbPinProvider implements IPinProvider {
 		// dispatch the event to update the handle DM context
 		Object debugContext = handle.getDebugContext();
 		if (debugContext instanceof IAdaptable) {
-			IDMContext dmc = (IDMContext) ((IAdaptable) debugContext).getAdapter(IDMContext.class);
+			IDMContext dmc = ((IAdaptable) debugContext).getAdapter(IDMContext.class);
 			GdbPinColorTracker.INSTANCE.removeRef(dmc.getSessionId() + "." + handle.getLabel()); //$NON-NLS-1$
 			dispatchChangedEvent(dmc);
 			
@@ -272,8 +272,8 @@ public class GdbPinProvider implements IPinProvider {
 		Object handleDebugContext = handle.getDebugContext();
 		
 		if (debugContext instanceof IAdaptable && handleDebugContext instanceof IAdaptable) {			
-			IDMContext dmc = (IDMContext) ((IAdaptable) debugContext).getAdapter(IDMContext.class);
-			IDMContext hDmc = (IDMContext) ((IAdaptable) handleDebugContext).getAdapter(IDMContext.class);
+			IDMContext dmc = ((IAdaptable) debugContext).getAdapter(IDMContext.class);
+			IDMContext hDmc = ((IAdaptable) handleDebugContext).getAdapter(IDMContext.class);
 			
 			if (dmc != null && hDmc != null) {
 				if (dmc.getSessionId().equals(hDmc.getSessionId())) {				
@@ -326,7 +326,7 @@ public class GdbPinProvider implements IPinProvider {
 						PinElementHandle handle = ((PinElementHandle)h);						
 						Object handleDebugContext = handle.getDebugContext();
 						if (handleDebugContext instanceof IAdaptable) {						
-							IDMContext handleDmc = (IDMContext) ((IAdaptable) handleDebugContext).getAdapter(IDMContext.class);
+							IDMContext handleDmc = ((IAdaptable) handleDebugContext).getAdapter(IDMContext.class);
 							if (handleDmc != null) {
 								DsfSession session = DsfSession.getSession(handleDmc.getSessionId());
 								if (session == null || !session.isActive()) {							

@@ -152,7 +152,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 	protected IEnableDisableTarget getEnableDisableTarget( Object obj ) {
 		IEnableDisableTarget target = null;
 		if ( obj instanceof IAdaptable ) {
-			target = (IEnableDisableTarget)((IAdaptable)obj).getAdapter( IEnableDisableTarget.class );
+			target = ((IAdaptable)obj).getAdapter( IEnableDisableTarget.class );
 		}
 		return target;
 	}

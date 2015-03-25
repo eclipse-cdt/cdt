@@ -66,7 +66,7 @@ public class RemoveGlobalsActionDelegate extends ActionDelegate implements IView
 		if ( list.size() == 0 )
 			return;
 		final ICGlobalVariable[] globals = (ICGlobalVariable[])list.toArray( new ICGlobalVariable[list.size()] );
-		final ICGlobalVariableManager gvm = (ICGlobalVariableManager)globals[0].getDebugTarget().getAdapter( ICGlobalVariableManager.class );
+		final ICGlobalVariableManager gvm = globals[0].getDebugTarget().getAdapter( ICGlobalVariableManager.class );
 		if ( gvm == null )
 			return;
 		Runnable r = new Runnable() {

@@ -156,7 +156,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 		if (elem instanceof IProject) {
 			project= (IProject) elem;
 		} else if (elem != null) {
-			project= (IProject) elem.getAdapter(IProject.class);
+			project= elem.getAdapter(IProject.class);
 		}
 		return project;
 	}

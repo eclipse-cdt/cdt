@@ -152,7 +152,7 @@ public class OpenFileGroup extends CViewActionGroup {
 			} catch (Exception e) {
 			}
 		} else if (obj instanceof IAdaptable) {
-			IResource element = (IResource)((IAdaptable)obj).getAdapter(IResource.class);
+			IResource element = ((IAdaptable)obj).getAdapter(IResource.class);
 			if (element instanceof IFile) {
 				openFileAction.selectionChanged(selection);
 				openFileAction.run();

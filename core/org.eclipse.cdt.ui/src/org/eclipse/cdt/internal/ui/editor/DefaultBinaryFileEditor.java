@@ -120,10 +120,10 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 		@Override
 		public IStorage getStorage() throws CoreException {
 			if (fStorage == null) {
-				IBinaryParser.IBinaryObject object = (IBinaryParser.IBinaryObject) fBinary
+				IBinaryParser.IBinaryObject object = fBinary
 						.getAdapter(IBinaryParser.IBinaryObject.class);
 				if (object != null) {
-					IGnuToolFactory factory = (IGnuToolFactory) object.getBinaryParser().getAdapter(
+					IGnuToolFactory factory = object.getBinaryParser().getAdapter(
 							IGnuToolFactory.class);
 					if (factory != null) {
 						Objdump objdump = factory.getObjdump(object.getPath());

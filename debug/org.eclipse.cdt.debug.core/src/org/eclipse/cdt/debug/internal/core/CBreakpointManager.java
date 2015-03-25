@@ -1536,7 +1536,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 	
 	private ICBreakpointFilterExtension getFilterExtension(ICBreakpoint bp) throws CoreException{
-	    return (ICBreakpointFilterExtension)bp.getExtension(
+	    return bp.getExtension(
 	        CDIDebugModel.getPluginIdentifier(), ICBreakpointFilterExtension.class);
 	}
 }

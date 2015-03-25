@@ -58,11 +58,11 @@ public class NamePatternFilter extends ViewerFilter {
 			matchName= ((ICElement) element).getElementName();
 		} else if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) element;
-			ICElement javaElement= (ICElement)adaptable.getAdapter(ICElement.class);
+			ICElement javaElement= adaptable.getAdapter(ICElement.class);
 			if (javaElement != null)
 				matchName= javaElement.getElementName();
 			else {
-				IResource resource= (IResource)adaptable.getAdapter(IResource.class);
+				IResource resource= adaptable.getAdapter(IResource.class);
 				if (resource != null)
 					matchName= resource.getName();
 			}

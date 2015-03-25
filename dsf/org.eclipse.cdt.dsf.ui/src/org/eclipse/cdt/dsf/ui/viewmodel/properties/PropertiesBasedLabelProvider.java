@@ -244,7 +244,7 @@ public class PropertiesBasedLabelProvider
 
     private IElementPropertiesProvider getElementPropertiesProvider(Object element) {
         if (element instanceof IAdaptable) {
-            return (IElementPropertiesProvider)((IAdaptable)element).getAdapter(IElementPropertiesProvider.class);
+            return ((IAdaptable)element).getAdapter(IElementPropertiesProvider.class);
         }
         return null;
     }

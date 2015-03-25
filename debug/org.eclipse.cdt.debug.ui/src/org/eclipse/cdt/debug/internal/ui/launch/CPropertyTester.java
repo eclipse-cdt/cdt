@@ -36,7 +36,7 @@ public class CPropertyTester extends PropertyTester {
 	private boolean isExecutable(Object receiver) {
 		ICElement celement = null;
 		if (receiver instanceof IAdaptable) {
-			IResource res = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
+			IResource res = ((IAdaptable) receiver).getAdapter(IResource.class);
 			if (res != null) {
 				celement = CoreModel.getDefault().create(res);
 			}

@@ -47,7 +47,7 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 			final IAddress address = disassemblySelection.getStartAddress();
 	    	
 	    	if (address != null && target instanceof IAdaptable) {
-	    		final IMoveToAddress moveToAddress = (IMoveToAddress)((IAdaptable)target).getAdapter(IMoveToAddress.class);
+	    		final IMoveToAddress moveToAddress = ((IAdaptable)target).getAdapter(IMoveToAddress.class);
 	    		if (moveToAddress != null && moveToAddress.canMoveToAddress(address)) {
 	    			try {
 	    				moveToAddress.moveToAddress(address);								
@@ -63,7 +63,7 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 	@Override
 	public boolean canMoveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
-			IMoveToAddress moveToAddress = (IMoveToAddress)((IAdaptable)target).getAdapter(IMoveToAddress.class);
+			IMoveToAddress moveToAddress = ((IAdaptable)target).getAdapter(IMoveToAddress.class);
 			if (moveToAddress == null) {
 				return false;
 			}

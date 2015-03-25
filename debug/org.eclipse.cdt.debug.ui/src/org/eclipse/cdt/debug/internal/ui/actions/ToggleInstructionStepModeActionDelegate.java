@@ -197,7 +197,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
 		}
 		if (target == null) {
 			if (element instanceof IAdaptable) {
-				target= (ISteppingModeTarget) ((IAdaptable)element).getAdapter(ISteppingModeTarget.class);
+				target= ((IAdaptable)element).getAdapter(ISteppingModeTarget.class);
 			}
 		}
 		return target;

@@ -91,7 +91,7 @@ public class SelectionConverter {
 				if (e instanceof ICElement) {
 					converted.add(e);
 				} else if (e instanceof IAdaptable) {
-					ICElement c = (ICElement) ((IAdaptable) e).getAdapter(ICElement.class);
+					ICElement c = ((IAdaptable) e).getAdapter(ICElement.class);
 					if (c != null) {
 						converted.add(c);
 					} else if (keepNonCElements)
@@ -112,7 +112,7 @@ public class SelectionConverter {
 				if (e instanceof IResource) {
 					converted.add(e);
 				} else if (e instanceof IAdaptable) {
-					IResource r = (IResource) ((IAdaptable) e).getAdapter(IResource.class);
+					IResource r = ((IAdaptable) e).getAdapter(IResource.class);
 					if (r != null) {
 						converted.add(r);
 					}
@@ -128,7 +128,7 @@ public class SelectionConverter {
 			Object next = resources.next();
 			if (next instanceof IAdaptable) {
 				IAdaptable element = (IAdaptable) next;
-				IResource resource = (IResource) element.getAdapter(IResource.class);
+				IResource resource = element.getAdapter(IResource.class);
 
 				if (resource == null) {
 					return false;
@@ -160,7 +160,7 @@ public class SelectionConverter {
 		while (adaptables.hasNext()) {
 			Object next = adaptables.next();
 			if (next instanceof IAdaptable) {
-				IResource resource = (IResource) ((IAdaptable) next).getAdapter(IResource.class);
+				IResource resource = ((IAdaptable) next).getAdapter(IResource.class);
 				if (resource == null) {
 					return null;
 				} else if (resourceIsType(resource, resourceMask)) {

@@ -823,7 +823,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 	 * @return the keybinding for Refactor &gt; Rename
 	 */
 	private static String getOpenDialogBinding() {
-		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService == null)
 			return ""; //$NON-NLS-1$
 		String binding= bindingService.getBestActiveBindingFormattedFor(ICEditorActionDefinitionIds.RENAME_ELEMENT);

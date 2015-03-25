@@ -156,7 +156,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 		if ( fBlock != null ) {
 			IDisassembly dis = fBlock.getDisassembly();
 			if ( dis != null ) {
-				ICDebugTarget target = (ICDebugTarget)dis.getDebugTarget().getAdapter( ICDebugTarget.class );
+				ICDebugTarget target = dis.getDebugTarget().getAdapter( ICDebugTarget.class );
 				if ( target != null ) {
 					try {
 						IAddress address = target.getBreakpointAddress( breakpoint );
@@ -341,7 +341,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 		Assert.isTrue( address != null );
 		IDisassembly dis = getDisassembly();
 		if ( dis != null ) {
-			ICDebugTarget bt = (ICDebugTarget)dis.getDebugTarget().getAdapter( ICDebugTarget.class );
+			ICDebugTarget bt = dis.getDebugTarget().getAdapter( ICDebugTarget.class );
 			if ( bt != null ) {
 				String modelId = CDIDebugModel.getPluginIdentifier();
 				IBreakpoint[] bps = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints( modelId );

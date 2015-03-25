@@ -122,7 +122,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			if (part != null) {
 				IEditorInput editorInput= part.getEditorInput();
 				if (editorInput != null) {
-					return (ICElement)editorInput.getAdapter(ICElement.class);
+					return editorInput.getAdapter(ICElement.class);
 				}
 			}
 		}

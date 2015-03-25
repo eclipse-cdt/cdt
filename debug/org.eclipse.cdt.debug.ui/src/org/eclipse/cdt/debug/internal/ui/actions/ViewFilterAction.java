@@ -124,7 +124,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
-		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
+		IDebugView view = getView().getAdapter(IDebugView.class);
 		
 		// Debug view
 		if (view instanceof LaunchView) {
@@ -183,7 +183,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	}
 	
 	protected StructuredViewer getStructuredViewer() {
-		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
+		IDebugView view = getView().getAdapter(IDebugView.class);
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {

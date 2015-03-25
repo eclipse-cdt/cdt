@@ -101,7 +101,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	public String getModuleFile() {
 		IDisassembly d = getDisassembly();
 		if ( d != null ) {
-			IExecFileInfo info = (IExecFileInfo)d.getAdapter( IExecFileInfo.class );
+			IExecFileInfo info = d.getAdapter( IExecFileInfo.class );
 			if ( info != null && info.getExecFile() != null ) {
 				return info.getExecFile().getPath().toOSString();
 			}

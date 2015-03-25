@@ -85,7 +85,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 			if (next instanceof IProject) {
 				project = (IProject) next;
 			} else if (next instanceof IAdaptable) {
-				IResource res = (IResource) ((IAdaptable) next).getAdapter(IResource.class);
+				IResource res = ((IAdaptable) next).getAdapter(IResource.class);
 				if (res instanceof IProject) {
 					project = (IProject)res;
 				}

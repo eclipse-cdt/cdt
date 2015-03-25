@@ -46,7 +46,7 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 
-		IBreakpoint tracepoint = (IBreakpoint) this.getElement().getAdapter(org.eclipse.debug.core.model.IBreakpoint.class);
+		IBreakpoint tracepoint = this.getElement().getAdapter(org.eclipse.debug.core.model.IBreakpoint.class);
 		tracepointMarker = tracepoint.getMarker();
 		savedActionNames = tracepointMarker.getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
 

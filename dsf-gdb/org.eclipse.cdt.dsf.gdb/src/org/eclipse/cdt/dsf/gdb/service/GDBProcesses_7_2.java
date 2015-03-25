@@ -411,7 +411,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		                    public void execute(RequestMonitor rm) {								
 								IReverseRunControl reverseService = getServicesTracker().getService(IReverseRunControl.class);
 								if (reverseService != null) {
-									ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
+									ILaunch launch = procCtx.getAdapter(ILaunch.class);
 									if (launch != null) {
 										try {
 											boolean reverseEnabled = 
@@ -451,7 +451,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	}
 	
 	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
-		ILaunch launch = (ILaunch)procCtx.getAdapter(ILaunch.class);
+		ILaunch launch = procCtx.getAdapter(ILaunch.class);
 		assert launch != null;
 		if (launch != null) {
 			Map<String, Object> attributes = null;

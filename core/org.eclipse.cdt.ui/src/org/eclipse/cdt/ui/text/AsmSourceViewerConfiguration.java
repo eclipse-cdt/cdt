@@ -181,7 +181,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 			IAsmLanguage asmLang= (IAsmLanguage)language;
 			scanner = new AsmCodeScanner(getTokenStoreFactory(), asmLang);
 		} else if (language != null) {
-			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+			ILanguageUI languageUI = language.getAdapter(ILanguageUI.class);
 			if (languageUI != null)
 				scanner = languageUI.getCodeScanner();
 		}
@@ -347,7 +347,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 				IPath path = ((IPathEditorInput)input).getPath();
 				contentType = CCorePlugin.getContentType(path.lastSegment());
 			} else {
-				ILocationProvider locationProvider = (ILocationProvider)input.getAdapter(ILocationProvider.class);
+				ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
 				if (locationProvider != null) {
 					IPath path = locationProvider.getPath(input);
 					contentType = CCorePlugin.getContentType(path.lastSegment());

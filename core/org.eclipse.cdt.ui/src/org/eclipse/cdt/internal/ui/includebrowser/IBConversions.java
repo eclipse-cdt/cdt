@@ -82,16 +82,16 @@ public class IBConversions {
         }
         if (object instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) object;
-            ITranslationUnit result= (ITranslationUnit) adaptable.getAdapter(ITranslationUnit.class);
+            ITranslationUnit result= adaptable.getAdapter(ITranslationUnit.class);
             if (result != null) {
                 return result;
             }
-            IFile file= (IFile) adaptable.getAdapter(IFile.class);
+            IFile file= adaptable.getAdapter(IFile.class);
             if (file != null) {
                 return CoreModelUtil.findTranslationUnit(file);
             }
 
-            ILocationProvider locProvider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+            ILocationProvider locProvider= adaptable.getAdapter(ILocationProvider.class);
             if (locProvider != null) {
             	IPath path= locProvider.getPath(locProvider);
             	if (path != null) {

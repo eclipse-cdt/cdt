@@ -69,7 +69,7 @@ public class TextSearchWrapper {
             ArrayList<IResource> resources = new ArrayList<IResource>();
             for (int i = 0; i < adaptables.length; i++) {
                 IAdaptable adaptable = adaptables[i];
-                IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+                IResource resource= adaptable.getAdapter(IResource.class);
                 if (resource != null) {
                     resources.add(resource);
                 }

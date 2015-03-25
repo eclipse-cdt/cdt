@@ -510,7 +510,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         	return;
         }
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
-        SteppingController stepQueueMgr = (SteppingController) execDmc.getAdapter(SteppingController.class); 
+        SteppingController stepQueueMgr = execDmc.getAdapter(SteppingController.class); 
         if (runControlService == null || stepQueueMgr == null) return;
         
         String imageKey = null;

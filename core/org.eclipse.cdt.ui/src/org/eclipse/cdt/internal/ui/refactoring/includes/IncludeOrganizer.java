@@ -820,11 +820,11 @@ public class IncludeOrganizer {
 			IIndexName[] indexNames;
 			if (binding instanceof IMacroBinding) {
 				indexNames = IIndexName.EMPTY_ARRAY;
-	    		ILocationResolver resolver = (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+	    		ILocationResolver resolver = ast.getAdapter(ILocationResolver.class);
 	    		IASTName[] declarations = resolver.getDeclarations((IMacroBinding) binding);
 	    		for (IASTName name : declarations) {
 	    			if (name instanceof IAdaptable) {
-	    				IIndexName indexName = (IIndexName) ((IAdaptable) name).getAdapter(IIndexName.class);
+	    				IIndexName indexName = ((IAdaptable) name).getAdapter(IIndexName.class);
 	    				if (indexName != null) {
 		    				indexNames = Arrays.copyOf(indexNames, indexNames.length + 1);
 		    				indexNames[indexNames.length - 1] = indexName;

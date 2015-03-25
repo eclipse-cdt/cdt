@@ -82,7 +82,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 			return;
 		}
 		if (fInput.fExplorer.getExpansionStepCount() > 1) {
-			IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			if (bindingService != null) {
 				String keySequence= bindingService.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 				if (keySequence != null) {

@@ -166,9 +166,9 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	@Override
 	public void partActivated(IWorkbenchPart part) {
 		fActivePart = part;
-		IResource resource = (IResource) part.getAdapter(IResource.class);
+		IResource resource = part.getAdapter(IResource.class);
 		if (resource == null && part instanceof IEditorPart) {
-			resource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
+			resource = ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
 		}
 		if (resource != null) {
 			fTargetAdapter = getAdapter(resource);

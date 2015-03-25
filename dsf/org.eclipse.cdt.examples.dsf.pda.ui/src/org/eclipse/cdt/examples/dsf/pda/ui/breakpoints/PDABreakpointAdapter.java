@@ -45,7 +45,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
 		ITextEditor textEditor = getEditor(part);
 		if (textEditor != null) {
-			IResource resource = (IResource) textEditor.getEditorInput().getAdapter(IResource.class);
+			IResource resource = textEditor.getEditorInput().getAdapter(IResource.class);
 			ITextSelection textSelection = (ITextSelection) selection;
 			int lineNumber = textSelection.getStartLine();
 			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(PDAPlugin.ID_PDA_DEBUG_MODEL);
@@ -82,7 +82,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	private ITextEditor getEditor(IWorkbenchPart part) {
 		if (part instanceof ITextEditor) {
 			ITextEditor editorPart = (ITextEditor) part;
-			IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
+			IResource resource = editorPart.getEditorInput().getAdapter(IResource.class);
 			if (resource != null) {
 				String extension = resource.getFileExtension();
 				if (extension != null && extension.equals("pda")) {
@@ -112,7 +112,7 @@ public class PDABreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	    if (variableAndFunctionName != null && part instanceof ITextEditor && selection instanceof ITextSelection) {
 	        ITextEditor editorPart = (ITextEditor)part;
 	        int lineNumber = ((ITextSelection)selection).getStartLine();
-	        IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
+	        IResource resource = editorPart.getEditorInput().getAdapter(IResource.class);
 	        String var = variableAndFunctionName[0];
 	        String fcn = variableAndFunctionName[1];
 	        // look for existing watchpoint to delete

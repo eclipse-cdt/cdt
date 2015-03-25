@@ -76,7 +76,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		IWorkingSet resolvedWS = resolve();
 		if (resolvedWS != null) {
 			for (IAdaptable next : resolvedWS.getElements()) {
-				IProject proj = (IProject) next.getAdapter(IProject.class);
+				IProject proj = next.getAdapter(IProject.class);
 
 				if (proj != null) {
 					result.add(proj);

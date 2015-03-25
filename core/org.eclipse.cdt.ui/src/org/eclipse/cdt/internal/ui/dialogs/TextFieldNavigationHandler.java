@@ -364,8 +364,8 @@ public class TextFieldNavigationHandler {
 
 						fSubmissions= new ArrayList<Submission>();
 
-						ICommandService commandService= (ICommandService) PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-						IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+						ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+						IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 						if (commandService == null || bindingService == null)
 							return fSubmissions;
 

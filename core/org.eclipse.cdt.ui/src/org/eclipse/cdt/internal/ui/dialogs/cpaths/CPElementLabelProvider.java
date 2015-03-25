@@ -406,7 +406,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 					return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LIBRARY);
 				case -1 :
 					IResource res = ((CPElementGroup)element).getResource();
-					IWorkbenchAdapter adapter = (IWorkbenchAdapter)res.getAdapter(IWorkbenchAdapter.class);
+					IWorkbenchAdapter adapter = res.getAdapter(IWorkbenchAdapter.class);
 					ImageDescriptor imageDescriptor = adapter.getImageDescriptor(res);
 					if (!res.exists()) {
 						imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.WARNING, SMALL_SIZE);

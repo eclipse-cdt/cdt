@@ -52,7 +52,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	protected void doAction() throws DebugException {
 		ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
 		if ( target != null ) {
-			final IModuleRetrieval mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+			final IModuleRetrieval mr = target.getAdapter( IModuleRetrieval.class );
 			if ( mr != null ) {
 				DebugPlugin.getDefault().asyncExec( 
 					new Runnable() {
@@ -92,7 +92,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 
 	private ICDebugTarget getDebugTarget( Object element ) {
 		if ( element instanceof IAdaptable ) {
-			return (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
+			return ((IAdaptable)element).getAdapter( ICDebugTarget.class );
 		}
 		return null;
 	}

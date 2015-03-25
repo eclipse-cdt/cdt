@@ -177,7 +177,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 			IWorkbenchWindow workbenchWindow = part.getSite().getWorkbenchWindow();
 			IDebugContextService service = manager.getContextService(workbenchWindow);
 			service.addDebugContextListener(fContextListener);
-			fPartTarget  = (IResumeAtLineTarget) part.getAdapter(IResumeAtLineTarget.class);
+			fPartTarget  = part.getAdapter(IResumeAtLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on

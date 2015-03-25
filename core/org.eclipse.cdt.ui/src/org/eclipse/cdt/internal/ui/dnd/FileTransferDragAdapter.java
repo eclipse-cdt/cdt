@@ -136,7 +136,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 				if (object instanceof IResource) {
 					resource = (IResource) object;
 				} else if (object instanceof IAdaptable) {
-					resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
+					resource = ((IAdaptable) object).getAdapter(IResource.class);
 				}
 
 				if (resource != null)

@@ -278,7 +278,7 @@ public class SourceDisplayAdapter implements ISourceDisplay {
                 displayDisassembly(page, frame);
             } else {
                 DelegatingStackFrame delegatingFrame = new DelegatingStackFrame((ICStackFrame)element);
-                ISourceDisplay sd = (ISourceDisplay)Platform.getAdapterManager().getAdapter(delegatingFrame, ISourceDisplay.class);
+                ISourceDisplay sd = Platform.getAdapterManager().getAdapter(delegatingFrame, ISourceDisplay.class);
                 if (sd != null)
                     sd.displaySource(element, page, forceSourceLookup);
             }

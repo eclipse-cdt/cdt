@@ -577,7 +577,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 		memento = null;
 
-    	IContextService ctxService = (IContextService) getSite().getService(IContextService.class);
+    	IContextService ctxService = getSite().getService(IContextService.class);
     	if (ctxService != null) {
     		fContextActivation= ctxService.activateContext(CUIPlugin.CVIEWS_SCOPE);
     	}
@@ -607,7 +607,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
-			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
+			IContextService ctxService = getSite().getService(IContextService.class);
 	    	if (ctxService != null) {
 	    		ctxService.deactivateContext(fContextActivation);
 	    	}
@@ -742,7 +742,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				return ((IResource) o).getFullPath().makeRelative().toString();
 			} else if (o instanceof ICElement) {
 				ICElement celement = (ICElement) o;
-				IResource res = (IResource) celement.getAdapter(IResource.class);
+				IResource res = celement.getAdapter(IResource.class);
 				if (res != null) {
 					return res.getFullPath().toString();
 				} else if (celement.getElementType() == ICElement.C_VCONTAINER) {
@@ -1085,7 +1085,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 		IEditorInput input = (IEditorInput) context.getInput();
 		if (input != null) {
-			IResource res = (IResource) input.getAdapter(IResource.class);
+			IResource res = input.getAdapter(IResource.class);
 			if (res != null) {
 				selectReveal(new StructuredSelection(res));
 				return true;

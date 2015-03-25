@@ -310,7 +310,7 @@ public class CElementImageProvider {
 	 * Returns <code>null</code> if no image could be found.
 	 */	
 	public ImageDescriptor getWorkbenchImageDescriptor(IAdaptable adaptable, int flags) {
-		IWorkbenchAdapter wbAdapter= (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
+		IWorkbenchAdapter wbAdapter= adaptable.getAdapter(IWorkbenchAdapter.class);
 		if (wbAdapter == null) {
 			return null;
 		}
@@ -331,7 +331,7 @@ public class CElementImageProvider {
 	public ImageDescriptor getBaseImageDescriptor(ICElement celement, int renderFlags) {
 		// Allow contributed languages to provide icons for their extensions to the ICElement hierarchy
 		if (celement instanceof IContributedCElement)
-		    return (ImageDescriptor)((IContributedCElement)celement).getAdapter(ImageDescriptor.class);
+		    return ((IContributedCElement)celement).getAdapter(ImageDescriptor.class);
 		
 		int type = celement.getElementType();
 		switch (type) {
@@ -389,7 +389,7 @@ public class CElementImageProvider {
 				ICProject cp= (ICProject)celement;
 				if (cp.getProject().isOpen()) {
 					IProject project= cp.getProject();
-					IWorkbenchAdapter adapter= (IWorkbenchAdapter)project.getAdapter(IWorkbenchAdapter.class);
+					IWorkbenchAdapter adapter= project.getAdapter(IWorkbenchAdapter.class);
 					if (adapter != null) {
 						ImageDescriptor result= adapter.getImageDescriptor(project);
 						if (result != null)

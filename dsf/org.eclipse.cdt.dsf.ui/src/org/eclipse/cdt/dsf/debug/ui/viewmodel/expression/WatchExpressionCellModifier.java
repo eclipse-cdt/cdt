@@ -189,7 +189,7 @@ public class WatchExpressionCellModifier implements ICellModifier {
 
 	private IWatchExpression getWatchExpression(Object element) {
         if (element instanceof IAdaptable) {
-            return (IWatchExpression)((IAdaptable)element).getAdapter(IWatchExpression.class);
+            return ((IAdaptable)element).getAdapter(IWatchExpression.class);
         }
         return null;
     }

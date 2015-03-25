@@ -80,7 +80,7 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 
 	private void setTargetPart(IAction callerAction, IWorkbenchPart targetPart) {
 		if (fDisassemblyPart != null) {
-			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo rulerInfo= fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				Control control= rulerInfo.getControl();
 				if (control != null && !control.isDisposed())
@@ -90,14 +90,14 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 			fDisassemblyPart.removeRulerContextMenuListener(this);
 		}
 
-		fDisassemblyPart= (IDisassemblyPart)(targetPart == null ? null : targetPart.getAdapter(IDisassemblyPart.class));
+		fDisassemblyPart= targetPart == null ? null : targetPart.getAdapter(IDisassemblyPart.class);
 		fCallerAction= callerAction;
 		fAction= null;
 
 		if (fDisassemblyPart != null) {
 				fDisassemblyPart.addRulerContextMenuListener(this);
 
-			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo rulerInfo= fDisassemblyPart.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				fAction= createAction(fDisassemblyPart, rulerInfo);
 				update();

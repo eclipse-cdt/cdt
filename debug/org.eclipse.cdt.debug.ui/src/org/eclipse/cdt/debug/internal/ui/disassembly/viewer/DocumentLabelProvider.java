@@ -103,7 +103,7 @@ public class DocumentLabelProvider extends BaseLabelProvider {
         }
         else if ( element instanceof IAdaptable ) {
             IAdaptable adaptable = (IAdaptable)element;
-            adapter = (IDocumentElementLabelProvider)adaptable.getAdapter( IDocumentElementLabelProvider.class );
+            adapter = adaptable.getAdapter( IDocumentElementLabelProvider.class );
         }
         return adapter;
     }

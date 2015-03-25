@@ -182,7 +182,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	
 	public static String getShortCutString(String proposalId) {
 		if (proposalId != null) {
-			IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			if (bindingService != null) {
 				TriggerSequence[] activeBindingsFor= bindingService.getActiveBindingsFor(proposalId);
 				if (activeBindingsFor.length > 0) {

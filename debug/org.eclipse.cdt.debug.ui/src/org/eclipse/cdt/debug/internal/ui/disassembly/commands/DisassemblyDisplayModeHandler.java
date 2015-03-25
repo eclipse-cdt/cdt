@@ -61,7 +61,7 @@ public class DisassemblyDisplayModeHandler extends AbstractHandler implements IE
     @Override
 	@SuppressWarnings("unchecked")
     public void updateElement( UIElement element, Map parameters ) {
-        IWorkbenchPartSite site = (IWorkbenchPartSite)element.getServiceLocator().getService( IWorkbenchPartSite.class );
+        IWorkbenchPartSite site = element.getServiceLocator().getService( IWorkbenchPartSite.class );
         if ( site != null ) {
             IWorkbenchPart part = site.getPart();
             if ( part instanceof ITextEditor ) {

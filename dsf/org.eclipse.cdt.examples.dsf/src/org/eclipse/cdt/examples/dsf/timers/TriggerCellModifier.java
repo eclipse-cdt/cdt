@@ -152,7 +152,7 @@ public class TriggerCellModifier implements ICellModifier {
 
     private TriggerDMContext getAlarmDMC(Object element) {
         if (element instanceof IAdaptable) {
-            return (TriggerDMContext)((IAdaptable)element).getAdapter(TriggerDMContext.class);
+            return ((IAdaptable)element).getAdapter(TriggerDMContext.class);
         }
         return null;
     }

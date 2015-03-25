@@ -149,7 +149,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	private IProject getProject() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
-			ICElement elem = (ICElement)adaptable.getAdapter(ICElement.class);
+			ICElement elem = adaptable.getAdapter(ICElement.class);
 			if (elem instanceof ICProject) {
 				return ((ICProject)elem).getProject();
 			}

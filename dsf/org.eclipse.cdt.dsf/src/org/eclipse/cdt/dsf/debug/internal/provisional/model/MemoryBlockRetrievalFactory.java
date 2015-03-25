@@ -35,7 +35,7 @@ public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 			if (adapterType.equals(IMemoryBlockRetrieval.class)) {
 				IAdaptable adaptable = (IAdaptable) adaptableObject;
 				//Retrieve the session's Memory Block Retrieval Manager
-				IMemoryBlockRetrievalManager retrievalManager = ((IMemoryBlockRetrievalManager) adaptable
+				IMemoryBlockRetrievalManager retrievalManager = (adaptable
 						.getAdapter(IMemoryBlockRetrievalManager.class));
 				if (retrievalManager != null) {
 					//resolve the specific Memory Block Retrieval associated to the memory context of adaptableObject

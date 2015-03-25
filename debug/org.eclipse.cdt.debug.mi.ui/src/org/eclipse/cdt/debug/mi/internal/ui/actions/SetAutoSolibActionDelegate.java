@@ -252,7 +252,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 
 	private SharedLibraryManager getSharedLibraryManager( IAdaptable element ) {
 		if ( element != null ) {
-			ICDISession session = (ICDISession)element.getAdapter( ICDISession.class );
+			ICDISession session = element.getAdapter( ICDISession.class );
 			if ( session instanceof Session )
 				return ((Session)session).getSharedLibraryManager();
 		}
@@ -261,7 +261,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 
 	private Target getTarget( IAdaptable element ) {
 		if (element != null) {
-			ICDITarget target = (ICDITarget)element.getAdapter( ICDITarget.class );
+			ICDITarget target = element.getAdapter( ICDITarget.class );
 			if (target instanceof Target) {
 				return (Target)target;
 			}

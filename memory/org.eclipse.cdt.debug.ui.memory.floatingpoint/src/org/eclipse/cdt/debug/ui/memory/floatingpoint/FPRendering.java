@@ -412,7 +412,7 @@ public class FPRendering extends AbstractMemoryRendering
         super.activated();
 
         IWorkbench workbench = PlatformUI.getWorkbench();
-        ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+        ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 
         if (commandSupport != null)
         {
@@ -437,7 +437,7 @@ public class FPRendering extends AbstractMemoryRendering
     public void deactivated()
     {
         IWorkbench workbench = PlatformUI.getWorkbench();
-        ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+        ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 
         if (commandSupport != null)
         {

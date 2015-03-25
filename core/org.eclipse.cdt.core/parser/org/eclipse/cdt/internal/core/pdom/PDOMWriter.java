@@ -491,7 +491,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		ast.accept(visitor);
 
 		if ((fSkipReferences & SKIP_MACRO_REFERENCES) == 0) {
-			LocationMap lm= (LocationMap) ast.getAdapter(LocationMap.class);
+			LocationMap lm= ast.getAdapter(LocationMap.class);
 			if (lm != null) {
 				IASTName[] refs= lm.getMacroReferences();
 				for (IASTName name : refs) {

@@ -157,13 +157,13 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		super(parent, shellStyle, true, true, true, true, true, null, null);
 		if (invokingCommandId != null) {
 			IWorkbench workbench = PlatformUI.getWorkbench();
-			ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+			ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 			if (commandSupport != null)	{
 				fInvokingCommand = commandSupport.getCommand(invokingCommandId);
 				if (fInvokingCommand != null && !fInvokingCommand.isDefined())
 					fInvokingCommand= null;
 				else {
-					IBindingService bindingService = (IBindingService) workbench.getService(IBindingService.class);
+					IBindingService bindingService = workbench.getService(IBindingService.class);
 					fInvokingTriggerSequence = bindingService.getBestActiveBindingFor(invokingCommandId);
 				}
 			}

@@ -137,7 +137,7 @@ public abstract class AbstractRegisterGroupCommandHandler extends AbstractHandle
 		Object element = selection.getFirstElement();
 
 		if (element instanceof IDebugElement) {
-			return (ICDebugTarget) ((IDebugElement) element).getDebugTarget().getAdapter(ICDebugTarget.class);
+			return ((IDebugElement) element).getDebugTarget().getAdapter(ICDebugTarget.class);
 		}
 		return null;
 	}

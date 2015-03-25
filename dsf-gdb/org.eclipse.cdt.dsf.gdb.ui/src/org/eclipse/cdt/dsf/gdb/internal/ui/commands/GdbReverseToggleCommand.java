@@ -236,13 +236,13 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements IRe
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 		        // Request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled" to update 
 			    // visibility of reverse stepping commands.
-			    IEvaluationService exprService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
+			    IEvaluationService exprService = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 			    if (exprService != null) {
 			        exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
 			    }
 			    // Refresh reverse toggle commands with the new state of reverse enabled. 
 			    // This is in order to keep multiple toggle actions in UI in sync.
-			    ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			    ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		        if (commandService != null) {
 		           commandService.refreshElements("org.eclipse.cdt.debug.ui.command.reverseToggle", null); //$NON-NLS-1$
 		        }

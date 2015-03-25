@@ -206,7 +206,7 @@ public class DsfStepIntoSelectionHyperlinkDetector extends AbstractHyperlinkDete
 	}
 
 	private static boolean isLanguageKeyword(ILanguage lang, String word) {
-		ICLanguageKeywords keywords = (ICLanguageKeywords) lang.getAdapter(ICLanguageKeywords.class);
+		ICLanguageKeywords keywords = lang.getAdapter(ICLanguageKeywords.class);
 		if (keywords != null) {
 			for (String keyword : keywords.getKeywords()) {
 				if (keyword.equals(word))

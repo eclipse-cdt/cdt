@@ -109,7 +109,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	}
 
     public static boolean supportsDebugContext_(IAdaptable context) {
-        IDMVMContext dmvmContext = (IDMVMContext) context.getAdapter(IDMVMContext.class);
+        IDMVMContext dmvmContext = context.getAdapter(IDMVMContext.class);
         return dmvmContext != null && hasDisassemblyService(dmvmContext.getDMContext());
     }
     
@@ -166,7 +166,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	@Override
 	public SetDebugContextResult setDebugContext(IAdaptable context) {
 		assert supportsDebugContext(context) : "caller should not have invoked us"; //$NON-NLS-1$
-		IDMVMContext vmContext = (IDMVMContext) context.getAdapter(IDMVMContext.class);
+		IDMVMContext vmContext = context.getAdapter(IDMVMContext.class);
 		IDMContext dmContext = vmContext.getDMContext();
 		
 		SetDebugContextResult result = new SetDebugContextResult();

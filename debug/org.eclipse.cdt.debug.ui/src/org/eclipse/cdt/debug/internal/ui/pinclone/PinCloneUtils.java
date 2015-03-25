@@ -181,7 +181,7 @@ public class PinCloneUtils {
 				
 				/* IPinProvider */
 				if (element instanceof IAdaptable) {					
-					IPinProvider pinProvider = (IPinProvider) ((IAdaptable)element).getAdapter(IPinProvider.class);
+					IPinProvider pinProvider = ((IAdaptable)element).getAdapter(IPinProvider.class);
 					if (pinProvider != null) {
 						if (pinProvider.isPinnable(part,  element))
 							pinnable = true;
@@ -216,7 +216,7 @@ public class PinCloneUtils {
         for (IPinElementHandle handle : handles) {
         	if (debugContext instanceof IAdaptable) {
 
-        		IPinProvider pinProvider = (IPinProvider) ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
+        		IPinProvider pinProvider = ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
         		if (pinProvider != null) {
         			if (pinProvider.isPinnedTo(debugContext, handle)) {
             			colorDesc = handle.getPinElementColorDescriptor();
@@ -249,7 +249,7 @@ public class PinCloneUtils {
 	public static boolean isPinnedTo(Set<IPinElementHandle> handles, Object debugContext) {
 		for (IPinElementHandle handle : handles) {
         	if (debugContext instanceof IAdaptable) {
-        		IPinProvider pinProvider = (IPinProvider) ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
+        		IPinProvider pinProvider = ((IAdaptable) debugContext).getAdapter(IPinProvider.class);
         		if (pinProvider != null) {
         			if (pinProvider.isPinnedTo(debugContext, handle)) {
         				return true;

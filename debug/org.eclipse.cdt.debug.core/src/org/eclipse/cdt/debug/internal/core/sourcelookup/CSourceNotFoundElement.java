@@ -50,7 +50,7 @@ public class CSourceNotFoundElement {
 	 * @return a description string or null if not available
 	 */
 	public String getDescription() {
-		ICSourceNotFoundDescription description = (ICSourceNotFoundDescription) element.getAdapter(ICSourceNotFoundDescription.class);
+		ICSourceNotFoundDescription description = element.getAdapter(ICSourceNotFoundDescription.class);
 		if (description != null)
 			return description.getDescription();
 		else

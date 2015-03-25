@@ -46,8 +46,8 @@ public class CorrectionCommandInstaller {
 	
 	public void registerCommands(CEditor editor) {
 		IWorkbench workbench= PlatformUI.getWorkbench();
-		ICommandService commandService= (ICommandService) workbench.getAdapter(ICommandService.class);
-		IHandlerService handlerService= (IHandlerService) workbench.getAdapter(IHandlerService.class);
+		ICommandService commandService= workbench.getAdapter(ICommandService.class);
+		IHandlerService handlerService= workbench.getAdapter(IHandlerService.class);
 		if (commandService == null || handlerService == null) {
 			return;
 		}
@@ -71,7 +71,7 @@ public class CorrectionCommandInstaller {
 	}
 	
 	public void deregisterCommands() {
-		IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		IHandlerService handlerService= PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		if (handlerService != null && fCorrectionHandlerActivations != null) {
 			handlerService.deactivateHandlers(fCorrectionHandlerActivations);
 			fCorrectionHandlerActivations= null;

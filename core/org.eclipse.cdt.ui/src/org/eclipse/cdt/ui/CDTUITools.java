@@ -138,7 +138,7 @@ public final class CDTUITools {
 		if (tu != null)
 			return tu;
 
-		return (ICElement)editorInput.getAdapter(ICElement.class);
+		return editorInput.getAdapter(ICElement.class);
 	}
 
 	/**

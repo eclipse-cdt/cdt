@@ -63,7 +63,7 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 	@Override
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		IContributedModelBuilder modelBuilder= null;
-		IContributedModelBuilder.Factory modelBuilderFactory= (IContributedModelBuilder.Factory)getAdapter(IContributedModelBuilder.Factory.class);
+		IContributedModelBuilder.Factory modelBuilderFactory= getAdapter(IContributedModelBuilder.Factory.class);
 		if (modelBuilderFactory != null) {
 			modelBuilder= modelBuilderFactory.create(tu);
 		}

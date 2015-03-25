@@ -73,7 +73,7 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 					final int lineNumber = textSelection.getStartLine() + 1;
 					if ( target instanceof IAdaptable ) {
 						final IPath path = convertPath( fileName, debugTarget );
-						final IMoveToLine moveToLine = (IMoveToLine)((IAdaptable)target).getAdapter( IMoveToLine.class );
+						final IMoveToLine moveToLine = ((IAdaptable)target).getAdapter( IMoveToLine.class );
 						if ( moveToLine != null && moveToLine.canMoveToLine( path.toPortableString(), lineNumber ) ) {
 							Runnable r = new Runnable() {
 								@Override
@@ -106,7 +106,7 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 	public boolean canMoveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( target instanceof IAdaptable ) {
 			if ( part instanceof IEditorPart ) {
-				IMoveToLine moveToLine = (IMoveToLine)((IAdaptable)target).getAdapter( IMoveToLine.class );
+				IMoveToLine moveToLine = ((IAdaptable)target).getAdapter( IMoveToLine.class );
 				if ( moveToLine == null)
 					return false;
 				IEditorPart editorPart = (IEditorPart)part;

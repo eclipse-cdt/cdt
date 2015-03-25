@@ -209,7 +209,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 				continue;
 			} else if (isConvertibleToFile(element)) {
 				IAdaptable a = (IAdaptable)element;
-				IFile file = (IFile)a.getAdapter(IFile.class);
+				IFile file = a.getAdapter(IFile.class);
 				String fileName = file.getName();
 				String fileLocation = file.getLocation().toString();
 

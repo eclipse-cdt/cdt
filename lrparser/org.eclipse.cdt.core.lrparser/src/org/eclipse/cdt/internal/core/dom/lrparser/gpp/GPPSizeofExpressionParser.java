@@ -64,9 +64,11 @@ public class GPPSizeofExpressionParser extends PrsStream implements RuleAction, 
     public IToken getRhsLastIToken(int i) { return super.getIToken(getRhsLastTokenIndex(i)); }
 
     public int getLeftSpan() { return btParser.getFirstToken(); }
+    @Override
     public IToken getLeftIToken()  { return super.getIToken(getLeftSpan()); }
 
     public int getRightSpan() { return btParser.getLastToken(); }
+    @Override
     public IToken getRightIToken() { return super.getIToken(getRightSpan()); }
 
     public int getRhsErrorTokenIndex(int i)
@@ -113,6 +115,7 @@ public class GPPSizeofExpressionParser extends PrsStream implements RuleAction, 
         } 
     }
 
+    @Override
     public String[] orderedTerminalSymbols() { return GPPSizeofExpressionParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return GPPSizeofExpressionParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return GPPSizeofExpressionParserprs.EOFT_SYMBOL; }
@@ -204,12 +207,14 @@ private void initActions(Map<String,String> properties) {
 }
 
 
+@Override
 public void addToken(IToken token) {
 	token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 	super.addToken(token);
 }
 
 
+@Override
 public  IASTExpression  parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
@@ -223,19 +228,23 @@ public  IASTExpression  parse() {
 }
 
 
+@Override
 public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
+@Override
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 }
 
+@Override
 public String[] getOrderedTerminalSymbols() {
 	return GPPSizeofExpressionParsersym.orderedTerminalSymbols;
 }
 
+@Override
 @SuppressWarnings("nls")
 public String getName() {
 	return "GPPSizeofExpressionParser";
@@ -245,6 +254,7 @@ public String getName() {
 
 private ITokenMap tokenMap = null;
 
+@Override
 public void setTokens(List<IToken> tokens) {
 	resetTokenStream();
 	addToken(new Token(null, 0, 0, 0)); // dummy token
@@ -269,6 +279,7 @@ public GPPSizeofExpressionParser(ITokenStream stream, Map<String,String> propert
 
 private  GNUBuildASTParserAction  gnuAction;
 
+    @Override
     public void ruleAction(int ruleNumber)
     {
         switch (ruleNumber)

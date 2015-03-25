@@ -47,6 +47,7 @@ public class FixedBacktrackingParser extends Stacks
     //
     // Override the getToken function in Stacks.
     //
+    @Override
     public final int getToken(int i)
     {
         return tokens.get(locationStack[stateStackTop + (i - 1)]);

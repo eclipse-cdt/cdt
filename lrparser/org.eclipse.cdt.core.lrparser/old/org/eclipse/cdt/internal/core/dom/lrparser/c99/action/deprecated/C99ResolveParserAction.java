@@ -192,6 +192,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		bindingScopeStack.add(new C99Scope(EScopeKind.eLocal));
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				
 				bindingScopeStack.removeLast();
@@ -213,6 +214,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -236,6 +238,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.openPointerModifierScope();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -254,6 +257,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		declarationStack.add(new DeclaratorFrame());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -269,6 +273,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		final DeclaratorFrame undoFrame = declarationStack.removeLast();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -311,6 +316,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -330,6 +336,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.setFunctionDeclarator(true);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -346,6 +353,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.setFunctionDeclarator(true);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.setFunctionDeclarator(false);
@@ -366,6 +374,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		declSpec.add(kind);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -395,6 +404,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		symbolTable = symbolTable.insert(GOTO_LABEL, ident, labelBinding);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -422,6 +432,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		}
 
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				symbolTable = oldTable;
@@ -455,6 +466,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		declSpec.setType(binding);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				declSpec.setType(null);
@@ -474,6 +486,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.setDeclaratorName(parser.getRightIToken());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				DebugUtil.printMethodTrace();
@@ -497,6 +510,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		}
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				for(int i = 0; i < scopeSize; i++) {
@@ -517,6 +531,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.setDeclaratorBracketed(true);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.setDeclaratorBracketed(false);
@@ -562,6 +577,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -584,6 +600,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		final IType type = exprTypeStack.pop();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -620,6 +637,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		}
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				symbolTable = oldTable;
@@ -675,6 +693,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				//declarationStack.removeLast();
@@ -709,6 +728,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				declarationStack.getLast().removeLastNestedDeclaration();
@@ -739,6 +759,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -770,6 +791,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -786,6 +808,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.addTypeModifier(new C99ArrayType());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.removeLastTypeModifier();
@@ -801,6 +824,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.addTypeModifier(new C99ArrayType());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.removeLastTypeModifier();
@@ -826,6 +850,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.addTypeModifier(arrayType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.removeLastTypeModifier();
@@ -842,6 +867,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.addPointerModifier(new C99PointerType());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.removeLastPointerModifier();
@@ -862,6 +888,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.addPointerModifier(pointerType);
 
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.removeLastPointerModifier();
@@ -891,6 +918,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		
 		// I don't think this is really necessary but I need an undo action anyway
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				typeQualifiers = null;
@@ -934,6 +962,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				declSpec.setType(null);
@@ -985,6 +1014,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.getDeclSpec().setType(struct);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.getDeclSpec().setType(null);
@@ -1018,6 +1048,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		frame.getDeclSpec().setType(enumeration);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				frame.getDeclSpec().setType(null);
@@ -1045,6 +1076,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		declarationStack.getLast().addNestedDeclaration(enumerator);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				declarationStack.getLast().removeLastNestedDeclaration();
@@ -1070,6 +1102,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 	
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1100,6 +1133,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 	
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1130,6 +1164,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(positionType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1199,6 +1234,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.openScope();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.closeScope();
@@ -1267,6 +1303,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1289,6 +1326,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(type);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1311,6 +1349,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(resultType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1366,6 +1405,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(resultType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1394,6 +1434,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(resultType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1414,6 +1455,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(resultType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1432,6 +1474,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(resultType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();
@@ -1451,6 +1494,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		//exprTypeStack.push(castType);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.push(exprType);
@@ -1466,6 +1510,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		final List<IType> scope = exprTypeStack.closeScope();
 
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.openScope(scope);
@@ -1479,6 +1524,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		final IType type = exprTypeStack.pop();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -1515,6 +1561,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		}
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -1534,6 +1581,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 		exprTypeStack.push(expr1Type);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				exprTypeStack.pop();

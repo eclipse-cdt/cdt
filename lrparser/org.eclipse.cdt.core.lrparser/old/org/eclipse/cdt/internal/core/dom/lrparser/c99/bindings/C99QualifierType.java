@@ -39,6 +39,7 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 		this.type = type;
 	}
 
+	@Override
 	public boolean isRestrict() {
 		return isRestrict;
 	}
@@ -47,6 +48,7 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 		this.isRestrict = isRestrict;
 	}
 
+	@Override
 	public boolean isConst() {
 		return isConst;
 	}
@@ -55,6 +57,7 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 		this.isConst = isConst;
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
@@ -63,14 +66,17 @@ public class C99QualifierType implements ICQualifierType, ITypeContainer {
 		this.isVolatile = isVolatile;
 	}
 
+	@Override
 	public IType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(IType type) {
 		this.type = type;
 	}
 
+	@Override
 	public boolean isSameType(IType t) {
 		if(t == this)
 			return true;

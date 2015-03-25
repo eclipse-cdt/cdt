@@ -692,8 +692,10 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static short baseCheck[] = BaseCheck.baseCheck;
+    @Override
     public final int baseCheck(int index) { return baseCheck[index]; }
     public final static short rhs[] = baseCheck;
+    @Override
     public final int rhs(int index) { return rhs[index]; };
 
     public interface BaseAction {
@@ -1397,8 +1399,10 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char baseAction[] = BaseAction.baseAction;
+    @Override
     public final int baseAction(int index) { return baseAction[index]; }
     public final static char lhs[] = baseAction;
+    @Override
     public final int lhs(int index) { return lhs[index]; };
 
     public interface TermCheck {
@@ -1795,6 +1799,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static byte termCheck[] = TermCheck.termCheck;
+    @Override
     public final int termCheck(int index) { return termCheck[index]; }
 
     public interface TermAction {
@@ -2182,6 +2187,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char termAction[] = TermAction.termAction;
+    @Override
     public final int termAction(int index) { return termAction[index]; }
 
     public interface Asb {
@@ -2250,6 +2256,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char asb[] = Asb.asb;
+    @Override
     public final int asb(int index) { return asb[index]; }
 
     public interface Asr {
@@ -2367,6 +2374,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static byte asr[] = Asr.asr;
+    @Override
     public final int asr(int index) { return asr[index]; }
 
     public interface Nasb {
@@ -2435,6 +2443,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char nasb[] = Nasb.nasb;
+    @Override
     public final int nasb(int index) { return nasb[index]; }
 
     public interface Nasr {
@@ -2473,6 +2482,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char nasr[] = Nasr.nasr;
+    @Override
     public final int nasr(int index) { return nasr[index]; }
 
     public interface TerminalIndex {
@@ -2493,6 +2503,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char terminalIndex[] = TerminalIndex.terminalIndex;
+    @Override
     public final int terminalIndex(int index) { return terminalIndex[index]; }
 
     public interface NonterminalIndex {
@@ -2523,6 +2534,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
+    @Override
     public final int nonterminalIndex(int index) { return nonterminalIndex[index]; }
 
     public interface ScopePrefix {
@@ -2543,6 +2555,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char scopePrefix[] = ScopePrefix.scopePrefix;
+    @Override
     public final int scopePrefix(int index) { return scopePrefix[index]; }
 
     public interface ScopeSuffix {
@@ -2563,6 +2576,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
+    @Override
     public final int scopeSuffix(int index) { return scopeSuffix[index]; }
 
     public interface ScopeLhs {
@@ -2583,6 +2597,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char scopeLhs[] = ScopeLhs.scopeLhs;
+    @Override
     public final int scopeLhs(int index) { return scopeLhs[index]; }
 
     public interface ScopeLa {
@@ -2603,6 +2618,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static byte scopeLa[] = ScopeLa.scopeLa;
+    @Override
     public final int scopeLa(int index) { return scopeLa[index]; }
 
     public interface ScopeStateSet {
@@ -2623,6 +2639,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
+    @Override
     public final int scopeStateSet(int index) { return scopeStateSet[index]; }
 
     public interface ScopeRhs {
@@ -2697,6 +2714,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char scopeRhs[] = ScopeRhs.scopeRhs;
+    @Override
     public final int scopeRhs(int index) { return scopeRhs[index]; }
 
     public interface ScopeState {
@@ -2742,6 +2760,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char scopeState[] = ScopeState.scopeState;
+    @Override
     public final int scopeState(int index) { return scopeState[index]; }
 
     public interface InSymb {
@@ -2810,6 +2829,7 @@ public class CPPNoFunctionDeclaratorParserprs implements lpg.lpgjavaruntime.Pars
         };
     };
     public final static char inSymb[] = InSymb.inSymb;
+    @Override
     public final int inSymb(int index) { return inSymb[index]; }
 
     public interface Name {

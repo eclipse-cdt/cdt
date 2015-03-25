@@ -26,10 +26,12 @@ public class C99CompositeTypeScope extends C99Scope implements ICCompositeTypeSc
 		this.struct = struct;
 	}
 
+	@Override
 	public ICompositeType getCompositeType() {
 		return struct;
 	}
 	
+	@Override
 	public IBinding getBinding(@SuppressWarnings("unused") char[] name) {
 		throw new UnsupportedOperationException();
 	}

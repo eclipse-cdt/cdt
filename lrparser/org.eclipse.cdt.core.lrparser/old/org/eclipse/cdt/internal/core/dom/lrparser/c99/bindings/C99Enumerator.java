@@ -35,6 +35,7 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -43,6 +44,7 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 		this.name = name;
 	}
 
+	@Override
 	public IType getType() {
 		return type;
 	}
@@ -51,28 +53,34 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 		this.type = type;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
 
+	@Override
 	public IScope getScope() {
 		return scope;
 	}
 
+	@Override
 	public void setScope(IScope scope) {
 		this.scope = scope;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (type instanceof IBinding)
 			return (IBinding) type;
 		return null;
 	}
 
+	@Override
 	public IValue getValue() {
 		return Value.UNKNOWN;
 	}

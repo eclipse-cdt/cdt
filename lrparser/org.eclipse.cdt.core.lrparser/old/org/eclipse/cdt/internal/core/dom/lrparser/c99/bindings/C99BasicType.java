@@ -35,6 +35,7 @@ public class C99BasicType implements ICBasicType {
 		this.type = type;
 	}
 	
+	@Override
 	public int getType() {
 		return type;
 	}
@@ -43,6 +44,7 @@ public class C99BasicType implements ICBasicType {
 		this.type = type;
 	}
 
+	@Override
 	public boolean isLong() {
 		return isLong;
 	}
@@ -51,6 +53,7 @@ public class C99BasicType implements ICBasicType {
 		this.isLong = isLong;
 	}
 
+	@Override
 	public boolean isShort() {
 		return isShort;
 	}
@@ -59,6 +62,7 @@ public class C99BasicType implements ICBasicType {
 		this.isShort = isShort;
 	}
 
+	@Override
 	public boolean isSigned() {
 		return isSigned;
 	}
@@ -67,6 +71,7 @@ public class C99BasicType implements ICBasicType {
 		this.isSigned = isSigned;
 	}
 
+	@Override
 	public boolean isUnsigned() {
 		return isUnsigned;
 	}
@@ -75,6 +80,7 @@ public class C99BasicType implements ICBasicType {
 		this.isUnsigned = isUnsigned;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return isComplex;
 	}
@@ -83,6 +89,7 @@ public class C99BasicType implements ICBasicType {
 		this.isComplex = isComplex;
 	}
 
+	@Override
 	public boolean isImaginary() {
 		return isImaginary;
 	}
@@ -91,6 +98,7 @@ public class C99BasicType implements ICBasicType {
 		this.isImaginary = isImaginary;
 	}
 
+	@Override
 	public boolean isLongLong() {
 		return isLongLong;
 	}
@@ -99,11 +107,13 @@ public class C99BasicType implements ICBasicType {
 		this.isLongLong = isLongLong;
 	}
 
+	@Override
 	@Deprecated
 	public IASTExpression getValue() {
 		return null;
 	}
 	
+	@Override
 	public boolean isSameType(IType t) {
 		if(t == this)
 			return true;
@@ -131,11 +141,13 @@ public class C99BasicType implements ICBasicType {
 		}
 	}
 
+	@Override
 	public Kind getKind() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public int getModifiers() {
 		// TODO Auto-generated method stub
 		return 0;

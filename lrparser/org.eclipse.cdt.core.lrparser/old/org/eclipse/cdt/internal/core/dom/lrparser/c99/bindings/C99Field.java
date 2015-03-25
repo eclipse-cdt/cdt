@@ -26,6 +26,7 @@ public class C99Field extends C99Variable implements IC99Binding, IField, ITypea
 		super(name);
 	}
 
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return compositeTypeOwner;
 	}

@@ -75,6 +75,7 @@ public class AbstractLRHangingTest  extends TestCase{
 		Thread testThread = new Thread() {
 			
 			
+			@Override
 			public void run() {
 				
 				String errMsg="";

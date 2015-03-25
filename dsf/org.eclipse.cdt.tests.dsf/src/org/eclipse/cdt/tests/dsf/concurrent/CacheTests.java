@@ -527,7 +527,8 @@ public class CacheTests {
 	    final boolean canceledCalled[] = new boolean[] { false };
 	    
 	    fTestCache = new TestCache() {
-	        protected synchronized void canceled() {
+	        @Override
+		protected synchronized void canceled() {
 	            canceledCalled[0] = true;
 	        };
 	    };

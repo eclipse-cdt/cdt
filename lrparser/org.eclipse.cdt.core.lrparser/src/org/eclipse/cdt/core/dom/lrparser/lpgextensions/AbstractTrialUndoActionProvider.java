@@ -78,22 +78,27 @@ public abstract class AbstractTrialUndoActionProvider<ACT, RULE_DATA> extends Pr
 		btParser.backtrack();
 	}
 
+	@Override
 	public void setActiveRule(Rule<RULE_DATA> rule) {
 		activeRule = rule;
 	}
 	
+	@Override
 	public Rule<RULE_DATA> getActiveRule() {
 		return activeRule;
 	}
 	
+	@Override
 	public final boolean trialAction(int rule_number) {
 		return ruleAction[rule_number].doTrial(this, parserAction);
 	}
 
+	@Override
 	public final void undoAction(int rule_number) {
 		ruleAction[rule_number].doUndo(this, parserAction);
 	}
 
+	@Override
 	public final void finalAction(int rule_number) {
 		//System.out.println("finalAction: " + rule_number); //$NON-NLS-1$
 		ruleAction[rule_number].doFinal(this, parserAction);

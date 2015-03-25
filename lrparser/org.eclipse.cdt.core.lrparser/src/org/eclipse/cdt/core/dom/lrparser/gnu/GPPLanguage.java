@@ -50,10 +50,12 @@ public class GPPLanguage extends BaseExtensibleLanguage {
 		return GPPScannerExtensionConfiguration.getInstance();
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
 	}

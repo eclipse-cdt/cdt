@@ -58,9 +58,11 @@ public class CPPExpressionParser extends PrsStream implements RuleAction, IToken
     public IToken getRhsLastIToken(int i) { return super.getIToken(getRhsLastTokenIndex(i)); }
 
     public int getLeftSpan() { return btParser.getFirstToken(); }
+    @Override
     public IToken getLeftIToken()  { return super.getIToken(getLeftSpan()); }
 
     public int getRightSpan() { return btParser.getLastToken(); }
+    @Override
     public IToken getRightIToken() { return super.getIToken(getRightSpan()); }
 
     public int getRhsErrorTokenIndex(int i)
@@ -107,6 +109,7 @@ public class CPPExpressionParser extends PrsStream implements RuleAction, IToken
         } 
     }
 
+    @Override
     public String[] orderedTerminalSymbols() { return CPPExpressionParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPExpressionParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPExpressionParserprs.EOFT_SYMBOL; }
@@ -194,12 +197,14 @@ private void initActions(Map<String,String> properties) {
 }
 
 
+@Override
 public void addToken(IToken token) {
 	token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 	super.addToken(token);
 }
 
 
+@Override
 public  IASTExpression  parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
@@ -213,19 +218,23 @@ public  IASTExpression  parse() {
 }
 
 
+@Override
 public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
+@Override
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 }
 
+@Override
 public String[] getOrderedTerminalSymbols() {
 	return CPPExpressionParsersym.orderedTerminalSymbols;
 }
 
+@Override
 @SuppressWarnings("nls")
 public String getName() {
 	return "CPPExpressionParser";
@@ -235,6 +244,7 @@ public String getName() {
 
 private ITokenMap tokenMap = null;
 
+@Override
 public void setTokens(List<IToken> tokens) {
 	resetTokenStream();
 	addToken(new Token(null, 0, 0, 0)); // dummy token
@@ -257,6 +267,7 @@ public CPPExpressionParser(ITokenStream stream, Map<String,String> properties) {
 }		
 
 
+    @Override
     public void ruleAction(int ruleNumber)
     {
         switch (ruleNumber)

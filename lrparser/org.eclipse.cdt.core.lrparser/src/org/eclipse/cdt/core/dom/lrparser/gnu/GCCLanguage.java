@@ -49,10 +49,12 @@ public class GCCLanguage extends BaseExtensibleLanguage {
 		return GCCScannerExtensionConfiguration.getInstance();
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
 	}

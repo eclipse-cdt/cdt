@@ -59,10 +59,12 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		fieldArray = null;
 	}
 	
+	@Override
 	public IField findField(String name) {
 		return fields.get(name);
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 //		C99Scope scope = new C99CompositeTypeScope(this);
 //		scope.setScopeName(nameNode);
@@ -70,6 +72,7 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		return null;
 	}
 
+	@Override
 	public IField[] getFields() {
 		if(fieldArray == null)
 			fieldArray = fields.values().toArray(new IField[fields.size()]);
@@ -80,6 +83,7 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		this.key = key;
 	}
 	
+	@Override
 	public int getKey() {
 		return key;
 	}
@@ -89,10 +93,12 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		if(name == null)
 			return new char[0];
@@ -101,14 +107,17 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 	}
 
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 	
+	@Override
 	public IType getType() {
 		return this;
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if(type == this)
 			return true;
@@ -139,14 +148,17 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		}
 	}
 
+	@Override
 	public IScope getScope() {
 		return scope;
 	}
 
+	@Override
 	public void setScope(IScope scope) {
 		this.scope = scope;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (scope != null) {
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
@@ -154,6 +166,7 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 		return null;
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return name == null || name.length() == 0;
 	}

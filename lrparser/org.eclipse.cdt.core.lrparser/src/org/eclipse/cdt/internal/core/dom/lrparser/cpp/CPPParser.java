@@ -54,9 +54,11 @@ public class CPPParser extends PrsStream implements RuleAction, ITokenStream,
     public IToken getRhsLastIToken(int i) { return super.getIToken(getRhsLastTokenIndex(i)); }
 
     public int getLeftSpan() { return btParser.getFirstToken(); }
+    @Override
     public IToken getLeftIToken()  { return super.getIToken(getLeftSpan()); }
 
     public int getRightSpan() { return btParser.getLastToken(); }
+    @Override
     public IToken getRightIToken() { return super.getIToken(getRightSpan()); }
 
     public int getRhsErrorTokenIndex(int i)
@@ -103,6 +105,7 @@ public class CPPParser extends PrsStream implements RuleAction, ITokenStream,
         } 
     }
 
+    @Override
     public String[] orderedTerminalSymbols() { return CPPParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPParserprs.EOFT_SYMBOL; }
@@ -190,12 +193,14 @@ private void initActions(Map<String,String> properties) {
 }
 
 
+@Override
 public void addToken(IToken token) {
 	token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 	super.addToken(token);
 }
 
 
+@Override
 public  IASTTranslationUnit   parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
@@ -209,25 +214,30 @@ public  IASTTranslationUnit   parse() {
 }
 
 
+@Override
 public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
+@Override
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 }
 
+@Override
 public String[] getOrderedTerminalSymbols() {
 	return CPPParsersym.orderedTerminalSymbols;
 }
 
+@Override
 @SuppressWarnings("nls")
 public String getName() {
 	return "CPPParser";
 }
 
 
+    @Override
     public void ruleAction(int ruleNumber)
     {
         switch (ruleNumber)

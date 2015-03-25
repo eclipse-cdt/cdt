@@ -33,14 +33,17 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 		this.type = type;
 	}
 	
+	@Override
 	public IType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(IType type) {
 		this.type = type;
 	}
 
+	@Override
 	public boolean isConst() {
 		return isConst;
 	}
@@ -49,6 +52,7 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 		this.isConst = isConst;
 	}
 
+	@Override
 	public boolean isRestrict() {
 		return isRestrict;
 	}
@@ -57,6 +61,7 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 		this.isRestrict = isRestrict;
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
@@ -66,6 +71,7 @@ public class C99PointerType implements ITypeContainer, ICPointerType {
 	}
 	
 	
+	@Override
 	public boolean isSameType(IType t) {
 		if(t == this)
 			return true;

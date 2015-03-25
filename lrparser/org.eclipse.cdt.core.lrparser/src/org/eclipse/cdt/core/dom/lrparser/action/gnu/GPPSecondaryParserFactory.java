@@ -34,22 +34,27 @@ public class GPPSecondaryParserFactory implements ICPPSecondaryParserFactory {
 	}
 	
 	
+	@Override
 	public ISecondaryParser<ICPPASTTemplateParameter> getTemplateTypeParameterParser(ITokenStream stream, Map<String,String> properties) {
 		return new CPPTemplateTypeParameterParser(stream, properties);
 	}
 	
+	@Override
 	public ISecondaryParser<IASTDeclarator> getNoFunctionDeclaratorParser(ITokenStream stream, Map<String,String> properties) {
 		return new CPPNoFunctionDeclaratorParser(stream, properties); 
 	}
 
+	@Override
 	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String,String> properties) {
 		return new CPPExpressionParser(stream, properties);
 	}
 
+	@Override
 	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String,String> properties) {
 		return new CPPNoCastExpressionParser(stream, properties);
 	}
 
+	@Override
 	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {
 		return new GPPSizeofExpressionParser(stream, properties);
 	}

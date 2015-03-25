@@ -42,14 +42,17 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		this.name = name;
 	}
 	
+	@Override
 	public IType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(IType type) {
 		this.type = type;	
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -58,10 +61,12 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		this.name = name;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
 
+	@Override
 	public boolean isSameType(IType t) {
 		if(t == this)
 			return true;
@@ -83,18 +88,22 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		}
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IScope getScope() {
 		return scope;
 	}
 
+	@Override
 	public void setScope(IScope scope) {
 		this.scope = scope;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (scope != null) {
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global

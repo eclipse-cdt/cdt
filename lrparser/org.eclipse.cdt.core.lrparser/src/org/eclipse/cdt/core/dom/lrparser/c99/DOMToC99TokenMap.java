@@ -30,14 +30,17 @@ public final class DOMToC99TokenMap implements IDOMTokenMap {
 		// just a private constructor
 	}
 	
+	@Override
 	public int getEOFTokenKind() {
 		return TK_EOF_TOKEN;
 	}
 	
+	@Override
 	public int getEOCTokenKind() {
 		return TK_EndOfCompletion;
 	}
 	
+	@Override
 	public int mapKind(IToken token) {
 		
 		switch(token.getType()) {

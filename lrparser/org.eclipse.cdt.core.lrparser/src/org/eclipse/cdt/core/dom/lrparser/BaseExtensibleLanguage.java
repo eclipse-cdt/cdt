@@ -321,6 +321,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		
 	}
 	
+	@Override
 	@Deprecated
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log)
@@ -329,6 +330,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
 	}
 	
+	@Override
 	@Deprecated
 	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log,
@@ -443,6 +445,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		System.out.println();
 	}
 	
+	@Override
 	@Deprecated
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
 		return GCCLanguage.getDefault().getSelectedNames(ast, start, length);
@@ -465,6 +468,7 @@ public abstract class BaseExtensibleLanguage extends AbstractLanguage {
 		return super.getAdapter(adapter);
 	}
 	
+	@Override
 	public IContributedModelBuilder createModelBuilder(@SuppressWarnings("unused") ITranslationUnit tu) {
 		return null;
 	}

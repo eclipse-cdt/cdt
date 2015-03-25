@@ -37,11 +37,13 @@ import java.util.regex.Pattern;
 public class PDAVirtualMachine {
 
     static class Stack extends LinkedList<Object> {
-        public Object pop() {
+        @Override
+	public Object pop() {
             return isEmpty() ? 0 : remove(size() - 1);
         }
 
-        public void push(Object value) {
+        @Override
+	public void push(Object value) {
             add(value);
         }
     }

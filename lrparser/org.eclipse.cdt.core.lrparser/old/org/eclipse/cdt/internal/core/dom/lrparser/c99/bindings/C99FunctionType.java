@@ -21,6 +21,7 @@ public class C99FunctionType implements IFunctionType {
 	private IType returnType;
 	private List<IType> parameterTypes = new ArrayList<IType>();
 	
+	@Override
 	public IType[] getParameterTypes() {
 		return parameterTypes.toArray(new IType[parameterTypes.size()]);
 	}
@@ -29,6 +30,7 @@ public class C99FunctionType implements IFunctionType {
 		parameterTypes.add(parameterType);
 	}
 
+	@Override
 	public IType getReturnType() {
 		return returnType;
 	}
@@ -37,6 +39,7 @@ public class C99FunctionType implements IFunctionType {
 		this.returnType = returnType;
 	}
 
+	@Override
 	public boolean isSameType(@SuppressWarnings("unused") IType type) {
 		// TODO Auto-generated method stub
 		return false;

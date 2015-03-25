@@ -50,10 +50,12 @@ public class ISOCPPLanguage extends BaseExtensibleLanguage {
 		return ScannerExtensionConfiguration.createCPP();
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
 	}

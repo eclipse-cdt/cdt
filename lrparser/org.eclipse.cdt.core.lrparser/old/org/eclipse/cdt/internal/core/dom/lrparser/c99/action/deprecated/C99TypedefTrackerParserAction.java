@@ -108,6 +108,7 @@ public class C99TypedefTrackerParserAction {
 		symbolTableScopeStack.add(symbolTable);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -124,6 +125,7 @@ public class C99TypedefTrackerParserAction {
 		symbolTable = symbolTableScopeStack.removeLast(); // close the scope
 
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -144,6 +146,7 @@ public class C99TypedefTrackerParserAction {
 		declarationStack.add(new DeclaratorFrame());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -159,6 +162,7 @@ public class C99TypedefTrackerParserAction {
 		final DeclaratorFrame undoFrame = declarationStack.removeLast();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -178,6 +182,7 @@ public class C99TypedefTrackerParserAction {
 		
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -204,6 +209,7 @@ public class C99TypedefTrackerParserAction {
 		declSpec.add(kind);
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -221,6 +227,7 @@ public class C99TypedefTrackerParserAction {
 		frame.setDeclaratorName(parser.getRightIToken());
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -251,6 +258,7 @@ public class C99TypedefTrackerParserAction {
 		declarationStack.add(new DeclaratorFrame(frame.getDeclSpec())); // reset the declarator
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -276,6 +284,7 @@ public class C99TypedefTrackerParserAction {
 
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				//declarationStack.removeLast();
@@ -303,6 +312,7 @@ public class C99TypedefTrackerParserAction {
 		final DeclaratorFrame frame = declarationStack.removeLast();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -320,6 +330,7 @@ public class C99TypedefTrackerParserAction {
 		declarationStack.add(new DeclaratorFrame(frame.getDeclSpec()));  // reset the declarator
 
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 				
@@ -344,6 +355,7 @@ public class C99TypedefTrackerParserAction {
 		final DeclaratorFrame frame = declarationStack.removeLast();
 		
 		undoStack.add(new IUndoAction() {
+			@Override
 			public void undo() {
 				if(DEBUG) DebugUtil.printMethodTrace();
 

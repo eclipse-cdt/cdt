@@ -46,6 +46,7 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		enumerators.add(e);
 	}
 	
+	@Override
 	public IEnumerator[] getEnumerators() {
 		return enumerators.toArray(new IEnumerator[enumerators.size()]);
 	}
@@ -54,19 +55,23 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		this.name = name;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
 
 
+	@Override
 	public IType getType() {
 		return this;
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		 if( type == this )
             return true;
@@ -94,18 +99,22 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		
 	}
 	
+	@Override
 	public ILinkage getLinkage()  {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IScope getScope() {
 		return scope;
 	}
 
+	@Override
 	public void setScope(IScope scope) {
 		this.scope = scope;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (scope != null) {
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
@@ -113,10 +122,12 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		return null;
 	}
 
+	@Override
 	public long getMinValue() {
 		return SemanticUtil.computeMinValue(this);
 	}
 
+	@Override
 	public long getMaxValue() {
 		return SemanticUtil.computeMaxValue(this);
 	}

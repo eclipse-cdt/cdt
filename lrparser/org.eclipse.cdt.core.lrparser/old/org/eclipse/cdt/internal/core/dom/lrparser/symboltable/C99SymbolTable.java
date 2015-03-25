@@ -40,6 +40,7 @@ public class C99SymbolTable {
 			this.namespace = namespace;
 		}
 
+		@Override
 		public int compareTo(Key x) {
 			// this separates namespaces in the symbol table
 			int c = namespace.compareTo(x.namespace);

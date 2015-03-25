@@ -29,14 +29,17 @@ public class C99SecondaryParserFactory implements ISecondaryParserFactory {
 	}
 	
 	
+	@Override
 	public ISecondaryParser<IASTExpression> getExpressionParser(ITokenStream stream, Map<String,String> properties) {
 		return new C99ExpressionParser(stream, properties); 
 	}
 
+	@Override
 	public ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String,String> properties) {
 		return new C99NoCastExpressionParser(stream, properties);
 	}
 	
+	@Override
 	public ISecondaryParser<IASTExpression> getSizeofExpressionParser(ITokenStream stream, Map<String,String> properties) {
 		return new C99SizeofExpressionParser(stream, properties);
 	}

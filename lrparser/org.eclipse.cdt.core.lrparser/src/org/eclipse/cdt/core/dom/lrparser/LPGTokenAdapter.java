@@ -43,76 +43,94 @@ public class LPGTokenAdapter implements lpg.lpgjavaruntime.IToken {
 		return token;
 	}
 	
+	@Override
 	public int getAdjunctIndex() {
 		return adjunctIndex;
 	}
 
+	@Override
 	public int getColumn() {
 		return 0;
 	}
 
+	@Override
 	public int getEndColumn() {
 		return 0;
 	}
 
+	@Override
 	public int getEndLine() {
 		return 0;
 	}
 
+	@Override
 	public int getEndOffset() {
 		return token.getEndOffset();
 	}
 
+	@Override
 	public lpg.lpgjavaruntime.IToken[] getFollowingAdjuncts() {
 		return null;
 	}
 
+	@Override
 	public int getKind() {
 		return kind;
 	}
 
+	@Override
 	public int getLine() {
 		return 0;
 	}
 
+	@Override
 	public lpg.lpgjavaruntime.IToken[] getPrecedingAdjuncts() {
 		return null;
 	}
 
+	@Override
 	public PrsStream getPrsStream() {
 		return null;
 	}
 
+	@Override
 	public int getStartOffset() {
 		return token.getOffset();
 	}
 
+	@Override
 	public int getTokenIndex() {
 		return tokenIndex;
 	}
 
+	@Override
 	@Deprecated
 	public String getValue(@SuppressWarnings("unused") char[] arg0) {
 		return toString();
 	}
 
+	@Override
 	public void setAdjunctIndex(int adjunctIndex) {
 		this.adjunctIndex = adjunctIndex;
 	}
 
+	@Override
 	public void setEndOffset(@SuppressWarnings("unused") int arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void setKind(int kind) {
 		this.kind = kind;
 	}
 
+	@Override
 	public void setStartOffset(@SuppressWarnings("unused") int arg0) {
 		throw new UnsupportedOperationException();
 
 	}
 
+	@Override
 	public void setTokenIndex(int tokenIndex) {
 		this.tokenIndex = tokenIndex;
 	}

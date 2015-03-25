@@ -58,6 +58,7 @@ public class TokenMap implements ITokenMap {
 	/**
 	 * Maps a token kind back to the corresponding kind define in the base C99 parser.
 	 */
+	@Override
 	public int mapKind(int kind) {
 		if(kindMap == null)
 			return kind;

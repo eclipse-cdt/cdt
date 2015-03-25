@@ -55,6 +55,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.type = type;
 	}
 
+	@Override
 	public IParameter[] getParameters() {
 		return parameters.toArray(new IParameter[parameters.size()]);
 	}
@@ -63,6 +64,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		parameters.add(parameter);
 	}
 
+	@Override
 	public IFunctionType getType() {
 		return type;
 	}
@@ -71,6 +73,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.type = type;
 	}
 
+	@Override
 	public boolean isAuto() {
 		return isAuto;
 	}
@@ -79,6 +82,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isAuto = isAuto;
 	}
 
+	@Override
 	public boolean isExtern() {
 		return isExtern;
 	}
@@ -87,6 +91,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isExtern = isExtern;
 	}
 
+	@Override
 	public boolean isInline() {
 		return isInline;
 	}
@@ -95,6 +100,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isInline = isInline;
 	}
 
+	@Override
 	public boolean isRegister() {
 		return isRegister;
 	}
@@ -103,6 +109,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isRegister = isRegister;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return isStatic;
 	}
@@ -111,6 +118,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isStatic = isStatic;
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return isVarArgs;
 	}
@@ -119,6 +127,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isVarArgs = isVarArgs;
 	}
 
+	@Override
 	public boolean isNoReturn() {
 		return isNoReturn;
 	}
@@ -127,6 +136,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.isNoReturn = isNoReturn;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
@@ -135,18 +145,22 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.name = name;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
 
+	@Override
 	public IScope getScope() {
 		return scope;
 	}
 	
+	@Override
 	public IScope getFunctionScope() {
 		return bodyScope;
 	}
@@ -155,10 +169,12 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this.bodyScope = bodyScope;
 	}
 
+	@Override
 	public void setScope(IScope scope) {
 		this.scope = scope;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return null;
 	}

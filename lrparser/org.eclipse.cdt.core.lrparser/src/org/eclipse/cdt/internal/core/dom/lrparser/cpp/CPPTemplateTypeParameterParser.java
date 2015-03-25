@@ -60,9 +60,11 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
     public IToken getRhsLastIToken(int i) { return super.getIToken(getRhsLastTokenIndex(i)); }
 
     public int getLeftSpan() { return btParser.getFirstToken(); }
+    @Override
     public IToken getLeftIToken()  { return super.getIToken(getLeftSpan()); }
 
     public int getRightSpan() { return btParser.getLastToken(); }
+    @Override
     public IToken getRightIToken() { return super.getIToken(getRightSpan()); }
 
     public int getRhsErrorTokenIndex(int i)
@@ -109,6 +111,7 @@ public class CPPTemplateTypeParameterParser extends PrsStream implements RuleAct
         } 
     }
 
+    @Override
     public String[] orderedTerminalSymbols() { return CPPTemplateTypeParameterParsersym.orderedTerminalSymbols; }
     public String getTokenKindName(int kind) { return CPPTemplateTypeParameterParsersym.orderedTerminalSymbols[kind]; }
     public int getEOFTokenKind() { return CPPTemplateTypeParameterParserprs.EOFT_SYMBOL; }
@@ -196,12 +199,14 @@ private void initActions(Map<String,String> properties) {
 }
 
 
+@Override
 public void addToken(IToken token) {
 	token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 	super.addToken(token);
 }
 
 
+@Override
 public  ICPPASTTemplateParameter  parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
@@ -215,19 +220,23 @@ public  ICPPASTTemplateParameter  parse() {
 }
 
 
+@Override
 public IASTCompletionNode getCompletionNode() {
 	return compNode;
 }
 
 // uncomment this method to use with backtracking parser
+@Override
 public List<IToken> getRuleTokens() {
     return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 }
 
+@Override
 public String[] getOrderedTerminalSymbols() {
 	return CPPTemplateTypeParameterParsersym.orderedTerminalSymbols;
 }
 
+@Override
 @SuppressWarnings("nls")
 public String getName() {
 	return "CPPTemplateTypeParameterParser";
@@ -237,6 +246,7 @@ public String getName() {
 
 private ITokenMap tokenMap = null;
 
+@Override
 public void setTokens(List<IToken> tokens) {
 	resetTokenStream();
 	addToken(new Token(null, 0, 0, 0)); // dummy token
@@ -259,6 +269,7 @@ public CPPTemplateTypeParameterParser(ITokenStream stream, Map<String,String> pr
 }		
 
 
+    @Override
     public void ruleAction(int ruleNumber)
     {
         switch (ruleNumber)

@@ -69,11 +69,13 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	/**
 	 * Returns the length of the prefix.
 	 */
+	@Override
 	public int getLength() {
 		return prefix == null ? 0 : prefix.length();
 	}
 
 	
+	@Override
 	public IASTName[] getNames() {
 		return names.toArray(new IASTName[names.size()]);
 	}
@@ -85,6 +87,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	 * 
 	 * @returns a string of length >= 1 or null
 	 */
+	@Override
 	public String getPrefix() {
 		return prefix;
 	}
@@ -93,6 +96,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 		this.tu = tu;
 	}
 
+	@Override
 	public IASTTranslationUnit getTranslationUnit() {
 		return tu;
 	}

@@ -113,7 +113,8 @@ public ImageCombo (Composite parent, int style) {
     arrow = new Button (this, arrowStyle);
 
     listener = new Listener () {
-        public void handleEvent (Event event) {
+        @Override
+		public void handleEvent (Event event) {
             if (popup == event.widget) {
                 popupEvent (event);
                 return;
@@ -140,7 +141,8 @@ public ImageCombo (Composite parent, int style) {
         }
     };
     filter = new Listener() {
-        public void handleEvent(Event event) {
+        @Override
+		public void handleEvent(Event event) {
             Shell shell = ((Control)event.widget).getShell ();
             if (shell == ImageCombo.this.getShell ()) {
                 handleFocus (SWT.FocusOut);
@@ -330,6 +332,7 @@ void comboEvent (Event event) {
     }
 }
 
+@Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
     checkWidget ();
     int width = 0, height = 0;
@@ -463,6 +466,7 @@ Label getAssociatedLabel () {
     }
     return null;
 }
+@Override
 public Control [] getChildren () {
     checkWidget();
     return new Control [0];
@@ -605,6 +609,7 @@ public int getSelectionIndex () {
     checkWidget ();
     return table.getSelectionIndex ();
 }
+@Override
 public int getStyle () {
     int style = super.getStyle ();
     style &= ~SWT.READ_ONLY;
@@ -732,7 +737,8 @@ public int indexOf (String string) {
 
 void initAccessible() {
     AccessibleAdapter accessibleAdapter = new AccessibleAdapter () {
-        public void getName (AccessibleEvent e) {
+        @Override
+		public void getName (AccessibleEvent e) {
             String name = null;
             Label label = getAssociatedLabel ();
             if (label != null) {
@@ -740,7 +746,8 @@ void initAccessible() {
             }
             e.result = name;
         }
-        public void getKeyboardShortcut(AccessibleEvent e) {
+        @Override
+		public void getKeyboardShortcut(AccessibleEvent e) {
             String shortcut = null;
             Label label = getAssociatedLabel ();
             if (label != null) {
@@ -754,7 +761,8 @@ void initAccessible() {
             }
             e.result = shortcut;
         }
-        public void getHelp (AccessibleEvent e) {
+        @Override
+		public void getHelp (AccessibleEvent e) {
             e.result = getToolTipText ();
         }
     };
@@ -763,32 +771,38 @@ void initAccessible() {
     table.getAccessible ().addAccessibleListener (accessibleAdapter);
     
     arrow.getAccessible ().addAccessibleListener (new AccessibleAdapter() {
-        public void getName (AccessibleEvent e) {
+        @Override
+		public void getName (AccessibleEvent e) {
             e.result = isDropped () ? SWT.getMessage ("SWT_Close") : SWT.getMessage ("SWT_Open"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        public void getKeyboardShortcut (AccessibleEvent e) {
+        @Override
+		public void getKeyboardShortcut (AccessibleEvent e) {
             e.result = "Alt+Down Arrow"; //$NON-NLS-1$
         }
-        public void getHelp (AccessibleEvent e) {
+        @Override
+		public void getHelp (AccessibleEvent e) {
             e.result = getToolTipText ();
         }
     });
 
     getAccessible().addAccessibleTextListener (new AccessibleTextAdapter() {
-        public void getCaretOffset (AccessibleTextEvent e) {
+        @Override
+		public void getCaretOffset (AccessibleTextEvent e) {
             e.offset = text.getCaretPosition ();
         }
     });
     
     getAccessible().addAccessibleControlListener (new AccessibleControlAdapter() {
-        public void getChildAtPoint (AccessibleControlEvent e) {
+        @Override
+		public void getChildAtPoint (AccessibleControlEvent e) {
             Point testPoint = toControl (e.x, e.y);
             if (getBounds ().contains (testPoint)) {
                 e.childID = ACC.CHILDID_SELF;
             }
         }
         
-        public void getLocation (AccessibleControlEvent e) {
+        @Override
+		public void getLocation (AccessibleControlEvent e) {
             Rectangle location = getBounds ();
             Point pt = toDisplay (location.x, location.y);
             e.x = pt.x;
@@ -797,31 +811,37 @@ void initAccessible() {
             e.height = location.height;
         }
         
-        public void getChildCount (AccessibleControlEvent e) {
+        @Override
+		public void getChildCount (AccessibleControlEvent e) {
             e.detail = 0;
         }
         
-        public void getRole (AccessibleControlEvent e) {
+        @Override
+		public void getRole (AccessibleControlEvent e) {
             e.detail = ACC.ROLE_COMBOBOX;
         }
         
-        public void getState (AccessibleControlEvent e) {
+        @Override
+		public void getState (AccessibleControlEvent e) {
             e.detail = ACC.STATE_NORMAL;
         }
 
-        public void getValue (AccessibleControlEvent e) {
+        @Override
+		public void getValue (AccessibleControlEvent e) {
             e.result = getText ();
         }
     });
 
     text.getAccessible ().addAccessibleControlListener (new AccessibleControlAdapter () {
-        public void getRole (AccessibleControlEvent e) {
+        @Override
+		public void getRole (AccessibleControlEvent e) {
             e.detail = text.getEditable () ? ACC.ROLE_TEXT : ACC.ROLE_LABEL;
         }
     });
 
     arrow.getAccessible ().addAccessibleControlListener (new AccessibleControlAdapter() {
-        public void getDefaultAction (AccessibleControlEvent e) {
+        @Override
+		public void getDefaultAction (AccessibleControlEvent e) {
             e.result = isDropped () ? SWT.getMessage ("SWT_Close") : SWT.getMessage ("SWT_Open"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     });
@@ -829,6 +849,7 @@ void initAccessible() {
 boolean isDropped () {
     return popup.getVisible ();
 }
+@Override
 public boolean isFocusControl () {
     checkWidget();
     if (text.isFocusControl () || arrow.isFocusControl () || table.isFocusControl () || popup.isFocusControl ()) {
@@ -957,12 +978,14 @@ void popupEvent(Event event) {
             break;
     }
 }
+@Override
 public void redraw () {
     super.redraw();
     text.redraw();
     arrow.redraw();
     if (popup.isVisible()) table.redraw();
 }
+@Override
 public void redraw (int x, int y, int width, int height, boolean all) {
     super.redraw(x, y, width, height, true);
 }
@@ -1120,6 +1143,7 @@ public void select (int index) {
         }
     }
 }
+@Override
 public void setBackground (Color color) {
     super.setBackground(color);
     background = color;
@@ -1143,16 +1167,19 @@ public void setEditable (boolean editable) {
     checkWidget ();
     text.setEditable(editable);
 }
+@Override
 public void setEnabled (boolean enabled) {
     super.setEnabled(enabled);
     if (popup != null) popup.setVisible (false);
     if (text != null) text.setEnabled(enabled);
     if (arrow != null) arrow.setEnabled(enabled);
 }
+@Override
 public boolean setFocus () {
     checkWidget();
     return text.setFocus ();
 }
+@Override
 public void setFont (Font font) {
     super.setFont (font);
     this.font = font;
@@ -1160,6 +1187,7 @@ public void setFont (Font font) {
     table.setFont (font);
     internalLayout (true);
 }
+@Override
 public void setForeground (Color color) {
     super.setForeground(color);
     foreground = color;
@@ -1228,6 +1256,7 @@ public void setItems (String [] items) {
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
  */
+@Override
 public void setLayout (Layout layout) {
     checkWidget ();
     return;
@@ -1314,6 +1343,7 @@ public void setTextLimit (int limit) {
     text.setTextLimit (limit);
 }
 
+@Override
 public void setToolTipText (String string) {
     checkWidget();
     super.setToolTipText(string);
@@ -1321,6 +1351,7 @@ public void setToolTipText (String string) {
     text.setToolTipText (string);       
 }
 
+@Override
 public void setVisible (boolean visible) {
     super.setVisible(visible);
     if (!visible) popup.setVisible(false);

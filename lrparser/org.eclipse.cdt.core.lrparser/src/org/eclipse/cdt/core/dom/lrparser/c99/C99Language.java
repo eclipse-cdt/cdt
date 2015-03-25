@@ -52,10 +52,12 @@ public class C99Language extends BaseExtensibleLanguage {
 		return ScannerExtensionConfiguration.createC();
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
 	}

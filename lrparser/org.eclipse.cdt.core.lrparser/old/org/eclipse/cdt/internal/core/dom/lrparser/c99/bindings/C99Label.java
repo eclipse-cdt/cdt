@@ -37,32 +37,39 @@ public class C99Label extends PlatformObject implements IC99Binding, ILabel {
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
 
 	
 
+	@Override
 	public IASTLabelStatement getLabelStatement() {
 		return null;
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IScope getScope() {
 		return scope;
 	}
 
+	@Override
 	public void setScope(IScope scope) {
 		this.scope = scope;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (scope != null) {
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global

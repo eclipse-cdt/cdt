@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_f4e92179",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBManagedRegisterGroups.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-25T19:41:08Z",
+      "side": 1,
+      "message": "This one should be an updated version of GDBRegisters, \ninstead of a new class. shouldn\u0027t it ?\n\nThen the MIRegistersTest can be used as is.",
+      "revId": "3d60d029c97290ada2926f7d620e03c0a1847e40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_dacc0f67",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBManagedRegisterGroups.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-25T19:41:08Z",
+      "side": 1,
+      "message": "javadoc missing for the class",
+      "range": {
+        "startLine": 61,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 9
+      },
+      "revId": "3d60d029c97290ada2926f7d620e03c0a1847e40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ba24a3b7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBManagedRegisterGroups.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1002,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-25T19:41:08Z",
+      "side": 1,
+      "message": "This method is no longer called, \nIt used to override the one in MIRegisters, i.e. called from MIRegisters#writeRegister\n\nSo e.g. if you manually update the value of a register, that is present in multiple groups, the value will not be propagated to all groups.",
+      "range": {
+        "startLine": 1002,
+        "startChar": 16,
+        "endLine": 1002,
+        "endChar": 44
+      },
+      "revId": "3d60d029c97290ada2926f7d620e03c0a1847e40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_d4ece589",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBManagedRegisterGroups.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1233,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-25T19:41:08Z",
+      "side": 1,
+      "message": "having a root group, may be implementation specific. \n\nCan we make this private to start with ?",
+      "revId": "3d60d029c97290ada2926f7d620e03c0a1847e40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_34e4499d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBManagedRegisterGroups.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1236,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-25T19:41:08Z",
+      "side": 1,
+      "message": "having a root group, may be implementation specific. \n\nCan we make this private to start with ?",
+      "revId": "3d60d029c97290ada2926f7d620e03c0a1847e40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ba178304",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/IMIRegisters.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-03-25T19:41:08Z",
+      "side": 1,
+      "message": "Some javadoc would be great !",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "3d60d029c97290ada2926f7d620e03c0a1847e40",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

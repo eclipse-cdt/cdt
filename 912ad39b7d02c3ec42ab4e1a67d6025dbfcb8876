@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_fe958296",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/AbstractContentAssistTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-25T10:05:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_6b15966e",
+      "range": {
+        "startLine": 220,
+        "startChar": 3,
+        "endLine": 220,
+        "endChar": 15
+      },
+      "revId": "912ad39b7d02c3ec42ab4e1a67d6025dbfcb8876",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_0b605200",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
         "patchSetId": 10
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_5ea49602",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-25T10:05:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_0b605200",
+      "range": {
+        "startLine": 634,
+        "startChar": 4,
+        "endLine": 634,
+        "endChar": 14
+      },
+      "revId": "912ad39b7d02c3ec42ab4e1a67d6025dbfcb8876",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_eb64e616",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
         "patchSetId": 10
@@ -59,6 +107,30 @@
       "writtenOn": "2015-03-04T20:15:18Z",
       "side": 1,
       "message": "The list of possibilities is still hard to parse. Why not say \"the position after a semicolon or opening or closing brace\"?",
+      "range": {
+        "startLine": 678,
+        "startChar": 83,
+        "endLine": 679,
+        "endChar": 25
+      },
+      "revId": "912ad39b7d02c3ec42ab4e1a67d6025dbfcb8876",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_de6a460b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-25T10:05:34Z",
+      "side": 1,
+      "message": "changed to \"Returns the position after last semicolon or opening or closing brace before the given offset\"",
+      "parentUuid": "a7fb1785_eb64e616",
       "range": {
         "startLine": 678,
         "startChar": 83,

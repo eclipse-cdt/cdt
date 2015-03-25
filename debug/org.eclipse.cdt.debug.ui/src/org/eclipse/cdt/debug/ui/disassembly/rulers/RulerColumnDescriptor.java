@@ -100,7 +100,6 @@ public final class RulerColumnDescriptor {
 		fIsGlobal= helper.getDefaultAttribute(GLOBAL, true);
 		fIncludeInMenu= helper.getDefaultAttribute(INCLUDE_IN_MENU, true);
 
-		@SuppressWarnings("null")
 		IConfigurationElement[] targetEditors= element.getChildren(TARGET_ID);
 		IConfigurationElement[] targetClasses= element.getChildren(TARGET_CLASS);
 
@@ -213,7 +212,6 @@ public final class RulerColumnDescriptor {
 		Assert.isLegal(disassembly != null);
 		RulerColumnTarget target= getTarget();
 
-		@SuppressWarnings("null")
 		IWorkbenchPartSite site= disassembly.getSite();
 		if (site != null && target.matchesEditorId(site.getId()))
 			return true;

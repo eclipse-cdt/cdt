@@ -46,7 +46,6 @@ public final class RulerColumnPreferenceAdapter {
 	 * @param descriptor a ruler contribution descriptor
 	 * @return <code>true</code> if the ruler is enabled, <code>false</code> otherwise
 	 */
-	@SuppressWarnings("null")
 	public boolean isEnabled(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
 		String preference= fStore.getString(fKey);
@@ -62,7 +61,6 @@ public final class RulerColumnPreferenceAdapter {
 	 */
 	public void setEnabled(RulerColumnDescriptor descriptor, boolean enabled) {
 		Assert.isLegal(descriptor != null);
-		@SuppressWarnings("null")
 		String id= descriptor.getId();
 		String preference= fStore.getString(fKey);
 		Set<String> marked= StringSetSerializer.deserialize(preference);

@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "a7fb1785_31646614",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2015-03-25T01:44:56Z",
+      "side": 1,
+      "message": "The received input path argument use the separator defined by the OS. And the InputOrder return the path with the forward path separator definition since Eclipse use it by default internally. The comparison needs to compare both path with the same separator definition.",
+      "revId": "04e3a762e3666064401ebeb27bb282819cb3b2e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_5152d2e4",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java",
         "patchSetId": 5
@@ -13,6 +30,30 @@
       "writtenOn": "2015-03-21T17:46:29Z",
       "side": 1,
       "message": "Guy, perhaps you missed my question on the first patch? I\u0027ll copied it here:\n\n\"Why the toOSString? Sorry I\u0027m not very familiar with this code and I don\u0027t see it getting called in the CDT code. Does the path parameter always have the os separators? It sounds like this would make it host dependent. I\u0027m thinking of a case where the host is Windows and the toolchain works remotely on Linux.\"",
+      "range": {
+        "startLine": 769,
+        "startChar": 44,
+        "endLine": 769,
+        "endChar": 54
+      },
+      "revId": "04e3a762e3666064401ebeb27bb282819cb3b2e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_31eaa622",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/InputType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1423
+      },
+      "writtenOn": "2015-03-25T01:44:56Z",
+      "side": 1,
+      "message": "Unfortunately (I did not investigate) the path parameter is received with the OS dependent separator. Yet within the plugin definition it does has the Linux separator. At some point it seems CDT does convert the input ordering path to the OS definition. This is the definition of the plugin.xml file:\n\n\u003cinputType\n   dependencyContentType\u003d\"org.eclipse.cdt.core.cxxHeader\"\n   id\u003d\"ca.maestro.eclipse.cdt.plugin.studio.cl.inputType.2008.x86.exe.debug\"\n   name\u003d\"Input C++ (cpp)\"\n   primaryInput\u003d\"true\"\n   scannerConfigDiscoveryProfileId\u003d\"ca.maestro.eclipse.cdt.plugin.studio.c2008.x86.ToolchainScannerProperties\"\n   sourceContentType\u003d\"org.eclipse.cdt.core.cxxSource\"\u003e\n   \u003cinputOrder\n      excluded\u003d\"false\"\n      order\u003d\"1\"\n      path\u003d\"src/stdafx.cpp\"\u003e\n   \u003c/inputOrder\u003e\n\u003c/inputType\u003e\n\nThe parameter I received is \"src\\\\stdafx.cpp\"",
+      "parentUuid": "a7fb1785_5152d2e4",
       "range": {
         "startLine": 769,
         "startChar": 44,

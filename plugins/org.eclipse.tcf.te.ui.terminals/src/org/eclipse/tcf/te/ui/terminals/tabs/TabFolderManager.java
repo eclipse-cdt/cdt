@@ -272,8 +272,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 			// Create the terminal control
 			ITerminalViewControl terminal = TerminalViewControlFactory.makeControl(doCreateTerminalTabTerminalListener(this, item), composite, new ITerminalConnector[] { connector }, true);
-			if (terminal instanceof ITerminalControl && flags.containsKey(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT)) {
-				Object value = flags.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT);
+			if (terminal instanceof ITerminalControl) {
+				Object value = flags != null ? flags.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT) : null;
 				boolean noReconnect = value instanceof Boolean ? ((Boolean)value).booleanValue() : false;
 				((ITerminalControl)terminal).setConnectOnEnterIfClosed(!noReconnect);
 			}

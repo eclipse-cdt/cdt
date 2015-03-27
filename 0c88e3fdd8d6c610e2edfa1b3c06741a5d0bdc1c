@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_b7b83163",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:28:29Z",
+      "side": 1,
+      "message": "Why have you changed to use getName() instead of getDescription()?  For Cflags (a FLAG option), this will result in showing \"cflags\" in lower case whereas the getDescription() will get Compiler Flags: as found in ConfigureMessages.properties.  This should be put back the way it was.",
+      "revId": "0c88e3fdd8d6c610e2edfa1b3c06741a5d0bdc1c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

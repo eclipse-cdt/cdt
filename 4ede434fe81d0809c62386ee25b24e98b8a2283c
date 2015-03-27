@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_f74759f4",
+        "filename": "build/org.eclipse.cdt.autotools.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "name must be translated.  Use %message and put the message in plugin.properties file.  See examples there.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_d74a1dfd",
+        "filename": "build/org.eclipse.cdt.autotools.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "Same comment for description.  Must be translated with message in plugin.properties.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_776ec9a4",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "page has to be AutotoolsProjectImportWizardPage so check is not necessary.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_57246d60",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "This and message after it should be translated.  Use the AutotoolsWizardMessages class.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_b766719e",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "You have copied this from the conversion wizard.  There is logic below that assumes an existing project that might not be a C/C++ project and might have configurations.  You created the project from scratch in the Wizard and are just adding the additional items to make it Autotools.  I\u0027ll try and point these out below.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_1775c53c",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "Nature check is unnecessary.  You have already done so in Wizard.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_778409ae",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "This can\u0027t occur because you created project in Wizard without Autotools nature.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_577f4d1c",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "Won\u0027t be any existing configurations to scrap so you can remove comments such as the above.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_b74dd11a",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "No need to remove old Autotools nature.  Can\u0027t happen.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_975095ad",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-03-27T22:12:46Z",
+      "side": 1,
+      "message": "Can\u0027t happen.  You will always be converting a new project that you created in the accompanying wizard.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

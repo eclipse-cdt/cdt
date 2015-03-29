@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_9abb9c5d",
+        "filename": "build/org.eclipse.cdt.autotools.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_f74759f4",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_d74a1dfd",
         "filename": "build/org.eclipse.cdt.autotools.ui/plugin.xml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-27T22:12:46Z",
       "side": 1,
       "message": "Same comment for description.  Must be translated with message in plugin.properties.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_fac2a0cc",
+        "filename": "build/org.eclipse.cdt.autotools.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_d74a1dfd",
       "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_dac524d6",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizard.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_776ec9a4",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_57246d60",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-03-27T22:12:46Z",
       "side": 1,
       "message": "This and message after it should be translated.  Use the AutotoolsWizardMessages class.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_5ab13475",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_57246d60",
       "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_1a8e8cb8",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Removed the unnecessary code as suggested.",
+      "parentUuid": "a7fb1785_b766719e",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_1775c53c",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2015-03-27T22:12:46Z",
       "side": 1,
       "message": "Nature check is unnecessary.  You have already done so in Wizard.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ba9f78e6",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_1775c53c",
       "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_9aa27c29",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_778409ae",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_577f4d1c",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2015-03-27T22:12:46Z",
       "side": 1,
       "message": "Won\u0027t be any existing configurations to scrap so you can remove comments such as the above.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_fa990001",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_577f4d1c",
       "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_da9c04f2",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_b74dd11a",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_975095ad",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
         "patchSetId": 1
@@ -166,6 +328,24 @@
       "writtenOn": "2015-03-27T22:12:46Z",
       "side": 1,
       "message": "Can\u0027t happen.  You will always be converting a new project that you created in the accompanying wizard.",
+      "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3a9388df",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsProjectImportWizardPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-03-29T09:27:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_975095ad",
       "revId": "4ede434fe81d0809c62386ee25b24e98b8a2283c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

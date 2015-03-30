@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_5c392d56",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-30T23:41:49Z",
+      "side": 1,
+      "message": "just setHidden",
+      "revId": "a208083fb8d3e8bd7dd4b91288271d500f5915cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_bcddb190",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-30T23:41:49Z",
+      "side": 1,
+      "message": "isHidden",
+      "revId": "a208083fb8d3e8bd7dd4b91288271d500f5915cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_9ce27549",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-30T23:41:49Z",
+      "side": 1,
+      "message": "Boolean is immutable, no need for new",
+      "revId": "a208083fb8d3e8bd7dd4b91288271d500f5915cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_dce87d2b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-30T23:41:49Z",
+      "side": 1,
+      "message": "this all does not make sense for boolean, just\nisHidden \u003d Boolean.valueOf(element.getAttribute(ITool.IS_HIDDEN)",
+      "revId": "a208083fb8d3e8bd7dd4b91288271d500f5915cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3cf8a1ed",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2561,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-30T23:41:49Z",
+      "side": 1,
+      "message": "just assign directly without new, it will be autoboxed in most efficient way",
+      "revId": "a208083fb8d3e8bd7dd4b91288271d500f5915cc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -25,15 +25,17 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 
 /**
  * Navigates to the definition of a name, or to the declaration if invoked on the definition.
  */
 public class OpenDeclarationsAction extends SelectionParseAction {
-	public static boolean sIsJUnitTest = false;	
+	public static boolean sDisallowAmbiguousInput = false;	
 
 	ITextSelection fTextSelection;
 
@@ -49,7 +51,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 
 	@Override
 	public void run() {
-		OpenDeclarationsJob job = createJob();
+		OpenDeclarationsJob job = createJob(sDefaultDisambiguator);
 		if (job != null)
 			job.schedule();
 	}
@@ -58,17 +60,23 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 	 * For the purpose of regression testing.
 	 */
 	public void runSync() throws CoreException {
-		OpenDeclarationsJob job = createJob();
+		OpenDeclarationsJob job = createJob(sDefaultDisambiguator);
+		if (job != null)
+			job.performNavigation(new NullProgressMonitor());
+	}
+	public void runSync(ITargetDisambiguator targetDisambiguator) throws CoreException {
+		OpenDeclarationsJob job = createJob(targetDisambiguator);
 		if (job != null)
 			job.performNavigation(new NullProgressMonitor());
 	}
 
-	private OpenDeclarationsJob createJob() {
+	private OpenDeclarationsJob createJob(ITargetDisambiguator targetDisambiguator) {
 		String text= computeSelectedWord();
 		OpenDeclarationsJob job= null;
 		ICElement elem= fEditor.getInputCElement();
 		if (elem instanceof ITranslationUnit && fTextSelection != null) {
-			job= new OpenDeclarationsJob(this, (ITranslationUnit) elem, fTextSelection, text);
+			job= new OpenDeclarationsJob(this, (ITranslationUnit) elem, fTextSelection, text, 
+					targetDisambiguator);
 		}
 		return job;
 	}
@@ -93,4 +101,25 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		}
 		return text;
 	}
+	
+	/**
+	 * Used to diambiguate between multiple candidate targets for this action.
+	 */
+	public static interface ITargetDisambiguator {
+		ICElement disambiguateTargets(ICElement[] targets, SelectionParseAction action);
+	}
+
+	/**
+	 * Disambiguates by showing the user a dialog to choose. 
+	 */
+	private static class DialogTargetDisambiguator implements ITargetDisambiguator {
+		@Override
+		public ICElement disambiguateTargets(ICElement[] targets, SelectionParseAction action) {
+			return OpenActionUtil.selectCElement(targets, action.getSite().getShell(),
+					CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
+					CElementLabels.ALL_DEFAULT | CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
+		}
+	}
+	
+	private static final ITargetDisambiguator sDefaultDisambiguator = new DialogTargetDisambiguator();
 }

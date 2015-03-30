@@ -66,7 +66,7 @@ public class BaseSelectionTestsIndexer extends BaseSelectionTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		OpenDeclarationsAction.sIsJUnitTest= true;
+		OpenDeclarationsAction.sDisallowAmbiguousInput= true;
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] refs= page.getViewReferences();
 		for (IViewReference viewReference : refs) {

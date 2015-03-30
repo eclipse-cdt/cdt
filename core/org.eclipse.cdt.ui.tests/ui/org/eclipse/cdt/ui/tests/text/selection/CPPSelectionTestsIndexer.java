@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -1288,5 +1290,29 @@ public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
         int offset= code.indexOf("a)"); 
         IASTNode def = testF3(file, offset + 1);
         assertTrue(def instanceof IASTName);
+    }
+
+    //  #define WALDO 42
+
+    //  #define WALDO 98
+
+    //  #include "a.hpp"
+    //  int x = WALDO;
+    public void testTwoMacrosWithSameName_440940() throws Exception {
+        StringBuilder[] buffers = getContents(3);
+        String aHpp = buffers[0].toString();
+        String bHpp = buffers[1].toString();
+        String cpp = buffers[2].toString();
+        IFile aHppFile = importFile("a.hpp", aHpp);
+        IFile bHppFile = importFile("b.hpp", bHpp);
+        IFile cppFile = importFile("test.cpp", cpp);
+        waitUntilFileIsIndexed(index, cppFile);
+
+        IASTNode result = testF3(cppFile, cpp.indexOf("WALDO") + 1);
+        assertTrue(result instanceof IASTName);
+        IBinding binding = ((IASTName) result).resolveBinding();
+        assertTrue(binding instanceof IMacroBinding);
+        String expansion = new String(((IMacroBinding) binding).getExpansion());
+        assertTrue(expansion.contains("42"));
     }
 }

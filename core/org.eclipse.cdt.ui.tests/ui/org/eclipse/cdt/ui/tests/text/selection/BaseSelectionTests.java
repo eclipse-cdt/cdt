@@ -28,6 +28,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
@@ -39,6 +40,8 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionParseAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction.ITargetDisambiguator;
 
 /**
  * Base class for all selection tests, using the indexer or not.
@@ -62,10 +65,44 @@ public abstract class BaseSelectionTests extends BaseUITestCase {
 	}
 	
 	protected IASTNode testF3(IFile file, int offset) throws ParserException, CoreException {
-		return testF3(file, offset, 0);
+		return testF3(file, offset, 0, null);
 	}
 
-    protected IASTNode testF3(IFile file, int offset, int length) throws ParserException, CoreException {
+	private static class TargetChooser implements ITargetDisambiguator {
+		private int fIndex;
+		private boolean fDisambiguationRequested = false;
+		
+		public TargetChooser(int index) {
+			fIndex = index;
+		}
+		
+		@Override
+		public ICElement disambiguateTargets(ICElement[] targets, SelectionParseAction action) {
+			fDisambiguationRequested = true;
+			return targets[fIndex];
+		}
+		
+		public boolean disambiguationRequested() {
+			return fDisambiguationRequested;
+		}
+	}
+	
+	protected IASTNode testF3(IFile file, int offset, int length) throws ParserException, CoreException {
+		return testF3(file, offset, length, null);
+	}
+	
+	protected IASTNode testF3WithAmbiguity(IFile file, int offset, int targetChoiceIndex) 
+			throws ParserException, CoreException {
+		TargetChooser chooser = new TargetChooser(targetChoiceIndex);
+		OpenDeclarationsAction.sDisallowAmbiguousInput = false;
+		IASTNode result = testF3(file, offset, 0, chooser);
+		OpenDeclarationsAction.sDisallowAmbiguousInput = true;
+		assertTrue(chooser.disambiguationRequested());  // Make sure there actually was an ambiguity
+		return result;
+	}
+
+    protected IASTNode testF3(IFile file, int offset, int length, ITargetDisambiguator disambiguator) 
+    		throws ParserException, CoreException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 		
@@ -83,7 +120,11 @@ public abstract class BaseSelectionTests extends BaseUITestCase {
             editor.getSelectionProvider().setSelection(new TextSelection(offset,length));
             
             final OpenDeclarationsAction action = (OpenDeclarationsAction) editor.getAction("OpenDeclarations"); //$NON-NLS-1$
-            action.runSync();
+            if (disambiguator == null) {
+            	action.runSync();
+            } else {
+            	action.runSync(disambiguator);
+            }
             
             if (shouldUpdateEditor()) {
             	// update the file/part to point to the newly opened IFile/IEditorPart

@@ -97,10 +97,9 @@ import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
-import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction.ITargetDisambiguator;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class OpenDeclarationsJob extends Job implements ASTRunnable {
@@ -112,13 +111,16 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	private IIndex fIndex;
 	private final ITextSelection fTextSelection;
 	private final String fSelectedText;
+	private final ITargetDisambiguator fTargetDisambiguator;
 
-	OpenDeclarationsJob(SelectionParseAction action, ITranslationUnit editorInput, ITextSelection textSelection, String text) {
+	OpenDeclarationsJob(SelectionParseAction action, ITranslationUnit editorInput, 
+			ITextSelection textSelection, String text, ITargetDisambiguator targetDisambiguator) {
 		super(CEditorMessages.OpenDeclarations_dialog_title);
 		fAction= action;
 		fTranslationUnit= editorInput;
 		fTextSelection= textSelection;
 		fSelectedText= text;
+		fTargetDisambiguator= targetDisambiguator;
 	}
 
 	@Override
@@ -533,13 +535,11 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 						}
 					}
 					if (target == null) {
-						if (OpenDeclarationsAction.sIsJUnitTest) {
+						if (OpenDeclarationsAction.sDisallowAmbiguousInput) {
 							throw new RuntimeException("ambiguous input: " + uniqueElements.size()); //$NON-NLS-1$
 						}
 						ICElement[] elemArray= uniqueElements.toArray(new ICElement[uniqueElements.size()]);
-						target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, fAction.getSite().getShell(),
-								CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
-								CElementLabels.ALL_DEFAULT | CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
+						target = (ISourceReference) fTargetDisambiguator.disambiguateTargets(elemArray, fAction);
 					}
 				}
 				if (target != null) {

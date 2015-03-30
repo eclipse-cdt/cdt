@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -229,7 +230,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			} else {
 				// Leave old method as fallback for local variables, parameters and
 				// everything else not covered by ICElementHandle.
-				found = navigateOneLocation(targets);
+				found = navigateOneLocation(ast, targets);
 			}
 			if (!found && !navigationFallBack(ast, sourceName, kind)) {
 				fAction.reportSymbolLookupFailure(new String(sourceName.toCharArray()));
@@ -581,7 +582,33 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return null;
 	}
 
-	private boolean navigateOneLocation(IName[] names) {
+	private IName[] filterNamesByIndexFileSet(IASTTranslationUnit ast, IName[] names) {
+		IIndexFileSet indexFileSet = ast.getIndexFileSet();
+		if (indexFileSet == null) {
+			return names;
+		}
+		IName[] result = IName.EMPTY_ARRAY;
+		for (IName name : names) {
+			if (name instanceof IIndexName) {
+				try {
+					if (!indexFileSet.contains(((IIndexName) name).getFile()))
+						continue;
+				} catch (CoreException e) {}
+			}
+			result = ArrayUtil.append(result, name);
+		}
+		return result;
+	}
+	
+	private boolean navigateOneLocation(IASTTranslationUnit ast, IName[] names) {
+		// If there is more than one name, try to filter out
+		// ones defined in a file not in the AST's index file set.
+		if (names.length > 1) {
+			IName[] filteredNames = filterNamesByIndexFileSet(ast, names);
+			if (filteredNames.length > 0) {
+				names = filteredNames;
+			}
+		}
 		for (IName name : names) {
 			if (navigateToName(name)) {
 				return true;

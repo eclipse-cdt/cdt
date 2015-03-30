@@ -20,9 +20,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
 Export-Package: org.eclipse.cdt.dsf.mi.service;x-internal:=true,
- org.eclipse.cdt.tests.dsf.gdb.framework;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.framework;x-friends:="org.eclipse.cdt.tests.dsf.gdb.ui",
  org.eclipse.cdt.tests.dsf.gdb.launching;x-internal:=true,
- org.eclipse.cdt.tests.dsf.gdb.tests;x-internal:=true,
+ org.eclipse.cdt.tests.dsf.gdb.tests;x-friends:="org.eclipse.cdt.tests.dsf.gdb.ui",
  org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;x-internal:=true,

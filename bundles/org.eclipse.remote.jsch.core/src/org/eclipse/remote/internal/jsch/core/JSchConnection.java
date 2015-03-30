@@ -652,6 +652,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 		}
 	}
 
+	@Override
 	public int getTimeout() {
 		String str = fRemoteConnection.getAttribute(TIMEOUT_ATTR);
 		return !str.isEmpty() ? Integer.parseInt(str) : DEFAULT_TIMEOUT;
@@ -967,9 +968,74 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 		}
 	}
 
+	@Override
 	public boolean useLoginShell() {
 		String str = fRemoteConnection.getAttribute(USE_LOGIN_SHELL_ATTR);
 		return !str.isEmpty() ? Boolean.parseBoolean(str) : DEFAULT_USE_LOGIN_SHELL;
+	}
+
+	@Override
+	public void setHostname(String hostname) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setAttribute(ADDRESS_ATTR, hostname);
+		}
+	}
+
+	@Override
+	public void setPassphrase(String passphrase) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setSecureAttribute(PASSPHRASE_ATTR, passphrase);
+		}
+	}
+
+	@Override
+	public void setPassword(String password) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setSecureAttribute(PASSWORD_ATTR, password);
+		}
+	}
+
+	@Override
+	public void setPort(int port) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setAttribute(PORT_ATTR, Integer.toString(port));
+		}
+	}
+
+	@Override
+	public void setTimeout(int timeout) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setAttribute(TIMEOUT_ATTR, Integer.toString(timeout));
+		}
+	}
+
+	@Override
+	public void setUseLoginShell(boolean useLogingShell) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setAttribute(USE_LOGIN_SHELL_ATTR, Boolean.toString(useLogingShell));
+		}
+	}
+
+	@Override
+	public void setUsePassword(boolean usePassword) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setAttribute(IS_PASSWORD_ATTR, Boolean.toString(usePassword));
+		}
+	}
+
+	@Override
+	public void setUsername(String username) {
+		if (fRemoteConnection instanceof IRemoteConnectionWorkingCopy) {
+			IRemoteConnectionWorkingCopy wc = (IRemoteConnectionWorkingCopy) fRemoteConnection;
+			wc.setAttribute(USERNAME_ATTR, username);
+		}
 	}
 
 }

@@ -12,6 +12,8 @@ package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.IOException;
 
+import junit.framework.Test;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
@@ -32,13 +34,17 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
-public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexer {
+public class CSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	private String sourceIndexerID;
 	private IIndex index;
 
-	public CSelectionTestsAnyIndexer(String name, String indexerID) {
+	public CSelectionTestsIndexer(String name) {
 		super(name);
-		sourceIndexerID= indexerID;
+		sourceIndexerID= IPDOMManager.ID_FAST_INDEXER;
+	}
+	
+	public static Test suite() {
+		return suite(CSelectionTestsIndexer.class);
 	}
 	
 	@Override
@@ -67,7 +73,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
 	
 	protected StringBuilder[] getContents(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "ui", CSelectionTestsAnyIndexer.class, getName(), sections);
+				CTestPlugin.getDefault().getBundle(), "ui", CSelectionTestsIndexer.class, getName(), sections);
 	}
 
 	private void assertNode(String name, int offset, IASTNode node) {

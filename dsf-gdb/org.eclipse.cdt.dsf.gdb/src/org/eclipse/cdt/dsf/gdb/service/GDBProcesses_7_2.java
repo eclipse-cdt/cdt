@@ -495,6 +495,12 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	@Override
     public void detachDebuggerFromProcess(IDMContext dmc, final RequestMonitor rm) {
     	
+		MIExitedProcessDMC exitedProc = DMContexts.getAncestorOfType(dmc, MIExitedProcessDMC.class);    	
+		if (exitedProc != null) {
+			super.detachDebuggerFromProcess(dmc, rm);
+			return;
+		}
+
 		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		

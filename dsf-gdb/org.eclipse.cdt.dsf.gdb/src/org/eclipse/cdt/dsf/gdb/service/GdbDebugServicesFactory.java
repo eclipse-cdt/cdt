@@ -19,6 +19,7 @@
  *     Marc Khouzam (Ericsson) - Support dynamic printf in bp service 7.5 (Bug 400628)
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *     Marc Dumais (Ericsson) - Update GDBHardwareAndOS service to take advantage of GDB providing CPU/core info (bug 464184)
+ *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -78,6 +79,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	/** @since 4.4 */
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.7 */
+	public static final String GDB_7_9_VERSION = "7.9"; //$NON-NLS-1$
 	// TODO: replace with version 7.10, when released
 	private static final String GDB_7_10_VERSION = "7.9.50.20150402"; //$NON-NLS-1$
 
@@ -221,6 +223,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
+		if (GDB_7_9_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBProcesses_7_9(session);
+		}
 		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_4(session);
 		}

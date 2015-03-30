@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Ericsson - added support for core-awareness
+ *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -29,7 +31,7 @@ public interface IGDBProcesses extends IMIProcesses {
      * 
 	 * @since 4.0
 	 */
-    public interface IGdbThreadDMData extends IThreadDMData {
+    interface IGdbThreadDMData extends IThreadDMData {
     	/**
     	 * @return The list of identifiers of the cores on which the thread
     	 *         or process is currently located.  A thread will typically
@@ -46,6 +48,27 @@ public interface IGDBProcesses extends IMIProcesses {
          */
         String getOwner();
     }
+    
+    /**
+     * This interface describes an exited thread/process.
+     * 
+	 * @since 4.7
+	 */
+    interface IGdbThreadExitedDMData extends IThreadDMData {
+		/** 
+		 * @return The exit code of this process.
+		 *         Returns null if the exit code is not known.
+		 */
+		Integer getExitCode();
+    }
+    
+    /**
+     * Indicates that a process or thread is no longer being tracked by
+     * the session.  This event usually refers to exited elements that
+     * were still being shown to the user but that have now been removed.
+	 * @since 4.7
+	 */
+    interface IThreadRemovedDMEvent extends IDMEvent<IThreadDMContext> {}
     
     /**
      * Get a list of all execution contexts belonging to a container.  This call is synchronous,

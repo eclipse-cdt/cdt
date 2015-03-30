@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems and others.
+ * Copyright (c) 2008, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
@@ -34,7 +35,10 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
         } 
         if (IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName)) {
             return properties.get(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY) != null ? 1 : 0;
-        } 
+        }
+        if (IGdbLaunchVMConstants.PROP_EXIT_CODE_KNOWN.equals(propertyName)) {
+        	return properties.get(IGdbLaunchVMConstants.PROP_EXIT_CODE) != null ? 1 : 0;
+        }
         return super.getPropertyValue(propertyName, status, properties);
     }
 
@@ -43,12 +47,11 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
         if (IGdbLaunchVMConstants.PROP_OS_ID_KNOWN.equals(propertyName) ||
             IGdbLaunchVMConstants.PROP_OS_ID.equals(propertyName) ||
             IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN.equals(propertyName) ||
-            IGdbLaunchVMConstants.PROP_CORES_ID.equals(propertyName)) 
-        {
-            return true;
-        }
-        if (IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName) ||
-        	IGdbLaunchVMConstants.PROP_THREAD_SUMMARY.equals(propertyName)) 
+            IGdbLaunchVMConstants.PROP_CORES_ID.equals(propertyName) ||
+            IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName) ||
+        	IGdbLaunchVMConstants.PROP_THREAD_SUMMARY.equals(propertyName) ||
+        	IGdbLaunchVMConstants.PROP_EXIT_CODE_KNOWN.equals(propertyName) ||
+        	IGdbLaunchVMConstants.PROP_EXIT_CODE.equals(propertyName))
         {
         	return true;
         } 

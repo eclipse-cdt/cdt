@@ -16,6 +16,8 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
@@ -34,6 +36,26 @@ public class GDBProcesses_7_3 extends GDBProcesses_7_2_1 {
 			Map<String, Object> attributes, boolean restart, 
 			DataRequestMonitor<IContainerDMContext> rm) {
 		return new StartOrRestartProcessSequence_7_3(executor, containerDmc, attributes, restart, rm);
+	}
+	
+	@Override
+    @DsfServiceEventHandler
+	public void eventDispatched(MIThreadGroupExitedEvent e) {
+		super.eventDispatched(e);
+
+		// Cache the exit code if there is one
+		String groupId = e.getGroupId();
+		String exitCode = e.getExitCode();
+		if (groupId != null && exitCode != null) {
+			ExitedProcInfo info = getExitedProcesses().get(groupId);
+			if (info != null) {
+				try {
+					// Must use 'decode' since GDB returns an octal value
+					info.setExitCode(Integer.decode(exitCode));
+				} catch (NumberFormatException exception) {
+				}    					
+			}
+		}
 	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Ericsson and others.
+ * Copyright (c) 2010, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
  *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
  *     Simon Marchi (Ericsson) - Bug 378154 - Pass thread name from MIThread to the data model
+ *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -135,6 +136,12 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 				@Override
 				protected void handleSuccess() {
 					final IThreadDMData firstLevelData = getData();
+
+					// No need to go further if we are dealing with an exited process
+					if (firstLevelData instanceof IGdbThreadExitedDMData) {
+						rm.done(firstLevelData);
+						return;
+					}
 					
 					ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 					final String groupId = getGroupFromPid(((IMIProcessDMContext)dmc).getProcId());
@@ -217,7 +224,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
 		String name = thread.getName();
 		String core = thread.getCore();
-		return new MIThreadDMData_7_1(name == null ? "" : name, id, core == null ? null : new String[] { core });
+		return new MIThreadDMData_7_1(name == null ? "" : name, id, core == null ? null : new String[] { core }); //$NON-NLS-1$
 	}
 	
 	@DsfServiceEventHandler

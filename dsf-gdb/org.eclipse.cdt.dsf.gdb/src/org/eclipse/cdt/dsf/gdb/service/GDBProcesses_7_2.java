@@ -495,6 +495,12 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	@Override
     public void detachDebuggerFromProcess(IDMContext dmc, final RequestMonitor rm) {
     	
+		MIExitedProcessDMC exitedProc = DMContexts.getAncestorOfType(dmc, MIExitedProcessDMC.class);    	
+		if (exitedProc != null) {
+			super.detachDebuggerFromProcess(dmc, rm);
+			return;
+		}
+
 		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		
@@ -509,7 +515,10 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 			if (runControl != null && !runControl.isTargetAcceptingCommands()) {
 				fBackend.interrupt();
 			}
-
+						
+			// Remember that this process was detached so we don't show it as an exited process.
+			// We must set this before sending the detach command to gdb to avoid race conditions
+			getDetachedProcesses().add(containerDmc.getGroupId());
         	fCommandControl.queueCommand(
         			fCommandFactory.createMITargetDetach(controlDmc, containerDmc.getGroupId()),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
@@ -529,7 +538,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
     							// Also, with GDB 7.2, removing the inferior does not work because of another bug, so we just don't do it.
     					       	fCommandControl.queueCommand(
     				        			fCommandFactory.createMITargetDetach(containerDmc),
-    				    				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+    				    				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    				        				@Override
+    				        				protected void handleFailure() {
+    				        					// Detach failed
+    				        					getDetachedProcesses().remove(containerDmc.getGroupId());
+    				        					super.handleFailure();
+    				        				};
+    				        			});
     						}
     					}
     				});

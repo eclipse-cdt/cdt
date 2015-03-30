@@ -13,6 +13,8 @@ package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.IOException;
 
+import junit.framework.Test;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
@@ -36,13 +38,17 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * Test Ctrl-F3/F3 with the DOM Indexer for a C++ project.
  */
-public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsIndexer {
+public class CPPSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	protected String sourceIndexerID;
 	protected IIndex index;
 	
-	public CPPSelectionTestsAnyIndexer(String name, String indexerID) {
+	public CPPSelectionTestsIndexer(String name) {
 		super(name);
-		sourceIndexerID= indexerID;
+		sourceIndexerID= IPDOMManager.ID_FAST_INDEXER;
+	}
+	
+	public static Test suite() {
+		return suite(CPPSelectionTestsIndexer.class);
 	}
 	
 	@Override
@@ -74,7 +80,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	
 	protected StringBuilder[] getContents(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(
-				CTestPlugin.getDefault().getBundle(), "ui", CPPSelectionTestsAnyIndexer.class, getName(), sections);
+				CTestPlugin.getDefault().getBundle(), "ui", CPPSelectionTestsIndexer.class, getName(), sections);
 	}
 
 	private void assertNode(String name, int offset, IASTNode node) {

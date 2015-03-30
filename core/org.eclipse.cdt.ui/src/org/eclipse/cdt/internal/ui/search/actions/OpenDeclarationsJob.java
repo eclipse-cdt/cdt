@@ -528,9 +528,10 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					if (uniqueElements.size() == 2) {
 						final ICElement e0 = uniqueElements.get(0);
 						final ICElement e1 = uniqueElements.get(1);
-						if (e0 instanceof IStructureDeclaration && e1 instanceof IMethodDeclaration) {
+						// Prefer a method of a class, to the class itself.
+						if (isMethodOfClass(e1, e0)) {
 							target= (ISourceReference) e1;
-						} else if (e1 instanceof IStructureDeclaration && e0 instanceof IMethodDeclaration) {
+						} else if (isMethodOfClass(e0, e1)) {
 							target= (ISourceReference) e0;
 						}
 					}
@@ -554,6 +555,13 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 						CUIPlugin.log(e);
 					}
 				}
+			}
+			
+			private boolean isMethodOfClass(ICElement method, ICElement clazz) {
+				return method instanceof IMethodDeclaration
+					&& clazz instanceof IStructureDeclaration
+					&& method.getParent() != null
+					&& method.getParent().equals(clazz);
 			}
 		});
 		return true;

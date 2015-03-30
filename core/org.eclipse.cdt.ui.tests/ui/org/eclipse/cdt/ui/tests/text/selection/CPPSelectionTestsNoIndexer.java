@@ -1191,4 +1191,31 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		int offset = code.indexOf("obj.waldo") + 4;
 		assertTrue(testF3(file, offset) instanceof IASTName);
 	}
+
+	//	struct A {
+	//	    A();
+	//	};
+	//
+	//	template <class>
+	//	struct B {
+	//	    B() {}
+	//	};
+	//
+	//	struct C {
+	//	    C();
+	//	    B<A>* b;
+	//	};
+	//
+	//	C::C() : b(new B<A>()) {}
+	public void testAmbiguityWithImplicitName_463234() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug463234.cpp", code);
+		
+		int offset = code.indexOf("new B<A>") + 6;
+        // There should be two ambiguous targets, the class A and the constructor B::B,
+        // with the class A being the first one (index 0).
+		IASTNode target = testF3WithAmbiguity(file, offset, 0);
+		assertTrue(target instanceof IASTName);
+		assertEquals("A", ((IASTName) target).toString());
+	}
 }

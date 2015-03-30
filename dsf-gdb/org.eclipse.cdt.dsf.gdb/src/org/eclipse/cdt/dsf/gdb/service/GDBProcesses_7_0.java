@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,12 @@
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
  *     Marc Khouzam (Ericsson) - Move IBreakpointsTargetDMContext from MIContainerDMC
  *                               to GDBContainerDMC to ease inheritance (Bug 389945)
+ *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -345,7 +347,55 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			return baseHashCode(); 
 		}
     }
-    
+   
+    /**
+     * A process context representing a process that has exited.
+     * Since an exited process no longer has a pid, we need another way
+     * of characterizing it.  We use the groupId instead.
+     * Note that with GDB 7.0 and 7.1, the groupId is the pid, so that
+     * does not help us, but since we only handle single-process debugging
+     * for those versions of GDB, we don't need any id to know we are
+     * dealing with our single process.
+     * Starting with GDB 7.2, we handle multi-process, but then we
+     * can use the groupId as a persistent identifier of each process,
+     * even an exited one.
+     * @since 4.7
+     */
+    @Immutable
+    protected static class MIExitedProcessDMC extends MIProcessDMC
+    {
+    	private final String fGroupId;
+
+    	public MIExitedProcessDMC(String sessionId, ICommandControlDMContext controlDmc, String pid, String groupId) {
+			super(sessionId, controlDmc, pid);
+    		fGroupId = groupId;
+    	}
+    	
+    	public String getGroupId() { return fGroupId; }
+
+    	@Override
+    	public String toString() { return baseToString() + ".group[" + getGroupId() + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!baseEquals(obj)) {
+				return false;
+			}
+
+			MIExitedProcessDMC other = (MIExitedProcessDMC)obj;
+			if (fGroupId == null || other.fGroupId == null) {
+				return fGroupId == null && other.fGroupId == null;
+			}
+
+			return fGroupId.equals(other.fGroupId);
+		}
+
+		@Override
+		public int hashCode() { 
+			return baseHashCode() ^ (fGroupId == null ? 0 : fGroupId.hashCode());
+		}
+    }
+
     /**
      * The data of a corresponding thread or process.
      */
@@ -371,6 +421,39 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		}
     }
     
+    /**
+     * The data of a corresponding to an exited process.
+     * @since 4.7
+     */
+    @Immutable
+    protected static class MIExitedProcessDMData implements IGdbThreadExitedDMData {
+    	final String fName;
+    	final String fId;
+    	final Integer fExitCode;
+    	
+    	public MIExitedProcessDMData(String name, String id, Integer exitCode) {
+    		fName = name;
+    		fId = id;
+    		fExitCode = exitCode;
+    	}
+    	
+    	@Override
+		public String getId() { return fId; }
+
+    	@Override
+		public String getName() { return fName; }
+    	
+    	@Override
+		public boolean isDebuggerAttached() {
+			return false;
+		}
+
+		@Override
+		public Integer getExitCode() {
+			return fExitCode;
+		}
+    }
+
     /**
      * This class provides an implementation of both a process context and process data.
      * It is used to be able to return a list of processes including their data all at once.
@@ -483,8 +566,22 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// This map also serves as a list of processes we are currently debugging.
 	// This is important because we cannot always ask GDB for the list, since it may
 	// be running at the time.  Bug 303503
-    private Map<String, String> fDebuggedProcessesAndNames = new HashMap<String, String>();
-	
+    private Map<String, String> fDebuggedProcessesAndNames = new HashMap<>();
+
+    private class ExitedProcInfo {
+    	public String pid;
+    	public String name;
+    	public ExitedProcInfo(String aPid, String aName) {
+    		pid = aPid;
+    		name = aName;   		
+    	}
+    }
+    /**
+     * Map of groupId to ExitedProcInfo.
+     * This map contains the information of each process that has exited.
+     */
+    private Map<String, ExitedProcInfo> fExitedProcesses = new HashMap<>();
+
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
     /**
@@ -625,6 +722,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	protected void setIsInitialProcess(boolean isInitial) {
 		fInitialProcess = isInitial;
 	}
+	
+	/** @since 4.7 */
+	protected CommandCache getContainerCommandCache() {
+		 return fContainerCommandCache;
+	}
+
+	/** @since 4.7 */
+	protected CommandCache getThreadCommandCache() {
+		 return fThreadCommandCache;
+	}
 
 	/** 
 	 * Returns the groupId that is associated with the provided pId
@@ -650,7 +757,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid) {
         return new MIProcessDMC(getSession().getId(), controlDmc, pid);
     }
-    
+ 
+	/**
+	 * Create a special context describing a process that has exited normally.
+	 * @param controlDmc Its parent context.
+	 * @param groupId The GDB groupId to which this process refers to.  Since an exited process no longer
+	 *                has a pid, we use this id to characterize it uniquely.
+     * 				  Note that with GDB 7.0 and 7.1, the groupId is the pid, so that
+     *                does not help us, but since we only handle single-process debugging
+     *                for those versions of GDB, we don't need any id to know we are
+     *                dealing with our single process.
+     *                Starting with GDB 7.2, we handle multi-process, but then we
+     *                can use the groupId as a persistent identifier of each process,
+     *                even an exited one.
+	 */
+    private IProcessDMContext createExitedProcessContext(ICommandControlDMContext controlDmc, String pid, String groupId) {
+        return new MIExitedProcessDMC(getSession().getId(), controlDmc, pid, groupId);
+    }
+ 
 	@Override
     public IMIExecutionDMContext createExecutionContext(IContainerDMContext containerDmc, 
                                                         IThreadDMContext threadDmc, 
@@ -713,6 +837,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     
 	@Override
     public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
+		if (isExitedProcess(containerDmc)) {
+			// No threads for an exited process
+			return new IMIExecutionDMContext[0];
+		}
+		
     	String groupId = containerDmc.getGroupId();
     	List<IMIExecutionDMContext> execDmcList = new ArrayList<IMIExecutionDMContext>(); 
     	Iterator<Map.Entry<String, String>> iterator = getThreadToGroupMap().entrySet().iterator();
@@ -732,6 +861,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	@Override
 	public void getExecutionData(IThreadDMContext dmc, final DataRequestMonitor<IThreadDMData> rm) {
+		if (dmc instanceof MIExitedProcessDMC) {
+			ExitedProcInfo info = fExitedProcesses.get(((MIExitedProcessDMC)dmc).getGroupId());
+			if (info != null) {
+				rm.done(new MIExitedProcessDMData(info.name, info.pid, null));
+			} else {
+				// This can happen for example, when restarting an exited process,
+				// where we've deleted the process from our table, but it has
+				// yet to be cleaned up from the view
+    			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Unavailable info about exited process", null)); //$NON-NLS-1$        	        			
+			}
+			
+			return;
+		}
+		
 		if (dmc instanceof IMIProcessDMContext) {
 			String id = ((IMIProcessDMContext)dmc).getProcId();
 			String name = null;
@@ -811,7 +954,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
 	@Override
     public void getDebuggingContext(IThreadDMContext dmc, DataRequestMonitor<IDMContext> rm) {
-    	if (dmc instanceof MIProcessDMC) {
+    	if (dmc instanceof MIExitedProcessDMC) {
+    		MIExitedProcessDMC exitedProc = (MIExitedProcessDMC)dmc;
+			IMIContainerDMContext containerDmc = createContainerContext(exitedProc, exitedProc.getGroupId());
+    		rm.setData(containerDmc);
+    	} else if (dmc instanceof MIProcessDMC) {
     		MIProcessDMC procDmc = (MIProcessDMC)dmc;
 			IMIContainerDMContext containerDmc = createContainerContext(procDmc, getGroupFromPid(procDmc.getProcId()));
     		rm.setData(containerDmc);
@@ -970,6 +1117,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
    		return fNumConnected > 0;
     }
     
+    private boolean isExitedProcess(IDMContext dmc) {
+    	return DMContexts.getAncestorOfType(dmc, MIExitedProcessDMC.class) != null;
+    }
+    
 	@Override
     public void canDetachDebuggerFromProcess(IDMContext dmc, DataRequestMonitor<Boolean> rm) {
     	rm.setData(doCanDetachDebuggerFromProcess());
@@ -1005,7 +1156,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	@Override
 	public void canTerminate(IThreadDMContext thread, DataRequestMonitor<Boolean> rm) {
-		rm.setData(true);
+		if (thread instanceof MIExitedProcessDMC) {
+			rm.setData(false);
+		} else {
+			rm.setData(true);
+		}
 		rm.done();
 	}
 
@@ -1057,6 +1212,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		if (containerDmc != null) {
+			if (isExitedProcess(containerDmc)) {
+				// No threads for an exited process
+				rm.done(new IMIExecutionDMContext[0]);
+				return;
+			}
+			
 			fThreadCommandCache.execute(
 					fCommandFactory.createMIListThreadGroups(controlDmc, containerDmc.getGroupId()),
 					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
@@ -1067,13 +1228,30 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						}
 					});
 		} else {
+			
+			final DataRequestMonitor<IMIContainerDMContext[]> addExitedDRM = 
+					new ImmediateDataRequestMonitor<IMIContainerDMContext[]>(rm) {
+				@Override
+				protected void handleCompleted() {
+					List<IMIContainerDMContext> containerDmcs = new ArrayList<>(Arrays.asList(getData()));
+					
+					// Add the exited processes to our list
+					for (String groupId : fExitedProcesses.keySet()) {
+						String pid = fExitedProcesses.get(groupId).pid;
+						IProcessDMContext processDmc = createExitedProcessContext(controlDmc, pid, groupId);
+						containerDmcs.add(createContainerContext(processDmc, groupId));
+					}
+					
+					rm.done(containerDmcs.toArray(new IMIContainerDMContext[containerDmcs.size()]));
+				};
+			};
+
 			fContainerCommandCache.execute(
 					fCommandFactory.createMIListThreadGroups(controlDmc),
-					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), addExitedDRM) {
 						@Override
 						protected void handleSuccess() {
-							rm.setData(makeContainerDMCs(controlDmc, getData().getGroupList()));
-							rm.done();
+							addExitedDRM.done(makeContainerDMCs(controlDmc, getData().getGroupList()));
 						}
 						@Override
 						protected void handleFailure() {
@@ -1083,8 +1261,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 							for (String groupId : getGroupToPidMap().keySet()) {
 								containerDmcs[i++] = createContainerContextFromGroupId(controlDmc, groupId);
 							}
-							rm.setData(containerDmcs);
-							rm.done();
+							addExitedDRM.done(containerDmcs);
 						}
 					});
 		}
@@ -1350,6 +1527,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						if (!isSuccess()) {
 							fProcRestarting = false;
 						}
+
+						// In case the process we restarted was already exited, remove it from our list
+						fExitedProcesses.remove(groupId);
+						
 						setData(getData());
 						super.handleCompleted();
 					};
@@ -1449,6 +1630,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	if (e instanceof ContainerStartedDMEvent) {
     		fContainerCommandCache.reset();
     		fNumConnected++;
+    		fProcRestarting = false;
     	} else {
     		fThreadCommandCache.reset();
     	}
@@ -1475,7 +1657,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				fCommandControl.terminate(new ImmediateRequestMonitor());
     			}
     		}
-    		fProcRestarting = false;
     	} else {
     		fThreadCommandCache.reset();
     	}
@@ -1617,8 +1798,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				if (groupId != null) {
     					String pId = getGroupToPidMap().remove(groupId);
 
-    					// GDB is no longer debugging this process.  Remove it from our list.
-    					fDebuggedProcessesAndNames.remove(pId);
+    					// GDB is no longer debugging this process.  Remove it from our list
+    					String name = fDebuggedProcessesAndNames.remove(pId);
+    					if (!fProcRestarting) {
+    						// If the process is not restarting, store it in the list of exited processes.
+    						fExitedProcesses.put(groupId, new ExitedProcInfo(pId, name));
+    					}
 
     					// Remove any entries for that group from our thread to group map
     					// When detaching from a group, we won't have received any thread-exited event

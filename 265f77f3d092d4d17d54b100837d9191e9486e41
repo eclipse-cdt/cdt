@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_bc9651a0",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-03-30T23:59:46Z",
+      "side": 1,
+      "message": "We cleared it here, later only time we change it is\nwhere you add locations.\nSo numberFound\u003d\u003dfTagLocations.size()\nI don\u0027t see how its possible that this is not equal",
+      "revId": "265f77f3d092d4d17d54b100837d9191e9486e41",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - Initial API and implementation
  *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
  *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
+ *     Marc Khouzam (Ericsson) - Support new "exit-code" MI parameter (Bug 407340)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -164,6 +165,14 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  * -list-thread-groups --available
  * ^done,groups=[{id="19445",type="process",description="gdb.7.2 -i mi testing/a.out",user="lmckhou"},{id="19451",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19462",type="process",description="sleep 5",user="lmckhou"}]
  *
+ * GDB 7.9
+ * 
+ * -list-thread-groups
+ * ^done,groups=[{id="i1",type="process",exit-code="0",executable="/home/lmckhou/runtime-TestDSF/DSFTestApp/Debug/DSFTestApp"}]
+ *
+ * -list-thread-groups
+ * ^done,groups=[{id="i1",type="process",exit-code="03",executable="/home/lmckhou/runtime-TestDSF/DSFTestApp/Debug/DSFTestApp"}]
+ *
  * @since 1.1
  */
 
@@ -186,6 +195,13 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		String[] getCores();
 		/**@since 4.0 */
 		String getExecutable();
+		
+		/** 
+		 * @return the exit code of this thread group.
+		 *         null if not applicable or not available.
+		 * @since 4.7
+		 */
+		Integer getExitCode();
 	}
 	
 	/**
@@ -207,9 +223,16 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		final String[] fCores;
 		final String fExecutable;
 		final MIThread[] fThreadList;
-		
+		final Integer fExitCode;
+
 		public ThreadGroupInfo(String id, String description, String type, String pid, 
-				               String user, String[] cores, String exec, MIThread[] threads) {
+	               String user, String[] cores, String exec, MIThread[] threads) {
+			this(id, description, type, pid, user, cores, exec, threads, null);
+		}
+
+		/** @since 4.7 */
+		public ThreadGroupInfo(String id, String description, String type, String pid, 
+				               String user, String[] cores, String exec, MIThread[] threads, Integer exitCode) {
 			fGroupId = id;
 			fDescription = description;
 			fType = type;
@@ -222,6 +245,8 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			fName = parseName(fDescription);
 			
 			fThreadList = threads;
+			
+			fExitCode = exitCode;
 		}
 		
 		protected String parseName(String desc) {
@@ -287,6 +312,12 @@ public class MIListThreadGroupsInfo extends MIInfo {
 
 		@Override
 		public MIThread[] getThreads() { return fThreadList; }
+
+		/** @since 4.7 */
+		@Override
+		public Integer getExitCode() {
+			return fExitCode;
+		}
 	}
 	
 	
@@ -346,6 +377,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			String id, desc, type, pid, exec, user;
 			id = desc = type = pid = exec = user = "";//$NON-NLS-1$
 			MIThread[] threads = null;
+			Integer exitCode = null;
 			
 			String[] cores = null;
 			
@@ -382,23 +414,34 @@ public class MIListThreadGroupsInfo extends MIInfo {
 						user = str.trim();
 					}
 				} else if (var.equals("cores")) { //$NON-NLS-1$
-					// Staring with GDB 7.1
+					// Starting with GDB 7.1
 					MIValue value = result.getMIValue();
 					if (value instanceof MIList) {
 						cores = parseCores((MIList)value);
 					}
 				} else if (var.equals("executable")) { //$NON-NLS-1$
-					// Staring with GDB 7.2
+					// Starting with GDB 7.2
 					MIValue value = result.getMIValue();
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getCString();
 						exec = str.trim();
 					}
 				} else if (var.equals("threads")) { //$NON-NLS-1$
-					// Staring with GDB 7.1
+					// Starting with GDB 7.1
 					MIValue value = result.getMIValue();
 					if (value instanceof MIList) {
 						threads = parseThreads(((MIList)value));
+					}
+				} else if (var.equals("exit-code")) { //$NON-NLS-1$
+					// Starting with GDB 7.9
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						try {
+							// Must use 'decode' as GDB returns the value in octal format
+							exitCode = Integer.decode(str.trim());
+						} catch (NumberFormatException e) {
+						}
 					}
 				}
 			}
@@ -410,7 +453,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			if (pid.equals("") && !desc.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 				pid = id;
 			}
-			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads);
+			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec, threads, exitCode);
 		}
 	}
 

@@ -130,7 +130,7 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 	protected void setUp() throws Exception {
     	super.setUp();
     	initProject();
-    	OpenDeclarationsAction.sIsJUnitTest= true;
+    	OpenDeclarationsAction.sDisallowAmbiguousInput= true;
     }
     
     @Override
@@ -1191,5 +1191,4 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		int offset = code.indexOf("obj.waldo") + 4;
 		assertTrue(testF3(file, offset) instanceof IASTName);
 	}
-	
 }

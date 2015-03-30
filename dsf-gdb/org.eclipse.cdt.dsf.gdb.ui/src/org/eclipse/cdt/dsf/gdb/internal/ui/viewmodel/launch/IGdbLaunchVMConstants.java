@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
+ *     Marc Khouzam (Ericsson) - Support for exited processes in the debug view (bug 407340)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
@@ -42,4 +43,18 @@ public interface IGdbLaunchVMConstants {
     
     public static final String PROP_THREAD_SUMMARY_KNOWN = "thread_summary_known"; //$NON-NLS-1$
     public static final String PROP_THREAD_SUMMARY = "thread_summary"; //$NON-NLS-1$
+
+    /**
+     * If this property is set, it indicates the process or thread should be shown as exited.
+     */
+    public static final String PROP_THREAD_EXITED = "thread_exited"; //$NON-NLS-1$  
+
+    /**
+     * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
+     */
+    public static final String PROP_EXIT_CODE_KNOWN = "exit_code_known"; //$NON-NLS-1$  
+    /**
+    * If set, the value of the property indicates the exit code returned.
+    */
+    public static final String PROP_EXIT_CODE = "exit_code"; //$NON-NLS-1$  
 }

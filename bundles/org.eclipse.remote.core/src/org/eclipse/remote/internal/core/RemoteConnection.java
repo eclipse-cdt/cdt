@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -42,7 +41,7 @@ public class RemoteConnection implements IRemoteConnection {
 
 	private final Map<String, Object> servicesMap = new HashMap<>();
 
-	private final List<IRemoteConnectionChangeListener> fListeners = new ArrayList<>();
+	private final ListenerList fListeners = new ListenerList();
 
 	final static String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -244,7 +243,8 @@ public class RemoteConnection implements IRemoteConnection {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.remote.core.IRemoteConnection#removeConnectionChangeListener(org.eclipse.remote.core.IRemoteConnectionChangeListener
+	 * org.eclipse.remote.core.IRemoteConnection#removeConnectionChangeListener(org.eclipse.remote.core.
+	 * IRemoteConnectionChangeListener
 	 * )
 	 */
 	@Override
@@ -260,8 +260,8 @@ public class RemoteConnection implements IRemoteConnection {
 	@Override
 	public void fireConnectionChangeEvent(final int type) {
 		RemoteConnectionChangeEvent event = new RemoteConnectionChangeEvent(this, type);
-		for (IRemoteConnectionChangeListener listener : fListeners) {
-			listener.connectionChanged(event);
+		for (Object listener : fListeners.getListeners()) {
+			((IRemoteConnectionChangeListener) listener).connectionChanged(event);
 		}
 		// fire to the global listeners too
 		connectionType.getRemoteServicesManager().fireRemoteConnectionChangeEvent(event);

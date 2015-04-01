@@ -676,6 +676,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " -D'MACRO5=\"quoted value\"'"
 				+ " -DMACRO6=\\\"escape-quoted value\\\""
 				+ " -DMACRO7=\"'single-quoted value'\""
+				+ " -DMACRO8=\"\\\"escape-quoted value\\\"\""
 				+ " file.cpp");
 		parser.shutdown();
 
@@ -696,6 +697,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertEquals(new CMacroEntry("MACRO5", "\"quoted value\"", 0), entries.get(5));
 		assertEquals(new CMacroEntry("MACRO6", "\"escape-quoted value\"", 0), entries.get(6));
 		assertEquals(new CMacroEntry("MACRO7", "'single-quoted value'", 0), entries.get(7));
+		assertEquals(new CMacroEntry("MACRO8", "\"escape-quoted value\"", 0).getValue(), entries.get(8).getValue());
 	}
 
 	/**

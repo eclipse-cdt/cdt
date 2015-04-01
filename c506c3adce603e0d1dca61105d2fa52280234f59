@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_3059e085",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-04-01T01:57:14Z",
+      "side": 1,
+      "message": "same comment as before. This should be same code as on line 802, you don\u0027t need to intern \"true\" string just to dispose it later",
+      "revId": "c506c3adce603e0d1dca61105d2fa52280234f59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_cbb39134",
+        "filename": "build/org.eclipse.cdt.managedbuilder.ui/src/org/eclipse/cdt/managedbuilder/ui/properties/ToolListContentProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-04-01T01:57:14Z",
+      "side": 1,
+      "message": "what this method does? Name suggest it filtering tools maybe\ncheck should be in there somewhere?",
+      "revId": "c506c3adce603e0d1dca61105d2fa52280234f59",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

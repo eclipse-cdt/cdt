@@ -40,6 +40,7 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 			new IncludeFileOptionParser("-include\\s*([\"'])(.*)\\1", "$2"),
 			new IncludeFileOptionParser("-include\\s*([^\\s\"']*)", "$1"),
 			new MacroOptionParser("-D\\s*([\"'])([^=]*)(=(.*))?\\1", "$2", "$4"),
+			new MacroOptionParser("-D\\s*([^\\s=\"']*)=(\"\\\\(\")(.*?)\\\\\"\")", "$1", "$3$4$3"),
 			new MacroOptionParser("-D\\s*([^\\s=\"']*)=(\\\\([\"']))(.*?)\\2", "$1", "$3$4$3"),
 			new MacroOptionParser("-D\\s*([^\\s=\"']*)=([\"'])(.*?)\\2", "$1", "$3"),
 			new MacroOptionParser("-D\\s*([^\\s=\"']*)(=([^\\s\"']*))?", "$1", "$3"),

@@ -91,7 +91,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
-		if (!fConnection.isOpen()) {
+		if (!fConnection.hasOpenSession()) {
 			throw new IOException(Messages.JSchProcessBuilder_Connection_is_not_open);
 		}
 

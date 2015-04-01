@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
@@ -60,7 +60,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#close()
 		 */
 		@Override
@@ -70,106 +70,106 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#connect(com.jcraft.jsch.SocketFactory, java.lang.String, int, int)
 		 */
 		@Override
 		public void connect(SocketFactory socket_factory, String host, int port, int timeout) throws IOException {
 			assert !connectCalled : "connect should only be called once"; //$NON-NLS-1$
-			try {
-				if (timeout == 0) {
-					timeout = 10000; // default to 10s
-				}
-				final int waitTime = 50;
-				final int waitSteps = timeout / waitTime;
-				SubMonitor subMon = SubMonitor.convert(monitor, waitSteps * 2);
-				final SubMonitor childMon = subMon.newChild(waitSteps);
+			connectCalled = true;
 
-				if (connection == null) {
-					IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
-					connection = (JSchConnection) manager.getLocalConnectionType().getConnections().get(0);
-				}
+			if (timeout == 0) {
+				timeout = 10000; // default to 10s
+			}
+			final int waitTime = 50;
+			final int waitSteps = timeout / waitTime;
+			SubMonitor subMon = SubMonitor.convert(monitor, waitSteps * 2);
+			final SubMonitor childMon = subMon.newChild(waitSteps);
 
+			if (connection != null) {
 				// Open connection if it isn't already opened
 				try {
 					connection.openMinimal(childMon);
 				} catch (RemoteConnectionException e) {
 					throw new IOException(e);
 				}
-				subMon.setWorkRemaining(waitSteps);
+			}
+			subMon.setWorkRemaining(waitSteps);
 
-				// Start command
-				command = command.replace("%h", host); //$NON-NLS-1$
-				command = command.replace("%p", Integer.toString(port)); //$NON-NLS-1$
+			// Start command
+			command = command.replace("%h", host); //$NON-NLS-1$
+			command = command.replace("%p", Integer.toString(port)); //$NON-NLS-1$
 
-				List<String> cmd = new ArgumentParser(command).getTokenList();
-				JSchProcessBuilder processBuilder = (JSchProcessBuilder) connection.getRemoteConnection()
-						.getService(IRemoteProcessService.class).getProcessBuilder(cmd);
+			List<String> cmd = new ArgumentParser(command).getTokenList();
+
+			if (connection != null) {
+				JSchProcessBuilder processBuilder = (JSchProcessBuilder) connection.getProcessBuilder(cmd);
 				processBuilder.setPreamble(false);
 				process = processBuilder.start();
+			} else {
+				process = Activator.getService(IRemoteServicesManager.class).getLocalConnectionType().getConnections().get(0).
+						getService(IRemoteProcessService.class).getProcessBuilder(cmd).start();
+			}
 
-				// Wait on command to produce stdout output
-				long endTime = System.currentTimeMillis() + timeout;
-				boolean bOutputAvailable, bProcessComplete, bTimedOut, bCanceled;
-				do {
-					try {
-						Thread.sleep(waitTime);
-						subMon.worked(1);
-					} catch (InterruptedException e) {
-						/* ignore */
-					}
-					bOutputAvailable = (getInputStream().available() != 0);
-					bProcessComplete = process.isCompleted();
-					bTimedOut = System.currentTimeMillis() > endTime;
-					bCanceled = subMon.isCanceled();
-				} while (!bOutputAvailable && !bProcessComplete && !bTimedOut && !bCanceled);
+			// Wait on command to produce stdout output
+			long endTime = System.currentTimeMillis() + timeout;
+			boolean bOutputAvailable, bProcessComplete, bTimedOut, bCanceled;
+			do {
+				try {
+					Thread.sleep(waitTime);
+					subMon.worked(1);
+				} catch (InterruptedException e) {
+					/* ignore */
+				}
+				bOutputAvailable = (getInputStream().available() != 0);
+				bProcessComplete = process.isCompleted();
+				bTimedOut = System.currentTimeMillis() > endTime;
+				bCanceled = subMon.isCanceled();
+			} while (!bOutputAvailable && !bProcessComplete && !bTimedOut && !bCanceled);
 
-				// If no output was produced before process died, throw an exception with the stderr output
-				final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-				if (getInputStream().available() == 0 || process.isCompleted()) {
-					String msg = ""; //$NON-NLS-1$
-					while (bufferedReader.ready()) {
-						msg += (char) bufferedReader.read();
-					}
-					msg = msg.trim();
+			// If no output was produced before process died, throw an exception with the stderr output
+			final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			if (getInputStream().available() == 0 || process.isCompleted()) {
+				String msg = ""; //$NON-NLS-1$
+				while (bufferedReader.ready()) {
+					msg += (char) bufferedReader.read();
+				}
+				msg = msg.trim();
 
-					if (!process.isCompleted()) {
-						process.destroy();
-					}
-
-					String cause = Messages.JSchConnectionProxyFactory_failed;
-					if (bTimedOut) {
-						cause = Messages.JSchConnectionProxyFactory_timedOut;
-					} else if (bCanceled) {
-						cause = Messages.JSchConnectionProxyFactory_wasCanceled;
-					}
-					throw new IOException(MessageFormat.format(Messages.JSchConnectionProxyFactory_ProxyCommandFailed, command,
-							cause, msg));
+				if (!process.isCompleted()) {
+					process.destroy();
 				}
 
-				// Dump the stderr to log
-				new Thread() {
-					@Override
-					public void run() {
-						final ILog log = Activator.getDefault().getLog();
-						String line;
-						try {
-							while ((line = bufferedReader.readLine()) != null) {
-								log.log(new Status(IStatus.INFO, Activator.getUniqueIdentifier(), IStatus.OK, line, null));
-							}
-						} catch (IOException e) {
-							Activator.log(e);
-						}
-					};
-				}.start();
-			} finally {
-				connectCalled = true;
+				String cause = Messages.JSchConnectionProxyFactory_failed;
+				if (bTimedOut) {
+					cause = Messages.JSchConnectionProxyFactory_timedOut;
+				} else if (bCanceled) {
+					cause = Messages.JSchConnectionProxyFactory_wasCanceled;
+				}
+				throw new IOException(MessageFormat.format(Messages.JSchConnectionProxyFactory_ProxyCommandFailed, command,
+						cause, msg));
 			}
+
+			// Dump the stderr to log
+			new Thread() {
+				@Override
+				public void run() {
+					final ILog log = Activator.getDefault().getLog();
+					String line;
+					try {
+						while ((line = bufferedReader.readLine()) != null) {
+							log.log(new Status(IStatus.INFO, Activator.getUniqueIdentifier(), IStatus.OK, line, null));
+						}
+					} catch (IOException e) {
+						Activator.log(e);
+					}
+				};
+			}.start();
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#getInputStream()
 		 */
 		@Override
@@ -179,7 +179,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#getOutputStream()
 		 */
 		@Override
@@ -189,7 +189,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#getSocket()
 		 */
 		@Override
@@ -214,7 +214,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#close()
 		 */
 		@Override
@@ -224,7 +224,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#connect(com.jcraft.jsch.SocketFactory, java.lang.String, int, int)
 		 */
 		@Override
@@ -246,7 +246,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#getInputStream()
 		 */
 		@Override
@@ -261,7 +261,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#getOutputStream()
 		 */
 		@Override
@@ -276,7 +276,7 @@ public class JSchConnectionProxyFactory {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see com.jcraft.jsch.Proxy#getSocket()
 		 */
 		@Override

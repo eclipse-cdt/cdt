@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+1: Rafael Sene <rpsene@br.ibm.com>
+Code-Review+2: Doug Schaefer <dschaefer@qnx.com>
+Submitted-by: Doug Schaefer <dschaefer@qnx.com>
+Submitted-at: Wed, 01 Apr 2015 13:35:23 -0400
+Reviewed-on: https://git.eclipse.org/r/34077
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

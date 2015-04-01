@@ -49,7 +49,20 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
-	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
+
+	/**
+	 * "foo"
+	 * Using look-ahead and look-behind to resolve ambiguity with "\" {@link #QUOTE_BSLASH_QUOTE}
+	 */
+	private static final String QUOTE = "(\"(?!\\\\).*?(?<!\\\\)\")"; //$NON-NLS-1$
+	/** \"foo\" */
+	private static final String BSLASH_QUOTE = "(\\\\\".*?\\\\\")"; //$NON-NLS-1$
+	/** 'foo' */
+	private static final String SINGLE_QUOTE = "('.*?')"; //$NON-NLS-1$
+	/** "\"foo\"" */
+	private static final String QUOTE_BSLASH_QUOTE = "(\"\\\\\".*?\\\\\"\")"; //$NON-NLS-1$
+
+	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"'\\\\]*(\\s*(" + QUOTE +"|" + QUOTE_BSLASH_QUOTE + "|" + BSLASH_QUOTE + "|" + SINGLE_QUOTE + "|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$<
 	private static final int OPTION_GROUP = 0;
 
 	public enum ResourceScope {

@@ -231,6 +231,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMod
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Name resolution
@@ -1075,12 +1076,24 @@ public class CPPSemantics {
     	return false;
 	}
 
-	private static void lookupInlineNamespaces(LookupData data, ICPPNamespaceScope namespace) throws DOMException {
+	private static void lookupInlineNamespaces(LookupData data, ICPPNamespaceScope namespace) 
+			throws DOMException {
+		lookupInlineNamespaces(data, namespace, new HashSet<ICPPInternalNamespaceScope>());
+	}
+	
+	private static void lookupInlineNamespaces(LookupData data, ICPPNamespaceScope namespace,
+			Set<ICPPInternalNamespaceScope> visited) throws DOMException {
 		if (namespace instanceof ICPPInternalNamespaceScope) {
 			ICPPInternalNamespaceScope ns= (ICPPInternalNamespaceScope) namespace;
+			visited.add(ns);
 			for (ICPPInternalNamespaceScope inline : ns.getInlineNamespaces()) {
+				if (visited.contains(inline)) {
+					CCorePlugin.log(IStatus.WARNING, 
+							"Detected circular reference between inline namespaces");  //$NON-NLS-1$
+					continue;
+				}
 				mergeResults(data, getBindingsFromScope(inline, data), true);
-				lookupInlineNamespaces(data, inline);
+				lookupInlineNamespaces(data, inline, visited);
 				nominateNamespaces(data, inline);
 			}
 		}

@@ -8,7 +8,8 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted to use with DSF
- *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)   
+ *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)
+ *     Vladimir Prus (Mentor Graphics) - handle tree expand/collapse
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
@@ -22,6 +23,9 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.ExpressionBasedDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -33,11 +37,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisito
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -65,6 +72,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     private boolean fDisposed = false;
     private ListenerList fListeners = new ListenerList();
 	private IDoubleClickListener fDoubleClickListener;
+	private ITreeViewerListener fTreeViewerListener;
 	private boolean fAllowRecursiveVMNodes = false;
     
     /**
@@ -184,6 +192,10 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         	((StructuredViewer) fViewer).removeDoubleClickListener(fDoubleClickListener);
         	fDoubleClickListener= null;
         }
+        if (fViewer instanceof AbstractTreeViewer && fTreeViewerListener != null) {
+        	((AbstractTreeViewer) fViewer).removeTreeListener(fTreeViewerListener);
+        	fTreeViewerListener = null;
+        }
     }
 
     /* (non-Javadoc)
@@ -228,6 +240,20 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         		}
         	});
         }
+        if (fViewer instanceof AbstractTreeViewer && fTreeViewerListener == null) {
+        	((AbstractTreeViewer) fViewer).addTreeListener(fTreeViewerListener = new ITreeViewerListener() {
+
+        		@Override
+        		public void treeExpanded(TreeExpansionEvent event) {
+        			handleExpandCollapse(event, true);
+        		}
+
+        		@Override
+        		public void treeCollapsed(TreeExpansionEvent event) {
+        			handleExpandCollapse(event, false);
+        		}
+        	});
+        }
     }
     
     /**
@@ -261,6 +287,29 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	            });
 	        }
 		}
+	}
+
+	protected void handleExpandCollapse(TreeExpansionEvent e, final boolean expanded) {
+
+		final AbstractVMProvider vmProvider = getVMProvider();
+		if (vmProvider.isDisposed())
+			return;
+
+		if (!(vmProvider instanceof ExpressionBasedDMVMProvider))
+			return;
+
+		Object xelement = e.getElement();
+		if (!(xelement instanceof IDMVMContext))
+			return;
+
+		IDMVMContext element = (IDMVMContext)xelement;
+		IDMContext xcontext = element.getDMContext();
+		if (!(xcontext instanceof IExpressionDMContext))
+			return;
+
+		IExpressionDMContext context = (IExpressionDMContext)xcontext;
+
+		((ExpressionBasedDMVMProvider)vmProvider).handleExpandCollapse(context, expanded);
 	}
 
 	/**

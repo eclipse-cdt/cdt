@@ -10,7 +10,9 @@
  *     Grzegorz Kuligowski - Cannot cast to type that contain commas (bug 393474)
  *     Marc Khouzam (Ericsson) - Support for glob-expressions for local variables (bug 394408)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Allow user to edit register groups (Bug 235747)
+ *     Vladimir Prus (Mentor Graphics) - added setAutomaticUpdate method
  *******************************************************************************/
+
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions3;
+import org.eclipse.cdt.dsf.debug.service.IExpressions4;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters2;
@@ -65,7 +68,7 @@ import com.ibm.icu.text.MessageFormat;
  * pattern.
  * @since 4.2
  */
-public class GDBPatternMatchingExpressions extends AbstractDsfService implements IMIExpressions, ICachingService {
+public class GDBPatternMatchingExpressions extends AbstractDsfService implements IMIExpressions, IExpressions4, ICachingService {
 	/**
 	 * A regex representing each character that can be used to separate
 	 * n the different expressions contained in an expression-group.
@@ -1167,5 +1170,15 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	    	// If the user put an invalid pattern, we just ignore it
 	    	return false;
 	    }
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	@Override
+	public void setAutomaticUpdate(IExpressionDMContext context, boolean update) {
+		if (fDelegate instanceof IExpressions4) {
+			((IExpressions4)fDelegate).setAutomaticUpdate(context, update);
+		}
 	}
 }

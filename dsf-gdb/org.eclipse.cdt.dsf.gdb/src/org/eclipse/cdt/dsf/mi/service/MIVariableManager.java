@@ -17,6 +17,7 @@
  *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *     Alvaro Sanchez-Leon (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
  *     Martin Schreiber - Bug 435606 - write unsigned variables (UINT32 and UINT64) in the binary format
+ *     Vladimir Prus (Mentor Graphics) - add setAutomaticUpdate method
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -57,6 +58,7 @@ import org.eclipse.cdt.dsf.gdb.GDBTypeParser;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -331,7 +333,11 @@ public class MIVariableManager implements ICommandControl {
 		/** @since 4.0 */
 		protected static final int STATE_CREATION_FAILED = 12;
 	    
-		protected int currentState;	
+		protected int currentState;
+
+		// Fetch Value related members
+		boolean isFetching = false;
+		LinkedList<RequestMonitor> fetchesPending;
 
 		// This is the lock used when we must run multiple
 		// operations at once.  This lock should be independent of the
@@ -396,6 +402,9 @@ public class MIVariableManager implements ICommandControl {
 		 * Bug 320277
 		 */
 		private boolean hasCastToBaseClassWorkaround = false;
+
+		private int automaticUpdateCount = 0;
+		private boolean frozen;
 
 		public MIVariableObject(VariableObjectId id, MIVariableObject parentObj) {
 			this(id, parentObj, false);
@@ -1023,6 +1032,58 @@ public class MIVariableManager implements ICommandControl {
 
 			countingRm.setDoneCount(pendingVariableCreationCount);
 		}
+
+		/**
+		 * This method updates the variable object by issuing "var-update" directly.
+		 * It is only applicable to the "permanently frozen" var-objects.
+		 * @since 4.7
+		 */
+		public void fetchValue(final RequestMonitor rm) {
+
+			if (isFetching) {
+				// If we were already fetching, we just queue the request monitor
+				// until the on-going fetch finishes.
+				fetchesPending.add(rm);
+			} else {
+				isFetching = true;
+				fCommandControl.queueCommand(
+						fCommandFactory.createMIVarUpdate(getRootToUpdate().getControlDMContext(), getGdbName()),
+						new DataRequestMonitor<MIVarUpdateInfo>(fSession.getExecutor(), rm) {
+							@Override
+							protected void handleCompleted() {
+								isFetching = false;
+
+								if (isSuccess()) {
+									MIVarChange[] changes = getData().getMIVarChanges();
+									// The mapping between variable object name and
+									// MIVariableObject instance is kept in the root
+									// variable object.  Ask it to apply the changes.
+									getRootToUpdate().processChanges(changes,
+											new RequestMonitor(fSession.getExecutor(), rm ) {
+										@Override
+										protected void handleSuccess() {
+											while (fetchesPending.size() > 0) {
+												RequestMonitor pendingRm = fetchesPending.poll();
+												pendingRm.done();
+											}
+											rm.done();
+										}
+									});
+								} else {
+									rm.setStatus(getStatus());
+									rm.done();
+
+									while (fetchesPending.size() > 0) {
+										RequestMonitor pendingRm = fetchesPending.poll();
+										pendingRm.setStatus(getStatus());
+										pendingRm.done();
+									}
+								}
+							}
+						});
+			}
+		}
+
 
 		/**
 		 * Variable objects need not be deleted unless they are root.
@@ -2064,6 +2125,61 @@ public class MIVariableManager implements ICommandControl {
 				getRootToUpdate().addModifiableDescendant(miVar.getVarName(), this);
 			}
 		}
+
+		/**
+		 * @since 4.7
+		 */
+		public void setAutomaticUpdate(boolean update, final RequestMonitor rm)
+		{
+			if (isDynamic()) {
+				// GDB can only freeze entire varobj. If we freeze dynamic one,
+				// then it's proper value will not be updated, not just children.
+				return;
+			}
+
+			if (!hasChildren()) {
+				// Similarly, it does not make sense to freeze varobj with no
+				// children.
+				return;
+			}
+
+			if (update)
+				++automaticUpdateCount;
+			else
+				--automaticUpdateCount;
+
+			boolean changed = false;
+			boolean xfreeze = false;
+			if (automaticUpdateCount == 0 && !frozen)
+			{
+				changed = true;
+				xfreeze = true;
+			}
+			else if (automaticUpdateCount > 0 && frozen)
+			{
+				changed = true;
+				xfreeze = false;
+			}
+			final boolean freeze = xfreeze;
+
+			if (changed)
+			{
+				fCommandControl.queueCommand(
+						fCommandFactory.createMIVarSetFrozen(getRootToUpdate().getControlDMContext(), getGdbName(), freeze),
+						new DataRequestMonitor<MIInfo>(fSession.getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								frozen = freeze;
+								if (!freeze)
+									fetchValue(rm);
+							}
+						});
+			}
+			else
+			{
+				rm.done();
+			}
+		}
 	}
 	
 	/**
@@ -2651,6 +2767,26 @@ public class MIVariableManager implements ICommandControl {
 					@Override
 					protected void handleSuccess() {
 					    getVariable(id, exprCtx, rm);
+					}
+				});
+	}
+
+	void setAutomaticUpdate(IExpressionDMContext context, final boolean update, final RequestMonitor rm)
+	{
+		if (!(fCommandControl instanceof IGDBControl))
+			return;
+
+		List<String> features = ((IGDBControl)fCommandControl).getFeatures();
+
+		if (!features.contains("frozen-varobjs")) //$NON-NLS-1$
+			return;
+
+		getVariable(
+				context,
+				new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						getData().setAutomaticUpdate(update, rm);
 					}
 				});
 	}

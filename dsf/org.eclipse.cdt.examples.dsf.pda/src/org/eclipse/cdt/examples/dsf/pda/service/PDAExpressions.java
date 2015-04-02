@@ -560,4 +560,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
     public void flushCache(IDMContext context) {
         fCommandCache.reset(context);
     }
+
+	public void setAutomaticUpdate(IExpressionDMContext context, boolean update) {
+	}
 }

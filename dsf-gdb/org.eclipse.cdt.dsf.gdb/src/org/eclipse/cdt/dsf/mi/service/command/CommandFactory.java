@@ -26,6 +26,7 @@
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
  *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
+ *     Vladimir Prus (Mentor Graphics) - add createMIVarSetFrozen
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -183,6 +184,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarInfoType;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarListChildren;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetFrozen;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
@@ -1108,6 +1110,13 @@ public class CommandFactory {
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIVarSetUpdateRange(ICommandControlDMContext ctx,String name, int from, int to) {
 		return new MIVarSetUpdateRange(ctx, name, from, to);
+	}
+
+	/**
+	 * @since 4.7
+	 */
+	public ICommand<MIInfo> createMIVarSetFrozen(ICommandControlDMContext ctx, String name, boolean frozen) {
+		return new MIVarSetFrozen(ctx, name, frozen);
 	}
 
 	public ICommand<MIVarShowAttributesInfo> createMIVarShowAttributes(ICommandControlDMContext ctx, String name) {

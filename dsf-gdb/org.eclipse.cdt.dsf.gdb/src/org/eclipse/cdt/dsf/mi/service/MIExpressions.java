@@ -12,6 +12,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Marc Khouzam (Ericsson) - Added support for expression aliases for return values of functions (bug 341731)
  *     Abeer Bagul (Tensilica) - Extra partition created for arrays of length 20000 or greater (Bug 443687)
+ *     Vladimir Prus (Mentor Graphics) - add setAutomaticUpdate method
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -36,6 +37,7 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions3;
+import org.eclipse.cdt.dsf.debug.service.IExpressions4;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -86,7 +88,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 2.0
  */
-public class MIExpressions extends AbstractDsfService implements IMIExpressions, ICachingService {
+public class MIExpressions extends AbstractDsfService implements IMIExpressions, ICachingService, IExpressions4 {
 
 	private static final int PARTITION_LENGTH = 100;
 
@@ -1997,4 +1999,20 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		// See org.eclipse.debug.internal.ui.model.elements.VariableContentProvider.
 		return PARTITION_LENGTH;
 	}
+
+    /**
+	 * @since 4.7
+	 */
+    @Override
+    public void setAutomaticUpdate(final IExpressionDMContext context, final boolean update) {
+
+    	varManager.setAutomaticUpdate(context, update, new RequestMonitor(getExecutor(), null) {
+    		@Override
+    		protected void handleSuccess() {
+    			getSession().dispatchEvent(new ExpressionChangedEvent(context), getProperties());
+    			super.handleSuccess();
+    		}
+    	});
+    }
+
 }

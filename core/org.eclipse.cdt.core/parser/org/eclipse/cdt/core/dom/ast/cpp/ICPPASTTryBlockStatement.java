@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 /**
- * This interface represents the try block statement. try { //body } catch (Exc e)
+ * This interface represents the try block statement. try { //body } catch (Exc e )
  * { // handler } catch ( ... ) { }
  * 
  * @noextend This interface is not intended to be extended by clients.
@@ -22,41 +22,43 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
  */
 public interface ICPPASTTryBlockStatement extends IASTStatement {
 	/**
-	 * {@code BODY} is the body of the try block.
+	 * <code>BODY</code> is the body of the try block.
 	 */
 	public static final ASTNodeProperty BODY = new ASTNodeProperty("ICPPASTTryBlockStatement.BODY - Body of try block"); //$NON-NLS-1$
 
 	/**
-	 * Sets the try body.
+	 * Set try body.
 	 * 
-	 * @param tryBlock {@code IASTStatement}
+	 * @param tryBlock
+	 *            <code>IASTStatement</code>
 	 */
 	public void setTryBody(IASTStatement tryBlock);
 
 	/**
-	 * Returns the try body.
+	 * Get try body.
 	 * 
-	 * @return {@code IASTStatement}
+	 * @return <code>IASTStatement</code>
 	 */
 	public IASTStatement getTryBody();
 
 	/**
-	 * {@code CATCH_HANDLER} are the exception catching handlers.
+	 * <code>CATCH_HANDLER</code> are the exception catching handlers.
 	 */
 	public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty(
 			"ICPPASTTryBlockStatement.CATCH_HANDLER - Exception catching handlers"); //$NON-NLS-1$
 
 	/**
-	 * Adds catch handler.
+	 * Add catch handler.
 	 * 
-	 * @param handler {@code ICPPASTCatchHandler}
+	 * @param handler
+	 *            <code>ICPPASTCatchHandler</code>
 	 */
 	public void addCatchHandler(ICPPASTCatchHandler handler);
 
 	/**
-	 * Returns the catch handlers.
+	 * Get the catch handlers.
 	 * 
-	 * @return {@code ICPPASTCatchHandler[]}
+	 * @return <code>ICPPASTCatchHandler []</code>
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();
 	

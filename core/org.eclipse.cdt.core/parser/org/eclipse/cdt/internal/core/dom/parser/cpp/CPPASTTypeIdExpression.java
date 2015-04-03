@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -25,15 +24,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
 
 public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression {
-    private int fOperator;
-    private IASTTypeId fTypeId;
+    private int op;
+    private IASTTypeId typeId;
 	private ICPPEvaluation fEvaluation;
 
     public CPPASTTypeIdExpression() {
 	}
 
 	public CPPASTTypeIdExpression(int op, IASTTypeId typeId) {
-		this.fOperator = op;
+		this.op = op;
 		setTypeId(typeId);
 	}
 
@@ -45,25 +44,25 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	@Override
 	public CPPASTTypeIdExpression copy(CopyStyle style) {
 		CPPASTTypeIdExpression copy =
-				new CPPASTTypeIdExpression(fOperator, fTypeId == null ? null : fTypeId.copy(style));
+				new CPPASTTypeIdExpression(op, typeId == null ? null : typeId.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public int getOperator() {
-        return fOperator;
+        return op;
     }
 
     @Override
 	public void setOperator(int value) {
         assertNotFrozen();
-        fOperator = value;
+        this.op = value;
     }
 
     @Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
-        this.fTypeId = typeId;
+        this.typeId = typeId;
         if (typeId != null) {
         	typeId.setParent(this);
         	typeId.setPropertyInParent(TYPE_ID);
@@ -72,13 +71,8 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 
     @Override
 	public IASTTypeId getTypeId() {
-        return fTypeId;
+        return typeId;
     }
-
-	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY; // Type-id expression does not call destructors.
-	}
 
     @Override
 	public boolean accept(ASTVisitor action) {
@@ -90,7 +84,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	        }
 		}
 
-        if (fTypeId != null && !fTypeId.accept(action)) return false;
+        if (typeId != null && !typeId.accept(action)) return false;
 
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
@@ -105,11 +99,11 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			IType type= CPPVisitor.createType(fTypeId);
+			IType type= CPPVisitor.createType(typeId);
 			if (type == null || type instanceof IProblemType) {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			} else {
-				fEvaluation= new EvalUnaryTypeID(fOperator, type, this);
+				fEvaluation= new EvalUnaryTypeID(op, type, this);
 			}
 		}
 		return fEvaluation;

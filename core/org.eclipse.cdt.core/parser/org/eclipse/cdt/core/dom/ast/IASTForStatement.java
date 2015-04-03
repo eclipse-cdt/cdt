@@ -19,89 +19,96 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTForStatement extends IASTStatement {
 	/**
-	 * {@code CONDITION} represents the relationship between a {@code IASTForStatement} and
-	 * its {@code IASTExpression} condition.
+	 * <code>CONDITION</code> represents the relationship between a
+	 * <code>IASTForStatement</code> and its <code>IASTExpression</code>
+	 * condition.
 	 */
 	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
 			"IASTForStatement.CONDITION - IASTExpression condition of IASTForStatement"); //$NON-NLS-1$
 
 	/**
-	 * {@code ITERATION} represents the relationship between a {@code IASTForStatement} and
-	 * its {@code IASTExpression} iteration expression.
+	 * <code>ITERATION</code> represents the relationship between a
+	 * <code>IASTForStatement</code> and its <code>IASTExpression</code>
+	 * iteration expression.
 	 */
 	public static final ASTNodeProperty ITERATION = new ASTNodeProperty(
 			"IASTForStatement.ITERATION - IASTExpression iteration of IASTForStatement"); //$NON-NLS-1$
 
 	/**
-	 * {@code BODY} represents the relationship between a {@code IASTForStatement} and
-	 * its {@code IASTStatement} body.
+	 * <code>BODY</code> represents the relationship between a
+	 * <code>IASTForStatement</code> and its <code>IASTStatement</code>
+	 * body.
 	 */
 	public static final ASTNodeProperty BODY = new ASTNodeProperty(
 			"IASTForStatement.BODY - IASTStatement body of IASTForStatement"); //$NON-NLS-1$
 
     /**
-     * {@code INITIALIZER} represents the relationship between a {@code IASTForStatement} and
-     * its {@code IASTDeclaration} initializer.
+     * <code>INITIALIZER</code> represents the relationship between a
+     * <code>IASTForStatement</code> and its <code>IASTDeclaration</code>
+     * initializer.
      */
     public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
             "IASTForStatement.INITIALIZER - initializer for IASTForStatement"); //$NON-NLS-1$
 
-    /**
-     * Returns the initializer statement.
-     */
+
     public IASTStatement getInitializerStatement();
     
     /**
      * @param statement
      */
-    public void setInitializerStatement(IASTStatement statement);
+    public void setInitializerStatement( IASTStatement statement );
 
 	/**
-	 * Returns the condition expression for the loop.
+	 * Get the condition expression for the loop.
 	 * 
-	 * @return {@code IASTExpression}
+	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getConditionExpression();
 
 	/**
-	 * Sets the condition expression for the loop.
+	 * Set the condition expression for the loop.
 	 * 
-	 * @param condition {@code IASTExpression}
+	 * @param condition
+	 *            <code>IASTExpression</code>
 	 */
 	public void setConditionExpression(IASTExpression condition);
 
 	/**
-	 * Returns the expression that is evaluated after the completion of an iteration of the loop.
+	 * Get the expression that is evaluated after the completion of an iteration
+	 * of the loop.
 	 * 
-	 * @return {@code IASTExpression}
+	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getIterationExpression();
 
 	/**
-	 * Sets the expression that is evaluated after the completion of an iteration of the loop.
+	 * Set the expression that is evaluated after the completion of an iteration
+	 * of the loop.
 	 * 
-	 * @param iterator {@code IASTExpression}
+	 * @param iterator
+	 *            <code>IASTExpression</code>
 	 */
 	public void setIterationExpression(IASTExpression iterator);
 
 	/**
-	 * Returns the statements that this for loop controls.
+	 * Get the statements that this for loop controls.
 	 * 
-	 * @return {@code IASTStatement}
+	 * @return <code>IASTStatement</code>
 	 */
 	public IASTStatement getBody();
 
 	/**
-	 * Sets the body of the for loop.
+	 * Set the body of the for loop.
 	 * 
-	 * @param statement {@code IASTStatement}
+	 * @param statement
+	 *            <code>IASTStatement</code>
 	 */
 	public void setBody(IASTStatement statement);
 
 	/**
-	 * Returns the {@code IScope} represented by this for loop.
+	 * Get the <code>IScope</code> represented by this for loop.
 	 * 
-	 * @return {@code IScope}
+	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();
 	

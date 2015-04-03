@@ -37,7 +37,7 @@ public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
 	    if (node instanceof IASTCompoundStatement) {
 	    	final IASTNode parent= node.getParent();
 	    	if (parent instanceof IASTFunctionDefinition) {
-	    		IASTDeclarator dtor= ((IASTFunctionDefinition) parent).getDeclarator();
+	    		IASTDeclarator dtor= ((IASTFunctionDefinition)parent).getDeclarator();
 	    		dtor = ASTQueries.findInnermostDeclarator(dtor);
 				return dtor.getName();
 	    	}

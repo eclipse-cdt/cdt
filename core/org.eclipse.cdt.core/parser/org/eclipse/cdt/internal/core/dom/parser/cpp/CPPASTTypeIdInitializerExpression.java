@@ -1,20 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     John Camelon (IBM Rational Software) - Initial API and implementation
- *     Yuan Zhang / Beth Tibbitts (IBM Research)
- *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
- *******************************************************************************/
+ *    Markus Schorn - initial API and implementation
+ *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
@@ -22,110 +17,35 @@ import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
 /**
- * Type id initializer expression for C++, type-id { initializer }
+ * C++ variant of type id initializer expression. type-id { initializer }
  */
-public class CPPASTTypeIdInitializerExpression extends ASTNode
-		implements IASTTypeIdInitializerExpression, ICPPASTExpression {
-    private IASTTypeId fTypeId;
-    private IASTInitializer fInitializer;
+public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression implements ICPPASTExpression {
+
 	private ICPPEvaluation fEvaluation;
-	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
-    public CPPASTTypeIdInitializerExpression() {
+	private CPPASTTypeIdInitializerExpression() {
 	}
 
-	public CPPASTTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i) {
-		setTypeId(t);
-		setInitializer(i);
-	}
-
-	@Override
-	public IASTTypeId getTypeId() {
-        return fTypeId;
-    }
-
-    @Override
-	public void setTypeId(IASTTypeId typeId) {
-        assertNotFrozen();
-        this.fTypeId = typeId;
-        if (typeId != null) {
-			typeId.setParent(this);
-			typeId.setPropertyInParent(TYPE_ID);
-		}
-    }
-
-    @Override
-	public IASTInitializer getInitializer() {
-        return fInitializer;
-    }
-
-    @Override
-	public void setInitializer(IASTInitializer initializer) {
-        assertNotFrozen();
-        this.fInitializer = initializer;
-        if (initializer != null) {
-			initializer.setParent(this);
-			initializer.setPropertyInParent(INITIALIZER);
-		}
-    }
-
-	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
-		}
-	
-		return fImplicitDestructorNames;
-	}
-
-	@Override
-	public boolean accept(ASTVisitor action) {
-        if (action.shouldVisitExpressions) {
-		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
-		}
-        
-        if (fTypeId != null && !fTypeId.accept(action)) return false;
-        if (fInitializer != null && !fInitializer.accept(action)) return false;
-
-		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
-			return false;
-
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
-		}
-        return true;
-    }
-
-	@Override
-	public final boolean isLValue() {
-		return false;
+	public CPPASTTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
+		super(typeId, initializer);
 	}
 
 	@Override
 	public IASTTypeIdInitializerExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-
+	
 	@Override
 	public IASTTypeIdInitializerExpression copy(CopyStyle style) {
-		CPPASTTypeIdInitializerExpression copy =new CPPASTTypeIdInitializerExpression(
-				fTypeId == null ? null : fTypeId.copy(style),
-				fInitializer == null ? null : fInitializer.copy(style));
-		return copy(copy, style);
+		CPPASTTypeIdInitializerExpression expr = new CPPASTTypeIdInitializerExpression();
+		initializeCopy(expr, style);
+		return expr;
 	}
 
 	@Override
@@ -135,7 +55,7 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 		
 		return fEvaluation;
 	}
-
+	
 	private ICPPEvaluation computeEvaluation() {
 		final IASTInitializer initializer = getInitializer();
 		if (!(initializer instanceof ICPPASTInitializerClause))
@@ -148,13 +68,13 @@ public class CPPASTTypeIdInitializerExpression extends ASTNode
 		return new EvalTypeId(type, this, ((ICPPASTInitializerClause) initializer).getEvaluation());
 	}
 
-	@Override
+    @Override
 	public IType getExpressionType() {
-		return getEvaluation().getTypeOrFunctionSet(this);
-	}
-
+    	return getEvaluation().getTypeOrFunctionSet(this);
+    }
+    
 	@Override
 	public ValueCategory getValueCategory() {
-		return getEvaluation().getValueCategory(this);
+    	return getEvaluation().getValueCategory(this);
 	}
 }

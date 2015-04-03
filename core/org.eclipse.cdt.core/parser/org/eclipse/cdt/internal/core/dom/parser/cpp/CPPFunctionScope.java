@@ -52,12 +52,12 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 
 	@Override
 	public void addBinding(IBinding binding) {
-	    // 3.3.4 only labels have function scope.
+	    //3.3.4 only labels have function scope
 	    if (!(binding instanceof ILabel))
 	        return;
 
 	    if (labels == CharArrayObjectMap.EMPTY_MAP)
-	        labels = new CharArrayObjectMap<>(2);
+	        labels = new CharArrayObjectMap<ILabel>(2);
 
 	    labels.put(binding.getNameCharArray(), (ILabel) binding);
 	}
@@ -65,7 +65,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	@Override
 	public IBinding[] find(String name) {
 	    char[] n = name.toCharArray();
-	    List<IBinding> bindings = new ArrayList<>();
+	    List<IBinding> bindings = new ArrayList<IBinding>();
 
 	    for (int i = 0; i < labels.size(); i++) {
 	    	char[] key = labels.keyAt(i);
@@ -84,8 +84,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	
 	@Override
 	public IScope getParent() {
-	    // We can't just resolve the function and get its parent scope, since there are cases where that 
-	    // could loop because resolving functions requires resolving their parameter types.
+	    //we can't just resolve the function and get its parent scope, since there are cases where that 
+	    //could loop since resolving functions requires resolving their parameter types
 	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
 	    IASTName name = fdtor.getName().getLastName();
 	    return CPPVisitor.getContainingNonTemplateScope(name);
@@ -96,9 +96,9 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
         IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
         IASTNode parent = fnDtor.getParent();
         if (parent instanceof IASTFunctionDefinition) {
-            IASTStatement body = ((IASTFunctionDefinition) parent).getBody();
+            IASTStatement body = ((IASTFunctionDefinition)parent).getBody();
             if (body instanceof IASTCompoundStatement)
-                return ((IASTCompoundStatement) body).getScope();
+                return ((IASTCompoundStatement)body).getScope();
         }
         return null;
     }
@@ -107,7 +107,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
         if (node instanceof IASTDeclarator) {
-            return ((IASTDeclarator) node).getName();
+            return ((IASTDeclarator)node).getName();
         }
         return null;
     }

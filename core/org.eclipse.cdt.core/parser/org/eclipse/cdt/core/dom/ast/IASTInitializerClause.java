@@ -11,7 +11,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * Interface for AST nodes that can nest in initializer lists.
+ * Interface for ast nodes that can nest in initializer lists.
  * @since 5.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

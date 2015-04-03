@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,7 +16,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
@@ -27,16 +25,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-public class CPPASTIdExpression extends ASTNode
-		implements IASTIdExpression, ICPPASTExpression, ICPPASTCompletionContext {
-	private IASTName fName;
+public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICPPASTExpression, ICPPASTCompletionContext {
+	private IASTName name;
 	private ICPPEvaluation fEvaluation;
-	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTIdExpression() {
 	}
@@ -52,33 +47,24 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public CPPASTIdExpression copy(CopyStyle style) {
-		CPPASTIdExpression copy = new CPPASTIdExpression(fName == null ? null : fName.copy(style));
+		CPPASTIdExpression copy = new CPPASTIdExpression(name == null ? null : name.copy(style));
 		return copy(copy, style);
 	}
 
 	@Override
 	public IASTName getName() {
-        return fName;
+        return name;
     }
 
     @Override
 	public void setName(IASTName name) {
         assertNotFrozen();
-        this.fName = name;
+        this.name = name;
         if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ID_NAME);
 		}
     }
-
-	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
-		}
-
-		return fImplicitDestructorNames;
-	}
 
     @Override
 	public boolean accept(ASTVisitor action) {
@@ -90,10 +76,7 @@ public class CPPASTIdExpression extends ASTNode
 	        }
 		}
 
-        if (fName != null && !fName.accept(action)) return false;
-
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
-        	return false;
+        if (name != null && !name.accept(action)) return false;
 
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
@@ -107,7 +90,7 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (fName == n)
+		if (name == n)
 			return r_reference;
 		return r_unclear;
 	}
@@ -119,7 +102,7 @@ public class CPPASTIdExpression extends ASTNode
 
 	@Override
 	public String toString() {
-		return fName != null ? fName.toString() : "<unnamed>"; //$NON-NLS-1$
+		return name != null ? name.toString() : "<unnamed>"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -139,7 +122,7 @@ public class CPPASTIdExpression extends ASTNode
 	public IType getExpressionType() {
 		IType type= getEvaluation().getTypeOrFunctionSet(this);
 		if (type instanceof FunctionSetType) {
-			IBinding binding= fName.resolveBinding();
+			IBinding binding= name.resolveBinding();
 			if (binding instanceof IFunction) {
 				return SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
 			}

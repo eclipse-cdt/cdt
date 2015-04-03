@@ -41,8 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -675,16 +673,6 @@ public class AST2TestBase extends BaseTestCase {
 			return implicits;
     	}
 
-    	public IASTImplicitDestructorName[] getImplicitDestructotNames(String section, int len) {
-    		final int offset = contents.indexOf(section);
-    		assertTrue(offset >= 0);
-    		IASTNodeSelector selector = tu.getNodeSelector(null);
-    		IASTNode enclosingNode = selector.findStrictlyEnclosingNode(offset, len);
-    		if (!(enclosingNode instanceof IASTImplicitDestructorNameOwner))
-    			return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;
-   			return ((IASTImplicitDestructorNameOwner) enclosingNode).getImplicitDestructorNames();
-    	}
-
     	public IASTName findName(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue("Section \"" + section + "\" not found", offset >= 0);
@@ -708,7 +696,7 @@ public class AST2TestBase extends BaseTestCase {
     		return findName(contents, name);
     	}
 
-    	public IASTImplicitName findImplicitName(String section, int len) {
+    	public IASTName findImplicitName(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue(offset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);

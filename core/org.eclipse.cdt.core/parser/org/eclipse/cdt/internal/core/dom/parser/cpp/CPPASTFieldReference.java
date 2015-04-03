@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Bryan Wilkinson (QNX)
  *     Mike Kucera (IBM)
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,7 +21,6 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -45,20 +43,18 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
 
 public class CPPASTFieldReference extends ASTNode
 		implements ICPPASTFieldReference, IASTAmbiguityParent, ICPPASTCompletionContext {
-    private boolean fIsTemplate;
-    private boolean fIsDeref;
-    private ICPPASTExpression fOwner;
-    private IASTName fName;
-    private IASTImplicitName[] fImplicitNames;
+    private boolean isTemplate;
+    private ICPPASTExpression owner;
+    private IASTName name;
+    private boolean isDeref;
+    private IASTImplicitName[] implicitNames;
 	private ICPPEvaluation fEvaluation;
-	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTFieldReference() {
 	}
@@ -76,33 +72,33 @@ public class CPPASTFieldReference extends ASTNode
 	@Override
 	public CPPASTFieldReference copy(CopyStyle style) {
 		CPPASTFieldReference copy = new CPPASTFieldReference();
-		copy.setFieldName(fName == null ? null : fName.copy(style));
-		copy.setFieldOwner(fOwner == null ? null : fOwner.copy(style));
-		copy.fIsTemplate = fIsTemplate;
-		copy.fIsDeref = fIsDeref;
+		copy.setFieldName(name == null ? null : name.copy(style));
+		copy.setFieldOwner(owner == null ? null : owner.copy(style));
+		copy.isTemplate = isTemplate;
+		copy.isDeref = isDeref;
 		return copy(copy, style);
 	}
 
 	@Override
 	public boolean isTemplate() {
-        return fIsTemplate;
+        return isTemplate;
     }
 
     @Override
 	public void setIsTemplate(boolean value) {
         assertNotFrozen();
-        fIsTemplate = value;
+        isTemplate = value;
     }
 
     @Override
 	public ICPPASTExpression getFieldOwner() {
-        return fOwner;
+        return owner;
     }
 
     @Override
 	public void setFieldOwner(IASTExpression expression) {
         assertNotFrozen();
-        fOwner = (ICPPASTExpression) expression;
+        owner = (ICPPASTExpression) expression;
         if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(FIELD_OWNER);
@@ -111,13 +107,13 @@ public class CPPASTFieldReference extends ASTNode
 
     @Override
 	public IASTName getFieldName() {
-        return fName;
+        return name;
     }
 
     @Override
 	public void setFieldName(IASTName name) {
         assertNotFrozen();
-        this.fName = name;
+        this.name = name;
         if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(FIELD_NAME);
@@ -126,53 +122,44 @@ public class CPPASTFieldReference extends ASTNode
 
     @Override
 	public boolean isPointerDereference() {
-        return fIsDeref;
+        return isDeref;
     }
 
     @Override
 	public void setIsPointerDereference(boolean value) {
         assertNotFrozen();
-        fIsDeref = value;
+        isDeref = value;
     }
     
     @Override
 	public IASTImplicitName[] getImplicitNames() {
-    	if (fImplicitNames == null) {
-    		if (!fIsDeref)
-    			return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+    	if (implicitNames == null) {
+    		if (!isDeref)
+    			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
     		// Collect the function bindings
 			List<ICPPFunction> functionBindings = new ArrayList<ICPPFunction>();
-			EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, this, functionBindings, false);
+			EvalMemberAccess.getFieldOwnerType(owner.getExpressionType(), isDeref, this, functionBindings, false);
 			if (functionBindings.isEmpty())
-				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			// Create a name to wrap each binding
-			fImplicitNames = new IASTImplicitName[functionBindings.size()];
+			implicitNames = new IASTImplicitName[functionBindings.size()];
 			int i= -1;
 			for (ICPPFunction op : functionBindings) {
 				if (op != null && !(op instanceof CPPImplicitFunction)) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW, this);
 					operatorName.setBinding(op);
-					operatorName.computeOperatorOffsets(fOwner, true);
-					fImplicitNames[++i] = operatorName;
+					operatorName.computeOperatorOffsets(owner, true);
+					implicitNames[++i] = operatorName;
 				}
 			}
-			fImplicitNames= ArrayUtil.trimAt(IASTImplicitName.class, fImplicitNames, i);
+			implicitNames= ArrayUtil.trimAt(IASTImplicitName.class, implicitNames, i);
 		}
 		
-		return fImplicitNames;
+		return implicitNames;
 	}
         
-	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
-		}
-
-		return fImplicitDestructorNames;
-	}
-
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -183,7 +170,7 @@ public class CPPASTFieldReference extends ASTNode
 	        }
 		}
       
-        if (fOwner != null && !fOwner.accept(action))
+        if (owner != null && !owner.accept(action))
         	return false;
         
         if (action.shouldVisitImplicitNames) { 
@@ -193,12 +180,9 @@ public class CPPASTFieldReference extends ASTNode
         	}
         }
         
-        if (fName != null && !fName.accept(action))
+        if (name != null && !name.accept(action))
         	return false;
-
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
-        	return false;
-
+        
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -211,17 +195,17 @@ public class CPPASTFieldReference extends ASTNode
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (n == fName)
+		if (n == name)
 			return r_reference;
 		return r_unclear;
 	}
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == fOwner) {
+        if (child == owner) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
-            fOwner  = (ICPPASTExpression) other;
+            owner  = (ICPPASTExpression) other;
         }
     }
 
@@ -254,7 +238,7 @@ public class CPPASTFieldReference extends ASTNode
      */
     @Override
 	public IType getFieldOwnerType() {
-    	return EvalMemberAccess.getFieldOwnerType(fOwner.getExpressionType(), fIsDeref, this, null, true);
+    	return EvalMemberAccess.getFieldOwnerType(owner.getExpressionType(), isDeref, this, null, true);
     }
     
 	@Override
@@ -266,24 +250,24 @@ public class CPPASTFieldReference extends ASTNode
 	}
 	
 	private ICPPEvaluation createEvaluation() {
-		ICPPEvaluation ownerEval = fOwner.getEvaluation();
+		ICPPEvaluation ownerEval = owner.getEvaluation();
 		if (!ownerEval.isTypeDependent()) {
-			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getTypeOrFunctionSet(this), fIsDeref, this, null, false);
+			IType ownerType= EvalMemberAccess.getFieldOwnerType(ownerEval.getTypeOrFunctionSet(this), isDeref, this, null, false);
 			if (ownerType != null) {
-				IBinding binding = fName.resolvePreBinding();
+				IBinding binding = name.resolvePreBinding();
 				if (binding instanceof CPPFunctionSet)
-					binding= fName.resolveBinding();
+					binding= name.resolveBinding();
 
 				if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) 
 					return EvalFixed.INCOMPLETE;
 
-				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, fIsDeref, this);
+				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, isDeref, this);
 			}
 		}
 
 		IBinding qualifier= null;
 		ICPPTemplateArgument[] args= null;
-		IASTName n= fName;
+		IASTName n= name;
 		if (n instanceof ICPPASTQualifiedName) {
 			ICPPASTQualifiedName qn= (ICPPASTQualifiedName) n;
 			ICPPASTNameSpecifier[] ns= qn.getQualifier();
@@ -301,7 +285,7 @@ public class CPPASTFieldReference extends ASTNode
 				return EvalFixed.INCOMPLETE;
 			}
 		}		
-		return new EvalID(ownerEval, qualifier, fName.getSimpleID(), false, true, args, this);
+		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args, this);
 	}
 
 	@Override

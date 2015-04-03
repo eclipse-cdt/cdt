@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,6 +185,16 @@ public abstract class ASTVisitor {
 	 * @see IASTImplicitName
 	 */
 	public boolean shouldVisitImplicitNameAlternates = false;
+
+	/**
+	 * Implicit destructor names are created to mark code locations where destructors of temporaries and
+	 * variables going out of scope are called, normally they are not visited, set this flag to true to visit
+	 * them.
+	 * @since 5.10
+	 * @see #visit(IASTName)
+	 * @see IASTImplicitDestructorName
+	 */
+	public boolean shouldVisitImplicitDestructorNames = false;
 
 	/**
 	 * Creates a visitor that does not visit any kind of node per default.

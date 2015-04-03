@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,24 +16,21 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTConditionalExpression extends ASTNode
-		implements IASTConditionalExpression, ICPPASTExpression, IASTAmbiguityParent {
+public class CPPASTConditionalExpression extends ASTNode implements IASTConditionalExpression,
+		ICPPASTExpression, IASTAmbiguityParent {
     private ICPPASTExpression fCondition;
     private ICPPASTExpression fPositive;
     private ICPPASTExpression fNegative;
     private ICPPEvaluation fEval;
-	private IASTImplicitDestructorName[] fImplicitDestructorNames;
     
     public CPPASTConditionalExpression() {
 	}
@@ -104,15 +100,6 @@ public class CPPASTConditionalExpression extends ASTNode
 		}
     }
 
-	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
-		}
-
-		return fImplicitDestructorNames;
-	}
-
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -129,9 +116,6 @@ public class CPPASTConditionalExpression extends ASTNode
 			return false;
 		if (fNegative != null && !fNegative.accept(action))
 			return false;
-
-		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
-        	return false;
         
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;

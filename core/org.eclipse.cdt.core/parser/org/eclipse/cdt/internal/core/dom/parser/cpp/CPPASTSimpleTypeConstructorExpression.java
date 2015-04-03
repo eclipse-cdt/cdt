@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,11 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -35,7 +33,6 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	private ICPPASTDeclSpecifier fDeclSpec;
 	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;
-	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTSimpleTypeConstructorExpression() {
 	}
@@ -126,15 +123,6 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	}
 	
 	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
-		}
-
-		return fImplicitDestructorNames;
-	}
-
-	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
 		    switch (action.visit(this)) {
@@ -150,9 +138,6 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;
         
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
-        	return false;
-
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -163,8 +148,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
         return true;
     }
 
-	@Deprecated
     @Override
+	@Deprecated
     public int getSimpleType() {
     	IType type= getExpressionType();
     	if (type instanceof ICPPBasicType) {
@@ -200,8 +185,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 		return t_unspecified;
     }
     
-	@Deprecated
     @Override
+	@Deprecated
     public void setSimpleType(int value) {
 		CPPASTSimpleDeclSpecifier declspec = new CPPASTSimpleDeclSpecifier();
     	switch(value) {
@@ -249,8 +234,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	setDeclSpecifier(declspec);
     }
     
-	@Deprecated
     @Override
+	@Deprecated
     public IASTExpression getInitialValue() {
     	if (fInitializer instanceof ICPPASTConstructorInitializer) {
     		return ((ICPPASTConstructorInitializer) fInitializer).getExpression();
@@ -258,8 +243,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	return null;
     }
     
-	@Deprecated
     @Override
+	@Deprecated
     public void setInitialValue(IASTExpression expression) {
     	ICPPASTConstructorInitializer init= new CPPASTConstructorInitializer();
     	init.setExpression(expression);

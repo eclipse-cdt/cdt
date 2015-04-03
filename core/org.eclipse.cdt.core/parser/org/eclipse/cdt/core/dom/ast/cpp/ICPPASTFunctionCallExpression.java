@@ -32,7 +32,7 @@ public interface ICPPASTFunctionCallExpression
 	
 	/**
 	 * Returns the function binding for the overloaded operator() invoked by
-	 * the function call, or {@code null} if the operator() is not overloaded.
+	 * the function call, or <code>null</code> if the operator() is not overloaded.
 	 * @since 5.8
 	 */
 	public ICPPFunction getOverload();

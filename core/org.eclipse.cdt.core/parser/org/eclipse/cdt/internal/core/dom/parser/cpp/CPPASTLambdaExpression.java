@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,7 +14,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -73,6 +71,11 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		return copy(copy, style);
 	}
 
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
+    	return new IASTImplicitName[] {getFunctionCallOperatorName()};
+    }
+
 	@Override
 	public IASTImplicitName getClosureTypeName() {
 		if (fClosureTypeName == null) {
@@ -104,16 +107,6 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 			fImplicitFunctionCallName= name;
     	}
 		return fImplicitFunctionCallName;
-	}
-
-    @Override
-	public IASTImplicitName[] getImplicitNames() {
-    	return new IASTImplicitName[] {getFunctionCallOperatorName()};
-    }
-
-	@Override
-	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
-		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY; // Lambda expression is never a full-expression.
 	}
 
 	@Override

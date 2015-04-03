@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     John Camelon (IBM) - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -33,7 +33,8 @@ public class CPPASTEqualsInitializer extends ASTEqualsInitializer {
 	@Override
 	public CPPASTEqualsInitializer copy(CopyStyle style) {
 		IASTInitializerClause arg = getInitializerClause();
-		CPPASTEqualsInitializer copy = new CPPASTEqualsInitializer(arg == null ? null : arg.copy(style));
+		CPPASTEqualsInitializer copy = new CPPASTEqualsInitializer(arg == null ? null
+				: arg.copy(style));
 		return copy(copy, style);
 	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
 		implements IASTAmbiguousExpression, ICPPASTExpression {
     private IASTExpression[] exp = new IASTExpression[2];
-    private int expPos;
+    private int expPos= -1;
     
     public CPPASTAmbiguousExpression(IASTExpression... expressions) {
 		for (IASTExpression e : expressions) {
@@ -43,7 +43,7 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
 	public void addExpression(IASTExpression e) {
         assertNotFrozen();
     	if (e != null) {
-    		exp = ArrayUtil.appendAt(exp, expPos++, e);
+    		exp = ArrayUtil.appendAt(IASTExpression.class, exp, ++expPos, e);
     		e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
     	}
@@ -51,7 +51,7 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode
 
     @Override
 	public IASTExpression[] getExpressions() {
-        exp = ArrayUtil.trim(exp, expPos);
+        exp = ArrayUtil.trimAt(IASTExpression.class, exp, expPos);
     	return exp;
     }
 

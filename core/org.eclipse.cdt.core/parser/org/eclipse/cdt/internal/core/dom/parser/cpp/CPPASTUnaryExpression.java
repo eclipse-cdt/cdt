@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
@@ -119,7 +119,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
 		}
 
 		return fImplicitDestructorNames;
@@ -154,7 +154,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
         	}
         }
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
         if (action.shouldVisitExpressions) {

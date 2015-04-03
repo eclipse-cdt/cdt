@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
@@ -128,7 +129,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
 		}
 
 		return fImplicitDestructorNames;
@@ -150,7 +151,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;
         
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
         if (action.shouldVisitExpressions) {

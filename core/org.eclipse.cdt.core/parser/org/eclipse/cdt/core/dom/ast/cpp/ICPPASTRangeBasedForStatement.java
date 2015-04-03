@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,19 +12,21 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
- * Represents a range-based for loop.
+ * Represents a range-based 'for' loop.
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.3
  */
-public interface ICPPASTRangeBasedForStatement extends IASTStatement, IASTImplicitNameOwner {
+public interface ICPPASTRangeBasedForStatement
+		extends IASTStatement, IASTImplicitNameOwner, IASTImplicitDestructorNameOwner {
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
 			"ICPPASTRangeBasedForStatement.DECLARATION [IASTDeclaration]"); //$NON-NLS-1$
 	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(

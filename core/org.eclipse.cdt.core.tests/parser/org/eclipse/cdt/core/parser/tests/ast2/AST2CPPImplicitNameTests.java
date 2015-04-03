@@ -604,13 +604,77 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 	//	  ~A();
 	//	  int a;
 	//	};
-	//	int x = A().a;
-	public void testDestructor() throws Exception {
+	//	void test() {
+	//		int x;
+	//	    x = A().a;
+	//	}
+	public void testTemporaryDestruction() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
-		XXX
-		IASTTranslationUnit tu = ba.getTranslationUnit();
-		ICPPFunction op = ba.assertNonProblem("operator==", 0);
-		IASTImplicitName a = ba.assertImplicitName("==b", 2, ICPPFunction.class);
-		assertSame(op, a.resolveBinding());
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("x = A().a");
+		assertEquals(1, names.length);
+		assertEquals("~A", names[0].resolveBinding().getName());
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	void test() {
+	//		A x;
+	//	    x = A();
+	//	}
+	public void testTemporaryNotCreatedWhenBoundToVariable() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("x = A()");
+		assertEquals(0, names.length);
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	int test() {
+	//		return (new A())->a;
+	//	}
+	public void testTemporaryNotCreatesInNewExpression() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("(new A())->a");
+		assertEquals(0, names.length);
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	void test() {
+	//		A& x = A();
+	//	}
+	public void testTemporaryBoundToReference() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("A()");
+		assertEquals(0, names.length);
+	}
+
+	//	struct S {
+	//	  S();
+	//	  S(int);
+	//	  ~S();
+	//	};
+	//
+	//	void test() {
+	//	  S s1;
+	//	  const S& s2 = S(1);
+	//	  S s3;
+	//	}//1
+	public void testOrderOfDestruction() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("}//1", 1);
+		assertEquals(3, names.length);
+		assertEquals("~S", names[0].resolveBinding().getName());
+		assertEquals("s3", names[0].getConstructionPoint().getParent().getRawSignature());
+		assertEquals("~S", names[1].resolveBinding().getName());
+		assertEquals("S(1)", names[1].getConstructionPoint().getParent().getRawSignature());
+		assertEquals("~S", names[2].resolveBinding().getName());
+		assertEquals("s1", names[2].getConstructionPoint().getParent().getRawSignature());
 	}
 }

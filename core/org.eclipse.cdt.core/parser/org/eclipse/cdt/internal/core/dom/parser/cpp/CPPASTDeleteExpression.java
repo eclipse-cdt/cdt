@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 
@@ -147,7 +147,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
 		}
 
 		return fImplicitDestructorNames;
@@ -163,17 +163,13 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	        }
 		}
 
-        if (action.shouldVisitImplicitNames) { 
-        	for (IASTImplicitName name : getImplicitNames()) {
-        		if (!name.accept(action))
-        			return false;
-        	}
-        }
+        if (action.shouldVisitImplicitNames && !acceptByNodes(getImplicitNames(), action))
+        	return false;
 
         if (operand != null && !operand.accept(action))
         	return false;
 
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
         if (action.shouldVisitExpressions) {

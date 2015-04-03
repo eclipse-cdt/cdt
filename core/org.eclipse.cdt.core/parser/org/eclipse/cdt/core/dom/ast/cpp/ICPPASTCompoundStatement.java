@@ -8,20 +8,17 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom.ast.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
 
 /**
- * An implicit name corresponding to a destructor call for a temporary or a variable going out of scope.
+ * Represents a block of statements in C++.
  *
- * @since 5.11
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @since 5.11
  */
-public interface IASTImplicitDestructorName extends IASTImplicitName {
-	public static final IASTImplicitDestructorName[] EMPTY_NAME_ARRAY = {}; 
-
-	/**
-	 * Returns the name corresponding to the constructor call.
-	 */
-	IASTName getConstructionPoint();
+public interface ICPPASTCompoundStatement extends IASTCompoundStatement, IASTImplicitDestructorNameOwner {
 }

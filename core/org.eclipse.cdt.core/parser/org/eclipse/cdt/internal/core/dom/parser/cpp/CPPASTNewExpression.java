@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.core.runtime.Assert;
 
@@ -204,7 +205,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (fImplicitDestructorNames == null) {
-			fImplicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
 		}
 
 		return fImplicitDestructorNames;
@@ -255,7 +256,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;       
         
-        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(fImplicitDestructorNames, action))
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
         if (action.shouldVisitExpressions) {

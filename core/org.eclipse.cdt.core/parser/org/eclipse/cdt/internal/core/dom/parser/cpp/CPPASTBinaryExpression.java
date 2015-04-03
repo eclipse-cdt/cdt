@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
@@ -146,7 +146,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	@Override
 	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
 		if (implicitDestructorNames == null) {
-			implicitDestructorNames = CPPVisitor.getTemporariesDestructorCalls(this);
+			implicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
 		}
 
 		return implicitDestructorNames;

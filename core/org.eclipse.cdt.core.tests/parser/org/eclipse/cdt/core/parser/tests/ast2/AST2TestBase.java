@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -668,6 +668,10 @@ public class AST2TestBase extends BaseTestCase {
     		assertNull("found name \"" + selection + "\"", name);
     	}
 
+    	public IASTImplicitName[] getImplicitNames(String section) {
+    		return getImplicitNames(section, section.length());
+    	}
+
     	public IASTImplicitName[] getImplicitNames(String section, int len) {
     		IASTName name = findImplicitName(section, len);
     		IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
@@ -675,11 +679,15 @@ public class AST2TestBase extends BaseTestCase {
 			return implicits;
     	}
 
-    	public IASTImplicitDestructorName[] getImplicitDestructotNames(String section, int len) {
+    	public IASTImplicitDestructorName[] getImplicitDestructorNames(String section) {
+    		return getImplicitDestructorNames(section, section.length());
+    	}
+
+    	public IASTImplicitDestructorName[] getImplicitDestructorNames(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue(offset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);
-    		IASTNode enclosingNode = selector.findStrictlyEnclosingNode(offset, len);
+    		IASTNode enclosingNode = selector.findEnclosingNode(offset, len);
     		if (!(enclosingNode instanceof IASTImplicitDestructorNameOwner))
     			return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;
    			return ((IASTImplicitDestructorNameOwner) enclosingNode).getImplicitDestructorNames();

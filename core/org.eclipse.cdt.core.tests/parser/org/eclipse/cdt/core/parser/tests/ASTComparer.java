@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Mike Kucera (IBM) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
@@ -26,7 +27,7 @@ import org.junit.Assert;
 
 public class ASTComparer extends Assert {
 
-	private static Set<String> methodsToIgnore = new HashSet<String>(Arrays.asList(
+	private static Set<String> methodsToIgnore = new HashSet<>(Arrays.asList(
 		// Prevent infinite recursion
 		"getParent",
 		"getTranslationUnit",
@@ -61,6 +62,7 @@ public class ASTComparer extends Assert {
 		"isAssociatedWithLastName",
 		"getNestingLevel",
 		"getImplicitNames",
+		"getImplicitDestructorNames",
 		"isLValue",
 		
 		// These methods can return a special constant value, such as

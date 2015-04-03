@@ -12,21 +12,21 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 
 public class CPPASTImplicitDestructorName extends CPPASTImplicitName implements IASTImplicitDestructorName {
-	private final IASTImplicitName constructionPoint;
+	private final IASTName constructionPoint;
 
-	public CPPASTImplicitDestructorName(char[] name, IASTNode parent, IASTImplicitName constructionPoint) {
+	public CPPASTImplicitDestructorName(char[] name, IASTNode parent, IASTName constructionPoint) {
 		super(name, parent);
 		this.constructionPoint = constructionPoint;
 		setPropertyInParent(IASTImplicitDestructorNameOwner.IMPLICIT_DESTRUCTOR_NAME);
 	}
 
 	@Override
-	public IASTImplicitName getConstructionPoint() {
+	public IASTName getConstructionPoint() {
 		return constructionPoint;
 	}
 }

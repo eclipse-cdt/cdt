@@ -396,7 +396,7 @@ public abstract class ASTNode implements IASTNode {
 	}
 
 	/**
-	 * If ambiguity resolution is in progress, and procesing of this node has been deferred,
+	 * If ambiguity resolution is in progress, and processing of this node has been deferred,
 	 * process it now. Has no effect if ambiguity resolution is not in progress.
 	 */
 	public void resolvePendingAmbiguities() {

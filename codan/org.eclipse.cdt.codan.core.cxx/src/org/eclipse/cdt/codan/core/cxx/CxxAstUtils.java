@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia, Tomasz Wesolowski
+ * Copyright (c) 2009, 2015 Alena Laskavaia, Tomasz Wesolowski
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
- *    Tomasz Wesolowski - extension
- *    Marc-Andre Laperle
+ *     Alena Laskavaia  - initial API and implementation
+ *     Tomasz Wesolowski - extension
+ *     Marc-Andre Laperle
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx;
 
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
@@ -87,6 +89,27 @@ public final class CxxAstUtils {
 				return PROCESS_ABORT;
 			}
 			return super.visit(expression);
+		}	
+	}
+	
+	private static class NoReturnImplicitCallFinder extends ASTVisitor {
+		boolean noReturn;
+
+		NoReturnImplicitCallFinder() {
+			shouldVisitImplicitNames = true;
+			shouldVisitImplicitDestructorNames = true;
+		}
+		
+		@Override
+		public int visit(IASTName name) {
+			if (name instanceof IASTImplicitName) {
+				IBinding binding = name.resolveBinding();
+				if (binding instanceof IFunction && ((IFunction) binding).isNoReturn()) {
+					noReturn = true;
+					return PROCESS_ABORT;
+				}
+			}
+			return PROCESS_CONTINUE;
 		}	
 	}
 	
@@ -378,6 +401,11 @@ public final class CxxAstUtils {
 	}
 
 	public static boolean isExitStatement(IASTNode statement) {
+		NoReturnImplicitCallFinder noReturnFinder = new NoReturnImplicitCallFinder();
+		statement.accept(noReturnFinder);
+		if (noReturnFinder.noReturn)
+			return true;
+
 		if (!(statement instanceof IASTExpressionStatement))
 			return false;
 		IASTExpression expression = ((IASTExpressionStatement) statement).getExpression();
@@ -388,7 +416,7 @@ public final class CxxAstUtils {
 			IASTName name = ((IASTIdExpression) functionNameExpression).getName();
 			
 			IBinding binding = name.resolveBinding();
-			if (binding != null && binding instanceof IFunction && ((IFunction) binding).isNoReturn()) {
+			if (binding instanceof IFunction && ((IFunction) binding).isNoReturn()) {
 				return true;
 			}
 		}

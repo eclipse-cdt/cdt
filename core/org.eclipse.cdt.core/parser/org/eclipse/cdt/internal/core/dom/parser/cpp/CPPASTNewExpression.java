@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.core.runtime.Assert;
 
@@ -57,6 +59,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     private IASTExpression[] fCachedArraySizes;
 	private ICPPEvaluation fEvaluation;
     private IASTImplicitName[] fImplicitNames;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
     
     public CPPASTNewExpression() {
 	}
@@ -199,6 +202,15 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     	return fImplicitNames;  
     }
 
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     /**
 	 * Returns true if this expression is allocating an array.
 	 * @since 5.1
@@ -244,6 +256,9 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;       
         
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+        	return false;
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

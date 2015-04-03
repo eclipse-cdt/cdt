@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -31,10 +32,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
- * Range based for loop in c++.
+ * Range based 'for' loop in C++.
  */
 public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
 		implements ICPPASTRangeBasedForStatement, IASTAmbiguityParent {
@@ -43,6 +45,7 @@ public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
     private IASTInitializerClause fInitClause;
     private IASTStatement fBody;
     private IASTImplicitName[] fImplicitNames;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTRangeBasedForStatement() {
 	}
@@ -173,6 +176,15 @@ public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
 		return fImplicitNames;
 	}
 	 
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getLocalVariablesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     @Override
 	public boolean accept( ASTVisitor action ){
 		if (action.shouldVisitStatements) {
@@ -199,6 +211,9 @@ public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
 		if (fBody != null && !fBody.accept(action))
 			return false;
         
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+        	return false;
+
 		if (action.shouldVisitStatements && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 		return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -16,11 +17,13 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
@@ -30,6 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
     private IASTCompoundStatement fStatement;
     private ICPPEvaluation fEval;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
     
     public CPPASTCompoundStatementExpression() {
 	}
@@ -82,6 +86,15 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 		}
     }
 
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -94,6 +107,9 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
         
         if (fStatement != null && !fStatement.accept(action)) return false;
    
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+        	return false;
+
         if (action.shouldVisitExpressions) {
         	switch (action.leave(this)) {
         		case ASTVisitor.PROCESS_ABORT: return false;

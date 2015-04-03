@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Bryan Wilkinson (QNX)
  *     Mike Kucera (IBM)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -43,6 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
@@ -55,6 +58,7 @@ public class CPPASTFieldReference extends ASTNode
     private IASTName fName;
     private IASTImplicitName[] fImplicitNames;
 	private ICPPEvaluation fEvaluation;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTFieldReference() {
 	}
@@ -160,6 +164,15 @@ public class CPPASTFieldReference extends ASTNode
 		return fImplicitNames;
 	}
         
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -181,6 +194,9 @@ public class CPPASTFieldReference extends ASTNode
         }
         
         if (fName != null && !fName.accept(action))
+        	return false;
+
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
         	return false;
 
         if (action.shouldVisitExpressions) {

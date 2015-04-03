@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
@@ -41,6 +43,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 
     private ICPPEvaluation fEvaluation;
     private IASTImplicitName[] fImplicitNames;
+    private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     public CPPASTBinaryExpression() {
 	}
@@ -139,6 +142,15 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return fImplicitNames;
 	}
 
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getTemporariesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
     	if (fOperand1 instanceof IASTBinaryExpression || fOperand2 instanceof IASTBinaryExpression) {
@@ -160,6 +172,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			return false;
 
 		if (fOperand2 != null && !fOperand2.accept(action))
+			return false;
+
+		if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
 			return false;
 
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)

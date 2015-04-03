@@ -17,14 +17,14 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.junit.runner.RunWith;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import junit.framework.JUnit4TestAdapter;
 
 @RunWith(Parameterized.class)
 public class UNCPathConverterTest {
@@ -41,19 +41,19 @@ public class UNCPathConverterTest {
 	}
 
 	@Parameters(name = "{index}: {0}")
-	public static Collection<Object []> testToPathCases() throws URISyntaxException {
-		return Arrays.asList(new Object [][] {
-						// Without scheme
-						{new URI("/foo/bar"), Path.fromOSString("/foo/bar")},
-						// With Scheme, no authority
-						{new URI("file", "/foo/bar", null), Path.fromOSString("/foo/bar")},
-						// With scheme and host
-						{new URI("http", "example.com", "/foo/bar", null), Path.fromOSString("//example.com/foo/bar")},
-						 // With server-based authority
-						{new URI("ssh", "user:password", "example.com", 8080, "/foo/bar", null, null), Path.fromOSString("//example.com/foo/bar")},
-						 // With Registry-based authority
-						{new URI("remotetools", "My Connection", "/foo/bar", null, null), Path.fromOSString("//My Connection/foo/bar")}}
-				);
+	public static Collection<Object[]> testToPathCases() throws URISyntaxException {
+		return Arrays.asList(new Object[][] {
+				// Without scheme
+				{ new URI("/foo/bar"), Path.fromOSString("/foo/bar") },
+				// With Scheme, no authority
+				{ new URI("file", "/foo/bar", null), Path.fromOSString("/foo/bar") },
+				// With scheme and host
+				{ new URI("http", "example.com", "/foo/bar", null), Path.fromOSString("//example.com/foo/bar") },
+				// With server-based authority
+				{ new URI("ssh", "user:password", "example.com", 8080, "/foo/bar", null, null), Path.fromOSString("//example.com/foo/bar") },
+				// With Registry-based authority
+				{ new URI("remotetools", "My Connection", "/foo/bar", null, null), Path.fromOSString("//My Connection/foo/bar") }
+		});
 	}
 
 	@Test

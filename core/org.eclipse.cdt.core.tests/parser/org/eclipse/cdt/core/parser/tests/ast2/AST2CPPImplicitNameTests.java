@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -59,6 +61,25 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		IASTImplicitNameOwner owner = (IASTImplicitNameOwner) firstImplicit.getParent();
 		IASTImplicitName[] implicits = owner.getImplicitNames();
 		return implicits;
+	}
+
+	protected IASTImplicitDestructorName[] getImplicitDestructorNames(IASTTranslationUnit tu, String contents,
+			String section) {
+		return getImplicitDestructorNames(tu, contents, section, section.length());
+	}
+
+	protected IASTImplicitDestructorName[] getImplicitDestructorNames(IASTTranslationUnit tu, String contents,
+			String section, int len) {
+		final int offset = contents.indexOf(section);
+		assertTrue(offset >= 0);
+		IASTNodeSelector selector = tu.getNodeSelector(null);
+		IASTImplicitName firstImplicit = selector.findImplicitName(offset, len);
+		if (firstImplicit instanceof IASTImplicitDestructorName) {
+			IASTImplicitDestructorNameOwner owner = (IASTImplicitDestructorNameOwner) firstImplicit.getParent();
+			IASTImplicitDestructorName[] implicits = owner.getImplicitDestructorNames();
+			return implicits;
+		}
+		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;
 	}
 
 	//	class point {
@@ -577,5 +598,83 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		ICPPFunction op = ba.assertNonProblem("operator==", 0);
 		IASTImplicitName a = ba.assertImplicitName("==b", 2, ICPPFunction.class);
 		assertSame(op, a.resolveBinding());
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	void test() {
+	//		int x;
+	//	    x = A().a;
+	//	}
+	public void testTemporaryDestruction() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("x = A().a");
+		assertEquals(1, names.length);
+		assertEquals("~A", names[0].resolveBinding().getName());
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	void test() {
+	//		A x;
+	//	    x = A();
+	//	}
+	public void testTemporaryNotCreatedWhenBoundToVariable() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("x = A()");
+		assertEquals(0, names.length);
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	int test() {
+	//		return (new A())->a;
+	//	}
+	public void testTemporaryNotCreatesInNewExpression() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("(new A())->a");
+		assertEquals(0, names.length);
+	}
+
+	//	struct A {
+	//	  ~A();
+	//	  int a;
+	//	};
+	//	void test() {
+	//		A& x = A();
+	//	}
+	public void testTemporaryBoundToReference() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("A()");
+		assertEquals(0, names.length);
+	}
+
+	//	struct S {
+	//	  S();
+	//	  S(int);
+	//	  ~S();
+	//	};
+	//
+	//	void test() {
+	//	  S s1;
+	//	  const S& s2 = S(1);
+	//	  S s3;
+	//	}//1
+	public void testOrderOfDestruction() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		IASTImplicitDestructorName[] names = ba.getImplicitDestructorNames("}//1", 1);
+		assertEquals(3, names.length);
+		assertEquals("~S", names[0].resolveBinding().getName());
+		assertEquals("s3", names[0].getConstructionPoint().getParent().getRawSignature());
+		assertEquals("~S", names[1].resolveBinding().getName());
+		assertEquals("S(1)", names[1].getConstructionPoint().getParent().getRawSignature());
+		assertEquals("~S", names[2].resolveBinding().getName());
+		assertEquals("s1", names[2].getConstructionPoint().getParent().getRawSignature());
 	}
 }

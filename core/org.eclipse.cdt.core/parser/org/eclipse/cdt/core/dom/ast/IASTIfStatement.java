@@ -18,22 +18,22 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTIfStatement extends IASTStatement {
 	/**
-	 * <code>CONDITION</code> represents the relationship between an
-	 * <code>IASTIfStatement</code> and its nested <code>IASTExpression</code>.
+	 * {@code CONDITION} represents the relationship between an
+	 * {@code IASTIfStatement} and its nested {@code IASTExpression}.
 	 */
 	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
 			"IASTIfStatement.CONDITION - IASTExpression condition for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
-	 * <code>THEN</code> represents the relationship between an
-	 * <code>IASTIfStatement</code> and its nested <code>IASTStatement</code>
+	 * {@code THEN} represents the relationship between an
+	 * {@code IASTIfStatement} and its nested {@code IASTStatement}
 	 * (then).
 	 */
 	public static final ASTNodeProperty THEN = new ASTNodeProperty("IASTIfStatement.THEN - IASTStatement (then) for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
-	 * <code>ELSE</code> represents the relationship between an
-	 * <code>IASTIfStatement</code> and its nested <code>IASTStatement</code>
+	 * {@code ELSE} represents the relationship between an
+	 * {@code IASTIfStatement} and its nested {@code IASTStatement}
 	 * (else).
 	 */
 	public static final ASTNodeProperty ELSE = new ASTNodeProperty("IASTIfStatement.ELSE - IASTStatement (else) for IASTIfStatement"); //$NON-NLS-1$
@@ -41,7 +41,7 @@ public interface IASTIfStatement extends IASTStatement {
 	/**
 	 * Returns the condition in the if statement.
 	 * 
-	 * @return the condition <code>IASTExpression</code>. May return <code>null</code> if the 'if'
+	 * @return the condition {@code IASTExpression}. May return {@code null} if the 'if'
 	 *     statement has condition declaration instead of condition expression
 	 *     (see {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement}).
 	 */
@@ -50,23 +50,21 @@ public interface IASTIfStatement extends IASTStatement {
 	/**
 	 * Sets the condition in the if statement.
 	 * 
-	 * @param condition
-	 *            <code>IASTExpression</code>
+	 * @param condition {@code IASTExpression}
 	 */
 	public void setConditionExpression(IASTExpression condition);
 
 	/**
 	 * Returns the statement that is executed if the condition is true.
 	 * 
-	 * @return the then clause <code>IASTStatement</code>
+	 * @return the then clause {@code IASTStatement}
 	 */
 	public IASTStatement getThenClause();
 
 	/**
 	 * Sets the statement that is executed if the condition is true.
 	 * 
-	 * @param thenClause
-	 *            <code>IASTStatement</code>
+	 * @param thenClause {@code IASTStatement}
 	 */
 	public void setThenClause(IASTStatement thenClause);
 
@@ -74,15 +72,14 @@ public interface IASTIfStatement extends IASTStatement {
 	 * Returns the statement that is executed if the condition is false. This clause
 	 * is optional and returns null if there is none.
 	 * 
-	 * @return the else clause or null <code>IASTStatement</code>
+	 * @return the else clause or {@code null} {@code IASTStatement}
 	 */
 	public IASTStatement getElseClause();
 
 	/**
 	 * Sets the else clause.
 	 * 
-	 * @param elseClause
-	 *            <code>IASTStatement</code>
+	 * @param elseClause {@code IASTStatement}
 	 */
 	public void setElseClause(IASTStatement elseClause);
 

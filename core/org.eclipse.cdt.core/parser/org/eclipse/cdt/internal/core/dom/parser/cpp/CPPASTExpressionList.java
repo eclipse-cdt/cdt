@@ -29,14 +29,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
-
     private IASTExpression[] expressions = new IASTExpression[2];
     
 	/**
 	 * Caution: may contain nulls. 
-	 * @see CPPASTExpressionList#computeImplicitNames
+	 * @see #computeImplicitNames
 	 */
-	private IASTImplicitName[] implicitNames;
+	private IASTImplicitName[] fImplicitNames;
 
 	private ICPPEvaluation fEvaluation;
 
@@ -48,8 +47,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	@Override
 	public CPPASTExpressionList copy(CopyStyle style) {
 		CPPASTExpressionList copy = new CPPASTExpressionList();
-		for(IASTExpression expr : getExpressions())
+		for (IASTExpression expr : getExpressions()) {
 			copy.addExpression(expr == null ? null : expr.copy(style));
+		}
 		return copy(copy, style);
 	}
 	
@@ -92,7 +92,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
         		}
         	}
         }
-        
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -104,32 +104,31 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     }
 
     /**
-     * Returns an array of implicit names where each element of the array
-     * represents a comma between the expression in the same index and the
-     * next expression. This array contains null elements as placeholders
-     * for commas that do not resolve to overloaded operators.
+     * Returns an array of implicit names where each element of the array represents a comma between
+     * the expression in the same index and the next expression. This array contains null elements
+     * as placeholders for commas that do not resolve to overloaded operators.
      */
     private IASTImplicitName[] computeImplicitNames() {
-		if (implicitNames == null) {
+		if (fImplicitNames == null) {
 			IASTExpression[] exprs = getExpressions(); // has to be at least two
 			if (exprs.length < 2)
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+				return fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
-			implicitNames = new IASTImplicitName[exprs.length - 1];
+			fImplicitNames = new IASTImplicitName[exprs.length - 1];
 			
 			ICPPFunction[] overloads = getOverloads();
-			for(int i = 0; i < overloads.length; i++) {
+			for (int i = 0; i < overloads.length; i++) {
 				ICPPFunction overload = overloads[i];
 				if (overload != null && !(overload instanceof CPPImplicitFunction)) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.COMMA, this);
 					operatorName.setBinding(overload);
 					operatorName.computeOperatorOffsets(exprs[i], true);
-					implicitNames[i] = operatorName;
+					fImplicitNames[i] = operatorName;
 				}
 			}
 		}
 		
-		return implicitNames;
+		return fImplicitNames;
 	}
 
     @Override

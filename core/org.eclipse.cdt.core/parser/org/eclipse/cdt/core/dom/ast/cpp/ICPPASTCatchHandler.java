@@ -49,27 +49,27 @@ public interface ICPPASTCatchHandler extends IASTStatement {
 	public boolean isCatchAll();
 
 	/**
-	 * Set the catch body.
+	 * Sets the catch body.
 	 */
 	public void setCatchBody(IASTStatement compoundStatement);
 
 	/**
-	 * Get the catch body.
+	 * Returns the catch body.
 	 */
 	public IASTStatement getCatchBody();
 
 	/**
-	 * Set the declaration.
+	 * Sets the declaration.
 	 */
 	public void setDeclaration(IASTDeclaration decl);
 
 	/**
-	 * Get the declaration.
+	 * Returns the declaration.
 	 */
 	public IASTDeclaration getDeclaration();
 
 	/**
-	 * Get the scope represented by this catch handler.
+	 * Returns the scope represented by this catch handler.
 	 * @since 5.1
 	 */
 	public IScope getScope();

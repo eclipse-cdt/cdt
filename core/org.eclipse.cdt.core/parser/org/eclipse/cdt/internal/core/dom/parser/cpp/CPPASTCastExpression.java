@@ -31,16 +31,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
  * Cast expression for C++
  */
 public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpression, IASTAmbiguityParent {
-    private int op;
-    private ICPPASTExpression operand;
-	private IASTTypeId typeId;
+    private int fOperator;
+    private ICPPASTExpression fOperand;
+	private IASTTypeId fTypeId;
 	private ICPPEvaluation fEvaluation;
 
     public CPPASTCastExpression() {
 	}
     
     public CPPASTCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
-		op = operator;
+		fOperator = operator;
 		setOperand(operand);
 		setTypeId(typeId);
 	}
@@ -54,7 +54,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	public CPPASTCastExpression copy(CopyStyle style) {
 		CPPASTCastExpression copy = new CPPASTCastExpression();
 		copy.setOperator(getOperator());
-		copy.setTypeId(typeId == null ? null : typeId.copy(style));
+		copy.setTypeId(fTypeId == null ? null : fTypeId.copy(style));
 		IASTExpression operand = getOperand();
 		copy.setOperand(operand == null ? null : operand.copy(style));
 		return copy(copy, style);
@@ -63,7 +63,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	@Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
-        this.typeId = typeId;
+        this.fTypeId = typeId;
         if (typeId != null) {
 			typeId.setParent(this);
 			typeId.setPropertyInParent(TYPE_ID);
@@ -72,35 +72,35 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 
     @Override
 	public IASTTypeId getTypeId() {
-        return typeId;
+        return fTypeId;
     }
     
 	@Override
 	public int getOperator() {
-        return op;
+        return fOperator;
     }
 
     @Override
 	public void setOperator(int operator) {
         assertNotFrozen();
-        op = operator;
+        fOperator = operator;
     }
 
     @Override
 	public IASTExpression getOperand() {
-        return operand;
+        return fOperand;
     }
 
     @Override
 	public void setOperand(IASTExpression expression) {
         assertNotFrozen();
-        operand = (ICPPASTExpression) expression;
+        fOperand = (ICPPASTExpression) expression;
         if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND);
 		}
     }
-    
+ 
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -111,7 +111,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	        }
 		}
         
-        if (typeId != null && !typeId.accept(action)) return false;
+        if (fTypeId != null && !fTypeId.accept(action)) return false;
         IASTExpression op = getOperand();
         if (op != null && !op.accept(action)) return false;
         
@@ -127,10 +127,10 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (child == operand) {
+        if (child == fOperand) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
-            operand  = (ICPPASTExpression) other;
+            fOperand  = (ICPPASTExpression) other;
         }
     }
     
@@ -144,14 +144,14 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	}
 	
 	private ICPPEvaluation computeEvaluation() {
-		if (operand == null)
+		if (fOperand == null)
 			return EvalFixed.INCOMPLETE;
 		
 		IType type= CPPVisitor.createType(getTypeId());
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalTypeId(type, this, operand.getEvaluation());
+		return new EvalTypeId(type, this, fOperand.getEvaluation());
 	}
 
     @Override

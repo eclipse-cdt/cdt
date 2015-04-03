@@ -172,6 +172,8 @@ public abstract class ASTVisitor {
 	 * Implicit names are created to allow implicit bindings to be resolved,
 	 * normally they are not visited, set this flag to true to visit them.
 	 * @since 5.1
+	 * @see #visit(IASTName)
+	 * @see IASTImplicitName
 	 */
 	public boolean shouldVisitImplicitNames = false;
 
@@ -179,6 +181,8 @@ public abstract class ASTVisitor {
 	 * Sometimes more than one implicit name is created for a binding,
 	 * set this flag to true to visit more than one name for an implicit binding.
 	 * @since 5.1
+	 * @see #visit(IASTName)
+	 * @see IASTImplicitName
 	 */
 	public boolean shouldVisitImplicitNameAlternates = false;
 

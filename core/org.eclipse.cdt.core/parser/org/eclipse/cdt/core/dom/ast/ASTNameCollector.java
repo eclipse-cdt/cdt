@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
 
@@ -22,12 +22,11 @@ import org.eclipse.core.runtime.Assert;
  * @since 5.1
  */
 public final class ASTNameCollector extends ASTVisitor {
-	
-	private char[] fName;
-	private ArrayList<IASTName> fFound= new ArrayList<IASTName>(4);
+	private final char[] fName;
+	private final ArrayList<IASTName> fFound= new ArrayList<>(4);
 
 	/**
-	 * Construct a name collector for the given name.
+	 * Constructs a name collector for the given name.
 	 */
 	public ASTNameCollector(char[] name) {
 		Assert.isNotNull(name);
@@ -36,7 +35,7 @@ public final class ASTNameCollector extends ASTVisitor {
 	}
 	
 	/**
-	 * Construct a name collector for the given name.
+	 * Constructs a name collector for the given name.
 	 */
 	public ASTNameCollector(String name) {
 		this(name.toCharArray());
@@ -53,14 +52,14 @@ public final class ASTNameCollector extends ASTVisitor {
 	}
 
 	/**
-	 * Return the array of matching names.
+	 * Returns the array of matching names.
 	 */
 	public IASTName[] getNames() {
 		return fFound.toArray(new IASTName[fFound.size()]);
 	}
 
 	/**
-	 * Clear the names found, such that the collector can be reused.
+	 * Clears the names found, such that the collector can be reused.
 	 */
 	public void clear() {
 		fFound.clear();

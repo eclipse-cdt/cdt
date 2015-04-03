@@ -102,12 +102,12 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     }
 
     /**
-     * Try to resolve both the destructor and operator delete.
+     * Tries to resolve both the destructor and operator delete.
      */
     @Override
 	public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
-	    	List<IASTImplicitName> names = new ArrayList<IASTImplicitName>();
+	    	List<IASTImplicitName> names = new ArrayList<>();
 	    	
 	    	if (!isVectored) {
 		    	ICPPFunction destructor = CPPSemantics.findImplicitlyCalledDestructor(this);

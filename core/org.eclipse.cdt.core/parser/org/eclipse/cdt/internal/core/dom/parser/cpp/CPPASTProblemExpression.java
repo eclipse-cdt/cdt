@@ -34,6 +34,7 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 	public CPPASTProblemExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
+
 	@Override
 	public CPPASTProblemExpression copy(CopyStyle style) {
 		CPPASTProblemExpression copy = new CPPASTProblemExpression();

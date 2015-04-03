@@ -37,10 +37,10 @@ public interface IScope {
     public IName getScopeName();
     
 	/**
-	 * Returns the first enclosing non-template scope, or <code>null</code> if this
+	 * Returns the first enclosing non-template scope, or {@code null} if this
 	 * is the global scope.
 	 * <p>
-	 * For scopes obtained from an index, <code>null</code> is returned to indicate that the
+	 * For scopes obtained from an index, {@code null} is returned to indicate that the
 	 * scope is only enclosed by the global scope.
 	 */
 	public IScope getParent() throws DOMException;
@@ -51,7 +51,7 @@ public interface IScope {
 	 * lookup.  Constructors are not considered during this lookup and won't be returned.
 	 * No attempt is made to resolve potential ambiguities or perform access checking.
 	 * 
-	 * @param name
+	 * @param name the name of the bindings
 	 * @return An array of bindings.
 	 */
 	public IBinding[] find(String name);
@@ -62,11 +62,9 @@ public interface IScope {
 	 * yet been cached in this scope, or if resolve == false and the appropriate binding 
 	 * has not yet been resolved.
 	 * 
-	 * @param name
-	 * @param resolve
-	 *            whether or not to resolve the matching binding if it has not
-	 *            been so already.
-	 * @return the binding in this scope that matches the name, or null
+	 * @param name the name of the binding
+	 * @param resolve whether or not to resolve the matching binding if it has not been so already.
+	 * @return the binding in this scope that matches the name, or {@code null}
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve);
 	
@@ -77,10 +75,8 @@ public interface IScope {
 	 * has not yet been resolved. Accepts file local bindings from the index for the files
 	 * in the given set, only.
 	 * 
-	 * @param name
-	 * @param resolve
-	 *            whether or not to resolve the matching binding if it has not
-	 *            been so already.
+	 * @param name the name of the binding
+	 * @param resolve whether or not to resolve the matching binding if it has not been so already.
 	 * @param acceptLocalBindings a set of files for which to accept local bindings.
 	 * @return the binding in this scope that matches the name, or null
 	 */
@@ -140,51 +136,63 @@ public interface IScope {
 		public final void setPrefixLookup(boolean prefixLookup) {
 			fPrefixLookup = prefixLookup;
 		}
+
 		public final void setResolve(boolean resolve) {
 			fResolve = resolve;
 		}
+
 		public final void setIgnorePointOfDeclaration(boolean ignorePointOfDeclaration) {
 			fIgnorePointOfDeclaration = ignorePointOfDeclaration;
 		}
+
 		public final void setLookupKey(char[] key) {
 			fLookupKey= key;
 		}
+
 		public final char[] getLookupKey() {
 			return fLookupKey;
 		}
+
 		public final IASTNode getLookupPoint() {
 			return fLookupPoint;
 		}
+
 		public final boolean isResolve() {
 			return fResolve;
 		}
+
 		public final boolean isPrefixLookup() {
 			return fPrefixLookup;
 		}
+
 		public final boolean isIgnorePointOfDeclaration() {
 			return fIgnorePointOfDeclaration;
 		}
+
 		public final IIndexFileSet getIncludedFiles() {
 			return fTu == null ? IIndexFileSet.EMPTY : fTu.getIndexFileSet();
 		}
+
 		public final IIndex getIndex() {
 			return fTu == null ? null : fTu.getIndex();
 		}
+
 		public final IASTName getLookupName() {
 			return fLookupPointIsName ? (IASTName) fLookupPoint : null;
 		}
+
 		public IASTTranslationUnit getTranslationUnit() {
 			return fTu;
 		}
 	}
 
 	/**
-	 * Get the bindings in this scope that the given name or prefix could resolve to. Could
+	 * Returns the bindings in this scope that the given name or prefix could resolve to. Could
 	 * return null if there is no matching bindings in this scope, if the bindings have not
 	 * yet been cached in this scope, or if resolve == false and the appropriate bindings 
 	 * have not yet been resolved.
 	 * 
-	 * @return : the bindings in this scope that match the name or prefix, or null
+	 * @return the bindings in this scope that match the name or prefix, or {@code null}
 	 * @since 5.5
 	 */
 	public IBinding[] getBindings(ScopeLookupData lookup);

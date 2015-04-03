@@ -402,4 +402,19 @@ public abstract class ASTNode implements IASTNode {
 	public void resolvePendingAmbiguities() {
 		((ASTTranslationUnit) getTranslationUnit()).resolvePendingAmbiguities(this);
 	}
+
+	/**
+	 * Helper method for use in {{@link #accept(ASTVisitor)} methods.
+	 * 
+	 * @param action the visitor to accept
+	 * @param nodes the array of nodes accepting the visitor
+	 * @return continue on ({@code true}) or quit ({@code false})
+	 */
+	protected static <T extends IASTNode> boolean acceptByNodes(T[] nodes, ASTVisitor action) {
+		for (T node : nodes) {
+			if (!node.accept(action))
+				return false;
+		}
+		return true;
+	}
 }

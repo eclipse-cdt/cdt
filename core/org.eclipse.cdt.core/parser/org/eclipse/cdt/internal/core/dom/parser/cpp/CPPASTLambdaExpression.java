@@ -71,11 +71,6 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		return copy(copy, style);
 	}
 
-    @Override
-	public IASTImplicitName[] getImplicitNames() {
-    	return new IASTImplicitName[] {getFunctionCallOperatorName()};
-    }
-
 	@Override
 	public IASTImplicitName getClosureTypeName() {
 		if (fClosureTypeName == null) {
@@ -108,6 +103,11 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
     	}
 		return fImplicitFunctionCallName;
 	}
+
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
+    	return new IASTImplicitName[] {getFunctionCallOperatorName()};
+    }
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {

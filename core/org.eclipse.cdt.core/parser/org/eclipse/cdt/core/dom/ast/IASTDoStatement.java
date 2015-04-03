@@ -18,33 +18,32 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTDoStatement extends IASTStatement {
 	/**
-	 * <code>BODY</code> represents the relationship between a
-	 * <code>IASTDoStatement</code> and its nested body
-	 * <code>IASTStatement</code>.
+	 * {@code BODY} represents the relationship between a
+	 * {@code IASTDoStatement} and its nested body
+	 * {@code IASTStatement}.
 	 */
 	public static final ASTNodeProperty BODY =
 			new ASTNodeProperty("IASTDoStatement.BODY - nested body for IASTDoStatement"); //$NON-NLS-1$
 
 	/**
-	 * <code>CONDITION</code> represents the relationship between a
-	 * <code>IASTDoStatement</code> and its condition
-	 * <code>IASTExpression</code>.
+	 * {@code CONDITION} represents the relationship between a
+	 * {@code IASTDoStatement} and its condition
+	 * {@code IASTExpression}.
 	 */
 	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
 			"IASTDoStatement.CONDITION - IASTExpression condition for IASTDoStatement"); //$NON-NLS-1$
 
 	/**
-	 * Get the body of the loop.
+	 * Returns the body of the loop.
 	 *
-	 * @return <code>IASTStatement</code> loop code body
+	 * @return {@code IASTStatement} loop code body
 	 */
 	public IASTStatement getBody();
 
 	/**
-	 * Set the body of the loop.
+	 * Sets the body of the loop.
 	 *
-	 * @param body
-	 *            an <code>IASTStatement</code>
+	 * @param body an {@code IASTStatement}
 	 */
 	public void setBody(IASTStatement body);
 
@@ -56,10 +55,9 @@ public interface IASTDoStatement extends IASTStatement {
 	public IASTExpression getCondition();
 
 	/**
-	 * Set the condition for the loop.
+	 * Sets the condition for the loop.
 	 *
-	 * @param condition
-	 *            an IASTExpression
+	 * @param condition an {@code IASTExpression}
 	 */
 	public void setCondition(IASTExpression condition);
 

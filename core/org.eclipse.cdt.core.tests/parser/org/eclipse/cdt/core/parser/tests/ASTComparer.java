@@ -18,11 +18,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.junit.Assert;
 
 public class ASTComparer extends Assert {
 

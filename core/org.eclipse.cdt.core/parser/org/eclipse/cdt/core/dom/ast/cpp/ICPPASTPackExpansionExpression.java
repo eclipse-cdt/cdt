@@ -22,11 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * @since 5.2
  */
 public interface ICPPASTPackExpansionExpression extends ICPPASTExpression {
-	
 	/**
 	 * Represents the relationship between a pack-expansion and its pattern.
 	 */
-	public static final ASTNodeProperty PATTERN = new ASTNodeProperty("ICPPASTPackExpansionExpression.Pattern [IASTExpression]"); //$NON-NLS-1$
+	public static final ASTNodeProperty PATTERN =
+			new ASTNodeProperty("ICPPASTPackExpansionExpression.Pattern [IASTExpression]"); //$NON-NLS-1$
 
 	/**
 	 * Returns the pattern of the pack expansion.

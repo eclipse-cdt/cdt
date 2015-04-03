@@ -24,7 +24,8 @@ public interface IASTTypeIdInitializerExpression extends IASTExpression {
 	 * <code>IASTTypeIdInitializerExpression</code> and
 	 * <code>IASTTypeId</code>.
 	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("IASTTypeIdInitializerExpression.TYPE_ID - IASTTypeId for IASTTypeIdInitializerExpression"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID =
+			new ASTNodeProperty("IASTTypeIdInitializerExpression.TYPE_ID - IASTTypeId for IASTTypeIdInitializerExpression"); //$NON-NLS-1$
 
 	/**
 	 * <code>INITIALIZER</code> represents the relationship between an

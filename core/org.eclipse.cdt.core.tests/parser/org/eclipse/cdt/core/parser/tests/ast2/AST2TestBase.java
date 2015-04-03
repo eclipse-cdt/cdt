@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -102,6 +100,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+
+import junit.framework.AssertionFailedError;
 
 /**
  * @author aniefer
@@ -696,7 +696,7 @@ public class AST2TestBase extends BaseTestCase {
     		return findName(contents, name);
     	}
 
-    	public IASTName findImplicitName(String section, int len) {
+    	public IASTImplicitName findImplicitName(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue(offset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);

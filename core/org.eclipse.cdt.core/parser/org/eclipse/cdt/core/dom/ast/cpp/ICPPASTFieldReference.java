@@ -29,7 +29,7 @@ public interface ICPPASTFieldReference extends IASTFieldReference, ICPPASTExpres
 	public boolean isTemplate();
 
 	/**
-	 * Set the template keyword used.
+	 * Sets the template keyword used.
 	 * 
 	 * @param value
 	 */

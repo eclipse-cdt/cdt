@@ -121,9 +121,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	setInitOperand2(expression);
     }
 
-    /**
-     * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
-     */
 	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
@@ -159,12 +156,8 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		if (operand1 != null && !operand1.accept(action))
 			return false;
 
-		if (action.shouldVisitImplicitNames) {
-			for (IASTImplicitName name : getImplicitNames()) {
-				if (!name.accept(action))
-					return false;
-			}
-		}
+		if (action.shouldVisitImplicitNames && !acceptByNodes(getImplicitNames(), action))
+			return false;
 
 		if (operand2 != null && !operand2.accept(action))
 			return false;
@@ -185,7 +178,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		}
 	}
 
-	public static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
+	private static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
 		N stack= new N(bexpr);
 		while (stack != null) {
 			IASTBinaryExpression expr= stack.fExpression;
@@ -211,12 +204,10 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 					return false;
 			}
 			if (stack.fState == 1) {
-				if (action.shouldVisitImplicitNames) {
-					for (IASTImplicitName name : ((IASTImplicitNameOwner) expr).getImplicitNames()) {
-		        		if (!name.accept(action))
-		        			return false;
-		        	}
-		        }
+				if (action.shouldVisitImplicitNames &&
+						!acceptByNodes(((IASTImplicitNameOwner) expr).getImplicitNames(), action)) {
+					return false;
+				}
 				stack.fState= 2;
 
 				IASTExpression op2 = expr.getOperand2();

@@ -169,7 +169,7 @@ public final class CxxAstUtils {
 	 * For any BinaryExpression, guess the type from the other operand. (A good
 	 * guess for =, ==; hard to get a better guess for others)
 	 * 
-	 * @return inferred type or null if couldn't infer
+	 * @return inferred type or {@code null} if couldn't infer
 	 */
 	private static IType tryInferTypeFromBinaryExpr(IASTName astName) {
 		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTBinaryExpression) {
@@ -188,9 +188,8 @@ public final class CxxAstUtils {
 	 * For a function call, tries to find a matching function declaration.
 	 * Checks the argument count.
 	 * 
-	 * @param index
-	 * 
-	 * @return a generated declaration or null if not suitable
+	 * @param index the index
+	 * @return a generated declaration or {@code null} if not suitable
 	 */
 	private static IASTSimpleDeclaration tryInferTypeFromFunctionCall(IASTName astName, INodeFactory factory, IIndex index) {
 		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTFunctionCallExpression
@@ -303,13 +302,11 @@ public final class CxxAstUtils {
 
 	/**
 	 * If the function definition belongs to a class, returns the class.
-	 * Otherwise, returns null.
+	 * Otherwise, returns {@code null}.
 	 * 
-	 * @param function
-	 *        the function definition to check
-	 * @param index
-	 *        the index to use for name lookup
-	 * @return Either a type specifier or null
+	 * @param function the function definition to check
+	 * @param index the index to use for name lookup
+	 * @return either a type specifier or {@code null}
 	 */
 	public static IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function, final IIndex index) {
 		// Return value to be set via visitor.
@@ -371,19 +368,19 @@ public final class CxxAstUtils {
 		return returnSpecifier[0];
 	}
 
-	public static boolean isThrowStatement(IASTNode body) {
-		if (!(body instanceof IASTExpressionStatement))
+	public static boolean isThrowStatement(IASTNode statement) {
+		if (!(statement instanceof IASTExpressionStatement))
 			return false;
-		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
+		IASTExpression expression = ((IASTExpressionStatement) statement).getExpression();
 		if (!(expression instanceof IASTUnaryExpression))
 			return false;
 		return ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_throw;
 	}
 
-	public static boolean isExitStatement(IASTNode body) {
-		if (!(body instanceof IASTExpressionStatement))
+	public static boolean isExitStatement(IASTNode statement) {
+		if (!(statement instanceof IASTExpressionStatement))
 			return false;
-		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
+		IASTExpression expression = ((IASTExpressionStatement) statement).getExpression();
 		if (!(expression instanceof IASTFunctionCallExpression))
 			return false;
 		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();

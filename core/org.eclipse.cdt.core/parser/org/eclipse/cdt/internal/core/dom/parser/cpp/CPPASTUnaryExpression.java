@@ -41,8 +41,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
 	private int fOperator;
     private ICPPASTExpression fOperand;
-    private IASTImplicitName[] fImplicitNames;
 	private ICPPEvaluation fEvaluation;
+    private IASTImplicitName[] fImplicitNames;
 
     public CPPASTUnaryExpression() {
 	}
@@ -94,9 +94,6 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     	return fOperator == op_postFixDecr || fOperator == op_postFixIncr;
     }
 
-    /**
-     * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
-     */
     @Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (fImplicitNames == null) {

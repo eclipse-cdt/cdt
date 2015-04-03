@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,22 +12,25 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 
 /**
  * @author jcamelon
  */
 public class CPPASTCompoundStatement extends ASTAttributeOwner
-		implements IASTCompoundStatement, IASTAmbiguityParent {
+		implements ICPPASTCompoundStatement, IASTAmbiguityParent {
     private IASTStatement[] statements = new IASTStatement[2];
     private ICPPScope scope;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
 
     @Override
 	public CPPASTCompoundStatement copy() {
@@ -68,6 +71,15 @@ public class CPPASTCompoundStatement extends ASTAttributeOwner
         return scope;
     }
 
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getLocalVariablesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
@@ -85,6 +97,9 @@ public class CPPASTCompoundStatement extends ASTAttributeOwner
             if (!statement.accept(action))
             	return false;
         }
+
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+        	return false;
 
         if (action.shouldVisitStatements) {
         	switch (action.leave(this)) {

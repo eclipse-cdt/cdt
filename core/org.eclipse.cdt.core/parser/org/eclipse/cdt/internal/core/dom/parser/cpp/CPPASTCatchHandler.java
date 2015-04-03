@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,22 +14,25 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 
 /**
  * @author jcamelon
  */
 public class CPPASTCatchHandler extends ASTAttributeOwner
 		implements ICPPASTCatchHandler, IASTAmbiguityParent {
-    private boolean isCatchAll;
-    private IASTStatement body;
-    private IASTDeclaration declaration;
-	private IScope scope;
+    private boolean fIsCatchAll;
+    private IASTStatement fBody;
+    private IASTDeclaration fDeclaration;
+	private IScope fScope;
+	private IASTImplicitDestructorName[] fImplicitDestructorNames;
     
     public CPPASTCatchHandler() {
 	}
@@ -47,27 +50,27 @@ public class CPPASTCatchHandler extends ASTAttributeOwner
 	@Override
 	public CPPASTCatchHandler copy(CopyStyle style) {
 		CPPASTCatchHandler copy = new CPPASTCatchHandler();
-		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
-		copy.setCatchBody(body == null ? null : body.copy(style));
-		copy.setIsCatchAll(isCatchAll);
+		copy.setDeclaration(fDeclaration == null ? null : fDeclaration.copy(style));
+		copy.setCatchBody(fBody == null ? null : fBody.copy(style));
+		copy.setIsCatchAll(fIsCatchAll);
 		return copy(copy, style);
 	}
 
 	@Override
 	public void setIsCatchAll(boolean isEllipsis) {
         assertNotFrozen();
-        isCatchAll = isEllipsis;
+        fIsCatchAll = isEllipsis;
     }
 
     @Override
 	public boolean isCatchAll() {
-        return isCatchAll;
+        return fIsCatchAll;
     }
 
     @Override
 	public void setCatchBody(IASTStatement compoundStatement) {
         assertNotFrozen();
-        body = compoundStatement;
+        fBody = compoundStatement;
         if (compoundStatement != null) {
 			compoundStatement.setParent(this);
 			compoundStatement.setPropertyInParent(CATCH_BODY);
@@ -76,13 +79,13 @@ public class CPPASTCatchHandler extends ASTAttributeOwner
 
     @Override
 	public IASTStatement getCatchBody() {
-        return body;
+        return fBody;
     }
 
     @Override
 	public void setDeclaration(IASTDeclaration decl) {
         assertNotFrozen();
-        declaration = decl;
+        fDeclaration = decl;
         if (decl != null) {
 			decl.setParent(this);
 			decl.setPropertyInParent(DECLARATION);
@@ -91,8 +94,17 @@ public class CPPASTCatchHandler extends ASTAttributeOwner
 
     @Override
 	public IASTDeclaration getDeclaration() {
-        return declaration;
+        return fDeclaration;
     }
+
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		if (fImplicitDestructorNames == null) {
+			fImplicitDestructorNames = DestructorCallCollector.getLocalVariablesDestructorCalls(this);
+		}
+
+		return fImplicitDestructorNames;
+	}
 
     @Override
 	public boolean accept(ASTVisitor action) {
@@ -105,9 +117,12 @@ public class CPPASTCatchHandler extends ASTAttributeOwner
 		}
 
         if (!acceptByAttributeSpecifiers(action)) return false;
-        if (declaration != null && !declaration.accept(action)) return false;
-        if (body != null && !body.accept(action)) return false;
-        
+        if (fDeclaration != null && !fDeclaration.accept(action)) return false;
+        if (fBody != null && !fBody.accept(action)) return false;
+
+        if (action.shouldVisitImplicitDestructorNames && !acceptByNodes(getImplicitDestructorNames(), action))
+        	return false;
+
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -120,23 +135,23 @@ public class CPPASTCatchHandler extends ASTAttributeOwner
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (body == child) {
+        if (fBody == child) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
-            body = (IASTStatement) other;
+            fBody = (IASTStatement) other;
         }
-        if (declaration == child) {
+        if (fDeclaration == child) {
             other.setParent(child.getParent());
             other.setPropertyInParent(child.getPropertyInParent());
-            declaration = (IASTDeclaration) other;
+            fDeclaration = (IASTDeclaration) other;
         }
     }
 
 	@Override
 	public IScope getScope() {
-		if (scope == null) {
-			scope = new CPPBlockScope(this);
+		if (fScope == null) {
+			fScope = new CPPBlockScope(this);
 		}
-		return scope;
+		return fScope;
 	}
 }

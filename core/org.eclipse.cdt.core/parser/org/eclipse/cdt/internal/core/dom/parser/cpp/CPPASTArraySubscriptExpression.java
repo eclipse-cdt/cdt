@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
  
@@ -16,6 +17,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -209,5 +211,10 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
+	}
+
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY;
 	}
 }

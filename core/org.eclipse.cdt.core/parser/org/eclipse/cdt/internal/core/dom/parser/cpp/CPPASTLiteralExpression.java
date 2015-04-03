@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,6 +16,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -91,6 +93,11 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	public String toString() {
         return new String(fValue);
     }
+
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY; // Literal expression does not call destructors.
+	}
 
     @Override
 	public boolean accept(ASTVisitor action) {

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -73,6 +74,11 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	public IASTTypeId getTypeId() {
         return fTypeId;
     }
+
+	@Override
+	public IASTImplicitDestructorName[] getImplicitDestructorNames() {
+		return IASTImplicitDestructorName.EMPTY_NAME_ARRAY; // Type-id expression does not call destructors.
+	}
 
     @Override
 	public boolean accept(ASTVisitor action) {

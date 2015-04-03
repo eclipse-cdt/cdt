@@ -303,15 +303,25 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkSampleAbove();
 	}
 
-
-//void f() __attribute__((noreturn));
-//
-//int test() {
-//  f();
-//}
-
+	//	void f() __attribute__((noreturn));
+	//
+	//	int test() {
+	//    f();
+	//	}
 	public void testNoReturn() {
 		checkSampleAbove();
+	}
+
+	//	struct A {
+	//	  A();
+	//	  ~A() __attribute__((noreturn));
+	//	};
+	//
+	//	int test() {
+	//	  A();
+	//	}
+	public void testNoReturnInDestructor_461538() throws Exception {
+		checkSampleAboveCpp();
 	}
 
 	//	int try1() {

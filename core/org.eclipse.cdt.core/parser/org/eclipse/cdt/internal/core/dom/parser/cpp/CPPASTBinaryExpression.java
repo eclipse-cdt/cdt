@@ -18,7 +18,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -220,10 +219,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 				}
 				if (op2 != null && !op2.accept(action))
 					return false;
-				if (action.shouldVisitImplicitDestructorNames &&
-						!acceptByNodes(((IASTImplicitDestructorNameOwner) expr).getImplicitDestructorNames(), action)) {
-					return false;
-				}
 			}
 
 			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT)

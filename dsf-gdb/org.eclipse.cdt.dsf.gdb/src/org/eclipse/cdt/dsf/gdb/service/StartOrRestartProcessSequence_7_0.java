@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Ericsson and others.
+ * Copyright (c) 2011, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -291,6 +292,16 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     	}
     }
 	
+	/** @since 4.7 */
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, OutputStream outputStream) {
+		return new MIInferiorProcess(container, outputStream);
+	}
+
+	/** @since 4.7 */
+	protected MIInferiorProcess createInferiorProcess(IContainerDMContext container, PTY pty) {
+		return new MIInferiorProcess(container, pty);
+	}
+
 	/**
 	 * Before running the program, we must create its console for IO.
 	 */
@@ -305,9 +316,9 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     	
 		Process inferiorProcess;
 		if (fPty == null) {
-			inferiorProcess = new MIInferiorProcess(fContainerDmc, fBackend.getMIOutputStream());
+			inferiorProcess = createInferiorProcess(fContainerDmc, fBackend.getMIOutputStream());
 		} else {
-			inferiorProcess = new MIInferiorProcess(fContainerDmc, fPty);
+			inferiorProcess = createInferiorProcess(fContainerDmc, fPty);
 		}
 
 		final Process inferior = inferiorProcess;

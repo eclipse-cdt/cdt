@@ -8,15 +8,24 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.utils.serial;
+package org.eclipse.cdt.serial.internal;
 
-/**
- * @since 5.8
- */
-public enum Parity {
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-	None,
-	Even,
-	Odd
-	
+public class Messages {
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.serial.internal.messages"; //$NON-NLS-1$
+
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+
+	private Messages() {
+	}
+
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
 }

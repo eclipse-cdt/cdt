@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.utils.serial;
+package org.eclipse.cdt.serial;
 
 /**
  * @since 5.8
@@ -16,6 +16,37 @@ package org.eclipse.cdt.utils.serial;
 public enum StopBits {
 
 	S1,
-	S2
+	S2;
+	
+	private static final String[] strings = {
+		"1", //$NON-NLS-1$
+		"2" //$NON-NLS-1$
+	};
+	
+	public static String[] getStrings() {
+		return strings;
+	}
+	
+	private static final StopBits[] stopBits = {
+		S1,
+		S2
+	};
+	
+	public static StopBits fromStringIndex(int index) {
+		return stopBits[index];
+	}
 
+	public static int getStringIndex(StopBits sb) {
+		for (int i = 0; i < stopBits.length; ++i) {
+			if (sb.equals(stopBits[i])) {
+				return i;
+			}
+		}
+		return getStringIndex(getDefault());
+	}
+	
+	public static StopBits getDefault() {
+		return S1;
+	}
+	
 }

@@ -55,6 +55,7 @@
 		<module>core/org.eclipse.cdt.core.macosx</module>
 		<module>core/org.eclipse.cdt.core.aix</module>
 		<module>core/org.eclipse.cdt.core.solaris</module>
+		<module>native/org.eclipse.cdt.native.serial</module>
 		<module>releng/org.eclipse.cdt.native-feature</module>
 		<module>releng/org.eclipse.cdt.native.source-feature</module>
 

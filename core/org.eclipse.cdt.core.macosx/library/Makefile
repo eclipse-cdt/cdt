@@ -51,19 +51,14 @@ LIB_NAME_FULL_PTY_X86_64 = $(INSTALL_DIR_X86_64)/libpty.jnilib
 OBJS_PTY_X86 = openpty_$(ARCH_X86).o pty_$(ARCH_X86).o ptyio_$(ARCH_X86).o
 OBJS_PTY_X86_64 = openpty_$(ARCH_X86_64).o pty_$(ARCH_X86_64).o ptyio_$(ARCH_X86_64).o
 
-LIB_NAME_FULL_SERIAL_X86 = $(INSTALL_DIR_X86)/libserial.jnilib
-LIB_NAME_FULL_SERIAL_X86_64 = $(INSTALL_DIR_X86_64)/libserial.jnilib
-OBJS_SERIAL_X86 = serial_$(ARCH_X86).o
-OBJS_SERIAL_X86_64 = serial_$(ARCH_X86_64).o
-
 OBJS_X86 = $(OBJS_SPAWNER_X86) $(OBJS_PTY_X86) $(OBJS_SERIAL_X86)
 OBJS_X86_64 = $(OBJS_SPAWNER_X86_64) $(OBJS_PTY_X86_64) $(OBJS_SERIAL_X86_64)
 
 all: x86 x86_64
 
-x86: $(LIB_NAME_FULL_SPAWNER_X86) $(LIB_NAME_FULL_PTY_X86) $(LIB_NAME_FULL_SERIAL_X86)
+x86: $(LIB_NAME_FULL_SPAWNER_X86) $(LIB_NAME_FULL_PTY_X86)
 
-x86_64: $(LIB_NAME_FULL_SPAWNER_X86_64) $(LIB_NAME_FULL_PTY_X86_64) $(LIB_NAME_FULL_SERIAL_X86_64)
+x86_64: $(LIB_NAME_FULL_SPAWNER_X86_64) $(LIB_NAME_FULL_PTY_X86_64)
 
 rebuild: clean all
 
@@ -82,14 +77,6 @@ $(LIB_NAME_FULL_PTY_X86): $(OBJS_PTY_X86)
 $(LIB_NAME_FULL_PTY_X86_64): $(OBJS_PTY_X86_64)
 	mkdir -p $(INSTALL_DIR_X86_64)
 	$(CC) -dynamiclib  $(ARCH_FLAG_X86_64) -o $(LIB_NAME_FULL_PTY_X86_64) $(OBJS_PTY_X86_64) -lc -framework JavaVM
-
-$(LIB_NAME_FULL_SERIAL_X86): $(OBJS_SERIAL_X86)
-	mkdir -p $(INSTALL_DIR_X86)
-	$(CC) -dynamiclib  $(ARCH_FLAG_X86) -o $(LIB_NAME_FULL_SERIAL_X86) $(OBJS_SERIAL_X86) -lc -framework JavaVM
-
-$(LIB_NAME_FULL_SERIAL_X86_64): $(OBJS_SERIAL_X86_64)
-	mkdir -p $(INSTALL_DIR_X86_64)
-	$(CC) -dynamiclib  $(ARCH_FLAG_X86_64) -o $(LIB_NAME_FULL_SERIAL_X86_64) $(OBJS_SERIAL_X86_64) -lc -framework JavaVM
 
 spawner_$(ARCH_X86).o: spawner.c
 	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ spawner.c
@@ -115,9 +102,6 @@ pty_$(ARCH_X86).o: pty.c
 ptyio_$(ARCH_X86).o: ptyio.c
 	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ ptyio.c
 
-serial_$(ARCH_X86).o: serial.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86) $(CPPFLAGS) -c -o $@ serial.c
-
 spawner_$(ARCH_X86_64).o: spawner.c
 	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ spawner.c
 
@@ -141,9 +125,6 @@ pty_$(ARCH_X86_64).o: pty.c
 
 ptyio_$(ARCH_X86_64).o: ptyio.c
 	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ ptyio.c
-
-serial_$(ARCH_X86_64).o: serial.c
-	$(CC) $(CFLAGS) $(ARCH_FLAG_X86_64) $(CPPFLAGS) -c -o $@ serial.c
 
 clean :
 	$(RM) $(OBJS_X86) $(LIB_NAME_FULL_SPAWNER_X86) $(LIB_NAME_FULL_PTY_X86)

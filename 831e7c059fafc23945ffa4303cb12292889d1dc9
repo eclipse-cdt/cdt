@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_3473865c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-04-06T17:25:13Z",
+      "side": 1,
+      "message": "I doubt this will work reliably. It\u0027s probably better to switch to lazy initialization.",
+      "range": {
+        "startLine": 609,
+        "startChar": 42,
+        "endLine": 609,
+        "endChar": 51
+      },
+      "revId": "831e7c059fafc23945ffa4303cb12292889d1dc9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

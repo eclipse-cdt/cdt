@@ -603,7 +603,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 		ASTRewriteAnalyzer.setCTextFileChangeFactory(new CTextFileChangeFactory());
 
 		// A workaround for black console bug 320723.
-		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
+		// This workaround causes all of CDT's UI preferences to init and that needs to be done on
+		// the UI thread.
+		if (PlatformUI.isWorkbenchRunning()) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					BuildConsolePreferencePage.initDefaults(getPreferenceStore());
+				}
+			});
+		}
+
 		// Initialize ContentAssistMatcherPreference.
 		ContentAssistPreference.getInstance();
 

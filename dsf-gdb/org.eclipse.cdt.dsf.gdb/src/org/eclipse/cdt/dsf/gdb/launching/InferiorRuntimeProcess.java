@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Ericsson and others.
+ * Copyright (c) 2011, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
@@ -37,8 +36,13 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 	
 	@Override
 	protected void terminated() {
-		super.terminated();
+		// We must set the console label before calling super.terminated()
+		// This is because super.terminated() will send an event to rename
+		// the console, and we find ourselves in a race condition
+		// where we may miss setting the label here (bug 463977)
 		setConsoleTerminatedLabel();
+		
+		super.terminated();
 	}
 	
 	// Inspired from org.eclipse.debug.internal.ui.views.console.ProcessConsole#computeName
@@ -66,9 +70,14 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 		if (getAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR) != null) {
 			// Add the exit code to the label if the inferior properly exited.
 			try {
+				// We have to explicitly get the exit code from the lower level process
+				// instead of calling getExitValue() because we have not yet indicated 
+				// that this wrapper process has terminated by calling super.terminated() 
+				// Bug 463977
+				int exitValue = getSystemProcess().exitValue();
 				buffer.insert(0, MessageFormat.format(LaunchMessages.getString("InferiorRuntimeProcess_ExitValue"), //$NON-NLS-1$
-						new Object[] { getExitValue() }));
-			} catch (DebugException e) {
+						new Object[] { exitValue }));
+			} catch (IllegalThreadStateException e) {
 				// Process not terminated.  Should not happen.  But even so, we should use the plain label.
 			}
 		}

@@ -22,6 +22,30 @@
       "revId": "831e7c059fafc23945ffa4303cb12292889d1dc9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_144f6a12",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-04-06T17:31:42Z",
+      "side": 1,
+      "message": "Don\u0027t disagree with that. I did put a comment in the original bug that they should take another look at this workaround and come up with something better.\n\nThe bigger issue is that any code in this start method that has a chance to invoke SWT is going to get the invalid thread exception. I already got it not in the next method initializing content assist preferences. This entire method needs to be revisited.\n\nBTW, I am getting this because my Eclipse crashed mysteriously and now it won\u0027t start at all because of the broken theme manager. Trying to get going again.",
+      "parentUuid": "a7fb1785_3473865c",
+      "range": {
+        "startLine": 609,
+        "startChar": 42,
+        "endLine": 609,
+        "endChar": 51
+      },
+      "revId": "831e7c059fafc23945ffa4303cb12292889d1dc9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -224,6 +224,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_4(session);
 		}
+		if (GDB_7_3_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBProcesses_7_3(session);
+		}
 		if (GDB_7_2_1_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBProcesses_7_2_1(session);
 		}

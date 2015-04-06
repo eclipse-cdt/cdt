@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson and others.
+ * Copyright (c) 2014, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
  * 
  * @since 4.4
  */
-public class GDBProcesses_7_4 extends GDBProcesses_7_2_1 {
+public class GDBProcesses_7_4 extends GDBProcesses_7_3 {
     
 	public GDBProcesses_7_4(DsfSession session) {
 		super(session);

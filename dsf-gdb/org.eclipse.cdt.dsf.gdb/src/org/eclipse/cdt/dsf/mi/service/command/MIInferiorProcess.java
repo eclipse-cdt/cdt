@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 QNX Software Systems and others.
+ * Copyright (c) 2009, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,12 +42,9 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
-import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
@@ -61,13 +58,11 @@ import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IProcess;
 
 /**
- * This Process implementation tracks the process that is being debugged 
- * by GDB.  The process object is displayed in Debug view and is used to
- * channel the STDIO of the interior process to the console view.  
+ * This Process implementation tracks one of the inferiors that is being debugged 
+ * by GDB.  The process object, although not displayed in the Debug view, is used to
+ * channel the STDIO of the inferior process to the console view.
  * 
  * @see org.eclipse.debug.core.model.IProcess 
  */
@@ -118,7 +113,28 @@ public class MIInferiorProcess extends Process
 
     @ThreadSafe
     Integer fExitCode = null;
+    
+    /**
+     * @returns if that the inferior has been started.
+	 * This is important for the case of a restart
+	 * where we need to make sure not to terminate
+	 * the new inferior, which was not started yet.
+	 * @since 4.7
+	 */
+    protected boolean isStarted() {
+		return fStarted;
+	}
  
+    /** @since 4.7 */
+    protected IContainerDMContext getContainer() {
+		return fContainerDMContext;
+	}
+    
+    /** @since 4.7 */
+    protected synchronized boolean isTerminated() {
+		return fTerminated;
+	}
+    
     /**
      * Creates an inferior process object which uses the given output stream 
      * to write the user standard input into.
@@ -145,8 +161,9 @@ public class MIInferiorProcess extends Process
         this(container, null, p);
     }
     
+    /** @since 4.7 */
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    private MIInferiorProcess(IContainerDMContext container, final OutputStream gdbOutputStream, PTY pty) {
+    protected MIInferiorProcess(IContainerDMContext container, final OutputStream gdbOutputStream, PTY pty) {
         fSession = DsfSession.getSession(container.getSessionId());
         fSession.addServiceEventListener(this, null);
         
@@ -260,11 +277,13 @@ public class MIInferiorProcess extends Process
             }
         }
         
-        // The below should only be used for GDB < 7.3 because $_exitcode does not
-        // support multi-process properly.  Note that for GDB 7.2, there is no proper
-        // solution because although we support multi-process, $_exitcode was still the
-        // only way to get the exit code.  For GDB >= 7.3, we can use =thread-group-exited
-        // which provides the exit code; in fact, fExitCode will already be set for that case.
+        // Fetch the exit code using $_exitcode of GDB when doing single
+        // process debugging (GDB <= 7.1)
+        // Note that for GDB 7.2, there is no proper solution for the exit code
+        // because although we support multi-process, $_exitcode was still the
+        // only way to get the exit code, and that variable does not work properly
+        // with multi-process (it is re-used by the different processes).
+        // We use it still for GDB 7.2, since the single-process case is the most common.
         try {
             Query<Integer> exitCodeQuery = new Query<Integer>() {
                 @Override
@@ -282,7 +301,7 @@ public class MIInferiorProcess extends Process
                     } else if (!fTerminated) {
                         // This will cause ExecutionException to be thrown with a CoreException, 
                         // which will in turn contain the IllegalThreadStateException.
-                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "GDB is still running.", new IllegalThreadStateException())); //$NON-NLS-1$
+                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Inferior is still running.", new IllegalThreadStateException())); //$NON-NLS-1$
                         rm.done();
                     } else {
                     	// The exitCode from GDB does not seem to be handled for multi-process
@@ -461,28 +480,6 @@ public class MIInferiorProcess extends Process
     /** @since 4.2 */
     @DsfServiceEventHandler
     public void eventDispatched(MIThreadGroupExitedEvent e) {
-		if (fContainerDMContext instanceof IMIContainerDMContext) {
-			if (((IMIContainerDMContext)fContainerDMContext).getGroupId().equals(e.getGroupId())) {
-    			if (fStarted) {
-    				// Only handle this event if this process was already
-    				// started.  This is to protect ourselves in the case of
-    				// a restart, where the new inferior is already created
-    				// and gets the exited event for the old inferior.
-    				String exitCode = e.getExitCode();
-    				if (exitCode != null) {
-    					setExitCodeAttribute();
-    					try {
-    						// Must use 'decode' since GDB returns an octal value
-    						Integer decodedExitCode = Integer.decode(exitCode);
-			        		synchronized(this) {
-    			            	fExitCode = decodedExitCode;
-    			            }
-    					} catch (NumberFormatException exception) {
-    					}    					
-    				}
-    			}
-    		}
-    	}
     }
     
     /**
@@ -525,34 +522,4 @@ public class MIInferiorProcess extends Process
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
     	dispose();
     }
-
-	/**
-	 * Set an attribute in the inferior process of the launch to indicate
-	 * that the inferior has properly exited and its exit value can be used.
-	 */
-    @ConfinedToDsfExecutor("fSession#getExecutor")
-	private void setExitCodeAttribute() {
-		// Update the console label to contain the exit code
-		ILaunch launch = (ILaunch)fSession.getModelAdapter(ILaunch.class);
-		IProcess[] launchProcesses = launch.getProcesses();
-		for (IProcess proc : launchProcesses) {
-			if (proc instanceof InferiorRuntimeProcess) {
-				InferiorRuntimeProcess process = (InferiorRuntimeProcess)proc;
-				String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
-
-				// if the groupAttribute is not set in the process we know we are dealing
-				// with single process debugging so the one process is the one we want.
-				// If the groupAttribute is set, then we must make sure it is the proper inferior
-				if (fContainerDMContext instanceof IMIContainerDMContext) {
-					if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
-							groupAttribute.equals(((IMIContainerDMContext)fContainerDMContext).getGroupId())) {
-						// Simply set the attribute that indicates the inferior has properly exited and its
-						// exit code can be used.
-						process.setAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR, ""); //$NON-NLS-1$
-						return;
-					}
-				}
-			}
-		}
-	}
 }

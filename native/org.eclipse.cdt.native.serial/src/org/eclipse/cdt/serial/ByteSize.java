@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.utils.serial;
+package org.eclipse.cdt.serial;
 
 /**
  * @since 5.8
@@ -19,14 +19,50 @@ public enum ByteSize {
 	B6(6),
 	B7(7),
 	B8(8);
-	
+
 	private final int size;
-	
+
 	private ByteSize(int size) {
 		this.size = size;
 	}
-	
+
 	public int getSize() {
 		return size;
 	}
+
+	private static final String[] strings = {
+		"5", //$NON-NLS-1$
+		"6", //$NON-NLS-1$
+		"7", //$NON-NLS-1$
+		"8" //$NON-NLS-1$
+	};
+
+	public static String[] getStrings() {
+		return strings;
+	}
+
+	private static final ByteSize[] sizes = {
+		B5,
+		B6,
+		B7,
+		B8
+	};
+
+	public static ByteSize fromStringIndex(int size) {
+		return sizes[size];
+	}
+
+	public static int getStringIndex(ByteSize size) {
+		for (int i = 0; i < sizes.length; ++i) {
+			if (size.equals(sizes[i])) {
+				return i;
+			}
+		}
+		return getStringIndex(getDefault());
+	}
+
+	public static ByteSize getDefault() {
+		return B8;
+	}
+
 }

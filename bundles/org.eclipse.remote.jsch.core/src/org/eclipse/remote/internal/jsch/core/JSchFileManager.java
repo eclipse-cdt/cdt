@@ -16,9 +16,9 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnection.Service;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
-import org.eclipse.remote.core.IRemoteConnection.Service;
 
 public class JSchFileManager implements IRemoteFileService {
 
@@ -51,9 +51,9 @@ public class JSchFileManager implements IRemoteFileService {
 
 	@Override
 	public IFileStore getResource(String pathStr) {
-		IPath path = new Path(pathStr);
+		IPath path = Path.forPosix(pathStr);
 		if (!path.isAbsolute()) {
-			path = new Path(getBaseDirectory()).append(path);
+			path = Path.forPosix(getBaseDirectory()).append(path);
 		}
 		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnection.getName(), path.toString()));
 	}
@@ -84,7 +84,7 @@ public class JSchFileManager implements IRemoteFileService {
 
 	@Override
 	public URI toURI(String path) {
-		return toURI(new Path(path));
+		return toURI(Path.forPosix(path));
 	}
 
 }

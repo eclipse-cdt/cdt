@@ -980,7 +980,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	 */
 	@Override
 	public void setWorkingDirectory(String path) {
-		if (new Path(path).isAbsolute()) {
+		if (Path.forPosix(path).isAbsolute()) {
 			fWorkingDir = path;
 		}
 	}

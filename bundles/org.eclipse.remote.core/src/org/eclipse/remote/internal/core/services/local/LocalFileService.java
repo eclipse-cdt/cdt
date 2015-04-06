@@ -18,9 +18,9 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnection.Service;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
-import org.eclipse.remote.core.IRemoteConnection.Service;
 
 public class LocalFileService implements IRemoteFileService {
 
@@ -53,7 +53,7 @@ public class LocalFileService implements IRemoteFileService {
 
 	@Override
 	public IFileStore getResource(String path) {
-		return EFS.getLocalFileSystem().getStore(new Path(path));
+		return EFS.getLocalFileSystem().getStore(Path.fromOSString(path));
 	}
 
 	@Override

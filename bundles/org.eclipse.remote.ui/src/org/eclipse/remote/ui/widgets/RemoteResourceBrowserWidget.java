@@ -528,19 +528,19 @@ public class RemoteResourceBrowserWidget extends Composite {
 						public void run() {
 							DelayedInputDialog dialog = new DelayedInputDialog(getShell(), Messages.RemoteResourceBrowserWidget_1,
 									Messages.RemoteResourceBrowserWidget_2, basePath.getName(), new IInputValidator() {
-										@Override
-										public String isValid(String newText) {
-											if (!newText.equals("")) { //$NON-NLS-1$
-												IFileStore newPath = path.getChild(newText);
-												if (newPath.fetchInfo().exists()) {
-													return Messages.RemoteResourceBrowserWidget_3;
-												}
-											} else {
-												return Messages.RemoteResourceBrowserWidget_4;
-											}
-											return null;
+								@Override
+								public String isValid(String newText) {
+									if (!newText.equals("")) { //$NON-NLS-1$
+										IFileStore newPath = path.getChild(newText);
+										if (newPath.fetchInfo().exists()) {
+											return Messages.RemoteResourceBrowserWidget_3;
 										}
-									});
+									} else {
+										return Messages.RemoteResourceBrowserWidget_4;
+									}
+									return null;
+								}
+							});
 							fValidateJob.setDialog(dialog);
 							if (dialog.open() == Dialog.OK) {
 								userPath[0] = dialog.getValue();
@@ -586,15 +586,15 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	private IPath findInitialPath(String cwd, String initialPath) {
 		if (initialPath != null) {
-			IPath path = new Path(initialPath);
+			IPath path = Path.forPosix(initialPath);
 			if (!path.isAbsolute()) {
-				path = new Path(cwd).append(path);
+				path = Path.forPosix(cwd).append(path);
 			}
 			if (fFileMgr.getResource(path.toString()).fetchInfo().exists()) {
 				return path;
 			}
 		}
-		return new Path(cwd);
+		return Path.forPosix(cwd);
 	}
 
 	/**
@@ -702,7 +702,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 			fRemotePathText.setText(path);
 			fRemotePathText.setSelection(fRemotePathText.getText().length());
 			fResources.add(root);
-			fRootPath = new Path(path);
+			fRootPath = Path.forPosix(path);
 		}
 	}
 

@@ -83,8 +83,8 @@ public abstract class AbstractRemoteCommand<T> {
 				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format1, new Object[] { workToDate, size }));
 			} else {
 				Double workPercent = new Double(fWorkPercentFactor * fWorkToDate);
-				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format2, new Object[] { workToDate, size,
-						fMaxWork, fMaxWorkSize, workPercent }));
+				taskName.append(MessageFormat.format(Messages.AbstractRemoteCommand_format2,
+						new Object[] { workToDate, size, fMaxWork, fMaxWorkSize, workPercent }));
 			}
 			fMonitor.subTask(taskName.toString());
 			fMonitor.worked((int) count);
@@ -107,7 +107,7 @@ public abstract class AbstractRemoteCommand<T> {
 				fMaxWork = max / 1024L;
 			}
 			fWorkToDate = 0;
-			fMonitor.beginTask(new Path(src).lastSegment(), (int) max);
+			fMonitor.beginTask(Path.forPosix(src).lastSegment(), (int) max);
 		}
 	}
 

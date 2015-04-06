@@ -68,7 +68,7 @@ public class JschFileStore extends FileStore {
 
 	private JschFileStore(URI uri) {
 		fURI = uri;
-		fRemotePath = new Path(uri.getPath());
+		fRemotePath = Path.forPosix(uri.getPath());
 	}
 
 	private JSchConnection checkConnection(IProgressMonitor monitor) throws RemoteConnectionException {
@@ -224,8 +224,8 @@ public class JschFileStore extends FileStore {
 		if ((options & EFS.SHALLOW) == EFS.SHALLOW) {
 			IFileStore parent = getParent();
 			if (parent != null && !parent.fetchInfo(EFS.NONE, subMon.newChild(9)).exists()) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE, NLS.bind(
-						Messages.JschFileStore_The_parent_of_directory_does_not_exist, fRemotePath.toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
+						NLS.bind(Messages.JschFileStore_The_parent_of_directory_does_not_exist, fRemotePath.toString()), null));
 			}
 			if (subMon.isCanceled()) {
 				return this;
@@ -245,8 +245,8 @@ public class JschFileStore extends FileStore {
 			IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(10));
 			if (!subMon.isCanceled()) {
 				if (!info.exists()) {
-					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE, NLS.bind(
-							Messages.JschFileStore_The_directory_could_not_be_created, fRemotePath.toString()), null));
+					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRITE,
+							NLS.bind(Messages.JschFileStore_The_directory_could_not_be_created, fRemotePath.toString()), null));
 				}
 				if (!info.isDirectory()) {
 					throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
@@ -271,12 +271,12 @@ public class JschFileStore extends FileStore {
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(9));
 		if (!subMon.isCanceled()) {
 			if (!info.exists()) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_READ, NLS.bind(
-						Messages.JschFileStore_File_doesnt_exist, fRemotePath.toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_READ,
+						NLS.bind(Messages.JschFileStore_File_doesnt_exist, fRemotePath.toString()), null));
 			}
 			if (info.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
-						Messages.JschFileStore_Is_a_directory, fRemotePath.toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
+						NLS.bind(Messages.JschFileStore_Is_a_directory, fRemotePath.toString()), null));
 			}
 			GetInputStreamCommand command = new GetInputStreamCommand(connection, fRemotePath);
 			return command.getResult(subMon.newChild(10));
@@ -297,8 +297,8 @@ public class JschFileStore extends FileStore {
 		IFileInfo info = fetchInfo(EFS.NONE, subMon.newChild(9));
 		if (!subMon.isCanceled()) {
 			if (info.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE, NLS.bind(
-						Messages.JschFileStore_Is_a_directory, fRemotePath.toString()), null));
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), EFS.ERROR_WRONG_TYPE,
+						NLS.bind(Messages.JschFileStore_Is_a_directory, fRemotePath.toString()), null));
 			}
 			GetOutputStreamCommand command = new GetOutputStreamCommand(connection, options, fRemotePath);
 			return command.getResult(subMon.newChild(10));

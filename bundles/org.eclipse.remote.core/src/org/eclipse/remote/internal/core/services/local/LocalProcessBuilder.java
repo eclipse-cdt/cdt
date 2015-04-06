@@ -70,7 +70,7 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 		if (dir == null) {
 			String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
 			if (userDir != null) {
-				dir = EFS.getLocalFileSystem().getStore(new Path(userDir));
+				dir = EFS.getLocalFileSystem().getStore(Path.fromOSString(userDir));
 				directory(dir);
 			}
 		}

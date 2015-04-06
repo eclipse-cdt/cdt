@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_94eebafb",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-06T14:14:16Z",
+      "side": 1,
+      "message": "Replace MIVariableManager.MIVariableObject with MIVariableObject and then cleanup the imports",
+      "revId": "5aaacd9cd79f27f99f6149945908db2af1daa71c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_74eb4eec",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/ExprMetaGetVarInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-06T14:14:16Z",
+      "side": 1,
+      "message": "Please check for varObj !\u003d null here since we have constructors that don\u0027t set varObj.",
+      "revId": "5aaacd9cd79f27f99f6149945908db2af1daa71c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_d4e4c21b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVar.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-06T14:14:16Z",
+      "side": 1,
+      "message": "2015",
+      "revId": "5aaacd9cd79f27f99f6149945908db2af1daa71c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

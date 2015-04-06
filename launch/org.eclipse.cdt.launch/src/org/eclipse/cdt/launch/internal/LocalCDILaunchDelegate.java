@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems) - bugs 205108, 212632, 224187
  * Ken Ryall (Nokia) - bug 188116
+ * Marc Khouzam (Ericsson) - Show exit code in console when doing a Run (Bug 463975)
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal; 
 
@@ -16,11 +17,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -96,7 +99,18 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(2);
 			Process process = exec(commandArray, getEnvironment(config), wd, usePty);
 			monitor.worked(6);
-			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
+			
+			// Bug 463975
+			Map<String, String> attributes = new HashMap<>();
+			// Specify that GdbProcessFactory should use InferiorRuntimeProcess to run the process
+			// instead of the simpler RuntimeProcess
+			// Note that GdbProcessFactory is only used for launches created using DSF-GDB not CDI
+		    attributes.put("org.eclipse.cdt.dsf.gdb.createProcessType", // IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR  //$NON-NLS-1$
+        		    	   "org.eclipse.cdt.dsf.gdb.inferiorProcess");  // IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE  //$NON-NLS-1$
+		    // Show the exit code of the process in the console title once it has terminated
+		    attributes.put("org.eclipse.cdt.dsf.gdb.inferiorExited", "");  // IGdbDebugConstants.INFERIOR_EXITED_ATTR  //$NON-NLS-1$ //$NON-NLS-2$
+
+			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]), attributes);
 		} finally {
 			monitor.done();
 		}		

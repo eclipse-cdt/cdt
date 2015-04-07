@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_a6263768",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-07T20:49:14Z",
+      "side": 1,
+      "message": "I changed the commit message to use the lower case d.",
+      "parentUuid": "a7fb1785_e2e17509",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_4204c953",
         "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
         "patchSetId": 10
@@ -89,6 +107,47 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_6630cf9d",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-07T20:49:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_82d35147",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_eec81121",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/Application.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-07T20:49:14Z",
+      "side": 1,
+      "message": "this is wrong, it should return the workspace root (parent to the workspace), not the workspace location itself. I have reworked that code.",
+      "range": {
+        "startLine": 124,
+        "startChar": 26,
+        "endLine": 124,
+        "endChar": 42
+      },
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_62d62539",
         "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/messages.properties",
         "patchSetId": 10
@@ -100,6 +159,24 @@
       "writtenOn": "2015-03-19T21:19:16Z",
       "side": 1,
       "message": "doesn\u0027t exist.",
+      "revId": "474d81e88acab252246882c28ff222ff364687ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_462dd346",
+        "filename": "debug/org.eclipse.cdt.debug.application/src/org/eclipse/cdt/debug/application/messages.properties",
+        "patchSetId": 10
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-07T20:49:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_62d62539",
       "revId": "474d81e88acab252246882c28ff222ff364687ce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

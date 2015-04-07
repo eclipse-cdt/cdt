@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.remote.core.remoteServices">
+      <connectionType
+            capabilities="7"
+            id="org.eclipse.remote.serial.core.connectionType"
+            name="Serial Port">
+      </connectionType>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.serial.core.connectionType"
+            factory="org.eclipse.remote.serial.core.SerialPortConnection$Factory"
+            service="org.eclipse.remote.serial.core.ISerialPortService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.serial.core.connectionType"
+            factory="org.eclipse.remote.serial.core.SerialPortConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteCommandShellService">
+      </connectionService>
+   </extension>
+
+</plugin>

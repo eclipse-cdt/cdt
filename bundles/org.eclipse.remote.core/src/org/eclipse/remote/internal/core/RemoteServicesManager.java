@@ -162,7 +162,7 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 	@SafeVarargs
 	public final List<IRemoteConnectionType> getConnectionTypesSupporting(Class<? extends IRemoteConnection.Service>... services) {
 		List<IRemoteConnectionType> connTypes = new ArrayList<IRemoteConnectionType>();
-		for (IRemoteConnectionType connType : getRemoteConnectionTypes()) {
+		for (IRemoteConnectionType connType : getAllConnectionTypes()) {
 			for (Class<? extends IRemoteConnection.Service> service : services) {
 				if (!connType.hasConnectionService(service)) {
 					connTypes.add(connType);
@@ -182,7 +182,7 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 	@SafeVarargs
 	public final List<IRemoteConnectionType> getConnectionTypesByService(Class<? extends IRemoteConnectionType.Service>... services) {
 		List<IRemoteConnectionType> connTypes = new ArrayList<IRemoteConnectionType>();
-		for (IRemoteConnectionType connType : getRemoteConnectionTypes()) {
+		for (IRemoteConnectionType connType : getAllConnectionTypes()) {
 			for (Class<? extends IRemoteConnectionType.Service> service : services) {
 				if (!connType.hasService(service)) {
 					connTypes.add(connType);

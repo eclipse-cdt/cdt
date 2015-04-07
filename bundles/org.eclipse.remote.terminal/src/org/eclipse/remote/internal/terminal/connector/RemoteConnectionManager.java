@@ -96,8 +96,7 @@ public class RemoteConnectionManager extends Job {
 				 */
 				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(TerminalViewPlugin.getUniqueIdentifier());
 				String terminalShellCommand = prefs.get(IRemoteTerminalConstants.PREF_TERMINAL_SHELL_COMMAND, ""); //$NON-NLS-1$
-				if (!("".equals(terminalShellCommand)) //$NON-NLS-1$
-						&& remoteConnection.hasService(IRemoteCommandShellService.class)) {
+				if (remoteConnection.hasService(IRemoteCommandShellService.class)) {
 					IRemoteCommandShellService cmdShellSvc = remoteConnection.getService(IRemoteCommandShellService.class);
 					remoteProcess = cmdShellSvc.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 				} else {
@@ -153,10 +152,10 @@ public class RemoteConnectionManager extends Job {
 		byte[] buf = new byte[32 * 1024];
 		while (getState() == Job.RUNNING) {
 			int n = in.read(buf, 0, buf.length);
-			if (n <= 0) {
+			if (n < 0) {
 				break;
 			}
-			if (parser == null || parser.parse(buf)) {
+			if (n > 0 && (parser == null || parser.parse(buf))) {
 				control.getRemoteToTerminalOutputStream().write(buf, 0, n);
 			}
 		}

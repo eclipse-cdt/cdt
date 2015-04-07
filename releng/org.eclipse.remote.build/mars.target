@@ -11,5 +11,10 @@
 <unit id="org.hamcrest" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.cdt.native.serial" version="0.0.0"/>
+<repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/"/>
+</location>
+</location>
 </locations>
 </target>

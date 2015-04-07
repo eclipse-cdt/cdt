@@ -158,7 +158,7 @@ public class RemoteConnectionWidget extends Composite {
 	 *            a combination of flags that modify the behavior of the widget.
 	 */
 	public RemoteConnectionWidget(Composite parent, int style, String title, int flags) {
-		this(parent, style, title, flags, null);
+		this(parent, style, title, flags, null, null);
 	}
 
 	/**
@@ -174,9 +174,57 @@ public class RemoteConnectionWidget extends Composite {
 	 *            a combination of flags that modify the behavior of the widget.
 	 * @param context
 	 *            runnable context, or null
+	 * @param connnectionTypes
+	 *            list of connection types to select from
+	 * @since 2.0
 	 */
 	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, IRunnableContext context) {
+		this(parent, style, title, flags, context, null);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param parent
+	 *            parent composite
+	 * @param style
+	 *            style or SWT.NONE
+	 * @param title
+	 *            if a title is supplied then the widget will be placed in a group. Can be null.
+	 * @param flags
+	 *            a combination of flags that modify the behavior of the widget.
+	 * @param connnectionTypes
+	 *            list of connection types to select from
+	 * @since 2.0
+	 */
+	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, List<IRemoteConnectionType> connectionTypes) {
+		this(parent, style, title, flags, null, connectionTypes);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param parent
+	 *            parent composite
+	 * @param style
+	 *            style or SWT.NONE
+	 * @param title
+	 *            if a title is supplied then the widget will be placed in a group. Can be null.
+	 * @param flags
+	 *            a combination of flags that modify the behavior of the widget.
+	 * @param context
+	 *            runnable context, or null
+	 * @param connnectionTypes
+	 *            list of connection types to select from
+	 * @since 2.0
+	 */
+	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, IRunnableContext context, List<IRemoteConnectionType> connectionTypes) {
 		super(parent, style);
+
+		if (connectionTypes != null) {
+			// Just present the connections that are provided
+			flags |= FLAG_FORCE_CONNECTION_TYPE_SELECTION | FLAG_NO_LOCAL_SELECTION;
+		}
 
 		Composite body = this;
 
@@ -200,9 +248,16 @@ public class RemoteConnectionWidget extends Composite {
 			body = group;
 		}
 
-		String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
-		if (id != null) {
-			fDefaultConnectionType = fRemoteServicesManager.getConnectionType(id);
+		fRemoteServicesManager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
+		if (connectionTypes != null) {
+			// No default if the list of connection types was supplied
+			fConnectionTypes = connectionTypes;
+		} else {
+			fConnectionTypes = fRemoteServicesManager.getRemoteConnectionTypes();
+			String id = Preferences.getString(IRemotePreferenceConstants.PREF_CONNECTION_TYPE_ID);
+			if (id != null) {
+				fDefaultConnectionType = fRemoteServicesManager.getConnectionType(id);
+			}
 		}
 
 		/*
@@ -249,9 +304,6 @@ public class RemoteConnectionWidget extends Composite {
 		fNewConnectionButton.setText(Messages.RemoteConnectionWidget_New);
 		fNewConnectionButton.setLayoutData(new GridData());
 		fNewConnectionButton.addSelectionListener(fWidgetListener);
-
-		fRemoteServicesManager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
-		fConnectionTypes = fRemoteServicesManager.getRemoteConnectionTypes();
 
 		if (fConnectionTypeCombo != null) {
 			initializeConnectionTypeCombo();
@@ -319,9 +371,11 @@ public class RemoteConnectionWidget extends Composite {
 		if (fDefaultConnectionType != null) {
 			return fDefaultConnectionType;
 		}
-		int selectionIndex = fConnectionTypeCombo.getSelectionIndex();
-		if (fConnectionTypes.size() > 0 && selectionIndex > 0) {
-			return fConnectionTypes.get(selectionIndex - 1);
+		if (fConnectionTypeCombo != null) {
+			int selectionIndex = fConnectionTypeCombo.getSelectionIndex();
+			if (fConnectionTypes.size() > 0 && selectionIndex > 0) {
+				return fConnectionTypes.get(selectionIndex - 1);
+			}
 		}
 		return null;
 	}

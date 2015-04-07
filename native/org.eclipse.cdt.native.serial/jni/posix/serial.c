@@ -97,18 +97,19 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 }
 
 JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
-		{
+{
 	close(handle);
-		}
+}
 
 JNIEXPORT jint JNICALL FUNC(read0)(JNIEnv *env, jobject jobj, jlong handle)
-		{
+{
 	char buff;
 	int res = read(handle, &buff, 1);
 	return res < 0 ? -1 : buff;
-		}
+}
 
-JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size) {
+JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size)
+{
 	jbyte buff[256];
 	int n = size < sizeof(buff) ? size : sizeof(buff);
 	n = read(handle, buff, n);
@@ -119,7 +120,7 @@ JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jby
 }
 
 JNIEXPORT void JNICALL FUNC(write0)(JNIEnv *env, jobject jobj, jlong handle, jint b)
-		{
+{
 	char buff = b;
 	write(handle, &buff, 1);
-		}
+}

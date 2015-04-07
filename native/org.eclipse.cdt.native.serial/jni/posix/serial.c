@@ -88,7 +88,7 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 	options.c_iflag |= IGNPAR;
 
 	options.c_cc[VMIN]     = 0;   // min chars to read
-	options.c_cc[VTIME]    = 10;   // 10ths second timeout
+	options.c_cc[VTIME]    = 2;   // 10ths second timeout
 
 	tcflush(fd, TCIFLUSH);
 	tcsetattr(fd, TCSANOW, &options);
@@ -97,18 +97,12 @@ JNIEXPORT jlong JNICALL FUNC(open0)(JNIEnv *env, jobject jobj, jstring portName,
 }
 
 JNIEXPORT void JNICALL FUNC(close0)(JNIEnv *env, jobject jobj, jlong handle)
-		{
+{
 	close(handle);
-		}
+}
 
-JNIEXPORT jint JNICALL FUNC(read0)(JNIEnv *env, jobject jobj, jlong handle)
-		{
-	char buff;
-	int res = read(handle, &buff, 1);
-	return res < 0 ? -1 : buff;
-		}
-
-JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size) {
+JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size)
+{
 	jbyte buff[256];
 	int n = size < sizeof(buff) ? size : sizeof(buff);
 	n = read(handle, buff, n);
@@ -119,7 +113,22 @@ JNIEXPORT jint JNICALL FUNC(read1)(JNIEnv * env, jobject jobj, jlong handle, jby
 }
 
 JNIEXPORT void JNICALL FUNC(write0)(JNIEnv *env, jobject jobj, jlong handle, jint b)
-		{
+{
 	char buff = b;
 	write(handle, &buff, 1);
+}
+
+JNIEXPORT void JNICALL FUNC(write1)(JNIEnv *env, jobject jobj, jlong handle, jbyteArray bytes, jint offset, jint size)
+{
+	while (size > 0) {
+		jbyte buff[256];
+		int n = size < sizeof(buff) ? size : sizeof(buff);
+		(*env)->GetByteArrayRegion(env, bytes, offset, n, buff);
+		n = write(handle, buff, n);
+		if (n < 0) {
+			return;
 		}
+		size -= n;
+		offset += n;
+	}
+}

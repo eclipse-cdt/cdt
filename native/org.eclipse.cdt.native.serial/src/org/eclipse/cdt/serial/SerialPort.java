@@ -15,6 +15,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.serial.internal.Messages;
@@ -32,7 +34,6 @@ public class SerialPort {
 	private StopBits stopBits = StopBits.S1;
 	private long handle;
 
-	private static final String SERIAL_KEY = "HARDWARE\\DEVICEMAP\\SERIALCOMM"; //$NON-NLS-1$
 	private static final String PORT_OPEN = Messages.getString("SerialPort.PortIsOpen"); //$NON-NLS-1$
 
 	static {
@@ -44,10 +45,24 @@ public class SerialPort {
 	}
 
 	private InputStream inputStream = new InputStream() {
+		private byte[] rbuff = new byte[256];
+		private int rpos = 0;
+		private int rlen = 0;
+		
 		@Override
 		public int read() throws IOException {
 			if (isOpen()) {
-				return read0(handle);
+				if (rpos >= rlen) {
+					while (true) {
+						rlen = read1(handle, rbuff, 0, rbuff.length);
+						if (rlen < 0) {
+							return -1;
+						} else if (rlen > 0) {
+							break;
+						}
+					}
+				}
+				return rbuff[rpos++];
 			} else {
 				return -1;
 			}
@@ -56,7 +71,17 @@ public class SerialPort {
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			if (isOpen()) {
-				return read1(handle, b, off, len);
+				int n = rlen - rpos;
+				if (n > 0) {
+					if (len < n) {
+						n = len;
+					}
+					System.arraycopy(rbuff, rpos, b, off, n);
+					rpos += n;
+					return n;
+				} else { 
+					return read1(handle, b, off, len);
+				}
 			} else {
 				return -1;
 			}
@@ -77,6 +102,13 @@ public class SerialPort {
 		}
 
 		@Override
+		public void write(byte[] buff, int off, int len) throws IOException {
+			if (isOpen()) {
+				write1(handle, buff, off, len);
+			}
+		}
+
+		@Override
 		public void close() throws IOException {
 			SerialPort.this.close();
 		}
@@ -91,12 +123,24 @@ public class SerialPort {
 		this.portName = portName;
 	}
 
+	private native long open0(String portName, int baudRate, int byteSize, int parity, int stopBits) throws IOException;
+
+	private native void close0(long handle) throws IOException;
+
+	private native int read1(long handle, byte[] b, int off, int len) throws IOException;
+
+	private native void write0(long handle, int b) throws IOException;
+	
+	private native void write1(long handle, byte[] b, int off, int len) throws IOException;
+	
+	private static native String getPortName(int i) throws IOException;
+
 	/**
 	 * List the available serial ports.
 	 * 
 	 * @return serial ports
 	 */
-	public static String[] list() {
+	public static String[] list() throws IOException {
 		if (System.getProperty("os.name").equals("Mac OS X")) {  //$NON-NLS-1$//$NON-NLS-2$
 			File dev = new File("/dev"); //$NON-NLS-1$
 			final Pattern pattern = Pattern.compile("tty\\.(usbserial|usbmodem).*"); //$NON-NLS-1$
@@ -115,37 +159,17 @@ public class SerialPort {
 				names[i] = files[i].getAbsolutePath();
 			}
 			return names;
-		} else if (System.getProperty("os.name").equals("Windows NT")) {  //$NON-NLS-1$//$NON-NLS-2$
-//			WindowsRegistry reg = WindowsRegistry.getRegistry();
-//			if (reg != null) {
-//				List<String> ports = new ArrayList<>();
-//				int i = 0;
-//				String name = reg.getLocalMachineValueName(SERIAL_KEY, i);
-//				while (name != null) {
-//					String value = reg.getLocalMachineValue(SERIAL_KEY, name);
-//					ports.add(value);
-//					i++;
-//					name = reg.getLocalMachineValueName(SERIAL_KEY, i);
-//				}
-//				return ports.toArray(new String[ports.size()]);
-//			} else {
-//				return new String[0];
-//			}
-			return new String[0];
+		} else if (System.getProperty("os.name").startsWith("Windows")) {  //$NON-NLS-1$//$NON-NLS-2$
+			List<String> ports = new ArrayList<>();
+			int i = 0;
+			for (String name = getPortName(i++); name != null; name = getPortName(i++)) {
+				ports.add(name);
+			}
+			return ports.toArray(new String[ports.size()]);
 		} else {
 			return new String[0];
 		}
 	}
-
-	private native long open0(String portName, int baudRate, int byteSize, int parity, int stopBits) throws IOException;
-
-	private native void close0(long handle) throws IOException;
-
-	private native int read0(long handle) throws IOException;
-
-	private native int read1(long handle, byte[] b, int off, int len);
-
-	private native void write0(long handle, int b) throws IOException;
 
 	/**
 	 * Return the name for this serial port.

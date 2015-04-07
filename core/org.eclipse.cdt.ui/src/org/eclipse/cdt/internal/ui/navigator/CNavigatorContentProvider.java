@@ -47,6 +47,9 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.core.model.CModel;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+
 import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
 
 /**
@@ -233,7 +236,12 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (element instanceof IWorkspaceRoot) {
 			return ((IWorkspaceRoot)element).getProjects();
 		} else if (element instanceof IProject) {
-			return super.getChildren(CoreModel.getDefault().create((IProject)element));
+			CModel cModel = CModelManager.getDefault().getCModel();
+			ICProject prj = cModel.findCProject((IProject)element);
+			if(prj == null) {
+				prj = CoreModel.getDefault().create((IProject)element);
+			}
+			return super.getChildren(prj);
 		} else {
 			children = super.getChildren(element);
 		}

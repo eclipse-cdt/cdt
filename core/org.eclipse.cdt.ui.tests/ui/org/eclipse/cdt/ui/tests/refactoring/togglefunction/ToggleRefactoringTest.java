@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -10,6 +10,7 @@
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
@@ -2881,6 +2882,338 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//	return MACRO;
 	//}
 	public void testFunctionWithMacroReference_399215() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//void /*$*/foo/*$$*/() {
+	//}
+	//}
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//void foo();
+	//}
+	//}
+
+	//A.cpp
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//void foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	public void testFunctionInNestedNamespaceToSource_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//void /*$*/foo/*$$*/();
+	//}
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//void foo() {
+	//}
+	//}
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//void foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	//====================
+	//#include "A.h"
+
+	public void testFunctionInNestedNamespaceToHeader_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//void /*$*/foo/*$$*/();
+	//}
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//void foo() {
+	//}
+	//}
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//namespace outer {
+	//
+	//void bar() {
+	//}
+	//
+	//namespace inner {
+	//
+	//void foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//void bar() {
+	//}
+	//
+	//}
+
+	public void testFunctionInNestedNamespaceToHeaderLeaveNonemptyNamespace_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//struct S {
+	//	void /*$*/foo/*$$*/();
+	//};
+	//}
+	//}
+	//void outer::inner::S::foo() {
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//struct S {
+	//	void foo();
+	//};
+	//}
+	//}
+
+	//A.cpp
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//void S::foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	public void testQualifiedFunctionInNestedNamespaceToSource_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//struct S {
+	//	void /*$*/foo/*$$*/();
+	//};
+	//}
+	//}
+	//void outer::inner::S::foo() {
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//struct S {
+	//	void foo();
+	//};
+	//}
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//}
+	//
+	//}
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//void S::foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	public void testQualifiedFunctionInNestedNamespaceToSourceWithInnerNamespace_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//namespace outer {
+	//struct S {
+	//	void /*$*/foo/*$$*/();
+	//};
+	//}
+	//}
+	//}
+	//void outer::inner::outer::S::foo() {
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//namespace outer {
+	//struct S {
+	//	void foo();
+	//};
+	//}
+	//}
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//}
+	//
+	//}
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//namespace outer {
+	//
+	//void S::foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	//
+	//}
+	public void testQualifiedFunctionInRecurringNestedNamespaceToSourceWithInnerNamespace_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//namespace outer {
+	//struct S {
+	//	void /*$*/foo/*$$*/();
+	//};
+	//}
+	//}
+	//}
+	//void outer::inner::outer::S::foo() {
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//namespace outer {
+	//struct S {
+	//	void foo();
+	//};
+	//}
+	//}
+	//}
+
+	//A.cpp
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//namespace outer {
+	//
+	//void S::foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	//
+	//}
+	public void testQualifiedFunctionInRecurringNestedNamespaceToNewSource_464102() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//namespace outer {
+	//namespace inner {
+	//struct S {
+	//	void /*$*/foo/*$$*/();
+	//};
+	//}
+	//}
+	//void outer::inner::S::foo() {
+	//}
+	//====================
+	//namespace outer {
+	//namespace inner {
+	//struct S {
+	//	void foo();
+	//};
+	//}
+	//}
+
+	//A.cpp
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//namespace outer {
+	//}
+	//
+	//}
+	//
+	//}
+	//====================
+	//#include "A.h"
+	//namespace outer {
+	//
+	//namespace inner {
+	//
+	//namespace outer {
+	//}
+	//
+	//void S::foo() {
+	//}
+	//
+	//}
+	//
+	//}
+	public void testQualifiedFunctionInNestedNamespaceToSourceWithRecurringNamespaceName_464102() throws Exception {
 		assertRefactoringSuccess();
 	}
 }

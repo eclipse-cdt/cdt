@@ -11,6 +11,7 @@
  *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *     Marc Dumais (Ericsson) - Bug 434889
  *     Teodor Madan (Freescale) - Activate multicore visualizer on non-linux hosts for remote case
+ *     Marc Dumais (Ericsson) - Bug 464184
  *     
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
@@ -387,7 +388,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	/**
 	 * Parse the CoreInfo and create the CPU Contexts for the hardwareTarget context.
 	 */
-	private ICPUDMContext[] parseCoresInfoForCPUs(IHardwareTargetDMContext dmc, ICoreInfo[] coresInfo) {
+	ICPUDMContext[] parseCoresInfoForCPUs(IHardwareTargetDMContext dmc, ICoreInfo[] coresInfo) {
 		Set<String> cpuIds = new HashSet<String>();
 		ICPUDMContext[] CPUs;
 
@@ -406,7 +407,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	/**
 	 * Parse the CoreInfo and create the Core Contexts for the specified CPU context.
 	 */
-	private ICoreDMContext[] parseCoresInfoForCores(ICPUDMContext cpuDmc, ICoreInfo[] coresInfo) {
+	ICoreDMContext[] parseCoresInfoForCores(ICPUDMContext cpuDmc, ICoreInfo[] coresInfo) {
 
 		Vector<ICoreDMContext> coreDmcs = new Vector<ICoreDMContext>();
 		for (ICoreInfo core : coresInfo) {

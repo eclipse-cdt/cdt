@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_38ba545b",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/togglefunction/ToggleRefactoringTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3099,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-04-08T18:21:52Z",
+      "side": 1,
+      "message": "Would the test work without preexisting namespaces?",
+      "revId": "41df4cd3b2a398b6f761b68b7c02a67e732f65f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_985f08ba",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromInHeaderToImplementationStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-04-08T18:21:52Z",
+      "side": 1,
+      "message": "Please move to the constructor.",
+      "range": {
+        "startLine": 74,
+        "startChar": 3,
+        "endLine": 74,
+        "endChar": 24
+      },
+      "revId": "41df4cd3b2a398b6f761b68b7c02a67e732f65f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_f858ccd1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromInHeaderToImplementationStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-04-08T18:21:52Z",
+      "side": 1,
+      "message": "if-else statements have to have braces around all branches.",
+      "range": {
+        "startLine": 381,
+        "startChar": 20,
+        "endLine": 381,
+        "endChar": 21
+      },
+      "revId": "41df4cd3b2a398b6f761b68b7c02a67e732f65f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

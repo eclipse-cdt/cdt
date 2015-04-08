@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -10,9 +10,11 @@
  *     Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
+ *     Thomas Corbat (IFS)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -21,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -53,18 +56,52 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
 public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefactoringStrategy {
+	private class NamespaceFinderVisitor extends ASTVisitor {
+		private final List<ICPPASTNamespaceDefinition> namespaces;
+		private final Container<IASTNode> result;
+		{
+			shouldVisitNamespaces = true;
+		}
+		protected int namespaceIndex = -1;
+		protected int deepestMatch = -1;
+
+		private NamespaceFinderVisitor(List<ICPPASTNamespaceDefinition> namespaces, Container<IASTNode> result) {
+			this.namespaces = namespaces;
+			this.result = result;
+		}
+
+		@Override
+		public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+			namespaceIndex++;
+			String namespaceName = namespaceDefinition.getName().toString();
+			if (namespaces.size() > namespaceIndex
+					&& namespaces.get(namespaceIndex).getName().toString().equals(namespaceName)) {
+				if (namespaceIndex > deepestMatch) {
+					result.setObject(namespaceDefinition);
+					deepestMatch = namespaceIndex;
+				}
+				return PROCESS_CONTINUE;
+			}
+			return PROCESS_SKIP;
+		}
+
+		@Override
+		public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
+			namespaceIndex--;
+			return super.leave(namespaceDefinition);
+		}
+	}
 	private IASTTranslationUnit implAst;
 	private ToggleRefactoringContext context;
 	private TextEditGroup infoText;
@@ -92,19 +129,22 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 			implRewrite.insertBefore(implAst, null, includeNode, infoText);
 		}
 		
-		IASTNode insertionParent = null;
-		ICPPASTNamespaceDefinition parent = getParentNamespace();
+		IASTNode insertionParent = implAst.getTranslationUnit();
+		List<ICPPASTNamespaceDefinition> namespaces = getSurroundingNamespaces();
 		
-		if (parent != null) {
-			adaptQualifiedNameToNamespaceLevel(newDefinition, parent);
-			insertionParent = searchNamespaceInImplementation(parent.getName());
-			if (insertionParent == null) {
-				insertionParent = createNamespace(parent);
-				implRewrite = implRewrite.insertBefore(implAst.getTranslationUnit(), 
-						null, insertionParent, infoText);
+		if (!namespaces.isEmpty()) {
+			IASTNode namespaceInImplementation = searchNamespaceInImplementation(namespaces);
+			if (namespaceInImplementation != null) {
+				insertionParent = namespaceInImplementation;
 			}
-		} else {
-			insertionParent = implAst.getTranslationUnit();
+			adaptQualifiedNameToNamespaceLevel(newDefinition, namespaces);
+
+			List<ICPPASTNamespaceDefinition> namespacesToAdd = getNamespacesToAdd(namespaces);
+			for (ICPPASTNamespaceDefinition namespace : namespacesToAdd) {
+				ICPPASTNamespaceDefinition newNamespace = createNamespace(namespace);
+				implRewrite = implRewrite.insertBefore(insertionParent, null, newNamespace, infoText);
+				insertionParent = newNamespace;
+			}
 		}
 		
 		newDefinition.setParent(insertionParent);
@@ -265,12 +305,12 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		return true;
 	}
 
-	private ICPPASTNamespaceDefinition getParentNamespace() {
+	private List<ICPPASTNamespaceDefinition> getSurroundingNamespaces() {
 		IASTNode toquery = context.getDeclaration();
 		if (toquery == null) {
 			toquery = context.getDefinition();
 		}
-		return CPPVisitor.findAncestorWithType(toquery, ICPPASTNamespaceDefinition.class);
+		return ToggleNodeHelper.findSurroundingNamespaces(toquery);
 	}
 
 	private IASTNode findInsertionPoint(IASTNode insertionParent, IASTTranslationUnit unit) {
@@ -325,27 +365,24 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		return newDefinition;
 	}
 
-	private void adaptQualifiedNameToNamespaceLevel(
-			IASTFunctionDefinition new_definition, IASTNode parent) {
-		if (parent instanceof ICPPASTNamespaceDefinition) {
-			ICPPASTNamespaceDefinition ns = (ICPPASTNamespaceDefinition) parent;
-			if (new_definition.getDeclarator().getName() instanceof ICPPASTQualifiedName) {
-				ICPPASTQualifiedName qname =
-						(ICPPASTQualifiedName) new_definition.getDeclarator().getName();
-				ICPPASTQualifiedName qname_new = new CPPASTQualifiedName();
-				boolean start = false;
-				for(ICPPASTNameSpecifier partname: qname.getQualifier()) {
-					if (partname.toString().equals(ns.getName().toString())) {
-						start = true;
-						continue;
-					}
-					if (start)
-						qname_new.addNameSpecifier(partname);
-				}
-				if (start) {
-					qname_new.setLastName((ICPPASTName) qname.getLastName());
-					new_definition.getDeclarator().setName(qname_new);
-				}
+	private void adaptQualifiedNameToNamespaceLevel(IASTFunctionDefinition new_definition,
+			List<ICPPASTNamespaceDefinition> namespaces) {
+		if (new_definition.getDeclarator().getName() instanceof ICPPASTQualifiedName && !namespaces.isEmpty()) {
+			ICPPNodeFactory nodeFactory = ASTNodeFactoryFactory.getDefaultCPPNodeFactory();
+			ICPPASTQualifiedName qname = (ICPPASTQualifiedName) new_definition.getDeclarator().getName();
+			ICPPASTName lastNameCopy = nodeFactory.newName(qname.getLastName().toCharArray());
+			ICPPASTQualifiedName qname_new = nodeFactory.newQualifiedName(lastNameCopy);
+			boolean start = false;
+			ICPPASTNameSpecifier[] qualifiers = qname.getQualifier();
+			for (int i = 0; i < qualifiers.length; i++) {
+				String qualifierName = qualifiers[i].toString();
+				if (i < namespaces.size() && qualifierName.equals(namespaces.get(i).getName().toString())) {
+					start = true;
+				} else if (start)
+					qname_new.addNameSpecifier(qualifiers[i]);
+			}
+			if (start) {
+				new_definition.getDeclarator().setName(qname_new);
 			}
 		}
 	}
@@ -363,22 +400,30 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		header_rewrite.remove(ToggleNodeHelper.getParentRemovePoint(context.getDefinition()), infoText);
 	}
 
-	private IASTNode searchNamespaceInImplementation(final IASTName name) {
+	private IASTNode searchNamespaceInImplementation(final List<ICPPASTNamespaceDefinition> namespaces) {
 		final Container<IASTNode> result = new Container<IASTNode>();
-		this.implAst.accept(new ASTVisitor() {
+		ASTVisitor visitor = new NamespaceFinderVisitor(namespaces, result);
+		this.implAst.accept(visitor);
+		return result.getObject();
+	}
+
+	private List<ICPPASTNamespaceDefinition> getNamespacesToAdd(final List<ICPPASTNamespaceDefinition> namespaces) {
+		final List<ICPPASTNamespaceDefinition> result = new ArrayList<ICPPASTNamespaceDefinition>();
+		this.implAst.accept(new NamespaceFinderVisitor(namespaces, new Container<IASTNode>()) {
 			{
-				shouldVisitNamespaces = true;
+				shouldVisitTranslationUnit = true;
 			}
 
 			@Override
-			public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
-				if (name.toString().equals(namespaceDefinition.getName().toString())) {
-					result.setObject(namespaceDefinition);
-					return PROCESS_ABORT;
+			public int leave(IASTTranslationUnit tu) {
+				int startIndex = deepestMatch + 1;
+				int namespacesSize = namespaces.size();
+				if (startIndex < namespacesSize) {
+					result.addAll(namespaces.subList(startIndex, namespacesSize));
 				}
-				return super.visit(namespaceDefinition);
+				return PROCESS_CONTINUE;
 			}
 		});
-		return result.getObject();
+		return result;
 	}
 }

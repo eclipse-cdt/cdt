@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Marc-Andre Laperle (Ericsson)
+ *     Thomas Corbat (IFS)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -51,6 +52,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
@@ -394,5 +396,22 @@ public class ToggleNodeHelper extends NodeHelper {
 			comments += c.getRawSignature() + System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		return comments;
+	}
+
+	/**
+	 * Returns all namespace definitions surrounding <code>node</code>, ordered from outer to inner.
+	 * @param node to collect the namespaces for.
+	 * @return List of the surrounding namespaces.
+	 */
+	public static List<ICPPASTNamespaceDefinition> findSurroundingNamespaces(IASTNode node) {
+		ArrayList<ICPPASTNamespaceDefinition> namespaces = new ArrayList<>();
+		ICPPASTNamespaceDefinition currentNamespace = CPPVisitor.findAncestorWithType(node,
+				ICPPASTNamespaceDefinition.class);
+		while (currentNamespace != null) {
+			namespaces.add(0, currentNamespace);
+			currentNamespace = CPPVisitor.findAncestorWithType(currentNamespace.getParent(),
+					ICPPASTNamespaceDefinition.class);
+		}
+		return namespaces;
 	}
 }

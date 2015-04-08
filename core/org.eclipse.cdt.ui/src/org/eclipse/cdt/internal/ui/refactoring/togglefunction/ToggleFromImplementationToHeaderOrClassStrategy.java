@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,9 +9,11 @@
  * Contributors: 
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -164,13 +166,27 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 	}
 
 	private void removeDefinitionFromImplementation(ASTRewrite implast) {
-		ICPPASTNamespaceDefinition ns =
-				CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
-		if (ns != null && isSingleElementInNamespace(ns, context.getDefinition())) {
+		ICPPASTNamespaceDefinition ns = findOutermostNonemptyNamspace();
+		if (ns != null) {
 			implast.remove(ns, infoText);
 		} else {
 			implast.remove(context.getDefinition(), infoText);
 		}
+	}
+
+	private ICPPASTNamespaceDefinition findOutermostNonemptyNamspace() {
+		List<ICPPASTNamespaceDefinition> namespaces = ToggleNodeHelper.findSurroundingNamespaces(context.getDefinition());
+		Collections.reverse(namespaces);
+		IASTFunctionDefinition definition = context.getDefinition();
+		ICPPASTNamespaceDefinition ns = null;
+		for (ICPPASTNamespaceDefinition namespace : namespaces) {
+			if (isSingleElementInNamespace(namespace, definition)) {
+				ns = namespace;
+			} else {
+				break;
+			}
+		}
+		return ns;
 	}
 
 	private boolean isSingleElementInNamespace(ICPPASTNamespaceDefinition ns,

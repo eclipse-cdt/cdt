@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_b562cd7d",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 12
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-08T13:28:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_d5db190a",
+      "range": {
+        "startLine": 2,
+        "startChar": 61,
+        "endLine": 2,
+        "endChar": 63
+      },
+      "revId": "db6473c400a4a82bd8d763a74ae43e69282ca72c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_35a09d7a",
         "filename": "releng/org.eclipse.cdt.target/cdt-staging.target",
         "patchSetId": 12
@@ -36,6 +60,30 @@
       "writtenOn": "2015-04-08T12:34:49Z",
       "side": 1,
       "message": "sequenceNumber needs to be stepped",
+      "range": {
+        "startLine": 2,
+        "startChar": 64,
+        "endLine": 2,
+        "endChar": 66
+      },
+      "revId": "db6473c400a4a82bd8d763a74ae43e69282ca72c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_955fd1b9",
+        "filename": "releng/org.eclipse.cdt.target/cdt-staging.target",
+        "patchSetId": 12
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-08T13:28:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_35a09d7a",
       "range": {
         "startLine": 2,
         "startChar": 64,

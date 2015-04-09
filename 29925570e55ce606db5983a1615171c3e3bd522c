@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_e9d76066",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-09T15:35:49Z",
+      "side": 1,
+      "message": "Would it make it easier to override if we return a List?  That way if someone wants to add an adapter, they could simply add to the list instead of copying the array.\n\nThis method is used in an enhanced for loop, so a list would work just as well as an Array",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_c9d42465",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-09T15:35:49Z",
+      "side": 1,
+      "message": "Same suggestion about returning a List",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -9,6 +9,7 @@
  * Contributors: 
  * 		Martin Schwab & Thomas Kallenberg - initial API and implementation
  * 		Sergey Prigogin (Google)
+ * 		Thomas Corbat (IFS)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -20,6 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -53,6 +55,10 @@ public class ToggleRefactoring extends CRefactoring {
 			pm.subTask(Messages.ToggleRefactoring_AnalyseSelection);
 			context = new ToggleRefactoringContext(refactoringContext, getIndex(), tu, selection);
 			strategy = new ToggleStrategyFactory(context).getAppropriateStategy();
+			IASTTranslationUnit definitionAST = context.getDefinitionAST();
+			if (definitionAST != null && checkAST(definitionAST)) {
+				initStatus.addFatalError(Messages.ToggleRefactoring_SyntaxError);
+			}
 		} catch (NotSupportedException e) {
 			initStatus.addFatalError(e.getMessage());
 		}

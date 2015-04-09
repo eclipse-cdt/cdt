@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  * 	   Emanuel Graf IFS - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -34,6 +35,7 @@ class Messages extends NLS {
 	public static String ToggleRefactoring_CanNotSaveFiles;
 	public static String ToggleRefactoring_InvalidSelection;
 	public static String ToggleRefactoring_NoIndex;
+	public static String ToggleRefactoring_SyntaxError;
 	public static String ToggleRefactoring_WaitingForIndexer;
 	public static String ToggleRefactoringContext_MultipleDeclarations;
 	public static String ToggleRefactoringContext_MultipleDefinitions;

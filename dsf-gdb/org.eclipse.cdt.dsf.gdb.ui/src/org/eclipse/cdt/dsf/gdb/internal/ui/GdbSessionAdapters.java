@@ -93,7 +93,7 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
 /**
  * This class creates and holds the different adapters registered with the DSF session
- * as well as the adapters for the launch..
+ * as well as the adapters for the launch.
  */
 @Immutable
 public class GdbSessionAdapters {
@@ -101,10 +101,12 @@ public class GdbSessionAdapters {
     private final DsfSession fSession;
 
     private final Map<Class<?>, Object> fLaunchAdapters = new HashMap<>();
-
-    public GdbSessionAdapters(ILaunch launch, DsfSession session) {
+    private final Class<?>[] fLaunchAdapterTypes;
+    
+    public GdbSessionAdapters(ILaunch launch, DsfSession session, Class<?>[] launchAdapterTypes) {
 		fLaunch = launch;
 		fSession = session;
+		fLaunchAdapterTypes = launchAdapterTypes;
 		createAdapters();
     }
 
@@ -118,7 +120,7 @@ public class GdbSessionAdapters {
     			getSession().registerModelAdapter(adapterType, adapter);
     		}
     	}
-    	for (Class<?> adapterType : getLaunchAdapters()) {
+    	for (Class<?> adapterType : fLaunchAdapterTypes) {
     		Object adapter = createLaunchAdapter(adapterType, getLaunch(), getSession());
     		if (adapter != null) {
     			fLaunchAdapters.put(adapterType, adapter);
@@ -152,7 +154,7 @@ public class GdbSessionAdapters {
     			disposeAdapter(adapter);
     		}
     	}
-    	for (Class<?> adapterType : getLaunchAdapters()) {
+    	for (Class<?> adapterType : fLaunchAdapterTypes) {
     		Object adapter = fLaunchAdapters.remove(adapterType);
     		if (adapter != null) {
     			disposeAdapter(adapter);

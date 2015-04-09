@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,20 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 		IArchive[] a = new IArchive[e.length];
 		System.arraycopy(e, 0, a, 0, e.length);
 		return a;
+	}
+
+	@Override
+	public CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
+		CModelManager manager = CModelManager.getDefault();
+		synchronized (manager) {
+			CElementInfo info = (CElementInfo) manager.getInfo(this);
+			if (info != null) {
+				return info;
+			}
+			info = createElementInfo();
+			openWhenClosed(info, monitor);
+			return info;
+		}
 	}
 
 	@Override

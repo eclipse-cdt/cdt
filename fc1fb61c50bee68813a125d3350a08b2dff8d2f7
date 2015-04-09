@@ -34,6 +34,24 @@
       "revId": "fc1fb61c50bee68813a125d3350a08b2dff8d2f7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_5a02b016",
+        "filename": "llvm/org.eclipse.cdt.managedbuilder.llvm.ui/src/org/eclipse/cdt/managedbuilder/llvm/ui/LlvmEnvironmentVariableSupplier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-04-09T20:39:46Z",
+      "side": 1,
+      "message": "If that was the case, the lines above would NPE. This method just seems odd, even before you made changes to it. :)",
+      "parentUuid": "a7fb1785_da7180d0",
+      "revId": "fc1fb61c50bee68813a125d3350a08b2dff8d2f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

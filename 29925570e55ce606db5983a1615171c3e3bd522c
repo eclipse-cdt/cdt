@@ -33,6 +33,24 @@
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_bf7746aa",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-09T17:45:12Z",
+      "side": 1,
+      "message": "This method is a duplicate of GdbAdaptorFactory.getAdapterList().  To avoid code duplication, how about if we pass this list as a parameter to the constructor?  \n\nThis will also help with extenders who could extend only GdbAdaptorFactory.getAdapterList() instead of bothGdbAdaptorFactory.getAdapterList() and this method as well.",
+      "parentUuid": "a7fb1785_c9d42465",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -260,18 +260,16 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	 * @return Full path for LLVM executable if valid, otherwise null
 	 */
 	private static String getDirIfLlvmFound(String candidatePath, String subPath) {
-		String llvmPath = null;
+		String llvmPath = candidatePath;
 		// If there is a trailing / or \, remove it
-		if (candidatePath.endsWith(Separators.getFileSeparator()) && candidatePath.length() > 1) {
-			llvmPath = candidatePath.substring(0, candidatePath.length() - 1);
+		if (llvmPath.endsWith(Separators.getFileSeparator()) && llvmPath.length() > 1) {
+			llvmPath = llvmPath.substring(0, candidatePath.length() - 1);
 		}
 		// If subPath exists and is not empty -> append it to candidatePath.
 		if (null != subPath && !subPath.isEmpty()) {
 			// Form full path.
-			llvmPath = candidatePath + Separators.getFileSeparator() + subPath;
+			llvmPath = llvmPath + Separators.getFileSeparator() + subPath;
 		}
-		if (llvmPath == null)
-			return null;
 		// Return a full path for LLVM executable if it's valid, otherwise null.
 		return getBinDirIfLlvm_ar(llvmPath);
 	}

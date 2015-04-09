@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		super (cProject, null, CCorePlugin.getResourceString("CoreModel.BinaryContainer.Binaries"), ICElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
-	synchronized void sync() {
+	void sync() {
 		BinaryRunner runner = CModelManager.getDefault().getBinaryRunner(getCProject());
 		if (runner != null) {
 			runner.waitIfRunning();
@@ -54,6 +54,20 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		IBinary[] b = new IBinary[list.size()];
 		list.toArray(b);
 		return b;
+	}
+
+	@Override
+	public CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
+		CModelManager manager = CModelManager.getDefault();
+		synchronized (manager) {
+			CElementInfo info = (CElementInfo) manager.getInfo(this);
+			if (info != null) {
+				return info;
+			}
+			info = createElementInfo();
+			openWhenClosed(info, monitor);
+			return info;
+		}
 	}
 
 	@Override

@@ -3216,4 +3216,68 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testQualifiedFunctionInNestedNamespaceToSourceWithRecurringNamespaceName_464102() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//typedef unsigned long uL;
+	//uL f();
+	//uL /*$*/f/*$$*/() {
+	//	ulong a;
+	//	return a;
+	//}
+	//====================
+	//typedef unsigned long uL;
+	//uL f();
+
+	//A.c
+	//#include "A.h"
+	//====================
+	//#include "A.h"
+	//
+	//uL f() {
+	//	ulong a;
+	//	return a;
+	//}
+	public void testToggleFunctionWithTypedefReturntypeToSource_399217() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//typedef unsigned long uL;
+	//uL f();
+	//====================
+	//typedef unsigned long uL;
+	//uL f() {
+	//	ulong a;
+	//	return a;
+	//}
+
+	//A.c
+	//#include "A.h"
+	//
+	//uL /*$*/f/*$$*/() {
+	//	ulong a;
+	//	return a;
+	//}
+	//====================
+	//#include "A.h"
+	public void testToggleFunctionWithTypedefReturntypeToHeader_399217() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.c
+	//typedef unsigned long uL;
+	//uL /*$*/f/*$$*/() {
+	//	ulong a;
+	//	return a;
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//typedef unsigned long uL;
+
+	//A.h
+	//====================
+	public void testToggleFunctionWithTypedefReturntypeSourceToSource_399217() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_ae9d5e74",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/togglefunction/ToggleRefactoringTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3099,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2015-04-09T06:32:54Z",
+      "side": 1,
+      "message": "Done\nYes it does. This kind of test aimes at checking the resolution of existing namespaces. I actually did not think about nested namespaces with the same name might be a problem when creating new namespaces in the source. I\u0027ve added a test for being sure.",
+      "parentUuid": "a7fb1785_38ba545b",
+      "revId": "41df4cd3b2a398b6f761b68b7c02a67e732f65f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_985f08ba",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromInHeaderToImplementationStrategy.java",
         "patchSetId": 1
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_8e9a2278",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromInHeaderToImplementationStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2015-04-09T06:32:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_985f08ba",
+      "range": {
+        "startLine": 74,
+        "startChar": 3,
+        "endLine": 74,
+        "endChar": 24
+      },
+      "revId": "41df4cd3b2a398b6f761b68b7c02a67e732f65f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_f858ccd1",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromInHeaderToImplementationStrategy.java",
         "patchSetId": 1
@@ -53,6 +95,30 @@
       "writtenOn": "2015-04-08T18:21:52Z",
       "side": 1,
       "message": "if-else statements have to have braces around all branches.",
+      "range": {
+        "startLine": 381,
+        "startChar": 20,
+        "endLine": 381,
+        "endChar": 21
+      },
+      "revId": "41df4cd3b2a398b6f761b68b7c02a67e732f65f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_eea3e6af",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleFromInHeaderToImplementationStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2015-04-09T06:32:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7fb1785_f858ccd1",
       "range": {
         "startLine": 381,
         "startChar": 20,

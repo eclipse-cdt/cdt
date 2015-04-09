@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_5a23d0dd",
+        "filename": "llvm/org.eclipse.cdt.managedbuilder.llvm.ui/src/org/eclipse/cdt/managedbuilder/llvm/ui/LlvmEnvironmentVariableSupplier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-04-09T19:32:38Z",
+      "side": 1,
+      "message": "llvmPath will never be null now, no?",
+      "revId": "fc1fb61c50bee68813a125d3350a08b2dff8d2f7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

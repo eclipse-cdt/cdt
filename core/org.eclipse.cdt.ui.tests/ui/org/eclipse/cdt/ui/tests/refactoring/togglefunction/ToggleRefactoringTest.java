@@ -3263,4 +3263,14 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testToggleFunctionWithTypedefReturntypeToHeader_399217() throws Exception {
 		assertRefactoringSuccess();
 	}
+
+	//A.c
+	//int /*$*/main/*$$*/(void) {
+	//	if (x===3){}
+	//	return 0;
+	//}
+	//====================
+	public void testToggleFunctionFailsOnSyntaxError_389299() throws Exception {
+		assertRefactoringFailure();
+	}
 }

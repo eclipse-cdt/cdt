@@ -21,8 +21,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvi
 @SuppressWarnings("restriction")
 public class GdbExtendedSessionAdapters extends GdbSessionAdapters {
     
-	public GdbExtendedSessionAdapters(ILaunch launch, DsfSession session) {
-		super(launch, session);
+	public GdbExtendedSessionAdapters(ILaunch launch, DsfSession session, Class<?>[] launchAdapterTypes) {
+		super(launch, session, launchAdapterTypes);
 	}
     
 	@SuppressWarnings("unchecked")

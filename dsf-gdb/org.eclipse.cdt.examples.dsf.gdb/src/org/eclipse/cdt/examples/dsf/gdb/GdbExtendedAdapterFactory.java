@@ -21,6 +21,6 @@ import org.eclipse.debug.core.ILaunch;
 public class GdbExtendedAdapterFactory extends GdbAdapterFactory {
     @Override
     protected GdbSessionAdapters createGdbSessionAdapters(ILaunch launch, DsfSession session) {
-	return new GdbExtendedSessionAdapters(launch, session);
+    	return new GdbExtendedSessionAdapters(launch, session, getAdapterList());
     }
 }

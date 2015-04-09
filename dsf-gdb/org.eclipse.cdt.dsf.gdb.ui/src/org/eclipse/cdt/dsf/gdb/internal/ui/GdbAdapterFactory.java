@@ -158,6 +158,6 @@ public class GdbAdapterFactory
     }
     
     protected GdbSessionAdapters createGdbSessionAdapters(ILaunch launch, DsfSession session) {
-    	return new GdbSessionAdapters(launch, session);
+    	return new GdbSessionAdapters(launch, session, getAdapterList());
     }
 }

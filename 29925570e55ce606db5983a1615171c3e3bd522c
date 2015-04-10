@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_6632767b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T17:53:17Z",
+      "side": 1,
+      "message": "So you agree?  I\u0027m not sure I\u0027m reading things as you meant them :)",
+      "parentUuid": "a7fb1785_84596187",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_c9d42465",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6
@@ -90,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_26250e36",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T17:53:17Z",
+      "side": 1,
+      "message": "That is a good point.  I hadn\u0027t thought of that.  Looking at the code, I think we\u0027ll be safe because although the list of adapters from GdbAdapterFactory could contain other adapters, those would get ignored thanks to the code in GdbSessionAdapters.createLaunchAdapter() which also has a hard-coded list of only launch adapters.",
+      "parentUuid": "a7fb1785_9f46cad6",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_bf390659",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6
@@ -101,6 +137,24 @@
       "writtenOn": "2015-04-10T14:11:59Z",
       "side": 1,
       "message": "Should we register the adapters from GdbLaunch.getAdater() here?",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_26eeae2b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T17:53:17Z",
+      "side": 1,
+      "message": "ITerminate and IDisconnect are already accessible through CommandAdapterFactory of the platform, although that does not provide the adapter we want, so we put it in GdbLaunch.getAdapter().\n\nIDebugNewExecutableHandler and IConnectHandler are not accessible in any other way than GdbLaunch.getAdapter() right now.\n\nHow do you propose we register them here?",
+      "parentUuid": "a7fb1785_bf390659",
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

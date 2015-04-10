@@ -123,6 +123,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode";
 	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget";
 	private static final String PREF_CONFIG_DESC_ORDER = "configDescList";
+	
+	boolean initialized = false;
 
 	public LaunchBarManager() {
 		this(true);
@@ -168,43 +170,47 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	// When testing, call this after setting up the mocks.
 	void init() throws CoreException {
-		// Fetch the desc order before the init messes it up
-		IEclipsePreferences store = getPreferenceStore();
-		String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, "");
-
-		// Load up the types
-		loadExtensions();
-
-		// Add in the default descriptor type
-		LaunchDescriptorTypeInfo defaultInfo = new LaunchDescriptorTypeInfo(DefaultLaunchDescriptorType.ID,
-				0, defaultDescriptorType);
-		addDescriptorType(defaultInfo);
-
-		// Hook up the existing launch configurations and listen
-		ILaunchManager launchManager = getLaunchManager();
-		for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
-			launchConfigurationAdded(configuration);
-		}
-		launchManager.addLaunchConfigurationListener(this);
-
-		// Reorder the descriptors based on the preference
-		if (!configDescIds.isEmpty()) {
-			String[] split = configDescIds.split(",");
-			ILaunchDescriptor last = null;
-			for (String id : split) {
-				Pair<String, String> key = toId(id);
-				ILaunchDescriptor desc = descriptors.get(key);
-				if (desc != null) {
-					descriptors.remove(key);
-					descriptors.put(key, desc);
-					last = desc;
+		try {
+			// Fetch the desc order before the init messes it up
+			IEclipsePreferences store = getPreferenceStore();
+			String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, "");
+			// Load up the types
+			loadExtensions();
+			// Add in the default descriptor type
+			LaunchDescriptorTypeInfo defaultInfo = new LaunchDescriptorTypeInfo(DefaultLaunchDescriptorType.ID,
+					0, defaultDescriptorType);
+			addDescriptorType(defaultInfo);
+			// Hook up the existing launch configurations and listen
+			ILaunchManager launchManager = getLaunchManager();
+			for (ILaunchConfiguration configuration : launchManager.getLaunchConfigurations()) {
+				launchConfigurationAdded(configuration);
+			}
+			launchManager.addLaunchConfigurationListener(this);
+			// Reorder the descriptors based on the preference
+			if (!configDescIds.isEmpty()) {
+				String[] split = configDescIds.split(",");
+				ILaunchDescriptor last = null;
+				for (String id : split) {
+					Pair<String, String> key = toId(id);
+					ILaunchDescriptor desc = descriptors.get(key);
+					if (desc != null) {
+						descriptors.remove(key);
+						descriptors.put(key, desc);
+						last = desc;
+					}
+				}
+				// Set the active desc, with MRU, it should be the last one
+				if (last != null) {
+					setActiveLaunchDescriptor(last);
 				}
 			}
-			// Set the active desc, with MRU, it should be the last one
-			if (last != null) {
-				setActiveLaunchDescriptor(last);
-			}
+		} finally {
+			initialized = true;
 		}
+		fireActiveLaunchDescriptorChanged();
+		fireActiveLaunchTargetChanged();
+		fireActiveLaunchModeChanged();
+		fireLaunchTargetsChanged();
 	}
 
 	private void loadExtensions() throws CoreException {
@@ -680,6 +686,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private void fireActiveLaunchDescriptorChanged() {
+		if (!initialized) return;
 		for (Listener listener : listeners) {
 			try {
 				listener.activeLaunchDescriptorChanged();
@@ -737,6 +744,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private void fireActiveLaunchModeChanged() {
+		if (!initialized) return;
 		for (Listener listener : listeners) {
 			try {
 				listener.activeLaunchModeChanged();
@@ -826,6 +834,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private void fireActiveLaunchTargetChanged() {
+		if (!initialized) return;
 		for (Listener listener : listeners) {
 			try {
 				listener.activeLaunchTargetChanged();
@@ -1027,38 +1036,46 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 				Activator.log(e);
 			}
 			break;
-
 		case RemoteConnectionChangeEvent.CONNECTION_REMOVED:
-		case RemoteConnectionChangeEvent.CONNECTION_RENAMED:
 			try {
 				launchTargetRemoved(event.getConnection());
 			} catch (CoreException e) {
+				Activator.log(e);
+			}
+			break;
+		case RemoteConnectionChangeEvent.CONNECTION_RENAMED:
+			fireLaunchTargetsChanged();
+			break;
+		default:
+			break;
+		}
+	}
+	
+	private void fireLaunchTargetsChanged() {
+		if (!initialized) return;
+		for (Listener listener : listeners) {
+			try {
+				listener.launchTargetsChanged();
+			} catch (Exception e) {
 				Activator.log(e);
 			}
 		}
 	}
 
 	private void launchTargetAdded(IRemoteConnection target) throws CoreException {
-		for (Listener listener : listeners) {
-			try {
-				listener.launchTargetsChanged();
-			} catch (Exception e) {
-				Activator.log(e);
-			}
-		}
-		if (activeLaunchDesc != null && activeLaunchTarget == null && supportsTargetType(activeLaunchDesc, target)) {
+		if (!initialized)
+			return;
+		fireLaunchTargetsChanged();
+		// if we added new target we probably want to use it
+		if (activeLaunchDesc != null && supportsTargetType(activeLaunchDesc, target)) {
 			setActiveLaunchTarget(target);
 		}
 	}
 
 	private void launchTargetRemoved(IRemoteConnection target) throws CoreException {
-		for (Listener listener : listeners) {
-			try {
-				listener.launchTargetsChanged();
-			} catch (Exception e) {
-				Activator.log(e);
-			}
-		}
+		if (!initialized)
+			return;
+		fireLaunchTargetsChanged();
 		if (activeLaunchTarget == target) {
 			setActiveLaunchTarget(getDefaultLaunchTarget(activeLaunchDesc));
 		}

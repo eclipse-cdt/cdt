@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -199,11 +198,12 @@ public class ConfigSelector extends CSelector {
 					new Job("Create Launch Configuration") {
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
-								ILaunchConfiguration config = wizard.getWorkingCopy().doSave();
 								final LaunchBarManager barManager = uiManager.getManager();
-								final ILaunchDescriptor desc = barManager.getDefaultDescriptorType().getDescriptor(config);
-								barManager.setLaunchMode(desc, wizard.getLaunchMode());
-								barManager.setActiveLaunchDescriptor(desc);
+								final ILaunchDescriptor desc = barManager.getDefaultDescriptorType().getDescriptor(wizard.getWorkingCopy());
+								if (desc != null) {
+									barManager.setLaunchMode(desc, wizard.getLaunchMode());
+								}
+								wizard.getWorkingCopy().doSave();// that would trigger active config change
 								return Status.OK_STATUS;
 							} catch (CoreException e) {
 								return e.getStatus();

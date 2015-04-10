@@ -144,6 +144,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_0678d2e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T19:10:33Z",
+      "side": 1,
+      "message": "Are you ok with this one? which would pass in GdbAdaptorFactory.getAdapterList() as a parameter, or did I not understand your concern properly?",
+      "parentUuid": "a7fb1785_26250e36",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_bf390659",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6
@@ -191,6 +209,24 @@
       "side": 1,
       "message": "I would say yes just to have all ILaunch adapters in one place. Do you agree?",
       "parentUuid": "a7fb1785_26eeae2b",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_a65e1e6f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T19:10:33Z",
+      "side": 1,
+      "message": "I don\u0027t understand how you mean to register them.  The idea sounds good but I don\u0027t see what you really mean.  Can you post a patch or a snippet?",
+      "parentUuid": "a7fb1785_c6bfea14",
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_a35e106f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_10.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T15:20:29Z",
+      "side": 1,
+      "message": "Replace fExecutor (which does not exist) with getExecutor()",
+      "revId": "a234ad861d73c0430731a988ba6ab5bb472ebfd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_83631434",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_10.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T15:20:29Z",
+      "side": 1,
+      "message": "Replace fExecutor (which does not exist) with getExecutor()",
+      "revId": "a234ad861d73c0430731a988ba6ab5bb472ebfd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0378c4e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_10.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T15:20:29Z",
+      "side": 1,
+      "message": "If this is a copy, you can remove it and make the base one package-private (just remove the \u0027private\u0027 from it).\n\nNormally, we\u0027d make the base one protected, but it gives a warning about leaking the internal ICoreInfo class.  Making it package-private does not make it API.",
+      "revId": "a234ad861d73c0430731a988ba6ab5bb472ebfd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_6368a814",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_10.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T15:20:29Z",
+      "side": 1,
+      "message": "If this is a copy, you can remove it and make the base one package-private (just remove the \u0027private\u0027 from it)",
+      "revId": "a234ad861d73c0430731a988ba6ab5bb472ebfd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_63dd488e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-10T15:20:29Z",
+      "side": 1,
+      "message": "Please make this private until we know what the GDB version will actually be.  If not, we won\u0027t be able to modify it.",
+      "revId": "a234ad861d73c0430731a988ba6ab5bb472ebfd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

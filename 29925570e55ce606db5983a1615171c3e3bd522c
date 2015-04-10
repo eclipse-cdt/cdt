@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_84596187",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-10T14:11:59Z",
+      "side": 1,
+      "message": "I usually use arrays to prevent clients from adding/removing elements but this is exactly the case when we need it.",
+      "parentUuid": "a7fb1785_e9d76066",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_c9d42465",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6
@@ -48,6 +66,41 @@
       "side": 1,
       "message": "This method is a duplicate of GdbAdaptorFactory.getAdapterList().  To avoid code duplication, how about if we pass this list as a parameter to the constructor?  \n\nThis will also help with extenders who could extend only GdbAdaptorFactory.getAdapterList() instead of bothGdbAdaptorFactory.getAdapterList() and this method as well.",
       "parentUuid": "a7fb1785_c9d42465",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_9f46cad6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-10T14:11:59Z",
+      "side": 1,
+      "message": "I agree the duplication is not good. Not sure about passing the list from GdbAdapterFactory to GdbSessionAdapters\u0027 constructor. The current adapter list returned by GdbAdapterFactory contains only adapters for ILaunch. In general, there could be other adapter types registered for elements that are not associated with ILaunch or DsfSession. how would we differentiate between ILaunch adater types and others?",
+      "parentUuid": "a7fb1785_bf7746aa",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_bf390659",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-10T14:11:59Z",
+      "side": 1,
+      "message": "Should we register the adapters from GdbLaunch.getAdater() here?",
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

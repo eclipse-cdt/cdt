@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_86ba0226",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-10T18:08:17Z",
+      "side": 1,
+      "message": "Yes, I agree. I think, this is a case when using List is better",
+      "parentUuid": "a7fb1785_6632767b",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_c9d42465",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6
@@ -155,6 +173,24 @@
       "side": 1,
       "message": "ITerminate and IDisconnect are already accessible through CommandAdapterFactory of the platform, although that does not provide the adapter we want, so we put it in GdbLaunch.getAdapter().\n\nIDebugNewExecutableHandler and IConnectHandler are not accessible in any other way than GdbLaunch.getAdapter() right now.\n\nHow do you propose we register them here?",
       "parentUuid": "a7fb1785_bf390659",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_c6bfea14",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-10T18:08:17Z",
+      "side": 1,
+      "message": "I would say yes just to have all ILaunch adapters in one place. Do you agree?",
+      "parentUuid": "a7fb1785_26eeae2b",
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_43092ca2",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/BinaryContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-10T14:15:07Z",
+      "side": 0,
+      "message": "did you mean to remove this synchronized?",
+      "range": {
+        "startLine": 34,
+        "startChar": 1,
+        "endLine": 34,
+        "endChar": 13
+      },
+      "revId": "3bd061e4ee34520530b2c089a8a53643ac861575",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

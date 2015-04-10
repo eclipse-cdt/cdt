@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.remote.terminal.TerminalPreferencePage"
+            category="org.eclipse.remote.ui.RemoteDevelopmentPreferencePage"
             class="org.eclipse.remote.internal.terminal.preferences.RemoteTerminalPreferencePage"
             id="org.eclipse.remote.terminal.page"
             name="%RemoteTerminalPage.name">

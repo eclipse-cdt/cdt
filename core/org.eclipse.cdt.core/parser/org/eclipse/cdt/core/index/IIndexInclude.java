@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,26 +40,25 @@ public interface IIndexInclude {
 	
 	/**
 	 * Returns the IIndexFileLocation of the file that is included by this
-	 * directive. In case of an unresolved include <code>null</code>
+	 * directive. In case of an unresolved include {@code null}
 	 * will be returned.
 	 * 
-	 * @return the IIndexFileLocation of the file that is included by this
-	 *         directive or <code>null</code> if the include is unresolved or
-	 *         inactive
+	 * @return the IIndexFileLocation of the file that is included by this directive or {@code null}
+	 *     if the include is unresolved or inactive
 	 * @throws CoreException
 	 */
 	IIndexFileLocation getIncludesLocation() throws CoreException;
 	
 	/**
 	 * Returns the simple name of the directive. This skips any leading
-	 * directories. E.g.: for '<sys/types.h>' 'types.h' will be returned.
+	 * directories. E.g. for {@code <sys/types.h>} {@code "types.h"} will be returned.
 	 * @throws CoreException 
 	 */
 	String getName() throws CoreException;
 
 	/**
 	 * Returns the name of the include. The name does not include the enclosing quotes
-	 * or angle brackets. E.g.: for '<sys/types.h>' 'sys/types.h' will be returned.
+	 * or angle brackets. E.g. for {@code <sys/types.h>} {@code "sys/types.h"} will be returned.
 	 * @throws CoreException 
 	 * @since 5.1
 	 */

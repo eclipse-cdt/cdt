@@ -1935,11 +1935,19 @@ public class PreferenceConstants {
 	/**
 	 * Defines a list of file name suffixes. A header file and the including file are considered
 	 * partners if their file names without extensions are either identical or differ by one of
-	 * these suffixes.  
+	 * these suffixes.
 	 *
 	 * @since 5.6
 	 */
 	public static final String INCLUDES_PARTNER_FILE_SUFFIXES = "includes.partnerFileSuffixes"; //$NON-NLS-1$
+
+	/**
+	 * Defines a list of file name extensions. An included file is considered exported by default if it has
+	 * one of the specified name extensions.
+	 *
+	 * @since 5.10
+	 */
+	public static final String INCLUDES_EXTENSIONS_OF_AUTO_EXPORTED_FILES = "includes.extensionsOfAutoExportedFiles"; //$NON-NLS-1$
 
 	/**
 	 * Whether a heuristic approach should be used to decide which C++ header files to include.

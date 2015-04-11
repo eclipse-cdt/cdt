@@ -379,6 +379,10 @@
             extension="hpp">
       </fileTypes>
       <fileTypes
+            type="text"
+            extension="inc">
+      </fileTypes>
+      <fileTypes
             type="binary"
             extension="o">
       </fileTypes>
@@ -514,7 +518,7 @@
 	  <!-- declares a content type for C++ header files -->
       <content-type id="cxxHeader" name="%cxxHeaderName" 
           base-type="org.eclipse.cdt.core.cxxSource"
-		  file-extensions="h,hpp,hh,hxx"          
+		  file-extensions="h,hpp,hh,hxx,inc"          
           priority="high"/>
 	  <!-- declares a content type for ASM Source files -->
       <content-type id="asmSource" name="%asmSourceName" 

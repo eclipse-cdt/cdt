@@ -1685,7 +1685,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator"
-            extensions="c,cc,cxx,cpp,c++,h,hh,hxx,hpp,c2"
+            extensions="c,cc,cxx,cpp,c++,h,hh,hxx,hpp,inc,c2"
             id="org.eclipse.cdt.ui.compare.CContentViewerCreator">
       </viewer>
       <contentTypeBinding
@@ -3192,7 +3192,7 @@
       <page
             canSearchEnclosingProjects="true"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
-            extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
+            extensions="c:90,cpp:90,cxx:90,cc:90,C:90,h:90,hh:90,hpp:90,H:90,inc:90"
             icon="icons/obj16/csearch_obj.gif"
             id="org.eclipse.cdt.ui.pdomSearchPage"
             label="%CSearchPage.label"

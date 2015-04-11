@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
 
@@ -80,7 +81,7 @@ public class IncludeCreationContext extends InclusionContext {
 					queue.add(file);
 					while ((file = queue.pollFirst()) != null) {
 						for (IIndexInclude include : file.getIncludes()) {
-							if (getPreferences().allowIndirectInclusion || include.isIncludedFileExported()) {
+							if (getPreferences().allowIndirectInclusion || isIncludedFileExported(include)) {
 								file = fIndex.resolveInclude(include);
 								if (file != null) {
 									if (exportedHeaders.add(getPath(file)))
@@ -93,6 +94,15 @@ public class IncludeCreationContext extends InclusionContext {
 			}
 		}
 		fHeadersToInclude.removeAll(exportedHeaders);
+	}
+
+	private boolean isIncludedFileExported(IIndexInclude include) throws CoreException {
+		if (include.isIncludedFileExported())
+			return true;
+		String name = include.getName();
+		int index = name.lastIndexOf('.');
+		String extension = index >= 0 ? name.substring(index + 1) : ""; //$NON-NLS-1$
+		return ArrayUtil.containsEqual(getPreferences().extensionsOfAutoExportedFiles, extension);
 	}
 
 	private static IPath getPath(IIndexFile file) throws CoreException {

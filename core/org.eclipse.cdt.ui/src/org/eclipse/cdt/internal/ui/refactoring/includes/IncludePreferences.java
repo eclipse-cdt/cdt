@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.Includ
  */
 public class IncludePreferences implements Comparator<StyledInclude> {
 	private static final String DEFAULT_PARTNER_FILE_SUFFIXES = "test,unittest"; //$NON-NLS-1$
+	private static final String DEFAULT_EXTENSIONS_OF_AUTO_EXPORTED_FILES = "inc"; //$NON-NLS-1$
 
 	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
 
@@ -48,6 +49,7 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 	public final boolean assumeTemplatesMayBeForwardDeclared;
 	public final UnusedStatementDisposition unusedStatementsDisposition;
 	public final String[] partnerFileSuffixes;
+	public final String[] extensionsOfAutoExportedFiles;
 
 	public IncludePreferences(ICProject project) {
 		includeStyles = new HashMap<IncludeKind, IncludeGroupStyle>();
@@ -94,6 +96,11 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 				PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, project, DEFAULT_PARTNER_FILE_SUFFIXES);
 		partnerFileSuffixes = value.split(","); //$NON-NLS-1$
 		
+		value = PreferenceConstants.getPreference(
+				PreferenceConstants.INCLUDES_EXTENSIONS_OF_AUTO_EXPORTED_FILES, project,
+				DEFAULT_EXTENSIONS_OF_AUTO_EXPORTED_FILES);
+		extensionsOfAutoExportedFiles = value.split(","); //$NON-NLS-1$
+
 		heuristicHeaderSubstitution = PreferenceConstants.getPreference(
 				PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, project, true);
 
@@ -171,6 +178,8 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 		store.setDefault(PreferenceConstants.INCLUDE_STYLE_MATCHING_PATTERN, ""); //$NON-NLS-1$
 
 		store.setDefault(PreferenceConstants.INCLUDES_PARTNER_FILE_SUFFIXES, DEFAULT_PARTNER_FILE_SUFFIXES);
+		store.setDefault(PreferenceConstants.INCLUDES_EXTENSIONS_OF_AUTO_EXPORTED_FILES,
+				DEFAULT_EXTENSIONS_OF_AUTO_EXPORTED_FILES);
 		store.setDefault(PreferenceConstants.INCLUDES_HEURISTIC_HEADER_SUBSTITUTION, true);
 		store.setDefault(PreferenceConstants.INCLUDES_ALLOW_REORDERING, true);
 		store.setDefault(PreferenceConstants.INCLUDES_ALLOW_PARTNER_INDIRECT_INCLUSION, true);

@@ -8,4 +8,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit;bundle-version="4.8.1",
  org.eclipse.cdt.visualizer.ui,
  org.eclipse.swt
-Import-Package: org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils

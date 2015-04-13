@@ -180,6 +180,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_5aae29a1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-13T17:38:13Z",
+      "side": 1,
+      "message": "I pushed an example of what I had in mind in review https://git.eclipse.org/r/#/c/45767/1\n\nSay we add IProcess to an extension of GdbAdapterFactory.getAdapterList(), you are right it would automatically be added ot the list of ILaunch adapters, however, when calling createLaunchAdapter on it, it will get ignored and won\u0027t be added to fLaunchAdapters.\n\nI believe this works because the list of launch adapters is actually hard-code in GdbAdapterFactory.getAdapterList() AND GdbSessionAdapters.createLaunchAdapter().  So I think we don\u0027t need to have it again in GdbSessionAdapters.getLaunchAdapters().\n\nDoes that make sense?",
+      "parentUuid": "a7fb1785_4f6cad7f",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_bf390659",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6

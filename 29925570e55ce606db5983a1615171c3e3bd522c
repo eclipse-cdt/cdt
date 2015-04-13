@@ -338,6 +338,24 @@
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_fa6435c5",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-13T18:56:26Z",
+      "side": 1,
+      "message": "Yes, I\u0027ll finish it off.  Thanks for your help.",
+      "parentUuid": "a7fb1785_5a8bc9fb",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

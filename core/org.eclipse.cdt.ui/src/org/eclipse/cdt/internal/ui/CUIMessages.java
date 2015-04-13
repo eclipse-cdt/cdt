@@ -78,6 +78,7 @@ public final class CUIMessages extends NLS {
 	public static String NewCDTProjectWizard_templatePageDesc;
 	public static String NewCDTProjectWizard_templatePageTitle;
 	public static String NewCDTProjectWizard_windowTitle;
+	public static String CUIPlugin_initPrefs;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CUIMessages.class);

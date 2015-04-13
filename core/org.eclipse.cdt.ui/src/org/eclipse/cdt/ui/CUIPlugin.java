@@ -65,6 +65,7 @@ import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -90,6 +91,7 @@ import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
@@ -602,10 +604,19 @@ public class CUIPlugin extends AbstractUIPlugin {
 		DocCommentOwnerManager.getInstance().addListener(new EditorReopener());
 		ASTRewriteAnalyzer.setCTextFileChangeFactory(new CTextFileChangeFactory());
 
-		// A workaround for black console bug 320723.
-		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
-		// Initialize ContentAssistMatcherPreference.
-		ContentAssistPreference.getInstance();
+		// These need to be done on the UI thread
+		UIJob prefsJob = new UIJob(CUIMessages.CUIPlugin_initPrefs) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				// A workaround for black console bug 320723.
+				BuildConsolePreferencePage.initDefaults(getPreferenceStore());
+				// Initialize ContentAssistMatcherPreference.
+				ContentAssistPreference.getInstance();
+				return Status.OK_STATUS;
+			}
+		};
+		prefsJob.setSystem(true);
+		prefsJob.schedule();
 
 		// Start make.ui plug-in, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {

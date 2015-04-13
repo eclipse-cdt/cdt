@@ -162,6 +162,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_4f6cad7f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-13T16:00:39Z",
+      "side": 1,
+      "message": "If I understand correctly, you are proposing passing the adapters returned by GdbAdapterFactory.getAdapterList() to the GdbSessionAdapters constructor and use it as the adapters for ILaunch. In this case, extending GdbAdapterFactory by adding an adapter for IProcess would automatically add this adapter to the ILaunch adapter list. Currently, it\u0027s just a coincidence that both lists have the same elements. I would suggest to leave it as it is and maybe add comments clarifying the purpose of the both lists.",
+      "parentUuid": "a7fb1785_0678d2e1",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_bf390659",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
         "patchSetId": 6
@@ -227,6 +245,24 @@
       "side": 1,
       "message": "I don\u0027t understand how you mean to register them.  The idea sounds good but I don\u0027t see what you really mean.  Can you post a patch or a snippet?",
       "parentUuid": "a7fb1785_c6bfea14",
+      "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_0fb0e570",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2015-04-13T16:00:39Z",
+      "side": 1,
+      "message": "I was thinking of\n1. adding the following code to GdbSessionAdapters().getLaunchAdapter() for each handler processed in GdbLaunch.getAdapter():\n\n        if (adapterType.equals(I...Handler.class)) {\n        \treturn (T)getSession().getModelAdapter(adapterType);\n        }\n\n2. update GdbAdapterFactory.getAdapterList() and GdbSessionAdapters.getLaunchAdapters() by adding the handlers\n\n3. delete GdbLaunch.getAdapter() method\n\nWould it work?",
+      "parentUuid": "a7fb1785_a65e1e6f",
       "revId": "29925570e55ce606db5983a1615171c3e3bd522c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

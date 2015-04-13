@@ -21,9 +21,10 @@
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/ptp/org.eclipse.remote.git</tycho.scmUrl>
 		<platform-version>4.5milestones</platform-version>
-		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
-		<license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-		<tm-site>http://download.eclipse.org/tm/updates/4.0milestones</tm-site>
+		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}/</platform-site>
+		<license-site>http://download.eclipse.org/cbi/updates/license/</license-site>
+		<tm-site>http://download.eclipse.org/tm/updates/4.0milestones/</tm-site>
+		<cdt-site>http://download.eclipse.org/tools/cdt/builds/master/nightly/</cdt-site>
 		<remote-install-dir>/home/data/httpd/download.eclipse.org/tools/ptp/builds/remote/${remote-release}</remote-install-dir>
 	</properties>
 
@@ -52,6 +53,10 @@
 		<!-- Remote Terminal feature -->
 		<module>../../bundles/org.eclipse.remote.terminal</module>
 		<module>../../features/org.eclipse.remote.terminal-feature</module>
+		<!-- Serial Port feature -->
+		<module>../../bundles/org.eclipse.remote.serial.core</module>
+		<module>../../bundles/org.eclipse.remote.serial.ui</module>
+		<module>../../features/org.eclipse.remote.serial-feature</module>
 	</modules>
 
 	<repositories>
@@ -68,6 +73,11 @@
 		<repository>
 			<id>tm</id>
 			<url>${tm-site}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>cdt</id>
+			<url>${cdt-site}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

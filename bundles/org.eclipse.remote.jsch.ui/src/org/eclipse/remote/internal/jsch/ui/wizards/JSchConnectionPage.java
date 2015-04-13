@@ -290,7 +290,7 @@ public class JSchConnectionPage extends WizardPage {
 		lblConnection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		lblConnection.setText(Messages.JSchConnectionPage_SelectConnection);
 
-		fProxyConnectionWidget = new RemoteConnectionWidget(proxyComp, SWT.NONE, null, 0, null);
+		fProxyConnectionWidget = new RemoteConnectionWidget(proxyComp, SWT.NONE, null, 0);
 		fProxyConnectionWidget.filterConnections(IRemoteConnectionHostService.class, IRemotePortForwardingService.class);
 
 		Label lblCommand = new Label(proxyComp, SWT.WRAP);

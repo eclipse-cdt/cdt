@@ -7,6 +7,13 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.terminal.settings;
 
+import java.util.List;
+
+import org.eclipse.remote.core.IRemoteCommandShellService;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -60,7 +67,12 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(gridData);
 
-		fRemoteConnectionWidget = new RemoteConnectionWidget(composite, SWT.NONE, null, 0);
+		IRemoteServicesManager manager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
+		// TODO remove the remote process service once we get command shell available with ssh and local
+		@SuppressWarnings("unchecked")
+		List<IRemoteConnectionType> connTypes = manager.getConnectionTypesSupporting(IRemoteCommandShellService.class, IRemoteProcessService.class);
+
+		fRemoteConnectionWidget = new RemoteConnectionWidget(composite, SWT.NONE, null, 0, connTypes);
 		loadSettings();
 	}
 }

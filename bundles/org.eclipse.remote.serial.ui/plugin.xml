@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.remote.core.remoteServices">
+      <connectionTypeService
+            connectionTypeId="org.eclipse.remote.serial.core.connectionType"
+            factory="org.eclipse.remote.serial.internal.ui.SerialPortConnectionsUI$Factory"
+            service="org.eclipse.remote.ui.IRemoteUIConnectionService">
+      </connectionTypeService>
+   </extension>
+
+</plugin>

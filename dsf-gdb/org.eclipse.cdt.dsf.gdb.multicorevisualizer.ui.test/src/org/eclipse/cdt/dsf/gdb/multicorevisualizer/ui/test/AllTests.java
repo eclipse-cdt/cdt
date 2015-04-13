@@ -8,26 +8,19 @@
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson) - Initial Implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.tests;
+package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
 
-import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIBreakInsertCommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.TestMICommandConstructCommand;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIStringHandlerTests;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadTests;
+import org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test.PersistentSettingsManagerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+
 @RunWith(Suite.class)
 
 // Add additional test case classes below
-@SuiteClasses({MIThreadTests.class, 
-    TestMIBreakInsertCommand.class,
-    TestMICommandConstructCommand.class,
-    LaunchUtilsTest.class,
-    MIStringHandlerTests.class,
-    ProcStatParserTest.class,
-    VisualizerVirtualBoundsGraphicObjectTest.class,
+@SuiteClasses({
+    PersistentSettingsManagerTest.class,
 })	
 public class AllTests {
 	// Often overriding BeforeClass method here

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DSF-GDB test fragment
+Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit
+

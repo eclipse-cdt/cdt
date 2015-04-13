@@ -184,6 +184,7 @@
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.examples.dsf.gdb</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
 		
 		<module>build/org.eclipse.cdt.autotools.core</module>
 		<module>build/org.eclipse.cdt.autotools.docs</module>

@@ -191,7 +191,7 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
 		if ( !(object instanceof IDMContext) || 
              !((IDMContext)object).getSessionId().equals(fSessionId) ) 
         {
-            throw new CoreException(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Invalid object", null)); //$NON-NLS-1$
+            return null;
         }
         
         final IDMContext dmc = (IDMContext)object;

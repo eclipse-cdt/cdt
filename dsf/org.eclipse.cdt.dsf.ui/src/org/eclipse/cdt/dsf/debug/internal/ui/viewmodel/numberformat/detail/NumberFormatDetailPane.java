@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -724,13 +724,13 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     @Override
-	@SuppressWarnings("rawtypes")
-    public Object getAdapter(Class required) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> required) {
         if (IFindReplaceTarget.class.equals(required)) {
-            return fTextViewer.getFindReplaceTarget();
+            return (T)fTextViewer.getFindReplaceTarget();
         }
         if (ITextViewer.class.equals(required)) {
-            return fTextViewer;
+            return (T)fTextViewer;
         }
         return null;
     }

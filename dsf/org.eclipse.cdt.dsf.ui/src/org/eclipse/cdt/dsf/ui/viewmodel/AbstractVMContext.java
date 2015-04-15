@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,23 +41,23 @@ abstract public class AbstractVMContext implements IVMContext {
     @Override
 	public IVMNode getVMNode() { return fNode; }
 
-    @Override
-	@SuppressWarnings("rawtypes")
-    public Object getAdapter(Class adapter) {
+    @SuppressWarnings("unchecked")
+	@Override
+    public <T> T getAdapter(Class<T> adapter) {
         // If the context implements the given adapter directly, it always takes
         // precedence.
         if (adapter.isInstance(this)) {
-            return this;
+            return (T)this;
         }
         
         IVMProvider vmProvider = getVMNode().getVMProvider();
         IVMAdapter vmAdapter = vmProvider.getVMAdapter();
         if (adapter.isInstance(vmAdapter)) {
-            return vmAdapter;
+            return (T)vmAdapter;
         } else if (adapter.isInstance(vmProvider)) {
-            return vmProvider;
+            return (T)vmProvider;
         } else if (adapter.isInstance(getVMNode())) {
-            return getVMNode();
+            return (T)getVMNode();
         }
         return Platform.getAdapterManager().getAdapter(this, adapter);
     }

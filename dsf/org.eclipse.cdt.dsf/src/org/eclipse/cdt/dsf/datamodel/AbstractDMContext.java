@@ -136,10 +136,10 @@ abstract public class AbstractDMContext extends PlatformObject
      * session is equally important. 
      * @see org.eclipse.runtime.IAdapterManager 
      */
-    @Override
-    @SuppressWarnings("rawtypes")
-    public Object getAdapter(Class adapterType) {
-        Object retVal = fSession.getModelAdapter(adapterType);
+    @SuppressWarnings("unchecked")
+	@Override
+    public <T> T getAdapter(Class<T> adapterType) {
+        T retVal = (T)fSession.getModelAdapter(adapterType);
         if (retVal == null) {
             retVal = super.getAdapter(adapterType);
         }

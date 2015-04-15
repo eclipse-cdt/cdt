@@ -193,7 +193,7 @@
             id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.mainTab"
             group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
             name="%MainLaunchTab.name"
-            class="org.eclipse.cdt.launch.ui.CMainTab">
+            class="org.eclipse.cdt.launch.ui.CMainTab2">
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
       </tab>
       <tab

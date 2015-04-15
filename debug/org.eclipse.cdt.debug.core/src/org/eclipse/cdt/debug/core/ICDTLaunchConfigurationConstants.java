@@ -81,7 +81,7 @@ public interface ICDTLaunchConfigurationConstants {
      * Specifies the default launch delegate for a Run mode session
 	 * @since 7.0
 	 */
-    public static final String PREFERRED_RUN_LAUNCH_DELEGATE = "org.eclipse.cdt.cdi.launch.localCLaunch"; //$NON-NLS-1$
+    public static final String PREFERRED_RUN_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
     
 	/**
 	 * Identifier for the C/C++ program process type, which is annotated on processes created

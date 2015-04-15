@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.debug.core" version="2">
+    <resource path="src/org/eclipse/cdt/debug/core/ICDTLaunchConfigurationConstants.java" type="org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants">
+        <filter comment="Changing the default Run launch delegate" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants"/>
+                <message_argument value="PREFERRED_RUN_LAUNCH_DELEGATE"/>
+                <message_argument value="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

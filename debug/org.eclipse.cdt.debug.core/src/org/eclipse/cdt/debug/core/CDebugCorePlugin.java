@@ -525,7 +525,10 @@ public class CDebugCorePlugin extends Plugin {
 		runSet.add(ILaunchManager.RUN_MODE);
 
 		try {
-			if (localCfg.getPreferredDelegate(runSet) == null) {
+			ILaunchDelegate preferredDelegate = localCfg.getPreferredDelegate(runSet);
+			if (preferredDelegate == null ||
+					// Replace the old CDI Run delegate with the new default one of CDT
+					preferredDelegate.getId().equals("org.eclipse.cdt.cdi.launch.localCLaunch")) { //$NON-NLS-1$
 				ILaunchDelegate[] delegates = localCfg.getDelegates(runSet);
 				for (ILaunchDelegate delegate : delegates) {
 					if (ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE.equals(delegate.getId())) {

@@ -6,7 +6,7 @@
       <launchDelegate
             id="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"
             type="org.eclipse.cdt.launch.applicationLaunchType"
-            modes="debug"
+            modes="run,debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
             name="%launchDelegate.localApplication.name"
             delegateDescription="%launchDelegate.localApplication.description"

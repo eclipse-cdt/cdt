@@ -16,6 +16,7 @@
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
@@ -48,8 +50,10 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -63,6 +67,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.osgi.util.NLS;
 
 public class LaunchUtils {
 	/**
@@ -564,5 +569,74 @@ public class LaunchUtils {
 		}
     	return false;
     }
+	
+	/**
+	 * Expands and returns the working directory attribute of the given launch
+	 * configuration. Returns <code>null</code> if a working directory is not
+	 * specified.
+	 * 
+	 * @param configuration launch configuration
+	 * @return an absolute path to a directory, or <code>null</code> if unspecified
+	 * @throws CoreException if unable to retrieve the associated launch
+	 * configuration attribute or if unable to resolve any variables
+	 * 
+	 * @since 4.7
+	 */
+	public static IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
+		String location = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		if (location != null) {
+			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);;
+			if (!expandedLocation.isEmpty()) {
+				return new Path(expandedLocation);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Verifies the working directory specified by the given launch
+	 * configuration exists, and returns that working directory, or
+	 * <code>null</code> if none is specified.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the working directory specified by the given launch
+	 *         configuration, or <code>null</code> if none
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 * @since 4.7
+	 */
+	public static File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		IPath path = getWorkingDirectoryPath(configuration);
+		if (path == null) {
+			// default working dir is the project if this config has a project
+			ICProject cp = CDebugUtils.getCProject(configuration);
+			if (cp == null) {
+				return null;
+			}
+
+			IProject p = cp.getProject();
+			return p.getLocation().toFile();
+		}
+		
+		if (path.isAbsolute()) {
+			File dir = new File(path.toOSString());
+			if (dir.isDirectory()) {
+				return dir;
+			}
+		} else {
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocation().toFile();
+			}
+		}
+
+		abort(LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+				new FileNotFoundException(
+						NLS.bind(LaunchMessages.getString("AbstractCLaunchDelegate.WORKINGDIRECTORY_PATH_not_found"), //$NON-NLS-1$
+								path.toOSString())),
+								ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+		return null;
+	}
 }
 

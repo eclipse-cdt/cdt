@@ -15,14 +15,22 @@
  * Anton Gorenkov         - Need to use a process factory (Bug 210366)
  * Marc Khouzam (Ericsson) - Cleanup the launch if it is cancelled (Bug 374374)
  * Marc-Andre Laperle      - Bug 382462
- * Marc Khouzam (Ericsson - Show GDB version in debug view node label (Bug 455408)
+ * Marc Khouzam (Ericsson) - Show GDB version in debug view node label (Bug 455408)
+ * Marc Khouzam (Ericsson) - Support Run launch (Bug 464636)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
@@ -41,6 +49,9 @@ import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate2;
+import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -48,6 +59,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -55,6 +67,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ISourceLocator;
+
+import com.ibm.icu.text.DateFormat;
  
 /**
  * The shared launch configuration delegate for the DSF/GDB debugger.
@@ -95,7 +109,73 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		}
 		if ( mode.equals( ILaunchManager.DEBUG_MODE ) ) {
 			launchDebugger( config, launch, monitor );
+		} else if ( mode.equals(ILaunchManager.RUN_MODE ) ) {
+			runLocalApplication( config, launch, monitor );
 		}
+	}
+
+	private void runLocalApplication(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(LaunchMessages.getString("LocalRunLaunchDelegate.Launching_Local_C_Application"), 10);  //$NON-NLS-1$
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
+		try {
+			IPath exePath = CDebugUtils.verifyProgramPath(config);
+			
+			File wd = LaunchUtils.verifyWorkingDirectory(config);
+			if (wd == null) {
+				wd = new File(System.getProperty("user.home", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			
+			String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+			if (args.length() != 0) {
+				args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
+			}
+			
+			String[] arguments = CommandLineUtil.argumentsToArray(args);
+			ArrayList<String> command = new ArrayList<>(1 + arguments.length);
+			command.add(exePath.toOSString());
+			command.addAll(Arrays.asList(arguments));
+			monitor.worked(2);
+			
+			String[] commandArray = command.toArray(new String[command.size()]);
+			String[] environment = DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
+			Process process = exec(commandArray, environment, wd);
+			monitor.worked(6);
+
+			String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+			String processLabel = String.format("%s (%s)", commandArray[0], timestamp); //$NON-NLS-1$
+			DebugPlugin.newProcess(launch, process, processLabel);
+		} finally {
+			monitor.done();
+		}		
+	}
+
+	/**
+	 * Performs a runtime exec on the given command line in the context of the
+	 * specified working directory, and returns the resulting process.
+	 * 
+	 * @param cmdLine
+	 *            the command line
+	 * @param environ
+	 * @param workingDirectory
+	 *            the working directory, or <code>null</code>
+	 * @return the resulting process or <code>null</code> if the exec is cancelled
+	 * @see Runtime
+	 * @since 4.7
+	 */
+	protected Process exec(String[] cmdLine, String[] environ, File workingDirectory) throws CoreException {
+		try {
+			if (PTY.isSupported()) {
+				return ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory, new PTY());
+			} else {
+				return ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory);
+			}
+		} catch (IOException e) {
+			abort(LaunchMessages.getString("LocalRunLaunchDelegate.Error_starting_process"), e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);  //$NON-NLS-1$
+		}
+		return null;
 	}
 
 	private void launchDebugger( ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor ) throws CoreException {

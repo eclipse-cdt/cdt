@@ -244,16 +244,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 			// debug. For instance, a local debug may also use gdbserver+gdb. So it's up to each 
 			// debugger implementation to make the distinction.
 			//
-			IPath path = null;
-			String location = fLaunchConfiguration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-
-    		if (location != null) {
-    			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
-    			if (!expandedLocation.isEmpty()) {
-    				path = new Path(expandedLocation);
-    			}
-    		}
-
+			IPath path = LaunchUtils.getWorkingDirectoryPath(fLaunchConfiguration);
     		if (path != null) {
     			// Some validity check. Should have been done by UI code.
     			if (path.isAbsolute()) {

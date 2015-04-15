@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,17 +35,17 @@ public class BreakpointActionAdapter implements IAdaptable {
         fContext = context;
     }
 
-    @SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+   	public <T> T getAdapter(Class<T> adapter) {
         if (adapter.equals(ILogActionEnabler.class)) {
-            return new MILogActionEnabler(fExecutor, fServiceTracker, fContext);
+            return (T)new MILogActionEnabler(fExecutor, fServiceTracker, fContext);
         }
         if (adapter.equals(IResumeActionEnabler.class)) {
-            return new MIResumeActionEnabler(fExecutor, fServiceTracker, fContext);
+            return (T)new MIResumeActionEnabler(fExecutor, fServiceTracker, fContext);
         }
         if (adapter.equals(IReverseDebugEnabler.class)) {
-        	return new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
+        	return (T)new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
         }
         return null;
     }

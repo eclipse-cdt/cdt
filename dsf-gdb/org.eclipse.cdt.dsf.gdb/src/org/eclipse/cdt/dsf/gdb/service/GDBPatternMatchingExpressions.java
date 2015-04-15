@@ -127,9 +127,8 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 			return fExprDelegate.getParents();
 		};
 		
-		@SuppressWarnings("rawtypes")
 		@Override
-		public Object getAdapter(Class adapterType) {
+		public <T> T getAdapter(Class<T> adapterType) {
 			return fExprDelegate.getAdapter(adapterType);
 		}
 		

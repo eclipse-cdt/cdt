@@ -98,9 +98,8 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		return false;
 	}
 	
-	@SuppressWarnings("rawtypes")
     @Override
-	public Object getAdapter(Class adapter) {
+   	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
 	

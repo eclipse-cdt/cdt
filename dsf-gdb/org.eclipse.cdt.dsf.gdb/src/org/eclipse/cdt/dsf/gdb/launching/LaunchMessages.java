@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009  QNX Software Systems and others.
+ * Copyright (c) 2008, 2015  QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,11 @@ public class LaunchMessages {
 	private LaunchMessages() {}
 
 	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getString(key), new String[]{arg});
+		return MessageFormat.format(getString(key), (Object[])new String[]{arg});
 	}
 
 	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getString(key), args);
+		return MessageFormat.format(getString(key), (Object[])args);
 	}
 
 	public static String getString(String key) {

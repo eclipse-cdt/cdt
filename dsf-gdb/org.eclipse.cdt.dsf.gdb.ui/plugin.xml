@@ -150,6 +150,38 @@
          <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
          <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
+
+      <!-- Run launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.runApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+      </tab>
+      <tab id="org.eclipse.cdt.dsf.gdb.launch.runApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%launchTab.arguments.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab 
+            id="org.eclipse.cdt.dsf.gdb.launch.runApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%launchTab.environment.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.runApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
    </extension>
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 

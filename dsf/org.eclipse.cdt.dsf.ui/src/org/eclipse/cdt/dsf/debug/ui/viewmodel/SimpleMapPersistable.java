@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2011, 2014 Wind River Systems and others.
+ * Copyright (c) 2011, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,10 +138,11 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 		return SimpleMapPersistableFactory.getFactoryId();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
     	if (adapter.isInstance(this)) {
-			return this;
+			return (T)this;
     	}
 		return null;
 	}

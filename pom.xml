@@ -15,8 +15,8 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<tycho-version>0.22.0</tycho-version>
-		<tycho-extras-version>0.22.0</tycho-extras-version>
+		<tycho-version>0.23.0-SNAPSHOT</tycho-version>
+		<tycho-extras-version>0.23.0-SNAPSHOT</tycho-extras-version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://hudson.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
@@ -242,6 +242,10 @@
 		<pluginRepository>
 			<id>cbi-snapshots</id>
 			<url>https://repo.eclipse.org/content/repositories/cbi-snapshots/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
 		</pluginRepository>
   	</pluginRepositories>
 	<profiles>

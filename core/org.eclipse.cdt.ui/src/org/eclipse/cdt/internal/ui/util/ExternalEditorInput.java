@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-
 import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
@@ -29,18 +28,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
-
 /**
  * An EditorInput for an external (non-workspace) file.
  */
 public final class ExternalEditorInput extends FileStoreEditorInput implements ITranslationUnitEditorInput {
-           
 	private final IPath location;
 	private final IResource markerResource;
 	private ITranslationUnit unit;
 
 	/**
-	 * Create an editor input for an external translation unit.
+	 * Creates an editor input for an external translation unit.
 	 * 
 	 * @param unit  the translation unit
 	 */
@@ -51,7 +48,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	}
 
 	/**
-	 * Create an editor input for an external file of the local file system.
+	 * Creates an editor input for an external file of the local file system.
 	 * 
 	 * @param location  the file system location
 	 */
@@ -60,7 +57,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	}
 
 	/**
-	 * Create an editor input for an external file of the local file system.
+	 * Creates an editor input for an external file of the local file system.
 	 * 
 	 * @param location  the file system location
 	 * @param markerResource  the associated marker resource, may be <code>null</code>
@@ -70,7 +67,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	}
 
 	/**
-	 * Create an editor input for a location URI.
+	 * Creates an editor input for a location URI.
 	 * 
 	 * @param locationURI  the location URI
 	 */
@@ -79,7 +76,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	}
 
 	/**
-	 * Create an editor input for a location URI.
+	 * Creates an editor input for a location URI.
 	 * 
 	 * @param locationURI  the location URI
 	 * @param markerResource  the associated marker resource, may be <code>null</code>
@@ -99,17 +96,11 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput#getTranslationUnit()
-	 */
 	@Override
 	public ITranslationUnit getTranslationUnit() {
 		return unit;
 	}
 
-	/*
-	 * @see org.eclipse.ui.ide.FileStoreEditorInput#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -120,15 +111,12 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	}
 
 	/**
-	 * Return the resource where markers for this external editor input are stored
+	 * Returns the resource where markers for this external editor input are stored
 	 */
 	public IResource getMarkerResource() {
 		return markerResource;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
-	 */
 	@Override
 	public String getFactoryId() {
 		if (getPath() != null) {
@@ -137,9 +125,6 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 		return super.getFactoryId();
 	}
 
-	/*
-	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		if (getPath() != null) {
@@ -156,5 +141,4 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	public IPath getPath() {
 		return location;
 	}
-	
 }

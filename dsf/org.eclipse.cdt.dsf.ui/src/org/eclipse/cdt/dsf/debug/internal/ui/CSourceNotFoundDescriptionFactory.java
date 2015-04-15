@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Nokia and others.
+ * Copyright (c) 2010, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,13 +40,13 @@ import com.ibm.icu.text.MessageFormat;
 public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(ICSourceNotFoundDescription.class) &&
 				adaptableObject instanceof IFrameDMContext)
 		{
 			final IFrameDMContext frameDMC = (IFrameDMContext) adaptableObject;
-			return new ICSourceNotFoundDescription() {
+			return (T)new ICSourceNotFoundDescription() {
 
 				@Override
 				public String getDescription() {
@@ -84,8 +84,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { ICSourceNotFoundDescription.class };
 	}
 	

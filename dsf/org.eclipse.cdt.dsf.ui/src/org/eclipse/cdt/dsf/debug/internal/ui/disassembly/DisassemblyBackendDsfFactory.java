@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Freescale Semiconductor, Inc. and others.
+ * Copyright (c) 2010, 2015 Freescale Semiconductor, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,8 @@ public class DisassemblyBackendDsfFactory implements IAdapterFactory {
 	private static final Class<?>[] ADAPTERS = { IDisassemblyBackend.class };
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (IDisassemblyBackend.class.equals(adapterType)) {							
 			if (adaptableObject instanceof IAdaptable && DisassemblyBackendDsf.supportsDebugContext_((IAdaptable)adaptableObject)) {
 				String sessionId = ((IDMVMContext) adaptableObject).getDMContext().getSessionId();
@@ -33,20 +33,19 @@ public class DisassemblyBackendDsfFactory implements IAdapterFactory {
 				if (session.isActive()) {
 					IAdapterFactory factory = (IAdapterFactory) session.getModelAdapter(IAdapterFactory.class);
 					if (factory != null) {
-						Object adapter = factory.getAdapter(adaptableObject, adapterType);
+						T adapter = factory.getAdapter(adaptableObject, adapterType);
 						if (adapter != null)
 							return adapter;
 					}
 				}
-				return new DisassemblyBackendDsf();
+				return (T)new DisassemblyBackendDsf();
 			}
 		}
 		return null;
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return ADAPTERS;
 	}
 }

@@ -138,10 +138,11 @@ public class SimpleMapPersistable<V> implements IPersistableElement, IAdaptable 
 		return SimpleMapPersistableFactory.getFactoryId();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
     	if (adapter.isInstance(this)) {
-			return this;
+			return (T)this;
     	}
 		return null;
 	}

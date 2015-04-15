@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -236,16 +236,16 @@ public class RegisterVMProvider extends AbstractElementVMProvider
          * The IAdaptable implementation.  If the adapter is the DM context, 
          * return the context, otherwise delegate to IDMContext.getAdapter().
          */
-        @Override
-		@SuppressWarnings("rawtypes")
-        public Object getAdapter(Class adapter) {
-            Object superAdapter = super.getAdapter(adapter);
+        @SuppressWarnings("unchecked")
+		@Override
+        public <T> T getAdapter(Class<T> adapter) {
+            T superAdapter = super.getAdapter(adapter);
             if (superAdapter != null) {
                 return superAdapter;
             } else {
                 // Delegate to the Data Model to find the context.
                 if (adapter.isInstance(fDMContext)) {
-                    return fDMContext;
+                    return (T)fDMContext;
                 } else {
                     return fDMContext.getAdapter(adapter);
                 }

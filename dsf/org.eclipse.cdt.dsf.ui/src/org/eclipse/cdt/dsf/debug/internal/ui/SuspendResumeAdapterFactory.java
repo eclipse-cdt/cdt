@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,17 +43,17 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
             fResumeAtLine = new ResumeAtLine(execCtx);
         }
         
-        @Override
-		@SuppressWarnings("rawtypes")
-        public Object getAdapter(Class adapter) {
+        @SuppressWarnings("unchecked")
+		@Override
+        public <T> T getAdapter(Class<T> adapter) {
             if (adapter.isInstance(fRunToLine)) {
-                return fRunToLine;
+                return (T)fRunToLine;
             }
             if (adapter.isInstance(fMoveToLine)) {
-                return fMoveToLine;
+                return (T)fMoveToLine;
             }
             if (adapter.isInstance(fResumeAtLine)) {
-                return fResumeAtLine;
+                return (T)fResumeAtLine;
             }
             return null;
         }
@@ -73,9 +73,9 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
 		public void suspend() throws DebugException {}
     }
     
-    @Override
-	@SuppressWarnings("rawtypes")
-    public Object getAdapter(Object adaptableObject, Class adapterType) {
+    @SuppressWarnings("unchecked")
+	@Override
+    public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
         if (ISuspendResume.class.equals(adapterType)) {
             if (adaptableObject instanceof IDMVMContext) {
                 IExecutionDMContext execDmc = DMContexts.getAncestorOfType(
@@ -84,7 +84,7 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
             	// It only makes sense to RunToLine, MoveToLine or
                 // ResumeAtLine if we are dealing with a thread, not a container
                 if (execDmc != null && !(execDmc instanceof IContainerDMContext)) {
-                    return new SuspendResume(execDmc);
+                    return (T)new SuspendResume(execDmc);
                 }
             }
         }
@@ -92,8 +92,7 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
     }
 
     @Override
-	@SuppressWarnings("rawtypes")
-    public Class[] getAdapterList() {
+    public Class<?>[] getAdapterList() {
         return new Class[] { ISuspendResume.class };
     }
 }

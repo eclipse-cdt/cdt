@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems and others.
+ * Copyright (c) 2007, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -537,26 +537,26 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/*
 	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("unchecked")
 	@Override
-    public Object getAdapter(Class required) {
+	public <T> T getAdapter(Class<T> required) {
 		if (IVerticalRulerInfo.class.equals(required)) {
 			if (fVerticalRuler != null) {
-				return fVerticalRuler;
+				return (T)fVerticalRuler;
 			}
 		} else if (IDisassemblyPart.class.equals(required)) {
-			return this;
+			return (T)this;
 		} else if (IFindReplaceTarget.class.equals(required)) {
 			if (fFindReplaceTarget == null) {
 				fFindReplaceTarget = (fViewer == null ? null : fViewer.getFindReplaceTarget());
 			}
-			return fFindReplaceTarget;
+			return (T)fFindReplaceTarget;
 		} else if (ITextOperationTarget.class.equals(required)) {
-			return (fViewer == null ? null : fViewer.getTextOperationTarget());
+			return (fViewer == null ? null : (T)fViewer.getTextOperationTarget());
 		} else if (Control.class.equals(required)) {
-			return fViewer != null ? fViewer.getTextWidget() : null;
+			return fViewer != null ? (T)fViewer.getTextWidget() : null;
 		} else if (IGotoMarker.class.equals(required)) {
-			return new IGotoMarker() {
+			return (T)new IGotoMarker() {
 				@Override
 				public void gotoMarker(IMarker marker) {
 					DisassemblyPart.this.gotoMarker(marker);
@@ -564,7 +564,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else if (IColumnSupport.class.equals(required)) {
 			if (fColumnSupport == null)
 				fColumnSupport= createColumnSupport();
-			return fColumnSupport;
+			return (T)fColumnSupport;
 		}
 
 		return super.getAdapter(required);
@@ -577,7 +577,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	private void addRulerContributionActions(IMenuManager menu) {
 		// store directly in generic editor preferences
-		final IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+		final IColumnSupport support= getAdapter(IColumnSupport.class);
 		IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
 		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, PREFERENCE_RULER_CONTRIBUTIONS);
 		List<RulerColumnDescriptor> descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
@@ -608,7 +608,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @param ruler the composite ruler to add contributions to
 	 */
 	protected void updateContributedRulerColumns(CompositeRuler ruler) {
-		IColumnSupport support= (IColumnSupport)getAdapter(IColumnSupport.class);
+		IColumnSupport support= getAdapter(IColumnSupport.class);
 		if (support == null)
 			return;
 
@@ -689,7 +689,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fPCHistorySizeMax = store.getInt(property);
 		} else if (PREFERENCE_RULER_CONTRIBUTIONS.equals(property)) {
 			String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
-			IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+			IColumnSupport support= getAdapter(IColumnSupport.class);
 			for (int i= 0; i < difference.length; i++) {
 				RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(difference[i]);
 				if (desc != null &&  support.isColumnSupported(desc)) {

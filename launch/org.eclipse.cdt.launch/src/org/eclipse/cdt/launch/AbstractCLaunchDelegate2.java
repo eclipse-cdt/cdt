@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Nokia and others.
+ * Copyright (c) 2010, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,12 @@
  * Contributors:
  *     Ken Ryall (Nokia)
  *     James Blackburn (Broadcom Corp.)
+ *     Marc Khouzam (Ericsson) - Modernize Run launch (bug 464636)
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ import org.eclipse.cdt.launch.internal.ui.BuildErrPrompter;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -37,10 +41,12 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -567,6 +573,75 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		return cproject;
 	}
 
+	/**
+	 * Expands and returns the working directory attribute of the given launch
+	 * configuration. Returns <code>null</code> if a working directory is not
+	 * specified.
+	 * 
+	 * @param configuration launch configuration
+	 * @return an absolute path to a directory, or <code>null</code> if unspecified
+	 * @throws CoreException if unable to retrieve the associated launch
+	 * configuration attribute or if unable to resolve any variables
+	 * 
+	 * @since 7.3
+	 */
+	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
+		String location = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		if (location != null) {
+			String expandedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);;
+			if (!expandedLocation.isEmpty()) {
+				return new Path(expandedLocation);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Verifies the working directory specified by the given launch
+	 * configuration exists, and returns that working directory, or
+	 * <code>null</code> if none is specified.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the working directory specified by the given launch
+	 *         configuration, or <code>null</code> if none
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 * @since 7.3
+	 */
+	protected File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		IPath path = getWorkingDirectoryPath(configuration);
+		if (path == null) {
+			// default working dir is the project if this config has a project
+			ICProject cp = CDebugUtils.getCProject(configuration);
+			if (cp == null) {
+				return null;
+			}
+
+			IProject p = cp.getProject();
+			return p.getLocation().toFile();
+		}
+		
+		if (path.isAbsolute()) {
+			File dir = new File(path.toOSString());
+			if (dir.isDirectory()) {
+				return dir;
+			}
+		} else {
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (res instanceof IContainer && res.exists()) {
+				return res.getLocation().toFile();
+			}
+		}
+
+		abort(LaunchMessages.AbstractCLaunchDelegate_Working_directory_does_not_exist,
+				new FileNotFoundException(
+						NLS.bind(LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found,
+								 path.toOSString())),
+								 ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+		return null;
+	}
+	
 	/**
 	 * @return the ID of the plugin hosting the launch delegate. It's used to
 	 *         create {@link IStatus} objects.

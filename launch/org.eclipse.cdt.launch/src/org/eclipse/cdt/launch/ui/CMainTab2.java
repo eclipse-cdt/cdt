@@ -76,7 +76,8 @@ public class CMainTab2 extends CAbstractMainTab {
      * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
      * extension point.
      */
-    public static final String TAB_ID = "org.eclipse.cdt.launch.mainTab2"; //$NON-NLS-1$
+	// Keep the same id as the original Run launch main tab for backwards-compatibility
+    public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
     
     private static final String CORE_FILE = LaunchMessages.CMainTab2_CoreFile_type;
     private static final String TRACE_FILE = LaunchMessages.CMainTab2_TraceFile_type;
@@ -441,7 +442,7 @@ public class CMainTab2 extends CAbstractMainTab {
 			}
 			IPath exePath = new Path(programName);
 			if (exePath.isAbsolute()) {
-				// For absolute paths, we don't need a project, we can debug the binary directly
+				// For absolute paths, we don't need a project, we can debug or run the binary directly
 				// as long as it exists
 				File executable = exePath.toFile();
 				if (!executable.exists()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,18 +9,17 @@
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems) - bugs 205108, 212632, 224187
  * Ken Ryall (Nokia) - bug 188116
+ * Marc Khouzam (Ericsson) - Modernize Run launch (bug 464636)
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal; 
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -68,38 +67,14 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			monitor = new NullProgressMonitor();
 		}
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
-			runLocalApplication(config, launch, monitor);
+			// We plan on splitting the Run delegate from the Debug one.
+			// For now, to keep backwards-compatibility, we need to keep the same delegate (to keep its id)
+			// However, we can just call the new delegate class
+			new LocalRunLaunchDelegate().launch(config, mode, launch, monitor);
 		}
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			launchDebugger(config, launch, monitor);
 		}
-	}
-
-	private void runLocalApplication(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(LaunchMessages.LocalCDILaunchDelegate_0, 10); 
-		if (monitor.isCanceled()) {
-			return;
-		}
-		monitor.worked(1);
-		try {
-			IPath exePath = CDebugUtils.verifyProgramPath(config);
-			File wd = getWorkingDirectory(config);
-			if (wd == null) {
-				wd = new File(System.getProperty("user.home", ".")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			String arguments[] = getProgramArgumentsArray(config);
-			ArrayList command = new ArrayList(1 + arguments.length);
-			command.add(exePath.toOSString());
-			command.addAll(Arrays.asList(arguments));
-			String[] commandArray = (String[])command.toArray(new String[command.size()]);
-			boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
-			monitor.worked(2);
-			Process process = exec(commandArray, getEnvironment(config), wd, usePty);
-			monitor.worked(6);
-			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
-		} finally {
-			monitor.done();
-		}		
 	}
 
 	private void launchDebugger(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {

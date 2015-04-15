@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -27,6 +25,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroExpander;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroExpansionTracker;
 import org.eclipse.text.edits.ReplaceEdit;
+
+import junit.framework.TestSuite;
 
 
 public class ExpansionExplorerTests extends BaseTestCase {
@@ -90,7 +90,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 		do {
 			type= cpp.nextTokenRaw().getType();
 		} while (type != IToken.tEND_OF_INPUT);
-		return (MacroExpander) cpp.getAdapter(MacroExpander.class);
+		return cpp.getAdapter(MacroExpander.class);
 	}
 	
 	// #define A

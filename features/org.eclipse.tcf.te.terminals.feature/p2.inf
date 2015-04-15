@@ -1,0 +1,22 @@
+###############################################################################
+# Copyright (c) 2014 Wind River Systems, Inc. and others. All rights reserved.
+# This program and the accompanying materials are made available under the terms
+# of the Eclipse Public License v1.0 which accompanies this distribution, and is
+# available at http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+# Wind River Systems - initial API and implementation
+###############################################################################
+
+# Make the org.eclipse.cdt.native feature dependency "optional" since it didn't
+# exist in CDT 8.3 and we can also work on top of CDT 8.3.
+
+# The real dependencies are all properly managed via p2.inf in the
+# org.eclipse.tcf.te.ui.terminals.process/META-INF/p2.inf file.
+# The only benefit of requesting the feature here is that it allow pulling in
+# additional fragments that we are not aware of in the bundle's p2.inf.
+
+requires.0.namespace = org.eclipse.equinox.p2.iu
+requires.0.name = org.eclipse.cdt.native.feature.group
+requires.0.greedy = true
+requires.0.optional = true

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+   <context id="ExternalExecutablesDialog">
+      <description>Add or modify an external executable added to the 'Show In' context menu.</description>
+   </context>
+</contexts>

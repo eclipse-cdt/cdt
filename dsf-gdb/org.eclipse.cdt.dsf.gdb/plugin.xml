@@ -43,6 +43,14 @@
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.dsf.gdb.launch.localRunCLaunch"
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            modes="run"
+            delegate="org.eclipse.cdt.dsf.gdb.launching.RunLaunchDelegate"
+            name="%launchDelegate.localRunApplication.name"
+            delegateDescription="%launchDelegate.localRunApplication.description">
+      </launchDelegate>
    </extension>
    
    <extension

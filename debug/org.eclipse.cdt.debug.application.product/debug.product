@@ -30,8 +30,9 @@
 
    <windowImages i16="/org.eclipse.cdt.debug.application/icons/cc16.png" i32="/org.eclipse.cdt.debug.application/icons/cc32.png" i48="/org.eclipse.cdt.debug.application/icons/cc48.png" i64="/org.eclipse.cdt.debug.application/icons/cc64.png" i128="/org.eclipse.cdt.debug.application/icons/cc128.png" i256="/org.eclipse.cdt.debug.application/icons/cc.png"/>
 
+
    <launcher name="cdtdebug">
-      <linux icon="../../../../org.eclipse.cdt.debug.application/icons/cc.xpm"/>
+      <linux icon="../org.eclipse.cdt.debug.application/icons/cc.xpm"/>
       <solaris/>
       <win useIco="false">
          <bmp/>

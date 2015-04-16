@@ -20,7 +20,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.rse.sdk.feature.group" version="3.7.0.201502160819"/>
-<repository location="http://download.eclipse.org/tm/updates/3.7milestones"/>
+<repository location="http://download.eclipse.org/tm/updates/3.7"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.1.v20140901-1055"/>

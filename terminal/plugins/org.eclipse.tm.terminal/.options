@@ -1,3 +1,0 @@
-org.eclipse.tm.terminal/debug/log = false
-org.eclipse.tm.terminal/debug/log/char = false
-org.eclipse.tm.terminal/debug/log/VT100Backend = false

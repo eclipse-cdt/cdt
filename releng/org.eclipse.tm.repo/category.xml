@@ -22,51 +22,14 @@
       <category name="rse_37_optional"/>
    </feature>
    
-   <!-- TM Terminal Features -->
-   <feature url="features/org.eclipse.tm.terminal.feature_0.0.0.jar" id="org.eclipse.tm.terminal.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.sdk.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.serial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.serial.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.serial.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.serial.sdk.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.ssh.feature_0.0.0.jar" id="org.eclipse.tm.terminal.ssh.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.ssh.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.ssh.sdk.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.telnet.feature_0.0.0.jar" id="org.eclipse.tm.terminal.telnet.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.telnet.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.telnet.sdk.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.remote.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.sdk.feature" version="0.0.0">
-      <category name="tm_40_main"/>
-   </feature>
-   
-   <category-def name="tm_40_main" label="TM Terminal 4.0 Main Features">
-      <description>
-         TM Terminal Main Features
-      </description>
-   </category-def>
    <category-def name="rse_37_main" label="RSE 3.7 Main Features">
       <description>
-         TM Terminal and RSE Main Features
+         RSE Main Features
       </description>
    </category-def>
    <category-def name="rse_37_optional" label="RSE 3.7 Optional Add-Ons">
       <description>
-         Examples, Tests and Incubation Plug-ins.
+         RSE Examples, Tests and Incubation Plug-ins.
       </description>
    </category-def>
 </site>

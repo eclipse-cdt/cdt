@@ -6,15 +6,6 @@
 <repository location="http://download.eclipse.org/tools/cdt/releases/kepler"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.rse.feature.group" version="3.4.1.201302122026"/>
-<repository location="http://download.eclipse.org/releases/juno"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="gnu.io.rxtx.sdk.feature.group" version="2.1.7.4_v20071016-417C7DP1Bh_eEaQJBrHBHg"/>
-<unit id="gnu.io.rxtx.feature.group" version="2.1.7.4_v20071016-7B57e7UAXMAAqGAGf"/>
-<repository location="http://archive.eclipse.org/tm/updates/rxtx"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
@@ -22,11 +13,6 @@
 <unit id="org.eclipse.platform.sdk" version="3.8.2.M20130131-0800"/>
 <unit id="org.eclipse.test.feature.group" version="3.5.100.v20120528-1717-7R7dBhBgLiCViQnG8ITHM73701A1"/>
 <repository location="http://download.eclipse.org/eclipse/updates/3.8"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.remote.source.feature.group" version="2.0.0.201502132206"/>
-<unit id="org.eclipse.remote.feature.group" version="2.0.0.201502132206"/>
-<repository location="http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones"/>
 </location>
 </locations>
 </target>

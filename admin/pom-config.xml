@@ -60,11 +60,8 @@
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
-        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/</orbit-site>
-        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
-        <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones</remote-site>
-        <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
-        <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20150316021154/repository/</orbit-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
       </properties>
 
     <repositories>
@@ -86,21 +83,6 @@
         <repository>
             <id>cdt</id>
             <url>${cdt-site}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>remote</id>
-            <url>${remote-site}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>swtbot</id>
-            <url>${swtbot-site}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>rxtx</id>
-            <url>${rxtx-site}</url>
             <layout>p2</layout>
         </repository>
     </repositories>
@@ -131,7 +113,7 @@
                 <tm-stream>kepler</tm-stream>
                 <sdk-version>4.3</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
-                <cdt-site>http://download.eclipse.org/tools/cdt/releases/kepler</cdt-site>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
         <profile>
@@ -142,7 +124,7 @@
                 <tm-stream>luna</tm-stream>
                 <sdk-version>4.4</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
-                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
             </properties>
         </profile>
     </profiles>
@@ -380,7 +362,7 @@
                     <configuration>
                         <baselineRepositories>
                             <repository>
-                                <url>http://download.eclipse.org/tools/tcf/builds/${tcf-stream}/nightly</url>
+                                <url>http://download.eclipse.org/tools/tm/builds/${tm-stream}/nightly</url>
                             </repository>
                         </baselineRepositories>
                     </configuration>

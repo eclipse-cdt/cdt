@@ -7,11 +7,6 @@
         </Or>
     </Match>
     
-    <!-- Ignore all Terminal Tests -->
-    <Match>
-        <Package name="~org\.eclipse\.tm\.internal\.terminal\.test..*"/>
-    </Match>
-    
 	<!-- Set maximum rank level to 16 -->
 	<Match>
 		<Rank value="17"/>

@@ -10,16 +10,6 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="gnu.io.rxtx.sdk.feature.group" version="2.1.7.4_v20071016-417C7DP1Bh_eEaQJBrHBHg"/>
-<repository location="http://archive.eclipse.org/tm/updates/rxtx"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.remote.source.feature.group" version="2.0.0.201502132206"/>
-<unit id="org.eclipse.remote.feature.group" version="2.0.0.201502132206"/>
-<repository location="http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.rse.feature.group" version="3.5.0.201406091451"/>
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.1.v20140901-1055"/>
 <repository location="http://download.eclipse.org/releases/luna"/>
 </location>

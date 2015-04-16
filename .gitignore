@@ -1,0 +1,10 @@
+bin/
+target/
+workspace/
+debug-workspace/
+
+# ignore various emacs droppings
+*~
+\#*\#
+
+

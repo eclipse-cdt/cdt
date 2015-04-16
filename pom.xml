@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.eclipse.tm.terminal</groupId>
+        <artifactId>org.eclipse.tm.terminal.maven-build</artifactId>
+        <version>4.0.0-SNAPSHOT</version>
+        <relativePath>admin/pom-build.xml</relativePath>
+    </parent>
+
+    <groupId>org.eclipse.tm.terminal</groupId>
+    <artifactId>terminal-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>TM Terminal, Maven Master</name>
+
+    <modules>
+        <!-- Terminal Widget features and plug-ins -->
+        <module>plugins/org.eclipse.tm.terminal</module>
+        <module>plugins/org.eclipse.tm.terminal.serial</module>
+        <module>plugins/org.eclipse.tm.terminal.ssh</module>
+        <module>plugins/org.eclipse.tm.terminal.telnet</module>
+        <module>plugins/org.eclipse.tm.terminal.remote</module>
+        
+        <module>features/org.eclipse.tm.terminal.feature</module>
+        <module>features/org.eclipse.tm.terminal.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.serial.feature</module>
+        <module>features/org.eclipse.tm.terminal.serial.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.ssh.feature</module>
+        <module>features/org.eclipse.tm.terminal.ssh.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.telnet.feature</module>
+        <module>features/org.eclipse.tm.terminal.telnet.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.remote.feature</module>
+        <module>features/org.eclipse.tm.terminal.remote.sdk.feature</module>
+
+        <!-- Terminals View features and plug-ins -->
+        <module>plugins/org.eclipse.tm.terminal.view.core</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui.local</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui.process</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui.rse</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui.serial</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui.ssh</module>
+        <module>plugins/org.eclipse.tm.terminal.view.ui.telnet</module>
+        
+        <module>features/org.eclipse.tm.terminal.view.feature</module>
+        <module>features/org.eclipse.tm.terminal.view.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.view.rse.feature</module>
+        <module>features/org.eclipse.tm.terminal.view.rse.sdk.feature</module>
+
+        <!-- TM Terminal Repository -->
+        <module>repos/org.eclipse.tm.terminal.repo</module>
+    </modules>
+
+    <profiles>
+        <profile>
+        <id>tests</id>
+        <modules>
+            <module>plugins/org.eclipse.tm.terminal.test</module>
+        </modules>
+    </profile>
+    </profiles>
+</project>

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+<!-- Extension points -->
+   <extension-point id="launcherDelegates" name="%ExtensionPoint.launcherDelegates.name" schema="schema/launcherDelegates.exsd"/>
+
+<!-- View contributions -->
+   <extension point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.tm.terminal.view.ui.views.category"
+            name="%ViewCategory.name">
+      </category>
+
+      <view
+            allowMultiple="true"
+            category="org.eclipse.tm.terminal.view.ui.views.category"
+            class="org.eclipse.tm.terminal.view.ui.view.TerminalsView"
+            icon="icons/eview16/terminal_view.gif"
+            id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+            name="%TerminalsView.name">
+      </view>
+    </extension>
+
+<!-- Perspective extension contributions -->    
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.tcf.te.ui.perspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.cdt.ui.CPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+
+      <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+      
+      <perspectiveExtension targetID="*">
+         <!-- Show In shortcut -->
+         <showInPart id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+      </perspectiveExtension>
+   </extension>
+
+<!-- Terminal connector contributions -->
+   <extension point="org.eclipse.tm.terminal.terminalConnectors">
+      <connector 
+                 name="%TerminalConnector.streams"
+                 id="org.eclipse.tm.terminal.view.ui.StreamsConnector"
+                 hidden="true"
+                 class="org.eclipse.tm.terminal.view.ui.streams.StreamsConnector"/>
+   </extension>
+
+<!-- Preferences contributions -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.tm.terminal.view.ui.internal.PreferencesInitializer"/>
+   </extension>
+
+<!-- Eclipse core expressions property tester -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.tm.terminal.view.ui.internal.PropertyTester"
+            id="org.eclipse.tm.terminal.view.ui.PropertyTester"
+            namespace="org.eclipse.tm.terminal.view.ui"
+            properties="hasApplicableLauncherDelegates,canDisconnect"
+            type="java.lang.Object">
+      </propertyTester>
+   </extension>
+
+<!-- Terminals launcher delegate contributions -->
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.tm.terminal.view.ui.streams.StreamsLauncherDelegate"
+            hidden="true"
+            id="org.eclipse.tm.terminal.view.ui.launcher.streams"
+            label="%StreamsLauncherDelegate.label">
+      </delegate>
+   </extension>
+
+<!-- Menu contributions -->
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.eclipse.tm.terminal.view.ui.toolbar"
+               label="%toolbar.terminal.label">
+	         <command
+	               commandId="org.eclipse.tm.terminal.view.ui.command.launchToolbar"
+	               icon="platform:/plugin/org.eclipse.ui.console/icons/full/eview16/console_view.gif"
+	               id="org.eclipse.tm.terminal.view.ui.commands.launchToolbar"
+	               label="%command.launch.label"
+	               style="push"
+	               tooltip="%command.launch.tooltip">
+	         </command>
+         </toolbar>
+      </menuContribution>
+      <menuContribution locationURI="toolbar:org.eclipse.tm.terminal.view.ui.TerminalsView">
+         <command
+               commandId="org.eclipse.tm.terminal.view.ui.command.launchToolbar"
+               icon="platform:/plugin/org.eclipse.ui.console/icons/full/eview16/console_view.gif"
+               id="org.eclipse.tm.terminal.view.ui.commands.launchToolbarTerminalsView"
+               label="%command.launch.label"
+               style="push"
+               tooltip="%command.launch.tooltip">
+         </command>
+         <command
+               commandId="org.eclipse.tm.terminal.view.ui.command.disconnect"
+               icon="icons/elcl16/disconnect.gif"
+               id="org.eclipse.tm.terminal.view.ui.commands.disconnect"
+               label="%command.disconnect.label"
+               style="push"
+               tooltip="%command.disconnect.tooltip">
+         </command>
+      </menuContribution>
+      <menuContribution locationURI="popup:org.eclipse.tm.terminal.view.ui.TerminalsView?after=additions">
+         <command
+               commandId="org.eclipse.tm.terminal.maximize"
+               id="org.eclipse.tm.terminal.view.ui.commands.maximizePart"
+               label="Maximize View"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.tm.terminal.quickaccess"
+               id="org.eclipse.tm.terminal.view.ui.commands.quickAccess"
+               label="Quick Access"
+               style="push">
+         </command>
+      </menuContribution>
+
+      <!-- Project Explorer "Show In" contribution -->
+      <menuContribution locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?before=group.edit">
+         <menu
+               id="org.eclipse.tm.terminal.view.ui.ProjectExplorer.menu.showIn"
+               label="%menu.showIn.label"
+               mnemonic="%menu.showIn.mnemonic">
+            <separator name="additions" visible="false"/>
+         </menu>
+      </menuContribution>
+            
+   </extension>
+
+<!-- Command contributions -->
+   <extension point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.tm.terminal.view.ui.commands.category"
+            name="%command.category.name">
+      </category>
+   
+      <command
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
+            helpContextId="org.eclipse.tm.terminal.view.ui.command_Launch"
+            id="org.eclipse.tm.terminal.view.ui.command.launch"
+            name="%command.launch.selection.name">
+      </command>
+      <command
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
+            helpContextId="org.eclipse.tm.terminal.view.ui.command_Launch"
+            id="org.eclipse.tm.terminal.view.ui.command.launchToolbar"
+            name="%command.launch.name">
+      </command>
+      <command
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
+            helpContextId="org.eclipse.tm.terminal.view.ui.command_Disconnect"
+            id="org.eclipse.tm.terminal.view.ui.command.disconnect"
+            name="%command.disconnect.name">
+      </command>
+   </extension>
+
+<!-- Key bindings -->
+   <extension point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.tm.terminal.view.ui.command.launchToolbar"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+SHIFT+M3+T"/> <!-- Bug 435111: Don't use M1 since COMMAND+Option T already taken on Mac -->
+   </extension>
+
+<!-- Handler contributions -->
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.internal.handler.LaunchTerminalCommandHandler"
+            commandId="org.eclipse.tm.terminal.view.ui.command.launch">
+      </handler>
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.internal.handler.LaunchTerminalCommandHandler"
+            commandId="org.eclipse.tm.terminal.view.ui.command.launchToolbar">
+      </handler>
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.internal.handler.DisconnectTerminalCommandHandler"
+            commandId="org.eclipse.tm.terminal.view.ui.command.disconnect">
+            <enabledWhen>
+               <with variable="activePart">
+                  <instanceof value="org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView"/>
+                  <test property="org.eclipse.tm.terminal.view.ui.canDisconnect" value="true"/>
+               </with>
+            </enabledWhen>
+      </handler>
+      
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.internal.handler.MaximizeViewHandler"
+            commandId="org.eclipse.tm.terminal.maximize">
+            <activeWhen>
+               <with variable="activePartId">
+                  <equals value="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+               </with>
+            </activeWhen>
+      </handler>
+      
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.internal.handler.QuickAccessHandler"
+            commandId="org.eclipse.tm.terminal.quickaccess">
+            <activeWhen>
+               <with variable="activePartId">
+                  <equals value="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+               </with>
+            </activeWhen>
+      </handler>
+
+   </extension>
+
+<!-- Help Context contributions -->
+   <extension point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+<!-- Activity contributions -->
+   <extension point="org.eclipse.ui.activities">
+      <category
+            description="%activities.category.terminals.description"
+            id="org.eclipse.tm.terminal.view.ui.category"
+            name="%activities.category.terminals.name">
+      </category>
+      
+      <activity
+            description="%activities.activity.terminals.views.description"
+            id="org.eclipse.tm.terminal.view.ui.activity.views"
+            name="%activities.activity.terminals.views.name">
+      </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.views"
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.TerminalsView">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.views"
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.toolbar">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.views"
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tm\.terminal\.view\.ui\.commands\..*">
+      </activityPatternBinding>
+      
+      <categoryActivityBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.views"
+            categoryId="org.eclipse.tm.terminal.view.ui.category">
+      </categoryActivityBinding>
+      
+      <defaultEnablement
+            id="org.eclipse.tm.terminal.view.ui.activity.views">
+      </defaultEnablement>
+   </extension>
+
+   <extension point="org.eclipse.ui.contexts">
+      <context
+            id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+            name="%TerminalsView.context.name"
+            description="%TerminalsView.context.description"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+   </extension>
+</plugin>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+<!-- Terminal context properties provider contributions -->
+   <extension point="org.eclipse.tm.terminal.view.core.contextPropertiesProviders">
+      <contextPropertiesProvider
+            class="org.eclipse.tm.terminal.view.ui.rse.internal.TerminalContextPropertiesProvider">
+         <enablement>
+            <instanceof value="org.eclipse.rse.core.model.IHost"/>
+         </enablement>
+      </contextPropertiesProvider>
+   </extension>
+
+<!-- Perspective extension contributions -->    
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.rse.ui.view.SystemPerspective">
+		 <!-- Register the view shortcuts  -->
+         <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+         <!-- Place the Terminals view relative to the Task List view -->
+         <view
+               id="org.eclipse.tm.terminal.view.ui.TerminalsView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.TaskList"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+<!-- Eclipse core expressions property tester -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.tm.terminal.view.ui.rse.internal.PropertyTester"
+            id="org.eclipse.tm.terminal.view.ui.rse.PropertyTester"
+            namespace="org.eclipse.tm.terminal.view.ui.rse"
+            properties="isVisible"
+            type="org.eclipse.rse.core.model.IRSEModelObject">
+      </propertyTester>
+
+      <propertyTester
+            class="org.eclipse.tm.terminal.view.ui.rse.internal.PropertyTester"
+            id="org.eclipse.tm.terminal.view.ui.rse.PropertyTester2"
+            namespace="org.eclipse.tm.terminal.view.ui.rse"
+            properties="isVisible"
+            type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+      </propertyTester>
+   </extension>
+
+<!-- Menu contributions -->
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.rse.ui.view.systemView?after=additions">
+         <command
+               commandId="org.eclipse.tm.terminal.view.ui.rse.command.launch"
+               icon="icons/eview16/terminal_view.gif"
+               id="org.eclipse.tm.terminal.view.ui.rse.commands.launch"
+               label="%command.launch.label"
+               tooltip="%command.launch.tooltip">
+            <visibleWhen checkEnabled="false">
+               <with variable="selection">
+                  <iterate operator="and" ifEmpty="false">
+                     <or>
+                        <adapt type="org.eclipse.rse.core.model.IRSEModelObject">
+                           <test property="org.eclipse.tm.terminal.view.ui.rse.isVisible" value="true" forcePluginActivation="true"/>
+                        </adapt>
+                        <adapt type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+                           <test property="org.eclipse.tm.terminal.view.ui.rse.isVisible" value="true" forcePluginActivation="true"/>
+                        </adapt>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+<!-- Command contributions -->
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
+            helpContextId="org.eclipse.tm.terminal.view.ui.rse.command_Launch"
+            id="org.eclipse.tm.terminal.view.ui.rse.command.launch"
+            name="%command.launch.name">
+      </command>
+   </extension>
+
+<!-- Handler contributions -->
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.rse.internal.LaunchTerminalHandler"
+            commandId="org.eclipse.tm.terminal.view.ui.rse.command.launch">
+         <activeWhen>
+            <with variable="activePartId">
+               <equals value="org.eclipse.rse.ui.view.systemView"/>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate operator="and" ifEmpty="false">
+                     <or>
+                        <adapt type="org.eclipse.rse.core.model.IRSEModelObject"/>
+                        <adapt type="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+                     </or>
+                  </iterate>
+               </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+
+</plugin>

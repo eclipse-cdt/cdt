@@ -1,0 +1,74 @@
+<FindBugsFilter>
+    <!-- Ignore all Terminal Tests -->
+    <Match>
+        <Package name="~org\.eclipse\.tm\.internal\.terminal\.test..*"/>
+    </Match>
+    
+	<!-- Set maximum rank level to 16 -->
+	<Match>
+		<Rank value="17"/>
+	</Match>
+
+	<!-- Ignore all I18N Internationalization bugs -->
+	<Match>
+		<Bug category="I18N"/>
+	</Match>
+	
+	<!-- Ignore all NM_SAME_SIMPLE_NAME_AS_SUPERCLASS or NM_SAME_SIMPLE_NAME_AS_INTERFACE violations -->
+	<Match>
+		<Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+	</Match>
+	<Match>
+		<Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+	</Match>
+
+	<!-- Ignore all SF_SWITCH_NO_DEFAULT violations -->
+	<Match>
+		<Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+	</Match>
+
+	<!-- Ignore all serialization violations -->
+	<Match>
+		<Or>
+			<Bug pattern="SE_BAD_FIELD"/>
+			<Bug pattern="SE_BAD_FIELD_INNER_CLASS"/>
+			<Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE"/>
+		</Or>
+	</Match>
+	
+	<!-- Ignore all inner class should be static violations -->
+	<Match>
+		<Or>
+			<Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+			<Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+			<Bug pattern="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS"/>
+		</Or>
+	</Match>
+	
+	<!-- Ignore all REC_CATCH_EXCEPTION -->
+	<Match>
+		<Bug pattern="REC_CATCH_EXCEPTION"/>
+	</Match>
+	
+	<!-- Ignore all STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE -->
+	<Match>
+		<Bug pattern="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE"/>
+	</Match>
+	
+	<!-- Ignore all ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD violations in bundle activators -->
+	<Match>
+		<Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+		<Or>
+			<Method name="start" params="org.osgi.framework.BundleContext" returns="void"/>
+			<Method name="stop" params="org.osgi.framework.BundleContext" returns="void"/>
+			<Class name="~.*\.Activator"/>
+			<Class name="~.*\..*Plugin"/>
+		</Or>
+	</Match>
+	
+	<!-- Ignore RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE -->
+	<Match>
+		<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+	</Match>
+
+</FindBugsFilter>

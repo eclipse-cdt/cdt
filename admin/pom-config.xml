@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
+    <groupId>org.eclipse.tm.terminal</groupId>
+    <artifactId>org.eclipse.tm.terminal.maven-config</artifactId>
+    <version>4.0.0-SNAPSHOT</version> 
+    <packaging>pom</packaging>
+    <name>TM Terminal, Maven Configuration Master</name>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License</name>
+            <url>http://www.eclipse.org/legal/epl-v10.html</url>
+            <distribution>repo</distribution>
+            <comments>
+            All rights reserved.
+
+            This program and the accompanying materials are made
+            available under the terms of the Eclipse Public License v1.0
+            which accompanies this distribution, and is available at
+            http://www.eclipse.org/legal/epl-v10.htm
+            </comments>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Eclipse Foundation</name>
+        <url>http://www.eclipse.org/</url>
+    </organization>
+    
+    <properties>
+        <!-- Define version id's to be used in the plugins section -->
+        <tycho-version>0.20.0</tycho-version>
+        <tycho-extras-version>0.20.0</tycho-extras-version>
+        <maven-resources-version>2.6</maven-resources-version>
+        <maven-antrun-version>1.7</maven-antrun-version>
+        <gmaven-version>1.5</gmaven-version>
+        <!-- Stick to Findbugs 2.5.2 until newer versions are supported by hudson.eclipse.org -->
+        <findbugs-version>2.5.2</findbugs-version>
+        <eclipse-jarsigner-version>1.1.1</eclipse-jarsigner-version>
+
+        <!-- Common global properties -->
+        <adminDir>${env.WORKSPACE}/admin</adminDir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
+
+        <terminal-stream>mars</terminal-stream>
+        <terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
+        <terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
+        <sdk-version>4.5</sdk-version>
+        
+        <!-- Set up the default target platform to build against -->
+        <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
+        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
+        <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20150316021154/repository/</orbit-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
+        <rse-site>http://download.eclipse.org/tm/updates/4.0milestones</rse-site>
+        <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones</remote-site>
+        <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
+        <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
+      </properties>
+
+    <repositories>
+        <repository>
+            <id>license-feature</id>
+            <url>${license-site}</url>
+            <layout>p2</layout>
+        </repository>    
+        <repository>
+            <id>platform</id>
+            <url>${platform-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>orbit</id>
+            <url>${orbit-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>cdt</id>
+            <url>${cdt-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>rse</id>
+            <url>${rse-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>remote</id>
+            <url>${remote-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>swtbot</id>
+            <url>${swtbot-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>rxtx</id>
+            <url>${rxtx-site}</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/public</url>
+              <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>                                                                                         
+            <id>cbi</id>                                                                                         
+            <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>                                             
+        </pluginRepository>
+    </pluginRepositories>
+
+    <profiles>
+        <profile>
+            <!-- Eclipse 4.3.x (Kepler) -->
+            <id>kepler</id>
+            
+            <properties>
+                <tm-stream>kepler</tm-stream>
+                <sdk-version>4.3</sdk-version>
+                <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Eclipse 4.4.x (Luna) -->
+            <id>luna</id>
+            
+            <properties>
+                <tm-stream>luna</tm-stream>
+                <sdk-version>4.4</sdk-version>
+                <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
+            </properties>
+        </profile>
+    </profiles>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-maven-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>target-platform-configuration</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <environments>
+                            <environment>
+                                <os>linux</os>
+                                <ws>gtk</ws>
+                                <arch>x86</arch>
+                            </environment>
+                            <environment>
+                                <os>linux</os>
+                                <ws>gtk</ws>
+                                <arch>x86_64</arch>
+                            </environment>
+                            <environment>
+                                <os>win32</os>
+                                <ws>win32</ws>
+                                <arch>x86</arch>
+                            </environment>
+                            <environment>
+                                <os>win32</os>
+                                <ws>win32</ws>
+                                <arch>x86_64</arch>
+                            </environment>
+                            <environment>
+                                <os>macosx</os>
+                                <ws>cocoa</ws>
+                                <arch>x86</arch>
+                            </environment>
+                            <environment>
+                                <os>macosx</os>
+                                <ws>cocoa</ws>
+                                <arch>x86_64</arch>
+                            </environment>
+                        </environments>
+                        <resolver>p2</resolver>
+                        <ignoreTychoRepositories>true</ignoreTychoRepositories>
+                        <includePackedArtifacts>true</includePackedArtifacts>
+                        <pomDependencies>consider</pomDependencies>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-compiler-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-source-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>plugin-source</id>
+                            <goals>
+                                <goal>plugin-source</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-packaging-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.eclipse.tycho.extras</groupId>
+                            <artifactId>tycho-buildtimestamp-jgit</artifactId>
+                            <version>${tycho-version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.eclipse.tycho.extras</groupId>
+                            <artifactId>tycho-sourceref-jgit</artifactId>
+                            <version>${tycho-extras-version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <strictBinIncludes>false</strictBinIncludes>
+                        <timestampProvider>jgit</timestampProvider>
+                        <jgit.ignore>pom.xml</jgit.ignore>
+                        <jgit.dirtyWorkingTree>ignore</jgit.dirtyWorkingTree>
+                        <sourceReferences>
+                            <generate>true</generate>
+                        </sourceReferences>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-p2-repository-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <configuration>
+                        <finalName>${project.artifactId}</finalName>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-version}</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>${gmaven-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs-version}</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <xmlOutput>true</xmlOutput>
+                        <failOnError>false</failOnError>
+                        <excludeFilterFile>${adminDir}/findbugs-exclude.xml</excludeFilterFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>      
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-version}</version>
+                </plugin>
+                
+                <!-- Pack200 and Signing -->
+                <plugin>
+                    <groupId>org.eclipse.tycho.extras</groupId>
+                    <artifactId>tycho-pack200a-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <executions>
+                        <execution>
+                            <id>pack200-normalize</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>normalize</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.cbi.maven.plugins</groupId>
+                    <artifactId>eclipse-jarsigner-plugin</artifactId>
+                    <version>${eclipse-jarsigner-version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho.extras</groupId>
+                    <artifactId>tycho-pack200b-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <executions>
+                        <execution>
+                            <id>pack200-pack</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>pack</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Keep the tycho-p2-plugin after the tycho-pack200b-plugin -->
+                <!-- Tycho p2 metadata generation shall happen _after_ the JAR has been packed. -->
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-p2-plugin</artifactId>
+                    <version>${tycho-version}</version>
+                    <!-- Signing appears to mess with the baseline repository logic.
+                         Disable the baseline repository until we've figured out what is going on. -->
+                    <!--                    
+                    <configuration>
+                        <baselineRepositories>
+                            <repository>
+                                <url>http://download.eclipse.org/tools/tm/terminal/builds/${terminal-stream}/nightly</url>
+                            </repository>
+                        </baselineRepositories>
+                    </configuration>
+                    -->
+                    <executions>
+                        <execution>
+                            <id>p2-metadata</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>p2-metadata</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <defaultP2Metadata>false</defaultP2Metadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

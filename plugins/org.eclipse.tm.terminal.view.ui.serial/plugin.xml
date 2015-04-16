@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   
+<!-- Terminals launcher delegate contributions -->
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.tm.terminal.view.ui.serial.launcher.SerialLauncherDelegate"
+            id="org.eclipse.tm.terminal.view.ui.serial.launcher.serial"
+            label="%SerialLauncherDelegate.label">
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate operator="and" ifEmpty="false">
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.tm.terminal.view.core.hasContextPropertiesProvider"
+                           value="true"/>
+                  </iterate>
+               </with>
+            </enablement>
+      </delegate>
+   </extension>
+</plugin>

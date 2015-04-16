@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.serial;singleton:=true
-Bundle-Version: 2.1.400.qualifier
+Bundle-Version: 4.0.0.qualifier
 Bundle-Localization: plugin
 Import-Package: gnu.io;resolution:=optional
 Require-Bundle: org.eclipse.ui,

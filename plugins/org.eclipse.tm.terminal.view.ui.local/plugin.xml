@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+<!-- Terminal connector contributions -->
+<!-- uses process connector -->
+   <extension point="org.eclipse.tm.terminal.terminalConnectors">
+      <connector
+            class="org.eclipse.tm.terminal.view.ui.process.ProcessConnector"
+            hidden="true"
+            id="org.eclipse.tm.terminal.view.ui.local.LocalConnector"
+            name="%TerminalConnector.local"/>
+   </extension>
+   
+<!-- Terminals launcher delegate contributions -->
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.tm.terminal.view.ui.local.launcher.LocalLauncherDelegate"
+            id="org.eclipse.tm.terminal.view.ui.local.launcher.local"
+            label="%LocalLauncherDelegate.label">
+      </delegate>
+   </extension>
+
+<!-- Menu contributions -->
+   <extension point="org.eclipse.ui.menus">
+      <!-- Project Explorer "Show In" contribution -->
+      <menuContribution locationURI="popup:org.eclipse.tm.terminal.view.ui.ProjectExplorer.menu.showIn?after=additions">
+         <command
+               commandId="org.eclipse.tm.terminal.view.ui.local.command.launch"
+               id="org.eclipse.tm.terminal.view.ui.local.commands.showin.launch"
+               label="%menu.showIn.localterminal.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <with variable="selection">
+                  <iterate operator="and" ifEmpty="false">
+                     <adapt type="org.eclipse.core.resources.IResource">
+                       <not>
+                          <!-- The JDT Project Explorer contributions are adding the "Navigate -> Show In" quick menu.
+                               See o.e.jdt.internal.ui.navigator.JavaNavigatorActionProvider -->
+                          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
+                       </not> 
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <dynamic
+               class="org.eclipse.tm.terminal.view.ui.local.showin.DynamicContributionItems"
+               id="org.eclipse.tm.terminal.view.ui.local.LocalLauncherDynamicContributionItems">
+            <visibleWhen checkEnabled="false">
+               <with variable="selection">
+                  <iterate operator="and" ifEmpty="false">
+                     <adapt type="org.eclipse.core.resources.IResource">
+                       <not>
+                          <!-- The JDT Project Explorer contributions are adding the "Navigate -> Show In" quick menu.
+                               See o.e.jdt.internal.ui.navigator.JavaNavigatorActionProvider -->
+                          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
+                       </not> 
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </dynamic>
+      </menuContribution>
+   </extension>
+
+<!-- Command contributions -->
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
+            helpContextId="org.eclipse.tm.terminal.view.ui.local.command_Launch"
+            id="org.eclipse.tm.terminal.view.ui.local.command.launch"
+            name="%command.launch.name">
+      </command>
+   </extension>
+
+   <extension point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.tm.terminal.view.ui.local.command.launch"
+            icon="icons/eview16/terminal_view.gif">
+      </image>
+   </extension>
+
+<!-- Key bindings -->
+   <extension point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.tm.terminal.view.ui.local.command.launch"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+M3+T"/> <!-- Bug 435111: Don't use M1 since COMMAND+Option T already taken on Mac -->
+   </extension>
+
+<!-- Handler contributions -->
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.local.launcher.LocalLauncherHandler"
+            commandId="org.eclipse.tm.terminal.view.ui.local.command.launch">
+      </handler>
+   </extension>
+   
+<!-- Preference page contributions -->
+   <extension point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.tm.terminal.TerminalPreferencePage"
+            class="org.eclipse.tm.terminal.view.ui.local.showin.preferences.PreferencePage"
+            id="org.eclipse.tm.terminal.view.ui.local.showin.preferences"
+            name="%preference.page.name">
+      </page>
+   </extension>
+
+<!-- Preferences contributions -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.tm.terminal.view.ui.local.showin.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
+   
+<!-- Startup contributions -->
+   <extension point="org.eclipse.ui.startup">
+      <startup class="org.eclipse.tm.terminal.view.ui.local.showin.ExternalExecutablesInitializer"/>
+   </extension>
+
+<!-- Help Context contributions -->
+   <extension point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>

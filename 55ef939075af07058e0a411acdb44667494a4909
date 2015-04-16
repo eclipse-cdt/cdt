@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_319b7bcb",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugCorePlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-04-16T14:08:36Z",
+      "side": 1,
+      "message": "Not sure we can do that. What is they don\u0027t have dsf and this is the real delegate they want to use? Also it\nis user preference we should not be just overriding it",
+      "revId": "55ef939075af07058e0a411acdb44667494a4909",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

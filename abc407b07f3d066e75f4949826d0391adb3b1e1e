@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_ccc0a025",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/sourcelookup/DsfSourceLookupParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-16T15:13:29Z",
+      "side": 1,
+      "message": "Maybe it would be safer to keep the exception but not throw it when (object instanceof ILaunch)?\n\nI\u0027m just not sure if there are cases where the exception causes a different behaviour, like showing a special editor to search for the source code...",
+      "revId": "abc407b07f3d066e75f4949826d0391adb3b1e1e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "revId": "55ef939075af07058e0a411acdb44667494a4909",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_2c8b24fd",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugCorePlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-16T15:34:47Z",
+      "side": 1,
+      "message": "So this sets up the \"preferred\" delegate, but if there are no other delegates, and there are no \"preferred\" one set anymore, the available one will be used.\n\nAnd you are right about not overriding a user preference.  So, the only time this code allows to override that preference is if none was set, or if it was the CDI one.  This makes the assumption that the preference was this by us (this method) to the CDI launch, and now we want to use a different one.\n\nFor the user to have set the CDI one, there would have to have been another Run launch Delegate provided by someone else than CDT, and in that case, I believe they want the CDT launch delegate whatever it is, not actually the CDI one.\n\nThis being said, I\u0027d like to discuss how to switch delegates nicely (discussion in the bug) to be as user-friendly as possible.  If you can look at the bug to give your opinion, that would be very useful.",
+      "parentUuid": "a7fb1785_319b7bcb",
+      "revId": "55ef939075af07058e0a411acdb44667494a4909",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

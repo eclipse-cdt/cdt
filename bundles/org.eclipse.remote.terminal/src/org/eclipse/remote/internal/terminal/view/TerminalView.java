@@ -194,7 +194,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	}
 
 	public TerminalView() {
-		TerminalViewPlugin.log("==============================================================="); //$NON-NLS-1$
 		fMultiConnectionManager.addListener(this);
 	}
 
@@ -235,7 +234,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	 */
 	@Override
 	public void onTerminalNewTerminal() {
-		TerminalViewPlugin.log("creating new Terminal instance."); //$NON-NLS-1$
 		setupControls();
 		if (newConnection(ViewMessages.NEW_TERMINAL_CONNECTION) == null) {
 			fMultiConnectionManager.removeActive();
@@ -269,7 +267,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 			// unique. This code runs only when the user clicks the New Terminal
 			// button, so there is no risk that this code will run twice in a single
 			// millisecond.
-			IViewPart newTerminalView = getSite().getPage().showView("org.eclipse.tm.terminal.view.TerminalView",//$NON-NLS-1$
+			IViewPart newTerminalView = getSite().getPage().showView("org.eclipse.tm.terminal.view.TerminalView", //$NON-NLS-1$
 					"SecondaryTerminal" + System.currentTimeMillis(), //$NON-NLS-1$
 					IWorkbenchPage.VIEW_ACTIVATE);
 			if (newTerminalView instanceof ITerminalView) {
@@ -362,14 +360,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		if (title != null) {
 			dlgTerminalSettings.setTitle(title);
 		}
-		TerminalViewPlugin.log("opening Settings dialog."); //$NON-NLS-1$
 
 		if (dlgTerminalSettings.open() == Window.CANCEL) {
-			TerminalViewPlugin.log("Settings dialog cancelled."); //$NON-NLS-1$
 			return null;
 		}
-
-		TerminalViewPlugin.log("Settings dialog OK'ed."); //$NON-NLS-1$
 
 		// When the settings dialog is closed, we persist the Terminal settings.
 		saveSettings(fStore, dlgTerminalSettings.getConnector());
@@ -462,8 +456,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
 	@Override
 	public void dispose() {
-		TerminalViewPlugin.log("entered."); //$NON-NLS-1$
-
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
 
 		// dispose all connections

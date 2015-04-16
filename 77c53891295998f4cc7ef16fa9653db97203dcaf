@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_5dd8e01a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/ui/test/AllTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-04-16T14:28:59Z",
+      "side": 1,
+      "message": "I think shall be 2015, only i.e. new file\n\nand Contributors: shall be initialized with your name, :-)",
+      "range": {
+        "startLine": 2,
+        "startChar": 21,
+        "endLine": 2,
+        "endChar": 22
+      },
+      "revId": "77c53891295998f4cc7ef16fa9653db97203dcaf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_1dd2d8fc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.tests/src/org/eclipse/cdt/dsf/gdb/tests/AllTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-04-16T14:28:59Z",
+      "side": 1,
+      "message": "This file does not seem to need updates any longer.",
+      "revId": "77c53891295998f4cc7ef16fa9653db97203dcaf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

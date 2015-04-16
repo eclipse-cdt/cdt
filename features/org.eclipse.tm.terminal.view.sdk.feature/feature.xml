@@ -22,10 +22,13 @@
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/releases/mars"/>
    </url>
-
+   
+   <includes
+         id="org.eclipse.tm.terminal.view.feature"
+         version="0.0.0"/>
+   
    <requires>
-      <import feature="org.eclipse.tm.terminal.view.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.view.serial.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.view.serial.sdk.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

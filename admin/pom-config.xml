@@ -62,6 +62,7 @@
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
         <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20150316021154/repository/</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
+        <terminal-site>http://download.eclipse.org/tm/terminal/builds/development/nightly</terminal-site>
       </properties>
 
     <repositories>
@@ -83,6 +84,11 @@
         <repository>
             <id>cdt</id>
             <url>${cdt-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>terminal</id>
+            <url>${terminal-site}</url>
             <layout>p2</layout>
         </repository>
     </repositories>

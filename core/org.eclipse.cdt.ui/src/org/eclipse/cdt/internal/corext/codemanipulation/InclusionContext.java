@@ -59,7 +59,7 @@ public class InclusionContext {
 		fTuLocation = fTu.getLocation();
 		ICProject cProject = fTu.getCProject();
 		fProject = cProject.getProject();
-		fCurrentDirectory = fTu.getResource().getParent().getLocation();
+		fCurrentDirectory = fTuLocation == null ? null : fTuLocation.removeLastSegments(1);
 		IScannerInfo scannerInfo = fTu.getScannerInfo(true);
 		fIncludeSearchPath = CPreprocessor.configureIncludeSearchPath(fCurrentDirectory.toFile(), scannerInfo);
 		fIncludeResolutionCache = new HashMap<>();
@@ -86,7 +86,7 @@ public class InclusionContext {
 	public IPath resolveInclude(IncludeInfo include) {
 		IPath path = fIncludeResolutionCache.get(include);
 		if (path == null) {
-			String directory = fCurrentDirectory.toOSString();
+			String directory = fCurrentDirectory == null ? null : fCurrentDirectory.toOSString();
 			String filePath = CPreprocessor.getAbsoluteInclusionPath(include.getName(), directory);
 	        if (filePath != null) {
 	        	path = new Path(filePath);
@@ -138,7 +138,7 @@ public class InclusionContext {
 			}
 		}
 		if (shortestInclude == null) {
-			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() ||
+			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() || fCurrentDirectory == null ||
 					!fCurrentDirectory.isPrefixOf(fullPath)) {
 				return null;
 			}
@@ -172,7 +172,7 @@ public class InclusionContext {
 			}
 		}
 		if (shortestInclude == null) {
-			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() ||
+			if (fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory() || fCurrentDirectory == null ||
 					!fCurrentDirectory.isPrefixOf(fullPath)) {
 				return null;
 			}

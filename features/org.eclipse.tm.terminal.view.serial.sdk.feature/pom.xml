@@ -12,7 +12,7 @@
   </parent>
 
   <version>4.0.0.qualifier</version>
-  <artifactId>org.eclipse.tm.terminal.serial.sdk.feature</artifactId>
+  <artifactId>org.eclipse.tm.terminal.view.serial.sdk.feature</artifactId>
   <packaging>eclipse-feature</packaging>
   
   <build>

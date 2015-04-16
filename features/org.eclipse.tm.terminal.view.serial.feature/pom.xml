@@ -12,6 +12,21 @@
   </parent>
 
   <version>4.0.0.qualifier</version>
-  <artifactId>org.eclipse.tm.terminal.serial</artifactId>
-  <packaging>eclipse-plugin</packaging>
+  <artifactId>org.eclipse.tm.terminal.view.serial.feature</artifactId>
+  <packaging>eclipse-feature</packaging>
+  
+  <build>
+  	<pluginManagement>
+  		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<timestampProvider>default</timestampProvider>
+				</configuration>
+			</plugin>
+  		</plugins>
+  	</pluginManagement>
+  </build>
 </project>

@@ -14,7 +14,7 @@
  * Michael Scharf (Wind River) - extracted from TerminalProperties 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.serial;
+package org.eclipse.tm.terminal.view.ui.serial.connector;
 
 import gnu.io.CommPortIdentifier;
 

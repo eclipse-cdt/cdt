@@ -25,6 +25,7 @@
 
    <requires>
       <import feature="org.eclipse.tm.terminal.view.feature" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.view.serial.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -50,13 +51,6 @@
 
    <plugin
          id="org.eclipse.tm.terminal.view.ui.process.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.serial.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

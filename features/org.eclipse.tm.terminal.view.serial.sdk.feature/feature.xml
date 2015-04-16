@@ -11,11 +11,10 @@
          Uwe Stieber (Wind River) - Bug 434937 - Releng: The Terminal Features have an incorrect license 
  -->
 <feature
-      id="org.eclipse.tm.terminal.serial.feature"
+      id="org.eclipse.tm.terminal.view.serial.sdk.feature"
       label="%featureName"
       version="4.0.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tm.terminal.serial"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
 
@@ -32,21 +31,21 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
 
+   <includes
+         id="org.eclipse.tm.terminal.view.serial.feature"
+         version="0.0.0"/>
+
    <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.3.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.sdk.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin
-         id="org.eclipse.tm.terminal.serial"
-         download-size="19"
-         install-size="19"
+         id="org.eclipse.tm.terminal.view.ui.serial.source"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
          unpack="false"/>
 

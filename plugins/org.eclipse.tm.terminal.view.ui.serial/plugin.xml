@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+
+<!-- Terminal connector contributions -->
+   <extension point="org.eclipse.tm.terminal.terminalConnectors">
+      <connector
+            name="%SerialConnector.label" 
+            id="org.eclipse.tm.terminal.connectors.serial"
+            class="org.eclipse.tm.terminal.view.ui.serial.connector.SerialConnector"/>
+   </extension>
    
-<!-- Terminals launcher delegate contributions -->
+<!-- Terminal launcher delegate contributions -->
    <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
       <delegate
             class="org.eclipse.tm.terminal.view.ui.serial.launcher.SerialLauncherDelegate"

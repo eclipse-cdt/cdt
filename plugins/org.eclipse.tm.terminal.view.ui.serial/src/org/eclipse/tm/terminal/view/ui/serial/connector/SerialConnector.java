@@ -15,9 +15,9 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] Don't connect if already connecting
  * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.serial;
+package org.eclipse.tm.terminal.view.ui.serial.connector;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -35,7 +35,10 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
+import org.eclipse.tm.terminal.view.ui.serial.activator.UIPlugin;
+import org.eclipse.tm.terminal.view.ui.serial.nls.Messages;
 
+@SuppressWarnings("restriction")
 public class SerialConnector extends TerminalConnectorImpl {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
@@ -44,22 +47,24 @@ public class SerialConnector extends TerminalConnectorImpl {
 	private SerialPortHandler fTerminalSerialPortHandler;
 	private SerialSettings fSettings;
 	private SerialConnectWorker fConnectWorker = null;
-	private volatile boolean fDisconnectGoingOn = false;
+	/* default */ volatile boolean fDisconnectGoingOn = false;
 
 	public SerialConnector() {
 	}
 	public SerialConnector(SerialSettings settings) {
 		fSettings=settings;
 	}
-	public void initialize() throws Exception {
+	@Override
+    public void initialize() throws Exception {
 		try {
 			fSettings=new SerialSettings();
 		} catch (NoClassDefFoundError e) {
 			// tell the user how to install the library
-			throw new CoreException(new Status(IStatus.WARNING,Activator.PLUGIN_ID,0, SerialMessages.ERROR_LIBRARY_NOT_INSTALLED,e));
+			throw new CoreException(new Status(IStatus.WARNING,UIPlugin.getUniqueIdentifier(),0, Messages.SerialConnector_Error_LiberayNotInstalled,e));
 		}
 	}
-	public void connect(ITerminalControl control) {
+	@Override
+    public void connect(ITerminalControl control) {
 		super.connect(control);
 		synchronized(this) {
 			if (fConnectWorker!=null || fDisconnectGoingOn) {
@@ -79,7 +84,8 @@ public class SerialConnector extends TerminalConnectorImpl {
 			fConnectWorker = null;
 		}
 	}
-	public void doDisconnect() {
+	@Override
+    public void doDisconnect() {
 		synchronized(this) {
 			//avoid multiple background connect/disconnect threads at the same time
 			if (fConnectWorker!=null) {
@@ -106,7 +112,8 @@ public class SerialConnector extends TerminalConnectorImpl {
 
 		new Thread("Terminal View Serial Port Disconnect Worker") //$NON-NLS-1$
 		{
-			public void run() {
+			@Override
+            public void run() {
 				try {
 					if (getSerialPortIdentifier() != null) {
 						try {
@@ -161,7 +168,8 @@ public class SerialConnector extends TerminalConnectorImpl {
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
-	public OutputStream getTerminalToRemoteStream() {
+	@Override
+    public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 	private void setInputStream(InputStream inputStream) {
@@ -170,7 +178,8 @@ public class SerialConnector extends TerminalConnectorImpl {
 	private void setOutputStream(OutputStream outputStream) {
 		fOutputStream = outputStream;
 	}
-	public void setTerminalSize(int newWidth, int newHeight) {
+	@Override
+    public void setTerminalSize(int newWidth, int newHeight) {
 		// TODO
 	}
 	protected SerialPort getSerialPort() {
@@ -215,16 +224,20 @@ public class SerialConnector extends TerminalConnectorImpl {
 	public ISerialSettings getSerialSettings() {
 		return fSettings;
 	}
-	public ISettingsPage makeSettingsPage() {
+	@Override
+    public ISettingsPage makeSettingsPage() {
 		return new SerialSettingsPage(fSettings);
 	}
-	public String getSettingsSummary() {
+	@Override
+    public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
-	public void load(ISettingsStore store) {
+	@Override
+    public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
-	public void save(ISettingsStore store) {
+	@Override
+    public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
 }

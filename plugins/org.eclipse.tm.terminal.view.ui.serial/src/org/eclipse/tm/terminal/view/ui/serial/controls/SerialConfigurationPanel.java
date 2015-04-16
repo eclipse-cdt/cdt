@@ -65,7 +65,7 @@ public class SerialConfigurationPanel extends AbstractExtendedConfigurationPanel
 	@Override
 	public void extractData(Map<String, Object> data) {
     	// set the terminal connector id for serial
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.internal.terminal.serial.SerialConnector"); //$NON-NLS-1$
+    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connectors.serial"); //$NON-NLS-1$
 
     	serialSettingsPage.extractData(data);
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());

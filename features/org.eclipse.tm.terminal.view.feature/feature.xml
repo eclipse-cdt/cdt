@@ -33,11 +33,11 @@
       <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.view.ui.process" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.security" version="1.1.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.serial" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.ssh" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.telnet" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.core.native"/>
+      <import feature="org.eclipse.tm.terminal.view.serial.feature" version="4.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -63,13 +63,6 @@
 
    <plugin
          id="org.eclipse.tm.terminal.view.ui.process"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.serial"
          download-size="0"
          install-size="0"
          version="0.0.0"

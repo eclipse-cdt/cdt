@@ -20,15 +20,12 @@
     <modules>
         <!-- Terminal Widget features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal</module>
-        <module>plugins/org.eclipse.tm.terminal.serial</module>
         <module>plugins/org.eclipse.tm.terminal.ssh</module>
         <module>plugins/org.eclipse.tm.terminal.telnet</module>
         <module>plugins/org.eclipse.tm.terminal.remote</module>
         
         <module>features/org.eclipse.tm.terminal.feature</module>
         <module>features/org.eclipse.tm.terminal.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.serial.feature</module>
-        <module>features/org.eclipse.tm.terminal.serial.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.ssh.feature</module>
         <module>features/org.eclipse.tm.terminal.ssh.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.telnet.feature</module>
@@ -50,6 +47,8 @@
         <module>features/org.eclipse.tm.terminal.view.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.view.rse.feature</module>
         <module>features/org.eclipse.tm.terminal.view.rse.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.view.serial.feature</module>
+        <module>features/org.eclipse.tm.terminal.view.serial.sdk.feature</module>
 
         <!-- TM Terminal Repository -->
         <module>repos/org.eclipse.tm.terminal.repo</module>

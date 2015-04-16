@@ -65,4 +65,15 @@ public class Messages extends NLS {
 	public static String SerialPortAddressDialog_Information_MissingPort;
 	public static String SerialPortAddressDialog_Error_InvalidPort;
 	public static String SerialPortAddressDialog_Error_InvalidPortRange;
+
+	public static String SerialConnector_Error_LiberayNotInstalled;
+
+	public static String SerialConnectWorker_PROP_TITLE;
+	public static String SerialConnectWorker_PORT_IN_USE;
+	public static String SerialConnectWorker_ANOTHER_TERMINAL;
+	public static String SerialConnectWorker_PORT_STOLEN;
+	public static String SerialConnectWorker_PORT_NOT_STOLEN;
+	public static String SerialConnectWorker_NO_SUCH_PORT;
+	public static String SerialConnectWorker_OWNERSHIP_GRANTED;
+
 }

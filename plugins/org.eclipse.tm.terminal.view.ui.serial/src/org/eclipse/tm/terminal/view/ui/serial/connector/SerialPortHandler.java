@@ -16,7 +16,7 @@
  * Martin Oberhuber (Wind River) - [168197] Replace JFace MessagDialog by SWT MessageBox
  * Martin Oberhuber (Wind River) - [221184] Redesign Serial Terminal Ownership Handling
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.serial;
+package org.eclipse.tm.terminal.view.ui.serial.connector;
 
 import gnu.io.CommPortOwnershipListener;
 import gnu.io.SerialPortEvent;
@@ -28,15 +28,16 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.terminal.view.ui.serial.nls.Messages;
 
 /**
  * UNDER CONSTRUCTION
  */
-public class SerialPortHandler implements
-		SerialPortEventListener, CommPortOwnershipListener {
+@SuppressWarnings("restriction")
+public class SerialPortHandler implements SerialPortEventListener, CommPortOwnershipListener {
 
-	private final ITerminalControl fControl;
-	private final SerialConnector fConn;
+    /* default */ final ITerminalControl fControl;
+	/* default */ final SerialConnector fConn;
 	protected byte[] bytes = new byte[2048];
 
 	/**
@@ -75,14 +76,15 @@ public class SerialPortHandler implements
 			StackTraceElement[] elems = e.getStackTrace();
 			final String requester = elems[elems.length - 4].getClassName();
 			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
+				@Override
+                public void run() {
 					fConn.disconnect();
 					String req = requester;
 					String myPackage = this.getClass().getPackage().getName();
 					if (req.startsWith(myPackage)) {
-						req = SerialMessages.ANOTHER_TERMINAL;
+						req = Messages.SerialConnectWorker_ANOTHER_TERMINAL;
 					}
-					fControl.displayTextInTerminal(NLS.bind(SerialMessages.OWNERSHIP_GRANTED, req));
+					fControl.displayTextInTerminal(NLS.bind(Messages.SerialConnectWorker_OWNERSHIP_GRANTED, req));
 				}
 			});
 			fConn.disconnect();
@@ -90,7 +92,8 @@ public class SerialPortHandler implements
 	}
 
 	// SerialPortEventListener interface
-	public void serialEvent(SerialPortEvent event) {
+	@Override
+    public void serialEvent(SerialPortEvent event) {
 		switch (event.getEventType()) {
 		case SerialPortEvent.DATA_AVAILABLE:
 			onSerialDataAvailable(null);
@@ -103,7 +106,8 @@ public class SerialPortHandler implements
 	/**
 	 * UNDER CONSTRUCTION
 	 */
-	public void ownershipChange(int nType) {
+	@Override
+    public void ownershipChange(int nType) {
 		switch (nType) {
 		case CommPortOwnershipListener.PORT_OWNERSHIP_REQUESTED:
 			onSerialOwnershipRequested(null);

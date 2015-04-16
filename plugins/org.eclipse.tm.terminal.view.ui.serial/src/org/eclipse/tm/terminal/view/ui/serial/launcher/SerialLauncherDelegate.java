@@ -18,7 +18,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
-import org.eclipse.tm.internal.terminal.serial.SerialSettings;
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
@@ -27,6 +26,7 @@ import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
 import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
 import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
+import org.eclipse.tm.terminal.view.ui.serial.connector.SerialSettings;
 import org.eclipse.tm.terminal.view.ui.serial.controls.SerialConfigurationPanel;
 import org.eclipse.tm.terminal.view.ui.serial.nls.Messages;
 
@@ -113,7 +113,7 @@ public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 
     	// Check for the terminal connector id
     	String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.internal.terminal.serial.SerialConnector"; //$NON-NLS-1$
+		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connectors.serial"; //$NON-NLS-1$
 
 		String port = (String)properties.get(ITerminalsConnectorConstants.PROP_SERIAL_DEVICE);
 		String baud = (String)properties.get(ITerminalsConnectorConstants.PROP_SERIAL_BAUD_RATE);

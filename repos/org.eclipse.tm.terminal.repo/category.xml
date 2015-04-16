@@ -7,12 +7,6 @@
    <feature url="features/org.eclipse.tm.terminal.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.serial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.serial.feature" version="0.0.0">
-      <category name="tm_main"/>
-   </feature>
-   <feature url="features/org.eclipse.tm.terminal.serial.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.serial.sdk.feature" version="0.0.0">
-      <category name="tm_main"/>
-   </feature>
    <feature url="features/org.eclipse.tm.terminal.ssh.feature_0.0.0.jar" id="org.eclipse.tm.terminal.ssh.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
@@ -43,6 +37,12 @@
       <category name="tm_main"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.view.rse.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.rse.sdk.feature" version="0.0.0">
+      <category name="tm_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.view.serial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.serial.feature" version="0.0.0">
+      <category name="tm_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.view.serial.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.serial.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
    

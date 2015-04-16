@@ -9,7 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.serial;
+package org.eclipse.tm.terminal.view.ui.serial.connector;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 

@@ -220,17 +220,16 @@ public class HeaderFileReferenceAdjuster {
 		}
 	}
 
-	private TextEditGroup createEdit(ITranslationUnit tu, IProgressMonitor pm)
+	private TextEditGroup createEdit(ITranslationUnit tu, IProgressMonitor monitor)
 			throws CoreException, OperationCanceledException {
-		checkCanceled(pm);
+		checkCanceled(monitor);
 
-		SubMonitor progress = SubMonitor.convert(pm, 2);
-		try {
-			IASTTranslationUnit ast = astManager.getAST(index, tu.getFile(), PARSE_MODE, false);
-	       	return createEdit(ast, tu, progress.newChild(1));
-		} finally {
-			pm.done();
-		}
+		SubMonitor progress = SubMonitor.convert(monitor, 3);
+		IASTTranslationUnit ast = astManager.getAST(index, tu.getFile(), PARSE_MODE, false);
+		progress.setWorkRemaining(1);
+		if (ast == null)
+			return null;
+		return createEdit(ast, tu, progress.newChild(1));
     }
 
 	private TextEditGroup createEdit(IASTTranslationUnit ast, ITranslationUnit tu, IProgressMonitor pm)

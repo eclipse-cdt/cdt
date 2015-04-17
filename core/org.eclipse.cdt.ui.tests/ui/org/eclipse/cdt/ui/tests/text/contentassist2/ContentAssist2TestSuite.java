@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Siemens AG and others.
+ * Copyright (c) 2006, 2007 Siemens AG and others.
  * All rights reserved. This content and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     Norbert Ploett - Initial implementation
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
- *     Mohamed Azab (Mentor Graphics) - Bug 438549. Add mechanism for parameter guessing.
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -72,8 +71,6 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTests.suite());
 		addTest(CompletionTests_PlainC.suite());
 		addTest(ParameterHintTests.suite());
-		addTest(CPPParameterGuessingTests.suite());
-		addTest(CParameterGuessingTests.suite());
 		
 		addTest(ShowCamelCasePreferenceTest.suite());
 		

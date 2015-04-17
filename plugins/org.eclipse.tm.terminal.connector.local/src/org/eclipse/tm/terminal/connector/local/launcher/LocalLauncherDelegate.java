@@ -391,7 +391,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 		ITerminalConnector connector = TerminalConnectorExtension.makeTerminalConnector(connectorId);
 		if (connector != null) {
 			// Apply default settings
-			connector.makeSettingsPage();
+			connector.setDefaultSettings();
 			// And load the real settings
 			connector.load(store);
 		}

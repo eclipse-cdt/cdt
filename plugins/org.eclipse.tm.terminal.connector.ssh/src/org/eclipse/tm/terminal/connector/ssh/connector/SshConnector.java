@@ -9,17 +9,17 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [225792] Rename SshConnector.getTelnetSettings() to getSshSettings()
- * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl 
+ * Martin Oberhuber (Wind River) - [225853][api] Provide more default functionality in TerminalConnectorImpl
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.ssh.connector;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
 import com.jcraft.jsch.ChannelShell;
@@ -40,15 +40,18 @@ public class SshConnector extends TerminalConnectorImpl {
 	public SshConnector(SshSettings settings) {
 		fSettings=settings;
 	}
-	public void initialize() throws Exception {
+	@Override
+    public void initialize() throws Exception {
 		fJsch=new JSch();
 	}
-	public void connect(ITerminalControl control) {
+	@Override
+    public void connect(ITerminalControl control) {
 		super.connect(control);
 		fConnection = new SshConnection(this,control);
 		fConnection.start();
 	}
-	synchronized public void doDisconnect() {
+	@Override
+    synchronized public void doDisconnect() {
 		fConnection.disconnect();
 		if (getInputStream() != null) {
 			try {
@@ -66,7 +69,8 @@ public class SshConnector extends TerminalConnectorImpl {
 			}
 		}
 	}
-	public void setTerminalSize(int newWidth, int newHeight) {
+	@Override
+    public void setTerminalSize(int newWidth, int newHeight) {
 		if(fChannel!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
 			//avoid excessive communications due to change size requests by caching previous size
 			fChannel.setPtySize(newWidth, newHeight, 8*newWidth, 8*newHeight);
@@ -77,7 +81,8 @@ public class SshConnector extends TerminalConnectorImpl {
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
-	public OutputStream getTerminalToRemoteStream() {
+	@Override
+    public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 	void setInputStream(InputStream inputStream) {
@@ -95,16 +100,20 @@ public class SshConnector extends TerminalConnectorImpl {
 	public ISshSettings getSshSettings() {
 		return fSettings;
 	}
-	public ISettingsPage makeSettingsPage() {
-		return new SshSettingsPage(fSettings);
+	@Override
+	public void setDefaultSettings() {
+		fSettings.load(new NullSettingsStore());
 	}
-	public String getSettingsSummary() {
+	@Override
+    public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
-	public void load(ISettingsStore store) {
+	@Override
+    public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
-	public void save(ISettingsStore store) {
+	@Override
+    public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
 	protected JSch getJsch() {

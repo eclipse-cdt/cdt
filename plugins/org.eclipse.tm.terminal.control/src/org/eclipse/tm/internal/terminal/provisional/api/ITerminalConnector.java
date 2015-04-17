@@ -132,18 +132,11 @@ public interface ITerminalConnector extends IAdaptable {
 	 * @param store
 	 */
 	void save(ISettingsStore store);
-
+	
 	/**
-	 * FIXME should not have UI related stuff in ITerminalConnector, since
-	 * connectors may be totally programmatic and UI-less. Better make the
-	 * connector adapt to an interface that controls the UI aspect.
-	 *
-	 * @return a new page that can be used in a dialog to setup this connection.
-	 *         The dialog should persist its settings with the
-	 *         {@link #load(ISettings)} and {@link #save(ISettings)}
-	 *         methods.
+	 * Set or reset the settings store to the default values.
 	 */
-	ISettingsPage makeSettingsPage();
+	void setDefaultSettings();
 
 	/**
 	 * @return A string that represents the settings of the connection. This representation

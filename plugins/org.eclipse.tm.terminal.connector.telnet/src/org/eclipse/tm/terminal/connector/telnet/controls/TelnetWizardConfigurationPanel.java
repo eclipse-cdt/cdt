@@ -24,6 +24,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.terminal.connector.telnet.connector.NetworkPortMap;
 import org.eclipse.tm.terminal.connector.telnet.connector.TelnetConnector;
 import org.eclipse.tm.terminal.connector.telnet.connector.TelnetSettings;
+import org.eclipse.tm.terminal.connector.telnet.connector.TelnetSettingsPage;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel;
@@ -31,7 +32,6 @@ import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel
 /**
  * telnet wizard configuration panel implementation.
  */
-@SuppressWarnings("restriction")
 public class TelnetWizardConfigurationPanel extends AbstractExtendedConfigurationPanel {
 
     public TelnetSettings telnetSettings;
@@ -65,7 +65,7 @@ public class TelnetWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		// MWE otherwise we don't get a valid default selection of the combo
 		telnetSettings.setNetworkPort(NetworkPortMap.PROP_VALUETELNET);
 
-		telnetSettingsPage = conn.makeSettingsPage();
+		telnetSettingsPage = new TelnetSettingsPage(telnetSettings);
 		if (telnetSettingsPage instanceof AbstractSettingsPage) {
 			((AbstractSettingsPage)telnetSettingsPage).setHasControlDecoration(true);
 		}

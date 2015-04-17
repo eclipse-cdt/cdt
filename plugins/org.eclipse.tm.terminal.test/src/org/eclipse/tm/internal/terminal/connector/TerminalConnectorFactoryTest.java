@@ -129,23 +129,6 @@ public class TerminalConnectorFactoryTest extends TestCase {
 			fLoadStore=store;
 		}
 
-		public ISettingsPage makeSettingsPage() {
-			return new ISettingsPage(){
-				public void createControl(Composite parent) {
-				}
-				public void loadSettings() {
-				}
-				public void saveSettings() {
-				}
-				public boolean validateSettings() {
-					return false;
-				}
-				public void addListener(Listener listener) {
-				}
-				public void removeListener(Listener listener) {
-				}};
-		}
-
 		public void save(ISettingsStore store) {
 			fSaveStore=store;
 		}
@@ -264,10 +247,10 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		assertSame(s,mock.fSaveStore);
 	}
 
-	public void testMakeSettingsPage() {
+	public void testSetDefaultSettings() {
 		ConnectorMock mock=new ConnectorMock();
 		TerminalConnector c = makeTerminalConnector(mock);
-		assertNotNull(c.makeSettingsPage());
+		c.setDefaultSettings();
 	}
 
 	public void testSetTerminalSize() {

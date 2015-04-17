@@ -25,9 +25,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.tm.internal.terminal.emulator.VT100Emulator;
 import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.connector.process.nls.Messages;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ILineSeparatorConstants;
@@ -256,11 +256,11 @@ public class ProcessConnector extends AbstractStreamsConnector {
 	// ***** Process Connector settings handling *****
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#makeSettingsPage()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#setDefaultSettings()
 	 */
 	@Override
-	public ISettingsPage makeSettingsPage() {
-		return new ProcessSettingsPage(settings);
+	public void setDefaultSettings() {
+	    settings.load(new NullSettingsStore());
 	}
 
 	/* (non-Javadoc)

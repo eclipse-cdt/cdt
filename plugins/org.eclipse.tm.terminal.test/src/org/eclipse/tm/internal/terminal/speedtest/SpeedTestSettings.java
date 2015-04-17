@@ -37,9 +37,9 @@ public class SpeedTestSettings {
 		fInputFile = testFile;
 	}
 	public void load(ISettingsStore store) {
-		fInputFile=store.get("inputFile");
-		fBufferSize=store.get("bufferSize");
-		fThrottle=store.get("throttle");
+		fInputFile=store.get("inputFile", "");
+		fBufferSize=store.get("bufferSize", "");
+		fThrottle=store.get("throttle", "0");
 	}
 	public void save(ISettingsStore store) {
 		store.put("inputFile", fInputFile);

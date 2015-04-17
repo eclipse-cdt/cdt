@@ -12,6 +12,7 @@ package org.eclipse.tm.terminal.view.ui.streams;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.ui.services.IDisposable;
 
@@ -97,6 +98,11 @@ public class StreamsConnector extends AbstractStreamsConnector implements IDispo
 	@Override
 	public String getSettingsSummary() {
 		return ""; //$NON-NLS-1$
+	}
+
+	@Override
+	public void setDefaultSettings() {
+	    settings.load(new NullSettingsStore());
 	}
 
 	/* (non-Javadoc)

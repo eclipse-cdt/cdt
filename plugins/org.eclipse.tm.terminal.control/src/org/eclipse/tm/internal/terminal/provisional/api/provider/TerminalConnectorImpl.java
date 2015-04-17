@@ -105,17 +105,10 @@ public abstract class TerminalConnectorImpl {
 	}
 
 	/**
-	 * Return a settings page for configuring this connector, or
-	 * <code>null</code> if it cannot be configured.
-	 *
-	 * The dialog should persist its settings with the
-	 * {@link #load(ISettings)} and {@link #save(ISettings)} methods.
-	 *
-	 * @return a new page that can be used in a dialog to setup this connection,
-	 *         or <code>null</code>.
+	 * Set or reset the settings store to the default values.
 	 */
-	public ISettingsPage makeSettingsPage() {
-		return null;
+	public void setDefaultSettings() {
+		// do nothing by default
 	}
 
 	/**
@@ -123,9 +116,8 @@ public abstract class TerminalConnectorImpl {
 	 * {@link #connect(ITerminalControl)}.
 	 *
 	 * Connectors that have nothing to configure do not need to implement this.
-	 * Those terminals that do have configuration (which they expose via
-	 * {@link #makeSettingsPage()} need to override this method to load
-	 * settings.
+	 * Those terminals that do have configuration need to override this method
+	 * to load settings.
 	 *
 	 * @param store a string based data store. Short keys like "foo" can be used
 	 *            to store the state of the connection.

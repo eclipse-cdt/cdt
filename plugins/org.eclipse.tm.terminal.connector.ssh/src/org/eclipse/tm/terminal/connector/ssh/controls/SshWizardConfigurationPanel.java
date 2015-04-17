@@ -31,6 +31,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.terminal.connector.ssh.connector.SshConnector;
 import org.eclipse.tm.terminal.connector.ssh.connector.SshSettings;
+import org.eclipse.tm.terminal.connector.ssh.connector.SshSettingsPage;
 import org.eclipse.tm.terminal.connector.ssh.nls.Messages;
 import org.eclipse.tm.terminal.view.core.TerminalContextPropertiesProviderFactory;
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalContextPropertiesProvider;
@@ -80,7 +81,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 		sshSettings.setHost(getSelectionHost());
 		sshSettings.setUser(getDefaultUser());
 
-		sshSettingsPage = conn.makeSettingsPage();
+		sshSettingsPage = new SshSettingsPage(sshSettings);
 		if (sshSettingsPage instanceof AbstractSettingsPage) {
 			((AbstractSettingsPage)sshSettingsPage).setHasControlDecoration(true);
 		}

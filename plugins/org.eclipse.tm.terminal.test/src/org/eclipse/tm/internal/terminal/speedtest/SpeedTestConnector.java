@@ -17,10 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
@@ -82,16 +82,13 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 		return fSettings.getInputFile();
 	}
 
-	public void initialize() {
-		//throw new RuntimeException("XXX problems\nSpeedTest\nXXX!");
+	@Override
+	public void setDefaultSettings() {
+		fSettings.load(new NullSettingsStore());
 	}
-
+	
 	public void load(ISettingsStore store) {
 		 fSettings.load(store);
-	}
-
-	public ISettingsPage makeSettingsPage() {
-		return new SpeedTestSettingsPage(fSettings);
 	}
 
 	public void save(ISettingsStore store) {

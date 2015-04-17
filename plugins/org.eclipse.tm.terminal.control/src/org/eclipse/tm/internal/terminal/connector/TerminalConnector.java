@@ -180,8 +180,9 @@ public class TerminalConnector implements ITerminalConnector {
 			getConnectorImpl().load(store);
 		}
 	}
-	public ISettingsPage makeSettingsPage() {
-		return getConnectorImpl().makeSettingsPage();
+	@Override
+	public void setDefaultSettings() {
+		getConnectorImpl().setDefaultSettings();
 	}
 	public void save(ISettingsStore store) {
 		// no need to save the settings: it cannot have changed

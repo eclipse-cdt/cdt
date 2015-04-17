@@ -25,10 +25,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 
@@ -47,7 +47,8 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	public TelnetConnector(TelnetSettings settings) {
 		fSettings=settings;
 	}
-	public void connect(ITerminalControl control) {
+	@Override
+    public void connect(ITerminalControl control) {
 		super.connect(control);
 		fWidth=-1;
 		fHeight=-1;
@@ -56,7 +57,8 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		TelnetConnectWorker worker = new TelnetConnectWorker(this,control);
 		worker.start();
 	}
-	public void doDisconnect() {
+	@Override
+    public void doDisconnect() {
 		if (getSocket() != null) {
 			try {
 				getSocket().close();
@@ -82,12 +84,14 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		}
 		cleanSocket();
 	}
-	public boolean isLocalEcho() {
+	@Override
+    public boolean isLocalEcho() {
 		if(fTelnetConnection==null)
 			return false;
 		return fTelnetConnection.localEcho();
 	}
-	public void setTerminalSize(int newWidth, int newHeight) {
+	@Override
+    public void setTerminalSize(int newWidth, int newHeight) {
 		if(fTelnetConnection!=null && (newWidth!=fWidth || newHeight!=fHeight)) {
 			//avoid excessive communications due to change size requests by caching previous size
 			fTelnetConnection.setTerminalSize(newWidth, newHeight);
@@ -98,7 +102,8 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	public InputStream getInputStream() {
 		return fInputStream;
 	}
-	public OutputStream getTerminalToRemoteStream() {
+	@Override
+    public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
 	}
 	private void setInputStream(InputStream inputStream) {
@@ -145,16 +150,20 @@ public class TelnetConnector extends TerminalConnectorImpl {
 	public ITelnetSettings getTelnetSettings() {
 		return fSettings;
 	}
-	public ISettingsPage makeSettingsPage() {
-		return new TelnetSettingsPage(fSettings);
+	@Override
+	public void setDefaultSettings() {
+	    fSettings.load(new NullSettingsStore());
 	}
-	public String getSettingsSummary() {
+	@Override
+    public String getSettingsSummary() {
 		return fSettings.getSummary();
 	}
-	public void load(ISettingsStore store) {
+	@Override
+    public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
-	public void save(ISettingsStore store) {
+	@Override
+    public void save(ISettingsStore store) {
 		fSettings.save(store);
 	}
 }

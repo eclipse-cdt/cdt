@@ -39,8 +39,8 @@ public class RemoteSettings implements IRemoteSettings {
 	 * Load information into the RemoteSettings object.
 	 */
 	public void load(ISettingsStore store) {
-		fRemoteServices = store.get(REMOTE_SERVICES);
-		fConnectionName = store.get(CONNECTION_NAME);
+		fRemoteServices = store.get(REMOTE_SERVICES, ""); //$NON-NLS-1$
+		fConnectionName = store.get(CONNECTION_NAME, ""); //$NON-NLS-1$
 	}
 
 	/**

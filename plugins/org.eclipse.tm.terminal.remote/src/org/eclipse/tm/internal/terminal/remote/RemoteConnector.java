@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
 import org.eclipse.tm.terminal.remote.IRemoteSettings;
@@ -109,44 +110,16 @@ public class RemoteConnector extends TerminalConnectorImpl {
 		return fOutputStream;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#initialize()
-	 */
-	@Override
-	public void initialize() throws Exception {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#load(org.eclipse.tm.internal.terminal.provisional
-	 * .api.ISettingsStore)
-	 */
 	@Override
 	public void load(ISettingsStore store) {
 		fSettings.load(store);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#makeSettingsPage()
-	 */
 	@Override
-	public ISettingsPage makeSettingsPage() {
-		return new RemoteSettingsPage(fSettings);
+	public void setDefaultSettings() {
+		fSettings.load(new NullSettingsStore());
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#save(org.eclipse.tm.internal.terminal.provisional
-	 * .api.ISettingsStore)
-	 */
+	
 	@Override
 	public void save(ISettingsStore store) {
 		fSettings.save(store);

@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Marc-Andre Laperle and others.
+ * Copyright (c) 2010, 2015 Marc-Andre Laperle and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Marc-Andre Laperle - Initial API and implementation
+ *     Marc-Andre Laperle - Initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Bug 438595
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
@@ -25,6 +26,7 @@ import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
@@ -44,6 +46,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
     private IConsole fConsole;
     private IPageBookViewPage fPage;
     private IConsoleView fView;
+    private ISelection fLastContext;
 
     @Override
 	public void init(IPageBookViewPage page, IConsole console) {
@@ -140,13 +143,6 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
         				return process;
         			}
         		}
-
-        		// No inferior?  return the gdb process
-        		// We have to check that the process is actually from a DSF-GDB session,
-        		// since the current context could be for any debug session
-        		if (processes[0] instanceof GDBProcess) {
-        			return processes[0];
-        		}
         	}
         	
         	return null;
@@ -174,11 +170,6 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		        				}
 		        			}
 		        		}
-
-		        		// No inferior?  return the gdb process
-		        		if (processes[0] instanceof GDBProcess) {
-		        			return processes[0];
-		        		}
 		        	}
 				}
 			}
@@ -191,12 +182,16 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
 	 */
     @Override
-	public void debugContextChanged(DebugContextEvent event) {
-		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
-			IProcess consoleProcess = getConsoleProcess();
-			if (fView != null && consoleProcess != null && consoleProcess.equals(getCurrentProcess())) {
-	            fView.display(fConsole);
-	        }
-		}
-	}
+    public void debugContextChanged(DebugContextEvent event) {
+        if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+            ISelection context = event.getContext();
+            if (context != fLastContext) {
+                fLastContext = context;
+                IProcess consoleProcess = getConsoleProcess();
+                if (fView != null && consoleProcess != null && consoleProcess.equals(getCurrentProcess())) {
+                    fView.display(fConsole);
+                }
+            }
+        }
+    }
 }

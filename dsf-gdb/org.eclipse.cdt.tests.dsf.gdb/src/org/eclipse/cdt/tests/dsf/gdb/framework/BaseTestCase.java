@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Ericsson and others.
+ * Copyright (c) 2007, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -80,7 +81,7 @@ public class BaseTestCase {
 	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 	
 	// Make the current test name available through testName.getMethodName()
-	@Rule public TestName testName = new TestName();
+	@Rule public TestName fTestName = new TestName();
 	
 	// Add a timeout for each test, to make sure no test hangs
 	@Rule public TestRule timeout = new Timeout(TEST_TIMEOUT);
@@ -304,7 +305,7 @@ public class BaseTestCase {
     	if (GdbDebugOptions.DEBUG) {
     		GdbDebugOptions.trace("===============================================================================================\n");
     		GdbDebugOptions.trace(String.format("%s \"%s\" launching %s %s\n", 
-    				GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));
+    				GdbPlugin.getDebugTime(), fTestName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));
     		GdbDebugOptions.trace("===============================================================================================\n");
     	}
 		
@@ -371,11 +372,43 @@ public class BaseTestCase {
 
 	}
 
+ 	// Since we terminate the launch in a separate thread, we need
+ 	// to keep track of any failures.
+ 	private static Set<String> fTestFailedToTerminate = new LinkedHashSet<>();
+ 	// Keep track of the number of threads still running that are doing
+ 	// a terminate on a launch
+ 	private static int fTerminateThreadsRunning = 0;
+ 	
 	@After
 	public void doAfterTest() throws Exception {
 		if (fLaunch != null) {
-			fLaunch.terminate();
+			// Cannot use fLaunch directly since the next test
+			// might change its value by the time we need it
+			// in the thread below
+			final GdbLaunch finalLaunch = fLaunch;
+			final String testName = fTestName.getMethodName();
 			fLaunch = null;
+			
+			synchronized (fTestFailedToTerminate) {
+				fTerminateThreadsRunning++;
+			}
+
+			new Thread() {
+				@Override
+				public void run() {
+					try {
+						finalLaunch.terminate();
+					} catch (Exception e) {
+						synchronized (fTestFailedToTerminate) {
+							fTestFailedToTerminate.add(testName + " with exception: " + e.getMessage());
+						}
+					}
+					synchronized (fTestFailedToTerminate) {
+						fTerminateThreadsRunning--;
+						fTestFailedToTerminate.notify();
+					}
+				}
+			}.start();
 		}
 	}
 
@@ -483,5 +516,27 @@ public class BaseTestCase {
 	public static void restoreGlobalPreferences() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(DebugPlugin.getUniqueIdentifier());
 		node.putBoolean(IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, fgStatusHandlersEnabled);
+		
+		checkTerminateFailures();
+	}
+	
+	private static void checkTerminateFailures() {
+		synchronized (fTestFailedToTerminate) {
+			while (fTerminateThreadsRunning > 0) {
+				try {
+					fTestFailedToTerminate.wait(500);
+				} catch (InterruptedException e) {
+				}
+			}
+		
+			if (fTestFailedToTerminate.isEmpty() == false) {
+				StringBuffer buffer = new StringBuffer();
+				for (String failedName : fTestFailedToTerminate) {
+					buffer.append("\nTermination failed for test " + failedName);
+				}
+				fTestFailedToTerminate.clear();
+				Assert.assertTrue(buffer.toString(), false);
+			}
+		}
  	}
 }

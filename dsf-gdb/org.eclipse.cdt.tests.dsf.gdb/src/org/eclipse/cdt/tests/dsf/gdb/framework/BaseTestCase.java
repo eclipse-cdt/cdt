@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -374,7 +375,16 @@ public class BaseTestCase {
 	@After
 	public void doAfterTest() throws Exception {
 		if (fLaunch != null) {
-			fLaunch.terminate();
+			final GdbLaunch finalLaunch = fLaunch;
+			new Thread() {
+				@Override
+				public void run() {
+					try {
+						finalLaunch.terminate();
+					} catch (DebugException e) {
+					}
+				}
+			}.start();
 			fLaunch = null;
 		}
 	}

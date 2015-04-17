@@ -55,6 +55,12 @@
 		<Bug pattern="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE"/>
 	</Match>
 	
+	<!-- Ignore ES_COMPARING_PARAMETER_STRING_WITH_EQ -->
+	<Match>
+		<Bug pattern="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
+		<Class name="org.eclipse.tm.terminal.view.ui.manager.ConsoleManager"/>
+	</Match>
+	
 	<!-- Ignore all ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD violations in bundle activators -->
 	<Match>
 		<Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
@@ -66,9 +72,21 @@
 		</Or>
 	</Match>
 	
+	<!-- Ignore RV_RETURN_VALUE_IGNORED_BAD_PRACTICE -->
+	<Match>
+		<Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+        <Class name="org.eclipse.tm.terminal.connector.local.showin.ExternalExecutablesManager"/>
+	</Match>
+
 	<!-- Ignore RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE -->
 	<Match>
 		<Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+	</Match>
+
+	<!-- Ignore NP_LOAD_OF_KNOWN_NULL_VALUE -->
+	<Match>
+		<Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+        <Class name="org.eclipse.tm.terminal.connector.local.showin.ExternalExecutablesDialog"/>
 	</Match>
 
 </FindBugsFilter>

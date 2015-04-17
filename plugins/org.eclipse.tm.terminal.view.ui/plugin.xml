@@ -109,7 +109,7 @@
    </extension>
 
 <!-- Terminal connector contributions -->
-   <extension point="org.eclipse.tm.terminal.terminalConnectors">
+   <extension point="org.eclipse.tm.terminal.control.connectors">
       <connector 
                  name="%TerminalConnector.streams"
                  id="org.eclipse.tm.terminal.view.ui.StreamsConnector"

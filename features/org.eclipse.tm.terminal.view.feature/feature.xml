@@ -21,23 +21,15 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/releases/mars"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
 
    <requires>
       <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.600" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.ui.process" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.equinox.security" version="1.1.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.ssh" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.telnet" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.core.native"/>
-      <import feature="org.eclipse.tm.terminal.view.serial.feature" version="4.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -49,34 +41,6 @@
 
    <plugin
          id="org.eclipse.tm.terminal.view.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.local"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.process"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.ssh"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.telnet"
          download-size="0"
          install-size="0"
          version="0.0.0"

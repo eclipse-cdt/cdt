@@ -21,7 +21,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/releases/mars"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
 
    <requires>
@@ -32,7 +32,7 @@
       <import plugin="org.eclipse.rse.ui" version="3.3.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.tm.terminal.view.feature" version="4.0.0" match="greaterOrEqual"/>
    </requires>

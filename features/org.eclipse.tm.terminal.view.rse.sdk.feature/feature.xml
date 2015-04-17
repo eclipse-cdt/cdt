@@ -20,7 +20,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/releases/mars"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
 
    <requires>

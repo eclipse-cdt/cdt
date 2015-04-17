@@ -30,8 +30,7 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
 
    <includes
@@ -39,7 +38,7 @@
          version="0.0.0"/>
 
    <requires>
-      <import feature="org.eclipse.tm.terminal.sdk.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.control.sdk.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

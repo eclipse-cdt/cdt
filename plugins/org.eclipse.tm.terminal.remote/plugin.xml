@@ -10,7 +10,7 @@
 <plugin>
    <extension-point id="parsers" name="Terminal Parsers" schema="schema/parsers.exsd"/>
    <extension
-         point="org.eclipse.tm.terminal.terminalConnectors">
+         point="org.eclipse.tm.terminal.control.connectors">
       <connector name="%connectionName"
       id="org.eclipse.tm.terminal.RemoteConnector"
       class="org.eclipse.tm.internal.terminal.remote.RemoteConnector"/>

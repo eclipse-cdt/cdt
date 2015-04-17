@@ -30,21 +30,20 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/4.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.7"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
 
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal"/>
+      <import plugin="org.eclipse.tm.terminal.control"/>
       <import plugin="org.eclipse.remote.core"/>
       <import plugin="org.eclipse.remote.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.ide"/>
-      <import feature="org.eclipse.tm.terminal.feature" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

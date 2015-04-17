@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+<!-- Terminal connector contributions -->
+   <extension point="org.eclipse.tm.terminal.control.connectors">
+      <connector
+            name="%SerialConnector.label" 
+            id="org.eclipse.tm.terminal.connector.serial.SerialConnector"
+            class="org.eclipse.tm.terminal.connector.serial.connector.SerialConnector"/>
+   </extension>
+   
+<!-- Terminal launcher delegate contributions -->
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.tm.terminal.connector.serial.launcher.SerialLauncherDelegate"
+            id="org.eclipse.tm.terminal.connector.serial.launcher.serial"
+            label="%SerialLauncherDelegate.label">
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate operator="and" ifEmpty="false">
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.tm.terminal.view.core.hasContextPropertiesProvider"
+                           value="true"/>
+                  </iterate>
+               </with>
+            </enablement>
+      </delegate>
+   </extension>
+</plugin>

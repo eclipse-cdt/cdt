@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     Copyright (c) 2015 Wind River Systems, Inc. and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Contributors:
+         Wind River - initial API and implementation
+ -->
+<feature
+      id="org.eclipse.tm.terminal.connector.local.sdk.feature"
+      label="%featureName"
+      version="4.0.0.qualifier"
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1.qualifier">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
+   </url>
+
+   <includes
+         id="org.eclipse.tm.terminal.connector.local.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import feature="org.eclipse.tm.terminal.control.sdk.feature" version="4.0.0" match="compatible"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.tm.terminal.connector.local.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.tm.terminal.connector.process.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

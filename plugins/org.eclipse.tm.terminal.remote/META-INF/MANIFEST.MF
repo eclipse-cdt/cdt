@@ -7,7 +7,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.tm.terminal,
+ org.eclipse.tm.terminal.control,
  org.eclipse.remote.core,
  org.eclipse.remote.ui,
  org.eclipse.core.resources,

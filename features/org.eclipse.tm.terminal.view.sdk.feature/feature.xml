@@ -20,17 +20,13 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/releases/mars"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
    
    <includes
          id="org.eclipse.tm.terminal.view.feature"
          version="0.0.0"/>
    
-   <requires>
-      <import feature="org.eclipse.tm.terminal.view.serial.sdk.feature" version="4.0.0" match="compatible"/>
-   </requires>
-
    <plugin
          id="org.eclipse.tm.terminal.view.core.source"
          download-size="0"
@@ -40,34 +36,6 @@
 
    <plugin
          id="org.eclipse.tm.terminal.view.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.local.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.process.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.ssh.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui.telnet.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

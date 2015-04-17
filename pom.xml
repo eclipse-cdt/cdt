@@ -18,37 +18,46 @@
     <name>TM Terminal, Maven Master</name>
 
     <modules>
-        <!-- Terminal Widget features and plug-ins -->
-        <module>plugins/org.eclipse.tm.terminal</module>
-        <module>plugins/org.eclipse.tm.terminal.ssh</module>
-        <module>plugins/org.eclipse.tm.terminal.telnet</module>
-        <module>plugins/org.eclipse.tm.terminal.remote</module>
-        
+        <!-- Terminal Control features and plug-ins -->
+        <module>plugins/org.eclipse.tm.terminal.control</module>
+
         <module>features/org.eclipse.tm.terminal.feature</module>
         <module>features/org.eclipse.tm.terminal.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.ssh.feature</module>
-        <module>features/org.eclipse.tm.terminal.ssh.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.telnet.feature</module>
-        <module>features/org.eclipse.tm.terminal.telnet.sdk.feature</module>
+
+        <!-- Terminal Connector features and plug-ins -->
+        <module>plugins/org.eclipse.tm.terminal.connector.local</module>
+        <module>plugins/org.eclipse.tm.terminal.connector.process</module>
+        <module>plugins/org.eclipse.tm.terminal.connector.serial</module>
+        <module>plugins/org.eclipse.tm.terminal.connector.ssh</module>
+        <module>plugins/org.eclipse.tm.terminal.connector.telnet</module>
+
+        <module>plugins/org.eclipse.tm.terminal.remote</module>
+        
+        <module>features/org.eclipse.tm.terminal.connector.local.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.local.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.ssh.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.ssh.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.telnet.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.telnet.sdk.feature</module>
+
         <module>features/org.eclipse.tm.terminal.remote.feature</module>
         <module>features/org.eclipse.tm.terminal.remote.sdk.feature</module>
 
         <!-- Terminals View features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal.view.core</module>
         <module>plugins/org.eclipse.tm.terminal.view.ui</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui.local</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui.process</module>
         <module>plugins/org.eclipse.tm.terminal.view.ui.rse</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui.serial</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui.ssh</module>
-        <module>plugins/org.eclipse.tm.terminal.view.ui.telnet</module>
         
         <module>features/org.eclipse.tm.terminal.view.feature</module>
         <module>features/org.eclipse.tm.terminal.view.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.view.rse.feature</module>
         <module>features/org.eclipse.tm.terminal.view.rse.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.view.serial.feature</module>
-        <module>features/org.eclipse.tm.terminal.view.serial.sdk.feature</module>
+
+        <!-- TM Terminal "all-in-one" features -->
+        <module>features/org.eclipse.tm.terminal.feature</module>
+        <module>features/org.eclipse.tm.terminal.sdk.feature</module>
 
         <!-- TM Terminal Repository -->
         <module>repos/org.eclipse.tm.terminal.repo</module>

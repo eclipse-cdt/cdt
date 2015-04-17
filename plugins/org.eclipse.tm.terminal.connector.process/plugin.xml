@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+<!-- Terminal connector contributions -->
+   <extension point="org.eclipse.tm.terminal.control.connectors">
+      <connector
+            class="org.eclipse.tm.terminal.connector.process.ProcessConnector"
+            hidden="true"
+            id="org.eclipse.tm.terminal.connector.process.ProcessConnector"
+            name="%TerminalConnector.process"/>
+   </extension>
+
+<!-- Terminals launcher delegate contributions -->
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.tm.terminal.connector.process.ProcessLauncherDelegate"
+            hidden="true"
+            id="org.eclipse.tm.terminal.connector.process.launcher.process"
+            label="%ProcessLauncherDelegate.label">
+      </delegate>
+   </extension>
+
+</plugin>

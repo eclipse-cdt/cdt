@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <!-- Terminal Widget Features -->
-   <feature url="features/org.eclipse.tm.terminal.feature_0.0.0.jar" id="org.eclipse.tm.terminal.feature" version="0.0.0">
+   <!-- Terminal Control Features -->
+   <feature url="features/org.eclipse.tm.terminal.control.feature_0.0.0.jar" id="org.eclipse.tm.terminal.control.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.sdk.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.control.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.control.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.ssh.feature_0.0.0.jar" id="org.eclipse.tm.terminal.ssh.feature" version="0.0.0">
+   
+   <!-- Terminal Connector Features -->
+   <feature url="features/org.eclipse.tm.terminal.connector.local.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.local.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.ssh.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.ssh.sdk.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.connector.local.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.local.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.telnet.feature_0.0.0.jar" id="org.eclipse.tm.terminal.telnet.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.connector.serial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.serial.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.telnet.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.telnet.sdk.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.connector.serial.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.serial.sdk.feature" version="0.0.0">
+      <category name="tm_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.ssh.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.ssh.feature" version="0.0.0">
+      <category name="tm_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.ssh.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.ssh.sdk.feature" version="0.0.0">
+      <category name="tm_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.telnet.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.telnet.feature" version="0.0.0">
+      <category name="tm_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.telnet.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.telnet.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.feature" version="0.0.0">
@@ -39,10 +53,12 @@
    <feature url="features/org.eclipse.tm.terminal.view.rse.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.rse.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.view.serial.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.serial.feature" version="0.0.0">
+
+   <!-- TM Terminal "all-in-one" features -->
+   <feature url="features/org.eclipse.tm.terminal.feature_0.0.0.jar" id="org.eclipse.tm.terminal.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.view.serial.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.serial.sdk.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
    

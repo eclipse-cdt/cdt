@@ -6,7 +6,7 @@ Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.junit,
- org.eclipse.tm.terminal;bundle-version="3.3.0",
+ org.eclipse.tm.terminal.control;bundle-version="4.0.0",
  org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

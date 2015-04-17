@@ -47,7 +47,7 @@ public class UIPlugin extends AbstractUIPlugin {
 		if (getDefault() != null && getDefault().getBundle() != null) {
 			return getDefault().getBundle().getSymbolicName();
 		}
-		return "org.eclipse.tm.terminal.view.ui.serial"; //$NON-NLS-1$
+		return "org.eclipse.tm.terminal.connector.serial"; //$NON-NLS-1$
 	}
 
 	/**

@@ -53,7 +53,7 @@ public class UIPlugin extends AbstractUIPlugin {
 		if (getDefault() != null && getDefault().getBundle() != null) {
 			return getDefault().getBundle().getSymbolicName();
 		}
-		return "org.eclipse.tm.terminal.view.ui.ssh"; //$NON-NLS-1$
+		return "org.eclipse.tm.terminal.connector.ssh"; //$NON-NLS-1$
 	}
 
 	/**

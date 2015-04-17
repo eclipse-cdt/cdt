@@ -64,7 +64,7 @@ public class LaunchTerminalHandler extends AbstractHandler {
 						@Override
 						protected boolean isFiltered(ISelection selection, ILauncherDelegate delegate) {
 							Assert.isNotNull(delegate);
-						    return !"org.eclipse.tm.terminal.view.ui.ssh.launcher.ssh".equals(delegate.getId()); //$NON-NLS-1$
+						    return !"org.eclipse.tm.terminal.connector.ssh.launcher.ssh".equals(delegate.getId()); //$NON-NLS-1$
 						}
 					};
 					dialog.setSelection(new StructuredSelection(host));

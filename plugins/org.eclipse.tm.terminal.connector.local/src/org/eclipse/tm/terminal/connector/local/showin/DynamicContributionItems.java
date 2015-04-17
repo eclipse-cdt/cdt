@@ -49,7 +49,7 @@ public class DynamicContributionItems extends CompoundContributionItem implement
 		this.serviceLocator = serviceLocator;
 
 		// Get the local terminal launcher delegate
-		delegate = LauncherDelegateManager.getInstance().getLauncherDelegate("org.eclipse.tm.terminal.view.ui.local.launcher.local", false); //$NON-NLS-1$
+		delegate = LauncherDelegateManager.getInstance().getLauncherDelegate("org.eclipse.tm.terminal.connector.local.launcher.local", false); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

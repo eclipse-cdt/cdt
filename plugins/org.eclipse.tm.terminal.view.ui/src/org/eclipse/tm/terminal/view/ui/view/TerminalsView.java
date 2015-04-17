@@ -696,7 +696,7 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 				// If the selection is valid, fire the command to open the local terminal
 				if (isValid) {
 					ICommandService service = (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
-					Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.view.ui.local.command.launch") : null; //$NON-NLS-1$
+					Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.connector.local.command.launch") : null; //$NON-NLS-1$
 					if (command != null && command.isDefined() && command.isEnabled()) {
 						try {
 							ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);

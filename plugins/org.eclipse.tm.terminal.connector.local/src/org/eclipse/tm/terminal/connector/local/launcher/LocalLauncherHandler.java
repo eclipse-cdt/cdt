@@ -57,7 +57,7 @@ public class LocalLauncherHandler extends AbstractHandler {
 		// Find the local terminal launcher delegate
 		ILauncherDelegate delegate = null;
 		for (ILauncherDelegate candidate : delegates) {
-			if ("org.eclipse.tm.terminal.view.ui.local.launcher.local".equals(candidate.getId())) { //$NON-NLS-1$
+			if ("org.eclipse.tm.terminal.connector.local.launcher.local".equals(candidate.getId())) { //$NON-NLS-1$
 				delegate = candidate;
 				break;
 			}

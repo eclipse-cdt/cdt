@@ -71,7 +71,7 @@ public class ProcessLauncherDelegate extends AbstractLauncherDelegate {
 
 		// Check for the terminal connector id
 		String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.view.ui.ProcessConnector"; //$NON-NLS-1$
+		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.process.ProcessConnector"; //$NON-NLS-1$
 
 		// Extract the process properties
 		String image = (String)properties.get(ITerminalsConnectorConstants.PROP_PROCESS_PATH);

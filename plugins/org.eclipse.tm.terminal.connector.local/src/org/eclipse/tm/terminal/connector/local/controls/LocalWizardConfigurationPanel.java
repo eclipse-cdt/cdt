@@ -100,7 +100,7 @@ public class LocalWizardConfigurationPanel extends AbstractExtendedConfiguration
 	@Override
 	public void extractData(Map<String, Object> data) {
     	// set the terminal connector id for local terminal
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.view.ui.local.LocalConnector"); //$NON-NLS-1$
+    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connector.local.LocalConnector"); //$NON-NLS-1$
 
     	// Store the encoding
 		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());

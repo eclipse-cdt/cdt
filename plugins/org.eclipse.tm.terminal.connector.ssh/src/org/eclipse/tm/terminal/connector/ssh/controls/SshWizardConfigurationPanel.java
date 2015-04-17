@@ -164,7 +164,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 		if (data == null) return;
 
     	// set the terminal connector id for ssh
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.internal.terminal.ssh.SshConnector"); //$NON-NLS-1$
+    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connector.ssh.connector.SshConnector"); //$NON-NLS-1$
 
     	sshSettingsPage.saveSettings();
 		data.put(ITerminalsConnectorConstants.PROP_IP_HOST,sshSettings.getHost());

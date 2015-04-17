@@ -121,7 +121,7 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 
     	// Check for the terminal connector id
     	String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.internal.terminal.ssh.SshConnector"; //$NON-NLS-1$
+		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.ssh.connector.SshConnector"; //$NON-NLS-1$
 
 		// Extract the ssh properties
 		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
@@ -141,7 +141,9 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 		}
 
 		// The real port to connect to is port + portOffset
-		port = Integer.toString(Integer.decode(port).intValue() + portOffset);
+		if (port != null) {
+			port = Integer.toString(Integer.decode(port).intValue() + portOffset);
+		}
 
 		// Construct the ssh settings store
 		ISettingsStore store = new SettingsStore();

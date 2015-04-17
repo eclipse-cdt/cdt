@@ -278,7 +278,7 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 
 		// Check for the terminal connector id
 		String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.view.ui.local.LocalConnector"; //$NON-NLS-1$
+		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.local.LocalConnector"; //$NON-NLS-1$
 
 		// Extract the process properties using defaults
 		String image;

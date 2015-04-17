@@ -112,7 +112,7 @@
    <extension point="org.eclipse.tm.terminal.control.connectors">
       <connector 
                  name="%TerminalConnector.streams"
-                 id="org.eclipse.tm.terminal.view.ui.StreamsConnector"
+                 id="org.eclipse.tm.terminal.connector.streams.StreamsConnector"
                  hidden="true"
                  class="org.eclipse.tm.terminal.view.ui.streams.StreamsConnector"/>
    </extension>
@@ -138,7 +138,7 @@
       <delegate
             class="org.eclipse.tm.terminal.view.ui.streams.StreamsLauncherDelegate"
             hidden="true"
-            id="org.eclipse.tm.terminal.view.ui.launcher.streams"
+            id="org.eclipse.tm.terminal.connector.streams.launcher.streams"
             label="%StreamsLauncherDelegate.label">
       </delegate>
    </extension>

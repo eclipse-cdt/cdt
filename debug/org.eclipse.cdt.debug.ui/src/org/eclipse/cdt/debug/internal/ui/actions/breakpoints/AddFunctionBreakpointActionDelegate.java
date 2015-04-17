@@ -69,7 +69,7 @@ public class AddFunctionBreakpointActionDelegate extends ActionDelegate implemen
         try {
             cToggleTarget.createFunctionBreakpointInteractive(fView, fSelection);
         } catch (CoreException e) {
-            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate1.0" ), e ); //$NON-NLS-1$
+            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddFunctionBreakpointActionDelegate.0" ), e ); //$NON-NLS-1$
         }
 	}
 }

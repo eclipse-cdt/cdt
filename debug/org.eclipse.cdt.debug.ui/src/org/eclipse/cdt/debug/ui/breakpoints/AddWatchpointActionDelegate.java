@@ -80,7 +80,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
         try {
             cToggleTarget.createWatchpointsInteractive(fPart, fSelection);
         } catch (CoreException e) {
-            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate1.0" ), e ); //$NON-NLS-1$
+            CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate.0" ), e ); //$NON-NLS-1$
         }
 	}
 }

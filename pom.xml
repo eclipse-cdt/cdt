@@ -21,8 +21,8 @@
         <!-- Terminal Control features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal.control</module>
 
-        <module>features/org.eclipse.tm.terminal.feature</module>
-        <module>features/org.eclipse.tm.terminal.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.control.feature</module>
+        <module>features/org.eclipse.tm.terminal.control.sdk.feature</module>
 
         <!-- Terminal Connector features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal.connector.local</module>

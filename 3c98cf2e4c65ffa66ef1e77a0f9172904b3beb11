@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_01e54ac6",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.4.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-19T17:26:46Z",
+      "side": 1,
+      "message": "we should bump the sequence number so that PDE can automatically detect the change.",
+      "range": {
+        "startLine": 2,
+        "startChar": 61,
+        "endLine": 2,
+        "endChar": 63
+      },
+      "revId": "3c98cf2e4c65ffa66ef1e77a0f9172904b3beb11",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

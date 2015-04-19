@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *     QNX Software Systems - Refactored to use platform implementation
  *     Marc Khouzam (Ericsson) - Added support for Tracepoints (bug 376116)
  *     Marc Khouzam (Ericsson) - Added support for Dynamic-Printf (bug 400628)
+ *     Jonah Graham (Kichwa Coders) - Resolve effective IResource on new breakpoint (bug 464917)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,13 +30,17 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -100,14 +106,59 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
             ICBreakpoint bp = fContext.getBreakpoint();
             if (bp.getMarker() != null && fIsDirty) {
                 saveToExistingMarker(bp, bp.getMarker());
-            }
-            else if (fContext.getResource() != null){
-                saveToNewMarker(bp, fContext.getResource());
             } else {
-                throw new IOException("Unable to create breakpoint: no resource specified."); //$NON-NLS-1$
+                IResource resolved = getResource(fContext.getResource());
+                if (resolved != null) {
+                    saveToNewMarker(bp, resolved);
+                } else {
+                    throw new IOException("Unable to create breakpoint: no resource specified."); //$NON-NLS-1$
+                }
             }
         }
-        
+
+    }
+
+    /**
+     * Get the resource to apply the marker against. This may not be the same
+     * resource the dialog was created for if the user has selected a different
+     * resource.
+     * <p>
+     * If the {@link ICBreakpoint#SOURCE_HANDLE} resolves to the same file on
+     * the filesystem as the preferred resource the preferred resource is used.
+     *
+     * @param preferred
+     *            resource to use if it matches the SOURCE_HANDLE
+     * @return Resource to install marker on, or <code>null</code> for not
+     *         available.
+     */
+    private IResource getResource(IResource preferred) {
+        IResource resolved = null;
+        String source = getString(ICBreakpoint.SOURCE_HANDLE);
+        if (!"".equals(source)) { //$NON-NLS-1$
+            IPath rawLocation = preferred.getRawLocation();
+            if (rawLocation != null) {
+                File file = rawLocation.toFile();
+                File sourceFile = new File(source);
+                if (file.getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
+                    resolved = preferred;
+                }
+            }
+
+            if (resolved == null) {
+                IPath path = Path.fromOSString(source);
+                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                IFile file = root.getFileForLocation(path);
+                if (file == null) {
+                    resolved = root;
+                } else {
+                    resolved = file;
+                }
+            }
+        }
+        if (resolved == null) {
+            resolved = preferred;
+        }
+        return resolved;
     }
     
     private void saveToExistingMarker(final ICBreakpoint breakpoint, final IMarker marker) throws IOException {

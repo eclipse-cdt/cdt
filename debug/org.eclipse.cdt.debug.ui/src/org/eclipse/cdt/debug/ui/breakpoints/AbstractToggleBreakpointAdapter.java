@@ -364,6 +364,9 @@ abstract public class AbstractToggleBreakpointAdapter
                     }
                 }
             }
+        } else if (interactive && !toggle) {
+            createLineBreakpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1);
+            return;
         } else {
             errorMessage = ActionMessages.getString("RunToLineAdapter.Operation_is_not_supported_1"); //$NON-NLS-1$
         }

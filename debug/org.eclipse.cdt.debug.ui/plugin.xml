@@ -933,6 +933,15 @@
                style="push"
                helpContextId="add_function_breakpoint_action_context"
                tooltip="%AddFunctionBreakpoint.tooltip"/>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddLineBreakpointActionDelegate"
+               icon="icons/elcl16/line_brkpt_co.gif"
+               id="org.eclipse.cdt.debug.ui.addLineBreakpoint"
+               label="%AddLineBreakpoint.label"
+               menubarPath="cDebugActions"
+               style="push"
+               helpContextId="add_line_breakpoint_action_context"
+               tooltip="%AddLineBreakpoint.tooltip"/>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.VariableView"

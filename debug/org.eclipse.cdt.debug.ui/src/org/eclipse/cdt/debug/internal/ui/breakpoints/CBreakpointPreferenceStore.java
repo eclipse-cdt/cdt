@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     QNX Software Systems - Refactored to use platform implementation
  *     Marc Khouzam (Ericsson) - Added support for Tracepoints (bug 376116)
  *     Marc Khouzam (Ericsson) - Added support for Dynamic-Printf (bug 400628)
+ *     Jonah Graham - Set REQUESTED_* fields when creating from dialog (bug 46026)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
@@ -183,6 +184,22 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 
     private void saveToNewMarker(final ICBreakpoint breakpoint, final IResource resource) throws IOException {
         try {
+            // On initial creation of BP, make sure that requested values of breakpoint
+            // match the current values (i.e. make sure it starts as a not-relocated breakpoint)
+            // See CDIDebugModel.setLineBreakpointAttributes
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, fProperties.get(ICBreakpoint.SOURCE_HANDLE));
+            }
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_LINE)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_LINE, fProperties.get(IMarker.LINE_NUMBER));
+            }
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_START)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_START, fProperties.get(IMarker.CHAR_START));
+            }
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_END)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_END, fProperties.get(IMarker.CHAR_END));
+            }
+
             CDIDebugModel.createBreakpointMarker(breakpoint, resource, fProperties, true);
         }
         catch( CoreException ce ) {

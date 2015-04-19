@@ -183,6 +183,22 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 
     private void saveToNewMarker(final ICBreakpoint breakpoint, final IResource resource) throws IOException {
         try {
+            // On initial creation of BP, make sure that requested values of breakpoint
+            // match the current values (i.e. make sure it starts as a not-relocated breakpoint)
+            // See setLineBreakpointAttributes.setLineBreakpointAttributes
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, fProperties.get(ICBreakpoint.SOURCE_HANDLE));
+            }
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_LINE)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_LINE, fProperties.get(IMarker.LINE_NUMBER));
+            }
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_START)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_START, fProperties.get(IMarker.CHAR_START));
+            }
+            if (fProperties.containsKey(ICLineBreakpoint2.REQUESTED_CHAR_END)) {
+                fProperties.put(ICLineBreakpoint2.REQUESTED_CHAR_END, fProperties.get(IMarker.CHAR_END));
+            }
+
             CDIDebugModel.createBreakpointMarker(breakpoint, resource, fProperties, true);
         }
         catch( CoreException ce ) {

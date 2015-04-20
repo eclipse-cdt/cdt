@@ -67,7 +67,7 @@
 <!-- Command contributions -->
    <extension point="org.eclipse.ui.commands">
       <command
-            categoryId="org.eclipse.tm.terminal.connector.commands.category"
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
             helpContextId="org.eclipse.tm.terminal.connector.local.command_Launch"
             id="org.eclipse.tm.terminal.connector.local.command.launch"
             name="%command.launch.name">

@@ -363,7 +363,7 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 							TimerThreadState.RUNNING : TimerThreadState.HALTED );
 				}
 				catch( NumberFormatException e ) {
-					GdbPlugin.getDefault().getLog().log( new Status( IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Invlaid timeout value" ) ); //$NON-NLS-1$
+					GdbPlugin.getDefault().getLog().log( new Status( IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Invalid timeout value" ) ); //$NON-NLS-1$
 				}
 			}
 		}

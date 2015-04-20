@@ -59,14 +59,14 @@ public class TerminalConnectorExtension {
 	 * terminal connector is not yet instantiated to any real connection.
 	 *
 	 * @param id the id of the terminal connector in the
-	 *            <code>org.eclipse.tm.terminal.terminalConnectors</code>
+	 *            <code>org.eclipse.tm.terminal.control.connectors</code>
 	 *            extension point
 	 * @return a new ITerminalConnector with id or <code>null</code> if there
 	 *         is no extension with that id.
 	 * @since org.eclipse.tm.terminal 2.0
 	 */
 	public static ITerminalConnector makeTerminalConnector(String id) {
-		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnectors"); //$NON-NLS-1$
+		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
 		for (int i = 0; i < config.length; i++) {
 			if(id.equals(config[i].getAttribute("id"))) { //$NON-NLS-1$
 				return makeConnector(config[i]);
@@ -82,12 +82,12 @@ public class TerminalConnectorExtension {
 	 * time.
 	 *
 	 * @return a new list of {@link ITerminalConnector} instances defined in the
-	 *         <code>org.eclipse.tm.terminal.terminalConnectors</code>
+	 *         <code>org.eclipse.tm.terminal.control.connectors</code>
 	 *         extension point
 	 * @since org.eclipse.tm.terminal 2.0 return value is ITerminalConnector[]
 	 */
 	public static ITerminalConnector[] makeTerminalConnectors() {
-		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.terminalConnectors"); //$NON-NLS-1$
+		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
 		List result=new ArrayList();
 		for (int i = 0; i < config.length; i++) {
 			result.add(makeConnector(config[i]));

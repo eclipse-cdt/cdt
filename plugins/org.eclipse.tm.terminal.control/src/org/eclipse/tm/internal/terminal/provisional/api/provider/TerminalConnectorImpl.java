@@ -21,7 +21,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * Abstract base class for all terminal connector implementations to be
- * registered via the <code>org.eclipse.tm.terminal.terminalConnectors</code>
+ * registered via the <code>org.eclipse.tm.terminal.control.connectors</code>
  * extension point.
  *
  * @since org.eclipse.tm.terminal 2.0

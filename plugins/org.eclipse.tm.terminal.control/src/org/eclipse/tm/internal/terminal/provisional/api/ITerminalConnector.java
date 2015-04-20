@@ -23,7 +23,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * A contributed connection type to manage a single connection.
  *
  * Implementations of this class are contributed through the
- * <code>org.eclipse.tm.terminal.terminalConnectors</code> extension point. This
+ * <code>org.eclipse.tm.terminal.control.connectors</code> extension point. This
  * class gives access to the static markup of a terminal connector extension as
  * well as providing the lifecycle management for the dynamically loaded
  * {@link TerminalConnectorImpl} instance, which performs the actual

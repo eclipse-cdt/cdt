@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -601,6 +601,18 @@ final class DeltaProcessor {
 			case IResourceDelta.REMOVED :
 				if (element != null) {
 					elementRemoved(element, delta);
+				} else {
+					// Bug 349564 - The 'Binaries' node does not always disappear when project is cleaned
+					CModel cModel = CModelManager.getDefault().getCModel();
+					ICProject cProject = cModel.findCProject(resource.getProject());
+					if (cProject != null && cProject.isOnOutputEntry(resource)) {
+						IBinaryContainer bin = cProject.getBinaryContainer();
+						if (!bin.isOpen())
+							fCurrentDelta.changed(bin, ICElementDelta.F_CONTENT);
+						IArchiveContainer archive = cProject.getArchiveContainer();
+						if (!archive.isOpen())
+							fCurrentDelta.changed(archive, ICElementDelta.F_CONTENT);
+					}
 				}
 				return element instanceof ICContainer;
 

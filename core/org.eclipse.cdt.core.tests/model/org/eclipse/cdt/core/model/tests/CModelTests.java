@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -571,6 +572,82 @@ public class CModelTests extends TestCase {
         catch (Exception e) {
             throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
         }
+    }
+    
+    public void testBinaryContainerDeltaAfterCloseProjDeleteBin_349564() throws Exception {
+        ICProject testProject;
+        testProject = CProjectHelper.createCProject("bug349564", "none", IPDOMManager.ID_NO_INDEXER);
+        if (testProject == null) {
+            fail("Unable to create project");
+        }
+        CProjectHelper.addDefaultBinaryParser(testProject.getProject());
+        
+        final IBinaryContainer bin = testProject.getBinaryContainer();
+        assertEquals(0, bin.getBinaries().length);
+        // import with folder structure
+        importSourcesFromPlugin(testProject, CTestPlugin.getDefault().getBundle(), "resources/exe/x86/o");
+        assertEquals(1, bin.getBinaries().length);
+        IResource resource = bin.getBinaries()[0].getResource();
+
+        final boolean binContainerChanged[] = { false };
+        
+        IElementChangedListener elementChangedListener = new IElementChangedListener() {
+            @Override
+			public void elementChanged(ElementChangedEvent event) {
+                ICElementDelta delta = event.getDelta();
+                processDelta(delta);
+            }
+            private boolean processDelta(ICElementDelta delta) {
+                if (delta.getElement() instanceof IBinaryContainer) {
+                    synchronized (binContainerChanged) {
+                        binContainerChanged[0] = true;
+                        binContainerChanged.notify();
+                    }
+                    return true;
+                }
+                ICElementDelta[] childDeltas = delta.getChangedChildren();
+                for (ICElementDelta childDelta : childDeltas) {
+                    if (processDelta(childDelta)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+
+        Thread waiter = new Thread() {
+            @Override
+            public void run() {
+                synchronized (binContainerChanged) {
+                    try {
+                        binContainerChanged.wait(1000);
+                    } catch (InterruptedException exc) {
+                    }
+                }
+            }
+        };
+        
+        CoreModel.getDefault().addElementChangedListener(elementChangedListener);
+        
+        testProject.close(); // comment this line to make test pass
+        testProject.open(monitor);
+        
+        
+        waiter.start();
+        Thread.sleep(50);
+        
+	    workspace.delete(new IResource[] { resource }, false, monitor);
+
+        // wait for delta notification
+        waiter.join(1000);
+
+        assertEquals(0, testProject.getBinaryContainer().getBinaries().length);
+        assertTrue(binContainerChanged[0]);
+
+        try {
+            testProject.getProject().delete(true, true, monitor);
+        } 
+        catch (CoreException e) {}
     }
 
 }

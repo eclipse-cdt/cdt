@@ -488,6 +488,7 @@ public class RemoteConnectionWidget extends Composite {
 				fConnectionCombo.select(0);
 				fConnectionCombo.setEnabled(false);
 				fNewConnectionButton.setEnabled(false);
+				handleConnectionSelected();
 			} else {
 				fConnectionCombo.setEnabled(true);
 

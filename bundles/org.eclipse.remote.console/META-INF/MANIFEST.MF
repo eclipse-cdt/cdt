@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Console
+Bundle-SymbolicName: org.eclipse.remote.console;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.remote.internal.console.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.remote.core;bundle-version="2.0.0",
+ org.eclipse.remote.ui;bundle-version="2.0.0",
+ org.eclipse.ui.console;bundle-version="3.6.0",
+ org.eclipse.tm.terminal.control;bundle-version="4.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

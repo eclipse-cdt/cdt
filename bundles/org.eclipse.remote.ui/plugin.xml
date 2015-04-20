@@ -121,11 +121,6 @@
             id="org.eclipse.remote.ui.command.deleteConnection"
             name="%DeleteConnectionCommand.name">
       </command>
-      <command
-            defaultHandler="org.eclipse.remote.internal.ui.views.OpenTerminalHandler"
-            id="org.eclipse.remote.ui.command.openTerminal"
-            name="%OpenTerminalCommand.name">
-      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -163,23 +158,6 @@
                   <iterate>
                      <test
                            property="org.eclipse.remote.ui.canDelete">
-                     </test>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.remote.ui.command.openTerminal"
-               label="%OpenTerminalCommand.name"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="selection">
-                  <iterate>
-                     <test
-                           args="org.eclipse.remote.core.IRemoteCommandShellService"
-                           property="org.eclipse.remote.ui.hasConnectionService">
                      </test>
                   </iterate>
                </with>

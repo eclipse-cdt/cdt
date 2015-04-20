@@ -60,12 +60,14 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		}
 
 		// load up existing connections
-		try {
-			for (String connectionName : getPreferenceNode().childrenNames()) {
-				connections.put(connectionName, new RemoteConnection(this, connectionName));
+		synchronized (connections) {
+			try {
+				for (String connectionName : getPreferenceNode().childrenNames()) {
+					connections.put(connectionName, new RemoteConnection(this, connectionName));
+				}
+			} catch (BackingStoreException e) {
+				RemoteCorePlugin.log(e);
 			}
-		} catch (BackingStoreException e) {
-			RemoteCorePlugin.log(e);
 		}
 	}
 
@@ -284,23 +286,27 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public IRemoteConnection getConnection(String name) {
-		return connections.get(name);
+		synchronized (connections) {
+			return connections.get(name);
+		}
 	}
 
 	@Override
 	public IRemoteConnection getConnection(URI uri) {
-		IRemoteConnection connection = connections.get(uri.getAuthority());
-		if (connection != null) {
-			return connection;
+		synchronized (connections) { 
+			IRemoteConnection connection = connections.get(uri.getAuthority());
+			if (connection != null) {
+				return connection;
+			}
+	
+			// If it's a file: scheme we must be the local connection type, just return our
+			// hopefully one connection, the Local connection.
+			if (uri.getScheme().equals("file") && !connections.isEmpty()) { //$NON-NLS-1$
+				return connections.values().iterator().next();
+			}
+	
+			return null;
 		}
-
-		// If it's a file: scheme we must be the local connection type, just return our
-		// hopefully one connection, the Local connection.
-		if (uri.getScheme().equals("file") && !connections.isEmpty()) { //$NON-NLS-1$
-			return connections.values().iterator().next();
-		}
-
-		return null;
 	}
 
 	/*
@@ -310,7 +316,9 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public List<IRemoteConnection> getConnections() {
-		return new ArrayList<IRemoteConnection>(connections.values());
+		synchronized (connections) {
+			return new ArrayList<IRemoteConnection>(connections.values());
+		}
 	}
 
 	/*
@@ -320,18 +328,24 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public IRemoteConnectionWorkingCopy newConnection(String name) throws RemoteConnectionException {
-		if (connections.containsKey(name)) {
-			throw new ConnectionExistsException(name);
+		synchronized (connections) {
+			if (connections.containsKey(name)) {
+				throw new ConnectionExistsException(name);
+			}
+			return new RemoteConnectionWorkingCopy(this, name);
 		}
-		return new RemoteConnectionWorkingCopy(this, name);
 	}
 
 	void addConnection(RemoteConnection remoteConnection) {
-		connections.put(remoteConnection.getName(), remoteConnection);
+		synchronized (connections) {
+			connections.put(remoteConnection.getName(), remoteConnection);
+		}
 	}
 
 	void removeConnection(String name) {
-		connections.remove(name);
+		synchronized (connections) {
+			connections.remove(name);
+		}
 	}
 
 	/*
@@ -341,19 +355,21 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public void removeConnection(IRemoteConnection connection) throws RemoteConnectionException {
-		if (connection instanceof RemoteConnection) {
-			connection.close();
-			RemoteConnection conn = (RemoteConnection) connection;
-			try {
-				conn.getPreferences().removeNode();
-			} catch (BackingStoreException e) {
-				throw new RemoteConnectionException(e);
+		synchronized (connections) {
+			if (connection instanceof RemoteConnection) {
+				connection.close();
+				RemoteConnection conn = (RemoteConnection) connection;
+				try {
+					conn.getPreferences().removeNode();
+				} catch (BackingStoreException e) {
+					throw new RemoteConnectionException(e);
+				}
+				conn.getSecurePreferences().removeNode();
+				connections.remove(conn.getName());
+				connection.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_REMOVED);
+			} else {
+				RemoteCorePlugin.log("Wrong class for " + connection.getName() + ", was " + connection.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			conn.getSecurePreferences().removeNode();
-			connections.remove(conn.getName());
-			connection.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_REMOVED);
-		} else {
-			RemoteCorePlugin.log("Wrong class for " + connection.getName() + ", was " + connection.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

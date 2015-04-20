@@ -33,6 +33,11 @@
             factory="org.eclipse.remote.internal.core.services.local.LocalProcessService$Factory"
             service="org.eclipse.remote.core.IRemoteProcessService">
       </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalCommandShellService$Factory"
+            service="org.eclipse.remote.core.IRemoteCommandShellService">
+      </connectionService>
       <processService
             connectionTypeId="org.eclipse.remote.LocalServices"
             factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"
@@ -42,6 +47,11 @@
             connectionTypeId="org.eclipse.remote.LocalServices"
             factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"
             service="org.eclipse.remote.internal.core.services.local.LocalProcess">
+      </processService>
+      <processService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"
+            service="org.eclipse.remote.core.IRemoteProcessTerminalService">
       </processService>
    </extension>
    <extension

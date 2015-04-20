@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.cdt.utils.pty.PTY.Mode;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
@@ -32,6 +35,7 @@ import org.eclipse.remote.core.AbstractRemoteProcessBuilder;
 import org.eclipse.remote.core.IProcessFactory;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.internal.core.RemoteCorePlugin;
 import org.eclipse.remote.internal.core.RemoteProcess;
 
@@ -43,6 +47,7 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 
 	private Process localProcess;
+	private PTY pty;
 
 	public LocalProcessBuilder(IRemoteConnection connection, List<String> command) {
 		super(connection, command);
@@ -103,26 +108,41 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	@Override
 	public IRemoteProcess start(int flags) throws IOException {
 		String commandArray[] = command().toArray(new String[0]);
+
+		if ((flags & IRemoteProcessBuilder.ALLOCATE_PTY) != 0) {
+			environment().put("TERM", "vt100"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		String environmentArray[] = new String[environment().size()];
 		int index = 0;
 		for (Entry<String, String> entry : environment().entrySet()) {
 			environmentArray[index++] = entry.getKey() + "=" + entry.getValue(); //$NON-NLS-1$
 		}
-		if (directory() != null) {
-			try {
-				localProcess = fProcessFactory.exec(commandArray, environmentArray,
-						directory().toLocalFile(EFS.NONE, new NullProgressMonitor()));
-			} catch (CoreException e) {
-				throw new IOException(e.getMessage());
+
+		try {
+			if ((flags & IRemoteProcessBuilder.ALLOCATE_PTY) != 0) {
+				pty = new PTY(Mode.TERMINAL);
+				File dir = directory() != null ? directory().toLocalFile(EFS.NONE, new NullProgressMonitor()) : null;
+				localProcess = ProcessFactory.getFactory().exec(commandArray, environmentArray, dir, pty);
+			} else {
+				if (directory() != null) {
+					localProcess = fProcessFactory.exec(commandArray, environmentArray,
+							directory().toLocalFile(EFS.NONE, new NullProgressMonitor()));
+				} else {
+					localProcess = fProcessFactory.exec(commandArray, environmentArray);
+				}
 			}
-		} else {
-			localProcess = fProcessFactory.exec(commandArray, environmentArray);
+		} catch (CoreException e) {
+			throw new IOException(e.getMessage());
 		}
 		return new RemoteProcess(getRemoteConnection(), this);
 	}
 
 	public Process getProcess() {
 		return localProcess;
+	}
+
+	public PTY getPty() {
+		return pty;
 	}
 
 	private IProcessFactory getProcessFactory() {

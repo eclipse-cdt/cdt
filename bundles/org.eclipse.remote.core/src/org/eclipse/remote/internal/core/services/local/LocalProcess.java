@@ -16,14 +16,18 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessControlService;
+import org.eclipse.remote.core.IRemoteProcessTerminalService;
 
-public class LocalProcess implements IRemoteProcessControlService {
+public class LocalProcess implements IRemoteProcessControlService, IRemoteProcessTerminalService {
 	private static int refCount = 0;
 
 	private final IRemoteProcess remoteProcess;
 	private final Process localProcess;
+	private final PTY pty;
+	private int width, height;
 	private InputStream procStdout;
 	private InputStream procStderr;
 	private Thread stdoutReader;
@@ -50,6 +54,9 @@ public class LocalProcess implements IRemoteProcessControlService {
 				return (T) new LocalProcess(remoteProcess);
 			}
 			if (IRemoteProcessControlService.class.equals(service)) {
+				return (T) remoteProcess.getService(LocalProcess.class);
+			}
+			if (IRemoteProcessTerminalService.class.equals(service)) {
 				return (T) remoteProcess.getService(LocalProcess.class);
 			}
 			return null;
@@ -113,7 +120,9 @@ public class LocalProcess implements IRemoteProcessControlService {
 
 	public LocalProcess(IRemoteProcess process) {
 		remoteProcess = process;
-		localProcess = ((LocalProcessBuilder) process.getProcessBuilder()).getProcess();
+		LocalProcessBuilder builder = (LocalProcessBuilder) process.getProcessBuilder();
+		localProcess = builder.getProcess();
+		pty = builder.getPty();
 
 		try {
 			if (process.getProcessBuilder().redirectErrorStream()) {
@@ -225,5 +234,14 @@ public class LocalProcess implements IRemoteProcessControlService {
 	@Override
 	public IRemoteProcess getRemoteProcess() {
 		return remoteProcess;
+	}
+
+	@Override
+	public void setTerminalSize(int cols, int rows, int pwidth, int pheight) {
+		if (pty != null && (width != cols || height != rows)) {
+			width = cols;
+			height = rows;
+			pty.setTerminalSize(width, height);
+		}
 	}
 }

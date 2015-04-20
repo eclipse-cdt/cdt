@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="org.eclipse.remote.internal.console.TerminalConsoleFactory"
+            icon="icons/cview16/terminal_view.gif"
+            label="%terminal.console.name">
+      </consoleFactory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.remote.internal.console.actions.OpenCommandShellHandler"
+            id="org.eclipse.remote.ui.command.openTerminal"
+            name="%OpenTerminalCommand.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.remote.ui.view.connections">
+         <command
+               commandId="org.eclipse.remote.ui.command.openTerminal"
+               label="%OpenTerminalCommand.name"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <test
+                           args="org.eclipse.remote.core.IRemoteCommandShellService"
+                           property="org.eclipse.remote.ui.hasConnectionService">
+                     </test>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

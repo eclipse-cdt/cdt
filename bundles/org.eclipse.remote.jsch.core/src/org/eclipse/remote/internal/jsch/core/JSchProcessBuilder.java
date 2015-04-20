@@ -46,6 +46,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	private Channel fChannel;
 	private Map<String, String> fNewRemoteEnv;
 	private boolean fPreamble = true;
+	private boolean fShell = false;
 
 	public JSchProcessBuilder(IRemoteConnection connection, List<String> command) {
 		super(connection, command);
@@ -67,7 +68,8 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	}
 
 	public JSchProcessBuilder(IRemoteConnection connection) {
-		this(connection, "shell"); //$NON-NLS-1$
+		this(connection, new ArrayList<String>());
+		fShell = true;
 	}
 
 	@Override
@@ -102,7 +104,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 
 		List<String> cmdArgs = command();
-		if (cmdArgs.size() < 1) {
+		if (cmdArgs.size() < 1 && !fShell) {
 			throw new IndexOutOfBoundsException();
 		}
 
@@ -161,10 +163,11 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 
 		try {
-			if (cmdArgs.size() == 1 && cmdArgs.get(0).equals("shell")) { //$NON-NLS-1$
+			if (fShell) {
 				fChannel = fConnection.getShellChannel();
 				((ChannelShell) fChannel).setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
-				RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: shell"); //$NON-NLS-1$
+				((ChannelShell) fChannel).setPtyType("vt100"); //$NON-NLS-1$
+				RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing shell"); //$NON-NLS-1$
 			} else {
 				fChannel = fConnection.getExecChannel();
 				String command = buildCommand(remoteCmd, env, clearEnv);

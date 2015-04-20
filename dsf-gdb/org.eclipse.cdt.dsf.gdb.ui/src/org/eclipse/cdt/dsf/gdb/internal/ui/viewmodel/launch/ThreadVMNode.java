@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
@@ -236,24 +237,34 @@ public class ThreadVMNode extends AbstractThreadVMNode
 
 	@Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        IProcesses procService = getServicesTracker().getService(IProcesses.class);
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
         final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
-        if (procService == null || contDmc == null) {
+        if (runControl == null || contDmc == null) {
         	handleFailedUpdate(update);
         	return;
         }
         
-		procService.getProcessesBeingDebugged(
+        runControl.getExecutionContexts(
 				contDmc,
-				new ViewerDataRequestMonitor<IDMContext[]>(getSession().getExecutor(), update){
+				new ViewerDataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), update){
 					@Override
 					public void handleCompleted() {
-						if (!isSuccess() || !(getData() instanceof IExecutionDMContext[])) {
+						if (!isSuccess()) {
 							handleFailedUpdate(update);
 							return;
 						}
 						
-						IExecutionDMContext[] execDmcs = (IExecutionDMContext[])getData();
+						IExecutionDMContext[] execDmcs = getData();
+						
+						// Extract the threads by removing any container
+						Vector<IExecutionDMContext> threadDmcs = new Vector<>();
+						for (IExecutionDMContext exec : execDmcs) {
+							if (!(exec instanceof IContainerDMContext)) {
+								threadDmcs.add(exec);
+							}
+						}
+						execDmcs = threadDmcs.toArray(new IExecutionDMContext[threadDmcs.size()]);
+
 						if (fHideRunningThreadsProperty) {
 							// Remove running threads from the list
 					    	IRunControl runControl = getServicesTracker().getService(IRunControl.class);

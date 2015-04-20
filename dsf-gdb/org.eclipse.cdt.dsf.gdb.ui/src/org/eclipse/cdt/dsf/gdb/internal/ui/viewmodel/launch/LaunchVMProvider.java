@@ -71,7 +71,7 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode});
         
         IVMNode threadsNode = new ThreadVMNode(this, getSession());
-        addChildNodes(containerNode, new IVMNode[] { threadsNode });
+        addChildNodes(containerNode, new IVMNode[] { containerNode, threadsNode });
         
         IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
         addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Ericsson and others.
+ * Copyright (c) 2006, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,12 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
 
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -31,13 +33,17 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.FullStackRefreshEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator.IContainerLayoutChangedEvent;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.MIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
@@ -45,6 +51,7 @@ import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -58,6 +65,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
@@ -237,23 +245,37 @@ public class ContainerVMNode extends AbstractContainerVMNode
     
 	@Override
 	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-		IProcesses processService = getServicesTracker().getService(IProcesses.class);
-		ICommandControlService controlService = getServicesTracker().getService(ICommandControlService.class);
-		if (processService == null || controlService == null) {
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		if (runControl == null) {
 			handleFailedUpdate(update);
 			return;
 		}
 
-		processService.getProcessesBeingDebugged(
-				controlService.getContext(),
-				new ViewerDataRequestMonitor<IDMContext[]>(getExecutor(), update) {
+		// If there is already a container in the path, we ask for its children,
+		// if not, we'll get a null and then the service will give us the top containers.
+		IContainerDMContext container = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
+		runControl.getExecutionContexts(
+				container,
+				new ViewerDataRequestMonitor<IExecutionDMContext[]>(getExecutor(), update) {
 					@Override
 					public void handleCompleted() {
 						if (!isSuccess()) {
 							handleFailedUpdate(update);
 							return;
 						}
-						if (getData() != null) fillUpdateWithVMCs(update, getData());
+						IExecutionDMContext[] execDmcs = getData();
+						if (execDmcs != null) {
+							// Extract the containers
+							Vector<IContainerDMContext> containerDmcs = new Vector<>();
+							for (IExecutionDMContext exec : execDmcs) {
+								if (exec instanceof IContainerDMContext) {
+									containerDmcs.add((IContainerDMContext)exec);
+								}
+							}
+							fillUpdateWithVMCs(
+									update,
+									containerDmcs.toArray(new IContainerDMContext[containerDmcs.size()]));
+						}
 						update.done();
 					}
 				});
@@ -267,48 +289,59 @@ public class ContainerVMNode extends AbstractContainerVMNode
             final IPropertiesUpdate update = updates[i];
             
             final ViewerCountingRequestMonitor countringRm = 
-                new ViewerCountingRequestMonitor(ImmediateExecutor.getInstance(), updates[i]);
+                new ViewerCountingRequestMonitor(ImmediateExecutor.getInstance(), update);
             int count = 0;
             
             // Create a delegating update which will let the super-class fill in the 
             // standard container properties.
-            parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
+            parentUpdates[i] = new VMDelegatingPropertiesUpdate(update, countringRm);
             count++;
 
             // set pin properties
             IDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IDMContext.class);
             IPinElementColorDescriptor colorDesc = PinCloneUtils.getPinElementColorDescriptor(GdbPinProvider.getPinnedHandles(), dmc);
-            updates[i].setProperty(IGdbLaunchVMConstants.PROP_PIN_COLOR, 
+            update.setProperty(IGdbLaunchVMConstants.PROP_PIN_COLOR, 
             		colorDesc != null ? colorDesc.getOverlayColor() : null);
-        	updates[i].setProperty(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+        	update.setProperty(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
         			PinCloneUtils.isPinnedTo(GdbPinProvider.getPinnedHandles(), dmc));
             
             if (update.getProperties().contains(PROP_NAME) || 
                 update.getProperties().contains(ILaunchVMConstants.PROP_ID) ||
                 update.getProperties().contains(IGdbLaunchVMConstants.PROP_CORES_ID)) 
             {
-            	
-            IProcesses processService = getServicesTracker().getService(IProcesses.class);
-            final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
             
-            if (processService == null || procDmc == null) {
-                update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
-            } else {
-                processService.getExecutionData(
-                    procDmc,
-                    new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
-                        @Override
-                        public void handleCompleted() {
-                            if (isSuccess()) {
-                                fillThreadDataProperties(update, getData());
-                            } else {
-                                update.setStatus(getStatus());
-                            }
-                            countringRm.done();
-                        }
-                    });
-                count++;
-            }
+            	// user groups support	
+            	// now there are two types of execution container contexts - UserGroupDMC and the original ones.
+            	final MIExecutionContextTranslator.UserGroupDMC group = findDmcInPath(
+            			update.getViewerInput(), update.getElementPath(), MIExecutionContextTranslator.UserGroupDMC.class);
+
+            	if( group != null) {
+            		update.setProperty(PROP_NAME, group.getId());
+            		countringRm.setDoneCount(count);
+            		continue;
+            	}
+            	
+            	IProcesses processService = getServicesTracker().getService(IProcesses.class);
+            	final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
+
+            	if (processService == null || procDmc == null) {
+            		update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
+            	} else {
+            		processService.getExecutionData(
+            				procDmc,
+            				new ViewerDataRequestMonitor<IThreadDMData>(getExecutor(), update) {
+            					@Override
+            					public void handleCompleted() {
+            						if (isSuccess()) {
+            							fillThreadDataProperties(update, getData());
+            						} else {
+            							update.setStatus(getStatus());
+            						}
+            						countringRm.done();
+            					}
+            				});
+            		count++;
+            	}
             }
             
             if (update.getProperties().contains(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY)) {
@@ -397,14 +430,38 @@ public class ContainerVMNode extends AbstractContainerVMNode
     
 	@Override
 	public int getDeltaFlags(Object e) {
+		if (e instanceof IContainerLayoutChangedEvent) {
+			return IModelDelta.CONTENT;
+		}
+		
+		if (e instanceof ISuspendedDMEvent) {
+			return IModelDelta.STATE;
+		}
+
 		if (e instanceof ICommandControlShutdownDMEvent) {
-	        return IModelDelta.CONTENT;
-	    }
-	    return super.getDeltaFlags(e);
+			return IModelDelta.CONTENT;
+		}
+		
+		return super.getDeltaFlags(e);
 	}
 
 	@Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+		if (buildDeltaForRecursiveVMNode(e, parentDelta, nodeOffset, requestMonitor))
+			return;
+
+		if (e instanceof IStartedDMEvent) {
+			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+			requestMonitor.done();
+			return;
+		}
+
+		if (e instanceof IContainerLayoutChangedEvent) {
+			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+			requestMonitor.done();
+			return;
+		}
+		
 		if (e instanceof ICommandControlShutdownDMEvent) {
 	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
 	    } else {
@@ -526,5 +583,27 @@ public class ContainerVMNode extends AbstractContainerVMNode
     		}
     		request.done();
     	}
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode#getContextsForEvent(org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, java.lang.Object, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+     */
+    @Override
+    public void getContextsForEvent(VMDelta parentDelta, Object event, final DataRequestMonitor<IVMContext[]> rm) {
+    	if (event instanceof FullStackRefreshEvent &&
+    			((FullStackRefreshEvent)event).getDMContext() instanceof IContainerDMContext)
+    	{
+    		// The step sequence end event occurred on a container and not on a thread.  Do not
+    		// return a context for this event, which will force the view model to generate
+    		// a delta for all the threads.
+    		rm.done(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+    		return;
+    	}
+
+    	if( getContextsForRecursiveVMNode( parentDelta, event, rm))
+    		return;
+
+    	super.getContextsForEvent(parentDelta, event, rm);
     }
 }

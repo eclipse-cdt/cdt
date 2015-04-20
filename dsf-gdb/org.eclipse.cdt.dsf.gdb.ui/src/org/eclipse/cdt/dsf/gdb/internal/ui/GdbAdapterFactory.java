@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.WeakHashMap;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
+import org.eclipse.cdt.debug.core.model.IGroupDebugContextsHandler;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -32,9 +33,12 @@ import org.eclipse.cdt.debug.core.model.IStepIntoSelectionHandler;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.IStopTracingHandler;
 import org.eclipse.cdt.debug.core.model.IUncallHandler;
+import org.eclipse.cdt.debug.core.model.IUngroupDebugContextsHandler;
 import org.eclipse.cdt.debug.ui.IPinProvider;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
+import org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.actions.DsfGroupDebugContextsCommand;
+import org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.actions.DsfUngroupDebugContextsCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionCommand;
@@ -137,6 +141,8 @@ public class GdbAdapterFactory
         final GdbSelectPrevTraceRecordCommand fSelectPrevRecordTarget;
         final GdbDebugTextHover fDebugTextHover;
         final GdbPinProvider fPinProvider;
+        final DsfGroupDebugContextsCommand fGroupCommand;
+        final DsfUngroupDebugContextsCommand fUngroupCommand;
         
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
@@ -183,6 +189,8 @@ public class GdbAdapterFactory
             fSelectNextRecordTarget = new GdbSelectNextTraceRecordCommand(session);
             fSelectPrevRecordTarget = new GdbSelectPrevTraceRecordCommand(session);
             fPinProvider = new GdbPinProvider(session);
+            fGroupCommand = new DsfGroupDebugContextsCommand(session);
+            fUngroupCommand = new DsfUngroupDebugContextsCommand(session);
 
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
@@ -210,6 +218,8 @@ public class GdbAdapterFactory
             session.registerModelAdapter(ISelectNextTraceRecordHandler.class, fSelectNextRecordTarget);
             session.registerModelAdapter(ISelectPrevTraceRecordHandler.class, fSelectPrevRecordTarget);
             session.registerModelAdapter(IPinProvider.class, fPinProvider);
+            session.registerModelAdapter(IGroupDebugContextsHandler.class, fGroupCommand);
+            session.registerModelAdapter(IUngroupDebugContextsHandler.class, fUngroupCommand);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
@@ -272,6 +282,8 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(ISelectNextTraceRecordHandler.class);
             session.unregisterModelAdapter(ISelectPrevTraceRecordHandler.class);
             session.unregisterModelAdapter(IPinProvider.class);
+            session.unregisterModelAdapter(IGroupDebugContextsHandler.class);
+            session.unregisterModelAdapter(IUngroupDebugContextsHandler.class);
             
             session.unregisterModelAdapter(IDebugModelProvider.class);
             session.unregisterModelAdapter(ILaunch.class);
@@ -303,6 +315,8 @@ public class GdbAdapterFactory
             fSelectNextRecordTarget.dispose();
             fSelectPrevRecordTarget.dispose();
             fPinProvider.dispose();
+            fGroupCommand.dispose();
+            fUngroupCommand.dispose();
         }
     }
 

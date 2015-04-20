@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,9 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -315,7 +317,10 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		@Override
 		public void refresh() {
-			if (container.hasChildren()) {
+			if (container instanceof IBinaryContainer || container instanceof IArchiveContainer) {
+				// Always refresh the project to properly show/hide container
+				fViewer.refresh(project);
+			} else if (container.hasChildren()) {
 				if (fViewer.testFindItem(container) != null) {
 					fViewer.refresh(container);
 				} else {

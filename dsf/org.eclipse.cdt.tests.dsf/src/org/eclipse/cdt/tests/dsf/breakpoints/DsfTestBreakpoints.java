@@ -262,7 +262,7 @@ public class DsfTestBreakpoints extends AbstractDsfService implements IBreakpoin
         }
 
         Integer subId = (Integer)attributes.get(ATTR_SUB_ID);
-        if (id == null) {
+        if (subId == null) {
             DsfTestPlugin.failRequest(rm, REQUEST_FAILED, "No Sub ID specified");
             return;
         }

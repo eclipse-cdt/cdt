@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/org.eclipse.rse_0.0.0.jar" id="org.eclipse.rse" version="0.0.0">
-      <category name="rse_37_main"/>
+      <category name="rse_38_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.sdk_0.0.0.jar" id="org.eclipse.rse.sdk" version="0.0.0">
-      <category name="rse_37_main"/>
+      <category name="rse_38_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.terminals_0.0.0.jar" id="org.eclipse.rse.terminals" version="0.0.0">
-      <category name="rse_37_main"/>
+      <category name="rse_38_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.terminals.source_0.0.0.jar" id="org.eclipse.rse.terminals.source" version="0.0.0">
-      <category name="rse_37_main"/>
+      <category name="rse_38_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_0.0.0.jar" id="org.eclipse.rse.useractions" version="0.0.0">
-      <category name="rse_37_main"/>
+      <category name="rse_38_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_0.0.0.jar" id="org.eclipse.rse.examples" version="0.0.0">
-      <category name="rse_37_optional"/>
+      <category name="rse_38_optional"/>
    </feature>
    <feature url="features/org.eclipse.rse.scp_0.0.0.jar" id="org.eclipse.rse.scp" version="0.0.0">
-      <category name="rse_37_optional"/>
+      <category name="rse_38_optional"/>
    </feature>
    
-   <category-def name="rse_37_main" label="RSE 3.7 Main Features">
+   <category-def name="rse_38_main" label="RSE 3.8 Main Features">
       <description>
          RSE Main Features
       </description>
    </category-def>
-   <category-def name="rse_37_optional" label="RSE 3.7 Optional Add-Ons">
+   <category-def name="rse_38_optional" label="RSE 3.8 Optional Add-Ons">
       <description>
          RSE Examples, Tests and Incubation Plug-ins.
       </description>

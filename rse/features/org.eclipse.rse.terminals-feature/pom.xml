@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.rse.terminals</artifactId>
-  <version>3.7.0.qualifier</version>
+  <version>3.8.0.qualifier</version>
   <packaging>eclipse-feature</packaging>
   
   <build>

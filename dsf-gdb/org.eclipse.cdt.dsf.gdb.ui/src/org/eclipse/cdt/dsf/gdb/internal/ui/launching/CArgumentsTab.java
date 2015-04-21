@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,13 +200,13 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	}
 
 	/**
-	 * Retuns the string in the text widget, or <code>null</code> if empty.
+	 * Returns the string in the text widget, or <code>null</code> if empty.
 	 * 
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {
 		String content = text.getText().trim();
-		// bug #131513 - eliminate Windows \r line delimiter
+		// Bug #131513 - eliminate Windows \r line delimiter
 		content = content.replaceAll("\r\n", "\n");  //$NON-NLS-1$//$NON-NLS-2$
 		if (!content.isEmpty()) {
 			return content;

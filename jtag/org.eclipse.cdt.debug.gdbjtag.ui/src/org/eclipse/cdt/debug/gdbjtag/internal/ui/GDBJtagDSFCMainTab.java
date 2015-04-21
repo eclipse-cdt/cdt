@@ -15,6 +15,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab;
 /**
  * @since 7.0
  */
+@SuppressWarnings("deprecation")
 public class GDBJtagDSFCMainTab extends CMainTab {
 
 	public GDBJtagDSFCMainTab() {

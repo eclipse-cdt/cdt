@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.rse.terminals.ui</artifactId>
-  <version>1.2.200-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

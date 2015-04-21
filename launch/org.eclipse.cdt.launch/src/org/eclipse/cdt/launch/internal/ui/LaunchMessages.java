@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Marc Khouzam (Ericsson) - New strings for CMainTab2
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
 
@@ -195,7 +196,15 @@ public class LaunchMessages extends NLS {
 	public static String BuildErrPrompter_error_in_active_config;
 	public static String BuildErrPrompter_error_in_referenced_project_specific;
 	public static String BuildErrPrompter_error_in_referenced_project_active;
-
+	public static String CMainTab2_File_does_not_exist;
+	public static String CMainTab2_CoreFile_type;
+	public static String CMainTab2_TraceFile_type; 
+	public static String CMainTab2_CoreFile_path;
+	public static String CMainTab2_TraceFile_path; 
+	public static String CMainTab2_Application_Selection;
+	public static String CMainTab2_Core_Selection;
+	public static String CMainTab2_Trace_Selection;
+	public static String CMainTab2_Post_mortem_file_type;
 	private LaunchMessages() {
 	}
 

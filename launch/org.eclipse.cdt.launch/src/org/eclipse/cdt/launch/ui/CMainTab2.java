@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012  QNX Software Systems and others.
+ * Copyright (c) 2008, 2015  QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,9 @@
  *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
  *                               dialog should start (Bug 362039)
  *     Anton Gorenkov
+ *     Marc Khouzam (Ericsson) - Move from dsf.gdb to cdt.launch
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
+package org.eclipse.cdt.launch.ui;
 
 import java.io.File;
 
@@ -24,10 +25,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
-import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
-import org.eclipse.cdt.launch.ui.CAbstractMainTab;
+import org.eclipse.cdt.launch.internal.ui.LaunchImages;
+import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -66,9 +66,10 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
+ * @since 7.3
  */
 
-public class CMainTab extends CAbstractMainTab {
+public class CMainTab2 extends CAbstractMainTab {
 
     /**
      * Tab identifier used for ordering of tabs added using the 
@@ -77,10 +78,10 @@ public class CMainTab extends CAbstractMainTab {
      *   
      * @since 2.0
      */
-    public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.mainTab"; //$NON-NLS-1$
+    public static final String TAB_ID = "org.eclipse.cdt.launch.mainTab2"; //$NON-NLS-1$
     
-    private static final String CORE_FILE = LaunchMessages.getString("CMainTab.CoreFile_type"); //$NON-NLS-1$
-    private static final String TRACE_FILE = LaunchMessages.getString("CMainTab.TraceFile_type"); //$NON-NLS-1$
+    private static final String CORE_FILE = LaunchMessages.CMainTab2_CoreFile_type;
+    private static final String TRACE_FILE = LaunchMessages.CMainTab2_TraceFile_type;
     
     /**
      * Combo box to select which type of post mortem file should be used.
@@ -98,11 +99,11 @@ public class CMainTab extends CAbstractMainTab {
 	public static final int SPECIFY_CORE_FILE = 4;
 	public static final int INCLUDE_BUILD_SETTINGS = 8;
 	
-	public CMainTab() {
+	public CMainTab2() {
 		this(INCLUDE_BUILD_SETTINGS);
 	}
 
-	public CMainTab(int flags) {
+	public CMainTab2(int flags) {
 		fDontCheckProgram = (flags & DONT_CHECK_PROGRAM) != 0;
 		fSpecifyCoreFile = (flags & SPECIFY_CORE_FILE) != 0;
 		fIncludeBuildSettings = (flags & INCLUDE_BUILD_SETTINGS) != 0;
@@ -118,7 +119,7 @@ public class CMainTab extends CAbstractMainTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 
-		GdbUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
+		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
@@ -135,7 +136,7 @@ public class CMainTab extends CAbstractMainTab {
 			createCoreFileGroup(comp, 1);
 		}
 		
-		GdbUIPlugin.setDialogShell(parent.getShell());
+		LaunchUIPlugin.setDialogShell(parent.getShell());
 	}
 
 	protected void createExeFileGroup(Composite parent, int colSpan) {
@@ -148,7 +149,7 @@ public class CMainTab extends CAbstractMainTab {
 		gd.horizontalSpan = colSpan;
 		mainComp.setLayoutData(gd);
 		fProgLabel = new Label(mainComp, SWT.NONE);
-		fProgLabel.setText(LaunchMessages.getString("CMainTab.C/C++_Application")); //$NON-NLS-1$
+		fProgLabel.setText(LaunchMessages.CMainTab_C_Application);
 		gd = new GridData();
 		fProgLabel.setLayoutData(gd);
 		fProgText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
@@ -170,8 +171,8 @@ public class CMainTab extends CAbstractMainTab {
 		buttonComp.setLayoutData(gd);
 		buttonComp.setFont(parent.getFont());
 
-		createVariablesButton(buttonComp, LaunchMessages.getString("CMainTab.Variables"), fProgText); //$NON-NLS-1$
-		fSearchButton = createPushButton(buttonComp, LaunchMessages.getString("CMainTab.Search..."), null); //$NON-NLS-1$
+		createVariablesButton(buttonComp, LaunchMessages.CMainTab_Variables, fProgText);
+		fSearchButton = createPushButton(buttonComp, LaunchMessages.CMainTab_Search, null);
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -181,11 +182,11 @@ public class CMainTab extends CAbstractMainTab {
 		});
 
 		Button browseForBinaryButton;
-		browseForBinaryButton = createPushButton(buttonComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
+		browseForBinaryButton = createPushButton(buttonComp, LaunchMessages.Launch_common_Browse_2, null);
 		browseForBinaryButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
-				String text = handleBrowseButtonSelected(LaunchMessages.getString("CMaintab.Application_Selection")); //$NON-NLS-1$
+				String text = handleBrowseButtonSelected(LaunchMessages.CMainTab2_Application_Selection);
 				if (text != null) {
 					fProgText.setText(text);
 				}
@@ -211,7 +212,7 @@ public class CMainTab extends CAbstractMainTab {
 		coreComp.setLayoutData(gd);
 		
 		Label comboLabel = new Label(coreComp, SWT.NONE);
-		comboLabel.setText(LaunchMessages.getString("CMainTab.Post_mortem_file_type")); //$NON-NLS-1$
+		comboLabel.setText(LaunchMessages.CMainTab2_Post_mortem_file_type);
 		comboLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 
 		fCoreTypeCombo = new Combo(coreComp, SWT.READ_ONLY | SWT.DROP_DOWN);
@@ -232,19 +233,19 @@ public class CMainTab extends CAbstractMainTab {
 		});
 
 		Button browseForCoreButton;
-		browseForCoreButton = createPushButton(coreComp, LaunchMessages.getString("Launch.common.Browse_3"), null); //$NON-NLS-1$
+		browseForCoreButton = createPushButton(coreComp, LaunchMessages.Launch_common_Browse_3, null);
 		browseForCoreButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				String text;
 				String coreType = getSelectedCoreType();
-				if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-					text = handleBrowseButtonSelected(LaunchMessages.getString("CMaintab.Core_Selection")); //$NON-NLS-1$
-				} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
-					text = handleBrowseButtonSelected(LaunchMessages.getString("CMaintab.Trace_Selection")); //$NON-NLS-1$
+				if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+					text = handleBrowseButtonSelected(LaunchMessages.CMainTab2_Core_Selection);
+				} else if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+					text = handleBrowseButtonSelected(LaunchMessages.CMainTab2_Trace_Selection);
 				} else {
 					assert false : "Unknown core file type"; //$NON-NLS-1$
-					text = handleBrowseButtonSelected(LaunchMessages.getString("CMaintab.Core_Selection")); //$NON-NLS-1$
+					text = handleBrowseButtonSelected(LaunchMessages.CMainTab2_Core_Selection);
 				}
 
 				if (text != null) {
@@ -301,18 +302,18 @@ public class CMainTab extends CAbstractMainTab {
 	protected void updateCoreFromConfig(ILaunchConfiguration config) {
 		if (fCoreText != null) {
 			String coreName = EMPTY_STRING;
-			String coreType = IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT;
+			String coreType = ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT;
 			try {
 				coreName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EMPTY_STRING);
-				coreType = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-						                       IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+				coreType = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
+						                       ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
 			} catch (CoreException ce) {
-				GdbUIPlugin.log(ce);
+				LaunchUIPlugin.log(ce);
 			}
 			fCoreText.setText(coreName);
-			if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+			if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
 				fCoreTypeCombo.setText(CORE_FILE);
-			} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+			} else if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
 				fCoreTypeCombo.setText(TRACE_FILE);
 			} else {
 				assert false : "Unknown core file type"; //$NON-NLS-1$
@@ -326,25 +327,25 @@ public class CMainTab extends CAbstractMainTab {
 	protected String getSelectedCoreType() {
 		int selectedIndex = fCoreTypeCombo.getSelectionIndex();
 		if (fCoreTypeCombo.getItem(selectedIndex).equals(CORE_FILE)) {
-			return IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE;
+			return ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE;
 		} else if (fCoreTypeCombo.getItem(selectedIndex).equals(TRACE_FILE)) {
-			return IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE;
+			return ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE;
 		} else {
 			assert false : "Unknown post mortem file type"; //$NON-NLS-1$
-			return IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE;
+			return ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE;
 		}
 	}
 
 	/** @since 2.1 */
 	protected void updateCoreFileLabel() {
 		String coreType = getSelectedCoreType();
-		if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-			fCoreLabel.setText(LaunchMessages.getString("CMainTab.CoreFile_path")); //$NON-NLS-1$
-		} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
-			fCoreLabel.setText(LaunchMessages.getString("CMainTab.TraceFile_path")); //$NON-NLS-1$
+		if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+			fCoreLabel.setText(LaunchMessages.CMainTab2_CoreFile_path);
+		} else if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+			fCoreLabel.setText(LaunchMessages.CMainTab2_TraceFile_path);
 		} else {
 			assert false : "Unknown post mortem file type"; //$NON-NLS-1$
-			fCoreLabel.setText(LaunchMessages.getString("CMainTab.CoreFile_path")); //$NON-NLS-1$
+			fCoreLabel.setText(LaunchMessages.CMainTab2_CoreFile_path);
 		}
 	}
 
@@ -368,7 +369,7 @@ public class CMainTab extends CAbstractMainTab {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fProgText.getText());
 		if (fCoreText != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, fCoreText.getText());
-			config.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE, getSelectedCoreType());
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE, getSelectedCoreType());
 		}
 	}
 
@@ -378,8 +379,9 @@ public class CMainTab extends CAbstractMainTab {
 	@Override
 	protected void handleSearchButtonSelected() {
 		if (getCProject() == null) {
-			MessageDialog.openInformation(getShell(), LaunchMessages.getString("CMainTab.Project_required"), //$NON-NLS-1$
-					LaunchMessages.getString("CMainTab.Enter_project_before_searching_for_program")); //$NON-NLS-1$
+			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required,
+					LaunchMessages.CMainTab_Enter_project_before_searching_for_program);
+					               
 			return;
 		}
 
@@ -430,10 +432,10 @@ public class CMainTab extends CAbstractMainTab {
 
 		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
 		dialog.setElements(getBinaryFiles(getCProject()));
-		dialog.setMessage(LaunchMessages.getString("CMainTab.Choose_program_to_run")); //$NON-NLS-1$
-		dialog.setTitle(LaunchMessages.getString("CMainTab.Program_Selection")); //$NON-NLS-1$
-		dialog.setUpperListLabel(LaunchMessages.getString("Launch.common.BinariesColon")); //$NON-NLS-1$
-		dialog.setLowerListLabel(LaunchMessages.getString("Launch.common.QualifierColon")); //$NON-NLS-1$
+		dialog.setMessage(LaunchMessages.CMainTab_Choose_program_to_run);
+		dialog.setTitle(LaunchMessages.CMainTab_Program_Selection);
+		dialog.setUpperListLabel(LaunchMessages.Launch_common_BinariesColon);
+		dialog.setLowerListLabel(LaunchMessages.Launch_common_QualifierColon);
 		dialog.setMultipleSelection(false);
 		// dialog.set
 		if (dialog.open() == Window.OK) {
@@ -460,11 +462,11 @@ public class CMainTab extends CAbstractMainTab {
 				// Silently ignore substitution failure (for consistency with "Arguments" and "Work directory" fields)
 			}
 			if (programName.length() == 0) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
+				setErrorMessage(LaunchMessages.CMainTab_Program_not_specified);
 				return false;
 			}
 			if (programName.equals(".") || programName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+				setErrorMessage(LaunchMessages.CMainTab_Program_does_not_exist);
 				return false;
 			}
 			IPath exePath = new Path(programName);
@@ -473,31 +475,31 @@ public class CMainTab extends CAbstractMainTab {
 				// as long as it exists
 				File executable = exePath.toFile();
 				if (!executable.exists()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.CMainTab_Program_does_not_exist);
 					return false;
 				}
 				if (!executable.isFile()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Selection_must_be_file")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.CMainTab_Selection_must_be_file);
 					return false;
 				}
 			} else {
 				// For relative paths, we need a proper project
 				String projectName = fProjText.getText().trim();
 				if (projectName.length() == 0) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Project_not_specified")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.CMainTab_Project_not_specified);
 					return false;
 				}
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 				if (!project.exists()) {
-					setErrorMessage(LaunchMessages.getString("Launch.common.Project_does_not_exist")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.Launch_common_Project_does_not_exist);
 					return false;
 				}
 				if (!project.isOpen()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.CMainTab_Project_must_be_opened);
 					return false;
 				}
 				if (!project.getFile(programName).exists()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.CMainTab_Program_does_not_exist);
 					return false;
 				}
 			}
@@ -526,7 +528,7 @@ public class CMainTab extends CAbstractMainTab {
 				if (!filePath.isDirectory()) {
 					IPath corePath = new Path(coreName);
 					if (!corePath.toFile().exists()) {
-						setErrorMessage(LaunchMessages.getString("CMainTab.File_does_not_exist")); //$NON-NLS-1$
+						setErrorMessage(LaunchMessages.CMainTab2_File_does_not_exist);
 						return false;
 					}
 				}
@@ -636,7 +638,7 @@ public class CMainTab extends CAbstractMainTab {
 	 */
     @Override
 	public String getName() {
-		return LaunchMessages.getString("CMainTab.Main"); //$NON-NLS-1$
+		return LaunchMessages.CMainTab_Main;
 	}
 
 	/*

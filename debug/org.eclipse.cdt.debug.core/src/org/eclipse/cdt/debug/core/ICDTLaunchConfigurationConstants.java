@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Ken Ryall (Nokia) - bug 118894
  *     Ken Ryall (Nokia) - bug 178731
  *     Alex Collins (Broadcom Corp.) - choose build config automatically
+ *     Marc Khouzam (Ericsson) - Migrate dsf.gdb's CMainTab to cdt.launch CMainTab2
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -276,6 +277,12 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_DEBUGGER_MEMORY_BLOCKS = CDT_LAUNCH_ID + ".MEMORY_BLOCKS"; //$NON-NLS-1$
 
+	/**         
+	 * Launch configuration attribute key. The value is a String specifying the type of post mortem launch.
+	 * @since 7.7
+	 */     
+	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = CDT_LAUNCH_ID + ".POST_MORTEM_TYPE"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute value. The key is
 	 * ATTR_DEBUGGER_STOP_AT_MAIN.
@@ -305,6 +312,28 @@ public interface ICDTLaunchConfigurationConstants {
 	 * ATTR_DEBUGGER_START_MODE. Startup debugger to view a core file.
 	 */
 	public static String DEBUGGER_MODE_CORE = "core"; //$NON-NLS-1$
+
+	/**  
+	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
+	 * Indicates a core file.
+	 *   
+	 * @since 7.7
+	 */                                                 
+	public static final String DEBUGGER_POST_MORTEM_CORE_FILE = "CORE_FILE"; //$NON-NLS-1$
+
+	/**
+	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
+	 * Indicates a trace data file.
+	 *      
+	 * @since 7.7
+	 */     
+	public static final String DEBUGGER_POST_MORTEM_TRACE_FILE = "TRACE_FILE"; //$NON-NLS-1$
+
+	/**  
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
+	 * @since 7.7
+	 */
+	public static final String DEBUGGER_POST_MORTEM_TYPE_DEFAULT = DEBUGGER_POST_MORTEM_CORE_FILE;
 
 	/**
 	 * Status code indicating that the Eclipse runtime does not support

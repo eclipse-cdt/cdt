@@ -42,6 +42,7 @@ import org.eclipse.remote.internal.jsch.core.messages.Messages;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
@@ -536,6 +537,22 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	public ChannelExec getExecChannel() throws RemoteConnectionException {
 		try {
 			return (ChannelExec) fSessions.get(0).openChannel("exec"); //$NON-NLS-1$
+		} catch (JSchException e) {
+			throw new RemoteConnectionException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Open a shell channel to the remote host.
+	 *
+	 * @return shell channel or null if the progress monitor was cancelled
+	 *
+	 * @throws RemoteConnectionException
+	 *             if a channel could not be opened
+	 */
+	public ChannelShell getShellChannel() throws RemoteConnectionException {
+		try {
+			return (ChannelShell) fSessions.get(0).openChannel("shell"); //$NON-NLS-1$
 		} catch (JSchException e) {
 			throw new RemoteConnectionException(e.getMessage());
 		}

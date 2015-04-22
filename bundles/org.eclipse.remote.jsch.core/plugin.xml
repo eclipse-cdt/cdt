@@ -44,6 +44,11 @@
             factory="org.eclipse.remote.internal.jsch.core.JSchConnection$Factory"
             service="org.eclipse.remote.internal.jsch.core.JSchConnection">
       </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.JSch"
+            factory="org.eclipse.remote.internal.jsch.core.JSchCommandShellService$Factory"
+            service="org.eclipse.remote.core.IRemoteCommandShellService">
+      </connectionService>
       <processService
             connectionTypeId="org.eclipse.remote.JSch"
             factory="org.eclipse.remote.internal.jsch.core.JSchProcess$Factory"

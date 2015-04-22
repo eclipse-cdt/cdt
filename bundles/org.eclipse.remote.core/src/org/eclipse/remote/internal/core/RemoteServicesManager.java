@@ -164,7 +164,7 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 		List<IRemoteConnectionType> connTypes = new ArrayList<IRemoteConnectionType>();
 		for (IRemoteConnectionType connType : getAllConnectionTypes()) {
 			for (Class<? extends IRemoteConnection.Service> service : services) {
-				if (!connType.hasConnectionService(service)) {
+				if (connType.hasConnectionService(service)) {
 					connTypes.add(connType);
 					break;
 				}

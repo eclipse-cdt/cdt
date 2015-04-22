@@ -22,7 +22,9 @@ import org.eclipse.remote.core.IRemoteProcessSignalService;
 import org.eclipse.remote.core.IRemoteProcessTerminalService;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelShell;
 
 public class JSchProcess implements IRemoteProcessControlService, IRemoteProcessSignalService, IRemoteProcessTerminalService {
 	@SuppressWarnings("nls")
@@ -32,7 +34,7 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 	private static int WAIT_TIMEOUT = 1000;
 	private static int refCount = 0;
 
-	private final ChannelExec fChannel;
+	private final Channel fChannel;
 	private final IRemoteProcess fProcess;
 
 	private InputStream fProcStdout;
@@ -127,14 +129,14 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 				fProcStdout = new PipedInputStream(pipedOutput);
 				fProcStderr = new NullInputStream();
 
-				fStderrReader = new Thread(new ProcReader(fChannel.getErrStream(), pipedOutput));
+				fStderrReader = new Thread(new ProcReader(fChannel.getExtInputStream(), pipedOutput));
 				fStdoutReader = new Thread(new ProcReader(fChannel.getInputStream(), pipedOutput));
 
 				fStderrReader.start();
 				fStdoutReader.start();
 			} else {
 				fProcStdout = fChannel.getInputStream();
-				fProcStderr = fChannel.getErrStream();
+				fProcStderr = fChannel.getExtInputStream();
 			}
 		} catch (IOException e) {
 			Activator.log(e);
@@ -237,7 +239,11 @@ public class JSchProcess implements IRemoteProcessControlService, IRemoteProcess
 	 */
 	@Override
 	public void setTerminalSize(int cols, int rows, int width, int height) {
-		fChannel.setPtySize(cols, rows, width, height);
+		if (fChannel instanceof ChannelExec) {
+			((ChannelExec) fChannel).setPtySize(cols, rows, width, height);
+		} else if (fChannel instanceof ChannelShell) {
+			((ChannelShell) fChannel).setPtySize(cols, rows, width, height);
+		}
 	}
 
 	/*

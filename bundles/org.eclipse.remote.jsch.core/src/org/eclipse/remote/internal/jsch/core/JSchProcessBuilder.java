@@ -32,7 +32,9 @@ import org.eclipse.remote.internal.core.RemoteDebugOptions;
 import org.eclipse.remote.internal.core.RemoteProcess;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
 
+import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 
 public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
@@ -41,7 +43,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
 	private final Set<Character> charSet = new HashSet<Character>();
 
-	private ChannelExec fChannel;
+	private Channel fChannel;
 	private Map<String, String> fNewRemoteEnv;
 	private boolean fPreamble = true;
 
@@ -62,6 +64,10 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 
 	public JSchProcessBuilder(IRemoteConnection connection, String... command) {
 		this(connection, Arrays.asList(command));
+	}
+
+	public JSchProcessBuilder(IRemoteConnection connection) {
+		this(connection, "shell"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -155,13 +161,19 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 
 		try {
-			fChannel = fConnection.getExecChannel();
-			String command = buildCommand(remoteCmd, env, clearEnv);
-			fChannel.setCommand(command);
-			fChannel.setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+			if (cmdArgs.size() == 1 && cmdArgs.get(0).equals("shell")) { //$NON-NLS-1$
+				fChannel = fConnection.getShellChannel();
+				((ChannelShell) fChannel).setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+				RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: shell"); //$NON-NLS-1$
+			} else {
+				fChannel = fConnection.getExecChannel();
+				String command = buildCommand(remoteCmd, env, clearEnv);
+				((ChannelExec) fChannel).setCommand(command);
+				((ChannelExec) fChannel).setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+				RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: " + command); //$NON-NLS-1$
+			}
 			fChannel.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);
 			fChannel.connect();
-			RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: " + command); //$NON-NLS-1$
 			return new RemoteProcess(getRemoteConnection(), this);
 		} catch (RemoteConnectionException e) {
 			throw new IOException(e.getMessage());
@@ -170,7 +182,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 	}
 
-	public ChannelExec getChannel() {
+	public Channel getChannel() {
 		return fChannel;
 	}
 

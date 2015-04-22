@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "a7fb1785_17b45ee9",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-22T13:39:53Z",
+      "side": 1,
+      "message": "Right, this is one of the differences between DSF and CDI.\n\nCDI gives the user the choice to use a PTY or not.  In DSF-GDB we always use a PTY if it is available.  I did the same here, which simplifies the UI, aligns things with the debugger, and is less confusing for the user (at least in my opinion :))",
+      "parentUuid": "a7fb1785_237843e2",
+      "revId": "4ea8cb37c98ac762dc03ccbf2c1aff8217bc49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7fb1785_83681715",
         "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java",
         "patchSetId": 6
@@ -47,6 +65,24 @@
       "writtenOn": "2015-04-22T00:43:07Z",
       "side": 1,
       "message": "Why do we need it here?",
+      "revId": "4ea8cb37c98ac762dc03ccbf2c1aff8217bc49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3736ba0c",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-22T13:39:53Z",
+      "side": 1,
+      "message": "Actually, this is for later, it will allow to show the exit code in the console.  I will remove it from this patch and keep it for the one about the exit code.",
+      "parentUuid": "a7fb1785_83681715",
       "revId": "4ea8cb37c98ac762dc03ccbf2c1aff8217bc49d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

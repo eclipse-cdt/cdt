@@ -14,9 +14,14 @@ import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 public class ExtendedTab extends CLaunchConfigurationTab {
 
@@ -37,6 +42,21 @@ public class ExtendedTab extends CLaunchConfigurationTab {
 	
 	@Override
 	public void createControl(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
+		GridLayout layout = new GridLayout();
+		comp.setLayout(layout);
+
+		SWTFactory.createVerticalSpacer(comp, 10);
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		comp.setLayoutData(gd);
+		Label l = new Label(comp, SWT.NONE);
+		l.setText("This tab is contributed by org.eclipse.cdt.example.dsf.gdb"); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		l.setLayoutData(gd);
 	}
 
 	@Override

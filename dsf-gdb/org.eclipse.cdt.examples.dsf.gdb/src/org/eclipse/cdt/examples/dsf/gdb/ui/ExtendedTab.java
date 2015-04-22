@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.gdb.ui;
 
+import org.eclipse.cdt.examples.dsf.gdb.GDBExamplePlugin;
 import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -53,7 +54,7 @@ public class ExtendedTab extends CLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		comp.setLayoutData(gd);
 		Label l = new Label(comp, SWT.NONE);
-		l.setText("This tab is contributed by org.eclipse.cdt.example.dsf.gdb"); //$NON-NLS-1$
+		l.setText("This empty tab is contributed by " + GDBExamplePlugin.PLUGIN_ID); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);

@@ -23,7 +23,10 @@ import org.eclipse.debug.core.model.RuntimeProcess;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * A process for the inferior to know it belongs to a DSF-GDB session
+ * A process for the inferior to know it belongs to a DSF-GDB session.
+ * This class also adds the exit code of the inferior to the console.
+ * 
+ * Note that this class is also used in Run mode.
  * 
  * @since 4.0
  */

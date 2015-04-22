@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Marc Khouzam (Ericsson) - Modified to only handle Run mode and modernized (Bug 464636)
+ *     Marc Khouzam (Ericsson) - Show exit code in console when doing a Run (Bug 463975)
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal;
 
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -33,6 +36,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 
 import com.ibm.icu.text.DateFormat;
@@ -92,10 +96,26 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 
 			String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 			String processLabel = String.format("%s (%s)", commandArray[0], timestamp); //$NON-NLS-1$
-			DebugPlugin.newProcess(launch, process, processLabel);
+			
+			DebugPlugin.newProcess(launch, process, processLabel, createProcessAttributes());
 		} finally {
 			monitor.done();
 		}		
+	}
+
+	protected Map<String, String> createProcessAttributes() {
+		Map<String, String> attributes = new HashMap<>();
+		
+		// Specify that the process factory (GdbProcessFactory) should use InferiorRuntimeProcess to wrap
+		// the process that we are about to run.
+		// Note that GdbProcessFactory is only used for launches created using DSF-GDB not CDI
+	    attributes.put("org.eclipse.cdt.dsf.gdb.createProcessType" /* IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR */, //$NON-NLS-1$
+    		    	   "org.eclipse.cdt.dsf.gdb.inferiorProcess" /* IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE */);  //$NON-NLS-1$
+	    
+	    // Show the exit code of the process in the console title once it has terminated
+	    attributes.put("org.eclipse.cdt.dsf.gdb.inferiorExited" /* IGdbDebugConstants.INFERIOR_EXITED_ATTR */,  //$NON-NLS-1$
+	    		       "");  //$NON-NLS-1$
+		return attributes;
 	}
 
 	/**
@@ -139,8 +159,30 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
+    	// Setup default Process Factory
+		setDefaultProcessFactory(config);
+
 		return super.preLaunchCheck(config, mode, monitor);
 	}
+
+    /**
+     * Modify the ILaunchConfiguration to set the DebugPlugin.ATTR_PROCESS_FACTORY_ID attribute,
+     * so as to specify the process factory to use.
+     * 
+     * This attribute should only be set if it is not part of the configuration already, to allow
+     * other code to set it to something else.
+	 */
+    protected void setDefaultProcessFactory(ILaunchConfiguration config) throws CoreException {
+        if (!config.hasAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID)) {
+            ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+            // Use the debug process factory as it provides extra features for the program
+            // that is being debugged or in this case run.
+            // Effectively, we want to use InferiorRuntimeProcess when doing this Run launch.
+            wc.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID,
+            				"org.eclipse.cdt.dsf.gdb.GdbProcessFactory"); //$NON-NLS-1$
+            wc.doSave();
+        }
+    }
 
 	@Override
 	protected String getPluginID() {

@@ -75,8 +75,6 @@ public class CMainTab2 extends CAbstractMainTab {
      * Tab identifier used for ordering of tabs added using the 
      * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
      * extension point.
-     *   
-     * @since 2.0
      */
     public static final String TAB_ID = "org.eclipse.cdt.launch.mainTab2"; //$NON-NLS-1$
     
@@ -86,8 +84,6 @@ public class CMainTab2 extends CAbstractMainTab {
     /**
      * Combo box to select which type of post mortem file should be used.
      * We currently support core files and trace files.
-     * 
-     * @since 2.1
      */
     protected Combo fCoreTypeCombo;
     
@@ -109,11 +105,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		fIncludeBuildSettings = (flags & INCLUDE_BUILD_SETTINGS) != 0;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
     @Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -198,7 +189,6 @@ public class CMainTab2 extends CAbstractMainTab {
 	/*
 	 * Overridden to add the possibility to choose a trace file as a post mortem debug file.
 	 */
-	/** @since 2.1 */
 	@Override
 	protected void createCoreFileGroup(Composite parent, int colSpan) {
 		Composite coreComp = new Composite(parent, SWT.NONE);
@@ -274,8 +264,6 @@ public class CMainTab2 extends CAbstractMainTab {
 	 * This method allows to set the title of the dialog.
 	 * 
 	 * @param title The title the dialog should show.
-	 * 
-	 * @since 2.1
 	 */
 	protected String handleBrowseButtonSelected(String title) {
 		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
@@ -284,11 +272,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		return fileDialog.open();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
     @Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		filterPlatform = getPlatform(config);
@@ -298,7 +281,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		updateBuildOptionFromConfig(config);
 	}
 	
-	/** @since 2.0 */
 	protected void updateCoreFromConfig(ILaunchConfiguration config) {
 		if (fCoreText != null) {
 			String coreName = EMPTY_STRING;
@@ -323,7 +305,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		}
 	}
 	
-	/** @since 2.1 */
 	protected String getSelectedCoreType() {
 		int selectedIndex = fCoreTypeCombo.getSelectionIndex();
 		if (fCoreTypeCombo.getItem(selectedIndex).equals(CORE_FILE)) {
@@ -336,7 +317,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		}
 	}
 
-	/** @since 2.1 */
 	protected void updateCoreFileLabel() {
 		String coreType = getSelectedCoreType();
 		if (coreType.equals(ICDTLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
@@ -349,11 +329,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		super.performApply(config);
@@ -444,11 +419,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
@@ -538,11 +508,6 @@ public class CMainTab2 extends CAbstractMainTab {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
     @Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		// We set empty attributes for project & program so that when one config is

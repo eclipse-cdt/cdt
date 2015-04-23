@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -364,7 +364,12 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	public IASTName newName(char[] name) {
 		return new CASTName(name);
 	}
-	
+
+	@Override
+	public IASTName newName(String name) {
+		return newName(name.toCharArray());
+	}
+
 	@Override
 	public IASTNullStatement newNullStatement() {
 		return new CASTNullStatement();

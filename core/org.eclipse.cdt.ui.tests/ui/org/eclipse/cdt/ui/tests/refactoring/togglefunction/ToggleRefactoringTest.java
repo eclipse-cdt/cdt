@@ -3273,4 +3273,282 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	public void testToggleFunctionFailsOnSyntaxError_389299() throws Exception {
 		assertRefactoringFailure();
 	}
+
+	//A.h
+	//class test
+	//{
+	//	typedef int M;
+	//public:
+	//	M /*$*/f/*$$*/(){
+	//		return 1;
+	//	}
+	//};
+	//====================
+	//class test
+	//{
+	//	typedef int M;
+	//public:
+	//	M f();
+	//};
+	//
+	//inline test::M test::f() {
+	//	return 1;
+	//}
+	public void testToggleFunctionWithScopedTypedefReturntype_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename T1, typename T2>
+	//class Tpl {
+	//	typedef T1 M;
+	//public:
+	//	M /*$*/f/*$$*/(){
+	//		return M();
+	//	}
+	//};
+	//====================
+	//template<typename T1, typename T2>
+	//class Tpl {
+	//	typedef T1 M;
+	//public:
+	//	M f();
+	//};
+	//
+	//template<typename T1, typename T2>
+	//inline typename Tpl<T1, T2>::M Tpl<T1, T2>::f() {
+	//	return M();
+	//}
+	public void testToggleFunctionWithScopedTypedefReturntypeFromTemplate_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename TOuter>
+	//struct TplOuter {
+	//	template<typename TInner>
+	//	struct TplInner {
+	//		typedef TInner R;
+	//		R /*$*/f/*$$*/(){
+	//			return R();
+	//		}
+	//	};
+	//};
+	//====================
+	//template<typename TOuter>
+	//struct TplOuter {
+	//	template<typename TInner>
+	//	struct TplInner {
+	//		typedef TInner R;
+	//		R f();
+	//	};
+	//};
+	//
+	//template<typename TOuter>
+	//template<typename TInner>
+	//inline typename TplOuter<TOuter>::template TplInner<TInner>::R TplOuter<TOuter>::TplInner<
+	//		TInner>::f() {
+	//	return R();
+	//}
+	public void testToggleFunctionFromNestedTemplate_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename Item>
+	//struct Bag {
+	//	Bag /*$*/create/*$$*/(){
+	//		return Bag();
+	//	}
+	//};
+	//====================
+	//template<typename Item>
+	//struct Bag {
+	//	Bag create();
+	//};
+	//
+	//template<typename Item>
+	//inline Bag<Item> Bag<Item>::create() {
+	//	return Bag();
+	//}
+	public void testToggleFunctionWithTemplateReturnType_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename Item>
+	//struct Bag {
+	//};
+	//
+	//template<typename Item>
+	//struct Bag<Item*> {
+	//	Bag /*$*/create/*$$*/() {
+	//		return Bag();
+	//	}
+	//};
+	//====================
+	//template<typename Item>
+	//struct Bag {
+	//};
+	//
+	//template<typename Item>
+	//struct Bag<Item*> {
+	//	Bag create();
+	//};
+	//
+	//template<typename Item>
+	//inline Bag<Item*> Bag<Item*>::create() {
+	//	return Bag();
+	//}
+	public void testToggleMemberFunctionOfPartialSpecialization_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename Item, typename T>
+	//struct Bag {
+	//};
+	//
+	//template<typename Item>
+	//struct Bag<Item*, int> {
+	//	Bag /*$*/create/*$$*/() {
+	//		return Bag();
+	//	}
+	//};
+	//====================
+	//template<typename Item, typename T>
+	//struct Bag {
+	//};
+	//
+	//template<typename Item>
+	//struct Bag<Item*, int> {
+	//	Bag create();
+	//};
+	//
+	//template<typename Item>
+	//inline Bag<Item*, int> Bag<Item*, int>::create() {
+	//	return Bag();
+	//}
+	public void testToggleMemberFunctionOfPartialSpecializationWithTwoParameters_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename Item, typename T>
+	//struct Bag {
+	//};
+	//
+	//template<typename Item>
+	//struct Bag<Item**, int**> {
+	//	Bag /*$*/create/*$$*/() {
+	//		return Bag();
+	//	}
+	//};
+	//====================
+	//template<typename Item, typename T>
+	//struct Bag {
+	//};
+	//
+	//template<typename Item>
+	//struct Bag<Item**, int**> {
+	//	Bag create();
+	//};
+	//
+	//template<typename Item>
+	//inline Bag<Item**, int**> Bag<Item**, int**>::create() {
+	//	return Bag();
+	//}
+	public void testToggleMemberFunctionOfPartialSpecializationMultiplePointers_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename Item>
+	//struct Bag {
+	//};
+	//
+	//template<>
+	//struct Bag<int> {
+	//	Bag /*$*/create/*$$*/() {
+	//		return Bag();
+	//	}
+	//};
+	//====================
+	//template<typename Item>
+	//struct Bag {
+	//};
+	//
+	//template<>
+	//struct Bag<int> {
+	//	Bag create();
+	//};
+	//
+	//inline Bag<int> Bag<int>::create() {
+	//	return Bag();
+	//}
+	public void testToggleMemberFunctionOfFullSpecialization_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename R>
+	//struct Qualifier {
+	//	typedef R ReturnType;
+	//};
+	//
+	//template<typename T>
+	//struct ToggleType {
+	//	typename Qualifier<int>::ReturnType /*$*/create/*$$*/() {
+	//	return typename Qualifier<int>::ReturnType();
+	//}
+	//};
+	//====================
+	//template<typename R>
+	//struct Qualifier {
+	//	typedef R ReturnType;
+	//};
+	//
+	//template<typename T>
+	//struct ToggleType {
+	//	typename Qualifier<int>::ReturnType create();
+	//};
+	//
+	//template<typename T>
+	//inline typename Qualifier<int>::ReturnType ToggleType<T>::create() {
+	//	return typename Qualifier<int>::ReturnType();
+	//}
+	public void testToggleWithTemplateQualifierInReturnType_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//template<typename R>
+	//struct Qualifier {
+	//	typedef R ReturnType;
+	//};
+	//
+	//template<typename T>
+	//struct ToggleType {
+	//	typename Qualifier<T>::ReturnType /*$*/create/*$$*/() {
+	//	return typename Qualifier<T>::ReturnType();
+	//}
+	//};
+	//====================
+	//template<typename R>
+	//struct Qualifier {
+	//	typedef R ReturnType;
+	//};
+	//
+	//template<typename T>
+	//struct ToggleType {
+	//	typename Qualifier<T>::ReturnType create();
+	//};
+	//
+	//template<typename T>
+	//inline typename Qualifier<T>::ReturnType ToggleType<T>::create() {
+	//	return typename Qualifier<T>::ReturnType();
+	//}
+	public void testToggleWithTemplateArgumentDependentQualifierInReturnType_399931() throws Exception {
+		assertRefactoringSuccess();
+	}
 }

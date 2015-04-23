@@ -14,10 +14,13 @@
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -31,34 +34,43 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
+import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionWithTryBlock;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamedTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
 
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 
 public class ToggleNodeHelper extends NodeHelper {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final ICPPNodeFactory factory = ASTNodeFactoryFactory.getDefaultCPPNodeFactory();
 
 	private static void removeParameterInitializations(IASTFunctionDeclarator funcDecl) {
 		for (IASTNode child : funcDecl.getChildren()) {
@@ -84,7 +96,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	static IASTSimpleDeclaration createDeclarationFromDefinition(IASTFunctionDefinition oldDefinition) {
 		IASTDeclarator newDeclarator = oldDefinition.getDeclarator().copy(CopyStyle.withLocations);
 		IASTDeclSpecifier newDeclSpec = oldDefinition.getDeclSpecifier().copy(CopyStyle.withLocations);
-		IASTSimpleDeclaration newDeclaration = new CPPASTSimpleDeclaration(newDeclSpec);
+		IASTSimpleDeclaration newDeclaration = factory.newSimpleDeclaration(newDeclSpec);
 		newDeclaration.addDeclarator(newDeclarator);
 		return newDeclaration;
 	}
@@ -95,11 +107,11 @@ public class ToggleNodeHelper extends NodeHelper {
 		ICPPASTFunctionDefinition newFunc = null;
 		newFuncDecl = adjustParamNames(newFuncDecl, oldDefinition);
 		if (oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
-			newFunc = new CPPASTFunctionWithTryBlock(newDeclSpec, newFuncDecl, 
-					new CPPASTCompoundStatement());
+			newFunc = factory.newFunctionTryBlock(newDeclSpec, newFuncDecl, 
+					factory.newCompoundStatement());
 		} else {
-			newFunc = new CPPASTFunctionDefinition(newDeclSpec, newFuncDecl, 
-					new CPPASTCompoundStatement());
+			newFunc = factory.newFunctionDefinition(newDeclSpec, newFuncDecl, 
+					factory.newCompoundStatement());
 		}
 		copyInitializerList(newFunc, oldDefinition);
 		return newFunc;
@@ -127,49 +139,134 @@ public class ToggleNodeHelper extends NodeHelper {
 
 	static IASTFunctionDefinition getQualifiedNameDefinition(IASTFunctionDefinition oldDefinition, 
 			IASTTranslationUnit definitionUnit, IASTNode nameSpace) {
-		
-		ICPPASTDeclSpecifier newDeclSpec = 
-				(ICPPASTDeclSpecifier) oldDefinition.getDeclSpecifier().copy(CopyStyle.withLocations);
-		
-		newDeclSpec.setVirtual(false);
-		newDeclSpec.setInline(true);
-		newDeclSpec.setStorageClass(IASTDeclSpecifier.sc_unspecified);
-		
+		ICPPASTDeclSpecifier newDeclSpecifier = createDeclSpecifier(oldDefinition);
 		IASTFunctionDeclarator newDeclarator = oldDefinition.getDeclarator().copy(CopyStyle.withLocations);
 		newDeclarator.setName(getQualifiedName(oldDefinition.getDeclarator(), nameSpace));
 		removeParameterInitializations(newDeclarator);
-		
+
 		ICPPASTFunctionDefinition newFunction = 
-				createFunctionSignatureWithEmptyBody(newDeclSpec, newDeclarator, oldDefinition);
-	
+				createFunctionSignatureWithEmptyBody(newDeclSpecifier, newDeclarator, oldDefinition);
+
 		return newFunction;
+	}
+
+	private static ICPPASTDeclSpecifier createDeclSpecifier(IASTFunctionDefinition oldDefinition) {
+		IASTDeclSpecifier originalDeclSpecifier = oldDefinition.getDeclSpecifier();
+		ICPPASTDeclSpecifier newDeclSpecifier = (ICPPASTDeclSpecifier) originalDeclSpecifier.copy(CopyStyle.withLocations);
+		if (newDeclSpecifier instanceof ICPPASTNamedTypeSpecifier) {
+			ICPPASTNamedTypeSpecifier newNamedTypeSpecifier = (ICPPASTNamedTypeSpecifier) newDeclSpecifier;
+			IASTName typename = ((ICPPASTNamedTypeSpecifier) originalDeclSpecifier).getName();
+			IBinding typenameBinding = typename.resolveBinding();
+			adaptTemplateQualifiers(newNamedTypeSpecifier, typenameBinding);
+		}
+		newDeclSpecifier.setVirtual(false);
+		newDeclSpecifier.setInline(true);
+		newDeclSpecifier.setStorageClass(IASTDeclSpecifier.sc_unspecified);
+		return newDeclSpecifier;
+	}
+
+	private static void adaptTemplateQualifiers(ICPPASTNamedTypeSpecifier newDeclSpecifier,
+			IBinding typenameBinding) {
+		if (typenameBinding instanceof ICPPBinding) {
+			try {
+				String[] nameParts = ((ICPPBinding) typenameBinding).getQualifiedName();
+				String qualifiedName = typenameBinding.getName();
+				String[] nameQualifiers = Arrays.copyOf(nameParts, nameParts.length - 1);
+				ICPPASTQualifiedName qualifiedTypeName = factory.newQualifiedName(nameQualifiers, qualifiedName);
+
+				if (typenameBinding instanceof ICPPTemplateInstance) {
+					ICPPTemplateInstance templateInstance = (ICPPTemplateInstance) typenameBinding;
+					ICPPTemplateArgument[] templateArguments = templateInstance.getTemplateArguments();
+					IASTName lastName = qualifiedTypeName.getLastName();
+					ICPPASTTemplateId newTemplateId = createTemplateIdForArguments(lastName, templateArguments);
+					qualifiedTypeName.setLastName(newTemplateId);
+				}
+
+				boolean setTypename = adaptQualifiers(typenameBinding, qualifiedTypeName);
+				newDeclSpecifier.setName(qualifiedTypeName);
+				newDeclSpecifier.setIsTypename(setTypename);
+			} catch (DOMException e) {
+				CUIPlugin.log(e);
+			}
+		}
+	}
+
+	private static boolean adaptQualifiers(IBinding typenameBinding, ICPPASTQualifiedName qualifiedTypeName) {
+		boolean setTypename = false;
+		IBinding owner = typenameBinding.getOwner();
+		ICPPASTNameSpecifier[] qualifiers = qualifiedTypeName.getQualifier();
+		if (qualifiers.length > 0) {
+			int level = qualifiers.length - 1;
+			while (owner != null && level >= 0) {
+				if (owner instanceof ICPPClassTemplate) {
+					IASTName qualifierName = (IASTName) qualifiers[level];
+					ICPPClassTemplate ownerBinding = (ICPPClassTemplate) owner;
+					ICPPASTTemplateId newTemplateId = createTemplateId(qualifierName, ownerBinding);
+					qualifiers[level] = newTemplateId;
+					newTemplateId.setParent(qualifiedTypeName);
+					setTypename = true;
+				}
+				owner = owner.getOwner();
+				level--;
+			}
+		}
+		return setTypename;
+	}
+	
+	private static ICPPASTTemplateId createTemplateIdForArguments(IASTName qualifierName, ICPPTemplateArgument[] templateArguments) {
+		ICPPASTTemplateId newTemplateId = factory.newTemplateId(qualifierName);
+		for (ICPPTemplateArgument templateArgument : templateArguments) {
+			IType type = templateArgument.getOriginalTypeValue();
+			DeclarationGeneratorImpl declarationGeneratorImpl = new DeclarationGeneratorImpl(factory);
+			IASTDeclarator abstractDeclarator = declarationGeneratorImpl.createDeclaratorFromType(type, EMPTY_STRING.toCharArray());
+			IType ultimateType = SemanticUtil.getUltimateType(type, false);
+			IASTName templateParameterName = factory.newName(ASTTypeUtil.getType(ultimateType, false));
+			ICPPASTNamedTypeSpecifier typeSpecifier = factory.newNamedTypeSpecifier(templateParameterName);
+			ICPPASTTypeId newTypeId = factory.newTypeId(typeSpecifier, abstractDeclarator);
+			newTemplateId.addTemplateArgument(newTypeId);
+		}
+		return newTemplateId;
+	}
+
+	private static ICPPASTTemplateId createTemplateId(IASTName qualifierName, ICPPClassTemplate ownerBinding) {
+		ICPPASTTemplateId newTemplateId = factory.newTemplateId(qualifierName);
+		for (ICPPTemplateParameter templateParameter : ownerBinding.getTemplateParameters()) {
+			IASTName abstractDeclaratorName = factory.newName();
+			ICPPASTDeclarator abstractDeclarator = factory.newDeclarator(abstractDeclaratorName);
+			ICPPASTName templateParameterName = factory.newName(templateParameter.getNameCharArray());
+			ICPPASTNamedTypeSpecifier typeSpecifier = factory.newNamedTypeSpecifier(templateParameterName);
+			ICPPASTTypeId newTypeId = factory.newTypeId(typeSpecifier, abstractDeclarator);
+			newTemplateId.addTemplateArgument(newTypeId);
+		}
+		return newTemplateId;
 	}
 
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration(
 			IASTFunctionDefinition oldFunction, IASTFunctionDefinition newFunction) {
-		ArrayList<ICPPASTTemplateDeclaration> templateDeclarations = getAllTemplateDeclaration(oldFunction);
+		ArrayList<ICPPASTTemplateDeclaration> templateDeclarations = getAllTemplateDeclarations(oldFunction);
 		return addTemplateDeclarationsInOrder(templateDeclarations, newFunction);
 	}
 
 	private static ICPPASTTemplateDeclaration addTemplateDeclarationsInOrder(
 			ArrayList<ICPPASTTemplateDeclaration> templDecs, IASTFunctionDefinition newFunction) {
-		ListIterator<ICPPASTTemplateDeclaration> iter1 = templDecs.listIterator();
 		ICPPASTTemplateDeclaration child = null;
-		while (iter1.hasNext()) {
-			child = iter1.next();
-			child.setDeclaration(newFunction);
-			ListIterator<ICPPASTTemplateDeclaration> iter2 = iter1;
-			if (iter2.hasNext()) {
-				ICPPASTTemplateDeclaration parent = iter2.next();
-				child.setParent(parent);
-				parent.setDeclaration(child);
-				child = parent;
+		for (ICPPASTTemplateDeclaration templateDeclaration : templDecs) {
+			if (templateDeclaration.getTemplateParameters().length == 0) {
+				continue;
+			}
+			if (child == null) {
+				child = templateDeclaration;
+				child.setDeclaration(newFunction);
+			} else {
+				templateDeclaration.setDeclaration(child);
+				child.setParent(templateDeclaration);
+				child = templateDeclaration;
 			}
 		}
 		return child;
 	}
 
-	private static ArrayList<ICPPASTTemplateDeclaration> getAllTemplateDeclaration(IASTNode node) {
+	private static ArrayList<ICPPASTTemplateDeclaration> getAllTemplateDeclarations(IASTNode node) {
 		ArrayList<ICPPASTTemplateDeclaration> templdecs = new ArrayList<ICPPASTTemplateDeclaration>();
 		while (node.getParent() != null) {
 			node = node.getParent();
@@ -226,13 +323,13 @@ public class ToggleNodeHelper extends NodeHelper {
 	 */
 	static ICPPASTQualifiedName getQualifiedName(IASTFunctionDeclarator declarator, IASTNode limiter) {
 		Stack<IASTNode> nodes = getQualifiedNames(declarator, limiter, declarator);
-		CPPASTQualifiedName qName = reAssembleQualifiedName(nodes);
+		ICPPASTQualifiedName qName = reAssembleQualifiedName(nodes);
 		qName.addName(declarator.getName().copy(CopyStyle.withLocations));
 		return qName;
 	}
 
-	private static CPPASTQualifiedName reAssembleQualifiedName(Stack<IASTNode> nodes) {
-		CPPASTQualifiedName qName = new CPPASTQualifiedName();
+	private static ICPPASTQualifiedName reAssembleQualifiedName(Stack<IASTNode> nodes) {
+		ICPPASTQualifiedName qName = factory.newQualifiedName(null);
 		while (!nodes.isEmpty()) {
 			IASTNode nnode = nodes.pop();
 			if (nnode instanceof IASTCompositeTypeSpecifier) {
@@ -258,10 +355,10 @@ public class ToggleNodeHelper extends NodeHelper {
 			} else if (node instanceof ICPPASTNamespaceDefinition) {
 				nodes.push(((ICPPASTNamespaceDefinition) node).copy(CopyStyle.withLocations));
 				lastName = ((ICPPASTNamespaceDefinition) node).getName();
-			} else if (shouldAddTemplateBrackets(node)) {
+			} else if (!(lastName instanceof ICPPASTTemplateId) && shouldAddTemplateBrackets(node)) {
 				if (!nodes.isEmpty())
 					nodes.pop();
-				ICPPASTTemplateId templateID = ToggleNodeHelper.getTemplateParameter(node, lastName);
+				ICPPASTTemplateId templateID = getTemplateParameter(node, lastName);
 				nodes.add(templateID);
 			} 
 		}
@@ -271,21 +368,19 @@ public class ToggleNodeHelper extends NodeHelper {
 	private static boolean shouldAddTemplateBrackets(IASTNode node) {
 		return node instanceof ICPPASTTemplateDeclaration
 				&& !(((ICPPASTTemplateDeclaration) node).getDeclaration() 
-						instanceof CPPASTFunctionDefinition);
+						instanceof ICPPASTFunctionDefinition);
 	}
 
 	private static ICPPASTTemplateId getTemplateParameter(IASTNode node, IASTName name) {
-		ICPPASTTemplateId templateID = new CPPASTTemplateId();
-		templateID.setTemplateName(name.copy(CopyStyle.withLocations));
+		ICPPASTTemplateId templateID = factory.newTemplateId(name.copy(CopyStyle.withLocations));
 		for (IASTNode child : node.getChildren()) {
 			if (child instanceof ICPPASTSimpleTypeTemplateParameter) {
 				ICPPASTSimpleTypeTemplateParameter tempChild = (ICPPASTSimpleTypeTemplateParameter) child;
-	
-				CPPASTNamedTypeSpecifier namedTypeSpecifier = new CPPASTNamedTypeSpecifier();
-				namedTypeSpecifier.setName(tempChild.getName().copy(CopyStyle.withLocations));
-				
-				CPPASTTypeId id = new CPPASTTypeId();
-				id.setDeclSpecifier(namedTypeSpecifier);
+
+				IASTName argumentName = tempChild.getName().copy(CopyStyle.withLocations);
+				ICPPASTNamedTypeSpecifier namedTypeSpecifier = factory.newNamedTypeSpecifier(argumentName);
+
+				ICPPASTTypeId id = factory.newTypeId(namedTypeSpecifier, null);
 				templateID.addTemplateArgument(id);
 			}
 		}

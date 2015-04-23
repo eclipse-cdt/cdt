@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_7d9e6370",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-23T02:57:26Z",
+      "side": 1,
+      "message": "let\u0027s update this to 2015 at the same time.",
+      "range": {
+        "startLine": 2,
+        "startChar": 22,
+        "endLine": 2,
+        "endChar": 26
+      },
+      "revId": "04c8614d6ae8f23a35e50309cb5832e6626fad13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_1db47fe9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1673,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-23T02:57:26Z",
+      "side": 1,
+      "message": "unintentional change by the PDE editor?",
+      "range": {
+        "startLine": 1673,
+        "startChar": 31,
+        "endLine": 1673,
+        "endChar": 39
+      },
+      "revId": "04c8614d6ae8f23a35e50309cb5832e6626fad13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_3db17bfb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1855,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-23T02:57:26Z",
+      "side": 1,
+      "message": "should be externalized too.",
+      "range": {
+        "startLine": 1855,
+        "startChar": 20,
+        "endLine": 1855,
+        "endChar": 22
+      },
+      "revId": "04c8614d6ae8f23a35e50309cb5832e6626fad13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_ddadd7a4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.gnu.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1902,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-04-23T02:57:26Z",
+      "side": 1,
+      "message": "compiler",
+      "range": {
+        "startLine": 1902,
+        "startChar": 103,
+        "endLine": 1902,
+        "endChar": 109
+      },
+      "revId": "04c8614d6ae8f23a35e50309cb5832e6626fad13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

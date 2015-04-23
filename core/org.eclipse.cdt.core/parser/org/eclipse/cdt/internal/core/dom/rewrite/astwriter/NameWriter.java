@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,9 +8,11 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -80,11 +82,15 @@ public class NameWriter extends NodeWriter {
 	private boolean needsTemplateQualifier(ICPPASTTemplateId templId){
 		if (templId.getParent() instanceof ICPPASTQualifiedName) {
 			ICPPASTQualifiedName qName = (ICPPASTQualifiedName)  templId.getParent();
-			return isDependentName(qName, templId);			
+			return !isPartOfFunctionDeclarator(qName) && isDependentName(qName, templId);
 		}
 		return false;
 	}
-	
+
+	private boolean isPartOfFunctionDeclarator(ICPPASTQualifiedName qName) {
+		return qName.getParent() instanceof IASTFunctionDeclarator;
+	}
+
 	private boolean isDependentName(ICPPASTQualifiedName qname, ICPPASTTemplateId tempId) {
 		ICPPASTNameSpecifier[] segments = qname.getAllSegments();
 		for (int i = 0; i < segments.length; ++i){

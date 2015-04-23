@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,6 +279,14 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTQualifiedName newQualifiedName();
 
 	/**
+	 * Creates an {@link ICPPASTQualifiedName} and adds name qualifiers for the
+	 * elements of {@code nameQualifiers}. {@code nameQualifiers} cannot contain decltype specifiers
+	 * for creation of {@link ICPPASTDecltypeSpecifier}.
+	 * @since 5.11
+	 */
+	public ICPPASTQualifiedName newQualifiedName(String[] nameQualifiers, String name);
+
+	/**
 	 * @since 5.9
 	 */
 	@Override
@@ -289,6 +297,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Override
 	public ICPPASTName newName(char[] name);
+
+	/**
+	 * @since 5.11
+	 */
+	public ICPPASTNamedTypeSpecifier newNamedTypeSpecifier(IASTName name);
 
 	/**
 	 * Creates a range based for statement.

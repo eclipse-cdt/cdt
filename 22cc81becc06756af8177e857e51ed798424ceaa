@@ -22,6 +22,30 @@
       "revId": "22cc81becc06756af8177e857e51ed798424ceaa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7fb1785_5e88ba2d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIInferiorProcess_7_3.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-24T17:00:28Z",
+      "side": 1,
+      "message": "That is a printout from GDB itself.  You you run GDB from the command-line you will see the same thing.\n\nThe exit code this patch adds is in the title of the console.",
+      "parentUuid": "a7fb1785_7b5e68bf",
+      "range": {
+        "startLine": 92,
+        "startChar": 32,
+        "endLine": 92,
+        "endChar": 47
+      },
+      "revId": "22cc81becc06756af8177e857e51ed798424ceaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

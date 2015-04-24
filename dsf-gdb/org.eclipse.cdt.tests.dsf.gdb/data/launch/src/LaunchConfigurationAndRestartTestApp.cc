@@ -24,10 +24,11 @@ int envTest() {
 
 int main (int argc, char *argv[])
 {
-    envTest();
+    envTest(); // FIRST_LINE_IN_MAIN
     reverseTest();
     stopAtOther();
-    return 36;
+
+    return 36; // LAST_LINE_IN_MAIN
     // Return special value to allow
     // testing exit code feature
 }

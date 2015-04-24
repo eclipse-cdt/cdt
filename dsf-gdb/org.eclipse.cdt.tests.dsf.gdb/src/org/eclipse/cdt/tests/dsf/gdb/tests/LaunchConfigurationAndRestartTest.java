@@ -74,9 +74,16 @@ import org.junit.runners.Parameterized;
 public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase {
 	public @Rule IntermittentRule intermittentRule = new IntermittentRule();
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
+	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 
-	protected static final int FIRST_LINE_IN_MAIN = 27;
-	protected static final int LAST_LINE_IN_MAIN = 30;
+	protected static final String[] LINE_TAGS = new String[] {
+		"FIRST_LINE_IN_MAIN",
+		"LAST_LINE_IN_MAIN",
+	};
+
+	protected int FIRST_LINE_IN_MAIN;
+	protected int LAST_LINE_IN_MAIN;
+
 	// The exit code returned by the test program
 	private static final int TEST_EXIT_CODE = 36;
 
@@ -94,7 +101,13 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some 
-		// parameters.  The individual tests will be responsible for starting the launch. 
+		// parameters.  The individual tests will be responsible for starting the launch.
+
+		// Looks up line tags in source file(s).
+		resolveLineTagLocations(SOURCE_NAME, LaunchConfigurationAndRestartTest.LINE_TAGS);
+
+		FIRST_LINE_IN_MAIN = getLineForTag("FIRST_LINE_IN_MAIN");
+		LAST_LINE_IN_MAIN = getLineForTag("LAST_LINE_IN_MAIN");
 	}
 
 	@Override

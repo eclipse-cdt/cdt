@@ -28,12 +28,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.cdt.dsf.gdb.internal.ui;x-internal:=true,
+Export-Package: org.eclipse.cdt.dsf.gdb.internal.ui;x-friends:="org.eclipse.cdt.docker.launcher",
  org.eclipse.cdt.dsf.gdb.internal.ui.actions;x-friends:="org.eclipse.cdt.examples.dsf.gdb",
  org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.commands;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.console;x-internal:=true,
- org.eclipse.cdt.dsf.gdb.internal.ui.launching;x-friends:="org.eclipse.cdt.debug.gdbjtag.ui,org.eclipse.cdt.examples.dsf.gdb",
+ org.eclipse.cdt.dsf.gdb.internal.ui.launching;x-friends:="org.eclipse.cdt.debug.gdbjtag.ui,org.eclipse.cdt.examples.dsf.gdb,org.eclipse.cdt.docker.launcher",
  org.eclipse.cdt.dsf.gdb.internal.ui.osview;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.preferences;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions;x-internal:=true,

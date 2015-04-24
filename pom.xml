@@ -195,6 +195,10 @@
 		<module>build/org.eclipse.cdt.autotools.source-feature</module>
 		<module>build/org.eclipse.linuxtools.cdt.autotools.core</module>
 
+		<module>launch/org.eclipse.cdt.docker.launcher</module>
+		<module>launch/org.eclipse.cdt.docker.launcher-feature</module>
+		<module>launch/org.eclipse.cdt.docker.launcher.source-feature</module>
+
 		<module>testsrunner/org.eclipse.cdt.testsrunner</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.boost</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.gtest</module>

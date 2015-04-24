@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7fb1785_7b5e68bf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/MIInferiorProcess_7_3.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-04-24T14:56:07Z",
+      "side": 1,
+      "message": "Just a question:\n\nThe value is decoded from octal, however in the console I still see the message with octal e.g. for an exit value of 10.\n\n[Inferior 1 (process 14937) exited with code 012]\n\nDo you know where this value comes from?",
+      "range": {
+        "startLine": 92,
+        "startChar": 32,
+        "endLine": 92,
+        "endChar": 47
+      },
+      "revId": "22cc81becc06756af8177e857e51ed798424ceaa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

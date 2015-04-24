@@ -62,8 +62,13 @@ import org.junit.runners.Parameterized;
 public class MIDisassemblyTest extends BaseParametrizedTestCase {
     private static final String EXEC_NAME = "MemoryTestApp.exe";
     private static final String SOURCE_NAME = "MemoryTestApp.cc";
-    private static final int LINE_NUMBER = 35;
     private static final String INVALID_SOURCE_NAME = "invalid_filename";
+
+	protected static final String[] LINE_TAGS = {
+		"LINE_NUMBER",
+	};
+
+	protected int LINE_NUMBER;
 
     private DsfSession          fSession;
     private DsfServicesTracker  fServicesTracker;
@@ -103,6 +108,8 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
         fDisassemblyDmc = DMContexts.getAncestorOfType(containerDmc, IDisassemblyDMContext.class);
         assert(fDisassemblyDmc != null);
 
+        resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
+        LINE_NUMBER = getLineForTag("LINE_NUMBER");
     }
 
     @Override

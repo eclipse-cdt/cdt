@@ -110,7 +110,7 @@ public class LaunchUtils {
 		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
 		if (programName == null) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-				  ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				  ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
         programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
 

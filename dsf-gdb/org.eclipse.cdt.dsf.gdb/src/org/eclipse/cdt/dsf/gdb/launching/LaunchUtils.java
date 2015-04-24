@@ -117,7 +117,7 @@ public class LaunchUtils {
 		IPath programPath = new Path(programName);    			 
 		if (programPath.isEmpty()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$
-				  ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				  ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 		
 		if (!programPath.isAbsolute() && cproject != null) {

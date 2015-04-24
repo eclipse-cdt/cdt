@@ -76,7 +76,7 @@
             id="org.eclipse.cdt.testsrunner.launch.mainTab"
             group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
             name="%MainLaunchTab.name"
-            class="org.eclipse.cdt.launch.ui.CMainTab">
+            class="org.eclipse.cdt.launch.ui.CMainTab2">
         <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
       </tab>
       <tab
@@ -104,20 +104,12 @@
         <placement after="org.eclipse.cdt.testsrunner.testingTab"/>
       </tab>
       <tab
-            id="org.eclipse.cdt.testsrunner.launch.sourceLookupTab"
-            group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
-            name="%SourceLookupLaunchTab.name"
-            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
-        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
-        <placement after="org.eclipse.cdt.cdi.launch.environmentTab"/>
-      </tab>
-      <tab
             id="org.eclipse.cdt.testsrunner.launch.commonTab"
             group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
             name="%CommonLaunchTab.name"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
-        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+        <placement after="org.eclipse.cdt.cdi.launch.environmentTab"/>
       </tab>
 
       <!-- Tests debug (CDI) tabs-->

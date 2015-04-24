@@ -34,6 +34,7 @@ import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -642,6 +643,45 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		return null;
 	}
 	
+	/**
+	 * Verify that the program name of the configuration can be found as a file.
+	 * This method supports a program name without a corresponding project,
+	 * as long as the program name is specified with an absolute path.
+	 * 
+	 * @return Absolute path of the program location
+	 * @since 7.3
+	 */
+	public IPath verifyProgramPath(ILaunchConfiguration configuration, ICProject cproject) throws CoreException {
+		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+		if (programName == null) {
+			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_not_specified, null,
+				  ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+		}
+        programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+
+		IPath programPath = new Path(programName);    			 
+		if (programPath.isEmpty()) {
+			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist, null,
+				  ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+		}
+		
+		if (!programPath.isAbsolute() && cproject != null) {
+			// Find the specified program within the specified project
+   			IFile wsProgramPath = cproject.getProject().getFile(programPath);
+   			programPath = wsProgramPath.getLocation();
+		}
+		
+		if (!programPath.toFile().exists()) {
+			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist,
+				  new FileNotFoundException(
+						  NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found, 
+						                                    programPath.toOSString())),
+				  ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+		
+		return programPath;
+	}
+
 	/**
 	 * @return the ID of the plugin hosting the launch delegate. It's used to
 	 *         create {@link IStatus} objects.

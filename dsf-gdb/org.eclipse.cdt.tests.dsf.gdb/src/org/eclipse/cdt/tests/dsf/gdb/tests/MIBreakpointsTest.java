@@ -134,13 +134,24 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 	protected final String EXPRESSION_TAG = MIBreakpoints.EXPRESSION;
 	protected final String READ_TAG = MIBreakpoints.READ;
 	protected final String WRITE_TAG = MIBreakpoints.WRITE;
+
 	// Target application 'special' locations
-	protected final int LINE_NUMBER_1 = 20;
-	protected final int LINE_NUMBER_2 = 21;
-	protected final int LINE_NUMBER_3 = 27;
-	protected final int LINE_NUMBER_4 = 36;
-	protected final int LINE_NUMBER_5 = 49;
-	protected final int LINE_NUMBER_6 = 50;
+	private static final String[] LINE_TAGS = new String[] {
+		"LINE_NUMBER_1",
+		"LINE_NUMBER_2",
+		"LINE_NUMBER_3",
+		"LINE_NUMBER_4",
+		"LINE_NUMBER_5",
+		"LINE_NUMBER_6",
+	};
+
+	private int LINE_NUMBER_1;
+	private int LINE_NUMBER_2;
+	private int LINE_NUMBER_3;
+	private int LINE_NUMBER_4;
+	private int LINE_NUMBER_5;
+	private int LINE_NUMBER_6;
+
 	protected final String FUNCTION = "zeroBlocks";
 	protected final String SIGNED_FUNCTION = "zeroBlocks(int)";
 	protected final String NO_CONDITION = "";
@@ -200,6 +211,16 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase	 {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
 		assert (fBreakpointsDmc != null);
+
+		// Look up line tags in source file.
+		resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
+
+		LINE_NUMBER_1 = getLineForTag("LINE_NUMBER_1");
+		LINE_NUMBER_2 = getLineForTag("LINE_NUMBER_2");
+		LINE_NUMBER_3 = getLineForTag("LINE_NUMBER_3");
+		LINE_NUMBER_4 = getLineForTag("LINE_NUMBER_4");
+		LINE_NUMBER_5 = getLineForTag("LINE_NUMBER_5");
+		LINE_NUMBER_6 = getLineForTag("LINE_NUMBER_6");
 	}
 
 	@Override

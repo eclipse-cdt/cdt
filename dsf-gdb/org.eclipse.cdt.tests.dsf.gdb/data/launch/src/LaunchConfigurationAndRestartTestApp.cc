@@ -24,9 +24,9 @@ int envTest() {
 
 int main (int argc, char *argv[])
 {
-    envTest();
+    envTest(); // FIRST_LINE_IN_MAIN
     reverseTest();
     stopAtOther();
-    return 0;
+    return 0; // LAST_LINE_IN_MAIN
 }
 

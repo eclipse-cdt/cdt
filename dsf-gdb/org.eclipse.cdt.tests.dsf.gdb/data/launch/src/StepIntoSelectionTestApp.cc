@@ -1,43 +1,26 @@
 #include "StepIntoSelection.h"
-//
-//
-//
-//    
-//
-//
-//
-// The first line of the below method must be at line 10
+
 int foo() {
-	int i = 0;  // The tests expect this to be at line 11
+	int i = 0; // FOO_LINE
 	return 1;
 }
-//
-//
-//
-//
-//
+
 int bar(int i) {
-	int b = 0;  // The tests expect this to be at line 20
+	int b = 0; // BAR_LINE
 	return i + b;
 }
-//
-//
-//
-//
-//
-//
+
 int add(int a) {
-	return a + 1;  // The tests expect this to be at line 30
+	return a + 1; // ADD_WITH_ARG_LINE
 }
-//
-//
+
 int add() {
-	return 1;   // The tests expect this to be at line 35
+	return 1; // ADD_NO_ARG_LINE
 }
 
 int recursiveTest(int a) {
 	if (a == 1) return a;
-	
+
 	return a + recursiveTest(--a);  // The test expects this line to be exactly 2 lines below the first line of the method
 }
 

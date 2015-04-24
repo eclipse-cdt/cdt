@@ -86,7 +86,7 @@ public class MIRunControlTest extends BaseTestCase {
 	private IExecutionDMContext fThreadExecDmc;
 
 	// Breakpoint tags in MultiThread.cc
-	public static final String[] LINE_TAGS = new String[] {
+	protected static final String[] LINE_TAGS = new String[] {
 			"LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
 			"LINE_MAIN_AFTER_THREAD_START", // Just after StartThread
 			"LINE_MAIN_ALL_THREADS_STARTED", // Where all threads are guaranteed to be started.

@@ -113,7 +113,7 @@ public class BaseTestCase {
 
 	private static boolean fgStatusHandlersEnabled = true;
 
-	private static HashMap<String, Integer> fTagLocations = new HashMap<>();
+	private HashMap<String, Integer> fTagLocations = new HashMap<>();
 
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
@@ -253,8 +253,6 @@ public class BaseTestCase {
 			Set<String> tagsToFind = new HashSet<>(Arrays.asList(tags));
 			String line;
 			int lineNumber = 1;
-
-			fTagLocations.clear();
 
 			line = reader.readLine();
 			while (line != null) {

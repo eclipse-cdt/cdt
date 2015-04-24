@@ -54,9 +54,15 @@ import org.junit.runner.RunWith;
 @RunWith(BackgroundRunner.class)
 public class LaunchConfigurationAndRestartTest extends BaseTestCase {
 	protected static final String EXEC_NAME = "LaunchConfigurationAndRestartTestApp.exe";
+	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 
-	protected static final int FIRST_LINE_IN_MAIN = 27;
-	protected static final int LAST_LINE_IN_MAIN = 30;
+	protected static final String[] LINE_TAGS = new String[] {
+		"FIRST_LINE_IN_MAIN",
+		"LAST_LINE_IN_MAIN",
+	};
+	
+	protected int FIRST_LINE_IN_MAIN;
+	protected int LAST_LINE_IN_MAIN;
 
 	protected DsfSession fSession;
     protected DsfServicesTracker fServicesTracker;
@@ -71,7 +77,11 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
 	public void doBeforeTest() throws Exception {
 		setLaunchAttributes();
 		// Can't run the launch right away because each test needs to first set some 
-		// parameters.  The individual tests will be responsible for starting the launch. 
+		// parameters.  The individual tests will be responsible for starting the launch.
+
+		resolveLineTagLocations(SOURCE_NAME, LaunchConfigurationAndRestartTest.LINE_TAGS);
+		FIRST_LINE_IN_MAIN = getLineForTag("FIRST_LINE_IN_MAIN");
+		LAST_LINE_IN_MAIN = getLineForTag("LAST_LINE_IN_MAIN");
 	}
 
 	@Override

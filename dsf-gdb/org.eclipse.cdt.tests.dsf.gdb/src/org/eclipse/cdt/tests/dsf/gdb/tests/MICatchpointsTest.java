@@ -85,7 +85,10 @@ public class MICatchpointsTest extends BaseTestCase {
     private static final String EXEC_NAME  = "CatchpointTestApp.exe"; //$NON-NLS-1$
     private static final String SOURCE_NAME = "CatchpointTestApp.cc"; //$NON-NLS-1$
     
-    public static final int LINE_NUMBER_SLEEP_CALL = 17;
+    protected static final String[] LINE_TAGS = {
+		"LINE_NUMBER_SLEEP_CALL",
+	};
+    protected int LINE_NUMBER_SLEEP_CALL;
 
     // Asynchronous Completion
     private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
@@ -177,6 +180,9 @@ public class MICatchpointsTest extends BaseTestCase {
         IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
         assertNotNull(fBreakpointsDmc);
+
+        resolveLineTagLocations(SOURCE_NAME, LINE_TAGS);
+        LINE_NUMBER_SLEEP_CALL = getLineForTag("LINE_NUMBER_SLEEP_CALL");
     }
 
     @Override

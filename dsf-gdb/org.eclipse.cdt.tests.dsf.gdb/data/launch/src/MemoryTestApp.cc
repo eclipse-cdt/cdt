@@ -32,7 +32,7 @@ void setBlocks()
 
 int main()
 {
-	zeroBlocks();
+	zeroBlocks(); // LINE_NUMBER
 	setBlocks();
 	return 0;
 }

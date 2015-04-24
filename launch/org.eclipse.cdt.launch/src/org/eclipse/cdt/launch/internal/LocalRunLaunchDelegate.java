@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate2;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
@@ -43,6 +43,7 @@ import com.ibm.icu.text.DateFormat;
 public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 {
 	public LocalRunLaunchDelegate() {
+		// We support project-less run
 		super(false);
 	}
 	
@@ -66,7 +67,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 		}
 		monitor.worked(1);
 		try {
-			IPath exePath = CDebugUtils.verifyProgramPath(config);
+			IPath exePath = checkBinaryDetails(config);
 
 			File wd = verifyWorkingDirectory(config);
 			if (wd == null) {
@@ -95,6 +96,18 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2
 		} finally {
 			monitor.done();
 		}		
+	}
+
+	/**
+	 * Method used to check that the project and program are correct.
+	 * Can be overridden to avoid checking certain things.
+	 */
+	protected IPath checkBinaryDetails(final ILaunchConfiguration config) throws CoreException {
+		// First verify we are dealing with a proper project.
+		ICProject project = verifyCProject(config);
+		// Now verify we know the program to run.
+		IPath exePath = verifyProgramPath(config, project);
+		return exePath;
 	}
 
 	/**

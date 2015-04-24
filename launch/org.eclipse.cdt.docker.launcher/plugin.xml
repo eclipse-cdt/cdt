@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.cdt.docker.launcher.ContainerLaunchConfigurationDelegate"
+            delegateDescription="%Delegate.desc"
+            delegateName="%Delegate.name"
+            id="org.eclipse.cdt.docker.launcher.launchConfigurationType"
+            modes="run,debug"
+            name="%LaunchConfigurationType.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.eclipse.cdt.docker.launcher.LaunchShortcut"
+            id="org.eclipse.cdt.docker.launcher.run.shortcut"
+            label="%Shortcut.label"
+            modes="run, debug">
+         <contextualLaunch>
+            <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                   <or>
+                     <instanceof value="org.eclipse.cdt.core.model.IBinary"/>
+                     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.cdt.launch.isExecutable"/>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.cdt.launch.isCProject"/>
+                     <and>
+                       <instanceof value="org.eclipse.ui.IFileEditorInput"/>
+                       <adapt type="org.eclipse.core.resources.IResource">
+                         <adapt type="org.eclipse.cdt.core.model.ICElement"/>
+                       </adapt>
+                     </and>
+                   </or>
+               </iterate>
+             </with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.docker.launcher.ui.preferences.DockerLaunchPreferencePage"
+            id="org.eclipse.cdt.docker.launcher.page1"
+            name="%DockerLaunchPreferencePage.name">
+      </page>
+   </extension>
+      <!--   <extension
+            point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <tab
+            id="org.eclipse.linuxtools.profiling.launch.profileApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%MainTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.docker.launcher.launchDelegate"/>
+      </tab>
+      <tab
+            id="org.eclipse.linuxtools.profiling.launch.profileApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%ArgumentsTab.name"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.docker.launcher.launchDelegate"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.linuxtools.profiling.launch.profileApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%EnvironmentTab.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.docker.launcher.launchDelegate"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.linuxtools.profiling.launch.profileApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%CommonTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.docker.launcher.launchDelegate"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+   </extension>
+         <extension
+               point="org.eclipse.debug.core.launchDelegates">
+            <launchDelegate
+                  delegate="org.eclipse.cdt.docker.launcher.ContainerLaunchConfigurationDelegate"
+                  delegateDescription="%Delegate.desc"
+                  id="org.eclipse.cdt.docker.launcher.launchDelegate"
+                  modes="run"
+                  name="%Delegate.name"
+                  sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+                  sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+                  type="org.eclipse.cdt.docker.launcher.launchConfigurationType">
+            </launchDelegate>
+         </extension>
+         -->
+         <extension
+               point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+            <launchConfigurationTabGroup
+                  class="org.eclipse.cdt.docker.launcher.ContainerLaunchConfigurationTabGroup"
+                  id="org.eclipse.cdt.docker.launcher.launchConfigurationTabGroup"
+                  type="org.eclipse.cdt.docker.launcher.launchConfigurationType">
+            </launchConfigurationTabGroup>
+         </extension>
+         <extension
+               point="org.eclipse.core.runtime.preferences">
+            <initializer
+                  class="org.eclipse.cdt.docker.launcher.ui.preferences.PreferenceInitializer">
+            </initializer>
+         </extension>
+         <extension
+               point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+            <launchConfigurationTypeImage
+                  configTypeID="org.eclipse.cdt.docker.launcher.launchConfigurationType"
+                  icon="icons/c_app.gif"
+                  id="org.eclipse.cdt.docker.launcher.launchConfigurationTypeImage1">
+            </launchConfigurationTypeImage>
+         </extension>
+   
+</plugin>

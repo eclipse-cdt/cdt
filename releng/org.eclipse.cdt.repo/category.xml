@@ -65,6 +65,12 @@
    <feature url="features/org.eclipse.cdt.autotools.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.autotools.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.docker.launcher_0.0.0.qualifier.jar" id="org.eclipse.cdt.docker.launcher" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.docker.launcher.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.docker.launcher.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.testsrunner.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.feature" version="0.0.0">
       <category name="extra"/>
    </feature>

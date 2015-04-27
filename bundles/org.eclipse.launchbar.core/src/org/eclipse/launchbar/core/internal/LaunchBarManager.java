@@ -831,6 +831,15 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		}
 		// per desc store, desc can be null means it store globally
 		setPreference(getPerDescriptorStore(desc), PREF_ACTIVE_LAUNCH_TARGET, toString(getTargetId(target)));
+		// Also we have to store this in remote connection service
+		try {
+			ILaunchConfiguration config = getLaunchConfiguration(desc, target, false);
+			if (config != null) {
+				remoteLaunchConfigService.setActiveConnection(config, target);
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
 	}
 
 	private void fireActiveLaunchTargetChanged() {
@@ -854,18 +863,16 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	public ILaunchConfiguration getActiveLaunchConfiguration() throws CoreException {
-		ILaunchConfiguration activeConfig = getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
-		if (activeConfig != null) {
-			// Save the config -> target mapping
-			// TODO: seems to be weird place for setting this
-			remoteLaunchConfigService.setActiveConnection(activeConfig, activeLaunchTarget);
-		}
-		return activeConfig;
+		return getLaunchConfiguration(activeLaunchDesc, activeLaunchTarget);
 	}
 
-	// Don't call this to get the active launch config. Use getActiveLaunchConfiguration(). It ensures that config -> target
-	// mapping is saved.
+
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+		return getLaunchConfiguration(descriptor, target, true);
+	}
+
+	private ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+			boolean create) throws CoreException {
 		if (descriptor == null) {
 			return null;
 		}
@@ -884,11 +891,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 				configMap = new HashMap<>();
 				configs.put(descriptor, configMap);
 			}
-
+			if (create == false)
+				return null;
 			// Not found, create, store and return it
 			ILaunchConfiguration config = configProvider.createLaunchConfiguration(getLaunchManager(), descriptor);
 			if (config != null) {
 				configMap.put(configProvider, config);
+				// since new LC is created we need to associate it with remote target
+				storeLaunchTarget(descriptor, target);
 				return config;
 			}
 		}
@@ -897,10 +907,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	public void addListener(Listener listener) {
+		if (listener == null)
+			return;
 		listeners.add(listener);
 	}
 
 	public void removeListener(Listener listener) {
+		if (listener == null)
+			return;
 		listeners.remove(listener);
 	}
 

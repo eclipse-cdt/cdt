@@ -185,6 +185,7 @@ public class LaunchBarManager2Test {
 		ILaunchConfiguration lc = mock(ILaunchConfiguration.class);
 		doReturn(string).when(lc).getName();
 		doReturn(lctype2).when(lc).getType();
+		doReturn("").when(lc).getAttribute(eq(ORIGINAL_NAME), eq(""));
 		return lc;
 	}
 
@@ -580,7 +581,7 @@ public class LaunchBarManager2Test {
 			return "pbtype";
 		}
 	}
-
+	String ORIGINAL_NAME = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".originalName";
 	protected void projectMappingSetup() throws CoreException {
 		descriptorType = new ProjectBasedLaunchDescriptorType();
 		descriptorTypeId = ((ProjectBasedLaunchDescriptorType) descriptorType).getId();
@@ -599,7 +600,7 @@ public class LaunchBarManager2Test {
 		mockConfigTypeElement(localTargetTypeId, descriptorTypeId, launchConfigType.getIdentifier());
 		//lc = provider.createLaunchConfiguration(lman, descType.getDescriptor(aaa));
 		mockLCProject(launchConfig, aaa);
-		String ORIGINAL_NAME = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".originalName";
+
 		mockLCAttribute(launchConfig, ORIGINAL_NAME, aaa.getName());
 		mockProviderElement(provider);
 		assertEquals(0, manager.getLaunchDescriptors().length);

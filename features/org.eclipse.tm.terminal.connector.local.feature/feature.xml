@@ -34,16 +34,14 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.variables" version="3.2.600" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.connector.process" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.core.native"/>
+      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
    </requires>
 
    <plugin

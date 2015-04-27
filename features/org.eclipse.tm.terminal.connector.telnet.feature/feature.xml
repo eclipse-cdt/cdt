@@ -35,10 +35,12 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
       <import plugin="org.eclipse.tm.terminal.control" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.control.feature" version="4.0.0" match="compatible"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.security" version="1.1.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

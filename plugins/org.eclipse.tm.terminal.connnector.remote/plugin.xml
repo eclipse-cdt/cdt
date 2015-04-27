@@ -17,6 +17,26 @@
             id="org.eclipse.tm.terminal.connector.remote.RemoteConnector"
             class="org.eclipse.tm.terminal.connector.remote.internal.RemoteConnector"/>
    </extension>
+
+<!-- Terminal launcher delegate contributions -->
+   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+      <delegate
+            class="org.eclipse.tm.terminal.connector.remote.launcher.RemoteLauncherDelegate"
+            id="org.eclipse.tm.terminal.connector.telnet.launcher.remote"
+            label="Remote Terminal">
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate operator="and" ifEmpty="false">
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.tm.terminal.view.core.hasContextPropertiesProvider"
+                           value="true"/>
+                  </iterate>
+               </with>
+            </enablement>
+      </delegate>
+   </extension>
    
 <!-- Preference contributions -->
    <extension point="org.eclipse.core.runtime.preferences">

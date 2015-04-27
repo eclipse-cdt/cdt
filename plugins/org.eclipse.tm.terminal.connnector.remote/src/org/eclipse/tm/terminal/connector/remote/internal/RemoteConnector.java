@@ -90,12 +90,11 @@ public class RemoteConnector extends TerminalConnectorImpl {
 	}
 
 	/**
-	 * Return the SSH Settings.
+	 * Return the Remote Settings.
 	 * 
 	 * @return the settings for a concrete connection.
-	 * @since org.eclipse.tm.terminal.ssh 2.0 renamed from getTelnetSettings()
 	 */
-	public IRemoteSettings getSshSettings() {
+	public IRemoteSettings getRemoteSettings() {
 		return fSettings;
 	}
 

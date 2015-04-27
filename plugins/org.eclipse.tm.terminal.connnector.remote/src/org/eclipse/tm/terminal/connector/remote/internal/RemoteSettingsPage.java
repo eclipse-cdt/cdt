@@ -9,6 +9,8 @@ package org.eclipse.tm.terminal.connector.remote.internal;
 
 import org.eclipse.remote.ui.widgets.RemoteConnectionWidget;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -25,13 +27,19 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 
 	@Override
 	public void saveSettings() {
-		fTerminalSettings.setRemoteServices(fRemoteConnectionWidget.getConnection().getConnectionType().getId());
-		fTerminalSettings.setConnectionName(fRemoteConnectionWidget.getConnection().getName());
+		if (fTerminalSettings != null && fRemoteConnectionWidget != null && !fRemoteConnectionWidget.isDisposed()) {
+			if (fRemoteConnectionWidget.getConnection() != null) {
+				if (fRemoteConnectionWidget.getConnection().getConnectionType() != null) {
+					fTerminalSettings.setRemoteServices(fRemoteConnectionWidget.getConnection().getConnectionType().getId());
+				}
+				fTerminalSettings.setConnectionName(fRemoteConnectionWidget.getConnection().getName());
+			}
+		}
 	}
 
 	@Override
 	public void loadSettings() {
-		if (fTerminalSettings != null) {
+		if (fTerminalSettings != null && fRemoteConnectionWidget != null && !fRemoteConnectionWidget.isDisposed()) {
 			fRemoteConnectionWidget.setConnection(fTerminalSettings.getRemoteServices(), fTerminalSettings.getConnectionName());
 		}
 	}
@@ -45,7 +53,7 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 
 	@Override
 	public boolean validateSettings() {
-		if (fRemoteConnectionWidget.getConnection() == null) {
+		if (fRemoteConnectionWidget == null || fRemoteConnectionWidget.isDisposed() || fRemoteConnectionWidget.getConnection() == null) {
 			return false;
 		}
 		return true;
@@ -61,6 +69,12 @@ public class RemoteSettingsPage extends AbstractSettingsPage {
 		composite.setLayoutData(gridData);
 
 		fRemoteConnectionWidget = new RemoteConnectionWidget(composite, SWT.NONE, null, 0);
+		fRemoteConnectionWidget.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fireListeners(fRemoteConnectionWidget);
+			}
+		});
 		loadSettings();
 	}
 }

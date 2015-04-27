@@ -14,7 +14,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.terminal.connector.remote.IRemoteTerminalConstants;
 import org.eclipse.tm.terminal.connector.remote.internal.Activator;
-import org.eclipse.tm.terminal.connector.remote.internal.messages.Messages;
+import org.eclipse.tm.terminal.connector.remote.nls.Messages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;

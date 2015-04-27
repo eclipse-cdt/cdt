@@ -34,7 +34,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.connector.remote.IRemoteTerminalConstants;
 import org.eclipse.tm.terminal.connector.remote.IRemoteTerminalParser;
-import org.eclipse.tm.terminal.connector.remote.internal.messages.Messages;
+import org.eclipse.tm.terminal.connector.remote.nls.Messages;
 
 @SuppressWarnings("restriction")
 public class RemoteConnectionManager extends Job {
@@ -67,20 +67,20 @@ public class RemoteConnectionManager extends Job {
 
 		try {
 			IRemoteServicesManager svcMgr = Activator.getService(IRemoteServicesManager.class);
-			String connTypeId = connector.getSshSettings().getRemoteServices();
+			String connTypeId = connector.getRemoteSettings().getRemoteServices();
 			IRemoteConnectionType connType = svcMgr.getConnectionType(connTypeId);
 			if (connType != null) {
-				remoteConnection = connType.getConnection(connector.getSshSettings().getConnectionName());
+				remoteConnection = connType.getConnection(connector.getRemoteSettings().getConnectionName());
 			}
 			if (remoteConnection == null) {
-				throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_0, connector.getSshSettings()
+				throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_0, connector.getRemoteSettings()
 						.getConnectionName()));
 			}
 
 			if (!remoteConnection.isOpen()) {
 				remoteConnection.open(monitor);
 				if (!remoteConnection.isOpen()) {
-					throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_1, connector.getSshSettings()
+					throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_1, connector.getRemoteSettings()
 							.getConnectionName()));
 				}
 			}

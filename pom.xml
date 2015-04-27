@@ -27,23 +27,21 @@
         <!-- Terminal Connector features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal.connector.local</module>
         <module>plugins/org.eclipse.tm.terminal.connector.process</module>
+        <module>plugins/org.eclipse.tm.terminal.connector.remote</module>
         <module>plugins/org.eclipse.tm.terminal.connector.serial</module>
         <module>plugins/org.eclipse.tm.terminal.connector.ssh</module>
         <module>plugins/org.eclipse.tm.terminal.connector.telnet</module>
-
-        <module>plugins/org.eclipse.tm.terminal.remote</module>
         
         <module>features/org.eclipse.tm.terminal.connector.local.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.local.sdk.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.remote.feature</module>
+        <module>features/org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.ssh.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.ssh.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.telnet.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.telnet.sdk.feature</module>
-
-        <module>features/org.eclipse.tm.terminal.remote.feature</module>
-        <module>features/org.eclipse.tm.terminal.remote.sdk.feature</module>
 
         <!-- Terminals View features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal.view.core</module>

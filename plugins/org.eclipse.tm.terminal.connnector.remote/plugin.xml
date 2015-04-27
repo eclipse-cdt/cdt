@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<!--
+# Copyright (c) 2015 IBM Corporation and others.
+# All rights reserved. This program and the accompanying materials 
+# are made available under the terms of the Eclipse Public License v1.0 
+# which accompanies this distribution, and is available at 
+# http://www.eclipse.org/legal/epl-v10.html 
+-->
+<plugin>
+   <extension-point id="parsers" name="Terminal Parsers" schema="schema/parsers.exsd"/>
+
+<!-- Terminal connector contributions -->
+   <extension point="org.eclipse.tm.terminal.control.connectors">
+      <connector 
+            name="%connectionName"
+            id="org.eclipse.tm.terminal.connector.remote.RemoteConnector"
+            class="org.eclipse.tm.terminal.connector.remote.internal.RemoteConnector"/>
+   </extension>
+   
+<!-- Preference contributions -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.tm.terminal.connector.remote.internal.preferences.RemoteTerminalPreferenceInitializer">
+      </initializer>
+   </extension>
+   
+   <extension point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.tm.terminal.TerminalPreferencePage"
+            class="org.eclipse.tm.terminal.connector.remote.internal.preferences.RemoteTerminalPreferencePage"
+            id="org.eclipse.tm.terminal.remote.page"
+            name="%RemoteTerminalPage.name">
+      </page>
+   </extension>
+</plugin>

@@ -33,10 +33,10 @@
    <feature url="features/org.eclipse.tm.terminal.connector.telnet.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.telnet.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.connector.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.remote.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.remote.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.remote.sdk.feature" version="0.0.0">
+   <feature url="features/org.eclipse.tm.terminal.connector.remote.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.remote.sdk.feature" version="0.0.0">
       <category name="tm_main"/>
    </feature>
 

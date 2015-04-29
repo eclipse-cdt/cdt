@@ -49,7 +49,7 @@
       <import plugin="org.eclipse.rse.subsystems.files.ftp" version="2.1.0" match="compatible"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.help"/>
-      <import plugin="org.junit" version="3.8.1" match="compatible"/>
+      <import plugin="org.junit"/>
       <import plugin="org.apache.ant"/>
    </requires>
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Dmitry Kozlov (CodeSourcery)
  *     Tomasz Wesolowski
  *     Andrew Gvozdev (Quoin Inc.) - moved usage involving registry to CDTSharedImages
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -299,6 +300,7 @@ public class CPluginImages {
 	public static final String IMG_MENU_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_CODE_ASSIST= NAME_PREFIX + "metharg_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
+	public static final String IMG_MENU_EXPAND_ALL= NAME_PREFIX + "expandall.gif"; //$NON-NLS-1$
 	public static final String IMG_CLEAR_CONSOLE= NAME_PREFIX + "clear_co.gif"; //$NON-NLS-1$
 	public static final String IMG_SCROLL_LOCK= NAME_PREFIX + "lock_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$

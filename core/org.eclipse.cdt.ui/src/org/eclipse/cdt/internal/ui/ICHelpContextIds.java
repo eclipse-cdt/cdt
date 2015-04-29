@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -104,6 +105,7 @@ public interface ICHelpContextIds {
 	public static final String TOGGLE_TEXTHOVER_ACTION = PREFIX + "toggle_texthover_action_context"; //$NON-NLS-1$
 
 	public static final String COLLAPSE_ALL_ACTION = PREFIX + "collapse_all_action"; //$NON-NLS-1$
+	public static final String EXPAND_ALL_ACTION = PREFIX + "expand_all_action"; //$NON-NLS-1$
 
 	public static final String C_SEARCH_PAGE = PREFIX + "cdt_u_search"; //$NON-NLS-1$
 

@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Ed Swartz (Nokia)
  *     Martin Oberhuber (Wind River) - bug 398195: consider external API in IB 
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -101,7 +102,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
 import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
+import org.eclipse.cdt.internal.ui.actions.ExpandAllAction;
 import org.eclipse.cdt.internal.ui.navigator.OpenCElementAction;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
@@ -627,6 +630,8 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
 
         fHistoryAction= new IBHistoryDropDownAction(this);
+        ExpandAllAction expandAll = new ExpandAllAction(getTreeViewer());
+        CollapseAllAction collapseAll = new CollapseAllAction(getTreeViewer());
 
         fCopyAction= new CopyCallHierarchyAction(this, fTreeViewer);
         fRemoveFromViewAction= new IBRemoveFromView(this);
@@ -646,6 +651,9 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         IToolBarManager tm = actionBars.getToolBarManager();
         tm.add(fNextAction);
         tm.add(fPreviousAction);
+        tm.add(new Separator());
+        tm.add(expandAll);
+        tm.add(collapseAll);
         tm.add(new Separator());
         tm.add(fFilterSystemAction);
         tm.add(fFilterInactiveAction);

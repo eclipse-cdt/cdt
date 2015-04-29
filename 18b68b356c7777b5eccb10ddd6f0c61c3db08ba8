@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_4db73073",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-04-29T15:03:17Z",
+      "side": 1,
+      "message": "It seems like the groupId / inferiorId is re-used by GDB quite closely to the termination of one, so in a dynamic application with threads started and exited we will have problems to distinguish them.",
+      "range": {
+        "startLine": 356,
+        "startChar": 56,
+        "endLine": 356,
+        "endChar": 57
+      },
+      "revId": "18b68b356c7777b5eccb10ddd6f0c61c3db08ba8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

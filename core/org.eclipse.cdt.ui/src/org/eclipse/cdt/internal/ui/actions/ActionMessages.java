@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2013 IBM Corporation and others.
+ * Copyright (c) 2001, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle (Ericsson)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
@@ -95,6 +96,9 @@ public class ActionMessages extends NLS {
 	public static String CollapseAllAction_label;
 	public static String CollapseAllAction_tooltip;
 	public static String CollapseAllAction_description;
+	public static String ExpandAllAction_label;
+	public static String ExpandAllAction_tooltip;
+	public static String ExpandAllAction_description;
 
 	static {
 		// Initialize resource bundle.

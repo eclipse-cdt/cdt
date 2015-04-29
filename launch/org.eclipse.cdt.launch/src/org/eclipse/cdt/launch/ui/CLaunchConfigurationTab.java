@@ -152,8 +152,10 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			config.setMappedResources(new IResource[] {cProject.getProject()});
 			
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
-			String buildConfigID = projDes.getActiveConfiguration().getId();
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);
+			if (projDes != null) {
+				String buildConfigID = projDes.getActiveConfiguration().getId();
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);
+			}
 			
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);

@@ -85,7 +85,7 @@ Terminal launcher delegates contributes terminal settings widget to the &lt;code
 The terminal launcher delegate implementation class must be specified either by the class attribute or the class child element!
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.tcf.te.ui.terminals.launcher.AbstractLauncherDelegate:org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate:org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -125,7 +125,7 @@ The terminal launcher delegate implementation class must be specified either by 
 The terminal launcher delegate implementation class must be specified either by the class attribute or the class child element!
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.tcf.te.ui.terminals.launcher.AbstractLauncherDelegate:org.eclipse.tcf.te.ui.terminals.interfaces.ILauncherDelegate"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate:org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate"/>
                </appinfo>
             </annotation>
          </attribute>

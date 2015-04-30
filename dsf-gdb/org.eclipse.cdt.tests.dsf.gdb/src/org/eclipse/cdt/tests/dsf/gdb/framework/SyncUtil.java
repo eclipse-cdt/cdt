@@ -384,7 +384,7 @@ public class SyncUtil {
 		return resumeUntilStopped(timeout);
 	}
 	
-    public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Throwable {
+    public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
     	Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
             @Override
             protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {

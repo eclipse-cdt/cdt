@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_06606276",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-04-30T20:56:20Z",
+      "side": 1,
+      "message": "This is the simplest way to make it build. The complicated way would be to change doBeforeTest so it throws a Throwable instead of an Exception.",
+      "revId": "a99c64483d3bc8605c4b92305b6b9cf956d07452",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

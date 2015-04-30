@@ -24,13 +24,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.tm.internal.terminal.control.actions.ImageConsts;
-import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 public class TerminalPlugin extends AbstractUIPlugin {
 	private static TerminalPlugin plugin;
-	public static final String  PLUGIN_ID  = "org.eclipse.tm.terminal"; //$NON-NLS-1$
+	public static final String  PLUGIN_ID  = "org.eclipse.tm.terminal.control"; //$NON-NLS-1$
 	public static final String  HELP_VIEW  = PLUGIN_ID + ".terminal_view"; //$NON-NLS-1$
 
 	/**
@@ -44,19 +43,21 @@ public class TerminalPlugin extends AbstractUIPlugin {
 	public static TerminalPlugin getDefault() {
 		return plugin;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext context) throws Exception {
+	@Override
+    public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext context) throws Exception {
+	@Override
+    public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
 	}
@@ -69,7 +70,8 @@ public class TerminalPlugin extends AbstractUIPlugin {
 		return new Boolean(strEnabled).booleanValue();
 	}
 
-	protected void initializeImageRegistry(ImageRegistry imageRegistry) {
+	@Override
+    protected void initializeImageRegistry(ImageRegistry imageRegistry) {
 		try {
 			// Local toolbars
 			putImageInRegistry(imageRegistry, ImageConsts.IMAGE_CLCL_CLEAR_ALL, ImageConsts.IMAGE_DIR_LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$

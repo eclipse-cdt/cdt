@@ -157,12 +157,8 @@ public class MIRegistersTest extends BaseTestCase {
 		//resolve the execution context
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 		IFrameDMContext frameDmc = null;
-		try {
-			frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		} catch (Throwable e1) {
-			e1.printStackTrace();
-			fail("Initialization problem");
-		}
+
+		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		//resolve the container context
 		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(getInitialStoppedEvent().getDMContext(), IContainerDMContext.class);

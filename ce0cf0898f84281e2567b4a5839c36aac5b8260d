@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_466d4aa6",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-30T20:09:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_06f7c2c7",
+      "range": {
+        "startLine": 800,
+        "startChar": 10,
+        "endLine": 800,
+        "endChar": 32
+      },
+      "revId": "ce0cf0898f84281e2567b4a5839c36aac5b8260d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_4601ca3c",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
         "patchSetId": 6
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_266abe8e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-30T20:09:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_4601ca3c",
+      "range": {
+        "startLine": 804,
+        "startChar": 24,
+        "endLine": 804,
+        "endChar": 45
+      },
+      "revId": "ce0cf0898f84281e2567b4a5839c36aac5b8260d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_a63b4ef3",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
         "patchSetId": 6
@@ -59,6 +107,30 @@
       "writtenOn": "2015-04-30T18:27:44Z",
       "side": 1,
       "message": "It seems the \"if\" is no longer needed",
+      "range": {
+        "startLine": 1267,
+        "startChar": 6,
+        "endLine": 1267,
+        "endChar": 12
+      },
+      "revId": "ce0cf0898f84281e2567b4a5839c36aac5b8260d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_a6550ecd",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1267,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-04-30T20:09:39Z",
+      "side": 1,
+      "message": "Right.  I was actually put the code like that to explicitly handle that case.  With a potential improvement of using the double X button in the debug view, I wanted to easily indicate that the terminate was handling MIExitedProcessDMC.  Let me know if you prefer I remove it.",
+      "parentUuid": "87f6139c_a63b4ef3",
       "range": {
         "startLine": 1267,
         "startChar": 6,

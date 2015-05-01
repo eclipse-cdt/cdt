@@ -14,6 +14,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,21 +23,23 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.launchbar.core.ILaunchBarManager;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 
 public class StopActiveCommandHandler extends AbstractHandler {
-	private ILaunchBarManager launchBarManager;
+	private LaunchBarManager launchBarManager;
 
 	public StopActiveCommandHandler() {
-		launchBarManager = Activator.getService(ILaunchBarManager.class);
+		launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
 	}
 
 	@Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		stop();
 		return null;
-    }
+	}
 
 	public void stop() {
 		stopBuild();
@@ -48,16 +51,23 @@ public class StopActiveCommandHandler extends AbstractHandler {
 		if (activeLaunches != null && activeLaunches.length > 0) {
 			new Job("Stopping launches") {
 				protected IStatus run(IProgressMonitor monitor) {
-					// TODO only stop the launches for the active launch descriptor
-					// Not sure we have the API to map that out yet.
-					for (ILaunch launch : activeLaunches) {
-						try {
-							launch.terminate();
-						} catch (DebugException e) {
-							return e.getStatus();
+					try {
+						ILaunchConfiguration activeConfig = launchBarManager.getActiveLaunchConfiguration();
+						for (ILaunch launch : activeLaunches) {
+							ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
+							if (launchConfig.equals(activeConfig)) {
+								launch.terminate();
+							} else if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
+								// There are evil delegates that use a working copy for scratch storage
+								if (((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal().equals(activeConfig)) {
+									launch.terminate();
+								}
+							}
 						}
+						return Status.OK_STATUS;
+					} catch (CoreException e) {
+						return e.getStatus();
 					}
-					return Status.OK_STATUS;
 				};
 			}.schedule();
 		}

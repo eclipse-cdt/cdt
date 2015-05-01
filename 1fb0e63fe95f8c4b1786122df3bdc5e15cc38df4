@@ -16,6 +16,24 @@
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_f1fb4e39",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-01T16:44:52Z",
+      "side": 1,
+      "message": "Yes.  This is a preview.  Can\u0027t get this to build until we have an external repo which is waiting upon the final CQs being approved.",
+      "parentUuid": "87f6139c_11dd3a00",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

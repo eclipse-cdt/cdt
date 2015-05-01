@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_11dd3a00",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-05-01T14:29:54Z",
+      "side": 1,
+      "message": "Uh, I assume the plan was to change this before we check it in?",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

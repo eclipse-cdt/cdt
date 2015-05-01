@@ -164,6 +164,30 @@
       "revId": "ce0cf0898f84281e2567b4a5839c36aac5b8260d",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_31c9564f",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_0.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1267,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-01T14:06:07Z",
+      "side": 1,
+      "message": "The nice thing about it being code is that it will be found when doing a search.  I was thinking that using the terminate button to remove exited processes was not very obvious, so I wanted to make it easily found if we decided to use another button instead.",
+      "parentUuid": "87f6139c_f1beaeaa",
+      "range": {
+        "startLine": 1267,
+        "startChar": 6,
+        "endLine": 1267,
+        "endChar": 12
+      },
+      "revId": "ce0cf0898f84281e2567b4a5839c36aac5b8260d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

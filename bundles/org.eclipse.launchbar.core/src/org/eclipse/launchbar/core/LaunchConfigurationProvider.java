@@ -23,7 +23,7 @@ import org.eclipse.launchbar.core.internal.Activator;
 public abstract class LaunchConfigurationProvider implements ILaunchConfigurationProvider {
 
 	// Used to make sure this is the config we've created
-	protected static final String ORIGINAL_NAME = Activator.PLUGIN_ID + ".originalName";
+	protected static final String ORIGINAL_NAME = Activator.PLUGIN_ID + ".originalName"; //$NON-NLS-1$
 
 	@Override
 	public ILaunchConfiguration createLaunchConfiguration(ILaunchManager launchManager, ILaunchDescriptor descriptor) throws CoreException {
@@ -71,7 +71,7 @@ public abstract class LaunchConfigurationProvider implements ILaunchConfiguratio
 			return false;
 
 		// we created it if it has the same name we created it with 
-		return configuration.getAttribute(ORIGINAL_NAME, "").equals(configuration.getName());
+		return configuration.getAttribute(ORIGINAL_NAME, "").equals(configuration.getName()); //$NON-NLS-1$
 	}
 
 }

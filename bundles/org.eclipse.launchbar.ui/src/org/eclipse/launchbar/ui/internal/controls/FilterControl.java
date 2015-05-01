@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -33,7 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -101,7 +101,7 @@ public class FilterControl extends Composite {
 	protected void init() {
 		createControl(this, SWT.NONE);
 		createRefreshJob();
-		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
+		setInitialText(Messages.FilterControl_0);
 		setFont(parent.getFont());
 	}
 
@@ -224,7 +224,7 @@ public class FilterControl extends Composite {
 							e.result = initialText;
 						} else {
 							e.result = NLS.bind(
-									WorkbenchMessages.FilteredTree_AccessibleListenerFiltered,
+									Messages.FilterControl_1,
 									new String[] {
 											filterTextString,
 											String.valueOf(getFilteredItemsCount()) });

@@ -15,12 +15,12 @@ public class LaunchBarPreferencePage extends FieldEditorPreferencePage implement
 	@Override
 	public void init(IWorkbench workbench) {
 	    setPreferenceStore(Activator.getDefault().getPreferenceStore());
-	    setDescription("Preferences for the Launch Bar.");
+	    setDescription(Messages.LaunchBarPreferencePage_0);
 	}
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, "Enable the Launch Bar.", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, Messages.LaunchBarPreferencePage_1, getFieldEditorParent()));
 	}
 	
 }

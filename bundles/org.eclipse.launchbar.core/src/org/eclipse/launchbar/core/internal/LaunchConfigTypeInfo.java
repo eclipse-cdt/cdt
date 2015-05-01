@@ -8,9 +8,9 @@ public class LaunchConfigTypeInfo {
 	private final String launchConfigTypeId;
 
 	public LaunchConfigTypeInfo(IConfigurationElement element) {
-		this.descriptorTypeId = element.getAttribute("descriptorType");
-		this.targetTypeId = element.getAttribute("targetType");
-		this.launchConfigTypeId = element.getAttribute("launchConfigurationType");
+		this.descriptorTypeId = element.getAttribute("descriptorType"); //$NON-NLS-1$
+		this.targetTypeId = element.getAttribute("targetType"); //$NON-NLS-1$
+		this.launchConfigTypeId = element.getAttribute("launchConfigurationType"); //$NON-NLS-1$
 	}
 
 	public String getDescriptorTypeId() {

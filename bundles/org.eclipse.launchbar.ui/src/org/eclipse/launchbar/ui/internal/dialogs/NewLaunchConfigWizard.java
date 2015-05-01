@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 
 public class NewLaunchConfigWizard extends Wizard implements ILaunchConfigurationListener {
 
@@ -31,7 +32,7 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 	private List<ILaunchConfiguration> configsToDelete = new ArrayList<>();
 
 	public NewLaunchConfigWizard() {
-		setWindowTitle("Create Launch Configuration");
+		setWindowTitle(Messages.NewLaunchConfigWizard_0);
 		initListeners();
 	}
 	

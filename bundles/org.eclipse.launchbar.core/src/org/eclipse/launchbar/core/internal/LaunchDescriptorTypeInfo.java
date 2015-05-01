@@ -11,8 +11,8 @@ public class LaunchDescriptorTypeInfo {
 	private ILaunchDescriptorType type;
 
 	public LaunchDescriptorTypeInfo(IConfigurationElement element) {
-		this.id = element.getAttribute("id");
-		String priorityStr = element.getAttribute("priority");
+		this.id = element.getAttribute("id"); //$NON-NLS-1$
+		String priorityStr = element.getAttribute("priority"); //$NON-NLS-1$
 		this.priority = 1;
 		if (priorityStr != null) {
 			try {
@@ -42,7 +42,7 @@ public class LaunchDescriptorTypeInfo {
 
 	public ILaunchDescriptorType getType() throws CoreException {
 		if (type == null) {
-			type = (ILaunchDescriptorType) element.createExecutableExtension("class");
+			type = (ILaunchDescriptorType) element.createExecutableExtension("class"); //$NON-NLS-1$
 			element = null;
 		}
 		return type;

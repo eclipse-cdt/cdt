@@ -30,6 +30,7 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -42,6 +43,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+@SuppressWarnings("restriction")
 public class NewLaunchConfigEditPage extends WizardPage {
 	ILaunchConfigurationWorkingCopy workingCopy;
 	ILaunchConfigurationTabGroup tabGroup;
@@ -51,9 +53,9 @@ public class NewLaunchConfigEditPage extends WizardPage {
 	private LaunchConfigurationManager launchConfigurationMgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 
 	public NewLaunchConfigEditPage() {
-		super("NewLaunchConfigEditPage");
-		setTitle("Launch Configuration Properties");
-		setDescription("Edit the new launch configuration properties");
+		super(Messages.NewLaunchConfigEditPage_0);
+		setTitle(Messages.NewLaunchConfigEditPage_1);
+		setDescription(Messages.NewLaunchConfigEditPage_2);
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		comp.setLayout(new GridLayout(2, false));
 		Label label = new Label(comp, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText("Name:");
+		label.setText(Messages.NewLaunchConfigEditPage_3 + ":"); //$NON-NLS-1$
 		nameText = new Text(comp, SWT.BORDER);
 		nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		ColorRegistry reg = JFaceResources.getColorRegistry();
@@ -97,14 +99,14 @@ public class NewLaunchConfigEditPage extends WizardPage {
 	private String checkName(String name) {
 		try {
 			if (name.isEmpty()) {
-				return "Name can not be empty";
+				return Messages.NewLaunchConfigEditPage_4;
 			}
 			
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			if (manager.isExistingLaunchConfigurationName(name)) {
 				ILaunchConfiguration config = ((LaunchManager) manager).findLaunchConfiguration(name);
 				if (config != workingCopy.getOriginal()) {
-					return ("A configuration with this name already exists");
+					return (Messages.NewLaunchConfigEditPage_5);
 				}
 			}
 		} catch (Exception e) {
@@ -120,7 +122,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			return;
 		try {
 			String initialMode = ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
-			workingCopy = type.newInstance(null, "New Configuration");
+			workingCopy = type.newInstance(null, Messages.NewLaunchConfigEditPage_6);
 			tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(workingCopy, initialMode);
 			for (CTabItem item : tabFolder.getItems())
 				item.dispose();
@@ -236,7 +238,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		@Override
 		public String generateName(String name) {
 			if (name == null)
-				return "";
+				return ""; //$NON-NLS-1$
 			return DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(name);
 		}
 

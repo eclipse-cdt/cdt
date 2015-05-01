@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.launchbar.ui.IHoverProvider;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -98,12 +99,12 @@ public abstract class CSelector extends Composite {
 				final Object eventSource = e.getSource();
 				if ((eventSource == currentLabel || eventSource == buttonComposite || eventSource == currentIcon)) {
 					if (hoverProvider.displayHover(selection)) {
-						buttonComposite.setToolTipText("");
+						buttonComposite.setToolTipText(""); //$NON-NLS-1$
 						if (currentLabel != null) {
-							currentLabel.setToolTipText("");
+							currentLabel.setToolTipText(""); //$NON-NLS-1$
 						}
 						if (currentIcon != null) {
-							currentIcon.setToolTipText("");
+							currentIcon.setToolTipText(""); //$NON-NLS-1$
 						}
 						toolTipWasModified = true;
 					}
@@ -131,12 +132,13 @@ public abstract class CSelector extends Composite {
 		}
 	};
 
-	protected boolean isFocusAncestor(Control control) {
+	protected boolean myIsFocusAncestor(Control control) {
 		while (control != null && control != this && !(control instanceof Shell)) {
 			control = control.getParent();
 		}
 		return control == this;
 	}
+
 	private Listener focusOutListener = new Listener() {
 		private Job closingJob;
 
@@ -146,7 +148,7 @@ public abstract class CSelector extends Composite {
 			case SWT.FocusIn:
 				if (closingJob != null)
 					closingJob.cancel();
-				if (event.widget instanceof Control && isFocusAncestor((Control) event.widget)) {
+				if (event.widget instanceof Control && myIsFocusAncestor((Control) event.widget)) {
 					break; // not closing
 				}
 				if (!isPopUpInFocus()) {
@@ -159,7 +161,7 @@ public abstract class CSelector extends Composite {
 					// to another child, lets schedule a job to wait before we close
 					if (closingJob != null)
 						closingJob.cancel();
-					closingJob = new Job("Closing popup") {
+					closingJob = new Job(Messages.CSelector_0) {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							if (monitor.isCanceled())
@@ -246,7 +248,7 @@ public abstract class CSelector extends Composite {
 	public void setDelayedSelection(final Object element, long millis) {
 		if (delayJob != null)
 			delayJob.cancel();
-		delayJob = new Job("Updating launch bar selection") {
+		delayJob = new Job(Messages.CSelector_1) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				if (monitor.isCanceled())

@@ -13,7 +13,7 @@ import org.eclipse.launchbar.core.ILaunchDescriptorType;
  */
 public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 
-	public static final String ID = Activator.PLUGIN_ID + ".descriptorType.default";
+	public static final String ID = Activator.PLUGIN_ID + ".descriptorType.default"; //$NON-NLS-1$
 
 	private Map<ILaunchConfiguration, DefaultLaunchDescriptor> descriptors = new HashMap<>();
 

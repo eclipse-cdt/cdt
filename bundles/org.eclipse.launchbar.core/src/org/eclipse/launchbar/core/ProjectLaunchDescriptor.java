@@ -28,9 +28,9 @@ public class ProjectLaunchDescriptor extends PlatformObject implements ILaunchDe
 	}
 
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IProject.class.equals(adapter)) {
-			return project;
+			return adapter.cast(project);
 		}
 		return super.getAdapter(adapter);
 	}

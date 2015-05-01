@@ -7,12 +7,10 @@ import java.util.List;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -20,6 +18,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
@@ -44,15 +43,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 public class LaunchBarListViewer extends StructuredViewer {
@@ -78,11 +74,13 @@ public class LaunchBarListViewer extends StructuredViewer {
 		}
 
 		// have to override it because standard ViewerComparator compares by labels only
+		@SuppressWarnings("unchecked")
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getComparator().compare(e1, e2);
 		}
 	}
+
 	private TraverseListener listItemTraverseListener = new TraverseListener() {
 		@Override
 		public void keyTraversed(TraverseEvent e) {
@@ -152,7 +150,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 				filterControl.setVisible(true);
 				filterControl.setFocus();
 				filterControl.getParent().layout(true);
-				filterControl.getFilterText().setText(e.character + "");
+				filterControl.getFilterText().setText(e.character + ""); //$NON-NLS-1$
 				filterControl.getFilterText().setSelection(1);
 			} else if (e.character == SWT.ESC) {
 				setDefaultSelection(new StructuredSelection());
@@ -175,7 +173,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 		@Override
 		public String toString() {
-			return "[" + index + "] " + labelProvider.getText(element);
+			return "[" + index + "] " + labelProvider.getText(element); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		public ListItem(Composite parent, int style, Object element, int index, ILabelProvider labelProvider,
 				ICellModifier modifier) {
@@ -427,7 +425,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 				// ignore
 			}
 		});
-		sash.setToolTipText("Increase/Decrease size of recently used elements pane");
+		sash.setToolTipText(Messages.LaunchBarListViewer_0);
 	}
 
 	@Override
@@ -504,6 +502,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getSelectionFromWidget() {
 		ArrayList<Object> arrayList = new ArrayList<>();
@@ -569,7 +568,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 	}
 
 	@Override
-	protected void setSelectionToWidget(List l, boolean reveal) {
+	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
 		if (l.size() == 0) {
 			return;
 		}
@@ -680,29 +679,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 	public void setFinalSelection(boolean finalSelection) {
 		this.finalSelection = finalSelection;
-	}
-
-	public static void main(String[] args) {
-		Display display = Display.getDefault();
-		Shell shell = new Shell();
-		RowLayout rowLayout = new RowLayout();
-		shell.setLayout(rowLayout);
-		(new Label(shell, SWT.NULL)).setText("Hello");
-		LaunchBarListViewer v = new LaunchBarListViewer(shell);
-		v.setContentProvider(new ArrayContentProvider());
-		v.setLabelProvider(new LabelProvider());
-		v.setInput(new String[] { "aaa", "bbb", "ccc" });
-		shell.pack();
-		shell.open();
-		// textUser.forceFocus();
-		// Set up the event loop.
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				// If no more entries in event queue
-				display.sleep();
-			}
-		}
-		display.dispose();
 	}
 
 	public void setFocus() {

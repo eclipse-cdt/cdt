@@ -10,7 +10,7 @@ public class LaunchConfigProviderInfo {
 	private ILaunchConfigurationProvider provider;
 
 	public LaunchConfigProviderInfo(IConfigurationElement element) {
-		this.launchConfigTypeId = element.getAttribute("launchConfigurationType");
+		this.launchConfigTypeId = element.getAttribute("launchConfigurationType"); //$NON-NLS-1$
 		this.element = element;
 	}
 
@@ -20,7 +20,7 @@ public class LaunchConfigProviderInfo {
 
 	public ILaunchConfigurationProvider getProvider() throws CoreException {
 		if (provider == null) {
-			provider = (ILaunchConfigurationProvider) element.createExecutableExtension("class");
+			provider = (ILaunchConfigurationProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 			element = null;
 		}
 		return provider;

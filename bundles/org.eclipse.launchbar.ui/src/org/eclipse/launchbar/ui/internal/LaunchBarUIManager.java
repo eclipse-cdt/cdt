@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,56 +18,28 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.ExecutableExtension;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
-import org.eclipse.launchbar.ui.IHoverProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.INewWizard;
 
 public class LaunchBarUIManager {
 
-	LaunchBarManager manager;
-	Map<String, ExecutableExtension<ILabelProvider>> descriptorLabelProviders = new HashMap<>();
-	Map<String, LaunchBarTargetContribution> targetContributions = new HashMap<>();
-
-	private final LaunchBarTargetContribution DEFAULT_CONTRIBUTION = new LaunchBarTargetContribution(null, null, null, null,
-	        null, null);
+	private LaunchBarManager manager;
+	private Map<String, ExecutableExtension<ILabelProvider>> descriptorLabelProviders = new HashMap<>();
 
 	public LaunchBarUIManager(LaunchBarManager manager) {
 		this.manager = manager;
 
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarUIContributions");
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarUIContributions"); //$NON-NLS-1$
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				String elementName = element.getName();
-				if (elementName.equals("descriptorUI")) {
-					String descriptorTypeId = element.getAttribute("descriptorTypeId");
-					ExecutableExtension<ILabelProvider> labelProvider = new ExecutableExtension<>(element, "labelProvider");
+				if (elementName.equals("descriptorUI")) { //$NON-NLS-1$
+					String descriptorTypeId = element.getAttribute("descriptorTypeId"); //$NON-NLS-1$
+					ExecutableExtension<ILabelProvider> labelProvider = new ExecutableExtension<>(element, "labelProvider"); //$NON-NLS-1$
 					descriptorLabelProviders.put(descriptorTypeId, labelProvider);
-				} else if (elementName.equals("targetUI")) {
-					String targetTypeId = element.getAttribute("targetTypeId");
-					String targetName = element.getAttribute("name");
-					String iconStr = element.getAttribute("icon");
-					ExecutableExtension<ILabelProvider> labelProvider = new ExecutableExtension<ILabelProvider>(element, "labelProvider");
-
-					ExecutableExtension<IHoverProvider> hoverProvider = null;
-					if (element.getAttribute("hoverProvider") != null) {
-						hoverProvider = new ExecutableExtension<IHoverProvider>(element, "hoverProvider");
-					}
-
-					String editCommandId = element.getAttribute("editCommandId");
-					
-					ExecutableExtension<INewWizard> newWizard = null;
-					if (element.getAttribute("newWizard") != null) {
-						newWizard = new ExecutableExtension<INewWizard>(element, "newWizard");
-					}
-
-					targetContributions.put(targetTypeId, new LaunchBarTargetContribution(targetName, iconStr,
-					        labelProvider, hoverProvider, editCommandId, newWizard));
 				}
 			}
 		}
@@ -84,41 +54,4 @@ public class LaunchBarUIManager {
 		return provider != null ? provider.get() : null;
 	}
 
-	private class LaunchBarTargetContribution {
-		String name;
-		String iconStr;
-		Image icon;
-		ExecutableExtension<ILabelProvider> labelProvider;
-		ExecutableExtension<IHoverProvider> hoverProvider;
-		String editCommandId;
-		ExecutableExtension<INewWizard> newWizard;
-
-		LaunchBarTargetContribution(String name, String iconStr,
-				ExecutableExtension<ILabelProvider> labelProvider,
-		        ExecutableExtension<IHoverProvider> hoverProvider,
-		        String editCommand,
-		        ExecutableExtension<INewWizard> newWizard) {
-			this.name = name;
-			this.iconStr = iconStr;
-			this.icon = null;
-			this.labelProvider = labelProvider;
-			this.hoverProvider = hoverProvider;
-			this.editCommandId = editCommand;
-			this.newWizard = newWizard;
-		}
-
-		Image getIcon() {
-			if (icon == null) {
-				if (iconStr != null && !iconStr.isEmpty()) {
-					try {
-						icon = ImageDescriptor.createFromURL(new URL(iconStr)).createImage();
-					} catch (MalformedURLException e) {
-						Activator.log(e);
-					}
-				}
-			}
-			return icon;
-		}
-
-	}
 }

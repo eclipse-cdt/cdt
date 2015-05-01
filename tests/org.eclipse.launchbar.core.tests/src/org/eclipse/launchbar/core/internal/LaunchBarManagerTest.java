@@ -27,7 +27,7 @@ import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.launch.IRemoteLaunchConfigService;
 import org.junit.Test;
 
-
+@SuppressWarnings("nls")
 public class LaunchBarManagerTest {
 
 	@Test

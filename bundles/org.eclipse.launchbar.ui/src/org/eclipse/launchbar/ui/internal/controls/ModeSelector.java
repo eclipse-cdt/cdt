@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -32,14 +33,14 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings("restriction")
 public class ModeSelector extends CSelector {
 
-	private static final String[] noModes = new String[] { "---" };
+	private static final String[] noModes = new String[] { "---" }; //$NON-NLS-1$
 
 	private final LaunchBarManager manager = Activator.getDefault().getLaunchBarUIManager().getManager();
 
 	public ModeSelector(Composite parent, int style) {
 		super(parent, style);
 
-		setToolTipText("Launch configuration");
+		setToolTipText(Messages.ModeSelector_0);
 
 		setContentProvider(new IStructuredContentProvider() {
 			@Override
@@ -98,7 +99,7 @@ public class ModeSelector extends CSelector {
 					try {
 						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
 						if (group != null) {
-							return group.getLabel().replace("&", "");
+							return group.getLabel().replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					} catch (CoreException e) {
 						Activator.log(e.getStatus());
@@ -115,21 +116,21 @@ public class ModeSelector extends CSelector {
 					String mode1 = ((ILaunchMode)o1).getIdentifier();
 					String mode2 = ((ILaunchMode)o2).getIdentifier();
 					// run comes first, then debug, then the rest
-					if (mode1.equals("run")) {
-						if (mode2.equals("run"))
+					if (mode1.equals("run")) { //$NON-NLS-1$
+						if (mode2.equals("run")) //$NON-NLS-1$
 							return 0;
 						else
 							return -1;
 					}
-					if (mode2.equals("run"))
+					if (mode2.equals("run")) //$NON-NLS-1$
 						return 1;
-					if (mode1.equals("debug")) {
-						if (mode2.equals("debug"))
+					if (mode1.equals("debug")) { //$NON-NLS-1$
+						if (mode2.equals("debug")) //$NON-NLS-1$
 							return 0;
 						else
 							return -1;
 					}
-					if (mode2.equals("debug"))
+					if (mode2.equals("debug")) //$NON-NLS-1$
 						return 1;
 				}
 				return 0;

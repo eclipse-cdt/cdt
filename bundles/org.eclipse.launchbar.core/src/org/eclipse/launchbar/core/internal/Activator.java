@@ -21,7 +21,7 @@ import org.osgi.framework.ServiceReference;
 
 public class Activator extends Plugin {
 
-	public static final String PLUGIN_ID = "org.eclipse.launchbar.core";
+	public static final String PLUGIN_ID = "org.eclipse.launchbar.core"; //$NON-NLS-1$
 	private static Activator plugin;
 
 	public void start(BundleContext bundleContext) throws Exception {
@@ -71,10 +71,10 @@ public class Activator extends Plugin {
 	}
 
 	private static final String DEBUG_ONE =
-			PLUGIN_ID + "/debug/launchbar";
+			PLUGIN_ID + "/debug/launchbar"; //$NON-NLS-1$
 
 	public static void trace(String str) {
-		if (plugin == null || (plugin.isDebugging() && "true".equalsIgnoreCase(Platform.getDebugOption(DEBUG_ONE))))
-			System.out.println("launchbar: " + str);
+		if (plugin == null || (plugin.isDebugging() && "true".equalsIgnoreCase(Platform.getDebugOption(DEBUG_ONE)))) //$NON-NLS-1$
+			System.out.println("launchbar: " + str); //$NON-NLS-1$
 	}
 }

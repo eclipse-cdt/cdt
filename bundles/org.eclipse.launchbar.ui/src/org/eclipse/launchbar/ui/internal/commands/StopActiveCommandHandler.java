@@ -20,13 +20,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 
 public class StopActiveCommandHandler extends AbstractHandler {
 	private LaunchBarManager launchBarManager;
@@ -49,7 +49,7 @@ public class StopActiveCommandHandler extends AbstractHandler {
 	protected void stopActiveLaunches() {
 		final ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		if (activeLaunches != null && activeLaunches.length > 0) {
-			new Job("Stopping launches") {
+			new Job(Messages.StopActiveCommandHandler_0) {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						ILaunchConfiguration activeConfig = launchBarManager.getActiveLaunchConfiguration();
@@ -74,7 +74,7 @@ public class StopActiveCommandHandler extends AbstractHandler {
 	}
 
 	protected void stopBuild() {
-		Job job = new Job("Stopping build") {
+		Job job = new Job(Messages.StopActiveCommandHandler_1) {
 			@Override
 			protected IStatus run(IProgressMonitor progress) {
 				// stops all builds

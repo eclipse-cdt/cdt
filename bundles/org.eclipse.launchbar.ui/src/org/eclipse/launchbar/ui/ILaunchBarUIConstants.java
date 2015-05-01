@@ -15,6 +15,6 @@ public interface ILaunchBarUIConstants {
 	/**
 	 * Parameter name for the edit target command.
 	 */
-	public static final String TARGET_NAME = "targetName";
+	public static final String TARGET_NAME = "targetName"; //$NON-NLS-1$
 
 }

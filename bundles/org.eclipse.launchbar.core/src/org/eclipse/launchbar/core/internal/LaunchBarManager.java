@@ -120,9 +120,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	private IRemoteConnection activeLaunchTarget;
 
 	//	private static final String PREF_ACTIVE_CONFIG_DESC = "activeConfigDesc";
-	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode";
-	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget";
-	private static final String PREF_CONFIG_DESC_ORDER = "configDescList";
+	private static final String PREF_ACTIVE_LAUNCH_MODE = "activeLaunchMode"; //$NON-NLS-1$
+	private static final String PREF_ACTIVE_LAUNCH_TARGET = "activeLaunchTarget"; //$NON-NLS-1$
+	private static final String PREF_CONFIG_DESC_ORDER = "configDescList"; //$NON-NLS-1$
 	
 	boolean initialized = false;
 
@@ -135,7 +135,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		remoteServicesManager.addRemoteConnectionChangeListener(this);
 
 		if (doInit) {
-			new Job("Launch Bar Initialization") {
+			new Job(Messages.LaunchBarManager_0) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
@@ -160,7 +160,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	// To allow override by tests
 	IExtensionPoint getExtensionPoint() throws CoreException {
-		return Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarContributions");
+		return Platform.getExtensionRegistry().getExtensionPoint(Activator.PLUGIN_ID, "launchBarContributions"); //$NON-NLS-1$
 	}
 
 	// To allow override by tests
@@ -173,7 +173,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		try {
 			// Fetch the desc order before the init messes it up
 			IEclipsePreferences store = getPreferenceStore();
-			String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, "");
+			String configDescIds = store.get(PREF_CONFIG_DESC_ORDER, ""); //$NON-NLS-1$
 			// Load up the types
 			loadExtensions();
 			// Add in the default descriptor type
@@ -188,7 +188,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			launchManager.addLaunchConfigurationListener(this);
 			// Reorder the descriptors based on the preference
 			if (!configDescIds.isEmpty()) {
-				String[] split = configDescIds.split(",");
+				String[] split = configDescIds.split(","); //$NON-NLS-1$
 				ILaunchDescriptor last = null;
 				for (String id : split) {
 					Pair<String, String> key = toId(id);
@@ -222,17 +222,17 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				try {
 					String elementName = element.getName();
-					if (elementName.equals("descriptorType")) {
+					if (elementName.equals("descriptorType")) { //$NON-NLS-1$
 						LaunchDescriptorTypeInfo typeInfo = new LaunchDescriptorTypeInfo(element);
 						addDescriptorType(typeInfo);
-					} else if (elementName.equals("targetType")) {
+					} else if (elementName.equals("targetType")) { //$NON-NLS-1$
 						LaunchTargetTypeInfo info = new LaunchTargetTypeInfo(element);
 						targetTypes.put(info.getId(), info);
-					} else if (elementName.equals("configType")) {
-						String descriptorTypeId = element.getAttribute("descriptorType");
-						String targetTypeId = element.getAttribute("targetType");
-						String launchConfigTypeId = element.getAttribute("launchConfigurationType");
-						String isDefaultStr = element.getAttribute("isDefault");
+					} else if (elementName.equals("configType")) { //$NON-NLS-1$
+						String descriptorTypeId = element.getAttribute("descriptorType"); //$NON-NLS-1$
+						String targetTypeId = element.getAttribute("targetType"); //$NON-NLS-1$
+						String launchConfigTypeId = element.getAttribute("launchConfigurationType"); //$NON-NLS-1$
+						String isDefaultStr = element.getAttribute("isDefault"); //$NON-NLS-1$
 						boolean isDefault = isDefaultStr != null ? Boolean.parseBoolean(isDefaultStr) : false;
 
 						// add to desc type -> target type mapping
@@ -258,13 +258,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 						// also assume that the target type works for the config type
 						addDefaultConfigTargetType(launchConfigTypeId, targetTypeId, isDefault);
-					} else if (elementName.equals("configProvider")) {
+					} else if (elementName.equals("configProvider")) { //$NON-NLS-1$
 						LaunchConfigProviderInfo info = new LaunchConfigProviderInfo(element);
 						configProviders.put(info.getLaunchConfigTypeId(), info);
-					} else if (elementName.equals("defaultConfigTarget")) {
-						String configTypeId = element.getAttribute("launchConfigurationType");
-						String targetTypeId = element.getAttribute("targetType");
-						String isDefaultStr = element.getAttribute("isDefault");
+					} else if (elementName.equals("defaultConfigTarget")) { //$NON-NLS-1$
+						String configTypeId = element.getAttribute("launchConfigurationType"); //$NON-NLS-1$
+						String targetTypeId = element.getAttribute("targetType"); //$NON-NLS-1$
+						String isDefaultStr = element.getAttribute("isDefault"); //$NON-NLS-1$
 						boolean isDefault = isDefaultStr != null ? Boolean.parseBoolean(isDefaultStr) : false;
 						addDefaultConfigTargetType(configTypeId, targetTypeId, isDefault);
 					}
@@ -279,8 +279,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				try {
 					String elementName = element.getName();
-					if (elementName.equals("objectProvider")) {
-						ILaunchObjectProvider objectProvider = (ILaunchObjectProvider) element.createExecutableExtension("class");
+					if (elementName.equals("objectProvider")) { //$NON-NLS-1$
+						ILaunchObjectProvider objectProvider = (ILaunchObjectProvider) element.createExecutableExtension("class"); //$NON-NLS-1$
 						addObjectProvider(objectProvider);
 					}
 				} catch (Exception e) {
@@ -309,7 +309,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			orderedDescriptorTypes.add(typeInfo);
 		}
 
-		Activator.trace("registered descriptor type " + typeInfo.getId());
+		Activator.trace("registered descriptor type " + typeInfo.getId()); //$NON-NLS-1$
 	}
 
 	private void addDefaultConfigTargetType(String configTypeId, String targetTypeId, boolean isDefault) {
@@ -371,7 +371,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private String toString(Pair<String, String> key) {
-		return key.getFirst() + ":" + key.getSecond();
+		return key.getFirst() + ":" + key.getSecond(); //$NON-NLS-1$
 	}
 
 	private Pair<String, String> toId(String key) {
@@ -476,7 +476,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	@Override
 	public ILaunchDescriptor launchObjectAdded(Object launchObject) {
-		Activator.trace("launch object added " + launchObject);
+		Activator.trace("launch object added " + launchObject); //$NON-NLS-1$
 		ILaunchDescriptor desc = objectDescriptorMap.get(launchObject);
 		if (desc != null)
 			return desc;
@@ -498,7 +498,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	@Override
 	public void launchObjectRemoved(Object launchObject) throws CoreException {
-		Activator.trace("launch object removed " + launchObject);
+		Activator.trace("launch object removed " + launchObject); //$NON-NLS-1$
 		ILaunchDescriptor desc = objectDescriptorMap.get(launchObject);
 		removeDescriptor(launchObject, desc);
 	}
@@ -545,16 +545,16 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	public void setActiveLaunchDescriptor(ILaunchDescriptor descriptor) throws CoreException {
-		Activator.trace("set active descriptor " + descriptor);
+		Activator.trace("set active descriptor " + descriptor); //$NON-NLS-1$
 		if (activeLaunchDesc == descriptor) {
 			// Sync since targets could be changed since last time (and modes theoretically too)
 			syncActiveTarget();
 			syncActiveMode();
-			Activator.trace("resync for " + descriptor);
+			Activator.trace("resync for " + descriptor); //$NON-NLS-1$
 			return;
 		}
 		if (descriptor != null && !descriptors.containsValue(descriptor))
-			throw new IllegalStateException("Active descriptor must be in the map of descriptors");
+			throw new IllegalStateException(Messages.LaunchBarManager_1);
 		if (descriptor == null)
 			descriptor = getLastUsedDescriptor(); // do not set to null unless no descriptors
 		activeLaunchDesc = descriptor;
@@ -575,7 +575,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private void storeActiveDescriptor(ILaunchDescriptor descriptor) {
-		Activator.trace("new active config is stored " + descriptor);
+		Activator.trace("new active config is stored " + descriptor); //$NON-NLS-1$
 
 		// Store the desc order, active one is the last one
 		StringBuffer buff = new StringBuffer();
@@ -624,8 +624,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			String modeNames[] = new String[] {
 					storedModeId,
 					lastActiveModeId,
-					"run",
-					"debug",
+					"run", //$NON-NLS-1$
+					"debug", //$NON-NLS-1$
 					supportedModes[0].getIdentifier()
 			};
 			for (int i = 0; i < modeNames.length; i++) {
@@ -736,7 +736,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		if (activeLaunchMode == mode)
 			return;
 		if (activeLaunchDesc != null && mode != null && !supportsMode(mode))
-			throw new IllegalStateException("Mode is not supported by descriptor");
+			throw new IllegalStateException(Messages.LaunchBarManager_2);
 		// change mode
 		activeLaunchMode = mode;
 		storeLaunchMode(activeLaunchDesc, mode);
@@ -920,7 +920,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		Activator.trace("launch config added " + configuration);
+		Activator.trace("launch config added " + configuration); //$NON-NLS-1$
 		try {
 			LaunchConfigProviderInfo info = configProviders.get(configuration.getType().getIdentifier());
 			if (info != null) {
@@ -936,7 +936,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 						}
 						configMap.put(provider, configuration);
 					}
-					Activator.trace("launch config claimed by " + provider);
+					Activator.trace("launch config claimed by " + provider); //$NON-NLS-1$
 					return;
 				}
 			}
@@ -945,7 +945,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			Activator.log(e);
 		}
 
-		Activator.trace("launch config not claimed");
+		Activator.trace("launch config not claimed"); //$NON-NLS-1$
 		try {
 			ILaunchDescriptor desc = defaultDescriptorType.getDescriptor(configuration);
 			addDescriptor(configuration, desc);
@@ -956,7 +956,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	@Override
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		Activator.trace("launch config removed " + configuration);
+		Activator.trace("launch config removed " + configuration); //$NON-NLS-1$
 
 		// Is there any way this method is called when a LC still exists??? This may be dead code.
 		// configuration.getType() will fail when !configuration.exists()
@@ -966,7 +966,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 				if (info != null) {
 					ILaunchConfigurationProvider provider = info.getProvider();
 					if (provider.launchConfigurationRemoved(configuration)) {
-						Activator.trace("launch config removed by " + provider);
+						Activator.trace("launch config removed by " + provider); //$NON-NLS-1$
 						return;
 					}
 				}
@@ -975,7 +975,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 			}
 		}
 
-		Activator.trace("launch config not claimed");
+		Activator.trace("launch config not claimed"); //$NON-NLS-1$
 		ILaunchDescriptor desc = objectDescriptorMap.get(configuration);
 		if (desc == null) {
 			/* WARNING: This is slow. Call only as a last resort */
@@ -990,7 +990,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 							final ILaunchConfigurationProvider provider = e2.getKey();
 							try {
 								provider.launchConfigurationRemoved(e2.getValue());
-								Activator.trace("launch config removed by " + provider);
+								Activator.trace("launch config removed by " + provider); //$NON-NLS-1$
 							} catch (Throwable e) {
 								Activator.log(e);
 							}
@@ -1007,7 +1007,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 				for (ILaunchConfigurationProvider provider : configMap.keySet()) {
 					try {
 						if (provider.launchConfigurationRemoved(configuration)) {
-							Activator.trace("launch config removed by " + provider);
+							Activator.trace("launch config removed by " + provider); //$NON-NLS-1$
 							return;
 						}
 					} catch (Throwable e) {

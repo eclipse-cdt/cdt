@@ -17,6 +17,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,9 +33,9 @@ public class NewLaunchConfigModePage extends WizardPage {
 	ILaunchGroup selectedGroup;
 	
 	public NewLaunchConfigModePage() {
-		super("Select Initial Launch Mode");
-		setTitle("Initial Launch Mode");
-		setDescription("Select initial launch mode.");
+		super(Messages.NewLaunchConfigModePage_0);
+		setTitle(Messages.NewLaunchConfigModePage_1);
+		setDescription(Messages.NewLaunchConfigModePage_2);
 	}
 	
 	@Override
@@ -49,14 +50,14 @@ public class NewLaunchConfigModePage extends WizardPage {
 		Set<ILaunchGroup> done = new HashSet<>();
 		
 		for (ILaunchGroup group : DebugUITools.getLaunchGroups()) {
-			if (group.getMode().equals("run")) {
+			if (group.getMode().equals("run")) { //$NON-NLS-1$
 				createModeItem(group);
 				done.add(group);
 			}
 		}
 		
 		for (ILaunchGroup group : DebugUITools.getLaunchGroups()) {
-			if (group.getMode().equals("debug")) {
+			if (group.getMode().equals("debug")) { //$NON-NLS-1$
 				createModeItem(group);
 				done.add(group);
 			}
@@ -73,7 +74,7 @@ public class NewLaunchConfigModePage extends WizardPage {
 			int i = 0;
 			boolean hasDebug = false;
 			for (TableItem item : table.getItems()) {
-				if ("debug".equals(((ILaunchGroup) item.getData()).getMode())) {
+				if ("debug".equals(((ILaunchGroup) item.getData()).getMode())) { //$NON-NLS-1$
 					hasDebug = true;
 					table.select(i);
 					break;
@@ -103,7 +104,7 @@ public class NewLaunchConfigModePage extends WizardPage {
 			return;
 		
 		TableItem item = new TableItem(table, SWT.NONE);
-		item.setText(group.getLabel().replace("&", ""));
+		item.setText(group.getLabel().replace("&", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		ImageDescriptor imageDesc = group.getImageDescriptor();
 		if (imageDesc != null) {
 			item.setImage(imageDesc.createImage());

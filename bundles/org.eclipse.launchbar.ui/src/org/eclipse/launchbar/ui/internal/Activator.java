@@ -41,19 +41,19 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.launchbar.ui"; //$NON-NLS-1$
 
 	// Images
-	public static final String IMG_BUTTON_BUILD = "build";
-	public static final String IMG_BUTTON_LAUNCH = "launch";
-	public static final String IMG_BUTTON_STOP = "stop";
+	public static final String IMG_BUTTON_BUILD = "build"; //$NON-NLS-1$
+	public static final String IMG_BUTTON_LAUNCH = "launch"; //$NON-NLS-1$
+	public static final String IMG_BUTTON_STOP = "stop"; //$NON-NLS-1$
 
 	// Command ids
-	public static final String CMD_BUILD = PLUGIN_ID + ".command.buildActive";
-	public static final String CMD_LAUNCH = PLUGIN_ID + ".command.launchActive";
-	public static final String CMD_STOP = PLUGIN_ID + ".command.stop";
-	public static final String CMD_CONFIG = PLUGIN_ID + ".command.configureActiveLaunch";
+	public static final String CMD_BUILD = PLUGIN_ID + ".command.buildActive"; //$NON-NLS-1$
+	public static final String CMD_LAUNCH = PLUGIN_ID + ".command.launchActive"; //$NON-NLS-1$
+	public static final String CMD_STOP = PLUGIN_ID + ".command.stop"; //$NON-NLS-1$
+	public static final String CMD_CONFIG = PLUGIN_ID + ".command.configureActiveLaunch"; //$NON-NLS-1$
 
 	// Preference ids
-	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar";
-	public static final String PREF_LAUNCH_HISTORY_SIZE = "launchHistorySize";
+	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar"; //$NON-NLS-1$
+	public static final String PREF_LAUNCH_HISTORY_SIZE = "launchHistorySize"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -72,9 +72,9 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 
 		ImageRegistry imageRegistry = getImageRegistry();
-		imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build.png"));
-		imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch.png"));
-		imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop.png"));
+		imageRegistry.put(IMG_BUTTON_BUILD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/build.png")); //$NON-NLS-1$
+		imageRegistry.put(IMG_BUTTON_LAUNCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/launch.png")); //$NON-NLS-1$
+		imageRegistry.put(IMG_BUTTON_STOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/stop.png")); //$NON-NLS-1$
 	}
 
 	public void stop(BundleContext context) throws Exception {

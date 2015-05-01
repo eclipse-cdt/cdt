@@ -28,6 +28,7 @@ import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.launchbar.ui.internal.commands.ConfigureActiveLaunchHandler;
 import org.eclipse.launchbar.ui.internal.dialogs.NewLaunchConfigWizard;
 import org.eclipse.swt.SWT;
@@ -46,17 +47,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-@SuppressWarnings("restriction")
 public class ConfigSelector extends CSelector {
 	private LaunchBarUIManager uiManager = Activator.getDefault().getLaunchBarUIManager();
 	private DefaultDescriptorLabelProvider defaultProvider;
 	
-	private static final String[] noConfigs = new String[] { "No Launch Configurations" };
+	private static final String[] noConfigs = new String[] { Messages.ConfigSelector_0 };
 	
 	public ConfigSelector(Composite parent, int style) {
 		super(parent, style);
 
-		setToolTipText("Launch configuration");
+		setToolTipText(Messages.ConfigSelector_1);
 		defaultProvider = new DefaultDescriptorLabelProvider();
 
 		setContentProvider(new IStructuredContentProvider() {
@@ -187,7 +187,7 @@ public class ConfigSelector extends CSelector {
 
 		final Label createLabel = new Label(createButton, SWT.None);
 		createLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		createLabel.setText("Create New Configuration...");
+		createLabel.setText(Messages.ConfigSelector_2);
 		createLabel.setBackground(backgroundColor);
 
 		MouseListener mouseListener = new MouseAdapter() {
@@ -195,7 +195,7 @@ public class ConfigSelector extends CSelector {
 				final NewLaunchConfigWizard wizard = new NewLaunchConfigWizard();
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				if (dialog.open() == Window.OK) {
-					new Job("Create Launch Configuration") {
+					new Job(Messages.ConfigSelector_3) {
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
 								final LaunchBarManager barManager = uiManager.getManager();

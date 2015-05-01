@@ -30,9 +30,9 @@ public class DefaultLaunchDescriptor extends PlatformObject implements ILaunchDe
 	}
 
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (ILaunchConfiguration.class.equals(adapter)) {
-			return configuration;
+			return adapter.cast(configuration);
 		}
 		return super.getAdapter(adapter);
 	}

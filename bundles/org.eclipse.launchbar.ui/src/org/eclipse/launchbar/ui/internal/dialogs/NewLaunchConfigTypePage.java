@@ -17,6 +17,7 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,9 +30,9 @@ public class NewLaunchConfigTypePage extends WizardPage {
 	private Table table;
 	
 	public NewLaunchConfigTypePage() {
-		super("Select Launch Configuration Type");
-		setTitle("Launch Configuration Type");
-		setDescription("Select the type of launch configuration to create.");
+		super(Messages.NewLaunchConfigTypePage_0);
+		setTitle(Messages.NewLaunchConfigTypePage_1);
+		setDescription(Messages.NewLaunchConfigTypePage_2);
 	}
 	
 	@Override

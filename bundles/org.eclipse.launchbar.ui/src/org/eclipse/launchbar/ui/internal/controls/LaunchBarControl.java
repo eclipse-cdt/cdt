@@ -73,7 +73,7 @@ public class LaunchBarControl implements Listener {
 
 		Label label = new Label(container, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		label.setText("on" + ":");
+		label.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$
 
 		targetSelector = new TargetSelector(container, SWT.NONE);
 		targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));

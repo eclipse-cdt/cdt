@@ -15,22 +15,22 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.remote.core.IRemoteConnection;
 
 class LaunchTargetTypeInfo {
-	private static final String ANY = "";
+	private static final String ANY = ""; //$NON-NLS-1$
 	private final String id;
 	private final String connectionTypeId;
 	private String osname;
 	private String osarch;
 
 	public LaunchTargetTypeInfo(IConfigurationElement ce) {
-		id = ce.getAttribute("id");
-		connectionTypeId = ce.getAttribute("connectionTypeId");
+		id = ce.getAttribute("id"); //$NON-NLS-1$
+		connectionTypeId = ce.getAttribute("connectionTypeId"); //$NON-NLS-1$
 		if (id == null || connectionTypeId == null)
 			throw new NullPointerException();
-		osname = ce.getAttribute("osname");
+		osname = ce.getAttribute("osname"); //$NON-NLS-1$
 		if (osname == null) {
 			osname = ANY;
 		}
-		osarch = ce.getAttribute("osarch");
+		osarch = ce.getAttribute("osarch"); //$NON-NLS-1$
 		if (osarch == null) {
 			osarch = ANY;
 		}

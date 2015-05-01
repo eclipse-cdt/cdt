@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -82,9 +83,9 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 		leftButtonComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		leftButtonComp.setFont(parent.getFont());
 
-		createButton(leftButtonComp, DELETE_ID, "Delete", false);
-		createButton(leftButtonComp, DUPLICATE_ID, "Duplicate", false);
-		createButton(leftButtonComp, LAUNCH_ID, "Launch", false);
+		createButton(leftButtonComp, DELETE_ID, Messages.LaunchConfigurationEditDialog_0, false);
+		createButton(leftButtonComp, DUPLICATE_ID, Messages.LaunchConfigurationEditDialog_1, false);
+		createButton(leftButtonComp, LAUNCH_ID, Messages.LaunchConfigurationEditDialog_2, false);
 
 		Composite mainButtonComp = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
@@ -121,9 +122,9 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 			if (c.isWorkingCopy())
 				c = ((ILaunchConfigurationWorkingCopy)c).getOriginal();
 			final ILaunchConfiguration config = c;
-			if (MessageDialog.openConfirm(getShell(), "Confirm Delete",
-					"Are you sure you want to delete " + config.getName())) {
-				new Job("Deleting launch configuration") {
+			if (MessageDialog.openConfirm(getShell(), Messages.LaunchConfigurationEditDialog_3,
+					Messages.LaunchConfigurationEditDialog_4 + config.getName())) {
+				new Job(Messages.LaunchConfigurationEditDialog_5) {
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							config.delete();
@@ -139,7 +140,7 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 		case DUPLICATE_ID:
 			final ILaunchConfiguration original = getLaunchConfiguration();
 			final String newName = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(original.getName());
-			new Job("Duplicating launch configuration") {
+			new Job(Messages.LaunchConfigurationEditDialog_6) {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						ILaunchConfigurationWorkingCopy newWorkingCopy = original.copy(newName);

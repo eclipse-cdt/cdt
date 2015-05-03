@@ -16,6 +16,24 @@
       "revId": "4232a76fb27339fe2cea310b668aef218d1c51f6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0ced212e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-05-03T02:49:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_4c5ba902",
+      "revId": "4232a76fb27339fe2cea310b668aef218d1c51f6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

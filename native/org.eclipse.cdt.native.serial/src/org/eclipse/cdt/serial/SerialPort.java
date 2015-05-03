@@ -28,6 +28,8 @@ public class SerialPort {
 
 	private final String portName;
 	private boolean isOpen;
+	private boolean isPaused;
+	private Object pauseMutex = new Object();
 	private BaudRate baudRate = BaudRate.B115200;
 	private ByteSize byteSize = ByteSize.B8;
 	private Parity parity = Parity.None;
@@ -56,7 +58,19 @@ public class SerialPort {
 					while (true) {
 						rlen = read1(handle, rbuff, 0, rbuff.length);
 						if (rlen < 0) {
-							return -1;
+							if (isPaused) {
+								synchronized (pauseMutex) {
+									while (isPaused) {
+										try {
+											pauseMutex.wait();
+										} catch (InterruptedException e) {
+											return -1;
+										}
+									}
+								}
+							} else {
+								return -1;
+							}
 						} else if (rlen > 0) {
 							break;
 						}
@@ -79,8 +93,22 @@ public class SerialPort {
 					System.arraycopy(rbuff, rpos, b, off, n);
 					rpos += n;
 					return n;
-				} else { 
-					return read1(handle, b, off, len);
+				} else {
+					n = read1(handle, b, off, len);
+					if (n < 0 && isPaused) {
+						synchronized (pauseMutex) {
+							while (isPaused) {
+								try {
+									pauseMutex.wait();
+								} catch (InterruptedException e) {
+									return -1;
+								}
+							}
+						}
+						return read1(handle, b, off, len);
+					} else {
+						return n;
+					}
 				}
 			} else {
 				return -1;
@@ -97,14 +125,44 @@ public class SerialPort {
 		@Override
 		public void write(int b) throws IOException {
 			if (isOpen()) {
-				write0(handle, b);
+				try {
+					write0(handle, b);
+				} catch (IOException e) {
+					if (isPaused) {
+						synchronized (pauseMutex) {
+							while (isPaused) {
+								try {
+									pauseMutex.wait();
+								} catch (InterruptedException e1) {
+									throw e;
+								}
+							}
+						}
+						write0(handle, b);
+					}
+				}
 			}
 		}
 
 		@Override
 		public void write(byte[] buff, int off, int len) throws IOException {
 			if (isOpen()) {
-				write1(handle, buff, off, len);
+				try {
+					write1(handle, buff, off, len);
+				} catch (IOException e) {
+					if (isPaused) {
+						synchronized (pauseMutex) {
+							while (isPaused) {
+								try {
+									pauseMutex.wait();
+								} catch (InterruptedException e1) {
+									throw e;
+								}
+							}
+						}
+						write1(handle, buff, off, len);
+					}
+				}
 			}
 		}
 
@@ -210,6 +268,19 @@ public class SerialPort {
 
 	public boolean isOpen() {
 		return isOpen;
+	}
+
+	public void pause() throws IOException {
+		isPaused = true;
+		close0(handle);
+	}
+
+	public void resume() throws IOException {
+		synchronized (pauseMutex) {
+			isPaused = false;
+			open();
+			pauseMutex.notifyAll();
+		}
 	}
 
 	public void setBaudRate(BaudRate rate) throws IOException {

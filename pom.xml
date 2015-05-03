@@ -216,6 +216,10 @@
 		<module>remote/org.eclipse.cdt.remote.core</module>
 		<module>remote/org.eclipse.cdt.remote-feature</module>
 		
+		<module>toolchains/arduino/org.eclipse.cdt.arduino.core</module>
+		<module>toolchains/arduino/org.eclipse.cdt.arduino.ui</module>
+		<module>toolchains/arduino/org.eclipse.cdt.arduino-feature</module>
+
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>

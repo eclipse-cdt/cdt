@@ -86,4 +86,6 @@
    <feature url="features/org.eclipse.cdt.debug.standalone.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.debug.standalone.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature id="org.eclipse.cdt.arduino">
+   </feature>
 </site>

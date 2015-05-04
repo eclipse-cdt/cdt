@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_8908de68",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/Activator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T15:27:03Z",
+      "side": 1,
+      "message": "What do you think of renaming this class:\nDockerLaunchUIPlugin",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_a99dda48",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T15:27:03Z",
+      "side": 1,
+      "message": "IDockerImage.repoTags() is deprecated.  It comes from Linux Tools, which makes me think we should be able to use whatever replacement there is for it.",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_c9aca678",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T15:27:03Z",
+      "side": 1,
+      "message": "IDockerImage.repoTags() is deprecated. It comes from Linux Tools, which makes me think we should be able to use whatever replacement there is for it.",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

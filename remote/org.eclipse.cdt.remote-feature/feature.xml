@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.remote"
       label="%featureName"
-      version="8.6.0.qualifier"
+      version="8.7.0.qualifier"
       provider-name="%featureVendor"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

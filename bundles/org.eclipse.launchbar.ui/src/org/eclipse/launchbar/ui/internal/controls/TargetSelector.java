@@ -83,8 +83,12 @@ public class TargetSelector extends CSelector {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof IRemoteConnection) {
-					//IRemoteConnection target = (IRemoteConnection) element;
-					// TODO need to get icon form ui service
+					IRemoteConnection target = (IRemoteConnection) element;
+					if (target.isOpen()) {
+						return Activator.getDefault().getImage("icons/connected.png");
+					} else {
+						return Activator.getDefault().getImage("icons/disconnected.png");
+					}
 				}
 				return super.getImage(element);
 			}

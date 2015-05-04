@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "87f6139c_c94b0601",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Do you want to allow others to add their own delegate to this type of launch configuration?  If so you should use the org.eclipse.debug.core.launchDelegates extension point instead of specifying the delegate here.\n\nI think it would be nice.  You can look at how CDT defines: org.eclipse.cdt.launch.applicationLaunchType",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_695ad2ca",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "You should specify the \"icon\" field here.  When right-clicking on a project and choosing \"Debug As\" the new container shortcut is missing its icon",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_8908de68",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/Activator.java",
         "patchSetId": 4
@@ -13,6 +47,57 @@
       "writtenOn": "2015-05-04T15:27:03Z",
       "side": 1,
       "message": "What do you think of renaming this class:\nDockerLaunchUIPlugin",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_29928ada",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Why call this explicitly?  The platform does that already, no?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_6927723f",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "In RemoteGdbLaunchDelegate.java, we perform variable substitution on the arguments.  Maybe nicer to do this here too.  See RemoteGdbLaunchDelegate.getProgramArguments()",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_49d6f66c",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Need to kill \u0027launcher\u0027 no?",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -47,6 +132,193 @@
       "writtenOn": "2015-05-04T15:27:03Z",
       "side": 1,
       "message": "IDockerImage.repoTags() is deprecated. It comes from Linux Tools, which makes me think we should be able to use whatever replacement there is for it.",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_a9567ad8",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/GDBDebuggerPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "The \u0027main\u0027 subtab is mimicking the CDI one instead of the DSF one.  Was that planned?  For example, I don\u0027t believe the launch will use the MIProtocol setting at all.\n\nMaybe a class to look at is:\no.e.cdt.dsf.gdb.internal.ui.launching.GdbServerDebuggerPage",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_c955c6cc",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ILaunchConstants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Set but never read.  Is it used outside of CDT?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_e9cb6219",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Maybe move to ILaunchConstants?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_89c61e12",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Update or remove",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_092b4e35",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "I wouldn\u0027t put that in javadoc.  I suggest keeping the param to be future-proof though",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0976ae49",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Maybe log using Activator",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_a94cba1d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Why only for run?  That option is shown in the Container tab for a debug launch.",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_09a50eff",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/RemoteDebuggerPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Update please",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_29a8cad7",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/RemoteDebuggerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Probably better to put in a new id for docker",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_a99e7ae9",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ui/preferences/DockerLaunchPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "Does it makes sense to the user to have these two preferences in a different place than all the other Docker preferences?  I\u0027m thinking unifying them would be better.  Is that possible?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_69b5b263",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ui/preferences/DockerLaunchPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T17:32:39Z",
+      "side": 1,
+      "message": "I\u0027m not sure what this preference does?\n\nAlso, maybe a browse button would be more user friendly",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

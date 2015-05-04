@@ -2,6 +2,244 @@
   "comments": [
     {
       "key": {
+        "uuid": "87f6139c_318316a8",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/build.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Add copyright header",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_515182af",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Maybe change if you move it to Linux Tools",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_714c7e1d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Should be:\n\nCopyright (c) 2015 Red Had, Inc.\\n\\\nAll rights reserved. This program and the accompanying materials\\n\\\nare made available under the terms of the Eclipse Public License v1.0\\n\\\nwhich accompanies this distribution, and is available at\\n\\\nhttp://www.eclipse.org/legal/epl-v10.html",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_d15c52c8",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/build.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_1157faa0",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Maybe should be:\nPlugins for launching C/C++ applications in Containers. Source Code.",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_71b75e73",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Should be:\n\ncopyright\u003d\\\nCopyright (c) 2015 Red Had, Inc.\\n\\\nAll rights reserved. This program and the accompanying materials\\n\\\nare made available under the terms of the Eclipse Public License v1.0\\n\\\nwhich accompanies this distribution, and is available at\\n\\\nhttp://www.eclipse.org/legal/epl-v10.html",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_11b25a7b",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/.gitignore",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Dont\u0027 need this file for CDT.  cdt/.gitignore handles this.",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_71091ebc",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Should export: org.eclipse.cdt.docker.launcher.ui.preferences\n\nexcept that this package should be in its own plugin.  If not, we should export it.\n\nPlease make internal since we expect them to move.",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_31279640",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/build.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_f1ceaed8",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_d1cbb2c6",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "We have to pick one vendor between CDT and Linux Tools :)",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0ccc01ad",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "You should use the new CMainTab2.  It is aligned with DSF debugger launch tabs",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_2ccf3da5",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "Is this if the reason you implemented this as a class instead of using the xml entries that are commented out in plugin.xml?  If so, you can still achieve this with xml by using two entries in the org.eclipse.debug.ui.launchConfigurationTabGroups and adding the launchMode tab to each, one for run and the other for debug",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_6cd82567",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-04T14:32:48Z",
+      "side": 1,
+      "message": "This one should be before the debugger tab above if you want to keep the same order as the other launch config types",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_11dd3a00",
         "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
         "patchSetId": 3

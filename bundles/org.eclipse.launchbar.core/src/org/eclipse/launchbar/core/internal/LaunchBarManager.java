@@ -948,7 +948,9 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		Activator.trace("launch config not claimed"); //$NON-NLS-1$
 		try {
 			ILaunchDescriptor desc = defaultDescriptorType.getDescriptor(configuration);
-			addDescriptor(configuration, desc);
+			if( desc != null ) {
+				addDescriptor(configuration, desc);
+			}
 		} catch (CoreException e) {
 			Activator.log(e.getStatus());
 		}

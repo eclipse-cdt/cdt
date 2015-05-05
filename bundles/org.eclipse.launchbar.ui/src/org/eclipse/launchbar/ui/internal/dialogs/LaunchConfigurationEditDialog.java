@@ -85,7 +85,8 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 
 		createButton(leftButtonComp, DELETE_ID, Messages.LaunchConfigurationEditDialog_0, false);
 		createButton(leftButtonComp, DUPLICATE_ID, Messages.LaunchConfigurationEditDialog_1, false);
-		createButton(leftButtonComp, LAUNCH_ID, Messages.LaunchConfigurationEditDialog_2, false);
+		// launch button text same as in eclipse LaunchConfigurationDialog - mode name
+		createButton(leftButtonComp, LAUNCH_ID, getLaunchButtonText(), false);
 
 		Composite mainButtonComp = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
@@ -101,6 +102,10 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 		createButton(mainButtonComp, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 
 		return composite;
+	}
+
+	protected String getLaunchButtonText() {
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode()).getLabel();
 	}
 
 	@Override

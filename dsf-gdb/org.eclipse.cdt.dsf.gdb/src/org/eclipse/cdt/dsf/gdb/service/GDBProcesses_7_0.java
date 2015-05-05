@@ -64,8 +64,10 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -98,6 +100,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -1207,8 +1210,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     public void detachDebuggerFromProcess(final IDMContext dmc, final RequestMonitor rm) {
 		MIExitedProcessDMC exitedProc = DMContexts.getAncestorOfType(dmc, MIExitedProcessDMC.class);    	
 		if (exitedProc != null) {
-			// For an exited process, simply remove the entry from our table to stop showing it.
-			getExitedProcesses().remove(exitedProc.getGroupId());
+			// For an exited process, remove the entry from our table to stop showing it, and
+			// remove the entry from the launch itself to remove the process's console
+			String groupId = exitedProc.getGroupId();
+			getExitedProcesses().remove(groupId);
+			removeProcessFromLaunch(groupId);
 			getSession().dispatchEvent(new ProcessRemovedDMEvent(exitedProc), null);
 			return;
 		}
@@ -1525,8 +1531,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	@Override
 	public void terminate(IThreadDMContext thread, final RequestMonitor rm) {
 		if (thread instanceof MIExitedProcessDMC) {
-			// For an exited process, simply remove the entry from our table to stop showing it.
-			getExitedProcesses().remove(((MIExitedProcessDMC)thread).getGroupId());
+			// For an exited process, remove the entry from our table to stop showing it, and
+			// remove the entry from the launch itself to remove the process's console
+			String groupId = ((MIExitedProcessDMC)thread).getGroupId();
+			getExitedProcesses().remove(groupId);
+			removeProcessFromLaunch(groupId);
 			getSession().dispatchEvent(new ProcessRemovedDMEvent((IProcessDMContext)thread), null);
 		} else if (fBackend.getSessionType() == SessionType.CORE) {
    			// For a core session, there is no concept of killing the inferior,
@@ -1680,6 +1689,29 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		return new StartOrRestartProcessSequence_7_0(executor, containerDmc, attributes, restart, rm);
 	}
 	
+	
+	/**
+	 * Removes the process with the specified groupId from the launch.
+	 */
+	private void removeProcessFromLaunch(String groupId) {
+		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+		IProcess[] launchProcesses = launch.getProcesses();
+		for (IProcess process : launchProcesses) {
+			if (process instanceof InferiorRuntimeProcess) {
+				String groupAttribute = process.getAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR);
+
+				// if the groupAttribute is not set in the process we know we are dealing
+				// with single process debugging so the one process is the one we want.
+				// If the groupAttribute is set, then we must make sure it is the proper inferior
+				if (groupAttribute == null || groupAttribute.equals(MIProcesses.UNIQUE_GROUP_ID) ||
+						groupAttribute.equals(groupId)) {			        					
+					launch.removeProcess(process);
+					break;
+				}
+			}
+		}
+	}
+
     @DsfServiceEventHandler
     public void eventDispatched(final MIThreadGroupCreatedEvent e) {
     	IProcessDMContext procDmc = e.getDMContext();

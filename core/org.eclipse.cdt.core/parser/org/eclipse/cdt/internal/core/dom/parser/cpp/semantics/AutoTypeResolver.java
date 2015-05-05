@@ -153,8 +153,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	}
 
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 

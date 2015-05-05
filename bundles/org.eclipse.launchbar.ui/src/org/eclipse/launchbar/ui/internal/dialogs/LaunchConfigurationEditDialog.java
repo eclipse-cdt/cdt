@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 @SuppressWarnings("restriction")
 public class LaunchConfigurationEditDialog extends LaunchConfigurationPropertiesDialog {
@@ -104,19 +105,9 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 		return composite;
 	}
 
-	protected String getLaunchButtonText() {
-		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode()).getLabel();
-	}
-
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// Do nothing since we now have the buttons created above.
-	}
-
-	@Override
-	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		// update the dialog with the new config
-		getTabViewer().setInput(configuration);
 	}
 
 	@Override
@@ -145,17 +136,23 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationProperties
 		case DUPLICATE_ID:
 			final ILaunchConfiguration original = getLaunchConfiguration();
 			final String newName = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(original.getName());
-			new Job(Messages.LaunchConfigurationEditDialog_6) {
-				protected IStatus run(IProgressMonitor monitor) {
+			final Shell shell = getParentShell();
+			final LaunchGroupExtension group = getLaunchGroup();
+
+			new UIJob(Messages.LaunchConfigurationEditDialog_6) {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					try {
-						ILaunchConfigurationWorkingCopy newWorkingCopy = original.copy(newName);
-						newWorkingCopy.doSave();
-						return Status.OK_STATUS;
+						final ILaunchConfigurationWorkingCopy newWorkingCopy = original.copy(newName);
+						final ILaunchConfiguration newConfig = newWorkingCopy.doSave();
+						new LaunchConfigurationEditDialog(shell, newConfig, group).open();
 					} catch (CoreException e) {
 						return e.getStatus();
 					}
-				};
+					return Status.OK_STATUS;
+				}
 			}.schedule();
+			cancelPressed();
 			break;
 		case LAUNCH_ID:
 			okPressed();

@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.remote.jsch.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.remote.internal.jsch.ui.Activator
 Bundle-Vendor: %pluginProvider
-Require-Bundle: org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.11.0",
  org.eclipse.core.filesystem,
  org.eclipse.remote.core,
  org.eclipse.remote.ui,

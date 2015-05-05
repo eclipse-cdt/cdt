@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.remote.jsch.tests.Activator
 Bundle-Vendor: Eclipse PTP
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+ org.eclipse.core.runtime;bundle-version="3.11.0",
  org.eclipse.core.filesystem,
  org.eclipse.remote.core,
  org.eclipse.remote.jsch.core,

@@ -19,6 +19,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.tm.terminal.connector.ssh.connector.ISshSettings;
 import org.eclipse.tm.terminal.connector.ssh.connector.SshSettings;
 import org.eclipse.tm.terminal.connector.ssh.controls.SshWizardConfigurationPanel;
 import org.eclipse.tm.terminal.connector.ssh.nls.Messages;
@@ -92,10 +93,15 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 	private String getTerminalTitle(Map<String, Object> properties) {
 		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
 		String user = (String)properties.get(ITerminalsConnectorConstants.PROP_SSH_USER);
+		Object value = properties.get(ITerminalsConnectorConstants.PROP_IP_PORT);
+		String port = value != null ? value.toString() : null;
 
 		if (host != null && user!= null) {
 			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 			String date = format.format(new Date(System.currentTimeMillis()));
+			if (port != null && Integer.valueOf(port).intValue() != ISshSettings.DEFAULT_SSH_PORT) {
+				return NLS.bind(Messages.SshLauncherDelegate_terminalTitle_port, new String[]{user, host, port, date});
+			}
 			return NLS.bind(Messages.SshLauncherDelegate_terminalTitle, new String[]{user, host, date});
 		}
 		return Messages.SshLauncherDelegate_terminalTitle_default;

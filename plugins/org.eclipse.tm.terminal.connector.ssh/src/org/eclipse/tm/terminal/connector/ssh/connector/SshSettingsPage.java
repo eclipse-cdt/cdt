@@ -54,7 +54,7 @@ public class SshSettingsPage extends AbstractSettingsPage {
 			fTimeout.setText(get(fTerminalSettings.getTimeoutString(),"0"));//$NON-NLS-1$
 			fKeepalive.setText(get(fTerminalSettings.getKeepaliveString(),"300"));//$NON-NLS-1$
 			fUser.setText(get(fTerminalSettings.getUser(),""));//$NON-NLS-1$
-			fPort.setText(get(fTerminalSettings.getPortString(),"22"));//$NON-NLS-1$
+			fPort.setText(get(fTerminalSettings.getPortString(), String.valueOf(ISshSettings.DEFAULT_SSH_PORT)));
 			fPassword.setText(get(fTerminalSettings.getPassword(),""));//$NON-NLS-1$
 		}
 	}

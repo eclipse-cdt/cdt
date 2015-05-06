@@ -98,7 +98,7 @@ public class SshConnection extends Thread {
     public void run() {
 		boolean connectSucceeded = false;
 		String host = ""; //$NON-NLS-1$
-		int port = 22;
+		int port = ISshSettings.DEFAULT_SSH_PORT;
 		try {
 			int nTimeout = fConn.getSshSettings().getTimeout() * 1000;
 			int nKeepalive = fConn.getSshSettings().getKeepalive() * 1000;
@@ -110,7 +110,7 @@ public class SshConnection extends Thread {
 			////Giving a connectionId could be the index into a local
 			////Store where passwords are stored
 			//String connectionId = host;
-			//if (port!=22) {
+			//if (port!=ISshSettings.DEFAULT_SSH_PORT) {
 			//	connectionId += ':' + port;
 			//}
 			//UserInfo ui=new MyUserInfo(connectionId, user, password);
@@ -175,7 +175,7 @@ public class SshConnection extends Thread {
 			}
 			if (!connectSucceeded) {
 				String hostPort = host;
-				if (port != 22) {
+				if (port != ISshSettings.DEFAULT_SSH_PORT) {
 					hostPort = hostPort + ':' + port;
 				}
 				msg = NLS.bind(SshMessages.ERROR_CONNECTING, hostPort, msg);

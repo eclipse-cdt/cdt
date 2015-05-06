@@ -35,7 +35,7 @@ public class SshSettings implements ISshSettings {
 	@Override
     public String getSummary() {
 		String settings = getUser()+'@'+getHost();
-		if(getPort()!=22) {
+		if(getPort()!=ISshSettings.DEFAULT_SSH_PORT) {
 			settings += ':' + getPort();
 		}
 		return settings;
@@ -49,7 +49,7 @@ public class SshSettings implements ISshSettings {
 		// the password is not saved in some as plain text
 		// on disk. [bug 313991]
 		fPassword = store.get("Password", "");//$NON-NLS-1$ //$NON-NLS-2$
-		fPort = store.get("Port", "22");//$NON-NLS-1$ //$NON-NLS-2$
+		fPort = store.get("Port", String.valueOf(ISshSettings.DEFAULT_SSH_PORT));//$NON-NLS-1$
 		fTimeout = store.get("Timeout", "0");//$NON-NLS-1$ //$NON-NLS-2$
 		fKeepalive = store.get("Keepalive", "300");//$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -112,7 +112,7 @@ public class SshSettings implements ISshSettings {
 		try {
 			return Integer.parseInt(fPort);
 		} catch (NumberFormatException numberFormatException) {
-			return 22;
+			return ISshSettings.DEFAULT_SSH_PORT;
 		}
 	}
 

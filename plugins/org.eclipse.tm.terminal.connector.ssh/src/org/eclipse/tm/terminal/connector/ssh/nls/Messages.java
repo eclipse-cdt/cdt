@@ -31,6 +31,7 @@ public class Messages extends NLS {
 	// **** Declare externalized string id's down here *****
 
 	public static String SshLauncherDelegate_terminalTitle;
+	public static String SshLauncherDelegate_terminalTitle_port;
 	public static String SshLauncherDelegate_terminalTitle_default;
 	public static String SshWizardConfigurationPanel_saveUser;
 	public static String SshWizardConfigurationPanel_savePassword;

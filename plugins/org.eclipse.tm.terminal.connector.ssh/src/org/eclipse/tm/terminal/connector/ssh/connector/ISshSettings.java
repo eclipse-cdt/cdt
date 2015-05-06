@@ -15,6 +15,9 @@ package org.eclipse.tm.terminal.connector.ssh.connector;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 
 public interface ISshSettings {
+
+	public static int DEFAULT_SSH_PORT = 22;
+
 	/** 
 	 * Get the host name or IP address of remote system to connect.
 	 * @return host name or IP address of the remote system.

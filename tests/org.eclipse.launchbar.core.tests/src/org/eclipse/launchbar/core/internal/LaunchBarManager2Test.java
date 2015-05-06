@@ -192,6 +192,7 @@ public class LaunchBarManager2Test {
 
 	protected ILaunchConfigurationType mockLCType(String id) {
 		ILaunchConfigurationType lctype = mock(ILaunchConfigurationType.class);
+		doReturn(true).when(lctype).isPublic();
 		doReturn(id).when(lctype).getIdentifier();
 		doReturn(lctype).when(lman).getLaunchConfigurationType(id);
 		return lctype;

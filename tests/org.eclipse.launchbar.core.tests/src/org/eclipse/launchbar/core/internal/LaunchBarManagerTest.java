@@ -48,6 +48,7 @@ public class LaunchBarManagerTest {
 		// Mocking
 		ILaunchConfigurationType launchConfigType = mock(ILaunchConfigurationType.class);
 		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
+		doReturn(true).when(launchConfigType).isPublic();
 		doReturn(launchConfigType).when(launchConfig).getType();
 		doReturn("dummy").when(launchConfigType).getIdentifier();
 		doReturn(true).when(launchConfigType).supportsMode("run");

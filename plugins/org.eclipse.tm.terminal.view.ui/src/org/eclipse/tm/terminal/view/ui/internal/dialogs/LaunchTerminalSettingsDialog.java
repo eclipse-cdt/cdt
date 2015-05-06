@@ -69,6 +69,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 	// The dialog settings storage
 	private IDialogSettings dialogSettings;
 
+	// In case of a single available terminal launcher delegate, the label of that delegate
+	private String singleDelegateLabel = null;
+
 	/**
 	 * The control managing the terminal setting panels.
 	 */
@@ -277,53 +280,60 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
 
     	setDialogTitle(Messages.LaunchTerminalSettingsDialog_title);
 
+    	final List<String> items = getTerminals();
+
         Composite panel = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0; layout.marginWidth = 0;
         panel.setLayout(layout);
         panel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 
-        Label label = new Label(panel, SWT.HORIZONTAL);
-        label.setText(Messages.LaunchTerminalSettingsDialog_combo_label);
+        if (items.size() != 1) {
+        	Label label = new Label(panel, SWT.HORIZONTAL);
+        	label.setText(Messages.LaunchTerminalSettingsDialog_combo_label);
 
-        terminals = new Combo(panel, SWT.READ_ONLY);
-        terminals.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        terminals.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		// Get the old panel
-        		IConfigurationPanel oldPanel = settings.getActiveConfigurationPanel();
-        		// Extract the current settings in an special properties container
-        		Map<String, Object> data = new HashMap<String, Object>();
-        		if (oldPanel != null) oldPanel.extractData(data);
-        		// Clean out settings which are never passed between the panels
-        		data.remove(ITerminalsConnectorConstants.PROP_IP_PORT);
-        		data.remove(ITerminalsConnectorConstants.PROP_TIMEOUT);
-            	data.remove(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-            	data.remove(ITerminalsConnectorConstants.PROP_ENCODING);
-        		// Switch to the new panel
-        		settings.showConfigurationPanel(terminals.getText());
-        		// Get the new panel
-        		IConfigurationPanel newPanel = settings.getActiveConfigurationPanel();
-        		// Re-setup the relevant data
-        		if (newPanel != null) newPanel.setupData(data);
+        	terminals = new Combo(panel, SWT.READ_ONLY);
+        	terminals.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        	terminals.addSelectionListener(new SelectionAdapter() {
+        		@Override
+        		public void widgetSelected(SelectionEvent e) {
+        			// Get the old panel
+        			IConfigurationPanel oldPanel = settings.getActiveConfigurationPanel();
+        			// Extract the current settings in an special properties container
+        			Map<String, Object> data = new HashMap<String, Object>();
+        			if (oldPanel != null) oldPanel.extractData(data);
+        			// Clean out settings which are never passed between the panels
+        			data.remove(ITerminalsConnectorConstants.PROP_IP_PORT);
+        			data.remove(ITerminalsConnectorConstants.PROP_TIMEOUT);
+        			data.remove(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+        			data.remove(ITerminalsConnectorConstants.PROP_ENCODING);
+        			// Switch to the new panel
+        			settings.showConfigurationPanel(terminals.getText());
+        			// Get the new panel
+        			IConfigurationPanel newPanel = settings.getActiveConfigurationPanel();
+        			// Re-setup the relevant data
+        			if (newPanel != null) newPanel.setupData(data);
 
-        		// resize the dialog if needed to show the complete panel
-        		getShell().pack();
-        		// validate the settings dialog
-        		validate();
-        	}
-		});
+        			// resize the dialog if needed to show the complete panel
+        			getShell().pack();
+        			// validate the settings dialog
+        			validate();
+        		}
+        	});
 
-        // fill the combo with content
-        fillCombo(terminals);
+            // fill the combo with content
+            fillCombo(terminals, items);
+        } else {
+        	Assert.isTrue(items.size() == 1);
+        	singleDelegateLabel = items.get(0);
+        }
 
         // Create the settings panel control
         settings = new SettingsPanelControl();
 
 		// Create, initialize and add the first visible panel. All
         // other panels are created on demand only.
-        String terminalLabel = terminals.getItem(0);
+        String terminalLabel = terminals != null ? terminals.getItem(0) : singleDelegateLabel;
         if (terminalLabel != null) {
        		// Get the corresponding delegate
        		ILauncherDelegate delegate = label2delegate.get(terminalLabel);
@@ -339,16 +349,20 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
         }
 
 		// Setup the panel control
-		settings.setupPanel(panel, terminals.getItems());
+		settings.setupPanel(panel, terminals != null ? terminals.getItems() : new String[] { singleDelegateLabel });
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.horizontalSpan = 2;
 		settings.getPanel().setLayoutData(layoutData);
 
 		// Preselect the first terminal launcher
-		terminals.select(0);
-		settings.showConfigurationPanel(terminals.getText());
+		if (terminals != null) {
+			terminals.select(0);
+			settings.showConfigurationPanel(terminals.getText());
 
-		terminals.setEnabled(terminals.getItemCount() > 1);
+			terminals.setEnabled(terminals.getItemCount() > 1);
+		} else {
+			settings.showConfigurationPanel(singleDelegateLabel);
+		}
 
 		restoreWidgetValues();
 
@@ -361,19 +375,31 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     }
 
     /**
-     * Fill the given combo with content. The content are the terminal
-     * launcher delegate labels.
+     * Fill the given combo with the given list of terminal launcher delegate labels.
      *
      * @param combo The combo. Must not be <code>null</code>.
+     * @param items The list of terminal launcher delegates. Must not be <code>null</code>.
      */
-    protected void fillCombo(Combo combo) {
+    protected void fillCombo(Combo combo, List<String> items) {
     	Assert.isNotNull(combo);
+    	Assert.isNotNull(items);
 
 		if (UIPlugin.getTraceHandler().isSlotEnabled(0, ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER)) {
 			UIPlugin.getTraceHandler().trace("Filling combo after " + (System.currentTimeMillis() - start) + " ms.", //$NON-NLS-1$ //$NON-NLS-2$
 												ITraceIds.TRACE_LAUNCH_TERMINAL_COMMAND_HANDLER, LaunchTerminalSettingsDialog.this);
 		}
 
+    	Collections.sort(items);
+    	combo.setItems(items.toArray(new String[items.size()]));
+    }
+
+    /**
+     * Returns the list of terminal launcher delegate labels. The method queries the
+     * terminal launcher delegates and initialize the <code>label2delegate</code> map.
+     *
+     * @return The list of terminal launcher delegate labels or an empty list.
+     */
+    protected List<String> getTerminals() {
     	List<String> items = new ArrayList<String>();
 
     	if(selection==null || selection.isEmpty()){
@@ -417,8 +443,8 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     			items.add(label);
     		}
     	}
-    	Collections.sort(items);
-    	combo.setItems(items.toArray(new String[items.size()]));
+
+    	return items;
     }
 
     /**
@@ -474,7 +500,7 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     	IDialogSettings settings = getDialogSettings();
     	if (settings != null) {
     		String terminalLabel = settings.get("terminalLabel"); //$NON-NLS-1$
-    		int index = terminalLabel != null ? Arrays.asList(terminals.getItems()).indexOf(terminalLabel) : -1;
+    		int index = terminalLabel != null && terminals != null ? Arrays.asList(terminals.getItems()).indexOf(terminalLabel) : -1;
     		if (index != -1) {
     			terminals.select(index);
     			this.settings.showConfigurationPanel(terminals.getText());
@@ -502,7 +528,9 @@ public class LaunchTerminalSettingsDialog extends TrayDialog {
     	data = new HashMap<String, Object>();
 
     	// Store the id of the selected delegate
-    	data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, label2delegate.get(terminals.getText()).getId());
+    	String terminalLabel = terminals != null ? terminals.getText() : singleDelegateLabel;
+    	String delegateId = terminalLabel != null ? label2delegate.get(terminalLabel).getId() : null;
+    	if (delegateId != null) data.put(ITerminalsConnectorConstants.PROP_DELEGATE_ID, delegateId);
     	// Store the selection
     	data.put(ITerminalsConnectorConstants.PROP_SELECTION, selection);
 

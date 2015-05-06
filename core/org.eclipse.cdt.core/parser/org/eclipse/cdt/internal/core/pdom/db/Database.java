@@ -796,4 +796,23 @@ public class Database {
 		}
 		return 0;
 	}
+
+	/**
+	 * A Record Pointer is a pointer as returned by Database.malloc().
+	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
+	 */
+	public static void putRecPtr(final long value, byte[] buffer, int idx) {
+		final int denseValue = value == 0 ? 0 : Chunk.compressFreeRecPtr(value - BLOCK_HEADER_SIZE);
+		Chunk.putInt(denseValue, buffer, idx);
+	}
+
+	/**
+	 * A Record Pointer is a pointer as returned by Database.malloc().
+	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
+	 */
+	public static long getRecPtr(byte[] buffer, final int idx) {
+		int value = Chunk.getInt(buffer, idx);
+		long address = Chunk.expandToFreeRecPtr(value);
+		return address != 0 ? (address + BLOCK_HEADER_SIZE) : address;
+	}
 }

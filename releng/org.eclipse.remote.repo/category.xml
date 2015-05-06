@@ -12,12 +12,6 @@
    <feature url="features/org.eclipse.remote.serial.source_0.0.0.jar" id="org.eclipse.remote.serial.source" version="0.0.0">
       <category name="Remote Console SDK"/>
    </feature>
-   <!--feature url="features/org.eclipse.remote.terminal_0.0.0.jar" id="org.eclipse.remote.terminal" version="0.0.0">
-      <category name="Remote Terminal"/>
-   </feature>
-   <feature url="features/org.eclipse.remote.terminal.source_0.0.0.jar" id="org.eclipse.remote.terminal.source" version="0.0.0">
-      <category name="Remote Terminal SDK"/>
-   </feature-->
    <feature url="features/org.eclipse.remote.console_0.0.0.jar" id="org.eclipse.remote.console" version="0.0.0">
       <category name="Remote Console"/>
    </feature>

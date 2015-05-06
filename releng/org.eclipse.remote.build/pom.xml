@@ -50,9 +50,6 @@
 		<module>../../bundles/org.eclipse.remote.ui</module>
 		<module>../../features/org.eclipse.remote-feature</module>
 		<module>../../releng/org.eclipse.remote.repo</module>
-		<!-- Remote Terminal feature
-		<module>../../bundles/org.eclipse.remote.terminal</module>
-		<module>../../features/org.eclipse.remote.terminal-feature</module> -->
 		<!-- Console Terminal feature -->
 		<module>../../bundles/org.eclipse.remote.console</module>
 		<module>../../features/org.eclipse.remote.console-feature</module>

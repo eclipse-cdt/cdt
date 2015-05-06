@@ -13,6 +13,6 @@ EXECUTABLES :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-sub\ folder\ with\ spaces \
 . \
+sub\ folder\ with\ spaces \
 

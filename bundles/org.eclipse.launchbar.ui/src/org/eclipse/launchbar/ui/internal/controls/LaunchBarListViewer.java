@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -45,6 +44,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -391,11 +391,13 @@ public class LaunchBarListViewer extends StructuredViewer {
 		if (separatorIndex < 0 || !historySupported)
 			return;
 		sash = new Sash(listComp, SWT.BORDER | SWT.HORIZONTAL);
-		sash.setLayoutData(GridDataFactory.fillDefaults().create());
+		sash.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (separatorIndex < listItems.length)
 			sash.moveAbove(listItems[separatorIndex]);
 		else
 			sash.moveBelow(null);
+
+		sash.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		sash.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {

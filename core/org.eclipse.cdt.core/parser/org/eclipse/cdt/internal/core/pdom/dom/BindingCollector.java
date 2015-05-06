@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 

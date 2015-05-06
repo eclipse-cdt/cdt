@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Markus Schorn - initial API and implementation
+ *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -29,16 +29,15 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 4.0
  */
 public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
-	
 	private final PDOMLinkage linkage;
 	private final char[] matchChars;
 	private final boolean prefixLookup;
 	private final IContentAssistMatcher contentAssistMatcher;
 	private final boolean caseSensitive;
-	private IProgressMonitor monitor= null;
-	private int monitorCheckCounter= 0;
+	private IProgressMonitor monitor;
+	private int monitorCheckCounter;
 	
-	private List<PDOMNamedNode> nodes = new ArrayList<PDOMNamedNode>();
+	private List<PDOMNamedNode> nodes = new ArrayList<>();
 
 	/**
 	 * Collects all nodes with given name.
@@ -99,14 +98,13 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		int cmp;
 		if (prefixLookup) {
 			cmp= rhsName.comparePrefix(matchChars, false);
-			if(caseSensitive) {
-				cmp= cmp==0 ? rhsName.comparePrefix(matchChars, true) : cmp;
+			if (caseSensitive) {
+				cmp= cmp == 0 ? rhsName.comparePrefix(matchChars, true) : cmp;
 			}
 		} else {
-			if(caseSensitive) {
+			if (caseSensitive) {
 				cmp= rhsName.compareCompatibleWithIgnoreCase(matchChars);
-			}
-			else {
+			} else {
 				cmp= rhsName.compare(matchChars, false);
 			}
 		}

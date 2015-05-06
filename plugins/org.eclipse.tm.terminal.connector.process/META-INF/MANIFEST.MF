@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.tm.terminal.connector.process.activator.UIPlugin
 Bundle-Vendor: %providerName
 Import-Package: org.eclipse.cdt.utils.pty;mandatory:=native,
  org.eclipse.cdt.utils.spawner;mandatory:=native
-Require-Bundle: org.eclipse.cdt.core;bundle-version="5.6";resolution:=optional,
+Require-Bundle: org.eclipse.cdt.core;bundle-version="5.4.1";resolution:=optional,
  org.eclipse.core.expressions;bundle-version="3.4.400",
  org.eclipse.core.resources;bundle-version="3.8.1";resolution:=optional,
  org.eclipse.core.runtime;bundle-version="3.8.0",

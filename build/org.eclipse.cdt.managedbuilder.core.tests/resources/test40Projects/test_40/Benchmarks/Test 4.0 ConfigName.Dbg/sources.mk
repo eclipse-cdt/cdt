@@ -23,12 +23,12 @@ C_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-dir1/dd/ff \
-dir1/dd/excluded_c \
-dir1/dd/excluded_c/asd \
-d1_1 \
-d1_1/d2_1 \
-d1 \
-d1/d2 \
 d1/d2/d3 \
+d1/d2 \
+d1 \
+d1_1/d2_1 \
+d1_1 \
+dir1/dd/excluded_c/asd \
+dir1/dd/excluded_c \
+dir1/dd/ff \
 

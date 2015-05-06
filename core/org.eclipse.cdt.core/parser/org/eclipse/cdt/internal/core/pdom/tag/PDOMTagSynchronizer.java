@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,11 +7,10 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
-
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.tag;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +29,8 @@ public class PDOMTagSynchronizer implements IBTreeVisitor {
 	private final Long searchRecord;
 	private final Map<String, ITag> newTags;
 
-	private final List<Long> toRemove = new LinkedList<Long>();
-	private final List<Long> toInsert = new LinkedList<Long>();
+	private final List<Long> toRemove = new ArrayList<>();
+	private final List<Long> toInsert = new ArrayList<>();
 
 	public PDOMTagSynchronizer(Database db, Long searchRecord, Map<String, ITag> newTags) {
 		this.db = db;
@@ -44,7 +43,7 @@ public class PDOMTagSynchronizer implements IBTreeVisitor {
 	 * and false otherwise.
 	 */
 	public boolean synchronize(BTree tree) {
-		for (Long rm : toRemove)
+		for (Long rm : toRemove) {
 			try {
 				long record = rm.longValue();
 				tree.delete(record);
@@ -52,9 +51,10 @@ public class PDOMTagSynchronizer implements IBTreeVisitor {
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
+		}
 		toRemove.clear();
 
-		for (Long insert : toInsert)
+		for (Long insert : toInsert) {
 			try {
 				tree.insert(insert.longValue());
 			} catch (CoreException e) {
@@ -65,6 +65,7 @@ public class PDOMTagSynchronizer implements IBTreeVisitor {
 					CCorePlugin.log(e1);
 				}
 			}
+		}
 		toInsert.clear();
 
 		return true;
@@ -73,7 +74,6 @@ public class PDOMTagSynchronizer implements IBTreeVisitor {
 	@Override
 	public int compare(long test_record) throws CoreException {
 		// TODO this is the same as BTreeIterable.Descriptor.compare
-
 		long test_node = new PDOMTag(db, test_record).getNode();
 
 		// -1 if record < key, 0 if record == key, 1 if record > key
@@ -90,15 +90,13 @@ public class PDOMTagSynchronizer implements IBTreeVisitor {
 			toRemove.add(Long.valueOf(existing_record));
 		} else if (newTag.getDataLen() > existingTag.getDataLen()) {
 			toRemove.add(Long.valueOf(existing_record));
-
 			PDOMTag pdomTag = existingTag.cloneWith(newTag.getBytes(0, -1));
 			if (pdomTag != null)
 				toInsert.add(Long.valueOf(pdomTag.getRecord()));
 		} else if (!existingTag.putBytes(0, newTag.getBytes(0, -1), -1))
-			CCorePlugin
-					.log("Unable to modify data of tag record " + existing_record + " from taggerId " + taggerId); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// try to visit the full tree
+			CCorePlugin.log("Unable to modify data of tag record " + existing_record //$NON-NLS-1$
+					+ " from taggerId " + taggerId); //$NON-NLS-1$
+		// Try to visit the full tree.
 		return true;
 	}
 }

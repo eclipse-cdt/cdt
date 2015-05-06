@@ -111,7 +111,7 @@ final class Chunk {
 	 * A free Record Pointer is a pointer to a raw block, i.e. the
 	 * pointer is not moved past the BLOCK_HEADER_SIZE.
 	 */
-	private static int compressFreeRecPtr(final long value) {
+	static int compressFreeRecPtr(final long value) {
 		// This assert verifies the alignment. We expect the low bits to be clear.
 		assert (value & (Database.BLOCK_SIZE_DELTA - 1)) == 0;
 		final int dense = (int) (value >> Database.BLOCK_SIZE_DELTA_BITS);
@@ -122,7 +122,7 @@ final class Chunk {
 	 * A free Record Pointer is a pointer to a raw block,
 	 * i.e. the pointer is not moved past the BLOCK_HEADER_SIZE.
 	 */
-	private static long expandToFreeRecPtr(int value) {
+	static long expandToFreeRecPtr(int value) {
 		/*
 		 * We need to properly manage the integer that was read. The value will be sign-extended 
 		 * so if the most significant bit is set, the resulting long will look negative. By 
@@ -138,30 +138,11 @@ final class Chunk {
 	 * A Record Pointer is a pointer as returned by Database.malloc().
 	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
 	 */
-	static void putRecPtr(final long value, byte[] buffer, int idx) {
-		final int denseValue = value == 0 ? 0 : compressFreeRecPtr(value - Database.BLOCK_HEADER_SIZE);
-		putInt(denseValue, buffer, idx);
-	}
-
-	/**
-	 * A Record Pointer is a pointer as returned by Database.malloc().
-	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
-	 */
-	static long getRecPtr(byte[] buffer, final int idx) {
-		int value = getInt(buffer, idx);
-		long address = expandToFreeRecPtr(value);
-		return address != 0 ? (address + Database.BLOCK_HEADER_SIZE) : address;
-	}
-
-	/**
-	 * A Record Pointer is a pointer as returned by Database.malloc().
-	 * This is a pointer to a block + BLOCK_HEADER_SIZE.
-	 */
 	public void putRecPtr(final long offset, final long value) {
 		assert fLocked;
 		fDirty = true;
 		int idx = recPtrToIndex(offset);
-		putRecPtr(value, fBuffer, idx);
+		Database.putRecPtr(value, fBuffer, idx);
 	}
 	
 	/**
@@ -177,7 +158,7 @@ final class Chunk {
 
 	public long getRecPtr(final long offset) {
 		final int idx = recPtrToIndex(offset);
-		return getRecPtr(fBuffer, idx);
+		return Database.getRecPtr(fBuffer, idx);
 	}
 	
 	public long getFreeRecPtr(final long offset) {

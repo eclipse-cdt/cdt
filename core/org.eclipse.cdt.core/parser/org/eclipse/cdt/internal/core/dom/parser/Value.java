@@ -76,7 +76,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
-import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.pdom.dom.TypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.pdom.db;
+package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -28,25 +28,20 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * For marshalling types to byte arrays.
  */
 public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
-	public static final byte[] EMPTY= { 0, 0, 0, 0, 0, 0 };
+	public static final byte[] EMPTY = new byte[Database.TYPE_SIZE];
 	public static final byte NULL_TYPE       = 0x00;
 	public static final byte INDIRECT_TYPE   = 0x1F;
 	public static final byte BINDING_TYPE    = 0x1E;
 	public static final byte UNSTORABLE_TYPE = 0x1D;
 
 	public static final IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
-
-	static {
-		assert EMPTY.length == Database.TYPE_SIZE;
-	}
 
 	private final PDOMLinkage fLinkage;
 	private int fPos;
@@ -346,7 +341,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	private void putRecordPointer(long record) {
 		request(Database.PTR_SIZE);
-		Chunk.putRecPtr(record, fBuffer, fPos);
+		Database.putRecPtr(record, fBuffer, fPos);
 		fPos += Database.PTR_SIZE;
 	}
 
@@ -357,7 +352,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos= fBuffer.length;
 			throw unmarshallingError();
 		}
-		return Chunk.getRecPtr(fBuffer, pos);
+		return Database.getRecPtr(fBuffer, pos);
 	}
 
 	@Override

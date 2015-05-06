@@ -439,4 +439,51 @@
          </adapter>
       </factory>
    </extension>  
+   <extension
+         point="org.eclipse.debug.core.breakpointImportParticipants">
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cWatchpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cEventBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cLineBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cAddressBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cFunctionBreakpointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cLineDynamicPrintfMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cAddressDynamicPrintfMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cFunctionDynamicPrintfMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cLineTracepointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cAddressTracepointMarker">
+      </importParticipant>
+      <importParticipant
+            participant="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointImportParticipant"
+            type="org.eclipse.cdt.debug.core.cFunctionTracepointMarker">
+      </importParticipant>
+   </extension>
 </plugin>

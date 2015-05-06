@@ -141,7 +141,7 @@
                 <tm-stream>juno</tm-stream>
                 <sdk-version>3.8</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
-                <cdt-site>http://download.eclipse.org/tools/cdt/releases/juno</cdt-site>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
         <profile>

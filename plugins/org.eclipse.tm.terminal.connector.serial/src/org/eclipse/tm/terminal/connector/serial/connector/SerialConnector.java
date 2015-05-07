@@ -50,9 +50,6 @@ public class SerialConnector extends TerminalConnectorImpl {
 
 	public SerialConnector() {
 	}
-	public SerialConnector(SerialSettings settings) {
-		fSettings=settings;
-	}
 	@Override
     public void initialize() throws Exception {
 		try {

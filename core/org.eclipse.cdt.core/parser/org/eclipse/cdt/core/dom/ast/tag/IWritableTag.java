@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.tag;
 
 /**
@@ -21,7 +21,9 @@ package org.eclipse.cdt.core.dom.ast.tag;
  * @since 5.5
  */
 public interface IWritableTag extends ITag {
-	/** Writes the given byte to the given offset in the tag. Returns {@code true} if successful. */
+	/**
+	 * Writes the given byte to the given offset in the tag. Returns {@code true} if successful.
+	 */
 	public boolean putByte(int offset, byte data);
 
 	/**

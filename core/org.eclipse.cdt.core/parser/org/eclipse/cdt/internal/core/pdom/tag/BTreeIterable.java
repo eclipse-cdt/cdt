@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.tag;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -42,13 +42,13 @@ public class BTreeIterable<T> implements Iterable<T> {
 			btree.accept(v);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return Collections.<T> emptyList().iterator();
+			return Collections.<T>emptyList().iterator();
 		}
 		return new BTreeIterator(v.records);
 	}
 
 	private class Visitor implements IBTreeVisitor {
-		public final List<Long> records = new LinkedList<Long>();
+		public final List<Long> records = new ArrayList<>();
 
 		@Override
 		public int compare(long record) throws CoreException {

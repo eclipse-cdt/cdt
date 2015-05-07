@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
-
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.tag;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -109,27 +108,28 @@ public class PDOMTag implements IWritableTag {
 
 	@Override
 	public String getTaggerId() {
-		if (taggerId == null)
+		if (taggerId == null) {
 			try {
 				long taggerIdRecord = Fields.TaggerId.getRecPtr(db, record, 0);
-				taggerId = taggerIdRecord == 0L ? new String() : db.getString(taggerIdRecord)
-						.getString();
+				taggerId = taggerIdRecord == 0L ? "" : db.getString(taggerIdRecord).getString(); //$NON-NLS-1$
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
+		}
 
 		return taggerId;
 	}
 
 	@Override
 	public int getDataLen() {
-		if (dataLen < 0)
+		if (dataLen < 0) {
 			try {
 				dataLen = Fields.DataLen.getInt(db, record, 0);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				return 0;
 			}
+		}
 
 		return dataLen;
 	}
@@ -165,12 +165,13 @@ public class PDOMTag implements IWritableTag {
 	}
 
 	public void delete() {
-		if (db != null && record != 0)
+		if (db != null && record != 0) {
 			try {
 				db.free(record);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
+		}
 	}
 
 	public static class BTreeComparator implements IBTreeComparator {

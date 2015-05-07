@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
-
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.tag;
 
 import java.util.Collections;
@@ -28,16 +27,16 @@ import org.eclipse.core.runtime.CoreException;
  * Not thread-safe.
  */
 public class PDOMTagIndex {
-	private final Database db;
-	private final long ptr;
-	private long rootRecord;
-
 	private static enum Fields {
 		TaggerIds, Tags, _last;
 
 		public final long offset = ordinal() * Database.PTR_SIZE;
 		public static int sizeof = _last.ordinal() * Database.PTR_SIZE;
 	}
+
+	private final Database db;
+	private final long ptr;
+	private long rootRecord;
 
 	private PDOMStringSet taggerIds;
 	private BTree tags;
@@ -80,8 +79,9 @@ public class PDOMTagIndex {
 		assert !taggerId.isEmpty();
 
 		if (db == null || taggerId == null || taggerId.isEmpty()
-				|| (taggerIds == null && !createIfNeeded))
+				|| (taggerIds == null && !createIfNeeded)) {
 			return 0L;
+		}
 
 		try {
 			long record = getTaggerIds().find(taggerId);
@@ -181,8 +181,8 @@ public class PDOMTagIndex {
 		for (ITag tag : tags) {
 			ITag dupTag = newTags.put(tag.getTaggerId(), tag);
 			if (dupTag != null)
-				CCorePlugin
-						.log("Duplicate incoming tag for record " + binding_record + " from taggerId " + tag.getTaggerId()); //$NON-NLS-1$ //$NON-NLS-2$
+				CCorePlugin.log("Duplicate incoming tag for record " + binding_record //$NON-NLS-1$
+						+ " from taggerId " + tag.getTaggerId()); //$NON-NLS-1$
 		}
 
 		BTree btree = null;
@@ -193,8 +193,7 @@ public class PDOMTagIndex {
 			return false;
 		}
 
-		PDOMTagSynchronizer sync = new PDOMTagSynchronizer(db, Long.valueOf(binding_record),
-				newTags);
+		PDOMTagSynchronizer sync = new PDOMTagSynchronizer(db, Long.valueOf(binding_record), newTags);
 
 		// visit the full tree, then return true on success and false on failure
 		try {
@@ -210,8 +209,7 @@ public class PDOMTagIndex {
 
 		// insert any new tags that are left in the incoming list
 		for (ITag newTag : newTags.values()) {
-			IWritableTag pdomTag = createTag(binding_record, newTag.getTaggerId(),
-					newTag.getDataLen());
+			IWritableTag pdomTag = createTag(binding_record, newTag.getTaggerId(), newTag.getDataLen());
 			pdomTag.putBytes(0, newTag.getBytes(0, -1), -1);
 		}
 

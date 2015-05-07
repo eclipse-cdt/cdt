@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -25,8 +25,7 @@ public interface ITagService {
 	 * Finds or creates a tag reader for the specified binding or null if a reader cannot be
 	 * associated with this binding.
 	 *
-	 * @param binding
-	 *            could be null
+	 * @param binding could be null
 	 */
 	public ITagReader findTagReader(IBinding binding);
 }

@@ -390,7 +390,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 		disconnectTerminal();
 		fClipboard.dispose();
-		fPollingTextCanvasModel.stopPolling();
 		getTerminalText().dispose();
 	}
 
@@ -446,6 +445,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
                 job.join();
             } catch (InterruptedException e) {}
         }
+		fPollingTextCanvasModel.stopPolling();
 	}
 
 	private void waitForConnect() {
@@ -470,6 +470,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			if (getState() == TerminalState.CONNECTED)
 				fFocusListener.captureKeyEvents(true);
 		}
+		fPollingTextCanvasModel.startPolling();
 		startReaderJob();
 	}
 
@@ -786,7 +787,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			// should never happen!
 			e.printStackTrace();
 		}
-
 	}
 
 	public OutputStream getRemoteToTerminalOutputStream() {
@@ -1252,12 +1252,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				if(fCtlText!=null && !fCtlText.isDisposed()) {
 					if (isConnected()) {
 						fCtlText.setCursorEnabled(true);
-						fPollingTextCanvasModel.startPolling();
 					} else {
 						fCtlText.setCursorEnabled(false);
 						// Stop capturing all key events
 						fFocusListener.captureKeyEvents(false);
-						fPollingTextCanvasModel.stopPolling();
 					}
 				}
 			}

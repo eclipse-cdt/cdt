@@ -38,7 +38,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
 import org.eclipse.tm.terminal.connector.serial.activator.UIPlugin;
 import org.eclipse.tm.terminal.connector.serial.nls.Messages;
 
-@SuppressWarnings("restriction")
 public class SerialConnector extends TerminalConnectorImpl {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;

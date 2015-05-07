@@ -38,7 +38,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.connector.serial.nls.Messages;
 
-@SuppressWarnings("restriction")
 public class SerialConnectWorker extends Thread {
     /* default */ final ITerminalControl fControl;
 	private final SerialConnector fConn;

@@ -11,25 +11,25 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalProperties 
+ * Michael Scharf (Wind River) - extracted from TerminalProperties
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.serial.connector;
 
 import gnu.io.CommPortIdentifier;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 public class SerialProperties {
-	protected List fSerialPortTable;
-	protected List fBaudRateTable;
-	protected List fDataBitsTable;
-	protected List fStopBitsTable;
-	protected List fParityTable;
-	protected List fFlowControlTable;
+	protected List<String> fSerialPortTable;
+	protected List<String> fBaudRateTable;
+	protected List<String> fDataBitsTable;
+	protected List<String> fStopBitsTable;
+	protected List<String> fParityTable;
+	protected List<String> fFlowControlTable;
 	protected String fDefaultConnType;
 	protected String fDefaultSerialPort;
 	protected String fDefaultBaudRate;
@@ -41,27 +41,27 @@ public class SerialProperties {
 	public SerialProperties() {
 		setupProperties();
 	}
-	public List getSerialPortTable() {
+	public List<String> getSerialPortTable() {
 		return fSerialPortTable;
 	}
 
-	public List getBaudRateTable() {
+	public List<String> getBaudRateTable() {
 		return fBaudRateTable;
 	}
 
-	public List getDataBitsTable() {
+	public List<String> getDataBitsTable() {
 		return fDataBitsTable;
 	}
 
-	public List getStopBitsTable() {
+	public List<String> getStopBitsTable() {
 		return fStopBitsTable;
 	}
 
-	public List getParityTable() {
+	public List<String> getParityTable() {
 		return fParityTable;
 	}
 
-	public List getFlowControlTable() {
+	public List<String> getFlowControlTable() {
 		return fFlowControlTable;
 	}
 	public String getDefaultConnType() {
@@ -95,12 +95,12 @@ public class SerialProperties {
 		return "5"; //$NON-NLS-1$
 	}
 	protected void setupProperties() {
-		fSerialPortTable = new Vector();
-		fBaudRateTable = new Vector();
-		fDataBitsTable = new Vector();
-		fStopBitsTable = new Vector();
-		fParityTable = new Vector();
-		fFlowControlTable = new Vector();
+		fSerialPortTable = new ArrayList<String>();
+		fBaudRateTable = new ArrayList<String>();
+		fDataBitsTable = new ArrayList<String>();
+		fStopBitsTable = new ArrayList<String>();
+		fParityTable = new ArrayList<String>();
+		fFlowControlTable = new ArrayList<String>();
 		fDefaultConnType = ""; //$NON-NLS-1$
 		fDefaultSerialPort = ""; //$NON-NLS-1$
 		fDefaultBaudRate = ""; //$NON-NLS-1$
@@ -138,15 +138,15 @@ public class SerialProperties {
 		fFlowControlTable.add("RTS/CTS"); //$NON-NLS-1$
 		fFlowControlTable.add("Xon/Xoff"); //$NON-NLS-1$
 
-		fDefaultBaudRate = (String) fBaudRateTable.get(4);
-		fDefaultDataBits = (String) fDataBitsTable.get(3);
-		fDefaultStopBits = (String) fStopBitsTable.get(0);
-		fDefaultParity = (String) fParityTable.get(0);
-		fDefaultFlowControl = (String) fFlowControlTable.get(0);
+		fDefaultBaudRate = fBaudRateTable.get(4);
+		fDefaultDataBits = fDataBitsTable.get(3);
+		fDefaultStopBits = fStopBitsTable.get(0);
+		fDefaultParity = fParityTable.get(0);
+		fDefaultFlowControl = fFlowControlTable.get(0);
 
-		Enumeration portIdEnum= CommPortIdentifier.getPortIdentifiers();
+		Enumeration<CommPortIdentifier> portIdEnum= CommPortIdentifier.getPortIdentifiers();
 		while (portIdEnum.hasMoreElements()) {
-			CommPortIdentifier identifier = (CommPortIdentifier) portIdEnum.nextElement();
+			CommPortIdentifier identifier = portIdEnum.nextElement();
 			String strName = identifier.getName();
 			int nPortType = identifier.getPortType();
 
@@ -157,7 +157,7 @@ public class SerialProperties {
 		Collections.sort(fSerialPortTable);
 
 		if (!fSerialPortTable.isEmpty()) {
-			fDefaultSerialPort = (String) fSerialPortTable.get(0);
+			fDefaultSerialPort = fSerialPortTable.get(0);
 		}
 	}
 }

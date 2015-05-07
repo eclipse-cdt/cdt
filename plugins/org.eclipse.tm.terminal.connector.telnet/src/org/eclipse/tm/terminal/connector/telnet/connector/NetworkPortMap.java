@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - extracted from TerminalNetworkPortMap 
+ * Michael Scharf (Wind River) - extracted from TerminalNetworkPortMap
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.telnet.connector;
@@ -52,8 +52,8 @@ public class NetworkPortMap {
 		return null;
 	}
 
-	public List getNameTable() {
-		List  names=new ArrayList();
+	public List<String> getNameTable() {
+		List<String>  names=new ArrayList<String>();
 		for (int i = 0; i < fPortMap.length; i++) {
 			names.add(fPortMap[i][0]);
 		}

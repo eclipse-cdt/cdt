@@ -132,7 +132,8 @@ protected Control createDialogArea(Composite parent) {
    *
    * @param parent  the parent of the widgets
    */
-  protected void createPasswordFields(Composite parent) {
+  @SuppressWarnings("unused")
+protected void createPasswordFields(Composite parent) {
     texts=new Text[prompt.length];
 
     for(int i=0; i<prompt.length; i++){

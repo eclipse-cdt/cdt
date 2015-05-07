@@ -590,7 +590,8 @@ class TelnetOption implements TelnetCodes
 			// is _bad_ (it hangs the GUI).
 
 			Thread t=new Thread() {
-				public void run() {
+				@Override
+                public void run() {
 					try {
 						outputStream.write(NAWSDataFinal);
 					} catch (IOException ex) {

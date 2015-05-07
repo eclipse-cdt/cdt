@@ -30,7 +30,8 @@ public class SerialSettings implements ISerialSettings {
     protected String fTimeout;
     final private SerialProperties fProperties=new SerialProperties();
 
-	public String getSerialPort() {
+	@Override
+    public String getSerialPort() {
 		return fSerialPort;
 	}
 
@@ -42,7 +43,8 @@ public class SerialSettings implements ISerialSettings {
 		return fBaudRate;
 	}
 
-	public int getBaudRate() {
+	@Override
+    public int getBaudRate() {
 		int nBaudRate;
 
 		try {
@@ -62,7 +64,8 @@ public class SerialSettings implements ISerialSettings {
 		return fDataBits;
 	}
 
-	public int getDataBits() {
+	@Override
+    public int getDataBits() {
 		if (fDataBits.equals("5")) { //$NON-NLS-1$
 			return SerialPort.DATABITS_5;
 		} else if (fDataBits.equals("6")) { //$NON-NLS-1$
@@ -82,7 +85,8 @@ public class SerialSettings implements ISerialSettings {
 		return fStopBits;
 	}
 
-	public int getStopBits() {
+	@Override
+    public int getStopBits() {
 		if (fStopBits.equals("1_5")) { //$NON-NLS-1$
 			return SerialPort.STOPBITS_1_5;
 		} else if (fStopBits.equals("2")) { //$NON-NLS-1$
@@ -100,7 +104,8 @@ public class SerialSettings implements ISerialSettings {
 		return fParity;
 	}
 
-	public int getParity() {
+	@Override
+    public int getParity() {
 		if (fParity.equals("Even")) //$NON-NLS-1$
 		{
 			return SerialPort.PARITY_EVEN;
@@ -127,7 +132,8 @@ public class SerialSettings implements ISerialSettings {
 		return fFlowControl;
 	}
 
-	public int getFlowControl() {
+	@Override
+    public int getFlowControl() {
 		if (fFlowControl.equals("RTS/CTS")) //$NON-NLS-1$
 		{
 			return SerialPort.FLOWCONTROL_RTSCTS_IN;
@@ -144,7 +150,8 @@ public class SerialSettings implements ISerialSettings {
 		fFlowControl = strFlow;
 	}
 
-	public String getSummary() {
+	@Override
+    public String getSummary() {
 		return getSerialPort() + ", " + //$NON-NLS-1$
 			getBaudRateString() + ", " + //$NON-NLS-1$
 			getDataBitsString() + ", " + //$NON-NLS-1$
@@ -153,7 +160,8 @@ public class SerialSettings implements ISerialSettings {
 			getFlowControlString();
 	}
 
-	public void load(ISettingsStore store) {
+	@Override
+    public void load(ISettingsStore store) {
 		fSerialPort = store.get("SerialPort", fProperties.getDefaultSerialPort());//$NON-NLS-1$
 		fBaudRate = store.get("BaudRate", fProperties.getDefaultBaudRate());//$NON-NLS-1$
 		fDataBits = store.get("DataBits", fProperties.getDefaultDataBits());//$NON-NLS-1$
@@ -163,7 +171,8 @@ public class SerialSettings implements ISerialSettings {
 		fTimeout = store.get("Timeout",fProperties.getDefaultTimeout()); //$NON-NLS-1$
 	}
 
-	public void save(ISettingsStore store) {
+	@Override
+    public void save(ISettingsStore store) {
 		store.put("SerialPort", fSerialPort); //$NON-NLS-1$
 		store.put("BaudRate", fBaudRate); //$NON-NLS-1$
 		store.put("DataBits", fDataBits); //$NON-NLS-1$
@@ -176,7 +185,8 @@ public class SerialSettings implements ISerialSettings {
 		return fProperties;
 	}
 
-	public int getTimeout() {
+	@Override
+    public int getTimeout() {
 		try {
 			return Integer.parseInt(fTimeout);
 		} catch (NumberFormatException numberFormatException) {

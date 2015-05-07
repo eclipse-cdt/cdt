@@ -23,7 +23,8 @@ public class TelnetSettings implements ITelnetSettings {
     protected String fNetworkPort;
     protected String fTimeout;
     private final TelnetProperties fProperties=new TelnetProperties();
-	public String getHost() {
+	@Override
+    public String getHost() {
 		return fHost;
 	}
 
@@ -35,7 +36,8 @@ public class TelnetSettings implements ITelnetSettings {
 		return fNetworkPort;
 	}
 
-	public int getNetworkPort() {
+	@Override
+    public int getNetworkPort() {
 		try {
 			return Integer.parseInt(fNetworkPort);
 		} catch (NumberFormatException numberFormatException) {
@@ -47,17 +49,20 @@ public class TelnetSettings implements ITelnetSettings {
 		fNetworkPort = strNetworkPort;
 	}
 
-	public String getSummary() {
+	@Override
+    public String getSummary() {
 		return getHost() + ":" + getNetworkPortString(); //$NON-NLS-1$
 	}
 
-	public void load(ISettingsStore store) {
+	@Override
+    public void load(ISettingsStore store) {
 		fHost = store.get("Host", fProperties.getDefaultHost());//$NON-NLS-1$
 		fNetworkPort = store.get("NetworkPort", fProperties.getDefaultNetworkPort());//$NON-NLS-1$
 		fTimeout = store.get("Timeout","10");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public void save(ISettingsStore store) {
+	@Override
+    public void save(ISettingsStore store) {
 		store.put("Host", fHost);//$NON-NLS-1$
 		store.put("NetworkPort", fNetworkPort);//$NON-NLS-1$
 		store.put("Timeout", fTimeout);//$NON-NLS-1$
@@ -66,7 +71,8 @@ public class TelnetSettings implements ITelnetSettings {
 	public TelnetProperties getProperties() {
 		return fProperties;
 	}
-	public int getTimeout() {
+	@Override
+    public int getTimeout() {
 		try {
 			return Integer.parseInt(fTimeout);
 		} catch (NumberFormatException numberFormatException) {

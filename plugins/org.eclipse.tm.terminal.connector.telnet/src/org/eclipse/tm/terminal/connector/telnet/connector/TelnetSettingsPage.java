@@ -38,21 +38,23 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 
 public class TelnetSettingsPage extends AbstractSettingsPage {
-	private Text fHostText;
-	private Combo fNetworkPortCombo;
-	private Text fTimeout;
+	/* default */ Text fHostText;
+	/* default */ Combo fNetworkPortCombo;
+	/* default */ Text fTimeout;
 	private final TelnetSettings fTerminalSettings;
 
 	public TelnetSettingsPage(TelnetSettings settings) {
 		fTerminalSettings=settings;
 	}
-	public void saveSettings() {
+	@Override
+    public void saveSettings() {
 		fTerminalSettings.setHost(fHostText.getText());
 		fTerminalSettings.setTimeout(fTimeout.getText());
 		fTerminalSettings.setNetworkPort(getNetworkPort());
 	}
 
-	public void loadSettings() {
+	@Override
+    public void loadSettings() {
 		if(fTerminalSettings!=null) {
 			setHost(fTerminalSettings.getHost());
 			setTimeout(fTerminalSettings.getTimeoutString());
@@ -95,7 +97,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		return fTerminalSettings.getProperties().getNetworkPortMap();
 	}
 
-	public boolean validateSettings() {
+	@Override
+    public boolean validateSettings() {
 		String message = null;
 		int messageType = IMessageProvider.NONE;
 		boolean valid = true;
@@ -144,7 +147,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		return valid;
 	}
 
-	public void createControl(Composite parent) {
+	@Override
+    public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -162,7 +166,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fHostText = new Text(composite, SWT.BORDER);
 		fHostText.setLayoutData(gridData);
 		fHostText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+			@Override
+            public void modifyText(ModifyEvent e) {
 				fireListeners(fHostText);
 			}
 		});
@@ -177,18 +182,20 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fNetworkPortCombo = new Combo(composite, SWT.DROP_DOWN);
 		fNetworkPortCombo.setLayoutData(gridData);
 		fNetworkPortCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+			@Override
+            public void modifyText(ModifyEvent e) {
 				fireListeners(fNetworkPortCombo);
 			}
 		});
 		fNetworkPortCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			@Override
+            public void widgetSelected(SelectionEvent e) {
 				fireListeners(fNetworkPortCombo);
 			}
 		});
 		createControlDecoration(fNetworkPortCombo);
 
-		List table = getNetworkPortMap().getNameTable();
+		List<String> table = getNetworkPortMap().getNameTable();
 		Collections.sort(table);
 		loadCombo(fNetworkPortCombo, table);
 
@@ -196,7 +203,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 		fTimeout = new Text(composite, SWT.BORDER);
 		fTimeout.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTimeout.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+			@Override
+            public void modifyText(ModifyEvent e) {
 				fireListeners(fTimeout);
 			}
 		});
@@ -204,9 +212,9 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 
 		loadSettings();
 	}
-	private void loadCombo(Combo ctlCombo, List table) {
-		for (Iterator iter = table.iterator(); iter.hasNext();) {
-			String label = (String) iter.next();
+	private void loadCombo(Combo ctlCombo, List<String> table) {
+		for (Iterator<String> iter = table.iterator(); iter.hasNext();) {
+			String label = iter.next();
 			ctlCombo.add(label);
 		}
 	}

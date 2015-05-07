@@ -33,7 +33,6 @@ import org.eclipse.tm.terminal.connector.serial.nls.Messages;
 /**
  * UNDER CONSTRUCTION
  */
-@SuppressWarnings("restriction")
 public class SerialPortHandler implements SerialPortEventListener, CommPortOwnershipListener {
 
     /* default */ final ITerminalControl fControl;

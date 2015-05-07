@@ -110,7 +110,7 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-	@Override
+    @Override
 	public Object getAdapter(Class adapter) {
 		if (IMementoHandler.class.equals(adapter)) {
 			return mementoHandler;

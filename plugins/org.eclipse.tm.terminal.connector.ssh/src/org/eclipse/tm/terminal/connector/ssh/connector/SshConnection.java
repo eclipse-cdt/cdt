@@ -50,7 +50,7 @@ import com.jcraft.jsch.UserInfo;
 
 public class SshConnection extends Thread {
 	private static int fgNo;
-	private final ITerminalControl fControl;
+	/* default */ final ITerminalControl fControl;
 	private final SshConnector fConn;
 	private Session fSession;
 	private boolean fDisconnectHasBeenCalled;
@@ -192,7 +192,7 @@ public class SshConnection extends Thread {
 		}
 	}
 
-	private synchronized boolean isSessionConnected() {
+	/* default */ synchronized boolean isSessionConnected() {
 		return !fDisconnectHasBeenCalled && fSession != null && fSession.isConnected();
 	}
 
@@ -238,8 +238,8 @@ public class SshConnection extends Thread {
     }
 
     private class MyUserInfo implements UserInfo, UIKeyboardInteractive {
-    	private final String fConnectionId;
-    	private final String fUser;
+    	/* default */ final String fConnectionId;
+    	/* default */ final String fUser;
     	private String fPassword;
     	private String fPassphrase;
     	private int fAttemptCount;

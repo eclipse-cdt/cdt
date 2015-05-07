@@ -14,7 +14,7 @@
  * Michael Scharf (Wind River) - [209665] Add ability to log byte streams from terminal
  * Alex Panchenko (Xored) - [277061]  TelnetConnection.isConnected() should check if socket was not closed
  * Uwe Stieber (Wind River) - [281329] Telnet connection not handling "SocketException: Connection reset" correct
- * Nils Hagge (Siemens AG) - [276023] close socket streams after connection is disconnected 
+ * Nils Hagge (Siemens AG) - [276023] close socket streams after connection is disconnected
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.telnet.connector;
 
@@ -294,7 +294,8 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 	 * them), and passes the remaining bytes to a TerminalDisplay object for
 	 * display.
 	 */
-	public void run() {
+	@Override
+    public void run() {
 		Logger.log("Entered"); //$NON-NLS-1$
 
 		try {
@@ -314,16 +315,16 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					// closed.
 					terminalControl.setState(TerminalState.CLOSED);
 					break;
-				} else {
-					// Process any TELNET protocol data that we receive. Don't
-					// send any TELNET protocol data until we are sure the remote
-					// endpoint is a TELNET server.
+				}
 
-					int nProcessedBytes = processTelnetProtocol(nRawBytes);
+				// Process any TELNET protocol data that we receive. Don't
+				// send any TELNET protocol data until we are sure the remote
+				// endpoint is a TELNET server.
 
-					if (nProcessedBytes > 0) {
-						terminalControl.getRemoteToTerminalOutputStream().write(processedBytes, 0, nProcessedBytes);
-					}
+				int nProcessedBytes = processTelnetProtocol(nRawBytes);
+
+				if (nProcessedBytes > 0) {
+					terminalControl.getRemoteToTerminalOutputStream().write(processedBytes, 0, nProcessedBytes);
 				}
 			}
 		} catch (SocketException ex) {

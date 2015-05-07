@@ -35,7 +35,8 @@ class TelnetConnectWorker extends Thread {
 		fConn = conn;
 		fControl.setState(TerminalState.CONNECTING);
 	}
-	public void run() {
+	@Override
+    public void run() {
 		// Retry the connect with after a little pause in case the
 		// remote telnet server isn't ready. ConnectExceptions might
 		// happen if the telnet server process did not initialized itself.

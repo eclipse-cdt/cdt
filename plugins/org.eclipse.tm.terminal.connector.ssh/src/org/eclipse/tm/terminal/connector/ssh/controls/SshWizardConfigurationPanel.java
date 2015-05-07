@@ -43,7 +43,6 @@ import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel
 /**
  * SSH wizard configuration panel implementation.
  */
-@SuppressWarnings("restriction")
 public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPanel {
 
 	private static final String SAVE_USER = "saveUser"; //$NON-NLS-1$

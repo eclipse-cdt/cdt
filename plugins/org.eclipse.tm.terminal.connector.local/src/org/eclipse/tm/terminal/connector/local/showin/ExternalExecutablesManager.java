@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
@@ -27,11 +28,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.tm.terminal.connector.local.activator.UIPlugin;
+import org.eclipse.tm.terminal.connector.local.showin.interfaces.IExternalExecutablesProperties;
 
 /**
  * External executables manager implementation.
  */
 public class ExternalExecutablesManager {
+	// Flag to indicate if we have searched for git bash already
+	private static boolean gitBashSearchDone = false;
 
 	/**
 	 * Loads the list of all saved external executables.
@@ -88,6 +92,63 @@ public class ExternalExecutablesManager {
 					if (r != null) try { r.close(); } catch (IOException e) { /* ignored on purpose */ }
 				}
 			}
+		}
+
+		// Lookup git bash (Windows Hosts only)
+		if (!gitBashSearchDone && Platform.OS_WIN32.equals(Platform.getOS())) {
+			// Check the existing entries first
+			// Find a entry labeled "Git Bash"
+			Map<String, String> m = null;
+			for (Map<String, String> candidate : l) {
+				String name = candidate.get(IExternalExecutablesProperties.PROP_NAME);
+				if ("Git Bash".equals(name)) { //$NON-NLS-1$
+					m = candidate;
+					break;
+				}
+			}
+
+			// If not found in the existing entries, check the path
+			if (m == null) {
+				String gitPath = null;
+				String iconPath = null;
+
+				String path = System.getenv("PATH"); //$NON-NLS-1$
+				if (path != null) {
+					StringTokenizer tokenizer = new StringTokenizer(path, ";"); //$NON-NLS-1$
+					while (tokenizer.hasMoreTokens()) {
+						String token = tokenizer.nextToken();
+						File f = new File(token, "git.exe"); //$NON-NLS-1$
+						if (f.canRead()) {
+							File f2 = new File(f.getParentFile().getParentFile(), "bin/sh.exe"); //$NON-NLS-1$
+							if (f2.canExecute()) {
+								gitPath = f2.getAbsolutePath();
+							}
+
+							f2 = new File(f.getParentFile().getParentFile(), "etc/git.ico"); //$NON-NLS-1$
+							if (f2.canRead()) {
+								iconPath = f2.getAbsolutePath();
+							}
+
+							break;
+						}
+					}
+				}
+
+				if (gitPath != null) {
+					m = new HashMap<String, String>();
+					m.put(IExternalExecutablesProperties.PROP_NAME, "Git Bash"); //$NON-NLS-1$
+					m.put(IExternalExecutablesProperties.PROP_PATH, gitPath);
+					m.put(IExternalExecutablesProperties.PROP_ARGS, "--login -i"); //$NON-NLS-1$
+					if (iconPath != null) m.put(IExternalExecutablesProperties.PROP_ICON, iconPath);
+					m.put(IExternalExecutablesProperties.PROP_TRANSLATE, Boolean.TRUE.toString());
+
+					l.add(m);
+					save(l);
+				}
+			}
+
+			// Do not search again for git bash while the session is running
+			gitBashSearchDone = true;
 		}
 
 		return l;

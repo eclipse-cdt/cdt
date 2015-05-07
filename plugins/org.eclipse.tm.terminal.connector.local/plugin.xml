@@ -115,11 +115,6 @@
       </initializer>
    </extension>
    
-<!-- Startup contributions -->
-   <extension point="org.eclipse.ui.startup">
-      <startup class="org.eclipse.tm.terminal.connector.local.showin.ExternalExecutablesInitializer"/>
-   </extension>
-
 <!-- Help Context contributions -->
    <extension point="org.eclipse.help.contexts">
       <contexts

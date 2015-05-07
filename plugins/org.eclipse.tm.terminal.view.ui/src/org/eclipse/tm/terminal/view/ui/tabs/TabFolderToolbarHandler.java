@@ -102,7 +102,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 * @return The tab folder or <code>null</code>.
 	 */
 	protected final CTabFolder getTabFolder() {
-		return getParentView().getAdapter(CTabFolder.class);
+		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = getParentView().getAdapter(TabFolderManager.class);
+		TabFolderManager manager = (TabFolderManager) getParentView().getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();

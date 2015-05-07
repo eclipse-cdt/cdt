@@ -131,7 +131,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 * @return The tab folder or <code>null</code>.
 	 */
 	protected final CTabFolder getTabFolder() {
-		return getParentView().getAdapter(CTabFolder.class);
+		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 				// Determine if pasting to the active tab require backslash translation
 				boolean needsTranslation = false;
 
-				TabFolderManager manager = getParentView().getAdapter(TabFolderManager.class);
+				TabFolderManager manager = (TabFolderManager) getParentView().getAdapter(TabFolderManager.class);
 				if (manager != null) {
 					// If we have the active tab item, we can get the active terminal control
 					CTabItem activeTabItem = manager.getActiveTabItem();
@@ -293,7 +293,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 		});
 
 		// Create and add the select encoding action
-		add (new SelectEncodingAction(getParentView().getAdapter(TabFolderManager.class)) {
+		add (new SelectEncodingAction((TabFolderManager) getParentView().getAdapter(TabFolderManager.class)) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -313,7 +313,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
-		TabFolderManager manager = getParentView().getAdapter(TabFolderManager.class);
+		TabFolderManager manager = (TabFolderManager) getParentView().getAdapter(TabFolderManager.class);
 		if (manager != null) {
 			// If we have the active tab item, we can get the active terminal control
 			CTabItem activeTabItem = manager.getActiveTabItem();

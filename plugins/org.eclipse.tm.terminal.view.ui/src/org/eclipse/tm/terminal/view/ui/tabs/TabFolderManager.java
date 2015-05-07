@@ -201,7 +201,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @return The tab folder or <code>null</code>.
 	 */
 	protected final CTabFolder getTabFolder() {
-		return getParentView().getAdapter(CTabFolder.class);
+		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -296,7 +296,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
 				Menu menu = (Menu)menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
@@ -408,7 +408,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler) getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
 				Menu menu = (Menu)menuHandler.getAdapter(Menu.class);
 				if (menu != null) {

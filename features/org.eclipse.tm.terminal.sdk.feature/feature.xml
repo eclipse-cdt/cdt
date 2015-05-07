@@ -23,11 +23,8 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
    </url>
    
-   <includes
-         id="org.eclipse.tm.terminal.feature"
-         version="0.0.0"/>
-
    <requires>
+      <import feature="org.eclipse.tm.terminal.feature" version="4.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.tm.terminal.connector.local.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.tm.terminal.connector.serial.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.tm.terminal.connector.ssh.sdk.feature" version="4.0.0" match="greaterOrEqual"/>

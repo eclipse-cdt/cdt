@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -106,7 +106,9 @@ public class TargetBuild {
 		Job targetJob = new Job(MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask(MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), targets.length); //$NON-NLS-1$
+				SubMonitor subMonitor = SubMonitor.convert(monitor, 
+						MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), //$NON-NLS-1$
+						targets.length); 
 				try {
 					for (int i = 0; i < targets.length; i++) {
 						final IMakeTarget target = targets[i];
@@ -114,10 +116,10 @@ public class TargetBuild {
 
 							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
-								target.build(new SubProgressMonitor(monitor, 1));
+								target.build(monitor);
 							}
 						};
-						MakeUIPlugin.getWorkspace().run(runnable, null, IResource.NONE, monitor);
+						MakeUIPlugin.getWorkspace().run(runnable, null, IResource.NONE, subMonitor.newChild(1));
 					}
 				} catch (CoreException e) {
 					return e.getStatus();

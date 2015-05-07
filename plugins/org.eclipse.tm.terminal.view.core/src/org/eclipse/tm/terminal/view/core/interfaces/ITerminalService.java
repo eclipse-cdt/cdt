@@ -14,7 +14,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Terminals service.
+ * Terminal service.
  */
 public interface ITerminalService {
 

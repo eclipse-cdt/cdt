@@ -13,7 +13,7 @@ package org.eclipse.tm.terminal.connector.telnet.nls;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Terminals extensions UI plug-in externalized strings management.
+ * Externalized strings management.
  */
 public class Messages extends NLS {
 

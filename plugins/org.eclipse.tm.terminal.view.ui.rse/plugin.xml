@@ -17,7 +17,7 @@
       <perspectiveExtension targetID="org.eclipse.rse.ui.view.SystemPerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"

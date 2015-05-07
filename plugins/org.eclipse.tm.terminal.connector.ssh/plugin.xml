@@ -10,7 +10,7 @@
             class="org.eclipse.tm.terminal.connector.ssh.connector.SshConnector"/>
    </extension>
 
-<!-- Terminals launcher delegate contributions -->
+<!-- Terminal launcher delegate contributions -->
    <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
       <delegate
             class="org.eclipse.tm.terminal.connector.ssh.launcher.SshLauncherDelegate"

@@ -14,7 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 /**
- * Terminals tab folder default selection listener implementation.
+ * Terminal tab folder default selection listener implementation.
  */
 public class TabFolderSelectionListener implements SelectionListener {
 	private final TabFolderManager parentTabFolderManager;

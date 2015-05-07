@@ -19,7 +19,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
 
 /**
- * Terminals tab default terminal listener implementation.
+ * Terminal tab default terminal listener implementation.
  */
 @SuppressWarnings("restriction")
 public class TabTerminalListener implements ITerminalListener {

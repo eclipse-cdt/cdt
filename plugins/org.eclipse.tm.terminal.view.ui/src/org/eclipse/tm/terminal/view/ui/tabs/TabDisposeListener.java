@@ -20,7 +20,7 @@ import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
 import org.eclipse.tm.terminal.view.ui.services.TerminalService;
 
 /**
- * Terminals tab default dispose listener implementation.
+ * Terminal tab default dispose listener implementation.
  */
 public class TabDisposeListener implements DisposeListener {
 	private final TabFolderManager parentTabFolderManager;

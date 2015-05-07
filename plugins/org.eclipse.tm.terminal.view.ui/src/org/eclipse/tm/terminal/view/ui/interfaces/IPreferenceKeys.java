@@ -10,7 +10,7 @@
 package org.eclipse.tm.terminal.view.ui.interfaces;
 
 /**
- * Terminals plug-in preference key definitions.
+ * Terminal plug-in preference key definitions.
  */
 public interface IPreferenceKeys {
 	/**

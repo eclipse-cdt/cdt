@@ -27,7 +27,7 @@
       <perspectiveExtension targetID="org.eclipse.tcf.te.ui.perspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
@@ -40,7 +40,7 @@
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
@@ -53,7 +53,7 @@
       <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
@@ -66,7 +66,7 @@
       <perspectiveExtension targetID="org.eclipse.cdt.ui.CPerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
@@ -79,7 +79,7 @@
       <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
@@ -92,7 +92,7 @@
       <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
-         <!-- Place the Terminals view relative to the Task List view -->
+         <!-- Place the Terminal view relative to the Task List view -->
          <view
                id="org.eclipse.tm.terminal.view.ui.TerminalsView"
                minimized="false"
@@ -133,7 +133,7 @@
       </propertyTester>
    </extension>
 
-<!-- Terminals launcher delegate contributions -->
+<!-- Terminal launcher delegate contributions -->
    <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
       <delegate
             class="org.eclipse.tm.terminal.view.ui.streams.StreamsLauncherDelegate"

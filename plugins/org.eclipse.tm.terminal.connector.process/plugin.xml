@@ -11,7 +11,7 @@
             name="%TerminalConnector.process"/>
    </extension>
 
-<!-- Terminals launcher delegate contributions -->
+<!-- Terminal launcher delegate contributions -->
    <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
       <delegate
             class="org.eclipse.tm.terminal.connector.process.ProcessLauncherDelegate"

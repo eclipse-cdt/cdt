@@ -117,7 +117,7 @@ public class UIPlugin extends AbstractUIPlugin {
 			@Override
 			public boolean preShutdown(IWorkbench workbench, boolean forced) {
 				if (workbench != null && workbench.getActiveWorkbenchWindow() != null && workbench.getActiveWorkbenchWindow().getActivePage() != null) {
-					// Find all "Terminals" views
+					// Find all "Terminal" views
 					IViewReference[] refs = workbench.getActiveWorkbenchWindow().getActivePage().getViewReferences();
 					for (IViewReference ref : refs) {
 						IViewPart part = ref.getView(false);

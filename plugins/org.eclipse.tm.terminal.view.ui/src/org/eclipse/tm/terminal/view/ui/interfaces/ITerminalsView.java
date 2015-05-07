@@ -13,7 +13,7 @@ package org.eclipse.tm.terminal.view.ui.interfaces;
 import org.eclipse.ui.IViewPart;
 
 /**
- * Terminals view public interface.
+ * Terminal view public interface.
  */
 public interface ITerminalsView extends IViewPart {
 

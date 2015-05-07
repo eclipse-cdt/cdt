@@ -15,7 +15,7 @@ import org.eclipse.tm.terminal.connector.local.showin.interfaces.IPreferenceKeys
 import org.eclipse.tm.terminal.view.core.preferences.ScopedEclipsePreferences;
 
 /**
- * Terminals default preferences initializer.
+ * Terminal default preferences initializer.
  */
 public class PreferencesInitializer extends AbstractPreferenceInitializer {
 

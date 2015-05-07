@@ -68,7 +68,7 @@ public interface ITerminalsConnectorConstants {
 	public static final String PROP_FORCE_NEW = "terminal.forceNew"; //$NON-NLS-1$
 
 	/**
-	 * Property: Terminals launcher delegate id.
+	 * Property: Terminal launcher delegate id.
 	 * <p>
 	 * Property Type: {@link String}
 	 */

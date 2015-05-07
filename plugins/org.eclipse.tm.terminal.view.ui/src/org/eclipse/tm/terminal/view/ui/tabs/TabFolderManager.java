@@ -57,7 +57,7 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Terminals tab folder manager.
+ * Terminal tab folder manager.
  */
 @SuppressWarnings({ "restriction" })
 public class TabFolderManager extends PlatformObject implements ISelectionProvider {
@@ -201,7 +201,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @return The tab folder or <code>null</code>.
 	 */
 	protected final CTabFolder getTabFolder() {
-		return (CTabFolder)getParentView().getAdapter(CTabFolder.class);
+		return getParentView().getAdapter(CTabFolder.class);
 	}
 
 	/**
@@ -296,7 +296,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler)getParentView().getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
 				Menu menu = (Menu)menuHandler.getAdapter(Menu.class);
 				if (menu != null) {
@@ -408,7 +408,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 			}
 
 			// Set the context menu
-			TabFolderMenuHandler menuHandler = (TabFolderMenuHandler)getParentView().getAdapter(TabFolderMenuHandler.class);
+			TabFolderMenuHandler menuHandler = getParentView().getAdapter(TabFolderMenuHandler.class);
 			if (menuHandler != null) {
 				Menu menu = (Menu)menuHandler.getAdapter(Menu.class);
 				if (menu != null) {

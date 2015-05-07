@@ -10,7 +10,7 @@
 package org.eclipse.tm.terminal.view.ui.interfaces;
 
 /**
- * Terminals common UI constants.
+ * Terminal common UI constants.
  */
 public interface IUIConstants {
 	/**

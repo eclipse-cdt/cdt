@@ -20,7 +20,7 @@ import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 
 
 /**
- * Terminals property tester implementation.
+ * Terminal property tester implementation.
  */
 @SuppressWarnings("restriction")
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
@@ -38,7 +38,7 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 		if ("canDisconnect".equals(property) && receiver instanceof ITerminalsView) { //$NON-NLS-1$
 			CTabItem tabItem = null;
 
-			TabFolderManager manager = (TabFolderManager) ((ITerminalsView)receiver).getAdapter(TabFolderManager.class);
+			TabFolderManager manager = ((ITerminalsView)receiver).getAdapter(TabFolderManager.class);
 			if (manager != null) {
 				tabItem = manager.getActiveTabItem();
 			}

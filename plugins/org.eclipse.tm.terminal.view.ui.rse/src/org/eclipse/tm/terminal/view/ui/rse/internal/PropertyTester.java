@@ -20,7 +20,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 
 
 /**
- * Terminals RSE add-on property tester implementation.
+ * Terminal RSE add-on property tester implementation.
  */
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 	// Supported system type id's

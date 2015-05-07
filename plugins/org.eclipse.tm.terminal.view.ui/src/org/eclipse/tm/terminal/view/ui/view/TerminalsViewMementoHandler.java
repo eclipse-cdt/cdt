@@ -30,7 +30,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Take care of the persisted state handling of the "Terminals" view.
+ * Take care of the persisted state handling of the "Terminal" view.
  */
 public class TerminalsViewMementoHandler {
 	// The list of items to save. See the workbench listener implementation

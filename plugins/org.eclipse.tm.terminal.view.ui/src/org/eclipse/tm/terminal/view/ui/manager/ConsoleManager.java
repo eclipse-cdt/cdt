@@ -43,7 +43,7 @@ import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Terminals console manager.
+ * Terminal console manager.
  */
 @SuppressWarnings("restriction")
 public class ConsoleManager {
@@ -440,7 +440,7 @@ public class ConsoleManager {
 		ITerminalsView view = (ITerminalsView)part;
 
 		// Get the tab folder manager associated with the view
-		TabFolderManager manager = (TabFolderManager)view.getAdapter(TabFolderManager.class);
+		TabFolderManager manager = view.getAdapter(TabFolderManager.class);
 		if (manager == null) return null;
 
 		// Lookup an existing console first
@@ -506,7 +506,7 @@ public class ConsoleManager {
 		if (view == null) return null;
 
 		// Get the tab folder manager associated with the view
-		TabFolderManager manager = (TabFolderManager)view.getAdapter(TabFolderManager.class);
+		TabFolderManager manager = view.getAdapter(TabFolderManager.class);
 		if (manager == null) return null;
 
 		return manager.findTabItem(title, connector, data);
@@ -532,7 +532,7 @@ public class ConsoleManager {
 				IViewReference ref = refs[i];
 				IViewPart part = ref != null ? ref.getView(false) : null;
 				if (part instanceof ITerminalsView) {
-					CTabFolder tabFolder = (CTabFolder) part.getAdapter(CTabFolder.class);
+					CTabFolder tabFolder = part.getAdapter(CTabFolder.class);
 					if (tabFolder == null) continue;
 					CTabItem[] candidates = tabFolder.getItems();
 					for (CTabItem candidate : candidates) {
@@ -575,7 +575,7 @@ public class ConsoleManager {
 					IViewPart part = ref.getView(true);
 					if (part instanceof ITerminalsView) {
 						// Get the tab folder manager associated with the view
-						TabFolderManager manager = (TabFolderManager) part.getAdapter(TabFolderManager.class);
+						TabFolderManager manager = part.getAdapter(TabFolderManager.class);
 						if (manager == null) {
 							continue;
 						}

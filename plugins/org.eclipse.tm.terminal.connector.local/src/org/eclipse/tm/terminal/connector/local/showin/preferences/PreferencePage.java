@@ -74,7 +74,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.osgi.framework.Bundle;
 
 /**
- * Terminals top preference page implementation.
+ * Terminal top preference page implementation.
  */
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage implements IWorkbenchPreferencePage {
 	/* default */ TableViewer viewer;

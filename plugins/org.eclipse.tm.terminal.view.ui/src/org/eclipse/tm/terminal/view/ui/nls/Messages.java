@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Terminals plug-in externalized strings management.
+ * Terminal plug-in externalized strings management.
  */
 public class Messages extends NLS {
 

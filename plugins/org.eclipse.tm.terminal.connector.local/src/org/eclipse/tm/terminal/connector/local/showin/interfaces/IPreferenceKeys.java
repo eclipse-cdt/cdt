@@ -10,7 +10,7 @@
 package org.eclipse.tm.terminal.connector.local.showin.interfaces;
 
 /**
- * Terminals plug-in preference key definitions.
+ * Terminal plug-in preference key definitions.
  */
 public interface IPreferenceKeys {
 	/**

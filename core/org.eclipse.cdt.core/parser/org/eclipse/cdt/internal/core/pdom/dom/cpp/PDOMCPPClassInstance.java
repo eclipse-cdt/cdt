@@ -89,9 +89,8 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 	
 	public void storeTemplateArguments() {
 		try {
-			// fTemplateArguments here are the temporarily stored, possibly non-PDOM
-			// arguments stored by the constructor. Construct the PDOM arguments and
-			// store them.
+			// fTemplateArguments here are the temporarily stored, possibly non-PDOM arguments stored
+			// by the constructor. Construct the PDOM arguments and store them.
 			final long argListRec= PDOMCPPArgumentList.putArguments(this, fTemplateArguments);
 			getDB().putRecPtr(record + ARGUMENTS, argListRec);
 			

@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * Template ids consist of an unqualified name (or operator or conversion name) 
+ * Template ID consist of an unqualified name (or operator or conversion name) 
  * and an array of template arguments. 
  */
 public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateId, IASTAmbiguityParent {
@@ -115,7 +115,8 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 
     @Override
 	public IASTNode[] getTemplateArguments() {
-        if (templateArguments == null) return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
+        if (templateArguments == null)
+        	return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
         return ArrayUtil.trim(IASTNode.class, templateArguments);
     }
 

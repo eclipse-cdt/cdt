@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.environment.Constants;
 
@@ -350,13 +350,13 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if (runAllBuidlers) {
 					ICommand[] commands = project.getDescription().getBuildSpec();
-					monitor.beginTask("", commands.length); //$NON-NLS-1$
+					SubMonitor subMonitor = SubMonitor.convert(monitor, commands.length);
 					for (ICommand command : commands) {
 						if (command.getBuilderName().equals(builderID)) {
-							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, new SubProgressMonitor(monitor, 1));
+							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, subMonitor.newChild(1));
 						} else {
 							project.build(IncrementalProjectBuilder.FULL_BUILD, command.getBuilderName(),
-									command.getArguments(), new SubProgressMonitor(monitor, 1));
+									command.getArguments(), subMonitor.newChild(1));
 						}
 					}
 					monitor.done();

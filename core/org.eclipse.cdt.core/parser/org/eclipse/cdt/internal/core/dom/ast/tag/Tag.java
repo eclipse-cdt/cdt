@@ -1,4 +1,4 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Andrew Eidsness - Initial implementation
- */
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
@@ -38,7 +38,7 @@ public class Tag implements IWritableTag {
 	}
 
 	private boolean isInBounds(int offset, int len) {
-		return offset >= 0 && offset < buff.length && (offset + len) <= buff.length;
+		return offset >= 0 && offset < buff.length && offset + len <= buff.length;
 	}
 
 	@Override

@@ -20,6 +20,16 @@
             id="org.eclipse.tm.terminal.view.ui.TerminalsView"
             name="%TerminalsView.name">
       </view>
+
+      <!-- Contribute another view with the old ID to handle the ID change -->
+      <view
+            allowMultiple="true"
+            class="org.eclipse.tm.terminal.view.ui.view.OldTerminalsViewHandler2"
+            icon="icons/eview16/terminal_view.gif"
+            id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
+            name="%TerminalsView.name"
+            restorable="false">
+      </view>
     </extension>
 
 <!-- Perspective extension contributions -->    
@@ -128,7 +138,7 @@
             class="org.eclipse.tm.terminal.view.ui.internal.PropertyTester"
             id="org.eclipse.tm.terminal.view.ui.PropertyTester"
             namespace="org.eclipse.tm.terminal.view.ui"
-            properties="hasApplicableLauncherDelegates,canDisconnect"
+            properties="oldViewActivityEnabled,hasApplicableLauncherDelegates,canDisconnect"
             type="java.lang.Object">
       </propertyTester>
    </extension>
@@ -325,6 +335,23 @@
       <defaultEnablement
             id="org.eclipse.tm.terminal.view.ui.activity.views">
       </defaultEnablement>
+      
+      <activity
+            id="org.eclipse.tm.terminal.view.ui.activity.oldview"
+            name="Terminal Views (Old)">
+            <enabledWhen>
+               <test
+                     property="org.eclipse.tm.terminal.view.ui.oldViewActivityEnabled"
+                     value="true">
+               </test>
+            </enabledWhen>
+      </activity>
+      
+      <activityPatternBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.oldview"
+            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tcf\.te\.ui\.terminals\.TerminalsView">
+      </activityPatternBinding>
+      
    </extension>
 
    <extension point="org.eclipse.ui.contexts">

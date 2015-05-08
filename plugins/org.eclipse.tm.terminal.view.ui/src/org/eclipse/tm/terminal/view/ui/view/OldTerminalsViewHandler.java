@@ -40,7 +40,7 @@ public class OldTerminalsViewHandler extends PerspectiveAdapter implements IStar
 		if (page != null) handleOldTerminalsView(page);
 
 		// Register ourself as perspective listener
-		window.addPerspectiveListener(this);
+		if (window != null) window.addPerspectiveListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -69,6 +69,7 @@ public class OldTerminalsViewHandler extends PerspectiveAdapter implements IStar
 		while (oldView != null) {
 			page.hideView(oldView);
 			showNewView = true;
+			oldView = page.findView(OLD_VIEW_ID);
 		}
 
 		// Show the new terminals view if necessary

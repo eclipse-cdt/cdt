@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * The result of instantiating a class template.
+ * The result of instantiating a class template or an explicit specialization of a class template.
  */
 public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemplateInstance {
 	private final ICPPTemplateArgument[] arguments;

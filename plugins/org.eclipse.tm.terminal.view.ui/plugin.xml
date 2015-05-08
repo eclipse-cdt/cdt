@@ -24,7 +24,7 @@
       <!-- Contribute another view with the old ID to handle the ID change -->
       <view
             allowMultiple="true"
-            class="org.eclipse.tm.terminal.view.ui.view.OldTerminalsViewHandler2"
+            class="org.eclipse.tm.terminal.view.ui.view.OldTerminalsViewHandler"
             icon="icons/eview16/terminal_view.gif"
             id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
             name="%TerminalsView.name.old">

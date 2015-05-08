@@ -8166,6 +8166,34 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testMemberAccessInPackExpansion_442213() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	// Example 1
+	//	template <typename... T>
+	//	void foo1(T&... t) {
+	//		bar(t.waldo...);
+	//	}
+	//
+	//	// Example 2
+	//	template <typename> struct A {};
+	//	template <typename... T>
+	//	void foo2(A<T>&... t) {
+	//		bar(t.waldo...);
+	//	}
+	//
+	//	// Example 3
+	//	template <typename... T>
+	//	void foo1(T&&... t) {
+	//		bar(t.waldo...);
+	//	}
+	//
+	//	// Example 4
+	//	template <typename... T>
+	//	void foo1(const T&... t) {
+	//		bar(t.waldo...);
+	//	}
+	public void testMemberAccessViaReferenceInPackExpansion_466845() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template <typename T>
 	//	struct A {};

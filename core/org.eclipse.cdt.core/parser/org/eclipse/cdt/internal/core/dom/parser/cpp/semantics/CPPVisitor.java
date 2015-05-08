@@ -1296,10 +1296,10 @@ public class CPPVisitor extends ASTQueries {
 			if (parent instanceof ICPPASTFieldReference) {
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) parent;
 				IType type = fieldReference.getFieldOwnerType();
-				type= getUltimateTypeUptoPointers(type);
 				if (type instanceof ICPPParameterPackType) {
 					type = ((ICPPParameterPackType) type).getType();
 				}
+				type= getUltimateTypeUptoPointers(type);
 				if (type instanceof ICPPClassType) {
 					type= SemanticUtil.mapToAST(type, fieldReference);
 					return ((ICPPClassType) type).getCompositeScope();

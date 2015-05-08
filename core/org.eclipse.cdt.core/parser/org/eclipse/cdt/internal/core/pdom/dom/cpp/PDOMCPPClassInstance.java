@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * The result of instantiating a class template or an explicit specialization of a class template.
+ * Result of instantiating a class template.
  */
 class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTemplateInstance {
 	private static final int ARGUMENTS = PDOMCPPClassSpecialization.RECORD_SIZE + 0;
@@ -99,6 +99,12 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
+	}
+	
+	@Override
+	protected boolean hasOwnScope() throws CoreException {
+		// An instance with a declaration does not use the original template.
+		return hasDeclaration();
 	}
 	
 	@Override

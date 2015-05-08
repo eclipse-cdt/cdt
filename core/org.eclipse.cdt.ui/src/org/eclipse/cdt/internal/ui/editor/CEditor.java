@@ -338,7 +338,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return;
 				case QUICK_ASSIST:
 					/*
-					 * XXX: We can get rid of this once the SourceViewer has a way to update
+					 * TODO: We can get rid of this once the SourceViewer has a way to update
 					 * the status line https://bugs.eclipse.org/bugs/show_bug.cgi?id=133787
 					 */
 					msg= fQuickAssistAssistant.showPossibleQuickAssists();
@@ -860,7 +860,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
+			// TODO: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
 			CEditor.this.selectionChanged();
 		}
 	}

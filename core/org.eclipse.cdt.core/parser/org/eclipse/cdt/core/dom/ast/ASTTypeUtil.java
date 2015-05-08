@@ -159,6 +159,8 @@ public class ASTTypeUtil {
 	 * @since 5.1
 	 */
 	public static String getArgumentListString(ICPPTemplateArgument[] args, boolean normalize) {
+		if (args.length == 0)
+			return "<>"; //$NON-NLS-1$
 		StringBuilder result= new StringBuilder();
 		appendArgumentList(args, normalize, result);
 		return result.toString();

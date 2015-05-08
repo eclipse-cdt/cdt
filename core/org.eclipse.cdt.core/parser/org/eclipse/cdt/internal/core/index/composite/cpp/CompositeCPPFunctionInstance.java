@@ -23,6 +23,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
+/**
+ * An instantiation or an explicit specialization of a function template.
+ */
 public class CompositeCPPFunctionInstance extends CompositeCPPFunction implements ICPPFunctionInstance {
 
 	public CompositeCPPFunctionInstance(ICompositesFactory cf, ICPPFunction rbinding) {

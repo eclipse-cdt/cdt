@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,20 +14,17 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
- * This interface represents an instantiation of a class or function template.
- * An instantiated template is a specialization of that template.
+ * This interface represents an instantiation or an explicit specialization of a class or a function template.
+ * The {@link #isExplicitSpecialization()} method is used to distinguish between the two cases.
  * 
- * An instance of a class template will also implement ICPPClassType and similarly
- * a function template instance will also implement ICPPFunction (or even ICPPMethod 
- * or ICPPConstructor as appropriate)
+ * An instance of a class template will also implement ICPPClassType and similarly a function template
+ * instance will also implement ICPPFunction (or even ICPPMethod or ICPPConstructor as appropriate).
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICPPTemplateInstance extends ICPPSpecialization {
-	/**
-	 * @since 5.1
-	 */
+	/** @since 5.1 */
 	ICPPTemplateInstance[] EMPTY_TEMPLATE_INSTANCE_ARRAY = {};
 
 	/**

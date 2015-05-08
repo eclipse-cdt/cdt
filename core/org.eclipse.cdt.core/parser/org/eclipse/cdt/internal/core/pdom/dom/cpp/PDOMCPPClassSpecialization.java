@@ -36,11 +36,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.RecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -57,13 +59,16 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 		implements ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
 	private static final int FIRST_BASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int MEMBERLIST = FIRST_BASE + 4;
-	private static final int FINAL = MEMBERLIST + PDOMCPPMemberBlock.RECORD_SIZE; // byte
+	private static final int FLAGS = MEMBERLIST + PDOMCPPMemberBlock.RECORD_SIZE; // byte
 
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = FINAL + 1;
+	protected static final int RECORD_SIZE = FLAGS + 1;
+
+	private static final byte FLAGS_FINAL = 0x01;
+	private static final byte FLAGS_HAS_OWN_SCOPE = 0x02;
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache.
@@ -77,7 +82,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	public PDOMCPPClassSpecialization(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassType classType,
 			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) classType, specialized);
-		setFinal(classType);
+		setFlags(classType);
 	}
 
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -87,8 +92,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPClassType) {
-			ICPPClassType ct= (ICPPClassType) newBinding;
-			setFinal(ct);
+			ICPPClassType classType= (ICPPClassType) newBinding;
+			setFlags(classType);
 			super.update(linkage, newBinding);
 		}
 	}
@@ -177,10 +182,6 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 			fScope= new PDOMCPPClassSpecializationScope(this);
 		}
 		return fScope;
-	}
-
-	protected boolean hasOwnScope() throws CoreException {
-		return hasDefinition();
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
@@ -471,15 +472,43 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 	@Override
 	public boolean isFinal() {
 		try {
-			return getDB().getByte(record + FINAL) != 0;
-		} catch (CoreException e){
+			return (getFlags() & FLAGS_FINAL) != 0;
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false;
 		}
 	}
 
-	private void setFinal(ICPPClassType ct) throws CoreException {
-		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
+	private boolean hasOwnScope() throws CoreException {
+		try {
+			return (getFlags() & FLAGS_HAS_OWN_SCOPE) != 0;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+
+	private byte getFlags() throws CoreException {
+		return getDB().getByte(record + FLAGS);
+	}
+
+	private void setFlags(ICPPClassType classType) throws CoreException {
+		byte flags = (byte) ((classType.isFinal() ? FLAGS_FINAL : 0) | (hasOwnScope(classType) ? FLAGS_HAS_OWN_SCOPE : 0));
+		getDB().putByte(record + FLAGS, flags);
+	}
+
+	/**
+	 * Returns true if the given class is an explicit template specialization that has its own definition.
+	 */
+	private static boolean hasOwnScope(ICPPClassType classType) {
+		if (!(classType instanceof ICPPInternalBinding))
+			return false;
+			
+		ICPPInternalBinding binding = (ICPPInternalBinding) classType;
+		if (binding.getDefinition() != null)
+			return true;
+		// An instance with a declaration does not use the original template.
+		return binding instanceof ICPPTemplateInstance && binding.getDeclarations() != null;
 	}
 
 	@Override

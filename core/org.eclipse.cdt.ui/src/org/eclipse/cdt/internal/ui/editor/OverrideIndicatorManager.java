@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -125,30 +126,33 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 					return PROCESS_CONTINUE;
 				}
 				IASTDeclarator decl = ASTQueries.findInnermostDeclarator(declarator);
-				IBinding binding = decl.getName().resolveBinding();
-				if (binding instanceof ICPPMethod) {
-					ICPPMethod method = (ICPPMethod) binding;
-					try {
-						ICPPMethod overriddenMethod = testForOverride(method, declarator);
-						if (overriddenMethod != null) {
-							try {
-								ICElementHandle baseDeclaration = IndexUI.findAnyDeclaration(index, null, overriddenMethod);
-								if (baseDeclaration == null) {
-									ICElementHandle[] allDefinitions = IndexUI.findAllDefinitions(index, overriddenMethod);
-									if (allDefinitions.length > 0) {
-										baseDeclaration = allDefinitions[0];
+				IASTName name = decl.getName();
+				if (name != null) {
+					IBinding binding = name.resolveBinding();
+					if (binding instanceof ICPPMethod) {
+						ICPPMethod method = (ICPPMethod) binding;
+						try {
+							ICPPMethod overriddenMethod = testForOverride(method, declarator);
+							if (overriddenMethod != null) {
+								try {
+									ICElementHandle baseDeclaration = IndexUI.findAnyDeclaration(index, null, overriddenMethod);
+									if (baseDeclaration == null) {
+										ICElementHandle[] allDefinitions = IndexUI.findAllDefinitions(index, overriddenMethod);
+										if (allDefinitions.length > 0) {
+											baseDeclaration = allDefinitions[0];
+										}
 									}
+									
+									OverrideIndicator indicator = new OverrideIndicator(annotationKind, annotationMessage, baseDeclaration);
+									
+									IASTFileLocation fileLocation = declarator.getFileLocation();
+									Position position = new Position(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
+									annotationMap.put(indicator, position);
+								} catch (CoreException e) {
 								}
-								
-								OverrideIndicator indicator = new OverrideIndicator(annotationKind, annotationMessage, baseDeclaration);
-								
-								IASTFileLocation fileLocation = declarator.getFileLocation();
-								Position position = new Position(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
-								annotationMap.put(indicator, position);
-							} catch (CoreException e) {
 							}
+						} catch (DOMException e) {
 						}
-					} catch (DOMException e) {
 					}
 				}
 				return PROCESS_CONTINUE;

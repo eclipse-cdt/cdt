@@ -95,6 +95,7 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 	 *
 	 * @param data The terminal custom data node or <code>null</code>.
 	 */
+	@SuppressWarnings("cast")
 	protected void executeCommand(Object data) {
 		// Get the command service from the workbench
 		ICommandService service = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
@@ -112,7 +113,7 @@ public abstract class AbstractAction extends AbstractTerminalAction {
 				// Apply the selection to the "activeMenuSelection" and "selection" variable too
 				context.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 				context.addVariable(ISources.ACTIVE_MENU_SELECTION_NAME, selection);
-				// Allow plugin activation
+				// Allow plug-in activation
 				context.setAllowPluginActivation(true);
 				// And execute the event
 				try {

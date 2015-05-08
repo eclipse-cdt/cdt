@@ -37,6 +37,7 @@ public abstract class AbstractTriggerCommandHandler extends AbstractHandler {
 	 * @param commandId The command id. Must not be <code>null</code>.
 	 * @param selection The selection to pass on to the command or <code>null</code>.
 	 */
+	@SuppressWarnings("cast")
 	protected void triggerCommand(String commandId, ISelection selection) {
 		Assert.isNotNull(commandId);
 

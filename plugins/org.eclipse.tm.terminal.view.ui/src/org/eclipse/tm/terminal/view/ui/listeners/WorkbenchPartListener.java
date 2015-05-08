@@ -65,6 +65,7 @@ public class WorkbenchPartListener implements IPartListener2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@SuppressWarnings("cast")
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		if ("org.eclipse.tm.terminal.view.ui.TerminalsView".equals(partRef.getId())) { //$NON-NLS-1$
@@ -86,6 +87,7 @@ public class WorkbenchPartListener implements IPartListener2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@SuppressWarnings("cast")
 	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 		if ("org.eclipse.tm.terminal.view.ui.TerminalsView".equals(partRef.getId())) { //$NON-NLS-1$

@@ -130,7 +130,8 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 *
 	 * @return The tab folder or <code>null</code>.
 	 */
-	protected final CTabFolder getTabFolder() {
+	@SuppressWarnings("cast")
+    protected final CTabFolder getTabFolder() {
 		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
@@ -201,7 +202,8 @@ public class TabFolderMenuHandler extends PlatformObject {
 	/**
 	 * Create the context menu actions.
 	 */
-	protected void doCreateContextMenuActions() {
+	@SuppressWarnings("cast")
+    protected void doCreateContextMenuActions() {
 		// Create and add the copy action
 		add(new TerminalActionCopy() {
 			/* (non-Javadoc)
@@ -215,7 +217,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 
 		// Create and add the paste action
 		add(new TerminalActionPaste() {
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings({ "unchecked" })
             @Override
 			public void run() {
 				// Determine if pasting to the active tab require backslash translation
@@ -309,7 +311,8 @@ public class TabFolderMenuHandler extends PlatformObject {
 	 *
 	 * @return The currently active terminal control or <code>null</code>.
 	 */
-	protected ITerminalViewControl getActiveTerminalViewControl() {
+	@SuppressWarnings("cast")
+    protected ITerminalViewControl getActiveTerminalViewControl() {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
@@ -366,6 +369,7 @@ public class TabFolderMenuHandler extends PlatformObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (MenuManager.class.isAssignableFrom(adapter)) {

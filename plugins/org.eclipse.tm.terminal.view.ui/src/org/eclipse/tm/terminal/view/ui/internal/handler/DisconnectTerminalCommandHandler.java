@@ -28,6 +28,7 @@ public class DisconnectTerminalCommandHandler extends AbstractHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@SuppressWarnings("cast")
     @Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		CTabItem item = null;

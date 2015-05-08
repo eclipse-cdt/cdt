@@ -200,7 +200,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 *
 	 * @return The tab folder or <code>null</code>.
 	 */
-	protected final CTabFolder getTabFolder() {
+	@SuppressWarnings("cast")
+    protected final CTabFolder getTabFolder() {
 		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
@@ -237,7 +238,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 *
 	 * @return The created tab item or <code>null</code> if failed.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "cast" })
 	public CTabItem createTabItem(String title, String encoding, ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
@@ -341,7 +342,7 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @param oldItem The old dragged tab item. Must not be <code>null</code>.
 	 * @return The new dropped tab item.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "cast" })
     public CTabItem cloneTabItemAfterDrop(CTabItem oldItem) {
 		Assert.isNotNull(oldItem);
 

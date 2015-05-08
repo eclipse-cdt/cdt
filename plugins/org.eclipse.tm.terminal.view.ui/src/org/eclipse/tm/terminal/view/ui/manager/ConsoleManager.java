@@ -424,6 +424,7 @@ public class ConsoleManager {
 	 * @param data The custom terminal data node or <code>null</code>.
 	 * @param flags The flags controlling how the console is opened or <code>null</code> to use defaults.
 	 */
+	@SuppressWarnings("cast")
 	public CTabItem openConsole(String id, String secondaryId, String title, String encoding, ITerminalConnector connector, Object data, Map<String, Boolean> flags) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
@@ -496,6 +497,7 @@ public class ConsoleManager {
 	 *
 	 * @return The corresponding console tab item or <code>null</code>.
 	 */
+	@SuppressWarnings("cast")
 	public CTabItem findConsole(String id, String secondaryId, String title, ITerminalConnector connector, Object data) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);
@@ -520,6 +522,7 @@ public class ConsoleManager {
 	 * @param control The terminal control. Must not be <code>null</code>.
 	 * @return The corresponding console tab item or <code>null</code>.
 	 */
+	@SuppressWarnings("cast")
 	public CTabItem findConsole(ITerminalControl control) {
 		Assert.isNotNull(control);
 
@@ -562,6 +565,7 @@ public class ConsoleManager {
 	 *
 	 * @return The corresponding console tab item or <code>null</code>.
 	 */
+	@SuppressWarnings("cast")
 	private CTabItem findConsoleForTerminalConnector(String id, String title, ITerminalConnector connector, Object data) {
 		Assert.isNotNull(title);
 		Assert.isNotNull(connector);

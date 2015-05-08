@@ -607,7 +607,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
-	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
 	public Object getAdapter(Class adapter) {
 		if (CTabFolder.class.isAssignableFrom(adapter)) {
 			return tabFolderControl;
@@ -667,7 +668,8 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
-	@Override
+	@SuppressWarnings("cast")
+    @Override
 	public boolean show(ShowInContext context) {
 		if (context != null) {
 			// Get the selection from the context

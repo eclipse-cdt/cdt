@@ -284,6 +284,7 @@ public class LauncherDelegateManager {
 	 * @param selection The selection or <code>null</code>.
 	 * @return The list of applicable terminal launcher delegates or an empty array.
 	 */
+	@SuppressWarnings("cast")
 	public ILauncherDelegate[] getApplicableLauncherDelegates(ISelection selection) {
 		List<ILauncherDelegate> applicable = new ArrayList<ILauncherDelegate>();
 

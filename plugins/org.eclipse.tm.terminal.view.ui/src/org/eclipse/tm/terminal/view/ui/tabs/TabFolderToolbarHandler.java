@@ -101,7 +101,8 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 *
 	 * @return The tab folder or <code>null</code>.
 	 */
-	protected final CTabFolder getTabFolder() {
+	@SuppressWarnings("cast")
+    protected final CTabFolder getTabFolder() {
 		return (CTabFolder) getParentView().getAdapter(CTabFolder.class);
 	}
 
@@ -110,7 +111,8 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	 *
 	 * @return The currently active terminal control or <code>null</code>.
 	 */
-	public ITerminalViewControl getActiveTerminalViewControl() {
+	@SuppressWarnings("cast")
+    public ITerminalViewControl getActiveTerminalViewControl() {
 		ITerminalViewControl terminal = null;
 
 		// Get the active tab item from the tab folder manager
@@ -347,6 +349,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IToolBarManager.class.isAssignableFrom(adapter)) {

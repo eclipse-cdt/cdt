@@ -31,8 +31,9 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 	@SuppressWarnings("cast")
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+		// This property is supposed to return always false
 		if ("oldViewActivityEnabled".equals(property)) { //$NON-NLS-1$
-			return true;
+			return false;
 		}
 
 		if ("hasApplicableLauncherDelegates".equals(property)) { //$NON-NLS-1$

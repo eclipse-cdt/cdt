@@ -27,8 +27,7 @@
             class="org.eclipse.tm.terminal.view.ui.view.OldTerminalsViewHandler2"
             icon="icons/eview16/terminal_view.gif"
             id="org.eclipse.tcf.te.ui.terminals.TerminalsView"
-            name="%TerminalsView.name"
-            restorable="false">
+            name="%TerminalsView.name.old">
       </view>
     </extension>
 
@@ -349,9 +348,13 @@
       
       <activityPatternBinding
             activityId="org.eclipse.tm.terminal.view.ui.activity.oldview"
-            pattern="org\.eclipse\.tm\.terminal\.view\.ui/org\.eclipse\.tcf\.te\.ui\.terminals\.TerminalsView">
+            pattern=".*/org\.eclipse\.tcf\.te\.ui\.terminals\.TerminalsView">
       </activityPatternBinding>
       
+      <categoryActivityBinding
+            activityId="org.eclipse.tm.terminal.view.ui.activity.oldview"
+            categoryId="org.eclipse.tm.terminal.view.ui.category">
+      </categoryActivityBinding>
    </extension>
 
    <extension point="org.eclipse.ui.contexts">

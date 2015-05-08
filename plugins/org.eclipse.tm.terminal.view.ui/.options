@@ -1,3 +1,3 @@
-org.eclipse.tcf.te.ui.terminals/debugmode = 0
-org.eclipse.tcf.te.ui.terminals/trace/outputStreamMonitor = false
-org.eclipse.tcf.te.ui.terminals/trace/launchTerminalCommandHandler = false
+org.eclipse.tm.terminal.view.ui/debugmode = 0
+org.eclipse.tm.terminal.view.ui/trace/outputStreamMonitor = false
+org.eclipse.tm.terminal.view.ui/trace/launchTerminalCommandHandler = false

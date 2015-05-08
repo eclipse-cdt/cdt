@@ -695,8 +695,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#onFontChanged()
+	 * @see org.eclipse.tm.internal.terminal.control.ITerminalViewControl#setFont(org.eclipse.swt.graphics.Font)
 	 */
+	@Deprecated
 	public void setFont(Font font) {
 		getCtlText().setFont(font);
 		if(fCommandInputField!=null) {
@@ -838,6 +839,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			super();
 		}
 
+		@SuppressWarnings("cast")
 		public void focusGained(FocusEvent event) {
 			// Disable all keyboard accelerators (e.g., Control-B) so the Terminal view
 			// can see every keystroke.  Without this, Emacs, vi, and Bash are unusable
@@ -845,28 +847,25 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			if (getState() == TerminalState.CONNECTED)
 				captureKeyEvents(true);
 
-			IContextService contextService = (IContextService) PlatformUI
-					.getWorkbench().getAdapter(IContextService.class);
-			editContextActivation = contextService
-					.activateContext("org.eclipse.tm.terminal.EditContext"); //$NON-NLS-1$
+			IContextService contextService = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+			editContextActivation = contextService.activateContext("org.eclipse.tm.terminal.EditContext"); //$NON-NLS-1$
 		}
 
+		@SuppressWarnings("cast")
 		public void focusLost(FocusEvent event) {
 			// Enable all keybindings.
 			captureKeyEvents(false);
 
 			// Restore the command context to its previous value.
 
-			IContextService contextService = (IContextService) PlatformUI
-					.getWorkbench().getAdapter(IContextService.class);
+			IContextService contextService = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
 			contextService.deactivateContext(editContextActivation);
 		}
 
+		@SuppressWarnings("cast")
 		protected void captureKeyEvents(boolean capture) {
-			IBindingService bindingService = (IBindingService) PlatformUI
-					.getWorkbench().getAdapter(IBindingService.class);
-			IContextService contextService = (IContextService) PlatformUI
-					.getWorkbench().getAdapter(IContextService.class);
+			IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			IContextService contextService = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
 
 			boolean enableKeyFilter = !capture;
 			if (bindingService.isKeyFilterEnabled() != enableKeyFilter)
@@ -879,8 +878,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				// override menu-activation accelerators with no-op commands in our
 				// plugin.xml file, which enables the Terminal view to see absolutely _all_
 				// key-presses.
-				terminalContextActivation = contextService
-						.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
+				terminalContextActivation = contextService.activateContext("org.eclipse.tm.terminal.TerminalContext"); //$NON-NLS-1$
 
 			} else if (!capture && terminalContextActivation != null) {
 				contextService.deactivateContext(terminalContextActivation);
@@ -1189,16 +1187,15 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		/*
 		 * Process given event as Eclipse key binding.
 		 */
+		@SuppressWarnings("cast")
 		private void processKeyBinding(KeyEvent event, int accelerator) {
-			IBindingService bindingService = (IBindingService) PlatformUI
-					.getWorkbench().getAdapter(IBindingService.class);
+			IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 			KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
 			Binding binding = bindingService.getPerfectMatch(KeySequence.getInstance(keyStroke));
 			if (binding != null) {
 				ParameterizedCommand cmd = binding.getParameterizedCommand();
 				if (cmd != null) {
-					IHandlerService handlerService = (IHandlerService) PlatformUI
-							.getWorkbench().getAdapter(IHandlerService.class);
+					IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 					Event cmdEvent = new Event();
 					cmdEvent.type = SWT.KeyDown;
 					cmdEvent.display = event.display;

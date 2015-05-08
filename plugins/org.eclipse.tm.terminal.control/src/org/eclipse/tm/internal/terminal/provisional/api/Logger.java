@@ -42,9 +42,9 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  * </p>
  */
 public final class Logger {
-    public static final String TRACE_DEBUG_LOG					= "org.eclipse.tm.terminal/debug/log"; //$NON-NLS-1$
-    public static final String TRACE_DEBUG_LOG_CHAR				= "org.eclipse.tm.terminal/debug/log/char"; //$NON-NLS-1$
-    public static final String TRACE_DEBUG_LOG_VT100BACKEND		= "org.eclipse.tm.terminal/debug/log/VT100Backend"; //$NON-NLS-1$
+    public static final String TRACE_DEBUG_LOG					= "org.eclipse.tm.terminal.control/debug/log"; //$NON-NLS-1$
+    public static final String TRACE_DEBUG_LOG_CHAR				= "org.eclipse.tm.terminal.control/debug/log/char"; //$NON-NLS-1$
+    public static final String TRACE_DEBUG_LOG_VT100BACKEND		= "org.eclipse.tm.terminal.control/debug/log/VT100Backend"; //$NON-NLS-1$
 
     private static PrintStream logStream;
 

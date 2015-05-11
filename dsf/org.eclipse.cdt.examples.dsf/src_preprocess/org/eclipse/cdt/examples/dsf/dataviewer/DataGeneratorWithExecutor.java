@@ -60,7 +60,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // Request objects are used to serialize the interface calls into objects
     // which can then be pushed into a queue.
     //#ifdef exercises
-    // TODO Ecercise 4 - Add an annotationindicating allowed concurrency access
+    // TODO Exercise 4 - Add an annotationindicating allowed concurrency access
     // Hint: Request and its subclasses have all their fields declared as final.
     //#else
 //#    @Immutable
@@ -305,7 +305,13 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
             }, 
             PROCESSING_DELAY, TimeUnit.MILLISECONDS);        
     }
-    
+
+    //#ifdef exercises
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor)
+    // indicating allowed thread access to this class/method/member
+    //#else
+//#    @ConfinedToDsfExecutor("fExecutor")
+    //#endif
     private void doServiceQueue() {
         //#ifdef exercises
         // TODO Exercise 3 - Add logic to discard cancelled requests from queue.

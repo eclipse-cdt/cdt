@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * The instantiation of a function template.
+ * An instantiation or an explicit specialization of a function template.
  */
 public class CPPFunctionInstance extends CPPFunctionSpecialization implements ICPPFunctionInstance {
 	private final ICPPTemplateArgument[] fArguments;

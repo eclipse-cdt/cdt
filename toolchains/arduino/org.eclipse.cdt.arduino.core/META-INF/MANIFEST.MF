@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Arduino C++ Core
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.arduino.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.arduino.core.internal.Activator
-Bundle-Vendor: Doug Schaefer
+Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.debug.core,
@@ -20,3 +20,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: libs/freemarker-2.3.22.jar,
  .
 Export-Package: org.eclipse.cdt.arduino.core
+Bundle-Localization: plugin

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Arduino UI
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.arduino.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.arduino.ui.internal.Activator
@@ -20,3 +20,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.native.serial;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin

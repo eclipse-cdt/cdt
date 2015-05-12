@@ -19,20 +19,28 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.internal.ui.RemoteUIImages;
 import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.internal.ui.messages.Messages;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * Abstract base class for providing UI connection manager services.
+ * @since 2.0
  */
-public abstract class AbstractRemoteUIConnectionManager implements IRemoteUIConnectionService {
+public abstract class AbstractRemoteUIConnectionService implements IRemoteUIConnectionService {
 
+	@Override
 	public void openConnectionWithProgress(final Shell shell, IRunnableContext context, final IRemoteConnection connection) {
 		if (!connection.isOpen()) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						connection.open(monitor);
@@ -60,6 +68,32 @@ public abstract class AbstractRemoteUIConnectionManager implements IRemoteUIConn
 								RemoteUIPlugin.PLUGIN_ID, e.getMessage()));
 			}
 		}
+	}
+
+	protected static class DefaultLabelProvider extends LabelProvider {
+		@Override
+		public String getText(Object element) {
+			if (element instanceof IRemoteConnection) {
+				return ((IRemoteConnection) element).getName();
+			} else if (element instanceof IRemoteConnectionType) {
+				return ((IRemoteConnectionType) element).getName();
+			} else {
+				return super.getText(element);
+			}
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			if (element instanceof IRemoteConnection || element instanceof IRemoteConnectionType) {
+				return RemoteUIImages.get(RemoteUIImages.IMG_DEFAULT_TYPE);
+			}
+			return super.getImage(element);
+		}
+	}
+
+	@Override
+	public ILabelProvider getLabelProvider() {
+		return new DefaultLabelProvider();
 	}
 
 }

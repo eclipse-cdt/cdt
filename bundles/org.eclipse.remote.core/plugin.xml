@@ -8,7 +8,9 @@
    <extension
          point="org.eclipse.remote.core.remoteServices">
       <connectionType
-            capabilities="0"
+            canAdd="false"
+            canEdit="false"
+            canRemove="false"
             id="org.eclipse.remote.LocalServices"
             name="Local"
             scheme="file">

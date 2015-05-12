@@ -25,13 +25,16 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.remote.serial.ui"; //$NON-NLS-1$
 
+	// Image keys
+	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
+	
 	// The shared instance
 	private static Activator plugin;
 	
-
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		getImageRegistry().put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "/icons/serial.png")); //$NON-NLS-1$
 	}
 
 	public void stop(BundleContext context) throws Exception {

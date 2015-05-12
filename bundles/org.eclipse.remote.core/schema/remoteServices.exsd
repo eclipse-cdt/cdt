@@ -84,10 +84,24 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="capabilities" type="string" use="required">
+         <attribute name="canAdd" type="boolean">
             <annotation>
                <documentation>
-                  The capabilities of this connection. This an integer created by ORing the applicable capabilities as listed in IRemoteServices.
+                  Can you add connections using the API. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="canEdit" type="boolean">
+            <annotation>
+               <documentation>
+                  Can a connection be changed using the API. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="canRemove" type="boolean">
+            <annotation>
+               <documentation>
+                  Can a connection be removed using the API.
                </documentation>
             </annotation>
          </attribute>

@@ -36,6 +36,11 @@
             factory="org.eclipse.remote.internal.ui.services.local.LocalUIFileService$Factory"
             service="org.eclipse.remote.ui.IRemoteUIFileService">
       </connectionTypeService>
+      <connectionTypeService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.ui.services.local.LocalUIConnectionService$Factory"
+            service="org.eclipse.remote.ui.IRemoteUIConnectionService">
+      </connectionTypeService>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -46,6 +51,7 @@
       <view
             category="org.eclipse.remote.ui.view.category.connections"
             class="org.eclipse.remote.internal.ui.views.RemoteConnectionsView"
+            icon="icons/connection.gif"
             id="org.eclipse.remote.ui.view.connections"
             name="%ConnectionsView.name"
             restorable="true">
@@ -57,7 +63,7 @@
             activeByDefault="true"
             contentProvider="org.eclipse.remote.internal.ui.views.RemoteConnectionsContentProvider"
             id="org.eclipse.remote.ui.navigatorContent.connections"
-            labelProvider="org.eclipse.remote.internal.ui.views.RemoteConnectionsLabelProvider"
+            labelProvider="org.eclipse.remote.ui.RemoteConnectionsLabelProvider"
             name="%ConnectionsContent.name">
          <triggerPoints>
             <instanceof
@@ -121,6 +127,16 @@
             id="org.eclipse.remote.ui.command.deleteConnection"
             name="%DeleteConnectionCommand.name">
       </command>
+      <command
+            defaultHandler="org.eclipse.remote.internal.ui.views.OpenConnectionHandler"
+            id="org.eclipse.remote.ui.command.openConnection"
+            name="%OpenConnectionCommand.name">
+      </command>
+      <command
+            defaultHandler="org.eclipse.remote.internal.ui.views.CloseConnectionHandler"
+            id="org.eclipse.remote.ui.command.closeConnection"
+            name="%CloseConnectionCommand.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -128,7 +144,7 @@
             class="org.eclipse.remote.internal.ui.ServicePropertyTester"
             id="org.eclipse.remote.ui.propertyTester.hasService"
             namespace="org.eclipse.remote.ui"
-            properties="hasConnectionTypeService,hasConnectionService,canDelete"
+            properties="hasConnectionTypeService,hasConnectionService,canDelete,canOpen,canClose"
             type="org.eclipse.remote.core.IRemoteConnection">
       </propertyTester>
    </extension>
@@ -147,6 +163,38 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.remote.ui.view.connections">
+         <command
+               commandId="org.eclipse.remote.ui.command.openConnection"
+               label="%OpenConnectionCommand.name"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <test
+                           property="org.eclipse.remote.ui.canOpen">
+                     </test>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.remote.ui.command.closeConnection"
+               label="%CloseConnectionCommand.name"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate>
+                     <test
+                           property="org.eclipse.remote.ui.canClose">
+                     </test>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
          <command
                commandId="org.eclipse.remote.ui.command.deleteConnection"
                label="%DeleteConnectionCommand.name"

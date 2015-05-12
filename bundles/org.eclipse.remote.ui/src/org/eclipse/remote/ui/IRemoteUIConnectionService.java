@@ -11,6 +11,7 @@
 package org.eclipse.remote.ui;
 
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.swt.widgets.Shell;
@@ -21,6 +22,12 @@ import org.eclipse.swt.widgets.Shell;
  * @since 2.0
  */
 public interface IRemoteUIConnectionService extends IRemoteConnectionType.Service {
+
+	/**
+	 * ID for the command to start the new connection wizard.
+	 */
+	public static final String NEW_CONNECTION_COMMAND = "org.eclipse.remote.ui.command.newConnection"; //$NON-NLS-1$
+
 	/**
 	 * Create a wizard for adding or editing connections. The implementation can choose to do this in any way, but typically will
 	 * use a dialog or wizard.
@@ -42,7 +49,15 @@ public interface IRemoteUIConnectionService extends IRemoteConnectionType.Servic
 	 *            runnable context for displaying progress indicator. Can be null.
 	 * @param connection
 	 *            connection to open
-	 * @since 5.0
 	 */
 	public void openConnectionWithProgress(Shell shell, IRunnableContext context, IRemoteConnection connection);
+
+	/**
+	 * Return the label provider that provides the text and base image for the connection type
+	 * and connections of that type.
+	 * 
+	 * @return label provider
+	 */
+	public ILabelProvider getLabelProvider();
+
 }

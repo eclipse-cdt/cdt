@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteConnectionControlService;
 import org.eclipse.remote.core.IRemoteConnectionHostService;
 import org.eclipse.remote.core.IRemoteConnectionPropertyService;
@@ -52,7 +53,7 @@ import com.jcraft.jsch.UserInfo;
  * @since 5.0
  */
 public class JSchConnection implements IRemoteConnectionControlService, IRemoteConnectionPropertyService,
-		IRemotePortForwardingService, IRemoteProcessService, IRemoteConnectionHostService {
+		IRemotePortForwardingService, IRemoteProcessService, IRemoteConnectionHostService, IRemoteConnectionChangeListener {
 	// Connection Type ID
 	public static final String JSCH_ID = "org.eclipse.remote.JSch"; //$NON-NLS-1$
 
@@ -255,9 +256,21 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	private ChannelSftp fSftpChannel;
 	private boolean isFullySetup; // including sftp channel and environment
 
+	private static final Map<IRemoteConnection, JSchConnection> connectionMap = new HashMap<>();
+	
 	public JSchConnection(IRemoteConnection connection) {
 		fRemoteConnection = connection;
 		fJSchService = Activator.getDefault().getService();
+		connection.addConnectionChangeListener(this);
+	}
+
+	@Override
+	public void connectionChanged(RemoteConnectionChangeEvent event) {
+		if (event.getType() == RemoteConnectionChangeEvent.CONNECTION_REMOVED) {
+			synchronized (connectionMap) {
+				connectionMap.remove(event.getConnection());
+			}
+		}
 	}
 
 	/*
@@ -286,7 +299,14 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 			// As a side effect, it makes this class a service too which can be used
 			// by the this plug-in
 			if (JSchConnection.class.equals(service)) {
-				return (T) new JSchConnection(connection);
+				synchronized (connectionMap) {
+					JSchConnection jschConnection = connectionMap.get(connection);
+					if (jschConnection == null) {
+						jschConnection = new JSchConnection(connection);
+						connectionMap.put(connection, jschConnection);
+					}
+					return (T) jschConnection;
+				}
 			} else if (IRemoteConnectionControlService.class.equals(service)
 					|| IRemoteConnectionPropertyService.class.equals(service) || IRemotePortForwardingService.class.equals(service)
 					|| IRemoteProcessService.class.equals(service) || IRemoteConnectionHostService.class.equals(service)) {
@@ -338,13 +358,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#close()
-	 */
-	@Override
-	public synchronized void close() {
+	private synchronized void cleanup() {
 		if (fSftpChannel != null) {
 			if (fSftpChannel.isConnected()) {
 				fSftpChannel.disconnect();
@@ -357,6 +371,16 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 			}
 		}
 		fSessions.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.remote.core.IRemoteConnectionControlService#close()
+	 */
+	@Override
+	public synchronized void close() {
+		cleanup();
 		fRemoteConnection.fireConnectionChangeEvent(RemoteConnectionChangeEvent.CONNECTION_CLOSED);
 	}
 
@@ -714,7 +738,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 			}
 		}
 		if (!hasOpenSession) {
-			close(); // Cleanup if session is closed
+			cleanup(); // Cleanup if session is closed
 		}
 		return hasOpenSession;
 	}

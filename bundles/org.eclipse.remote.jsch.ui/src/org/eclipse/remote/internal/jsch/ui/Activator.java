@@ -1,19 +1,22 @@
 package org.eclipse.remote.internal.jsch.ui;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends Plugin {
+public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	private static final String PLUGIN_ID = "org.eclipse.remote.jsch.ui"; //$NON-NLS-1$
+
+	// Image Keys
+	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -107,6 +110,7 @@ public class Activator extends Plugin {
 		plugin = this;
 		ServiceReference<IJSchService> reference = context.getServiceReference(IJSchService.class);
 		fJSchService = context.getService(reference);
+		getImageRegistry().put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "/icons/ssh.png")); //$NON-NLS-1$
 	}
 
 	/*

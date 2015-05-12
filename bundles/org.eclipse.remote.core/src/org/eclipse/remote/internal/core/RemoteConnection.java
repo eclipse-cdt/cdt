@@ -39,7 +39,7 @@ public class RemoteConnection implements IRemoteConnection {
 	private final RemoteConnectionType connectionType;
 	private String name;
 
-	private final Map<String, Object> servicesMap = new HashMap<>();
+	private final Map<Class<? extends Service>, Service> servicesMap = new HashMap<>();
 
 	private final ListenerList fListeners = new ListenerList();
 
@@ -69,15 +69,15 @@ public class RemoteConnection implements IRemoteConnection {
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
 		String serviceName = service.getName();
-		Object obj = servicesMap.get(serviceName);
+		T obj = (T) servicesMap.get(serviceName);
 		if (obj == null) {
 			obj = connectionType.getConnectionService(this, service);
 			if (obj != null) {
-				servicesMap.put(serviceName, obj);
+				servicesMap.put(service, obj);
 			}
 		}
 
-		return (T) obj;
+		return obj;
 	}
 
 	/*

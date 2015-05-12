@@ -4,7 +4,6 @@
    <extension
          point="org.eclipse.remote.core.remoteServices">
       <connectionType
-            capabilities="7"
             id="org.eclipse.remote.serial.core.connectionType"
             name="Serial Port">
       </connectionType>

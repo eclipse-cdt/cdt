@@ -4,7 +4,6 @@
    <extension
          point="org.eclipse.remote.core.remoteServices">
       <connectionType
-            capabilities="31"
             id="org.eclipse.remote.JSch"
             name="SSH"
             scheme="ssh">

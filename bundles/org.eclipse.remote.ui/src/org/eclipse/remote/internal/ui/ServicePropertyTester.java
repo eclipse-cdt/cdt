@@ -2,6 +2,7 @@ package org.eclipse.remote.internal.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionControlService;
 import org.eclipse.remote.core.IRemoteConnectionType;
 
 public class ServicePropertyTester extends PropertyTester {
@@ -32,7 +33,21 @@ public class ServicePropertyTester extends PropertyTester {
 					}
 				}
 			} else if (property.equals("canDelete")) { //$NON-NLS-1$
-				return (connection.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0;
+				return connection.getConnectionType().canRemove();
+			} else if (property.equals("canOpen")) { //$NON-NLS-1$
+				IRemoteConnectionControlService controlService = connection.getService(IRemoteConnectionControlService.class);
+				if (controlService != null) {
+					return !connection.isOpen();
+				} else {
+					return false;
+				}
+			} else if (property.equals("canClose")) { //$NON-NLS-1$
+				IRemoteConnectionControlService controlService = connection.getService(IRemoteConnectionControlService.class);
+				if (controlService != null) {
+					return connection.isOpen();
+				} else {
+					return false;
+				}
 			}
 		}
 		return false;

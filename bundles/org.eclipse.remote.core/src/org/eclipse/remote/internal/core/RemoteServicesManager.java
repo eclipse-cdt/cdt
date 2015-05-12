@@ -218,7 +218,6 @@ public class RemoteServicesManager implements IRemoteServicesManager {
 	 */
 	@Override
 	public List<IRemoteConnection> getAllRemoteConnections() {
-		// TODO do this without getting the connection managers and force loading the plugins
 		List<IRemoteConnection> connections = new ArrayList<>();
 		for (IRemoteConnectionType connType : getAllConnectionTypes()) {
 			connections.addAll(connType.getConnections());

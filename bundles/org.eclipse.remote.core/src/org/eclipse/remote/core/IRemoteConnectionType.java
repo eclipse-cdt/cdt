@@ -38,13 +38,6 @@ public interface IRemoteConnectionType {
 		}
 	}
 
-	// Capabilities
-	static final int CAPABILITY_ADD_CONNECTIONS = 0x01;
-	static final int CAPABILITY_EDIT_CONNECTIONS = 0x02;
-	static final int CAPABILITY_REMOVE_CONNECTIONS = 0x04;
-	static final int CAPABILITY_SUPPORTS_TCP_PORT_FORWARDING = 0x08;
-	static final int CAPABILITY_SUPPORTS_X11_FORWARDING = 0x10;
-
 	/**
 	 * Get the remote services manager. This is a convenient way to get back
 	 * to the root.
@@ -75,11 +68,25 @@ public interface IRemoteConnectionType {
 	String getScheme();
 
 	/**
-	 * Gets the capabilities of the remote service.
+	 * Can you add new connections of this type using the API.
 	 * 
-	 * @return bit-wise or of capability flag constants
+	 * @return can add
 	 */
-	int getCapabilities();
+	boolean canAdd();
+
+	/**
+	 * Can you edit connections of this type, i.e. create working copies.
+	 * 
+	 * @return can edit
+	 */
+	boolean canEdit();
+
+	/**
+	 * Can you remove connections of this type using the API.
+	 * 
+	 * @return can remove
+	 */
+	boolean canRemove();
 
 	/**
 	 * Get the service for this remote services implementation that implements the given interface.
@@ -102,6 +109,13 @@ public interface IRemoteConnectionType {
 	<T extends Service> boolean hasService(Class<T> service);
 
 	/**
+	 * Return the list of connection type services supported by this type.
+	 * 
+	 * @return connection type services
+	 */
+	List<String> getServices();
+
+	/**
 	 * Do connections created by this connection type support the given service.
 	 * 
 	 * @param service
@@ -111,6 +125,13 @@ public interface IRemoteConnectionType {
 	<T extends IRemoteConnection.Service> boolean hasConnectionService(Class<T> service);
 
 	/**
+	 * Return the list of connection services supported by connections of this type.
+	 * 
+	 * @return connection services
+	 */
+	List<String> getConnectionServices();
+	
+	/**
 	 * Do processes created by this connection type support the given service.
 	 * 
 	 * @param service
@@ -118,6 +139,13 @@ public interface IRemoteConnectionType {
 	 * @return true if processes created by this connection type support this service
 	 */
 	<T extends IRemoteProcess.Service> boolean hasProcessService(Class<T> service);
+
+	/**
+	 * Return the list of process services supported by connections of this type.
+	 * 
+	 * @return process services
+	 */
+	List<String> getProcessServices();
 
 	/**
 	 * Gets the remote connection corresponding to the supplied name.

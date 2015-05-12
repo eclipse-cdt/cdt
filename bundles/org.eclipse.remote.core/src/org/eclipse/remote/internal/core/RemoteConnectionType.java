@@ -39,10 +39,14 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	private final String id;
 	private final String name;
 	private final String scheme;
-	private final int capabilities;
+	private final boolean canAdd;
+	private final boolean canEdit;
+	private final boolean canRemove;
 
-	private final Map<String, Object> serviceMap = new HashMap<>();
+	private final Map<Class<? extends Service>, Object> serviceMap = new HashMap<>();
 	private final Map<String, IConfigurationElement> serviceDefinitionMap = new HashMap<>();
+	private final Map<String, IConfigurationElement> connectionServiceDefinitionMap = new HashMap<>();
+	private final Map<String, IConfigurationElement> processServiceDefinitionMap = new HashMap<>();
 
 	private final Map<String, RemoteConnection> connections = new HashMap<>();
 
@@ -52,22 +56,23 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		name = ce.getAttribute("name"); //$NON-NLS-1$
 		scheme = ce.getAttribute("scheme"); //$NON-NLS-1$
 
-		String caps = ce.getAttribute("capabilities"); //$NON-NLS-1$
-		if (caps != null) {
-			capabilities = Integer.parseInt(caps);
-		} else {
-			capabilities = 0;
-		}
-
+		// capabilities, default is true for all of these
+		String canAddStr = ce.getAttribute("canAdd"); //$NON-NLS-1$
+		canAdd = canAddStr != null ? Boolean.parseBoolean(canAddStr) : true;
+		
+		String canEditStr = ce.getAttribute("canEdit"); //$NON-NLS-1$
+		canEdit = canEditStr != null ? Boolean.parseBoolean(canEditStr) : true;
+		
+		String canRemoveStr = ce.getAttribute("canRemove"); //$NON-NLS-1$
+		canRemove = canRemoveStr != null ? Boolean.parseBoolean(canRemoveStr) : true;
+		
 		// load up existing connections
-		synchronized (connections) {
-			try {
-				for (String connectionName : getPreferenceNode().childrenNames()) {
-					connections.put(connectionName, new RemoteConnection(this, connectionName));
-				}
-			} catch (BackingStoreException e) {
-				RemoteCorePlugin.log(e);
+		try {
+			for (String connectionName : getPreferenceNode().childrenNames()) {
+				connections.put(connectionName, new RemoteConnection(this, connectionName));
 			}
+		} catch (BackingStoreException e) {
+			RemoteCorePlugin.log(e);
 		}
 	}
 
@@ -119,14 +124,19 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return scheme;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.remote.core.IRemoteConnectionType#getCapabilities()
-	 */
 	@Override
-	public int getCapabilities() {
-		return capabilities;
+	public boolean canAdd() {
+		return canAdd;
+	}
+
+	@Override
+	public boolean canEdit() {
+		return canEdit;
+	}
+
+	@Override
+	public boolean canRemove() {
+		return canRemove;
 	}
 
 	/*
@@ -136,18 +146,16 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
-		String serviceName = service.getName();
 		@SuppressWarnings("unchecked")
-		T obj = (T) serviceMap.get(serviceName);
+		T obj = (T) serviceMap.get(service);
 		if (obj == null) {
-			IConfigurationElement ce = serviceDefinitionMap.get(serviceName);
+			IConfigurationElement ce = serviceDefinitionMap.get(service.getName());
 			if (ce != null) {
 				try {
 					Service.Factory factory = (Service.Factory) ce.createExecutableExtension("factory"); //$NON-NLS-1$
 					if (factory != null) {
 						obj = factory.getService(this, service);
-						serviceMap.put(serviceName, obj);
-						serviceDefinitionMap.remove(serviceName);
+						serviceMap.put(service, obj);
 					}
 				} catch (CoreException e) {
 					RemoteCorePlugin.log(e.getStatus());
@@ -157,6 +165,11 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return obj;
 	}
 
+	@Override
+	public List<String> getServices() {
+		return new ArrayList<>(serviceDefinitionMap.keySet());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -164,8 +177,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public <T extends Service> boolean hasService(Class<T> service) {
-		String serviceName = service.getName();
-		return serviceMap.get(serviceName) != null || serviceDefinitionMap.get(service) != null;
+		return serviceDefinitionMap.get(service.getName()) != null;
 	}
 
 	/**
@@ -179,9 +191,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 * @throws CoreException
 	 */
 	public <T extends IRemoteConnection.Service> T getConnectionService(IRemoteConnection connection, Class<T> service) {
-		// Both top level and connection services are stored in the serviceDefinitionMap.
-		// In theory the two sets of interfaces can't collide.
-		IConfigurationElement ce = serviceDefinitionMap.get(service.getName());
+		IConfigurationElement ce = connectionServiceDefinitionMap.get(service.getName());
 		if (ce != null) {
 			try {
 				IRemoteConnection.Service.Factory factory = (IRemoteConnection.Service.Factory) ce
@@ -197,6 +207,11 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return null;
 	}
 
+	@Override
+	public List<String> getConnectionServices() {
+		return new ArrayList<>(connectionServiceDefinitionMap.keySet());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -204,7 +219,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public <T extends IRemoteConnection.Service> boolean hasConnectionService(Class<T> service) {
-		return serviceDefinitionMap.get(service.getName()) != null;
+		return connectionServiceDefinitionMap.get(service.getName()) != null;
 	}
 
 	/**
@@ -218,9 +233,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 * @throws CoreException
 	 */
 	public <T extends IRemoteProcess.Service> T getProcessService(IRemoteProcess process, Class<T> service) {
-		// Both top level and connection services are stored in the serviceDefinitionMap.
-		// In theory the two sets of interfaces can't collide.
-		IConfigurationElement ce = serviceDefinitionMap.get(service.getName());
+		IConfigurationElement ce = processServiceDefinitionMap.get(service.getName());
 		if (ce != null) {
 			try {
 				IRemoteProcess.Service.Factory factory = (IRemoteProcess.Service.Factory) ce.createExecutableExtension("factory"); //$NON-NLS-1$
@@ -235,6 +248,11 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 		return null;
 	}
 
+	@Override
+	public List<String> getProcessServices() {
+		return new ArrayList<>(processServiceDefinitionMap.keySet());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -242,7 +260,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 */
 	@Override
 	public <T extends IRemoteProcess.Service> boolean hasProcessService(Class<T> service) {
-		return serviceDefinitionMap.get(service.getName()) != null;
+		return processServiceDefinitionMap.get(service.getName()) != null;
 	}
 
 	/**
@@ -253,8 +271,19 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	 *            the extension element defining the service
 	 */
 	public void addService(IConfigurationElement ce) {
-		String service = ce.getAttribute("service"); //$NON-NLS-1$
-		serviceDefinitionMap.put(service, ce);
+		String serviceName = ce.getAttribute("service"); //$NON-NLS-1$
+		String name = ce.getName();
+		switch (name) {
+		case "connectionTypeService": //$NON-NLS-1$
+			serviceDefinitionMap.put(serviceName, ce);
+			break;
+		case "connectionService": //$NON-NLS-1$
+			connectionServiceDefinitionMap.put(serviceName, ce);
+			break;
+		case "processService": //$NON-NLS-1$
+			processServiceDefinitionMap.put(serviceName, ce);
+			break;
+		}
 	}
 
 	/**
@@ -298,13 +327,13 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 			if (connection != null) {
 				return connection;
 			}
-	
+
 			// If it's a file: scheme we must be the local connection type, just return our
 			// hopefully one connection, the Local connection.
 			if (uri.getScheme().equals("file") && !connections.isEmpty()) { //$NON-NLS-1$
 				return connections.values().iterator().next();
 			}
-	
+
 			return null;
 		}
 	}

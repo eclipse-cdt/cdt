@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2015 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     QNX Software Systems - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.remote.internal.ui.views;
 
 import org.eclipse.jface.wizard.IWizardPage;
@@ -9,6 +19,7 @@ import org.eclipse.remote.internal.ui.RemoteUIPlugin;
 import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,25 +57,25 @@ public class NewRemoteConnectionTypePage extends WizardPage {
 
 		IRemoteServicesManager remoteManager = RemoteUIPlugin.getService(IRemoteServicesManager.class);
 		for (IRemoteConnectionType connectionType : remoteManager.getAllConnectionTypes()) {
-			if ((connectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) == 0)
+			if (!connectionType.canAdd())
 				continue;
 
-			IRemoteUIConnectionService connManager = connectionType.getService(IRemoteUIConnectionService.class);
-			if (connManager == null)
+			IRemoteUIConnectionService connService = connectionType.getService(IRemoteUIConnectionService.class);
+			if (connService == null)
 				continue;
 
-			IRemoteUIConnectionWizard wizard = connManager.getConnectionWizard(parent.getShell());
+			IRemoteUIConnectionWizard wizard = connService.getConnectionWizard(parent.getShell());
 			if (wizard == null)
 				continue;
 
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(connectionType.getName());
 			item.setData(wizard);
-			// TODO connection type icons somehow
-//			Image icon = ui.getIcon();
-//			if (icon != null) {
-//				item.setImage(icon);
-//			}
+
+			Image icon = connService.getLabelProvider().getImage(connectionType);
+			if (icon != null) {
+				item.setImage(icon);
+			}
 
 			// TODO select the last selected entry
 			table.select(0);

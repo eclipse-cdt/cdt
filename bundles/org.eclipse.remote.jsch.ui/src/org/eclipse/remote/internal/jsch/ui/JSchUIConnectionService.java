@@ -19,18 +19,20 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionType.Service;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.ui.messages.Messages;
 import org.eclipse.remote.internal.jsch.ui.wizards.JSchConnectionWizard;
-import org.eclipse.remote.ui.AbstractRemoteUIConnectionManager;
+import org.eclipse.remote.ui.AbstractRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
-public class JSchUIConnectionService extends AbstractRemoteUIConnectionManager {
+public class JSchUIConnectionService extends AbstractRemoteUIConnectionService {
 
 	private final IRemoteConnectionType fConnectionType;
 
@@ -53,7 +55,7 @@ public class JSchUIConnectionService extends AbstractRemoteUIConnectionManager {
 	public IRemoteConnectionType getConnectionType() {
 		return fConnectionType;
 	}
-	
+
 	@Override
 	public IRemoteUIConnectionWizard getConnectionWizard(Shell shell) {
 		return new JSchConnectionWizard(shell, fConnectionType);
@@ -92,4 +94,15 @@ public class JSchUIConnectionService extends AbstractRemoteUIConnectionManager {
 			}
 		}
 	}
+
+	@Override
+	public ILabelProvider getLabelProvider() {
+		return new DefaultLabelProvider() {
+			@Override
+			public Image getImage(Object element) {
+				return Activator.getDefault().getImageRegistry().get(Activator.IMG_CONNECTION_TYPE);
+			}
+		};
+	}
+
 }

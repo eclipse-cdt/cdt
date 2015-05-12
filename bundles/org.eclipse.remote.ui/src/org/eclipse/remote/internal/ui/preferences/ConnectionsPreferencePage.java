@@ -506,7 +506,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			fUIConnectionManager = fConnectionType.getService(IRemoteUIConnectionService.class);
 			initWorkingConnections();
 			fConnectionViewer.refresh();
-			fAddButton.setEnabled((fConnectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
+			fAddButton.setEnabled(fConnectionType.canAdd());
 		}
 		fIsDirty = false;
 	}
@@ -596,16 +596,16 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			if (conn.hasService(IRemoteConnectionControlService.class)) {
 				if (!conn.isOpen()) {
 					fEditButton
-							.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
+							.setEnabled(conn.getConnectionType().canEdit());
 					fRemoveButton
-							.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0);
+							.setEnabled(conn.getConnectionType().canRemove());
 					fOpenButton.setEnabled(true);
 				} else {
 					fCloseButton.setEnabled(true);
 				}
 			} else {
 				fEditButton
-						.setEnabled((conn.getConnectionType().getCapabilities() & IRemoteConnectionType.CAPABILITY_EDIT_CONNECTIONS) != 0);
+						.setEnabled(conn.getConnectionType().canEdit());
 			}
 		}
 	}

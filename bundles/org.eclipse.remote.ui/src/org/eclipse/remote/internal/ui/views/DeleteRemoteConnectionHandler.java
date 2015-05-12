@@ -43,7 +43,7 @@ public class DeleteRemoteConnectionHandler extends AbstractHandler {
 				if (obj instanceof IRemoteConnection) {
 					IRemoteConnection connection = (IRemoteConnection) obj;
 					IRemoteConnectionType connectionType = connection.getConnectionType();
-					if ((connectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_REMOVE_CONNECTIONS) != 0) {
+					if (connectionType.canRemove()) {
 						connections.add(connection);
 					}
 				}

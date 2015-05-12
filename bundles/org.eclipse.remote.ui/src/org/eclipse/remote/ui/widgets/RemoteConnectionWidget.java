@@ -521,7 +521,7 @@ public class RemoteConnectionWidget extends Composite {
 				 * Enable 'new' button if new connections are supported
 				 */
 				fNewConnectionButton
-						.setEnabled((selectedConnectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
+						.setEnabled(selectedConnectionType.canAdd());
 			}
 		} finally {
 			fWidgetListener.setEnabled(enabled);
@@ -652,12 +652,12 @@ public class RemoteConnectionWidget extends Composite {
 			}
 			fConnectionCombo.setEnabled(fEnabled && isRemote);
 			fNewConnectionButton.setEnabled(fEnabled && isRemote
-					&& (fDefaultConnectionType.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
+					&& fDefaultConnectionType.canAdd());
 		} else {
 			IRemoteConnectionType services = getSelectedConnectionType();
 			fConnectionCombo.setEnabled(fEnabled && services != null);
 			fNewConnectionButton.setEnabled(fEnabled && services != null
-					&& (services.getCapabilities() & IRemoteConnectionType.CAPABILITY_ADD_CONNECTIONS) != 0);
+					&& services.canAdd());
 			fConnectionTypeCombo.setEnabled(fEnabled);
 		}
 	}

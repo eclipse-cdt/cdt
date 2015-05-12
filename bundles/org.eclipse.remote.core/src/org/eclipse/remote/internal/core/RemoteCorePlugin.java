@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.remote.core.IRemoteServicesManager;
-import org.eclipse.remote.core.launch.IRemoteLaunchConfigService;
-import org.eclipse.remote.internal.core.launch.RemoteLaunchConfigService;
 import org.eclipse.remote.internal.core.preferences.Preferences;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -110,7 +108,6 @@ public class RemoteCorePlugin extends Plugin {
 		super.start(context);
 		plugin = this;
 		context.registerService(IRemoteServicesManager.class, new RemoteServicesManager(), null);
-		context.registerService(IRemoteLaunchConfigService.class, new RemoteLaunchConfigService(), null);
 		RemoteDebugOptions.configure(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(), new ISaveParticipant() {
 			@Override

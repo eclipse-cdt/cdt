@@ -15,15 +15,18 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteConnectionType.Service;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.remote.ui.AbstractRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionService;
 import org.eclipse.remote.ui.IRemoteUIConnectionWizard;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
-public class SerialPortConnectionsUI implements IRemoteUIConnectionService {
+public class SerialPortConnectionsUI extends AbstractRemoteUIConnectionService {
 
 	private final IRemoteConnectionType connectionType;
 	
@@ -68,6 +71,16 @@ public class SerialPortConnectionsUI implements IRemoteUIConnectionService {
 		} catch (InvocationTargetException | InterruptedException e) {
 			Activator.log(e);
 		}
+	}
+
+	@Override
+	public ILabelProvider getLabelProvider() {
+		return new DefaultLabelProvider() {
+			@Override
+			public Image getImage(Object element) {
+				return Activator.getDefault().getImageRegistry().get(Activator.IMG_CONNECTION_TYPE);
+			}
+		};
 	}
 
 }

@@ -41,6 +41,8 @@ public class RemoteUIImages {
 	public static final String IMG_OVR_SYMLINK = NAME_PREFIX + T_OVR + ".symlink_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_ELCL_NEW_FOLDER = NAME_PREFIX + T_ELCL + ".new_folder.gif"; //$NON-NLS-1$
 	public static final String IMG_DLCL_NEW_FOLDER = NAME_PREFIX + T_DLCL + ".new_folder.gif"; //$NON-NLS-1$
+	public static final String IMG_DEFAULT_TYPE = NAME_PREFIX + "defaultType"; //$NON-NLS-1$
+	
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -49,6 +51,7 @@ public class RemoteUIImages {
 	public static final ImageDescriptor DESC_OVR_SYMLINK = createManaged(T_OVR, "symlink_ovr.gif", IMG_OVR_SYMLINK); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ELCL_NEW_FOLDER = createManaged(T_ELCL, "new_folder.gif", IMG_ELCL_NEW_FOLDER); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_NEW_FOLDER = createManaged(T_DLCL, "new_folder.gif", IMG_DLCL_NEW_FOLDER); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEFAULT_TYPE = createManaged(ICONS_PATH.append("console.png"), IMG_DEFAULT_TYPE); //$NON-NLS-1$
 
 	/**
 	 * Returns the image managed under the given key in this registry.
@@ -104,6 +107,12 @@ public class RemoteUIImages {
 		action.setImageDescriptor(descriptor);
 	}
 
+	private static ImageDescriptor createManaged(IPath path, String key) {
+		ImageDescriptor desc = createImageDescriptor(RemoteUIPlugin.getDefault().getBundle(), path, true);
+		fgImageRegistry.put(key, desc);
+		return desc;
+	}
+
 	private static ImageDescriptor createManaged(String prefix, String name, String key) {
 		ImageDescriptor image = create(prefix, name, true);
 		fgImageRegistry.put(key, image);
@@ -139,4 +148,5 @@ public class RemoteUIImages {
 		}
 		return null;
 	}
+
 }

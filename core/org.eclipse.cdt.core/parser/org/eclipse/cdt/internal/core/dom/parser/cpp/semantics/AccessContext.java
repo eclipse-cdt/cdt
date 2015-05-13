@@ -141,21 +141,22 @@ public class AccessContext {
 		if (!(owner instanceof ICPPClassType)) {
 			return true; // The binding is not a class member.
 		}
-		ICPPClassType accessOwner= (ICPPClassType) owner;
-		if (!initialize(accessOwner)) {
+		if (!initialize()) {
 			return true; // Assume visibility if anything goes wrong.
 		}
+		ICPPClassType accessOwner= (ICPPClassType) owner;
+		namingClass = getNamingClass(accessOwner);
 		if (namingClass == null) {
 			return true;
 		}
-		return isAccessible(binding, bindingVisibility, (ICPPClassType) owner, namingClass,
+		return isAccessible(binding, bindingVisibility, accessOwner, namingClass,
 				v_public, 0);
 	}
 
 	/**
 	 * @return {@code true} if initialization succeeded.
 	 */
-	private boolean initialize(ICPPClassType accessOwner) {
+	private boolean initialize() {
 		if (context == null) {
 			if (initializationException != null) {
 				return false;
@@ -169,7 +170,6 @@ public class AccessContext {
 				return false;
 			}
 		}
-		namingClass = getNamingClass(accessOwner);
 		return true;
 	}
 

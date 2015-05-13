@@ -173,22 +173,27 @@ public class AccessContext {
 		return true;
 	}
 
+	// Return true if 'c' is the same type as 'target', or a specialization of 'target'.
+	private static boolean isSameTypeOrSpecialization(ICPPClassType c, ICPPClassType target) {
+		if (!(c instanceof ICPPSpecialization)) {
+			while (target instanceof ICPPSpecialization) {
+				IBinding specialized = ((ICPPSpecialization) target).getSpecializedBinding();
+				if (specialized instanceof ICPPClassType) {
+					target = (ICPPClassType) specialized;
+				}
+			}
+		}
+		return c.isSameType(target);
+	}
+	
 	private boolean isAccessible(IBinding binding, int bindingVisibility, ICPPClassType owner,
 			ICPPClassType derivedClass, int accessLevel, int depth) {
 		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return false;
 
 		accessLevel = getMemberAccessLevel(derivedClass, accessLevel);
-		
-		if (!(owner instanceof ICPPSpecialization)) {
-			while (derivedClass instanceof ICPPSpecialization) {
-				IBinding specialized = ((ICPPSpecialization) derivedClass).getSpecializedBinding();
-				if (specialized instanceof ICPPClassType) {
-					derivedClass = (ICPPClassType) specialized;
-				}
-			}
-		}
-		if (owner.isSameType(derivedClass)) {
+	
+		if (isSameTypeOrSpecialization(owner, derivedClass)) {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
 

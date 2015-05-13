@@ -1706,4 +1706,20 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertCompletionResults(fCursorOffset, expected, DISPLAY);
 		assertDotReplacedWithArrow();
 	}
+	
+	//	struct A {
+	//	    void foo();
+	//	};
+	//
+	//	template <class T>
+	//	class C : public T {};
+	//
+	//	int main() {
+	//	    C<A> c;
+	//	    c./*cursor*/
+	//	}
+	public void testInheritanceFromTemplateParameter_bug466861() throws Exception {
+		final String[] expected = { "A", "C", "foo(void)" };
+		assertCompletionResults(fCursorOffset, expected, ID);
+	}
 }

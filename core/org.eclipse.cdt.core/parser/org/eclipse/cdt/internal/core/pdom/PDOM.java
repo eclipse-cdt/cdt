@@ -92,12 +92,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTagIndex;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
 
 /**
  * Database for storing semantic information for one project.
@@ -704,7 +698,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 						updatedMatchesUpToLevel.set(0);
 						visitNextLevel= true;
 					}
-					for (int i=0; i < lastIdx; i++) {
+					for (int i = 0; i < lastIdx; i++) {
 						if (matchesUpToLevel.get(i) && pattern[i].matcher(name).matches()) {
 							updatedMatchesUpToLevel.set(i+1);
 							visitNextLevel= true;

@@ -1064,20 +1064,22 @@ public class CVisitor extends ASTQueries {
 	}
 	
 	private static IASTNode getContainingBlockItem(IASTNode node) {
-		IASTNode parent = node.getParent();
-		if (parent instanceof IASTDeclaration) {
-			IASTNode p = parent.getParent();
-			if (p instanceof IASTDeclarationStatement)
-				return p;
-			return parent;
-		} else if (parent instanceof IASTCompoundStatement || // parent is something that can contain a declaration 
-				parent instanceof IASTTranslationUnit   ||
-				parent instanceof IASTForStatement  ||
-				parent instanceof IASTFunctionDeclarator) {
-			return node;
+		for (IASTNode parent = node.getParent(); parent != null; parent = parent.getParent()) {
+			if (parent instanceof IASTDeclaration) {
+				IASTNode p = parent.getParent();
+				if (p instanceof IASTDeclarationStatement)
+					return p;
+				return parent;
+			}
+			if (parent instanceof IASTCompoundStatement || // parent is something that can contain a declaration 
+					parent instanceof IASTTranslationUnit   ||
+					parent instanceof IASTForStatement  ||
+					parent instanceof IASTFunctionDeclarator) {
+				return node;
+			}
+			node = parent;
 		}
-		
-		return getContainingBlockItem(parent);
+		return null;
 	}
 	
 	/**

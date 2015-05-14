@@ -40,6 +40,11 @@
             factory="org.eclipse.remote.internal.core.services.local.LocalCommandShellService$Factory"
             service="org.eclipse.remote.core.IRemoteCommandShellService">
       </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.LocalServices"
+            factory="org.eclipse.remote.internal.core.services.local.LocalConnectionHostService$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionHostService">
+      </connectionService>
       <processService
             connectionTypeId="org.eclipse.remote.LocalServices"
             factory="org.eclipse.remote.internal.core.services.local.LocalProcess$Factory"

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_a6a84063",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_c94b0601",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_695ad2ca",
         "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "You should specify the \"icon\" field here.  When right-clicking on a project and choosing \"Debug As\" the new container shortcut is missing its icon",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_c6baacb5",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_695ad2ca",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_86b544e9",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/Activator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_8908de68",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_29928ada",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "Why call this explicitly?  The platform does that already, no?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_e007d58d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "removed.",
+      "parentUuid": "87f6139c_29928ada",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_40fd09e0",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_6927723f",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_49d6f66c",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "Need to kill \u0027launcher\u0027 no?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_66a81895",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done.  Added a cleanup method to launcher.",
+      "parentUuid": "87f6139c_49d6f66c",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_668f783a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "It is no longer deprecated.  I removed the tag which was added by the JBoss folks.  The field is actually part of the API and should not be messed with.",
+      "parentUuid": "87f6139c_a99dda48",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_c9aca678",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerTab.java",
         "patchSetId": 4
@@ -132,6 +258,24 @@
       "writtenOn": "2015-05-04T15:27:03Z",
       "side": 1,
       "message": "IDockerImage.repoTags() is deprecated. It comes from Linux Tools, which makes me think we should be able to use whatever replacement there is for it.",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_46923c5e",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "No longer an issue.  It is no longer deprecated.",
+      "parentUuid": "87f6139c_c9aca678",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_ac35bf91",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/GDBDebuggerPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "It was not planned.  I have changed over to use the DSF format.",
+      "parentUuid": "87f6139c_a9567ad8",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_c955c6cc",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ILaunchConstants.java",
         "patchSetId": 4
@@ -166,6 +328,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "Set but never read.  Is it used outside of CDT?",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_c67d8c8f",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ILaunchConstants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Removed.  We calculate the command path in a separate function now.",
+      "parentUuid": "87f6139c_c955c6cc",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_267d708d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_e9cb6219",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_89c61e12",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
         "patchSetId": 4
@@ -200,6 +398,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "Update or remove",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0678349a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Updated.",
+      "parentUuid": "87f6139c_89c61e12",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_a604c022",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_092b4e35",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_0976ae49",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
         "patchSetId": 4
@@ -234,6 +468,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "Maybe log using Activator",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_46fd1c79",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_0976ae49",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_c608ec35",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/LaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Fair enough.  Didn\u0027t think anyone would want to do that, but you are right it is an option so I have removed the check.",
+      "parentUuid": "87f6139c_a94cba1d",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_09a50eff",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/RemoteDebuggerPage.java",
         "patchSetId": 4
@@ -268,6 +538,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "Update please",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_06131464",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/RemoteDebuggerPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_09a50eff",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_861ee466",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/RemoteDebuggerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_29a8cad7",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_a99e7ae9",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ui/preferences/DockerLaunchPreferencePage.java",
         "patchSetId": 4
@@ -308,6 +614,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_46cfdc58",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ui/preferences/DockerLaunchPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "No, these are CDT-specific (i.e. language specific).  All other Docker preferences are language-neutral.  Fortran may have their own settings as will Java.  We could put them under Docker-\u003eC, but I think this is more intuitive for CDT users.",
+      "parentUuid": "87f6139c_a99e7ae9",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_69b5b263",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ui/preferences/DockerLaunchPreferencePage.java",
         "patchSetId": 4
@@ -319,6 +643,24 @@
       "writtenOn": "2015-05-04T17:32:39Z",
       "side": 1,
       "message": "I\u0027m not sure what this preference does?\n\nAlso, maybe a browse button would be more user friendly",
+      "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_062af47d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ui/preferences/DockerLaunchPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:35:52Z",
+      "side": 1,
+      "message": "The default image is used for a launch shortcut.  You can\u0027t anticipate which image to run in when the user clicks run or debug.  If a default is specified, it is used, otherwise, the first image in the list for the connection is used.  You might for example set up an image with gdbserver (required for debugging) and make it the default from then on.  Currently, if the image is not found, an error is issued.  In the future, we will offer a chance to pull the image down from the registry.",
+      "parentUuid": "87f6139c_69b5b263",
       "revId": "9309d5e351686b4c6c26d468a1aa984823725d90",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

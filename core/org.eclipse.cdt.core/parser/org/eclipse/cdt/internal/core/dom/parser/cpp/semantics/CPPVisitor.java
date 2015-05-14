@@ -1362,10 +1362,8 @@ public class CPPVisitor extends ASTQueries {
 	public static IASTNode getContainingBlockItem(IASTNode node) {
 	    if (node == null) return null;
 	    if (node.getPropertyInParent() == null) return null;
-		IASTNode parent = node.getParent();
-		if (parent == null)
-		    return null;
-		while (parent != null) {
+
+		for (IASTNode parent = node.getParent(); parent != null; parent = parent.getParent()) {
 			if (parent instanceof IASTDeclaration) {
 				IASTNode p = parent.getParent();
 				if (p instanceof IASTDeclarationStatement)
@@ -1387,7 +1385,6 @@ public class CPPVisitor extends ASTQueries {
 			    return parent;
 			}
 			node = parent;
-			parent = node.getParent();
 		}
 		return null;
 	}

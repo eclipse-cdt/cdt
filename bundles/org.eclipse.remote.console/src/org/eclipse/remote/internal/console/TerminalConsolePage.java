@@ -148,7 +148,7 @@ public class TerminalConsolePage extends Page {
 
 	public void disconnectTerminal() {
 		if (tViewCtrl.getState() != TerminalState.CLOSED) {
-			tViewCtrl.getTerminalConnector().disconnect();
+			tViewCtrl.disconnectTerminal();
 		}
 	}
 

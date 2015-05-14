@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_8c38c388",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/build.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_318316a8",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_515182af",
         "filename": "launch/org.eclipse.cdt.docker.launcher-feature/feature.properties",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2015-05-04T14:32:48Z",
       "side": 1,
       "message": "Maybe change if you move it to Linux Tools",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_cc292b3d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Not being moved.",
+      "parentUuid": "87f6139c_515182af",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_2c29cf3a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_714c7e1d",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_d15c52c8",
         "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/build.properties",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2015-05-04T14:32:48Z",
       "side": 1,
       "message": "Copyright header",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0c24d35f",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/build.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_d15c52c8",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_6c6637a2",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_1157faa0",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_71b75e73",
         "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/feature.properties",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2015-05-04T14:32:48Z",
       "side": 1,
       "message": "Should be:\n\ncopyright\u003d\\\nCopyright (c) 2015 Red Had, Inc.\\n\\\nAll rights reserved. This program and the accompanying materials\\n\\\nare made available under the terms of the Eclipse Public License v1.0\\n\\\nwhich accompanies this distribution, and is available at\\n\\\nhttp://www.eclipse.org/legal/epl-v10.html",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_4c69bb6e",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/feature.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_71b75e73",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -138,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_2c842fad",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "All packages made internal and exported.",
+      "parentUuid": "87f6139c_71091ebc",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_31279640",
         "filename": "launch/org.eclipse.cdt.docker.launcher/build.properties",
         "patchSetId": 3
@@ -149,6 +275,24 @@
       "writtenOn": "2015-05-04T14:32:48Z",
       "side": 1,
       "message": "Copyright",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0c7fb31d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/build.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_31279640",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -172,6 +316,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_6c4d9718",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_f1ceaed8",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_d1cbb2c6",
         "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.properties",
         "patchSetId": 3
@@ -183,6 +345,24 @@
       "writtenOn": "2015-05-04T14:32:48Z",
       "side": 1,
       "message": "We have to pick one vendor between CDT and Linux Tools :)",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_4c509bac",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Fixed.",
+      "parentUuid": "87f6139c_d1cbb2c6",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -206,6 +386,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_ac477ff5",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_0ccc01ad",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_2ccf3da5",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
         "patchSetId": 3
@@ -223,6 +421,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_ec606779",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "This was simpler and achieves the same effect.  Unless you strongly believe in this change, I would prefer to leave it.",
+      "parentUuid": "87f6139c_2ccf3da5",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_6cd82567",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
         "patchSetId": 3
@@ -234,6 +450,24 @@
       "writtenOn": "2015-05-04T14:32:48Z",
       "side": 1,
       "message": "This one should be before the debugger tab above if you want to keep the same order as the other launch config types",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_8c4a83fc",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_6cd82567",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -268,6 +502,24 @@
       "writtenOn": "2015-05-01T16:44:52Z",
       "side": 1,
       "message": "Yes.  This is a preview.  Can\u0027t get this to build until we have an external repo which is waiting upon the final CQs being approved.",
+      "parentUuid": "87f6139c_11dd3a00",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_2c5b8fce",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-14T18:36:03Z",
+      "side": 1,
+      "message": "Done",
       "parentUuid": "87f6139c_11dd3a00",
       "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",

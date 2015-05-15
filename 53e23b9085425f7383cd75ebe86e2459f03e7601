@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_fd63efb9",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/.project",
+        "patchSetId": 8
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-15T18:30:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_92bbba2b",
+      "revId": "53e23b9085425f7383cd75ebe86e2459f03e7601",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_32cc86ce",
         "filename": "launch/org.eclipse.cdt.docker.launcher-feature/.project",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2015-05-15T17:29:14Z",
       "side": 1,
       "message": "I think the only nature should be:\n\u003cnature\u003eorg.eclipse.pde.FeatureNature\u003c/nature\u003e",
+      "revId": "53e23b9085425f7383cd75ebe86e2459f03e7601",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_dd5ef3f5",
+        "filename": "launch/org.eclipse.cdt.docker.launcher-feature/.project",
+        "patchSetId": 8
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-15T18:30:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_32cc86ce",
       "revId": "53e23b9085425f7383cd75ebe86e2459f03e7601",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_1d699b99",
+        "filename": "launch/org.eclipse.cdt.docker.launcher.source-feature/.project",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-15T18:30:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_b28fd686",
+      "revId": "53e23b9085425f7383cd75ebe86e2459f03e7601",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_fd692fed",
         "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2015-05-15T17:29:14Z",
       "side": 1,
       "message": "Since we are not using these but dealing with the tabs in code instead, can we remove these comments?",
+      "revId": "53e23b9085425f7383cd75ebe86e2459f03e7601",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_7d57ffd6",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/plugin.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-05-15T18:30:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_fd692fed",
       "revId": "53e23b9085425f7383cd75ebe86e2459f03e7601",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -439,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_f2731e08",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-15T15:28:52Z",
+      "side": 1,
+      "message": "ok with me",
+      "parentUuid": "87f6139c_ec606779",
+      "revId": "1fb0e63fe95f8c4b1786122df3bdc5e15cc38df4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_6cd82567",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerLaunchConfigurationTabGroup.java",
         "patchSetId": 3

@@ -1331,6 +1331,9 @@ public class SemanticHighlightings {
 		@Override
 		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
+			if (node == null) {
+				return false;
+			}
 			if (node.getTranslationUnit().isBasedOnIncompleteIndex()) {
 				// Do not highlight problems if the AST is unreliable.
 				return false;

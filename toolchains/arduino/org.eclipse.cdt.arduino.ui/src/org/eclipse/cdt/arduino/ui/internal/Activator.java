@@ -27,7 +27,8 @@ public class Activator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.arduino.ui"; //$NON-NLS-1$
 
-	public static final String IMG_ARDUINO = "arduino"; //$NON-NLS-1$
+	public static final String IMG_ARDUINO = PLUGIN_ID + ".arduino"; //$NON-NLS-1$
+	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
 	
 	// The shared instance
 	private static Activator plugin;
@@ -38,6 +39,7 @@ public class Activator extends AbstractUIPlugin {
 
 		ImageRegistry imageRegistry = getImageRegistry();
 		imageRegistry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
+		imageRegistry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -60,10 +62,6 @@ public class Activator extends AbstractUIPlugin {
 
 	public static String getId() {
 		return plugin.getBundle().getSymbolicName();
-	}
-
-	public Image getImage(String id) {
-		return getImageRegistry().get(id);
 	}
 
 	public static void log(Exception e) {

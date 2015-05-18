@@ -38,32 +38,23 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.launchbar.core.launch.RemoteLaunchConfigurationDelegate;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.launch.IRemoteLaunchConfigService;
 
-public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
+public class ArduinoLaunchConfigurationDelegate extends RemoteLaunchConfigurationDelegate {
 
-	public static ILaunchConfigurationType getLaunchConfigurationType() {
-		return DebugPlugin.getDefault().getLaunchManager()
-				.getLaunchConfigurationType("org.eclipse.cdt.arduino.core.launchConfigurationType"); //$NON-NLS-1$
-	}
+	public static final String TYPE_ID = "org.eclipse.cdt.arduino.core.launchConfigurationType"; //$NON-NLS-1$
 
 	@Override
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IRemoteConnection target,
+			IProgressMonitor monitor) throws CoreException {
 		// 1. make sure proper build config is set active
 		IProject project = configuration.getMappedResources()[0].getProject();
 		ICProjectDescription projDesc = CCorePlugin.getDefault().getProjectDescription(project);
-		IRemoteConnection remoteConnection = getActiveRemote(configuration);
-		if (remoteConnection == null) {
-			// TODO default?
-			return false;
-		}
-		ICConfigurationDescription configDesc = getBuildConfiguration(projDesc, remoteConnection);
+		ICConfigurationDescription configDesc = getBuildConfiguration(projDesc, target);
 		boolean newConfig = false;
 		if (configDesc == null) {
-			IArduinoRemoteConnection arduinoRemote = remoteConnection.getService(IArduinoRemoteConnection.class);
+			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
 			configDesc = ArduinoProjectGenerator.createBuildConfiguration(projDesc, arduinoRemote.getBoard());
 			newConfig = true;
 		}
@@ -75,7 +66,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		// 2. Run the build
 		return super.buildForLaunch(configuration, mode, monitor);
 	}
-
+	
 	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		// 1. Extract project from configuration
@@ -84,43 +75,38 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 	}
 
 	@Override
-	public void launch(final ILaunchConfiguration configuration, String mode,
+	public void launch(final ILaunchConfiguration configuration, String mode, final IRemoteConnection target,
 			final ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		new Job(Messages.ArduinoLaunchConfigurationDelegate_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					ArduinoLaunchConsoleService consoleService = getConsoleService();
 
-					IRemoteConnection connection = getActiveRemote(configuration);
-					if (connection == null) {
-						return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoLaunchConfigurationDelegate_1);
-					}
-					
 					// The project
 					IProject project = (IProject) configuration.getMappedResources()[0];
 
 					// The build environment
 					ICProjectDescription projDesc = CCorePlugin.getDefault().getProjectDescription(project);
-					ICConfigurationDescription configDesc = getBuildConfiguration(projDesc, connection);
+					ICConfigurationDescription configDesc = getBuildConfiguration(projDesc, target);
 					IEnvironmentVariable[] envVars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(configDesc, true);
 					List<String> envVarList = new ArrayList<String>(envVars.length + 1);
 					for (IEnvironmentVariable var : envVars) {
 						envVarList.add(var.getName() + '=' + var.getValue());
 					}
 					// Add in the serial port based on launch config
-					IArduinoRemoteConnection arduinoRemote = connection.getService(IArduinoRemoteConnection.class);
+					IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
 					envVarList.add("SERIAL_PORT=" + arduinoRemote.getPortName()); //$NON-NLS-1$
 					String[] envp = envVarList.toArray(new String[envVarList.size()]);
 
 					// The project directory to launch from
 					File projectDir = new File(project.getLocationURI());
-					
+
 					// The build command
 					IConfiguration buildConfig = ManagedBuildManager.getConfigurationForDescription(configDesc);
 					String command = buildConfig.getBuilder().getCommand();
 
 					// If opened, temporarily close the connection so we can use it to download the firmware.
-					boolean wasOpened = connection.isOpen();
+					boolean wasOpened = target.isOpen();
 					if (wasOpened) {
 						arduinoRemote.pause();
 					}
@@ -162,9 +148,14 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 	 * @param launchConfig
 	 * @return
 	 */
-	private ICConfigurationDescription getBuildConfiguration(ICProjectDescription projDesc, IRemoteConnection remoteConnection) throws CoreException {
-		IArduinoRemoteConnection arduinoRemote = remoteConnection.getService(IArduinoRemoteConnection.class);
-		String boardId = arduinoRemote.getBoard().getId();
+	private ICConfigurationDescription getBuildConfiguration(ICProjectDescription projDesc, IRemoteConnection target) throws CoreException {
+		String boardId;
+		if (target != null) {
+			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
+			boardId = arduinoRemote.getBoard().getId();
+		} else {
+			boardId = "uno"; //$NON-NLS-1$
+		}
 
 		for (ICConfigurationDescription configDesc : projDesc.getConfigurations()) {
 			IConfiguration config = ManagedBuildManager.getConfigurationForDescription(configDesc);
@@ -175,8 +166,4 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		return null;
 	}
 
-	private IRemoteConnection getActiveRemote(ILaunchConfiguration configuration) {
-		IRemoteLaunchConfigService remoteLaunchService = Activator.getService(IRemoteLaunchConfigService.class);
-		return remoteLaunchService.getActiveConnection(configuration);
-	}
 }

@@ -25,7 +25,6 @@ import java.util.Map;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature;
 import org.eclipse.cdt.arduino.core.internal.Messages;
-import org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationDelegate;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -55,7 +54,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteServicesManager;
-import org.eclipse.remote.core.launch.IRemoteLaunchConfigService;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -69,16 +67,16 @@ public class ArduinoProjectGenerator {
 
 	private final IProject project;
 	private IFile sourceFile;
-	
+
 	public ArduinoProjectGenerator(IProject project) {
 		this.project = project;
 	}
-	
+
 	public void setupArduinoProject(IProgressMonitor monitor) throws CoreException {
 		// create the CDT-ness of the project
 		IProjectDescription projDesc = project.getDescription();
 		CCorePlugin.getDefault().createCDTProject(projDesc, project, monitor);
-		
+
 		String[] oldIds = projDesc.getNatureIds();
 		String[] newIds = new String[oldIds.length + 3];
 		System.arraycopy(oldIds, 0, newIds, 0, oldIds.length);
@@ -94,28 +92,21 @@ public class ArduinoProjectGenerator {
 		info.setManagedProject(mProj);
 
 		Board board = null;
-		
+
 		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
-		IRemoteLaunchConfigService remoteLaunchService = Activator.getService(IRemoteLaunchConfigService.class);
-		IRemoteConnection remoteConnection = remoteLaunchService.getLastActiveConnection(ArduinoLaunchConfigurationDelegate.getLaunchConfigurationType());
-		if (remoteConnection != null) {
-			IArduinoRemoteConnection arduinoRemote = remoteConnection.getService(IArduinoRemoteConnection.class);
-			board = arduinoRemote.getBoard();
-		} else {
-			IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
-			Collection<IRemoteConnection> connections = connectionType.getConnections();
-			if (!connections.isEmpty()) {
-				IRemoteConnection firstConnection = connections.iterator().next();
-				IArduinoRemoteConnection firstArduino = firstConnection.getService(IArduinoRemoteConnection.class);
-				board = firstArduino.getBoard();
-			}
+		IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
+		Collection<IRemoteConnection> connections = connectionType.getConnections();
+		if (!connections.isEmpty()) {
+			IRemoteConnection firstConnection = connections.iterator().next();
+			IArduinoRemoteConnection firstArduino = firstConnection.getService(IArduinoRemoteConnection.class);
+			board = firstArduino.getBoard();
 		}
-		
+
 		if (board == null) {
 			IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
 			board = boardManager.getBoard("uno"); // the default //$NON-NLS-1$
 		}
-		
+
 		createBuildConfiguration(cprojDesc, board);
 
 		CCorePlugin.getDefault().setProjectDescription(project, cprojDesc, true, monitor);
@@ -128,9 +119,9 @@ public class ArduinoProjectGenerator {
 
 			final Map<String, Object> fmModel = new HashMap<>();
 			fmModel.put("projectName", project.getName()); //$NON-NLS-1$
-			
+
 			generateFile(fmModel, fmConfig.getTemplate("Makefile"), project.getFile("Makefile")); //$NON-NLS-1$ //$NON-NLS-2$
-			
+
 			sourceFile = project.getFile(project.getName() + ".cpp"); //$NON-NLS-1$
 			generateFile(fmModel, fmConfig.getTemplate("arduino.cpp"), sourceFile);  //$NON-NLS-1$
 		} catch (IOException e) {
@@ -140,7 +131,7 @@ public class ArduinoProjectGenerator {
 		} catch (TemplateException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e));
 		}
-		
+
 		// Do the initial build
 		project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 	}
@@ -172,7 +163,7 @@ public class ArduinoProjectGenerator {
 		if (!status.isOK())
 			throw new CoreException(status);
 	}
-	
+
 	public static ICConfigurationDescription createBuildConfiguration(ICProjectDescription projDesc, Board board) throws CoreException {
 		ManagedProject managedProject = new ManagedProject(projDesc);
 		String configId = ManagedBuildManager.calculateChildId(AVR_TOOLCHAIN_ID, null);
@@ -191,7 +182,7 @@ public class ArduinoProjectGenerator {
 			IToolChain toolChain = configuration.getToolChain();
 			IOption boardOption = toolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
 			String boardId = boardOption.getStringValue();
-			
+
 			IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
 			Board board = boardManager.getBoard(boardId);
 			if (board == null) {
@@ -201,11 +192,11 @@ public class ArduinoProjectGenerator {
 		} catch (BuildException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e));
 		}
-		
+
 	}
 
 	public IFile getSourceFile() {
 		return sourceFile;
 	}
-	
+
 }

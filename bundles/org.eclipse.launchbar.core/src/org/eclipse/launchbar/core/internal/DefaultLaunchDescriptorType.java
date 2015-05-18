@@ -21,8 +21,7 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 
 	@Override
 	public boolean ownsLaunchObject(Object element) {
-		// This descriptor type doesn't own any launch objects
-		return false;
+		return element instanceof ILaunchConfiguration;
 	}
 
 	@Override

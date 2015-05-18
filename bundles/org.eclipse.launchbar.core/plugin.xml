@@ -4,14 +4,20 @@
    <extension-point id="launchBarContributions" name="Launch Bar Contributions" schema="schema/launchBarContributions.exsd"/>
    <extension
          point="org.eclipse.launchbar.core.launchBarContributions">
-      <targetType
-            connectionTypeId="ca.cdtdoug.wascana.arduino.core.connectionType"
-            id="org.eclipse.launchbar.core.targetType.local">
-      </targetType>
       <objectProvider
             class="org.eclipse.launchbar.core.internal.ProjectLaunchObjectProvider"
             id="org.eclipse.launchbar.core.objectProvider.project">
       </objectProvider>
+      <descriptorType
+            class="org.eclipse.launchbar.core.internal.DefaultLaunchDescriptorType"
+            id="org.eclipse.launchbar.core.descriptorType.default"
+            priority="0">
+      </descriptorType>
+      <configProvider
+            class="org.eclipse.launchbar.core.DefaultLaunchConfigProvider"
+            descriptorType="org.eclipse.launchbar.core.descriptorType.default"
+            priority="0">
+      </configProvider>
    </extension>
 
 </plugin>

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -31,8 +30,6 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -61,7 +58,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 	private final int maxScrollBucket = 6;
 	private int separatorIndex = -1;
 	private boolean historySupported = true;
-	private ICellModifier modifier;
 	private ViewerComparator historyComparator;
 	private boolean finalSelection = false;
 	private FilterControl filterControl;
@@ -169,19 +165,16 @@ public class LaunchBarListViewer extends StructuredViewer {
 		private Color outlineColor = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		private Color highlightColor = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 		private ILabelProvider labelProvider;
-		private ICellModifier modifer;
 
 		@Override
 		public String toString() {
 			return "[" + index + "] " + labelProvider.getText(element); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		public ListItem(Composite parent, int style, Object element, int index, ILabelProvider labelProvider,
-				ICellModifier modifier) {
+		public ListItem(Composite parent, int style, Object element, int index, ILabelProvider labelProvider) {
 			super(parent, style);
 			this.element = element;
 			this.index = index;
 			this.labelProvider = labelProvider;
-			this.modifer = modifier;
 			setData(element);
 			addPaintListener(new PaintListener() {
 				@Override
@@ -199,11 +192,8 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 		protected void lazyInit() {
 			Image image = labelProvider.getImage(element);
-			boolean editable = isEditable(element);
 			int columns = 1;
 			if (image != null)
-				columns++;
-			if (editable)
 				columns++;
 			GridLayout layout = new GridLayout(columns, false);
 			layout.marginWidth = layout.marginHeight = 7;
@@ -235,31 +225,9 @@ public class LaunchBarListViewer extends StructuredViewer {
 			label = createLabel(this, element);
 			label.addMouseListener(listItemMouseListener);
 			label.addMouseTrackListener(listItemMouseTrackListener);
-			if (editable) {
-				editButton = new EditButton(this, SWT.NONE);
-				editButton.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						// Need to run this after the current event storm
-						// Or we get a disposed error.
-						getDisplay().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								if (editButton.isSelected())
-									handleEdit(element);
-							}
-						});
-					}
-				});
-				editButton.setBackground(backgroundColor);
-				editButton.addMouseTrackListener(listItemMouseTrackListener);
-				editButton.addTraverseListener(listItemTraverseListener);
-				editButton.addKeyListener(lisItemKeyListener);
-			} else {
-				// add traverse listnener to control which will have keyboard focus
-				addTraverseListener(listItemTraverseListener);
-				addKeyListener(lisItemKeyListener);
-			}
+			// add traverse listnener to control which will have keyboard focus
+			addTraverseListener(listItemTraverseListener);
+			addKeyListener(lisItemKeyListener);
 
 			setBackground(backgroundColor);
 			layout(true);
@@ -283,19 +251,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 			}
 			if (editButton != null) {
 				editButton.setSelected(selected);
-			}
-		}
-
-		protected boolean isEditable(Object element) {
-			if (modifer != null) {
-				return modifer.canModify(element, null);
-			}
-			return false;
-		}
-
-		protected void handleEdit(Object element) {
-			if (modifer != null) {
-				modifer.modify(element, null, null);
 			}
 		}
 
@@ -470,7 +425,7 @@ public class LaunchBarListViewer extends StructuredViewer {
 	}
 
 	private ListItem createListItem(Object[] elements, int i) {
-		ListItem item = new ListItem(listComposite, SWT.NONE, elements[i], i, (ILabelProvider) getLabelProvider(), modifier);
+		ListItem item = new ListItem(listComposite, SWT.NONE, elements[i], i, (ILabelProvider) getLabelProvider());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		item.setLayoutData(gd);
 		if (i <= maxScrollBucket) { // this is how many visible by default
@@ -599,10 +554,6 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 	protected String getHistoryPreferenceName() {
 		return historyPref;
-	}
-
-	public void setCellModifier(ICellModifier modifier) {
-		this.modifier = modifier;
 	}
 
 	public int getItemCount() {

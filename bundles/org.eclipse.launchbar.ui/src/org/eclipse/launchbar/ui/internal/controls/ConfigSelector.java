@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.DefaultDescriptorLabelProvider;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
@@ -198,12 +197,7 @@ public class ConfigSelector extends CSelector {
 					new Job(Messages.ConfigSelector_3) {
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
-								final LaunchBarManager barManager = uiManager.getManager();
-								final ILaunchDescriptor desc = barManager.getDefaultDescriptorType().getDescriptor(wizard.getWorkingCopy());
-								if (desc != null) {
-									barManager.setLaunchMode(desc, wizard.getLaunchMode());
-								}
-								wizard.getWorkingCopy().doSave();// that would trigger active config change
+								wizard.getWorkingCopy().doSave();
 								return Status.OK_STATUS;
 							} catch (CoreException e) {
 								return e.getStatus();

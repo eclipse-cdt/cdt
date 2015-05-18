@@ -19,11 +19,8 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="descriptorType"/>
-            <element ref="targetType"/>
-            <element ref="configType"/>
             <element ref="configProvider"/>
             <element ref="objectProvider"/>
-            <element ref="defaultConfigTarget"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -86,48 +83,7 @@
       </complexType>
    </element>
 
-   <element name="targetType">
-      <annotation>
-         <documentation>
-            A target is the machine you launch on. Typical examples include the local machine we are running on, or remote embedded or server targets.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="connectionTypeId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="osname" type="string">
-            <annotation>
-               <documentation>
-                  The osname property for the connection, i.e. the operating system name, e.g. win32, linux. If not specified, matches all.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="osarch" type="string">
-            <annotation>
-               <documentation>
-                  The osarch property for the connection, i.e. the CPU architecture such as x86, armv7. If not specified, matches all.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="configType">
+   <element name="configProvider">
       <annotation>
          <documentation>
             Descriptor types and target types map to a launch configuration type. Configurations of that type knows how to launch for the desciptor on targets of that type.
@@ -144,51 +100,11 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="targetType" type="string" use="required">
+         <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.launchbar.core.launchBarContributions/targetType/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="launchConfigurationType" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="isDefault" type="boolean">
-            <annotation>
-               <documentation>
-                  Is this the default target type for this descriptor type.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="configProvider">
-      <annotation>
-         <documentation>
-            The config provider knows how to create launch configurations from descriptors. It tracks which configs it has created so that they don&apos;t show up as descriptors on their own.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="launchConfigurationType" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -199,43 +115,6 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.launchbar.core.ILaunchConfigurationProvider"/>
                </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="defaultConfigTarget">
-      <annotation>
-         <documentation>
-            The default config provider is brought in when no other config providers claim a given launch configuration. This entry associates a target type with the launch configuration so that it can be launched on targets of that type.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="launchConfigurationType" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="targetType" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.launchbar.core.launchBarContributions/targetType/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="isDefault" type="boolean">
-            <annotation>
-               <documentation>
-                  Is this the default target type for this descriptor type.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

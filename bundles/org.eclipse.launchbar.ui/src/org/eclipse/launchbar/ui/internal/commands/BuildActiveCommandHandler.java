@@ -35,7 +35,10 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
+import org.eclipse.launchbar.core.launch.IRemoteLaunchConfigurationDelegate;
 import org.eclipse.launchbar.ui.internal.Activator;
+import org.eclipse.launchbar.ui.internal.Messages;
+import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -52,23 +55,25 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		new UIJob(Display.getDefault(), "Building Active Configuration") {
-			@Override
-			public boolean belongsTo(Object family) {
-				return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
-			}
+		try {
+			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
+			final ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
+			final ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
+			final IRemoteConnection target = launchBarManager.getActiveLaunchTarget();
 
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				try {
-					final LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
-					final ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
+			new UIJob(Display.getDefault(), Messages.BuildActiveCommandHandler_0) {
+				@Override
+				public boolean belongsTo(Object family) {
+					return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
+				}
 
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 					final Collection<IProject> projects = getProjects(config);
 					if (BuildAction.isSaveAllSet()) {
 						saveEditors(projects);
 					}
 
-					new Job("Building Active Configuration") {
+					new Job(Messages.BuildActiveCommandHandler_1) {
 						@Override
 						protected IStatus run(IProgressMonitor monitor) {
 							try {
@@ -77,25 +82,36 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 									return Status.OK_STATUS;
 								}
-	
-								ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
-								String mode = launchMode.getIdentifier();
+
+								String mode = launchMode != null ? launchMode.getIdentifier() : "run"; //$NON-NLS-1$
 								Set<String> modes = new HashSet<>();
 								modes.add(mode);
 								ILaunchDelegate delegate = config.getType().getPreferredDelegate(modes);
 								if (delegate == null)
 									delegate = config.getType().getDelegates(modes)[0];
 								ILaunchConfigurationDelegate configDel = delegate.getDelegate();
-								if (configDel instanceof ILaunchConfigurationDelegate2) {
+								if (configDel instanceof IRemoteLaunchConfigurationDelegate) {
+									IRemoteLaunchConfigurationDelegate configDel2 = (IRemoteLaunchConfigurationDelegate)configDel;
+									boolean ret;
+									ret = configDel2.preLaunchCheck(config, mode, target, monitor);
+									if (!ret) {
+										return Status.CANCEL_STATUS;
+									}
+									if (!configDel2.buildForLaunch(config, mode, target, monitor)) {
+										return Status.OK_STATUS;
+									}
+								} else if (configDel instanceof ILaunchConfigurationDelegate2) {
 									ILaunchConfigurationDelegate2 configDel2 = (ILaunchConfigurationDelegate2)configDel;
 									boolean ret;
 									ret = configDel2.preLaunchCheck(config, mode, monitor);
-									if (!ret)
+									if (!ret) {
 										return Status.CANCEL_STATUS;
-									if (!configDel2.buildForLaunch(config, mode, monitor))
+									}
+									if (!configDel2.buildForLaunch(config, mode, monitor)) {
 										return Status.OK_STATUS;
+									}
 								}
-	
+
 								// Fall through, do a normal build
 								if (projects.isEmpty()) {
 									ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
@@ -111,14 +127,14 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 							}
 						}
 					}.schedule();
-				} catch (CoreException e) {
-					return e.getStatus();
-				}
 
-				return Status.OK_STATUS;
-			};
-		}.schedule();
+					return Status.OK_STATUS;
+				};
+			}.schedule();
 
+		} catch (CoreException e) {
+			return e.getStatus();
+		}
 		return Status.OK_STATUS;
 	}
 

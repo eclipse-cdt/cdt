@@ -14,6 +14,8 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.launchbar.ui.internal.messages"; //$NON-NLS-1$
+	public static String BuildActiveCommandHandler_0;
+	public static String BuildActiveCommandHandler_1;
 	public static String ConfigSelector_0;
 	public static String ConfigSelector_1;
 	public static String ConfigSelector_2;

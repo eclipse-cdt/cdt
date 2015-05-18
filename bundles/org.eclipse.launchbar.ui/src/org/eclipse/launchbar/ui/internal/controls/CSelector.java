@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -188,23 +187,6 @@ public abstract class CSelector extends Composite {
 		}
 
 	};
-	private ICellModifier modifier = new ICellModifier() {
-		@Override
-		public void modify(Object element, String property, Object value) {
-			handleEdit(element);
-		}
-
-		@Override
-		public Object getValue(Object element, String property) {
-			return null;
-		}
-
-		@Override
-		public boolean canModify(Object element, String property) {
-			return isEditable(element);
-		}
-	};
-
 
 	public CSelector(Composite parent, int style) {
 		super(parent, style);
@@ -439,7 +421,6 @@ public abstract class CSelector extends Composite {
 	protected void initializeListViewer(LaunchBarListViewer listViewer) {
 		listViewer.setContentProvider(contentProvider);
 		listViewer.setLabelProvider(labelProvider);
-		listViewer.setCellModifier(modifier);
 		listViewer.setComparator(sorter);
 		listViewer.setHistoryComparator(sorterTop);
 	}

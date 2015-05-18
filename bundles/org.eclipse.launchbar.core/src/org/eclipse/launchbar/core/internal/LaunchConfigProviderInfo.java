@@ -5,17 +5,32 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 
 public class LaunchConfigProviderInfo {
-	private final String launchConfigTypeId;
+	private final String descriptorTypeId;
+	private final int priority;
 	private IConfigurationElement element;
 	private ILaunchConfigurationProvider provider;
 
 	public LaunchConfigProviderInfo(IConfigurationElement element) {
-		this.launchConfigTypeId = element.getAttribute("launchConfigurationType"); //$NON-NLS-1$
+		this.descriptorTypeId = element.getAttribute("descriptorType"); //$NON-NLS-1$
+
+		String priorityStr = element.getAttribute("priority"); //$NON-NLS-1$
+		int priorityNum;
+		try {
+			priorityNum = Integer.parseInt(priorityStr);
+		} catch (NumberFormatException e) {
+			priorityNum = 0;
+		}
+		priority = priorityNum;
+
 		this.element = element;
 	}
 
-	public String getLaunchConfigTypeId() {
-		return launchConfigTypeId;
+	public String getDescriptorTypeId() {
+		return descriptorTypeId;
+	}
+
+	public int getPriority() {
+		return priority;
 	}
 
 	public ILaunchConfigurationProvider getProvider() throws CoreException {

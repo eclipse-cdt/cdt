@@ -21,13 +21,14 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.ui.IRemoteUIConnectionService;
+import org.eclipse.remote.ui.RemoteConnectionsLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -37,7 +38,6 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -79,29 +79,7 @@ public class TargetSelector extends CSelector {
 			}
 		});
 
-		setLabelProvider(new LabelProvider() {
-			@Override
-			public Image getImage(Object element) {
-				if (element instanceof IRemoteConnection) {
-					IRemoteConnection target = (IRemoteConnection) element;
-					if (target.isOpen()) {
-						return Activator.getDefault().getImage("icons/connected.png");
-					} else {
-						return Activator.getDefault().getImage("icons/disconnected.png");
-					}
-				}
-				return super.getImage(element);
-			}
-
-			@Override
-			public String getText(Object element) {
-				if (element instanceof IRemoteConnection) {
-					IRemoteConnection target = (IRemoteConnection) element;
-					return target.getName();
-				}
-				return super.getText(element);
-			}
-		});
+		setLabelProvider(new RemoteConnectionsLabelProvider());
 
 		setSorter(new Comparator<Object>() {
 			@Override
@@ -163,8 +141,7 @@ public class TargetSelector extends CSelector {
 			public void mouseUp(org.eclipse.swt.events.MouseEvent event) {
 				try {
 					ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
-					// TODO the command id should be in a remote ui interface
-					Command newConnectionCmd = commandService.getCommand("org.eclipse.remote.ui.command.newConnection"); //$NON-NLS-1$
+					Command newConnectionCmd = commandService.getCommand(IRemoteUIConnectionService.NEW_CONNECTION_COMMAND);
 					newConnectionCmd.executeWithChecks(new ExecutionEvent());
 				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 					Activator.log(e);

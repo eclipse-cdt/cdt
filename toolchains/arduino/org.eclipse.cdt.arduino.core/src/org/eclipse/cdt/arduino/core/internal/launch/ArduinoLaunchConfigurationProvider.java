@@ -10,15 +10,35 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.launch;
 
+import org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature;
+import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.launchbar.core.ProjectLaunchConfigurationProvider;
+import org.eclipse.launchbar.core.ILaunchDescriptor;
+import org.eclipse.launchbar.core.ProjectPerTypeLaunchConfigProvider;
+import org.eclipse.remote.core.IRemoteConnection;
 
-public class ArduinoLaunchConfigurationProvider extends ProjectLaunchConfigurationProvider {
+public class ArduinoLaunchConfigurationProvider extends ProjectPerTypeLaunchConfigProvider {
 
 	@Override
-	public ILaunchConfigurationType getLaunchConfigurationType() throws CoreException {
-		return ArduinoLaunchConfigurationDelegate.getLaunchConfigurationType();
+	protected String getLaunchConfigurationTypeId() {
+		return ArduinoLaunchConfigurationDelegate.TYPE_ID;
+	}
+
+	@Override
+	protected String getRemoteConnectionTypeId() {
+		return ArduinoRemoteConnection.TYPE_ID;
+	}
+
+	@Override
+	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
+		if (!super.supports(descriptor, target)) {
+			return false;
+		}
+
+		// must have the arduino nature
+		IProject project = descriptor.getAdapter(IProject.class);
+		return ArduinoProjectNature.hasNature(project);
 	}
 
 }

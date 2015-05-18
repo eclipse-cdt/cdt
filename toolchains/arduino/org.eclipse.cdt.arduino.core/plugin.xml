@@ -87,7 +87,6 @@
    <extension
          point="org.eclipse.remote.core.remoteServices">
       <connectionType
-            capabilities="7"
             id="org.eclipse.cdt.arduino.core.connectionType"
             name="Arduino">
       </connectionType>
@@ -116,18 +115,9 @@
       </descriptorType>
       <configProvider
             class="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationProvider"
-            launchConfigurationType="org.eclipse.cdt.arduino.core.launchConfigurationType">
-      </configProvider>
-      <configType
             descriptorType="org.eclipse.cdt.arduino.core.descriptorType"
-            isDefault="true"
-            launchConfigurationType="org.eclipse.cdt.arduino.core.launchConfigurationType"
-            targetType="org.eclipse.cdt.arduino.core.targetType">
-      </configType>
-      <targetType
-            connectionTypeId="org.eclipse.cdt.arduino.core.connectionType"
-            id="org.eclipse.cdt.arduino.core.targetType">
-      </targetType>
+            priority="5">
+      </configProvider>
    </extension>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">

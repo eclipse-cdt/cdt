@@ -19,7 +19,7 @@ public class ArduinoDescriptorLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		return Activator.getDefault().getImage(Activator.IMG_ARDUINO);
+		return Activator.getDefault().getImageRegistry().get(Activator.IMG_ARDUINO);
 	}
 
 	@Override

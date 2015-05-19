@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.11.0",
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.remote.core,
  org.eclipse.remote.core.exception,
+ org.eclipse.remote.core.launch,
  org.eclipse.remote.internal.core;x-friends:="org.eclipse.remote.ui,org.eclipse.remote.jsch.core",
  org.eclipse.remote.internal.core.preferences;x-friends:="org.eclipse.remote.ui"
 Bundle-Localization: plugin

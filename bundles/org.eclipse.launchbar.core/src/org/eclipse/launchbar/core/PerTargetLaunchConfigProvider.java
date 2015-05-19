@@ -7,7 +7,10 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
 
 public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfigProvider {
 
@@ -42,6 +45,26 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
 		workingCopy.setAttribute(ATTR_CONNECTION_TYPE, target.getConnectionType().getId());
 		workingCopy.setAttribute(ATTR_CONNECTION_NAME, target.getName());
+	}
+
+	public static IRemoteConnection getTarget(ILaunchConfiguration configuration) throws CoreException {
+		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
+		String connectionTypeId = configuration.getAttribute(ATTR_CONNECTION_TYPE, ""); //$NON-NLS-1$
+		if (connectionTypeId.isEmpty()) {
+			return null;
+		}
+		
+		IRemoteConnectionType connectionType = remoteManager.getConnectionType(connectionTypeId);
+		if (connectionType == null) {
+			return null;
+		}
+		
+		String connectionName = configuration.getAttribute(ATTR_CONNECTION_NAME, ""); //$NON-NLS-1$
+		if (connectionName.isEmpty()) {
+			return null;
+		}
+
+		return connectionType.getConnection(connectionName);
 	}
 
 	@Override

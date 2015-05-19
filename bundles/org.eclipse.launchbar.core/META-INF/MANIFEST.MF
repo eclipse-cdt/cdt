@@ -12,5 +12,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.launchbar.core,
- org.eclipse.launchbar.core.internal;x-friends:="org.eclipse.launchbar.core.tests,org.eclipse.launchbar.ui",
- org.eclipse.launchbar.core.launch
+ org.eclipse.launchbar.core.internal;x-friends:="org.eclipse.launchbar.core.tests,org.eclipse.launchbar.ui"

@@ -35,10 +35,8 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
-import org.eclipse.launchbar.core.launch.IRemoteLaunchConfigurationDelegate;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
-import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -59,7 +57,6 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 			LaunchBarManager launchBarManager = Activator.getDefault().getLaunchBarUIManager().getManager();
 			final ILaunchConfiguration config = launchBarManager.getActiveLaunchConfiguration();
 			final ILaunchMode launchMode = launchBarManager.getActiveLaunchMode();
-			final IRemoteConnection target = launchBarManager.getActiveLaunchTarget();
 
 			new UIJob(Display.getDefault(), Messages.BuildActiveCommandHandler_0) {
 				@Override
@@ -90,17 +87,7 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 								if (delegate == null)
 									delegate = config.getType().getDelegates(modes)[0];
 								ILaunchConfigurationDelegate configDel = delegate.getDelegate();
-								if (configDel instanceof IRemoteLaunchConfigurationDelegate) {
-									IRemoteLaunchConfigurationDelegate configDel2 = (IRemoteLaunchConfigurationDelegate)configDel;
-									boolean ret;
-									ret = configDel2.preLaunchCheck(config, mode, target, monitor);
-									if (!ret) {
-										return Status.CANCEL_STATUS;
-									}
-									if (!configDel2.buildForLaunch(config, mode, target, monitor)) {
-										return Status.OK_STATUS;
-									}
-								} else if (configDel instanceof ILaunchConfigurationDelegate2) {
+								if (configDel instanceof ILaunchConfigurationDelegate2) {
 									ILaunchConfigurationDelegate2 configDel2 = (ILaunchConfigurationDelegate2)configDel;
 									boolean ret;
 									ret = configDel2.preLaunchCheck(config, mode, monitor);

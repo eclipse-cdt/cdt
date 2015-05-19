@@ -56,7 +56,7 @@ import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.ProjectLaunchDescriptor;
-import org.eclipse.launchbar.core.ProjectPerTypeLaunchConfigProvider;
+import org.eclipse.launchbar.core.ProjectPerTargetLaunchConfigProvider;
 import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
@@ -136,7 +136,6 @@ public class LaunchBarManager2Test {
 		doReturn(config).when(provider).getLaunchConfiguration(descriptor, target);
 		doReturn(true).when(provider).supports(descriptor, target);
 		doReturn(true).when(provider).ownsLaunchConfiguration(config);
-		doReturn(launchObj).when(provider).launchConfigurationAdded(config);
 		return provider;
 	}
 
@@ -313,13 +312,6 @@ public class LaunchBarManager2Test {
 	}
 
 	@Test
-	public void testAddConfigProviderBad() throws CoreException {
-		doThrow(new NullPointerException()).when(provider).launchConfigurationAdded(any(ILaunchConfiguration.class));
-		manager.launchConfigurationAdded(launchConfig);
-		verify(provider).launchConfigurationAdded(any(ILaunchConfiguration.class));
-	}
-
-	@Test
 	public void testAddDescriptorTypeBad() throws CoreException {
 		doThrow(new NullPointerException()).when(descriptorType).ownsLaunchObject(any());
 		manager.launchObjectAdded("aaa");
@@ -403,6 +395,7 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testGetLaunchDescriptors() throws CoreException {
+		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
 		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
@@ -447,6 +440,7 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testLaunchConfigurationAdded() throws CoreException {
+		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
 		ILaunchConfiguration lc2 = mockLC("lc2", launchConfigType);
 		manager.launchConfigurationAdded(lc2);
@@ -564,35 +558,16 @@ public class LaunchBarManager2Test {
 		mockLCAttribute(launchConfig, ORIGINAL_NAME, aaa.getName());
 		mockLCAttribute(launchConfig, PROJECT_CONFIG, true);
 		assertEquals(0, manager.getLaunchDescriptors().length);
-		provider = new ProjectPerTypeLaunchConfigProvider() {
+		provider = new ProjectPerTargetLaunchConfigProvider() {
 			@Override
-			protected String getRemoteConnectionTypeId() {
-				return localTargetTypeId;
+			public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor,
+					IRemoteConnection target) throws CoreException {
+				return launchConfigType;
 			}
 
 			@Override
-			protected String getLaunchConfigurationTypeId() {
-				return launchConfigType.getIdentifier();
-			}
-			
-			@Override
 			public boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
 				return configuration == launchConfig;
-			}
-			
-			@Override
-			protected Object getLaunchObject(ILaunchConfiguration configuration) throws CoreException {
-				if (configuration == launchConfig)
-					return aaa;
-				return null;
-			}
-			
-			@Override
-			protected Object getLaunchObject(ILaunchDescriptor d) {
-				if (descriptor == d) {
-					return aaa;
-				}
-				return null;
 			}
 		};
 		mockProviderElement(descriptorTypeId, 10, provider);
@@ -703,6 +678,7 @@ public class LaunchBarManager2Test {
 		Listener lis = mock(Listener.class);
 		manager.addListener(lis);
 		doThrow(new NullPointerException()).when(lis).activeLaunchDescriptorChanged();
+		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
 		verify(lis).activeLaunchDescriptorChanged();
 	}
@@ -727,6 +703,7 @@ public class LaunchBarManager2Test {
 		ILaunchConfigurationType lctype2 = mockLCType("lctype2");
 		mockLaunchModes(lctype2, "modex");
 		mockLaunchModes(launchConfigType, "run", "debug", "foo");
+		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
 		ILaunchMode[] launchModes = manager.getLaunchModes();
 		assertEquals(3, launchModes.length);
@@ -760,6 +737,7 @@ public class LaunchBarManager2Test {
 		ILaunchConfigurationType lctype2 = mockLCType("lctype2");
 		ILaunchMode mode = mockLaunchModes(lctype2, "modex")[0];
 		mockLaunchModes(launchConfigType, "run", "debug", "foo");
+		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
 		try {
 			manager.setActiveLaunchMode(mode);
@@ -895,7 +873,7 @@ public class LaunchBarManager2Test {
 		ILaunchMode mode = mockLaunchModes(launchConfigType, "foo")[0];
 		manager.launchObjectAdded(launchObject);
 		manager.launchConfigurationAdded(launchConfig);
-		verify(provider).launchConfigurationAdded(launchConfig);
+		verify(provider).ownsLaunchConfiguration(launchConfig);
 		ILaunchDescriptor[] launchDescriptors = manager.getLaunchDescriptors();
 		assertEquals(1, launchDescriptors.length);
 		assertNotNull(launchDescriptors[0]);
@@ -922,9 +900,9 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testLaunchConfigurationAddedBad() throws CoreException {
-		doThrow(new NullPointerException()).when(provider).launchConfigurationAdded(any(ILaunchConfiguration.class));
+		doThrow(new NullPointerException()).when(provider).ownsLaunchConfiguration(any(ILaunchConfiguration.class));
 		manager.launchConfigurationAdded(launchConfig);
-		verify(provider).launchConfigurationAdded(launchConfig);
+		verify(provider).ownsLaunchConfiguration(launchConfig);
 	}
 
 	@Test

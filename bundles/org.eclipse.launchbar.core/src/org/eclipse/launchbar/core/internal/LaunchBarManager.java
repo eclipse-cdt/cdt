@@ -745,14 +745,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		for (LaunchDescriptorTypeInfo descTypeInfo : orderedDescriptorTypes) {
 			for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeInfo.getId())) {
 				try {
-					Object launchObject = providerInfo.getProvider().launchConfigurationAdded(configuration);
-					if (launchObject != null) {
-						ILaunchDescriptor descriptor = objectDescriptorMap.get(launchObject);
-						if (descriptor != null) {
-							setActiveLaunchDescriptor(descriptor);
-						} else {
-							launchObjectAdded(configuration);
-						}
+					if (providerInfo.getProvider().ownsLaunchConfiguration(configuration)) {
 						return;
 					}
 				} catch (Throwable e) {
@@ -760,6 +753,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 				}
 			}
 		}
+		// No one clamed it, add it as a launch object
+		launchObjectAdded(configuration);
 	}
 
 	@Override

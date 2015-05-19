@@ -67,17 +67,6 @@ public interface ILaunchConfigurationProvider {
 	 * @throws CoreException
 	 */
 	boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException;
-	
-	/**
-	 * A launch configuration has been added.
-	 * Return the launch object associated with this configuration and the launch bar manager
-	 * will ensure the descriptor is created for it.
-	 * 
-	 * @param configuration
-	 * @return whether this provider owns this launch configuration
-	 * @throws CoreException
-	 */
-	Object launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException;
 
 	/**
 	 * A launch configuration has been removed. 

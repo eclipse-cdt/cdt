@@ -32,17 +32,13 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 
 	@Override
 	public boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
-		// If I get here, I own it
-		return true;
-	}
-
-	@Override
-	public Object launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
-		return configuration;
+		// return false so that the config is added as a launch object
+		return false;
 	}
 
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
+		// catch any left over configs
 		return true;
 	}
 

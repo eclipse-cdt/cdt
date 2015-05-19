@@ -14,25 +14,28 @@ import org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
-import org.eclipse.launchbar.core.ProjectPerTypeLaunchConfigProvider;
+import org.eclipse.launchbar.core.ProjectPerTargetLaunchConfigProvider;
 import org.eclipse.remote.core.IRemoteConnection;
 
-public class ArduinoLaunchConfigurationProvider extends ProjectPerTypeLaunchConfigProvider {
+public class ArduinoLaunchConfigurationProvider extends ProjectPerTargetLaunchConfigProvider {
 
 	@Override
-	protected String getLaunchConfigurationTypeId() {
-		return ArduinoLaunchConfigurationDelegate.TYPE_ID;
-	}
-
-	@Override
-	protected String getRemoteConnectionTypeId() {
-		return ArduinoRemoteConnection.TYPE_ID;
+	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
+			throws CoreException {
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(
+				ArduinoLaunchConfigurationDelegate.TYPE_ID);
 	}
 
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 		if (!super.supports(descriptor, target)) {
+			return false;
+		}
+
+		if (!target.getConnectionType().getId().equals(ArduinoRemoteConnection.TYPE_ID)) {
 			return false;
 		}
 

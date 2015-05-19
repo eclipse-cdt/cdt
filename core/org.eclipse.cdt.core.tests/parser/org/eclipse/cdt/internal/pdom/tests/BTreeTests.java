@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Symbian - Initial implementation
- * Markus Schorn (Wind River Systems)
+ *     Symbian - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -19,8 +19,6 @@ import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
@@ -29,11 +27,12 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
+import junit.framework.Test;
+
 /**
- * Test insertion/deletion of records of a mock record type in a B-tree
+ * Test insertion/deletion of records of a mock record type in a B-tree.
  *
  * @author aferguso
- *
  */
 public class BTreeTests extends BaseTestCase {
 	private static int DEBUG= 0;
@@ -42,7 +41,6 @@ public class BTreeTests extends BaseTestCase {
 	protected BTree btree;
 	protected int rootRecord;
 	protected IBTreeComparator comparator;
-
 
 	public static Test suite() {
 		return suite(BTreeTests.class);
@@ -78,10 +76,10 @@ public class BTreeTests extends BaseTestCase {
 	protected void sortedMirrorTest(int noTrials) throws Exception {
 		Random seeder = new Random(90210);
 
-		for(int i=0; i<noTrials; i++) {
+		for (int i = 0; i < noTrials; i++) {
 			int seed = seeder.nextInt();
 			if (DEBUG > 0)
-				System.out.println("Iteration #"+i);
+				System.out.println("Iteration #" + i);
 			trial(seed, false);
 		}
 	}
@@ -94,11 +92,11 @@ public class BTreeTests extends BaseTestCase {
 	public void testInsertion() throws Exception {
 		Random seeder = new Random();
 
-		for(int i=0; i<6; i++) {
+		for (int i = 0; i < 6; i++) {
 			int seed = seeder.nextInt();
 			if (DEBUG > 0)
-				System.out.println("Iteration #"+i);
-			trialImp(seed, false, new Random(seed*2), 1);
+				System.out.println("Iteration #" + i);
+			trialImp(seed, false, new Random(seed * 2), 1);
 		}
 	}
 
@@ -106,7 +104,6 @@ public class BTreeTests extends BaseTestCase {
 	 * Bug 402177: BTree.insert should return the matching record if the new record was not inserted.
 	 */
 	public void testEquivalentRecordInsert_Bug402177() throws Exception {
-
 		init(8);
 		try {
 			BTMockRecord value1 = new BTMockRecord(db, 42);
@@ -136,7 +133,8 @@ public class BTreeTests extends BaseTestCase {
 		trialImp(seed, checkCorrectnessEachIteration, random, pInsert);
 	}
 
-	private void trialImp(int seed, final boolean checkCorrectnessEachIteration, Random random, double pInsert) throws Exception {
+	private void trialImp(int seed, final boolean checkCorrectnessEachIteration, Random random,
+			double pInsert) throws Exception {
 		final int degree = 2 + random.nextInt(11);
 		final int nIterations = random.nextInt(100000);
 		final SortedSet expected = new TreeSet();
@@ -145,35 +143,35 @@ public class BTreeTests extends BaseTestCase {
 		init(degree);
 
 		if (DEBUG > 0)
-			System.out.print("\t "+seed+" "+(nIterations/1000)+"K: ");
-		for(int i=0; i<nIterations; i++) {
-			if(random.nextDouble()<pInsert) {
+			System.out.print("\t " + seed + " " + (nIterations/1000) + "K: ");
+		for (int i = 0; i < nIterations; i++) {
+			if (random.nextDouble() < pInsert) {
 				Integer value = new Integer(random.nextInt(Integer.MAX_VALUE));
 				boolean newEntry = expected.add(value);
-				if(newEntry) {
+				if (newEntry) {
 					BTMockRecord btValue = new BTMockRecord(db, value.intValue());
 					history.add(btValue);
-					if(DEBUG > 1)
-						System.out.println("Add: "+value+" @ "+btValue.record);
+					if (DEBUG > 1)
+						System.out.println("Add: " + value + " @ " + btValue.record);
 					btree.insert(btValue.getRecord());
 				}
 			} else {
-				if(!history.isEmpty()) {
+				if (!history.isEmpty()) {
 					int index = random.nextInt(history.size());
 					BTMockRecord btValue = (BTMockRecord) history.get(index);
 					history.remove(index);
 					expected.remove(new Integer(btValue.intValue()));
-					if(DEBUG > 1)
-						System.out.println("Remove: "+btValue.intValue()+" @ "+btValue.record);
+					if (DEBUG > 1)
+						System.out.println("Remove: " + btValue.intValue() + " @ " + btValue.record);
 					btree.delete(btValue.getRecord());
 				}
 			}
-			if(i % 1000 == 0 && DEBUG > 0) {
+			if (i % 1000 == 0 && DEBUG > 0) {
 				System.out.print(".");
 			}
-			if(checkCorrectnessEachIteration) {
-				assertBTreeMatchesSortedSet("[iteration "+i+"] ", btree, expected);
-				assertBTreeInvariantsHold("[iteration "+i+"] ");
+			if (checkCorrectnessEachIteration) {
+				assertBTreeMatchesSortedSet("[iteration " + i + "] ", btree, expected);
+				assertBTreeInvariantsHold("[iteration " + i + "] ");
 			}
 		}
 		if (DEBUG > 0)
@@ -187,26 +185,27 @@ public class BTreeTests extends BaseTestCase {
 
 	public void assertBTreeInvariantsHold(String msg) throws CoreException {
 		String errorReport = btree.getInvariantsErrorReport();
-		if(!errorReport.equals("")) {
-			fail("Invariants do not hold: "+errorReport);
+		if (!errorReport.equals("")) {
+			fail("Invariants do not hold: " + errorReport);
 		}
 	}
 
 	public void assertBTreeMatchesSortedSet(final String msg, BTree actual, SortedSet expected) throws CoreException {
 		final Iterator i = expected.iterator();
-		btree.accept(new IBTreeVisitor(){
+		btree.accept(new IBTreeVisitor() {
 			int k;
 			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+
 			@Override
 			public boolean visit(long record) throws CoreException {
-				if(record!=0) {
+				if (record != 0) {
 					BTMockRecord btValue = new BTMockRecord(record, db);
-					if(i.hasNext()) {
+					if (i.hasNext()) {
 						Integer exp = ((Integer)i.next());
-						assertEquals(msg+" Differ at index: "+k, btValue.intValue(), exp.intValue());
+						assertEquals(msg + " Differ at index: " + k, btValue.intValue(), exp.intValue());
 						k++;
 					} else {
 						fail("Sizes different");

@@ -246,6 +246,9 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 					wc.setAttribute(
 							IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
 							true);
+					wc.setAttribute(
+							ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+							IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 					wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST,
 							job.getIpAddress());
 					wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT,

@@ -38,16 +38,18 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.launchbar.core.launch.RemoteLaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.launchbar.core.PerTargetLaunchConfigProvider;
 import org.eclipse.remote.core.IRemoteConnection;
 
-public class ArduinoLaunchConfigurationDelegate extends RemoteLaunchConfigurationDelegate {
+public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.arduino.core.launchConfigurationType"; //$NON-NLS-1$
 
 	@Override
-	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IRemoteConnection target,
-			IProgressMonitor monitor) throws CoreException {
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		IRemoteConnection target = PerTargetLaunchConfigProvider.getTarget(configuration);
+		
 		// 1. make sure proper build config is set active
 		IProject project = configuration.getMappedResources()[0].getProject();
 		ICProjectDescription projDesc = CCorePlugin.getDefault().getProjectDescription(project);
@@ -75,12 +77,15 @@ public class ArduinoLaunchConfigurationDelegate extends RemoteLaunchConfiguratio
 	}
 
 	@Override
-	public void launch(final ILaunchConfiguration configuration, String mode, final IRemoteConnection target,
-			final ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	public void launch(final ILaunchConfiguration configuration, String mode, final ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		new Job(Messages.ArduinoLaunchConfigurationDelegate_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					ArduinoLaunchConsoleService consoleService = getConsoleService();
+					IRemoteConnection target = PerTargetLaunchConfigProvider.getTarget(configuration);
+					if (target == null) {
+						return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoLaunchConfigurationDelegate_2);
+					}
 
 					// The project
 					IProject project = (IProject) configuration.getMappedResources()[0];

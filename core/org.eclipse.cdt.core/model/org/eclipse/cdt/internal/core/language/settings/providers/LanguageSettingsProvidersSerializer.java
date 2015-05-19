@@ -230,7 +230,7 @@ public class LanguageSettingsProvidersSerializer {
 			// keep in mind that rawProvider can change externally
 			ILanguageSettingsProvider rawProvider = getRawProvider();
 			if (rawProvider instanceof ICListenerAgent) {
-				((ICListenerAgent) rawProvider).registerListener(null);
+				((ICListenerAgent) rawProvider).registerListener(cfgDescription);
 			}
 		}
 

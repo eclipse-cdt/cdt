@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_5bd9611e",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/language/settings/providers/LanguageSettingsProvidersSerializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2015-05-19T20:15:31Z",
+      "side": 1,
+      "message": "This fix is just wrong. A workspace (global) provider by definition is not using any project\u0027s configuration. A single workspace provider is designed to supply settings for all projects/configurations that set up to use global provider. If you need to discover settings that are specific for a project (or rather for its configuration) set up the provider in configuration not to be global.",
+      "range": {
+        "startLine": 233,
+        "startChar": 36,
+        "endLine": 233,
+        "endChar": 52
+      },
+      "revId": "dd29dac4e9aaca8936b3ca626bfc1b759274c0af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

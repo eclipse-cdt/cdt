@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_b8632bbb",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerLaunchConfigurationDelegate.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-19T17:45:42Z",
+      "side": 1,
+      "message": "This is not needed.  It is automatically set by RemoteDebuggerTab (CDebuggerTab) in setDefaults() because the constructor was called with SessionType.REMOTE.",
+      "revId": "12c3d0ad84426dccb744826d8d63b94812726e35",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

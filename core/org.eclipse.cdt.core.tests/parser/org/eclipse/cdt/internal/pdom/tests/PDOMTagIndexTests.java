@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.io.File;
 import java.util.Arrays;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -26,8 +24,11 @@ import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTag;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTagIndex;
 
+import junit.framework.Test;
+
 // copy/pasted from BTreeTests
 public class PDOMTagIndexTests extends BaseTestCase {
+	private File pdomFile;
 	private PDOM pdom;
 
 	public static Test suite() {
@@ -51,12 +52,9 @@ public class PDOMTagIndexTests extends BaseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		// Create a dummy instance of the PDOM for the various tests to operate
-		// upon. Also acquire the PDOM's write lock to simulate the condition
-		// under which the tag index is normally accessed.
-		File tmpFile = File.createTempFile(getClass().getSimpleName() + '.'
+		pdomFile = File.createTempFile(getClass().getSimpleName() + '.'
 				+ Double.toString(Math.random()).substring(2), null);
-		pdom = new WritablePDOM(tmpFile, new MockIndexLocationConverter(),
+		pdom = new WritablePDOM(pdomFile, new MockIndexLocationConverter(),
 				LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		pdom.acquireWriteLock(null);
 	}
@@ -64,6 +62,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		pdom.close();
+		pdomFile.delete();
 		super.tearDown();
 	}
 

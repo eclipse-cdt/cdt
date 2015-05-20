@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -374,13 +376,17 @@ public class LaunchBarListViewer extends StructuredViewer {
 
 			@Override
 			public void mouseDown(MouseEvent e) {
-				sash.moveAbove(null); // keep on top so user see it when moving
+				if (!Platform.getOS().equals(Platform.OS_MACOSX)) { // does not work on mac
+					sash.moveAbove(null); // keep on top so user see it when moving
+				}
 			}
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				// ignore
 			}
+			
+		
 		});
 		sash.setToolTipText(Messages.LaunchBarListViewer_0);
 	}

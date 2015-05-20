@@ -102,6 +102,7 @@ public class AutotoolsCategoryPropertyOptionPage extends
 			case IConfigureOption.STRING:
 			case IConfigureOption.INTERNAL:
 			case IConfigureOption.MULTIARG:
+			case IConfigureOption.VARIABLE:
 				StringFieldEditor f = new StringFieldEditor(option.getName(), option.getDescription(), area);
 				f.getLabelControl(area).setToolTipText(option.getToolTip());
 				addField(f);

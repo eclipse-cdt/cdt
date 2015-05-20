@@ -24,6 +24,10 @@ public interface IConfigureOption {
 	public final static int TOOL = IAutotoolsOption.TOOL;
 	public final static int FLAG = IAutotoolsOption.FLAG;
 	public final static int FLAGVALUE = IAutotoolsOption.FLAGVALUE;
+	/**
+	 * @since 1.5
+	 */
+	public final static int VARIABLE = IAutotoolsOption.VARIABLE;
 	public String getName();
 	public String getParameter();
 	public ArrayList<String> getParameters();

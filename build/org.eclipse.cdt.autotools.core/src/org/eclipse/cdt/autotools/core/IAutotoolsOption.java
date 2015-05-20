@@ -15,6 +15,10 @@ public interface IAutotoolsOption {
 	public final static int TOOL = 5;
 	public final static int FLAG = 6;
 	public final static int FLAGVALUE = 7;
+	/**
+	 * @since 1.5
+	 */
+	public final static int VARIABLE = 8;
 	public int getType();
 	public boolean canUpdate();
 	public void setValue(String value) throws CoreException;

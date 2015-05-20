@@ -69,7 +69,7 @@ LIB_SRCS = $(call rwildcard, $(LIB_ROOT)/, *.c *.cpp)
 LIB_OBJS = $(patsubst $(LIB_ROOT)/%.c, $(OUTPUT_DIR)/arduino/%.o, $(filter %.c, $(LIB_SRCS))) \
            $(patsubst $(LIB_ROOT)/%.cpp, $(OUTPUT_DIR)/arduino/%.o, $(filter %.cpp, $(LIB_SRCS)))
 
-LIBS_ROOTS = $(HOME)/Documents/Arduino/libraries $(ARDUINO_HOME)/hardware/arduino/$(ARCH)/libraries $(ARDUINO_HOME)/libraries
+LIBS_ROOTS = $(ARDUINO_LIBS) $(ARDUINO_HOME)/hardware/arduino/$(ARCH)/libraries $(ARDUINO_HOME)/libraries
 
 LIBS_DIRS = $(foreach lib, $(LIBS), $(firstword $(realpath $(foreach lib_root, $(LIBS_ROOTS), $(lib_root)/$(lib)))))
 

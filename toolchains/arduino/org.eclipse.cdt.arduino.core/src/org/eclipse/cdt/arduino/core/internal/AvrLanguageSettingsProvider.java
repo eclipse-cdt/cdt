@@ -50,7 +50,7 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 	protected List<String> parseOptions(String line) {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			if (line.startsWith(" /arduino/")) { //$NON-NLS-1$
-				File full = new File(ArduinoHome.get().getParentFile(), line.trim());
+				File full = new File(ArduinoHome.getArduinoDir().getParentFile(), line.trim());
 				return parseOptions(" " + full.getAbsolutePath()); //$NON-NLS-1$
 			}
 		}

@@ -67,6 +67,9 @@ public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService
 	@Override
 	public Board getBoard() {
 		String boardId = remoteConnection.getAttribute(BOARD_ID);
+		if (boardId == null) {
+			boardId = "uno"; //$NON-NLS-1$
+		}
 		return boardManager.getBoard(boardId);
 	}
 

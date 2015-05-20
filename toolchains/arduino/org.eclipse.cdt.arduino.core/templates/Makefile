@@ -1,3 +1,3 @@
 EXE = ${projectName}
 
-include $(ARDUINO_HOME)/arduino.mk
+include $(ARDUINO_ROOT)/arduino.mk

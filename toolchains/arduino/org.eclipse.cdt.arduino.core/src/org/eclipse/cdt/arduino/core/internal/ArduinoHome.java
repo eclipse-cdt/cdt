@@ -19,7 +19,7 @@ public class ArduinoHome {
 
 	private static File home;
 	
-	public static File get() {
+	public static File getRootfileDir() {
 		if (home == null) {
 			String arduinoPathStr = System.getProperty("org.eclipse.cdt.arduino.home"); //$NON-NLS-1$
 			if (arduinoPathStr != null) {
@@ -35,6 +35,15 @@ public class ArduinoHome {
 			}
 		}
 		return home;
+	}
+
+	public static File getArduinoDir() {
+		return new File("/Applications/Arduino.app/Contents/Java"); //$NON-NLS-1$
+	}
+	
+	public static File getArduinoLibsDir() {
+		File home = new File(System.getProperty("user.home")); //$NON-NLS-1$
+		return new File(home, "/Documents/Arduino/libraries"); //$NON-NLS-1$
 	}
 
 }

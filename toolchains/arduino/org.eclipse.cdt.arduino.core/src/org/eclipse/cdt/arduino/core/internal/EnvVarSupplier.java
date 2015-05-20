@@ -21,16 +21,16 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 
 public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier {
 
+	private EnvVar arduinoRoot;
 	private EnvVar arduinoHome;
+	private EnvVar arduinoLibs;
 	private EnvVar path;
-	
+
 	private static final String OUTPUT_DIR = "OUTPUT_DIR"; //$NON-NLS-1$
 	private static final String BOARD = "BOARD"; //$NON-NLS-1$
-	private static final String CYGWIN = "CYGWIN"; //$NON-NLS-1$
 
 	private static final class EnvVar implements IBuildEnvironmentVariable {
 		String name;
@@ -57,26 +57,26 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 	}
 
 	public EnvVarSupplier() {
-		File arduinoPath = ArduinoHome.get();
+		arduinoRoot = new EnvVar();
+		arduinoRoot.name = "ARDUINO_ROOT"; //$NON-NLS-1$
+		arduinoRoot.value = ArduinoHome.getRootfileDir().getAbsolutePath();
 
-		if (arduinoPath.isDirectory()) {
-			arduinoHome = new EnvVar();
-			arduinoHome.name = "ARDUINO_HOME"; //$NON-NLS-1$
-			arduinoHome.value = arduinoPath.getAbsolutePath();
+		arduinoHome = new EnvVar();
+		arduinoHome.name = "ARDUINO_HOME"; //$NON-NLS-1$
+		arduinoHome.value = ArduinoHome.getArduinoDir().getAbsolutePath();
 
-			File avrPath = new File(arduinoPath, "hardware/tools/avr/bin"); //$NON-NLS-1$
-			String pathStr = avrPath.getAbsolutePath();
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				// Windows needs the arduino path too to pick up the cygwin dlls
-				pathStr += File.pathSeparator + arduinoPath.getAbsolutePath();
-			}
+		arduinoLibs = new EnvVar();
+		arduinoLibs.name = "ARDUINO_LIBS"; //$NON-NLS-1$
+		arduinoLibs.value = ArduinoHome.getArduinoLibsDir().getAbsolutePath();
 
-			path = new EnvVar();
-			path.name = "PATH"; //$NON-NLS-1$
-			path.value = pathStr;
-			path.operation = IBuildEnvironmentVariable.ENVVAR_PREPEND;
-			path.delimiter = File.pathSeparator;
-		}
+		File avrPath = new File(ArduinoHome.getArduinoDir(), "hardware/tools/avr/bin"); //$NON-NLS-1$
+		String pathStr = avrPath.getAbsolutePath();
+
+		path = new EnvVar();
+		path.name = "PATH"; //$NON-NLS-1$
+		path.value = pathStr;
+		path.operation = IBuildEnvironmentVariable.ENVVAR_PREPEND;
+		path.delimiter = File.pathSeparator;
 	}
 
 	private IBuildEnvironmentVariable getOutputDir(IConfiguration configuration) {
@@ -91,7 +91,7 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 			Board board = ArduinoProjectGenerator.getBoard(configuration);
 			if (board == null)
 				return null;
-			
+
 			EnvVar boardVar = new EnvVar();
 			boardVar.name = BOARD;
 			boardVar.value = board.getId();
@@ -102,26 +102,21 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 		}
 	}
 
-	private IBuildEnvironmentVariable getCygwin() {
-		EnvVar var = new EnvVar();
-		var.name = CYGWIN;
-		var.value = "nodosfilewarning"; //$NON-NLS-1$
-		return var;
-	}
-	
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		if (path != null && variableName.equals(path.name)) {
+		if (variableName.equals(path.name)) {
 			return path;
-		} else if (arduinoHome != null && variableName.equals(arduinoHome.name)) {
+		} else if (variableName.equals(arduinoRoot.name)) {
+			return arduinoRoot;
+		} else if (variableName.equals(arduinoHome.name)) {
 			return arduinoHome;
+		} else if (variableName.equals(arduinoLibs.name)) {
+			return arduinoLibs;
 		} else if (variableName.equals(OUTPUT_DIR)) {
 			return getOutputDir(configuration);
 		} else if (variableName.equals(BOARD)) {
 			return getBoard(configuration);
-		} else if (variableName.equals(CYGWIN)) {
-			return getCygwin();
 		}
 		return null;
 	}
@@ -131,11 +126,10 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
 		List<IBuildEnvironmentVariable> vars = new ArrayList<>();
 
-		if (path != null)
-			vars.add(path);
-
-		if (arduinoHome != null)
-			vars.add(arduinoHome);
+		vars.add(path);
+		vars.add(arduinoRoot);
+		vars.add(arduinoHome);
+		vars.add(arduinoLibs);
 
 		if (configuration != null) {
 			vars.add(getOutputDir(configuration));
@@ -145,9 +139,6 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 				vars.add(boardVar);
 		}
 
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			vars.add(getCygwin());
-		
 		return vars.toArray(new IBuildEnvironmentVariable[vars.size()]);
 	}
 

@@ -54,7 +54,7 @@ public class ArduinoBoardManager implements IArduinoBoardManager {
 		if (boards != null)
 			return;
 		boards = new HashMap<>();
-		File home = ArduinoHome.get();
+		File home = ArduinoHome.getArduinoDir();
 		if (!home.isDirectory())
 			return;
 

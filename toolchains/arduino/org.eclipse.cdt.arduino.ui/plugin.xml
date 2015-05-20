@@ -65,4 +65,12 @@
             service="org.eclipse.remote.ui.IRemoteUIConnectionService">
       </connectionTypeService>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.cdt.arduino.ui.internal.ArduinoPreferencePage"
+            id="org.eclipse.cdt.arduino.ui.page1"
+            name="%preferencePage.name">
+      </page>
+   </extension>
 </plugin>

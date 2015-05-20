@@ -47,6 +47,10 @@ public class AutotoolsOptionConstants {
 	public final static String OPT_CFLAGS_DEBUG = "cflags-debug"; // $NON-NLS-1$
 	public final static String OPT_CFLAGS_GPROF = "cflags-gprof"; // $NON-NLS-1$ 
 	public final static String OPT_CFLAGS_GCOV = "cflags-gcov"; // $NON-NLS-1$ 
+	/**
+	 * @since 1.5
+	 */
+	public final static String VAR_CC = "CC"; // $NON-NLS-1$
 	public final static String OPT_USER = "user"; // $NON-NLS-1$
 	public final static String TOOL_AUTOGEN = "autogen"; // $NON-NLS-1$
 	public final static String CATEGORY_OPTIONS = "options"; // $NON-NLS-1$

@@ -51,5 +51,9 @@ public class AutotoolsOptionConstants {
 	public static final String TOOL_AUTOGEN = "autogen"; // $NON-NLS-1$
 	public static final String CATEGORY_OPTIONS = "options"; // $NON-NLS-1$
 	public static final String OPT_AUTOGENOPTS = "autogenOpts"; // $NON-NLS-1$
+	/**
+	 * @since 2.0
+	 */
+	public final static String VAR_CC = "CC"; // $NON-NLS-1$
 
 }

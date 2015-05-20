@@ -15,6 +15,10 @@ public interface IAutotoolsOption {
 	int TOOL = 5;
 	int FLAG = 6;
 	int FLAGVALUE = 7;
+	/**
+	 * @since 2.0
+	 */
+	int VARIABLE = 8;
 
 	int getType();
 

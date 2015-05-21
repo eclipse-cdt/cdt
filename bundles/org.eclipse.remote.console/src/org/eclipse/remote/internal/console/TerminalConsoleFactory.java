@@ -47,25 +47,24 @@ public class TerminalConsoleFactory implements IConsoleFactory {
 		};
 		j.schedule();
 	}
-		
-	private static IStatus openConsoleImplementation( final IRemoteConnection connection, 
-			final String encoding, IProgressMonitor monitor) {
+
+	private static IStatus openConsoleImplementation(final IRemoteConnection connection, final String encoding,
+			IProgressMonitor monitor) {
 		IRemoteCommandShellService commandShellService = connection.getService(IRemoteCommandShellService.class);
 		if (commandShellService == null) {
 			return Status.CANCEL_STATUS;
 		}
 		try {
-			IConsole ret = createConsole(connection, encoding, commandShellService, monitor);
+			createConsole(connection, encoding, commandShellService, monitor);
 			return Status.OK_STATUS;
-		} catch(RemoteConnectionException rce) {
+		} catch (RemoteConnectionException rce) {
 			return rce.getStatus();
 		}
 
 	}
-	
-	private static IConsole createConsole( final IRemoteConnection connection, 
-			final String encoding, IRemoteCommandShellService service, 
-			IProgressMonitor monitor) throws RemoteConnectionException {
+
+	private static IConsole createConsole(final IRemoteConnection connection, final String encoding,
+			IRemoteCommandShellService service, IProgressMonitor monitor) throws RemoteConnectionException {
 		if (!connection.isOpen()) {
 			connection.open(monitor);
 		}
@@ -81,7 +80,7 @@ public class TerminalConsoleFactory implements IConsoleFactory {
 		consoleManager.showConsoleView(terminalConsole);
 		return terminalConsole;
 	}
-	
+
 	private static int findNextIndex(IConsoleManager consoleManager, IRemoteConnection connection) {
 		IConsole[] consoles = consoleManager.getConsoles();
 		boolean[] indices = new boolean[consoles.length];
@@ -99,7 +98,7 @@ public class TerminalConsoleFactory implements IConsoleFactory {
 		}
 		return index;
 	}
-	
+
 	public static List<IConsole> findConsole(IRemoteConnection connection) {
 		ArrayList<IConsole> ret = new ArrayList<IConsole>();
 		IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
@@ -114,5 +113,5 @@ public class TerminalConsoleFactory implements IConsoleFactory {
 		}
 		return ret;
 	}
-	
+
 }

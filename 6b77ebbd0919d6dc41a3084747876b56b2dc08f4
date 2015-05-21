@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_771709d4",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/actions/breakpoints/AddLineBreakpointActionDelegate.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-05-21T20:37:58Z",
+      "side": 1,
+      "message": "Copyright (c) 2004, 2015 QNX Software Systems and others.",
+      "revId": "6b77ebbd0919d6dc41a3084747876b56b2dc08f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

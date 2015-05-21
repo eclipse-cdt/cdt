@@ -410,6 +410,22 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 				directoriesList.setItems(additionalDirs.toArray(new String[0]));
 			connectionUri = configuration.getAttribute(
 					ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
+			int defaultIndex = 0;
+			connections = DockerConnectionManager.getInstance()
+					.getConnections();
+			if (connections.length > 0) {
+				if (!connectionUri.equals("")) { //$NON-NLS-1$
+					String[] connectionNames = new String[connections.length];
+					for (int i = 0; i < connections.length; ++i) {
+						connectionNames[i] = connections[i].getName();
+						if (connections[i].getUri().equals(connectionUri))
+							defaultIndex = i;
+					}
+					connectionSelector.select(defaultIndex);
+				} else {
+					connectionUri = connections[0].getUri();
+				}
+			}
 			imageName = configuration.getAttribute(ILaunchConstants.ATTR_IMAGE,
 					"");
 			imageCombo.setText(imageName);

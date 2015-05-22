@@ -56,25 +56,28 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 		}
 	}
 
+	private String clean(String str) {
+		return str.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 	public EnvVarSupplier() {
 		arduinoRoot = new EnvVar();
 		arduinoRoot.name = "ARDUINO_ROOT"; //$NON-NLS-1$
-		arduinoRoot.value = ArduinoHome.getRootfileDir().getAbsolutePath();
+		arduinoRoot.value = clean(ArduinoHome.getRootfileDir().getAbsolutePath());
 
 		arduinoHome = new EnvVar();
 		arduinoHome.name = "ARDUINO_HOME"; //$NON-NLS-1$
-		arduinoHome.value = ArduinoHome.getArduinoDir().getAbsolutePath();
+		arduinoHome.value = clean(ArduinoHome.getArduinoDir().getAbsolutePath());
 
 		arduinoLibs = new EnvVar();
 		arduinoLibs.name = "ARDUINO_LIBS"; //$NON-NLS-1$
-		arduinoLibs.value = ArduinoHome.getArduinoLibsDir().getAbsolutePath();
-
+		arduinoLibs.value = clean(ArduinoHome.getArduinoLibsDir().getAbsolutePath());
 		File avrPath = new File(ArduinoHome.getArduinoDir(), "hardware/tools/avr/bin"); //$NON-NLS-1$
 		String pathStr = avrPath.getAbsolutePath();
 
 		path = new EnvVar();
 		path.name = "PATH"; //$NON-NLS-1$
-		path.value = pathStr;
+		path.value = pathStr + File.pathSeparator + arduinoRoot.value;
 		path.operation = IBuildEnvironmentVariable.ENVVAR_PREPEND;
 		path.delimiter = File.pathSeparator;
 	}

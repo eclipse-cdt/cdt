@@ -3,7 +3,10 @@ VERSION = 156
 BOARD ?= uno
 OUTPUT_DIR ?= build/Default
 
-rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+space :=
+space +=
+spacify = $(subst $(space),\$(space),$1)
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$(call spacify,$d)/,$2) $(filter $(subst *,%,$2),$d))
 
 ifeq ($(OS),Windows_NT)
 RMDIR = rmdir /s /q
@@ -64,18 +67,25 @@ endif # ARCH = avr
 
 LIB_ROOT = $(ARDUINO_HOME)/hardware/arduino/$(ARCH)/cores/$(BUILD_CORE)
 
-LIB_SRCS = $(call rwildcard, $(LIB_ROOT)/, *.c *.cpp)
+LIB_SRCS = $(wildcard $(call spacify,$(LIB_ROOT))/*.c) \
+           $(wildcard $(call spacify,$(LIB_ROOT))/*.cpp)
 
-LIB_OBJS = $(patsubst $(LIB_ROOT)/%.c, $(OUTPUT_DIR)/arduino/%.o, $(filter %.c, $(LIB_SRCS))) \
-           $(patsubst $(LIB_ROOT)/%.cpp, $(OUTPUT_DIR)/arduino/%.o, $(filter %.cpp, $(LIB_SRCS)))
+LIB_OBJS = $(patsubst $(call spacify,$(LIB_ROOT))/%.c, $(OUTPUT_DIR)/arduino/%.o, $(filter %.c,$(LIB_SRCS))) \
+           $(patsubst $(call spacify,$(LIB_ROOT))/%.cpp, $(OUTPUT_DIR)/arduino/%.o, $(filter %.cpp,$(LIB_SRCS)))
 
-LIBS_ROOTS = $(ARDUINO_LIBS) $(ARDUINO_HOME)/hardware/arduino/$(ARCH)/libraries $(ARDUINO_HOME)/libraries
+$(info LIB_SRCS = $(LIB_SRCS))
+$(info LIB_OBJS = $(LIB_OBJS))
+
+ifdef OFF
+LIBS_ROOTS = $(ARDUINO_LIBS) $(ARDUINO_HOME)/hardware/arduino/$(ARCH)/libraries \
+			 $(ARDUINO_HOME)/libraries
 
 LIBS_DIRS = $(foreach lib, $(LIBS), $(firstword $(realpath $(foreach lib_root, $(LIBS_ROOTS), $(lib_root)/$(lib)))))
+endif
 
-INCLUDES = -I$(ARDUINO_HOME)/hardware/arduino/$(ARCH)/cores/$(BUILD_CORE) \
-           -I$(ARDUINO_HOME)/hardware/arduino/$(ARCH)/variants/$(BUILD_VARIANT) \
-           $(foreach lib, $(LIBS_DIRS), -I$(lib))
+INCLUDES = -I"$(ARDUINO_HOME)/hardware/arduino/$(ARCH)/cores/$(BUILD_CORE)" \
+           -I"$(ARDUINO_HOME)/hardware/arduino/$(ARCH)/variants/$(BUILD_VARIANT)" \
+           $(foreach lib, $(LIBS_DIRS), -I"$(lib)")
 
 SRCS = $(call rwildcard, ./, *.c *.cpp) $(foreach lib, $(LIBS_DIRS), $(wildcard $(lib)/*.c $(lib)/*.cpp $(lib)/utility/*.c $(lib)/utility/*.cpp))
 

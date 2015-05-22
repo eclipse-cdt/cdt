@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Platform;
 public class ArduinoHome {
 
 	private static File home;
-	
+
 	public static File getRootfileDir() {
 		if (home == null) {
 			String arduinoPathStr = System.getProperty("org.eclipse.cdt.arduino.home"); //$NON-NLS-1$
@@ -38,9 +38,16 @@ public class ArduinoHome {
 	}
 
 	public static File getArduinoDir() {
-		return new File("/Applications/Arduino.app/Contents/Java"); //$NON-NLS-1$
+		switch (Platform.getOS()) {
+		case Platform.OS_MACOSX:
+			return new File("/Applications/Arduino.app/Contents/Java"); //$NON-NLS-1$
+		case Platform.OS_WIN32:
+			return new File("C:\\Program Files (x86)\\Arduino"); //$NON-NLS-1$
+		default:
+			return null;
+		}
 	}
-	
+
 	public static File getArduinoLibsDir() {
 		File home = new File(System.getProperty("user.home")); //$NON-NLS-1$
 		return new File(home, "/Documents/Arduino/libraries"); //$NON-NLS-1$

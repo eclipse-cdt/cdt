@@ -19,6 +19,7 @@
  * David McKnight (IBM) - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
  * Martin Oberhuber (Wind River) - [227135] Cryptic exception when sftp-server is missing
+ * Dan Ungureanu (Freescale)     - [306494] Avoid dialog race on connection loss
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;

@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Anna Dushistova  (MontaVista) - [198819] [telnet] TelnetConnectorService does not send CommunicationsEvent.BEFORE_CONNECT
+ * Dan Ungureanu (Freescale) -     [306494] Avoid dialog race on connection loss
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 

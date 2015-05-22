@@ -243,11 +243,20 @@ public class ProcessConnector extends AbstractStreamsConnector {
 		// Stop monitoring the process
 		monitor.dispose();
 
+		boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());
+
+		if (!isWindows) {
+			// Destroy the process first, except on windows (Bug 465674)
+			if (process != null) { process.destroy(); process = null; }
+		}
+
 		// Dispose the streams
 		super.doDisconnect();
 
-		// Dispose the process
-		if (process != null) { process.destroy(); process = null; }
+		if (isWindows) {
+			// On Windows destroy the process after closing streams
+			if (process != null) { process.destroy(); process = null; }
+		}
 
 		// Set the terminal control state to CLOSED.
 		fControl.setState(TerminalState.CLOSED);

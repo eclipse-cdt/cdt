@@ -44,7 +44,7 @@
         <gmaven-version>1.5</gmaven-version>
         <!-- Stick to Findbugs 2.5.2 until newer versions are supported by hudson.eclipse.org -->
         <findbugs-version>2.5.2</findbugs-version>
-        <eclipse-jarsigner-version>1.1.2-SNAPSHOT</eclipse-jarsigner-version>
+        <eclipse-jarsigner-version>1.1.2</eclipse-jarsigner-version>
 
         <!-- Common global properties -->
         <adminDir>${env.WORKSPACE}/admin</adminDir>

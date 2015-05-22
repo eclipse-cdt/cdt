@@ -17,3 +17,18 @@ template<typename T> struct S
 };
 template<typename T> using Alias = S<T>;
 Alias<int> sInt;
+
+//!Variadic Function Template
+//%CPP
+template<typename T, typename... Args> 
+void f(T t, Args... args)
+{
+    f(args...);
+}
+
+//!Variadic Class Template
+//%CPP
+template<typename... Args> struct S
+{
+    static const int size = sizeof...(Args);
+};

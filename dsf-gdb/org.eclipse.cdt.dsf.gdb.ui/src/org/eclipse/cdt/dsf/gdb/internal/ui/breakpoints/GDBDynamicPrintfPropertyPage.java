@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson and others.
+ * Copyright (c) 2014, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.breakpoints.BreakpointsMessages;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointPreferenceStore;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.ui.DebugUITools;
@@ -35,6 +37,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
@@ -177,7 +180,15 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	private DynamicPrintfStringFieldEditor fCondition;
 
 	private Text fIgnoreCountTextControl;
+	private DynamicPrintfIntegerFieldEditor fLineEditor;
 	private DynamicPrintfIntegerFieldEditor fIgnoreCount;
+	
+	/** 
+	 * Indicates if the page currently aims to create
+	 * a breakpoint that already exits.
+	 */
+	private boolean fDuplicateBreakpoint;
+
 	
 	private DynamicPrintfStringFieldEditor fPrintString;
 
@@ -197,11 +208,6 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 		noDefaultAndApplyButton();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
 	@Override
 	protected void createFieldEditors() {
 		ICDynamicPrintf dprintf = getDprintf();
@@ -269,9 +275,10 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
     }
 	protected void createLineNumberEditor(Composite parent) {
 		 String title = Messages.PropertyPage_LineNumber;
-		 DynamicPrintfIntegerFieldEditor labelFieldEditor = new DynamicPrintfIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
-		 labelFieldEditor.setValidRange(1, Integer.MAX_VALUE);
-		 addField(labelFieldEditor);
+		 fLineEditor = new DynamicPrintfIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
+		 fLineEditor.setValidRange(1, Integer.MAX_VALUE);
+		 fLineEditor.setErrorMessage(Messages.PropertyPage_lineNumber_errorMessage);
+		 addField(fLineEditor);
 	}
 	
 	protected void createEnabledField(Composite parent) {
@@ -312,6 +319,66 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 		addField(fPrintString);
 	}
 
+	@Override
+	public boolean isValid() {
+		// Don't allow to create a duplicate breakpoint
+		return super.isValid() && !fDuplicateBreakpoint;
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		super.propertyChange(event);
+
+		if (event.getProperty().equals(FieldEditor.VALUE)) {
+        	if (super.isValid()) {
+        		// For every change, if all the fields are valid
+        		// we then check if we are dealing with a duplicate
+        		// breakpoint.
+                boolean oldValue = fDuplicateBreakpoint;
+                fDuplicateBreakpoint = isDuplicateBreakpoint();
+                if (oldValue != fDuplicateBreakpoint) {
+                	if (fDuplicateBreakpoint) {
+                		setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
+                	} else {
+                		setErrorMessage(null);
+                	}
+                    // update container state
+                    if (getContainer() != null) {
+        				getContainer().updateButtons();
+        			}
+                    // update page state
+                    updateApplyButton();
+                }
+        	}
+        }
+	}
+	
+	private boolean isDuplicateBreakpoint() {
+		String source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
+		int line = fLineEditor.getIntValue();
+
+		// Look for any breakpoint (base bp class) that has the same source file and line number as what
+		// is currently being inputed.  Careful not to compare with the current dprintf
+		// in the case of modifying the properties of an existing dprintf; in
+		// that case we of course have this particular dprintf at this file and line.
+		ICBreakpoint currentBp = getDprintf();
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+		for (IBreakpoint bp : breakpoints) {
+			if (!bp.equals(currentBp) && bp instanceof ICBreakpoint) {
+				IMarker marker = bp.getMarker();
+				if (marker != null) {
+					String markerFile = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, ""); //$NON-NLS-1$
+					int markerLine = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+					if (source.equals(markerFile) && line == markerLine) {
+						// Woops, we already have another breakpoint at this file:line
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	protected FieldEditor createLabelEditor(Composite parent, String title, String value) {
 		return new LabelFieldEditor(parent, title, value);
 	}

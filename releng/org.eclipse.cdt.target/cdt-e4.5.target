@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="cdt_e4.5" sequenceNumber="30">
+<?pde version="3.8"?><target name="cdt_e4.5" sequenceNumber="35">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.compress" version="0.0.0"/>
@@ -25,6 +25,7 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.remote.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.remote.console.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/ptp/builds/remote/2.0.0/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
@@ -49,12 +50,16 @@
 <unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.tm.terminal.control" version="0.0.0"/>
+<repository location="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
+</location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 <launcherArgs>
-<vmArgs>-Xms40m
--Xmx512M
--XX:MaxPermSize=256m
+<vmArgs>-Xms40m&#13;
+-Xmx512M&#13;
+-XX:MaxPermSize=256m&#13;
 -ea</vmArgs>
 <programArgs>-consolelog</programArgs>
 </launcherArgs>

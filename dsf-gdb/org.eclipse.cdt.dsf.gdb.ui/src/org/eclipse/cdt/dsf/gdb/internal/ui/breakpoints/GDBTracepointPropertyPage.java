@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
+import org.eclipse.cdt.debug.internal.ui.breakpoints.BreakpointsMessages;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointPreferenceStore;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
@@ -27,6 +28,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.ui.DebugUITools;
@@ -37,6 +39,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
@@ -179,8 +182,16 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	private TracepointStringFieldEditor fCondition;
 
 	private Text fIgnoreCountTextControl;
+	
+	private TracepointIntegerFieldEditor fLineEditor;
 	private TracepointIntegerFieldEditor fIgnoreCount;
 	
+	/** 
+	 * Indicates if the page currently aims to create
+	 * a breakpoint that already exits.
+	 */
+	private boolean fDuplicateBreakpoint;
+
 	private Text fPassCountTextControl;
 	private TracepointIntegerFieldEditor fPassCount;
 
@@ -204,11 +215,6 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		noDefaultAndApplyButton();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
 	@Override
 	protected void createFieldEditors() {
 		ICTracepoint tracepoint = getTracepoint();
@@ -277,9 +283,10 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
     }
 	protected void createLineNumberEditor(Composite parent) {
 		 String title = Messages.PropertyPage_LineNumber;
-		 TracepointIntegerFieldEditor labelFieldEditor = new TracepointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
-		 labelFieldEditor.setValidRange(1, Integer.MAX_VALUE);
-		 addField(labelFieldEditor);
+		 fLineEditor = new TracepointIntegerFieldEditor(IMarker.LINE_NUMBER, title, parent);
+		 fLineEditor.setValidRange(1, Integer.MAX_VALUE);
+		 fLineEditor.setErrorMessage(Messages.PropertyPage_lineNumber_errorMessage);
+		 addField(fLineEditor);
 	}
 	
 	protected void createEnabledField(Composite parent) {
@@ -314,6 +321,72 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 		return new LabelFieldEditor(parent, title, value);
 	}
 
+	@Override
+	public boolean isValid() {
+		// Don't allow to create a duplicate breakpoint
+		return super.isValid() && !fDuplicateBreakpoint;
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		super.propertyChange(event);
+
+		ICBreakpoint currentBp = getTracepoint();
+		if (!(currentBp instanceof ICFunctionBreakpoint) &&
+				!(currentBp instanceof ICAddressBreakpoint)) {
+			// Check for duplication of line tracepoints
+
+			if (event.getProperty().equals(FieldEditor.VALUE)) {
+				if (super.isValid()) {
+					// For every change, if all the fields are valid
+					// we then check if we are dealing with a duplicate
+					// breakpoint.
+					boolean oldValue = fDuplicateBreakpoint;
+					fDuplicateBreakpoint = isDuplicateBreakpoint();
+					if (oldValue != fDuplicateBreakpoint) {
+						if (fDuplicateBreakpoint) {
+							setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
+						} else {
+							setErrorMessage(null);
+						}
+						// update container state
+						if (getContainer() != null) {
+							getContainer().updateButtons();
+						}
+						// update page state
+						updateApplyButton();
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean isDuplicateBreakpoint() {
+		String source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
+		int line = fLineEditor.getIntValue();
+
+		// Look for any breakpoint (base class) that has the same source file and line number as what
+		// is currently being inputed.  Careful not to compare with the current tracepoint
+		// in the case of modifying the properties of an existing tracepoint; in
+		// that case we of course have this particular tracepoint at this file and line.
+		ICBreakpoint currentBp = getTracepoint();
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+		for (IBreakpoint bp : breakpoints) {
+			if (!bp.equals(currentBp) && bp instanceof ICBreakpoint) {
+				IMarker marker = bp.getMarker();
+				if (marker != null) {
+					String markerFile = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, ""); //$NON-NLS-1$
+					int markerLine = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+					if (source.equals(markerFile) && line == markerLine) {
+						// Woops, we already have another breakpoint at this file:line
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	protected ICTracepoint getTracepoint() {
 		IAdaptable element = getElement();
 		if (element instanceof ICTracepoint) {

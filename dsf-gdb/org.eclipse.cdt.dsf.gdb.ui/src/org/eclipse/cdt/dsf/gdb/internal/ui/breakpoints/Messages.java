@@ -1,5 +1,5 @@
 /*******************************************************************************
-  * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
+  * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class Messages extends NLS {
 	public static String PropertyPage_function_value_errorMessage;
 	public static String PropertyPage_Class;
 	public static String PropertyPage_Enabled;
+	public static String PropertyPage_lineNumber_errorMessage;
 	public static String DynamicPrintfPropertyPage_PrintString;
 
 	public static String GdbThreadFilterEditor_Thread;

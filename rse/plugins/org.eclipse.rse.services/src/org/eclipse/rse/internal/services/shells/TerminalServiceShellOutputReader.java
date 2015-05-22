@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,17 +17,20 @@
  * Anna Dushistova  (MontaVista) - adapted from SshShellOutputReader
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Rob Stryker (JBoss) - [335059] TerminalServiceShellOutputReader logs error when hostShell.exit() is called
+ * Teodor Madan (Freescale)     - [467833] Fix leaking shell writer thread
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.shells;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 
 import org.eclipse.rse.internal.services.Activator;
 import org.eclipse.rse.services.shells.AbstractHostShellOutputReader;
 import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
+import org.eclipse.rse.services.shells.IHostShellOutputListener;
 import org.eclipse.rse.services.shells.SimpleHostOutput;
 
 /**
@@ -39,10 +42,17 @@ public class TerminalServiceShellOutputReader extends
 	private volatile Thread fReaderThread = null;
 	private volatile boolean isCanceled = false;
 	private String fPromptChars = ">$%#]"; //Characters we accept as the end of a prompt //$NON-NLS-1$;
+	private Closeable closable;
 
 	public TerminalServiceShellOutputReader(IHostShell hostShell,
 			BufferedReader reader, boolean isErrorReader) {
+		this(hostShell, reader, isErrorReader, null);
+	}
+
+	public TerminalServiceShellOutputReader(IHostShell hostShell,
+			BufferedReader reader, boolean isErrorReader, Closeable closable) {
 		super(hostShell, isErrorReader);
+		this.closable = closable;
 		setName("Terminal Service ShellOutputReader" + getName()); //$NON-NLS-1$
 		fReader = reader;
 	}
@@ -173,5 +183,26 @@ public class TerminalServiceShellOutputReader extends
 		if (fReaderThread != null) {
 			fReaderThread.interrupt();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.services.shells.AbstractHostShellOutputReader#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (closable != null)
+			try {
+				closable.close();
+			} catch (IOException e) {
+				Activator.getDefault().logException(e);
+			}
+	}
+
+	/**
+	 * Remove a registered output listener.
+	 * @param listener to be removed.
+	 */
+	public void removeOutputListener(IHostShellOutputListener listener) {
+		_listeners.remove(listener);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,18 @@
  * Anna Dushistova  (MontaVista) - adapted from SshShellWriterThread
  * Anna Dushistova  (MontaVista) - [240523] [rseterminals] Provide a generic adapter factory that adapts any ITerminalService to an IShellService
  * Rob Stryker (JBoss) - [335059] TerminalServiceShellOutputReader logs error when hostShell.exit() is called
+ * Teodor Madan (Freescale)     - [467833] Fix leaking shell writer thread
  *******************************************************************************/
 package org.eclipse.rse.internal.services.shells;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
  * @since 3.1
  */
-public class TerminalServiceShellWriterThread extends Thread {
+public class TerminalServiceShellWriterThread extends Thread implements Closeable{
 	private PrintWriter fOutputWriter;
 	private String fNextCommand;
 	private volatile boolean fIsCancelled;
@@ -97,6 +100,10 @@ public class TerminalServiceShellWriterThread extends Thread {
 			fOutputWriter.close();
 			fOutputWriter = null;
 		}
+	}
+
+	public void close() throws IOException {
+		stopThread();
 	}
 
 }

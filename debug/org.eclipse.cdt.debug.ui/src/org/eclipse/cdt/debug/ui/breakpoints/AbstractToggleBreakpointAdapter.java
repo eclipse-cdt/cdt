@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Mentor Graphics and others.
+ * Copyright (c) 2011, 2015 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Mentor Graphics - Initial API and implementation
  * Marc Khouzam (Ericsson) - Don't allow to set two bps at same line (bug 432503)
  * Teodor Madan (Freescale) - Do not create multiple watchpoints /method breakpoints at same location ( 445375 )
+ * Jonah Graham (Kichwa Coders) - Create "Add Line Breakpoint (C/C++)" action (Bug 464917)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.breakpoints;
@@ -364,6 +365,9 @@ abstract public class AbstractToggleBreakpointAdapter
                     }
                 }
             }
+        } else if (interactive && !toggle) {
+            createLineBreakpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1);
+            return;
         } else {
             errorMessage = ActionMessages.getString("RunToLineAdapter.Operation_is_not_supported_1"); //$NON-NLS-1$
         }

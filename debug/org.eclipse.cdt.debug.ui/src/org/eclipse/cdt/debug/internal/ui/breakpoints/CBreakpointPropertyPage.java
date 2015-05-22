@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -57,6 +58,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -535,9 +537,17 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	private Text fIgnoreCountTextControl;
 
+	private BreakpointFileNameFieldEditor fFileEditor;
+	private BreakpointIntegerFieldEditor fLineEditor;
 	private BreakpointIntegerFieldEditor fIgnoreCount;
-
+	
 	private IAdaptable fElement;
+
+	/** 
+	 * Indicates if the page currently aims to create
+	 * a breakpoint that already exits.
+	 */
+	private boolean fDuplicateBreakpoint;
 
 	/**
 	 * The preference store used to interface between the breakpoint and the 
@@ -560,11 +570,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 //		fCBreakpointPreferenceStore = new CBreakpointPreferenceStore();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
 	@Override
 	protected void createFieldEditors() {
 		ICBreakpoint breakpoint = getBreakpoint();
@@ -681,11 +686,11 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		boolean isFilenameEditable = fileName != null && fileName.isEmpty();
 
 		if (isNewBreakpoint && isFilenameEditable) {
-			BreakpointFileNameFieldEditor fileNameEditor = new BreakpointFileNameFieldEditor(
+			fFileEditor = new BreakpointFileNameFieldEditor(
 					ICLineBreakpoint.SOURCE_HANDLE, title, parent);
-			fileNameEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.fileName_errorMessage")); //$NON-NLS-1$
-			fileNameEditor.setEmptyStringAllowed(false);
-			addField(fileNameEditor);
+			fFileEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.fileName_errorMessage")); //$NON-NLS-1$
+			fFileEditor.setEmptyStringAllowed(false);
+			addField(fFileEditor);
 		} else {
 			if (fileName != null) {
 				addField(createLabelEditor(parent, title, fileName));
@@ -704,10 +709,10 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	
 	protected void createLineNumberEditor( Composite parent ) {
 		 String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.lineNumber_label" ); //$NON-NLS-1$
-		 BreakpointIntegerFieldEditor labelFieldEditor =new BreakpointIntegerFieldEditor( IMarker.LINE_NUMBER ,title, parent);
-		 labelFieldEditor.setValidRange( 1, Integer.MAX_VALUE );
-		 labelFieldEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.lineNumber_errorMessage")); //$NON-NLS-1$
-		 addField( labelFieldEditor );
+		 fLineEditor = new BreakpointIntegerFieldEditor(IMarker.LINE_NUMBER ,title, parent);
+		 fLineEditor.setValidRange(1, Integer.MAX_VALUE);
+		 fLineEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.lineNumber_errorMessage")); //$NON-NLS-1$
+		 addField(fLineEditor);
 	}
 
     protected void createWatchExpressionEditor( Composite parent ) {
@@ -805,6 +810,79 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	protected FieldEditor createLabelEditor( Composite parent, String title, String value ) {
 		return new LabelFieldEditor( parent, title, value );
+	}
+
+	@Override
+	public boolean isValid() {
+		// Don't allow to create a duplicate breakpoint
+		return super.isValid() && !fDuplicateBreakpoint;
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		super.propertyChange(event);
+
+		ICBreakpoint currentBp = getBreakpoint();
+		if (!(currentBp instanceof ICFunctionBreakpoint) &&
+				!(currentBp instanceof ICAddressBreakpoint)) {
+			// Check for duplication of line breakpoints
+			if (event.getProperty().equals(FieldEditor.VALUE)) {
+				if (super.isValid()) {
+					// For every change, if all the fields are valid
+					// we then check if we are dealing with a duplicate
+					// breakpoint.
+					boolean oldValue = fDuplicateBreakpoint;
+					fDuplicateBreakpoint = isDuplicateBreakpoint();
+					if (oldValue != fDuplicateBreakpoint) {
+						if (fDuplicateBreakpoint) {
+							setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.breakpoint_already_exists_errorMessage")); //$NON-NLS-1$
+						} else {
+							setErrorMessage(null);
+						}
+						// update container state
+						if (getContainer() != null) {
+							getContainer().updateButtons();
+						}
+						// update page state
+						updateApplyButton();
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean isDuplicateBreakpoint() {
+		String source = null;
+		if (fFileEditor != null) {
+			source = fFileEditor.getStringValue();
+		} else {
+			// If the source file is not editable, we should fetch
+			// it from the preference store
+			source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
+		}
+		
+		int line = fLineEditor.getIntValue();
+
+		// Look for any breakpoint that has the same source file and line number as what
+		// is currently being inputed.  Careful not to compare with the current breakpoint
+		// in the case of modifying the breakpoint properties of an existing breakpoint; in
+		// that case we of course have this particular bp at this file and line.
+		ICBreakpoint currentBp = getBreakpoint();
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+		for (IBreakpoint bp : breakpoints) {
+			if (!bp.equals(currentBp) && bp instanceof ICBreakpoint) {
+				IMarker marker = bp.getMarker();
+				if (marker != null) {
+					String markerFile = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, ""); //$NON-NLS-1$
+					int markerLine = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+					if (source.equals(markerFile) && line == markerLine) {
+						// Woops, we already have another breakpoint at this file:line
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	protected ICBreakpoint getBreakpoint() {

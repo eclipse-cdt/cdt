@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -69,7 +70,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String TYPEID_OP = "typeid ("; //$NON-NLS-1$
 	private static final String OPEN_BRACKET_OP = "("; //$NON-NLS-1$
 	private static final String SIZEOF_OP = "sizeof "; //$NON-NLS-1$
-	private static final String SIZEOF_PARAMETER_PACK_OP = "sizeof... "; //$NON-NLS-1$
+	private static final String SIZEOF_PARAMETER_PACK_OP = "sizeof..."; //$NON-NLS-1$
 	private static final String NOT_OP = "!"; //$NON-NLS-1$
 	private static final String TILDE_OP = "~"; //$NON-NLS-1$
 	private static final String AMPERSAND_OP = "&"; //$NON-NLS-1$
@@ -154,6 +155,8 @@ public class ExpressionWriter extends NodeWriter{
 			writeSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression) expression);
 		} else if (expression instanceof ICPPASTLambdaExpression) {
 			writeLambdaExpression((ICPPASTLambdaExpression) expression);
+		} else if (expression instanceof ICPPASTPackExpansionExpression) {
+			writePackExpansionExpression((ICPPASTPackExpansionExpression) expression);
 		}
 	}
 
@@ -509,6 +512,8 @@ public class ExpressionWriter extends NodeWriter{
 			return ALIGNOF_OP + "("; //$NON-NLS-1$
 		case IASTTypeIdExpression.op_typeof:
 			return TYPEOF_OP;
+		case IASTTypeIdExpression.op_sizeofParameterPack:
+			return SIZEOF_PARAMETER_PACK_OP + "("; //$NON-NLS-1$
 		}
 		throw new IllegalArgumentException("Unknown TypeId Type"); //$NON-NLS-1$
 	}
@@ -566,6 +571,11 @@ public class ExpressionWriter extends NodeWriter{
 			}
 			capture.getIdentifier().accept(visitor);
 		}
+	}
+
+	private void writePackExpansionExpression(ICPPASTPackExpansionExpression expression) {
+		visitNodeIfNotNull(expression.getPattern());
+		scribe.print(VAR_ARGS);
 	}
 }
 

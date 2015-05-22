@@ -11,39 +11,20 @@
 package org.eclipse.cdt.arduino.core.internal;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.Platform;
 
 public class ArduinoHome {
 
-	private static File home;
-	
-	public static File getRootfileDir() {
-		if (home == null) {
-			String arduinoPathStr = System.getProperty("org.eclipse.cdt.arduino.home"); //$NON-NLS-1$
-			if (arduinoPathStr != null) {
-				home = new File(arduinoPathStr);
-			} else {
-				try {
-					home = new File(new File(Platform.getInstallLocation().getURL().toURI()), "arduino"); //$NON-NLS-1$
-				} catch (URISyntaxException e) {
-					// TODO log
-					e.printStackTrace();
-					home = new File("nohome"); //$NON-NLS-1$
-				}
-			}
-		}
-		return home;
-	}
-
 	public static File getArduinoDir() {
-		return new File("/Applications/Arduino.app/Contents/Java"); //$NON-NLS-1$
-	}
-	
-	public static File getArduinoLibsDir() {
-		File home = new File(System.getProperty("user.home")); //$NON-NLS-1$
-		return new File(home, "/Documents/Arduino/libraries"); //$NON-NLS-1$
+		switch (Platform.getOS()) {
+		case Platform.OS_MACOSX:
+			return new File("/Applications/Arduino.app/Contents/Java"); //$NON-NLS-1$
+		case Platform.OS_WIN32:
+			return new File("C:\\Program Files (x86)\\Arduino"); //$NON-NLS-1$
+		default:
+			return null;
+		}
 	}
 
 }

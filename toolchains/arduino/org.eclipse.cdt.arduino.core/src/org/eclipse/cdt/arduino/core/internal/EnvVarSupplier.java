@@ -21,10 +21,10 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier {
 
-	private EnvVar arduinoRoot;
 	private EnvVar arduinoHome;
 	private EnvVar arduinoLibs;
 	private EnvVar path;
@@ -42,39 +42,41 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 		public String getName() {
 			return name;
 		}
+
 		@Override
 		public String getValue() {
 			return value;
 		}
+
 		@Override
 		public int getOperation() {
 			return operation;
 		}
+
 		@Override
 		public String getDelimiter() {
 			return delimiter;
 		}
 	}
 
-	public EnvVarSupplier() {
-		arduinoRoot = new EnvVar();
-		arduinoRoot.name = "ARDUINO_ROOT"; //$NON-NLS-1$
-		arduinoRoot.value = ArduinoHome.getRootfileDir().getAbsolutePath();
+	private String clean(String str) {
+		return str.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
+	public EnvVarSupplier() {
 		arduinoHome = new EnvVar();
 		arduinoHome.name = "ARDUINO_HOME"; //$NON-NLS-1$
-		arduinoHome.value = ArduinoHome.getArduinoDir().getAbsolutePath();
+		arduinoHome.value = clean(ArduinoHome.getArduinoDir().getAbsolutePath());
 
 		arduinoLibs = new EnvVar();
-		arduinoLibs.name = "ARDUINO_LIBS"; //$NON-NLS-1$
-		arduinoLibs.value = ArduinoHome.getArduinoLibsDir().getAbsolutePath();
+		arduinoLibs.name = "ARDUINO_USER_LIBS"; //$NON-NLS-1$
+		arduinoLibs.value = clean(System.getProperty("user.home") + "/Documents/Arduino/libraries"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		File avrPath = new File(ArduinoHome.getArduinoDir(), "hardware/tools/avr/bin"); //$NON-NLS-1$
-		String pathStr = avrPath.getAbsolutePath();
-
+		String avrDir = ArduinoHome.getArduinoDir().toString() + "/hardware/tools/avr/bin"; //$NON-NLS-1$
+		String installDir = Platform.getInstallLocation().getURL().getPath();
 		path = new EnvVar();
 		path.name = "PATH"; //$NON-NLS-1$
-		path.value = pathStr;
+		path.value = avrDir + File.pathSeparator + installDir;
 		path.operation = IBuildEnvironmentVariable.ENVVAR_PREPEND;
 		path.delimiter = File.pathSeparator;
 	}
@@ -103,12 +105,10 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 	}
 
 	@Override
-	public IBuildEnvironmentVariable getVariable(String variableName,
-			IConfiguration configuration, IEnvironmentVariableProvider provider) {
+	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
+			IEnvironmentVariableProvider provider) {
 		if (variableName.equals(path.name)) {
 			return path;
-		} else if (variableName.equals(arduinoRoot.name)) {
-			return arduinoRoot;
 		} else if (variableName.equals(arduinoHome.name)) {
 			return arduinoHome;
 		} else if (variableName.equals(arduinoLibs.name)) {
@@ -122,12 +122,11 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 	}
 
 	@Override
-	public IBuildEnvironmentVariable[] getVariables(
-			IConfiguration configuration, IEnvironmentVariableProvider provider) {
+	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
+			IEnvironmentVariableProvider provider) {
 		List<IBuildEnvironmentVariable> vars = new ArrayList<>();
 
 		vars.add(path);
-		vars.add(arduinoRoot);
 		vars.add(arduinoHome);
 		vars.add(arduinoLibs);
 

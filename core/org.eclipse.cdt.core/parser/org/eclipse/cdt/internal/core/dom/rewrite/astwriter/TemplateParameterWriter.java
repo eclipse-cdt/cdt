@@ -70,13 +70,16 @@ public class TemplateParameterWriter extends NodeWriter {
 	private void writeSimpleTypeTemplateParameter(ICPPASTSimpleTypeTemplateParameter simple) {
 		switch (simple.getParameterType()) {
 		case ICPPASTSimpleTypeTemplateParameter.st_class:
-			scribe.printStringSpace(Keywords.CLASS);
+			scribe.print(Keywords.CLASS);
 			break;
 		case ICPPASTSimpleTypeTemplateParameter.st_typename:
-			scribe.printStringSpace(Keywords.TYPENAME);
+			scribe.print(Keywords.TYPENAME);
 			break;
 		}
-					
+		if (simple.isParameterPack()) {
+			scribe.print(VAR_ARGS);
+		}
+		scribe.printSpace();
 		visitNodeIfNotNull(simple.getName());
 		
 		if (simple.getDefaultType() != null){

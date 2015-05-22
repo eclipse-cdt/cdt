@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
@@ -63,6 +64,8 @@ public class DeclaratorWriter extends NodeWriter {
 			writeFieldDeclarator((IASTFieldDeclarator) declarator);
 		} else if (declarator instanceof ICASTKnRFunctionDeclarator) {
 			writeCKnRFunctionDeclarator((ICASTKnRFunctionDeclarator) declarator);
+		} else if (declarator instanceof ICPPASTDeclarator) {
+			writeCPPDeclarator((ICPPASTDeclarator) declarator);
 		} else {
 			writeDefaultDeclarator(declarator);
 		}
@@ -318,5 +321,12 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writeKnRParameterNames(ICASTKnRFunctionDeclarator knrFunct, IASTName[] parameterNames) {
 		writeNodeList(parameterNames);
+	}
+
+	protected void writeCPPDeclarator(ICPPASTDeclarator declarator) {
+		if (declarator.declaresParameterPack()) {
+			scribe.print(VAR_ARGS);
+		}
+		writeDefaultDeclarator(declarator);
 	}
 }

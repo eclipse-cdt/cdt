@@ -36,7 +36,7 @@ public class SshSettings implements ISshSettings {
     public String getSummary() {
 		String settings = getUser()+'@'+getHost();
 		if(getPort()!=ISshSettings.DEFAULT_SSH_PORT) {
-			settings += ':' + getPort();
+			settings += ":" + getPort(); //$NON-NLS-1$
 		}
 		return settings;
 	}

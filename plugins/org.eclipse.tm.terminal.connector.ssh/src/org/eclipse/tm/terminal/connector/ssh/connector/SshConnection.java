@@ -107,13 +107,6 @@ public class SshConnection extends Thread {
 			String password = fConn.getSshSettings().getPassword();
 			port = fConn.getSshSettings().getPort();
 
-			////Giving a connectionId could be the index into a local
-			////Store where passwords are stored
-			//String connectionId = host;
-			//if (port!=ISshSettings.DEFAULT_SSH_PORT) {
-			//	connectionId += ':' + port;
-			//}
-			//UserInfo ui=new MyUserInfo(connectionId, user, password);
 			UserInfo ui=new MyUserInfo(null, user, password);
 
             Session session = createSession(user, password, host, port,

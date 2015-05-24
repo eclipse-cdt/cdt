@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Result of instantiating a function template.
+ * An instantiation or an explicit specialization of a function template.
  */
 class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements ICPPFunctionInstance {
 	private static final int ARGUMENTS = PDOMCPPFunctionSpecialization.RECORD_SIZE + 0;

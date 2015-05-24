@@ -5858,17 +5858,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertSame(template, inst.getTemplateDefinition());
 	}
 
-	//	template<typename T1,typename T2> class A{};
-	//	template<typename T1> class A<T1, int>{};
-	//	template<typename T2> class A<int, T2>{};
+	//	template<typename T1, typename T2> class A {};
+	//	template<typename T1> class A<T1, int> {};
+	//	template<typename T2> class A<int, T2> {};
 	//	template<> class A<int, int>;
 	//  A<int, int> fooA();
     //
-	//	template<typename T1,typename T2> class B{};
-	//	template<typename T1> class B<T1, int>{};
-	//	template<typename T2> class B<int, T2>{};
+	//	template<typename T1, typename T2> class B {};
+	//	template<typename T1> class B<T1, int> {};
+	//	template<typename T2> class B<int, T2> {};
 	//	template<> class B<int, int> {};
-	//  A<int, int> fooB();
+	//  B<int, int> fooB();
 	public void testExplicitSpecializationOfForbiddenAsImplicit_356818() throws Exception {
 		parseAndCheckBindings();
 	}

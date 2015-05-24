@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
- * The result of instantiating a class template.
+ * The result of instantiating a class template or an explicit specialization of a class template.
  */
 public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemplateInstance {
 	private final ICPPTemplateArgument[] arguments;
@@ -50,12 +50,9 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 
 	@Override
 	protected ICPPClassSpecializationScope getSpecializationScope() {
-		// An instance with a declaration has no specialization scope.
+		// An instance with a definition has no specialization scope.
 		checkForDefinition();
 		if (getDefinition() != null)
-			return null;
-		final IASTNode[] decls = getDeclarations();
-		if (decls != null && decls.length > 0 && decls[0] != null)
 			return null;
 		
 		return super.getSpecializationScope();
@@ -63,7 +60,15 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 
 	@Override
 	public boolean isExplicitSpecialization() {
-		return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
+		// An instance with a declaration is an explicit specialization.
+		checkForDefinition();
+		if (getDefinition() != null)
+			return true;
+		final IASTNode[] decls = getDeclarations();
+		if (decls != null && decls.length > 0 && decls[0] != null)
+			return true;
+		
+		return false;
 	}
 
 	@Override

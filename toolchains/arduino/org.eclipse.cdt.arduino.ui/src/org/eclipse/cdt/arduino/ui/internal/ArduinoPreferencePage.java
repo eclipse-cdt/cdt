@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal;
 
+import org.eclipse.cdt.arduino.core.ArduinoHome;
+import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -18,25 +20,18 @@ public class ArduinoPreferencePage extends FieldEditorPreferencePage implements 
 
 	public ArduinoPreferencePage() {
 		super(GRID);
-		setDescription("Arduino C++ Preferences");
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 	}
 
 	@Override
 	protected void createFieldEditors() {
-
+		addField(new DirectoryFieldEditor(ArduinoHome.preferenceName, Messages.ArduinoPreferencePage_0,
+				getFieldEditorParent()));
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		super.dispose();
+		setDescription(Messages.ArduinoPreferencePage_1);
+		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.arduino.core.internal;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.cdt.arduino.core.ArduinoHome;
 import org.eclipse.cdt.arduino.core.ArduinoProjectGenerator;
 import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -50,7 +51,7 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 	protected List<String> parseOptions(String line) {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			if (line.startsWith(" /arduino/")) { //$NON-NLS-1$
-				File full = new File(ArduinoHome.getArduinoDir().getParentFile(), line.trim());
+				File full = new File(ArduinoHome.getArduinoHome().getParentFile(), line.trim());
 				return parseOptions(" " + full.getAbsolutePath()); //$NON-NLS-1$
 			}
 		}

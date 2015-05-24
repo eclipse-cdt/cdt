@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -33,9 +34,9 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 	private Combo boardCombo;
 
 	public NewArduinoTargetWizardPage() {
-		super("NewArduinoTargetPage");
-		setDescription("New Arduino Target settings");
-		setTitle("New Arduino Target");
+		super("NewArduinoTargetPage"); //$NON-NLS-1$
+		setDescription(Messages.NewArduinoTargetWizardPage_0);
+		setTitle(Messages.NewArduinoTargetWizardPage_1);
 	}
 
 	@Override
@@ -44,11 +45,11 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		comp.setLayout(new GridLayout(2, false));
 
 		Label nameLabel = new Label(comp, SWT.NONE);
-		nameLabel.setText("Target name:");
+		nameLabel.setText(Messages.NewArduinoTargetWizardPage_2);
 
 		nameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		nameText.setText("");
+		nameText.setText(Messages.NewArduinoTargetWizardPage_3);
 		nameText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -61,7 +62,7 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		});
 
 		Label portLabel = new Label(comp, SWT.NONE);
-		portLabel.setText("Serial port:");
+		portLabel.setText(Messages.NewArduinoTargetWizardPage_4);
 
 		portCombo = new Combo(comp, SWT.READ_ONLY);
 		portCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -83,9 +84,9 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		});
 
 		IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
-		
+
 		Label boardLabel = new Label(comp, SWT.NONE);
-		boardLabel.setText("Board type:");
+		boardLabel.setText(Messages.NewArduinoTargetWizardPage_5);
 
 		boardCombo = new Combo(comp, SWT.READ_ONLY);
 		boardCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

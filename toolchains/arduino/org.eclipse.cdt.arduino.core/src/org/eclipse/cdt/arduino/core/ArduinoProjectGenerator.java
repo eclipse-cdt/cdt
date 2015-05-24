@@ -121,6 +121,7 @@ public class ArduinoProjectGenerator {
 			fmModel.put("projectName", project.getName()); //$NON-NLS-1$
 
 			generateFile(fmModel, fmConfig.getTemplate("Makefile"), project.getFile("Makefile")); //$NON-NLS-1$ //$NON-NLS-2$
+			generateFile(fmModel, fmConfig.getTemplate("arduino.mk"), project.getFile("arduino.mk")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			sourceFile = project.getFile(project.getName() + ".cpp"); //$NON-NLS-1$
 			generateFile(fmModel, fmConfig.getTemplate("arduino.cpp"), sourceFile);  //$NON-NLS-1$

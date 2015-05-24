@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -29,10 +28,10 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String IMG_ARDUINO = PLUGIN_ID + ".arduino"; //$NON-NLS-1$
 	public static final String IMG_CONNECTION_TYPE = PLUGIN_ID + ".connectionType"; //$NON-NLS-1$
-	
+
 	// The shared instance
 	private static Activator plugin;
-	
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;

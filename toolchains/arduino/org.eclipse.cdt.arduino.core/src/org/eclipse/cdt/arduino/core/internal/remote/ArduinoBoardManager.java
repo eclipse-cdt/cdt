@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.cdt.arduino.core.ArduinoHome;
 import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.ArduinoHome;
 
 public class ArduinoBoardManager implements IArduinoBoardManager {
 
@@ -54,7 +54,7 @@ public class ArduinoBoardManager implements IArduinoBoardManager {
 		if (boards != null)
 			return;
 		boards = new HashMap<>();
-		File home = ArduinoHome.getArduinoDir();
+		File home = ArduinoHome.getArduinoHome();
 		if (!home.isDirectory())
 			return;
 

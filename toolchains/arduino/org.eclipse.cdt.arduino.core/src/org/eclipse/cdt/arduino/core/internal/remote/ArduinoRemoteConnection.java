@@ -11,6 +11,8 @@
 package org.eclipse.cdt.arduino.core.internal.remote;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
@@ -19,27 +21,50 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.remote.core.IRemoteCommandShellService;
 import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteConnectionPropertyService;
 import org.eclipse.remote.core.IRemoteProcess;
+import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 import org.eclipse.remote.serial.core.SerialPortCommandShell;
 
-public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService, IRemoteCommandShellService, IArduinoRemoteConnection {
+public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService, IRemoteCommandShellService,
+		IArduinoRemoteConnection, IRemoteConnectionChangeListener {
 
 	private final IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;
 	private SerialPortCommandShell commandShell;
 
+	private static final Map<IRemoteConnection, ArduinoRemoteConnection> connectionMap = new HashMap<>();
+
 	public ArduinoRemoteConnection(IRemoteConnection remoteConnection) {
 		this.remoteConnection = remoteConnection;
+		remoteConnection.addConnectionChangeListener(this);
+	}
+
+	@Override
+	public void connectionChanged(RemoteConnectionChangeEvent event) {
+		if (event.getType() == RemoteConnectionChangeEvent.CONNECTION_REMOVED) {
+			synchronized (connectionMap) {
+				connectionMap.remove(event.getConnection());
+			}
+		}
 	}
 
 	public static class Factory implements IRemoteConnection.Service.Factory {
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends IRemoteConnection.Service> T getService(IRemoteConnection remoteConnection, Class<T> service) {
+		public <T extends IRemoteConnection.Service> T getService(IRemoteConnection remoteConnection,
+				Class<T> service) {
 			if (IArduinoRemoteConnection.class.equals(service)) {
-				return (T) new ArduinoRemoteConnection(remoteConnection);
+				synchronized (connectionMap) {
+					ArduinoRemoteConnection connection = connectionMap.get(remoteConnection);
+					if (connection == null) {
+						connection = new ArduinoRemoteConnection(remoteConnection);
+						connectionMap.put(remoteConnection, connection);
+					}
+					return (T) connection;
+				}
 			} else if (IRemoteConnectionPropertyService.class.equals(service)
 					|| IRemoteCommandShellService.class.equals(service)) {
 				return (T) remoteConnection.getService(IArduinoRemoteConnection.class);
@@ -77,7 +102,6 @@ public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService
 	public String getPortName() {
 		return remoteConnection.getAttribute(PORT_NAME);
 	}
-
 
 	@Override
 	public IRemoteProcess getCommandShell(int flags) throws IOException {

@@ -19,6 +19,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
+/**
+ * The result of instantiating a class template or an explicit specialization of a class template.
+ */
 public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization implements ICPPTemplateInstance {
 
 	public CompositeCPPClassInstance(ICompositesFactory cf, ICPPClassType rbinding) {

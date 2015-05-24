@@ -2533,6 +2533,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	}
 
 	//	template <typename T>
+	//	struct A {
+	//	  static T* get();
+	//	};
+
+	//	class B {
+	//	  friend class A<B>;
+	//	};
+	//
+	//	void test() {
+	//	  A<B>::get();
+	//	}
+	public void testFriendClassSpecialization_466362() throws Exception {
+		checkBindings();
+	}
+
+	//	template <typename T>
 	//	constexpr T t(T) {
 	//	    return 0;
 	//	}
@@ -2623,6 +2639,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	// source file is deliberately empty
 	public void testInfiniteRecursionMarshallingTemplateDefinition_439923() throws Exception {
+		checkBindings();
+	}
+
+	//	// Empty header file
+
+	//	typedef unsigned long size_t;
+	//
+	//	template <size_t... Is> struct int_pack { typedef int_pack type; };
+	//
+	//	template <class Pack, size_t I> struct append;
+	//
+	//	template <size_t... Is, size_t I>
+	//	struct append<int_pack<Is...>, I> : int_pack<Is..., I> {};
+	//
+	//	template <size_t C>
+	//	struct make_int_pack : append<typename make_int_pack<C - 1>::type, C - 1> {};
+	//
+	//	template <> struct make_int_pack<0> : int_pack<> {};
+	public void testRecursiveInheritance_466362() throws Exception {
 		checkBindings();
 	}
 

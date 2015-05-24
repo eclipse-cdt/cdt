@@ -7,6 +7,7 @@ import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
 import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
@@ -37,7 +38,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		IArduinoRemoteConnection arduinoRemote = remoteConnection.getService(IArduinoRemoteConnection.class);
 
 		Label portLabel = new Label(comp, SWT.NONE);
-		portLabel.setText("Serial Port:");
+		portLabel.setText(Messages.ArduinoTargetPropertyPage_0);
 
 		portSelector = new Combo(comp, SWT.READ_ONLY);
 		portSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -60,12 +61,12 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		if (portSel >= 0) {
 			portSelector.select(portSel);
 		} else {
-			setMessage("No serial ports", ERROR);
+			setMessage(Messages.ArduinoTargetPropertyPage_1, ERROR);
 			setValid(false);
 		}
 
 		Label boardLabel = new Label(comp, SWT.NONE);
-		boardLabel.setText("Board type:");
+		boardLabel.setText(Messages.ArduinoTargetPropertyPage_2);
 
 		boardSelector = new Combo(comp, SWT.READ_ONLY);
 		boardSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

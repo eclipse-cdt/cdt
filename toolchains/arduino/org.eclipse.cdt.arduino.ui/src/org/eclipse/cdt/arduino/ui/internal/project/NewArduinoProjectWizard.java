@@ -2,6 +2,7 @@ package org.eclipse.cdt.arduino.ui.internal.project;
 
 import org.eclipse.cdt.arduino.core.ArduinoProjectGenerator;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,7 +25,7 @@ public class NewArduinoProjectWizard extends BasicNewProjectResourceWizard {
 		if (!super.performFinish())
 			return false;
 
-		new Job("Creating Aurdino Project") {
+		new Job(Messages.NewArduinoProjectWizard_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					final ArduinoProjectGenerator generator = new ArduinoProjectGenerator(getNewProject());

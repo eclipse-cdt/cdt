@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core.internal;
+package org.eclipse.cdt.arduino.core;
 
 import java.io.File;
 
@@ -16,14 +16,26 @@ import org.eclipse.core.runtime.Platform;
 
 public class ArduinoHome {
 
-	public static File getArduinoDir() {
+	public static final String preferenceName = "arduinoHome"; //$NON-NLS-1$
+	private static final String qualifiedName = "org.eclipse.cdt.arduino.ui"; //$NON-NLS-1$
+
+	public static File getArduinoHome() {
+		String arduinoHome = Platform.getPreferencesService().getString(qualifiedName, preferenceName, getDefault(),
+				null);
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			arduinoHome += "/Contents/Java"; //$NON-NLS-1$
+		}
+		return new File(arduinoHome);
+	}
+
+	public static String getDefault() {
 		switch (Platform.getOS()) {
 		case Platform.OS_MACOSX:
-			return new File("/Applications/Arduino.app/Contents/Java"); //$NON-NLS-1$
+			return "/Applications/Arduino.app"; //$NON-NLS-1$
 		case Platform.OS_WIN32:
-			return new File("C:\\Program Files (x86)\\Arduino"); //$NON-NLS-1$
+			return "C:\\Program Files (x86)\\Arduino"; //$NON-NLS-1$
 		default:
-			return null;
+			return ""; //$NON-NLS-1$
 		}
 	}
 

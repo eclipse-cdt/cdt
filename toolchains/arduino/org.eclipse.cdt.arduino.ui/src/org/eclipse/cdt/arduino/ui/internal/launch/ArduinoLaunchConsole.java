@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.cdt.arduino.core.ArduinoLaunchConsoleService;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,7 +32,7 @@ public class ArduinoLaunchConsole implements ArduinoLaunchConsoleService {
 
 	public ArduinoLaunchConsole() {
 		if (console == null) {
-			console = new MessageConsole("Arduino Launch", null);
+			console = new MessageConsole(Messages.ArduinoLaunchConsole_0, null);
 			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] { console });
 		}
 	}
@@ -41,12 +42,12 @@ public class ArduinoLaunchConsole implements ArduinoLaunchConsoleService {
 		console.clearConsole();
 		console.activate();
 
-		new UIJob("Start Arduino Console") {
+		new UIJob(Messages.ArduinoLaunchConsole_1) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				final IOConsoleOutputStream out = console.newOutputStream();
 				out.setColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-				new Thread("Arduino Launch Console Output") {
+				new Thread(Messages.ArduinoLaunchConsole_2) {
 					public void run() {
 						try (InputStream processOut = process.getInputStream()) {
 							for (int c = processOut.read(); c >= 0; c = processOut.read()) {
@@ -60,7 +61,7 @@ public class ArduinoLaunchConsole implements ArduinoLaunchConsoleService {
 
 				final IOConsoleOutputStream err = console.newOutputStream();
 				err.setColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-				new Thread("Arduino Launch Console Output") {
+				new Thread(Messages.ArduinoLaunchConsole_3) {
 					public void run() {
 						try (InputStream processErr = process.getErrorStream()) {
 							for (int c = processErr.read(); c >= 0; c = processErr.read()) {

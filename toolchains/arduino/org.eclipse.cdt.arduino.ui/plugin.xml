@@ -5,7 +5,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="org.eclipse.cdt.arduino.core.launchConfigurationType"
-            icon="icons/logo.png"
+            icon="icons/arduino.png"
             id="org.eclipse.cdt.arduino.ui.launchConfigurationTypeImage1">
       </launchConfigurationTypeImage>
    </extension>
@@ -45,7 +45,7 @@
             selectionFilter="single">
          <enabledWhen>
             <adapt
-                  type="org.eclipse.cdt.arduino.core.remote.IArduinoRemoteConnection">
+                  type="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection">
             </adapt>
          </enabledWhen>
       </page>
@@ -68,9 +68,16 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.arduino.ui.internal.ArduinoPreferencePage"
-            id="org.eclipse.cdt.arduino.ui.page1"
+            id="org.eclipse.cdt.arduino.preference.page"
             name="%preferencePage.name">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.arduino.ui.internal.ArduinoPreferenceInitializer">
+      </initializer>
    </extension>
 </plugin>

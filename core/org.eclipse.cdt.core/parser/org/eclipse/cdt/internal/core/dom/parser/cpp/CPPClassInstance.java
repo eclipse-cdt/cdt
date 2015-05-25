@@ -77,8 +77,8 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
-	/* (non-Javadoc)
-	 * For debug purposes only
+	/**
+	 * For debugging only.
 	 */
 	@Override
 	public String toString() {

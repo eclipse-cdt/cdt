@@ -349,9 +349,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return ClassTypeHelper.getAllDeclaredMethods(this, point);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
-	 */
 	@Override
 	public int getKey() {
 		if (getDefinition() != null)
@@ -360,9 +357,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return getSpecializedBinding().getKey();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
-	 */
 	@Override
 	public ICPPClassScope getCompositeScope() {
 		final ICPPClassScope specScope= getSpecializationScope();

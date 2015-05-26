@@ -16,8 +16,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -77,6 +79,9 @@ public class ModeSelector extends CSelector {
 					ILaunchMode mode = (ILaunchMode) element;
 					try {
 						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
+						if( group == null ) {
+							group = getDefaultLaunchGroup(mode.getIdentifier());
+						}
 						if (group != null) {
 							ImageDescriptor imageDesc = group.getImageDescriptor();
 							Image image = images.get(imageDesc);
@@ -98,6 +103,9 @@ public class ModeSelector extends CSelector {
 					ILaunchMode mode = (ILaunchMode) element;
 					try {
 						ILaunchGroup group = getLaunchGroup(mode.getIdentifier());
+						if( group == null ) {
+							group = getDefaultLaunchGroup(mode.getIdentifier());
+						}
 						if (group != null) {
 							return group.getLabel().replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -138,7 +146,20 @@ public class ModeSelector extends CSelector {
 		});
 	}
 
-
+	protected ILaunchGroup getDefaultLaunchGroup(String mode) throws CoreException {
+		String groupId = null;
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			groupId = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
+		} else if( mode.equals(ILaunchManager.PROFILE_MODE)) {
+			groupId = IDebugUIConstants.ID_PROFILE_LAUNCH_GROUP;
+		} else {
+			groupId = IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
+		}
+		if( groupId != null )
+			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupId);
+		return null;
+	}
+	
 	protected ILaunchGroup getLaunchGroup(String mode) throws CoreException {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(manager.getActiveLaunchDescriptor(), manager.getActiveLaunchTarget());
 		if (type == null)

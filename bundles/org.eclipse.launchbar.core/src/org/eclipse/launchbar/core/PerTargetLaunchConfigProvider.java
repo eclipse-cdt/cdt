@@ -84,6 +84,17 @@ public abstract class PerTargetLaunchConfigProvider extends AbstractLaunchConfig
 	}
 
 	@Override
+	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
+		// TODO re-create map
+		return false;
+	}
+
+	@Override
+	public boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException {
+		return false;
+	}
+
+	@Override
 	public void launchDescriptorRemoved(ILaunchDescriptor descriptor) throws CoreException {
 		configMap.remove(descriptor);
 	}

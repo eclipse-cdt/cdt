@@ -745,6 +745,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		for (LaunchDescriptorTypeInfo descTypeInfo : orderedDescriptorTypes) {
 			for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeInfo.getId())) {
 				try {
+					providerInfo.getProvider().launchConfigurationAdded(configuration);
 					if (providerInfo.getProvider().ownsLaunchConfiguration(configuration)) {
 						return;
 					}
@@ -781,7 +782,15 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		// Nothing to do on changes
+		for (LaunchDescriptorTypeInfo descTypeInfo : orderedDescriptorTypes) {
+			for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeInfo.getId())) {
+				try {
+					providerInfo.getProvider().launchConfigurationChanged(configuration);
+				} catch (Throwable e) {
+					Activator.log(e);
+				}
+			}
+		}
 	}
 
 	public void dispose() {

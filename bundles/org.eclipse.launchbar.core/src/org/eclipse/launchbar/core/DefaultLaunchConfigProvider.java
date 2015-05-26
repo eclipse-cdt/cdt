@@ -52,4 +52,15 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 		// nothing to do
 	}
 
+	@Override
+	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
+		// catch any left over configs
+		return true;
+	}
+
+	@Override
+	public boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException {
+		// catch any left over configs
+		return true;
+	}
 }

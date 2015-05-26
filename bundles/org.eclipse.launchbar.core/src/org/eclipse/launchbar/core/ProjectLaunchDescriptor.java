@@ -45,4 +45,8 @@ public class ProjectLaunchDescriptor extends PlatformObject implements ILaunchDe
 		return type;
 	}
 
+	@Override
+	public String toString() {
+		return getName(); // for debugging purposes
+	}
 }

@@ -82,6 +82,21 @@ public interface ILaunchConfigurationProvider {
 	boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException;
 
 	/**
+	 * A launch configuration has been added. Provider can inspect it and associate with internal map.
+	 * Provider should make sure it owns this launch configuration or it can modify it to take over.
+	 * 
+	 * @return true of provider owns this launch configuration
+	 */
+	boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException;
+
+	/**
+	 * A launch configuration has been changed. Provider can inspect it to re-evaluate its internal map.
+	 * Provider should make sure it owns this launch configuration or it can modify it to take over.
+	 * 
+	 * @return true of provider owns this launch configuration
+	 */
+	boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException;
+	/**
 	 * A launch descriptor has been removed. Remove any launch configurations that were
 	 * created for it.
 	 * 
@@ -98,5 +113,6 @@ public interface ILaunchConfigurationProvider {
 	 * @throws CoreException
 	 */
 	void launchTargetRemoved(IRemoteConnection target) throws CoreException;
+
 
 }

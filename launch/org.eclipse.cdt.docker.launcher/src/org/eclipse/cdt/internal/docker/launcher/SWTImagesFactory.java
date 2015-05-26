@@ -13,15 +13,16 @@ package org.eclipse.cdt.internal.docker.launcher;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.linuxtools.docker.ui.Activator;
 import org.eclipse.swt.graphics.Image;
 
 public class SWTImagesFactory {
 	// The plug-in registry
-	private static ImageRegistry imageRegistry = Activator.getDefault()
+	private static ImageRegistry imageRegistry = DockerLaunchUIPlugin
+			.getDefault()
 			.getImageRegistry();
 
 	// Sub-directory (under the package containing this class) where 16 color
@@ -30,13 +31,16 @@ public class SWTImagesFactory {
 
 	static {
 		try {
-			fgIconBaseURL = new URL(Activator.getDefault().getBundle()
+			fgIconBaseURL = new URL(
+					DockerLaunchUIPlugin.getDefault().getBundle()
 					.getEntry("/"), "icons/"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
-			Activator.log(e);
+			DockerLaunchUIPlugin.log(e);
 		}
 	}
-	private static final String NAME_PREFIX = Activator.PLUGIN_ID + '.';
+
+	private static final String NAME_PREFIX = DockerLaunchUIPlugin.PLUGIN_ID
+			+ '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 	public static final String IMG_DOCKER_SMALL = NAME_PREFIX
 			+ "docker_small.gif"; //$NON-NLS-1$
@@ -69,7 +73,7 @@ public class SWTImagesFactory {
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			Activator.log(e);
+			DockerLaunchUIPlugin.log(e);
 			return null;
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,6 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildren;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetValue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetVar;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildCountInfo;
@@ -1666,13 +1665,17 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         		}
         			
         		if (stoppedEventThread != null) {
-        			if (miEvent instanceof MIFunctionFinishedEvent) {
-        				// When getting an MIFunctionFinishedEvent we must set
-        				// a proper alias for the convenience variable
-        				String resultVar = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
-        				if (resultVar != null && !resultVar.isEmpty()) {
-        					fReturnValueAliases.createAlias(stoppedEventThread, resultVar);
-        				}
+        			// Don't limit this check to MIFunctionFinishedEvent because when
+        			// returning out of a function, we could get another suspended event.
+        			// For example, if the execution returns on a line that has a breakpoint
+        			// we would get MIBreakpointHitEvent.  Let's use the base MIStoppedEvent
+        			// to be safe.
+
+        			// When getting an MIStoppedEvent that holds a return value, we must set
+        			// a proper alias for the convenience variable
+        			String resultVar = ((MIStoppedEvent)miEvent).getGDBResultVar();
+        			if (resultVar != null && !resultVar.isEmpty()) {
+        				fReturnValueAliases.createAlias(stoppedEventThread, resultVar);
         			}
 
         			// Keep track of the latest method the thread is stopped in.

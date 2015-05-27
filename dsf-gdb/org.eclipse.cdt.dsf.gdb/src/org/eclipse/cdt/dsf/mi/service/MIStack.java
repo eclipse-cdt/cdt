@@ -47,7 +47,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIArg;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
@@ -1141,12 +1140,17 @@ implements IStack, ICachingService {
 		// can arrive here, faster that a preceding IResumedDMEvent
 		if (e instanceof IMIDMEvent) {
 			Object miEvent = ((IMIDMEvent)e).getMIEvent();
-			if (miEvent instanceof MIFunctionFinishedEvent) {
-				// When returning out of a function, we want to show the return value
+			if (miEvent instanceof MIStoppedEvent) {
+				// Don't limit this check to MIFunctionFinishedEvent because when
+				// returning out of a function, we could get another suspended event.
+				// For example, if the execution returns on a line that has a breakpoint
+				// we would get MIBreakpointHitEvent.  Let's use the base MIStoppedEvent
+				// to be safe.
+				
+				// we want to show the return value
 				// for the thread that finished the call.  To do that, we store
 				// the variable in which GDB stores that return value, and we do
 				// that for the proper thread.
-
 				IMIExecutionDMContext finishedEventThread = null;
 				if (e instanceof IContainerSuspendedDMEvent) {
 					// All-stop mode
@@ -1163,8 +1167,8 @@ implements IStack, ICachingService {
 				}
 
 				if (finishedEventThread != null) {
-					String name = ((MIFunctionFinishedEvent)miEvent).getGDBResultVar();
-					String value = ((MIFunctionFinishedEvent)miEvent).getReturnValue();
+					String name = ((MIStoppedEvent)miEvent).getGDBResultVar();
+					String value = ((MIStoppedEvent)miEvent).getReturnValue();
 
 					if (name != null && !name.isEmpty() && value != null && !value.isEmpty()) {
 						fThreadToReturnVariable.put(finishedEventThread, new VariableData(new MIArg(name, value)));

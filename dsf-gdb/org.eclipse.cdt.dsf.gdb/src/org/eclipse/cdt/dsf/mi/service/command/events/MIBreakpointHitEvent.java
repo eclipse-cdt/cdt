@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 QNX Software Systems and others.
+ * Copyright (c) 2009, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,15 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
     int bkptno;
 
     protected MIBreakpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, int bkptno) {
-        super(ctx, token, results, frame);
+    	this(ctx, token, results, frame, bkptno, null, null, null);
+    }
+    
+    /**
+	 * @since 4.7
+	 */
+    protected MIBreakpointHitEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, int bkptno,
+    		                       String gdbResult, String returnValue, String returnType) {
+        super(ctx, token, results, frame, gdbResult, returnValue, returnType);
         this.bkptno = bkptno;
     }
 
@@ -104,6 +112,7 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
        }
 
        MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
-       return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
+       return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno,
+    		   						   stoppedEvent.getGDBResultVar(), stoppedEvent.getReturnValue(), stoppedEvent.getReturnType());
     }
 }

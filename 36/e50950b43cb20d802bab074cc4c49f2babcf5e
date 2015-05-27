@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+2: Jeff Johnston <jjohnstn@redhat.com>
+Verified+1: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-by: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-at: Wed, 27 May 2015 12:33:03 -0400
+Reviewed-on: https://git.eclipse.org/r/48700
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

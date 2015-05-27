@@ -59,21 +59,24 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Global descriptor type id. I.e. com.example.mytype
                </documentation>
             </annotation>
          </attribute>
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Priority of the descriptor, values from 1 to 100.
+Lower values represent lower priority.
+I.e. descriptor with priority 10 will override
+descriptor with priority 5. Priority 0 is reserved for default descriptor.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Class that implements ILaunchDescriptorType
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.launchbar.core.ILaunchDescriptorType"/>
@@ -93,7 +96,7 @@
          <attribute name="descriptorType" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Id of the descriptor type defined in descriptorType element (can be from another extension)
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.launchbar.core.launchBarContributions/descriptorType/@id"/>
@@ -103,14 +106,17 @@
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Priority of the provider, values from 1 to 100.
+Lower values represent lower priority.
+I.e. provider with priority 10 will be checked before
+provider with priority 5. Priority 0 is reserved for default provider.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Class that implements ILaunchConfigurationProvider
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.launchbar.core.ILaunchConfigurationProvider"/>

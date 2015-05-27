@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -45,7 +46,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -66,7 +66,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-@SuppressWarnings({"restriction", "nls"})
+@SuppressWarnings({ "restriction", "nls" })
 @FixMethodOrder(MethodSorters.JVM)
 public class LaunchBarManager2Test {
 	private LaunchBarManager manager;
@@ -121,14 +121,16 @@ public class LaunchBarManager2Test {
 		basicSetup();
 	}
 
-	protected void mockProviderElement(String descriptorTypeId, int priority, ILaunchConfigurationProvider provider) throws CoreException {
+	protected void mockProviderElement(String descriptorTypeId, int priority, ILaunchConfigurationProvider provider)
+			throws CoreException {
 		IConfigurationElement element = mockElementAndAdd("configProvider");
 		doReturn(descriptorTypeId).when(element).getAttribute("descriptorType");
 		doReturn(Integer.toString(priority)).when(element).getAttribute("priority");
 		doReturn(provider).when(element).createExecutableExtension("class");
 	}
 
-	protected ILaunchConfigurationProvider mockProviderElement(String descriptorTypeId, int priority, ILaunchDescriptor descriptor, IRemoteConnection target,
+	protected ILaunchConfigurationProvider mockProviderElement(String descriptorTypeId, int priority, ILaunchDescriptor descriptor,
+			IRemoteConnection target,
 			ILaunchConfiguration config, Object launchObj) throws CoreException {
 		ILaunchConfigurationProvider provider = mock(ILaunchConfigurationProvider.class);
 		mockProviderElement(descriptorTypeId, priority, provider);
@@ -139,7 +141,8 @@ public class LaunchBarManager2Test {
 		return provider;
 	}
 
-	protected IConfigurationElement mockDescriptorTypeElement(String descriptorTypeId, int priority, ILaunchDescriptorType descriptorType)
+	protected IConfigurationElement mockDescriptorTypeElement(String descriptorTypeId, int priority,
+			ILaunchDescriptorType descriptorType)
 			throws CoreException {
 		IConfigurationElement element = mockElementAndAdd("descriptorType");
 		doReturn(descriptorTypeId).when(element).getAttribute("id");
@@ -171,7 +174,8 @@ public class LaunchBarManager2Test {
 		ILaunchConfiguration lc = mock(ILaunchConfiguration.class);
 		doReturn(string).when(lc).getName();
 		doReturn(lctype2).when(lc).getType();
-		doReturn("").when(lc).getAttribute(eq(ORIGINAL_NAME), eq(""));
+		doReturn("").when(lc).getAttribute(eq(ATTR_ORIGINAL_NAME), eq(""));
+		doReturn("").when(lc).getAttribute(eq(ATTR_PROVIDER_CLASS), eq(""));
 		return lc;
 	}
 
@@ -280,9 +284,7 @@ public class LaunchBarManager2Test {
 		doReturn(descriptor).when(descriptorType).getDescriptor(launchObject);
 		// configProvider
 		provider = mockProviderElement(descriptorTypeId, 10, descriptor, otherTarget, launchConfig, launchObject);
-
 		mockLaunchObjectOnDescriptor(launchObject);
-
 		// default descriptor
 		String defaultDescTypeId = "defaultDescType";
 		mockDescriptorTypeElement(defaultDescTypeId, 0, new DefaultLaunchDescriptorType());
@@ -543,9 +545,9 @@ public class LaunchBarManager2Test {
 			return "pbtype";
 		}
 	}
+	public static final String ATTR_ORIGINAL_NAME = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".originalName"; //$NON-NLS-1$
+	public static final String ATTR_PROVIDER_CLASS = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".providerClass"; //$NON-NLS-1$
 
-	String ORIGINAL_NAME = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".originalName";
-	String PROJECT_CONFIG = org.eclipse.launchbar.core.internal.Activator.PLUGIN_ID + ".projectConfig";
 	protected void projectMappingSetup() throws CoreException {
 		descriptorType = new ProjectBasedLaunchDescriptorType();
 		descriptorTypeId = ((ProjectBasedLaunchDescriptorType) descriptorType).getId();
@@ -555,8 +557,7 @@ public class LaunchBarManager2Test {
 		mockDescriptorTypeElement(descriptorTypeId, 10, descriptorType);
 		//lc = provider.createLaunchConfiguration(lman, descType.getDescriptor(aaa));
 		mockLCProject(launchConfig, aaa);
-		mockLCAttribute(launchConfig, ORIGINAL_NAME, aaa.getName());
-		mockLCAttribute(launchConfig, PROJECT_CONFIG, true);
+		mockLCAttribute(launchConfig, ATTR_ORIGINAL_NAME, aaa.getName());
 		assertEquals(0, manager.getLaunchDescriptors().length);
 		provider = new ProjectPerTargetLaunchConfigProvider() {
 			@Override
@@ -571,6 +572,7 @@ public class LaunchBarManager2Test {
 			}
 		};
 		mockProviderElement(descriptorTypeId, 10, provider);
+		mockLCAttribute(launchConfig, ATTR_PROVIDER_CLASS, provider.getClass().getName());
 		init();
 	}
 
@@ -793,7 +795,7 @@ public class LaunchBarManager2Test {
 	@Test
 	public void testGetActiveLaunchModeFromDescActive() throws CoreException {
 		globalmodes.clear();
-		ILaunchMode mode = mockLaunchModes(launchConfigType, "foo","run")[0];
+		ILaunchMode mode = mockLaunchModes(launchConfigType, "foo", "run")[0];
 		manager.launchObjectAdded(launchObject);
 		manager.setActiveLaunchDescriptor(descriptor);
 		manager.setActiveLaunchMode(mode);
@@ -902,30 +904,26 @@ public class LaunchBarManager2Test {
 	public void testLaunchConfigurationAddedBad() throws CoreException {
 		doThrow(new NullPointerException()).when(provider).ownsLaunchConfiguration(any(ILaunchConfiguration.class));
 		manager.launchConfigurationAdded(launchConfig);
+		verify(provider).launchConfigurationAdded(launchConfig);
 		verify(provider).ownsLaunchConfiguration(launchConfig);
 	}
 
 	@Test
-	public void testLaunchConfigurationRemoved_fails() throws CoreException {
-		manager.launchConfigurationRemoved(launchConfig);
-		try {
-			verify(provider).launchConfigurationRemoved(launchConfig);
-			fail();
-		} catch (Throwable e) {
-			// temp fail test
-		}
+	public void testLaunchConfigurationChanged() throws CoreException {
+		manager.launchConfigurationChanged(launchConfig);
+		verify(provider).launchConfigurationChanged(launchConfig);
 	}
 
 	@Test
-	public void testLaunchConfigurationRemovedBad_fails() throws CoreException {
-		doThrow(new NullPointerException()).when(provider).launchConfigurationRemoved(any(ILaunchConfiguration.class));
+	public void testLaunchConfigurationRemoved() throws CoreException {
 		manager.launchConfigurationRemoved(launchConfig);
-		try {
-			verify(provider).launchConfigurationRemoved(launchConfig);
-			fail();
-		} catch (Throwable e) {
-			// temp fail test
-		}
+		verify(provider).launchConfigurationRemoved(launchConfig);
 	}
 
+	@Test
+	public void testLaunchConfigurationRemovedBad() throws CoreException {
+		doThrow(new NullPointerException()).when(provider).launchConfigurationRemoved(any(ILaunchConfiguration.class));
+		manager.launchConfigurationRemoved(launchConfig);
+		verify(provider).launchConfigurationRemoved(launchConfig);
+	}
 }

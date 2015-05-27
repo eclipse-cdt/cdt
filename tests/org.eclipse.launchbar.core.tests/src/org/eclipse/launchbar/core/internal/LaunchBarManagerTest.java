@@ -3,6 +3,7 @@ package org.eclipse.launchbar.core.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -33,7 +34,6 @@ import org.mockito.stubbing.Answer;
 
 @SuppressWarnings("nls")
 public class LaunchBarManagerTest {
-
 	@Test
 	public void startupTest() throws Exception {
 		// Make sure the manager starts up and defaults everything to null
@@ -55,6 +55,7 @@ public class LaunchBarManagerTest {
 		String launchConfigName = "launchConfig";
 		doReturn(launchConfigName).when(launchConfig).getName();
 		doReturn(launchConfigName).when(launchConfig).getAttribute(eq("org.eclipse.launchbar.core.originalName"), anyString());
+		doReturn("").when(launchConfig).getAttribute(eq("org.eclipse.launchbar.core.providerClass"), anyString());
 		doReturn(true).when(launchConfigType).isPublic();
 		doReturn(launchConfigType).when(launchConfig).getType();
 		doReturn("launchConfigType").when(launchConfigType).getIdentifier();

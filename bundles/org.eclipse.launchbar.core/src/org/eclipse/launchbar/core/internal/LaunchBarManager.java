@@ -37,6 +37,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.launchbar.core.ILaunchBarManager;
+import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.ILaunchObjectProvider;
@@ -648,8 +649,12 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	boolean supportsTarget(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 		String descriptorTypeId = getDescriptorTypeId(descriptor.getType());
 		for (LaunchConfigProviderInfo provider : configProviders.get(descriptorTypeId)) {
-			if (provider.getProvider().supports(descriptor, target)) {
-				return true;
+			try {
+				if (provider.getProvider().supports(descriptor, target)) {
+					return true;
+				}
+			} catch (Throwable e) {
+				Activator.log(e);
 			}
 		}
 		return false;
@@ -718,10 +723,19 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 		}
 
 		String descTypeId = getDescriptorTypeId(descriptor.getType());
-		for (LaunchConfigProviderInfo provider : configProviders.get(descTypeId)) {
-			ILaunchConfiguration config = provider.getProvider().getLaunchConfiguration(descriptor, target);
-			if (config != null) {
-				return config;
+		for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeId)) {
+			try {
+				ILaunchConfigurationProvider provider = providerInfo.getProvider();
+				// between multiple provider who support this descriptor we need to find one
+				// that supports this target
+				if (provider.supports(descriptor, target)) {
+					ILaunchConfiguration config = provider.getLaunchConfiguration(descriptor, target);
+					if (config != null) {
+						return config;
+					}
+				}
+			} catch (Throwable e) {
+				Activator.log(e);
 			}
 		}
 

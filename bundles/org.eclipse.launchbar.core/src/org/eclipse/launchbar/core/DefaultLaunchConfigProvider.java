@@ -12,10 +12,17 @@ import org.eclipse.remote.core.IRemoteConnection;
  */
 public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider {
 
+	/**
+	 * Only support local connection. Override to support different types of connection.
+	 */
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 		// Only supports Local connection
-		return target.getConnectionType().getId().equals("org.eclipse.remote.LocalServices"); //$NON-NLS-1$
+		if (target != null && target.getConnectionType().getId().equals("org.eclipse.remote.LocalServices")) { //$NON-NLS-1$
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -30,6 +37,10 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 		return descriptor.getAdapter(ILaunchConfiguration.class);
 	}
 
+	/**
+	 * If you do override this method and return true you would have to make sure you add launch object which matches 
+	 * this configuration, otherwise it will not be visible
+	 */
 	@Override
 	public boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
 		// return false so that the config is added as a launch object
@@ -38,8 +49,8 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
-		// catch any left over configs
-		return true;
+		// by contract we return true if we own or use to own configuration
+		return ownsLaunchConfiguration(configuration);
 	}
 
 	@Override
@@ -54,13 +65,13 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 
 	@Override
 	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
-		// catch any left over configs
-		return true;
+		// by contract we return true if we own configuration
+		return ownsLaunchConfiguration(configuration);
 	}
 
 	@Override
 	public boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException {
-		// catch any left over configs
-		return true;
+		// by contract we return true if we own configuration
+		return ownsLaunchConfiguration(configuration);
 	}
 }

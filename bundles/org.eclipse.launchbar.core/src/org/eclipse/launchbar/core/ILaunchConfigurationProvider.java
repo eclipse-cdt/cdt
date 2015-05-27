@@ -23,7 +23,6 @@ import org.eclipse.remote.core.IRemoteConnection;
  * subclasses instead of implementing this directly.
  */
 public interface ILaunchConfigurationProvider {
-
 	/**
 	 * Does this config provider provide launch configurations for the combination
 	 * of descriptor and target.
@@ -33,7 +32,7 @@ public interface ILaunchConfigurationProvider {
 	 * 
 	 * @param descriptor
 	 * @param target
-	 * @return
+	 * @return true if target is supported, false otherwise. 
 	 */
 	boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException;
 

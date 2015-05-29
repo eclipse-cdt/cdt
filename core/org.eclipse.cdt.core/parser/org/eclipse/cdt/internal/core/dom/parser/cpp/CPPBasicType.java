@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,6 +115,12 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return Kind.eFloat;
 		case IASTSimpleDeclSpecifier.t_float128:
 			return Kind.eFloat128;
+		case IASTSimpleDeclSpecifier.t_decimal32:
+			return Kind.eDecimal32;
+		case IASTSimpleDeclSpecifier.t_decimal64:
+			return Kind.eDecimal64;
+		case IASTSimpleDeclSpecifier.t_decimal128:
+			return Kind.eDecimal128;
 		case IASTSimpleDeclSpecifier.t_int:
 			return Kind.eInt;
 		case IASTSimpleDeclSpecifier.t_int128:
@@ -295,6 +301,9 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		case eNullPtr:
 		case eInt128:
 		case eFloat128:
+		case eDecimal32:
+		case eDecimal64:
+		case eDecimal128:
 			// Null pointer type cannot be expressed wit ha simple decl specifier.
 			break;
 		}

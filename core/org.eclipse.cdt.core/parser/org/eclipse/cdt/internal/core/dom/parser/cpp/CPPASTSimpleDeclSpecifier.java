@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,12 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 			return t_float;
 		case eFloat128:
 			return t_float128;
+		case eDecimal32:
+			return t_decimal32;
+		case eDecimal64:
+			return t_decimal64;
+		case eDecimal128:
+			return t_decimal128;
 		case eInt:
 			return t_int;
 		case eInt128:

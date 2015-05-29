@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,12 @@ public class GCCKeywords {
 	public static final String __FLOAT128 = "__float128";
 	/** @since 5.9 */
 	public static final String __FINAL = "__final";
+	/** @since 5.10  */
+	public static final String _DECIMAL32 = "_Decimal32";
+	/** @since 5.10  */
+	public static final String _DECIMAL64 = "_Decimal64";
+	/** @since 5.10  */
+	public static final String _DECIMAL128 = "_Decimal128";
 
 	public static final char[]
 		cpTYPEOF = 			TYPEOF.toCharArray(),
@@ -90,4 +96,10 @@ public class GCCKeywords {
 	/** @since 5.9 */
 	public static final char[]
 		cp__FINAL=						__FINAL.toCharArray();
+
+	/** @since 5.10 */
+	public static final char[]
+		cp_decimal32=					_DECIMAL32.toCharArray(),
+		cp_decimal64=					_DECIMAL64.toCharArray(),
+		cp_decimal128=					_DECIMAL128.toCharArray();
 }

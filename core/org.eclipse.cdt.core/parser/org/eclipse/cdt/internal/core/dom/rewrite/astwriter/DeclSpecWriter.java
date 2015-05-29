@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -92,6 +92,12 @@ public class DeclSpecWriter extends NodeWriter {
 			return Keywords.DOUBLE;
 		case IASTSimpleDeclSpecifier.t_float128:
 			return GCCKeywords.__FLOAT128;
+		case IASTSimpleDeclSpecifier.t_decimal32:
+			return GCCKeywords._DECIMAL32;
+		case IASTSimpleDeclSpecifier.t_decimal64:
+			return GCCKeywords._DECIMAL64;
+		case IASTSimpleDeclSpecifier.t_decimal128:
+			return GCCKeywords._DECIMAL128;
 			
 		case IASTSimpleDeclSpecifier.t_bool:
 			return isCpp ? Keywords.BOOL : Keywords._BOOL;

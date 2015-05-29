@@ -165,14 +165,19 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		try {
 			if (fShell) {
 				fChannel = fConnection.getShellChannel();
-				((ChannelShell) fChannel).setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
-				((ChannelShell) fChannel).setPtyType("vt100"); //$NON-NLS-1$
+				if ((flags & ALLOCATE_PTY) == ALLOCATE_PTY) {
+					((ChannelShell) fChannel).setPty(true);
+					((ChannelShell) fChannel).setPtyType((flags & FORWARD_X11) == FORWARD_X11 ? "xterm" : "vt100"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing shell"); //$NON-NLS-1$
 			} else {
 				fChannel = fConnection.getExecChannel();
 				String command = buildCommand(remoteCmd, env, clearEnv);
 				((ChannelExec) fChannel).setCommand(command);
-				((ChannelExec) fChannel).setPty((flags & ALLOCATE_PTY) == ALLOCATE_PTY);
+				if ((flags & ALLOCATE_PTY) == ALLOCATE_PTY) {
+					((ChannelExec) fChannel).setPty(true);
+					((ChannelExec) fChannel).setPtyType((flags & FORWARD_X11) == FORWARD_X11 ? "xterm" : "vt100"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				RemoteDebugOptions.trace(RemoteDebugOptions.DEBUG_REMOTE_COMMANDS, "executing command: " + command); //$NON-NLS-1$
 			}
 			fChannel.setXForwarding((flags & FORWARD_X11) == FORWARD_X11);

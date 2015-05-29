@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2622,6 +2622,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         case IToken.t__Imaginary:
         case IGCCToken.t__int128:
         case IGCCToken.t__float128:
+        case IGCCToken.t_decimal32:
+        case IGCCToken.t_decimal64:
+        case IGCCToken.t_decimal128:
         case IToken.t_signed:
         case IToken.t_unsigned:
         case IToken.t_decltype:

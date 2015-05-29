@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,6 +111,24 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.5
 	 */
 	public static final int t_float128 = 14;
+
+	/**
+	 * <code>_Decimal32 i;</code>
+	 * @since 5.10
+	 */
+	public static final int t_decimal32 = 15;
+
+	/**
+	 * <code>_Decimal64 i;</code>
+	 * @since 5.10
+	 */
+	public static final int t_decimal64 = 16;
+
+	/**
+	 * <code>_Decimal128 i;</code>
+	 * @since 5.10
+	 */
+	public static final int t_decimal128 = 17;
 
 	/**
 	 * @since 5.1

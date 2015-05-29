@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,9 @@ public interface IBasicType extends IType {
 	enum Kind {
 		eUnspecified, eVoid, eChar, eWChar, eInt, eFloat, eDouble,
 		eBoolean, eChar16, eChar32, /** @since 5.4 */ eNullPtr,
-		/** @since 5.5 */ eInt128, /** @since 5.5 */ eFloat128
+		/** @since 5.5 */ eInt128, /** @since 5.5 */ eFloat128,
+		/** @since 5.10 */ eDecimal32, /** @since 5.10  */eDecimal64,
+		/** @since 5.10  */ eDecimal128;
 	}
 
 	/** @since 5.2 */

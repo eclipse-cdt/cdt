@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -597,6 +597,9 @@ class BuiltinOperators {
 			case eDouble:
 			case eFloat:
 			case eFloat128:
+			case eDecimal32:
+			case eDecimal64:
+			case eDecimal128:
 				return true;
 			case eBoolean:
 			case eChar:
@@ -625,6 +628,9 @@ class BuiltinOperators {
 			case eDouble:
 			case eFloat:
 			case eFloat128:
+			case eDecimal32:
+			case eDecimal64:
+			case eDecimal128:
 			case eInt:
 			case eInt128:
 			case eWChar:
@@ -653,6 +659,9 @@ class BuiltinOperators {
 			case eDouble:
 			case eFloat:
 			case eFloat128:
+			case eDecimal32:
+			case eDecimal64:
+			case eDecimal128:
 			case eUnspecified:
 			case eVoid:
 			case eNullPtr:

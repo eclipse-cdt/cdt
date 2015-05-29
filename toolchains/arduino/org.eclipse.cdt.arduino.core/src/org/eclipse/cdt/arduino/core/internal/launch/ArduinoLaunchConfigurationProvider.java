@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ProjectPerTargetLaunchConfigProvider;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -25,8 +26,8 @@ public class ArduinoLaunchConfigurationProvider extends ProjectPerTargetLaunchCo
 	@Override
 	public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
 			throws CoreException {
-		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(
-				ArduinoLaunchConfigurationDelegate.TYPE_ID);
+		return DebugPlugin.getDefault().getLaunchManager()
+				.getLaunchConfigurationType(ArduinoLaunchConfigurationDelegate.TYPE_ID);
 	}
 
 	@Override
@@ -42,6 +43,13 @@ public class ArduinoLaunchConfigurationProvider extends ProjectPerTargetLaunchCo
 		// must have the arduino nature
 		IProject project = descriptor.getAdapter(IProject.class);
 		return ArduinoProjectNature.hasNature(project);
+	}
+
+	@Override
+	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
+		super.populateLaunchConfiguration(descriptor, target, workingCopy);
+		workingCopy.setAttribute(ArduinoLaunchConfigurationDelegate.CONNECTION_NAME, target.getName());
 	}
 
 }

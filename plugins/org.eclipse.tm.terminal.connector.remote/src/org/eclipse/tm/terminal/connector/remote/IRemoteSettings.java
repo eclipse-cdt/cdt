@@ -9,19 +9,19 @@ package org.eclipse.tm.terminal.connector.remote;
 
 public interface IRemoteSettings {
 	public static final String CONNECTION_NAME = "ConnectionName"; //$NON-NLS-1$
-	public static final String REMOTE_SERVICES = "RemoteServices"; //$NON-NLS-1$
+	public static final String CONNECTION_TYPE_ID = "ConnectionTypeId"; //$NON-NLS-1$
 
 	/**
-	 * Get the host name or IP address of remote system to connect.
+	 * Get the connection type ID for the connection (e.g. local, ssh, etc.)
 	 * 
-	 * @return host name or IP address of the remote system.
+	 * @return connection type ID.
 	 */
-	String getRemoteServices();
+	String getConnectionTypeId();
 
 	/**
-	 * Get the login name for connecting to the remote system.
+	 * Get the connection name for the target system.
 	 * 
-	 * @return remote login name
+	 * @return connection name
 	 */
 	String getConnectionName();
 }

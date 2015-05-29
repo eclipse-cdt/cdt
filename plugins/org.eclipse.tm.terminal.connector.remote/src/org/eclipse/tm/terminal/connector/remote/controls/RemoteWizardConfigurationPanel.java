@@ -33,19 +33,22 @@ import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel
 @SuppressWarnings("restriction")
 public class RemoteWizardConfigurationPanel extends AbstractExtendedConfigurationPanel {
 
-    public RemoteSettings remoteSettings;
+	private RemoteSettings remoteSettings;
 	private ISettingsPage remoteSettingsPage;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param container The configuration panel container or <code>null</code>.
+	 * @param container
+	 *            The configuration panel container or <code>null</code>.
 	 */
 	public RemoteWizardConfigurationPanel(IConfigurationPanelContainer container) {
-	    super(container);
-    }
+		super(container);
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel#setupPanel(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -60,7 +63,7 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 		remoteSettingsPage = new RemoteSettingsPage(remoteSettings);
 		if (remoteSettingsPage instanceof AbstractSettingsPage) {
-			((AbstractSettingsPage)remoteSettingsPage).setHasControlDecoration(true);
+			((AbstractSettingsPage) remoteSettingsPage).setHasControlDecoration(true);
 		}
 		remoteSettingsPage.createControl(panel);
 
@@ -69,7 +72,9 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 
 			@Override
 			public void onSettingsPageChanged(Control control) {
-				if (getContainer() != null) getContainer().validate();
+				if (getContainer() != null) {
+					getContainer().validate();
+				}
 			}
 		});
 
@@ -79,79 +84,107 @@ public class RemoteWizardConfigurationPanel extends AbstractExtendedConfiguratio
 		setControl(panel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#setupData(java.util.Map)
 	 */
 	@Override
 	public void setupData(Map<String, Object> data) {
-		if (data == null || remoteSettings == null || remoteSettingsPage == null) return;
+		if (data == null || remoteSettings == null || remoteSettingsPage == null) {
+			return;
+		}
 
-		String value = (String)data.get(IRemoteSettings.REMOTE_SERVICES);
-		if (value != null) remoteSettings.setRemoteServices(value);
+		String value = (String) data.get(IRemoteSettings.CONNECTION_TYPE_ID);
+		if (value != null) {
+			remoteSettings.setConnectionTypeId(value);
+		}
 
-		value = (String)data.get(IRemoteSettings.CONNECTION_NAME);
-		if (value != null) remoteSettings.setConnectionName(value);
+		value = (String) data.get(IRemoteSettings.CONNECTION_NAME);
+		if (value != null) {
+			remoteSettings.setConnectionName(value);
+		}
 
-		value = (String)data.get(ITerminalsConnectorConstants.PROP_ENCODING);
-		if (value != null) setEncoding(value);
+		value = (String) data.get(ITerminalsConnectorConstants.PROP_ENCODING);
+		if (value != null) {
+			setEncoding(value);
+		}
 
 		remoteSettingsPage.loadSettings();
-    }
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#extractData(java.util.Map)
 	 */
 	@Override
 	public void extractData(Map<String, Object> data) {
-		if (data == null) return;
+		if (data == null) {
+			return;
+		}
 
-    	// set the terminal connector id for remote
-    	data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID, "org.eclipse.tm.terminal.connector.remote.RemoteConnector"); //$NON-NLS-1$
+		// set the terminal connector id for remote
+		data.put(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID,
+				"org.eclipse.tm.terminal.connector.remote.RemoteConnector"); //$NON-NLS-1$
 
-    	remoteSettingsPage.saveSettings();
-    	
-    	data.put(IRemoteSettings.REMOTE_SERVICES, remoteSettings.getRemoteServices());
-    	data.put(IRemoteSettings.CONNECTION_NAME, remoteSettings.getConnectionName());
-		data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
-    }
+		remoteSettingsPage.saveSettings();
 
-	/* (non-Javadoc)
+		data.put(IRemoteSettings.CONNECTION_TYPE_ID, remoteSettings.getConnectionTypeId());
+		data.put(IRemoteSettings.CONNECTION_NAME, remoteSettings.getConnectionName());
+		if (getEncoding() != null) {
+			data.put(ITerminalsConnectorConstants.PROP_ENCODING, getEncoding());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#fillSettingsForHost(java.lang.String)
 	 */
 	@Override
-	protected void fillSettingsForHost(String host){
+	protected void fillSettingsForHost(String host) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#saveSettingsForHost(boolean)
 	 */
 	@Override
-	protected void saveSettingsForHost(boolean add){
+	protected void saveSettingsForHost(boolean add) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#isValid()
 	 */
 	@Override
-    public boolean isValid(){
+	public boolean isValid() {
 		return isEncodingValid() && remoteSettingsPage.validateSettings();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.IDialogSettings, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#doSaveWidgetValues(org.eclipse.jface.dialogs.
+	 * IDialogSettings, java.lang.String)
 	 */
 	@Override
-    public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
-    	saveSettingsForHost(true);
-    	super.doSaveWidgetValues(settings, idPrefix);
-    }
+	public void doSaveWidgetValues(IDialogSettings settings, String idPrefix) {
+		saveSettingsForHost(true);
+		super.doSaveWidgetValues(settings, idPrefix);
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel#getHostFromSettings()
 	 */
 	@Override
-    protected String getHostFromSettings() {
+	protected String getHostFromSettings() {
 		remoteSettingsPage.saveSettings();
-	    return null;
-    }
+		return null;
+	}
 }

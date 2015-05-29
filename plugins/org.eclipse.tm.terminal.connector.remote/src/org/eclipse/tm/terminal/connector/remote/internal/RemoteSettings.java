@@ -12,22 +12,24 @@ import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 
 @SuppressWarnings("restriction")
 public class RemoteSettings implements IRemoteSettings {
-	protected String fRemoteServices;
-	protected String fConnectionName;
+	protected String connectionTypeId;
+	protected String connectionName;
 
 	public RemoteSettings() {
 	}
 
+	@Override
 	public String getConnectionName() {
-		return fConnectionName;
+		return connectionName;
 	}
 
-	public String getRemoteServices() {
-		return fRemoteServices;
+	@Override
+	public String getConnectionTypeId() {
+		return connectionTypeId;
 	}
 
 	public String getSummary() {
-		return "Remote:" + getRemoteServices() + '_' + getConnectionName(); //$NON-NLS-1$
+		return "Remote:" + getConnectionTypeId() + '_' + getConnectionName(); //$NON-NLS-1$
 	}
 
 	@Override
@@ -39,23 +41,23 @@ public class RemoteSettings implements IRemoteSettings {
 	 * Load information into the RemoteSettings object.
 	 */
 	public void load(ISettingsStore store) {
-		fRemoteServices = store.get(REMOTE_SERVICES, ""); //$NON-NLS-1$
-		fConnectionName = store.get(CONNECTION_NAME, ""); //$NON-NLS-1$
+		connectionTypeId = store.get(CONNECTION_TYPE_ID, ""); //$NON-NLS-1$
+		connectionName = store.get(CONNECTION_NAME, ""); //$NON-NLS-1$
 	}
 
 	/**
 	 * Extract information from the RemoteSettings object.
 	 */
 	public void save(ISettingsStore store) {
-		store.put(REMOTE_SERVICES, fRemoteServices);
-		store.put(CONNECTION_NAME, fConnectionName);
+		store.put(CONNECTION_TYPE_ID, connectionTypeId);
+		store.put(CONNECTION_NAME, connectionName);
 	}
 
 	public void setConnectionName(String name) {
-		fConnectionName = name;
+		connectionName = name;
 	}
 
-	public void setRemoteServices(String remoteServices) {
-		fRemoteServices = remoteServices;
+	public void setConnectionTypeId(String id) {
+		connectionTypeId = id;
 	}
 }

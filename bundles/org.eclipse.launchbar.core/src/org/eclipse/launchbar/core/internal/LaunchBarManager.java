@@ -76,7 +76,6 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 
 	// the extended info for loaded descriptor types
 	private final Map<ILaunchDescriptorType, LaunchDescriptorTypeInfo> descriptorTypeInfo = new HashMap<>();
-
 	private final Map<String, List<LaunchConfigProviderInfo>> configProviders = new HashMap<>();
 
 	// Descriptors in MRU order, key is desc type id and desc name.
@@ -194,9 +193,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 						LaunchDescriptorTypeInfo typeInfo = new LaunchDescriptorTypeInfo(element);
 
 						descriptorTypes.put(typeInfo.getId(), typeInfo);
-						// TODO figure out a better place to set the id so we don't load the type object
-						// until needed
-						descriptorTypeInfo.put(typeInfo.getType(), typeInfo);
+
 
 						if (configProviders.get(typeInfo.getId()) == null) {
 							// Make sure we initialize the list
@@ -211,8 +208,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 						}
 						providers.add(info);
 					}
-				} catch (CoreException e) {
-					Activator.log(e.getStatus());
+				} catch (Exception e) {
+					Activator.log(e);
 				}
 			}
 		}
@@ -329,13 +326,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchConfiguration
 	}
 
 	private ILaunchDescriptorType ownsLaunchObject(Object launchObject) throws CoreException {
-		// TODO use enablement to find out what descriptor types to ask
-		// to prevent unnecessary plug-in loading
 		for (LaunchDescriptorTypeInfo descriptorInfo : orderedDescriptorTypes) {
-			ILaunchDescriptorType descriptorType = descriptorInfo.getType();
 			try {
-				if (descriptorType.ownsLaunchObject(launchObject)) {
-					return descriptorType;
+				if (descriptorInfo.ownsLaunchObject(launchObject)) {
+					ILaunchDescriptorType type = descriptorInfo.getType();
+					descriptorTypeInfo.put(type, descriptorInfo);
+					if (type.ownsLaunchObject(launchObject)) {
+						return type;
+					}
 				}
 			} catch (Throwable e) {
 				Activator.log(e); // one of used defined launch types is misbehaving

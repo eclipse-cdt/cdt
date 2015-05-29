@@ -18,11 +18,13 @@ import org.eclipse.core.runtime.CoreException;
  * It is strongly recommended to extend AbstarctLaunchDescriptorType instead of implementing this directly
  */
 public interface ILaunchDescriptorType {
-
 	/**
 	 * Does this type own this launch object?
 	 * 
-	 * @deprecated this needs to be replaced by enablement to avoid plug-in loading.
+	 * The main checking should be done in enablement expression of extension declaring the type,
+	 * if enablement expression if defined this method can return true. 
+	 * This also can used for fine-tuning of ownership
+	 * which is hard to declared in xml. 
 	 * 
 	 * @param element
 	 * @return owns element

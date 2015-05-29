@@ -10,6 +10,8 @@
       </documentation>
    </annotation>
 
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
    <element name="extension">
       <annotation>
          <appinfo>
@@ -56,6 +58,9 @@
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="enablement"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>

@@ -10,8 +10,9 @@
       </objectProvider>
       <descriptorType
             class="org.eclipse.launchbar.core.internal.DefaultLaunchDescriptorType"
-            id="org.eclipse.launchbar.core.descriptorType.default"
+            id="org.eclipse.launchbar.core.descriptorType.default"     
             priority="0">
+         <enablement></enablement>
       </descriptorType>
       <configProvider
             class="org.eclipse.launchbar.core.DefaultLaunchConfigProvider"

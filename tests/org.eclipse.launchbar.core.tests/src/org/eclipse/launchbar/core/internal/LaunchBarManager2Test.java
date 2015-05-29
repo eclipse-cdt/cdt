@@ -80,7 +80,7 @@ public class LaunchBarManager2Test {
 	private ArrayList<ILaunchMode> globalmodes = new ArrayList<>();
 	IExtensionPoint point;
 	IEclipsePreferences store = new EclipsePreferences();
-	private ArrayList<Object> elements;
+	private ArrayList<IConfigurationElement> elements;
 	private IExtension extension;
 	private static final String localTargetTypeId = "org.eclipse.remote.LocalServices";
 	private String descriptorTypeId;
@@ -148,7 +148,21 @@ public class LaunchBarManager2Test {
 		doReturn(descriptorTypeId).when(element).getAttribute("id");
 		doReturn(Integer.toString(priority)).when(element).getAttribute("priority");
 		doReturn(descriptorType).when(element).createExecutableExtension("class");
+		mockEnablementElement(element);
 		return element;
+	}
+
+	private void mockSubElement(IConfigurationElement parent, IConfigurationElement... elements) {
+		doReturn(elements).when(parent).getChildren();
+		String name = elements[0].getName();
+		doReturn(elements).when(parent).getChildren(name);
+	}
+
+	private IConfigurationElement mockEnablementElement(IConfigurationElement parent) {
+		IConfigurationElement enablement = mock(IConfigurationElement.class);
+		doReturn("enablement").when(enablement).getName();
+		mockSubElement(parent, new IConfigurationElement[] { enablement });
+		return enablement;
 	}
 
 	protected void init() throws CoreException {
@@ -331,6 +345,7 @@ public class LaunchBarManager2Test {
 		ConfigBasedLaunchDescriptor desc2 = new ConfigBasedLaunchDescriptor(descriptorType, lc2);
 		mockProviderElement(descriptorTypeId, 10, desc2, target, lc2, lc2);
 		init();
+		manager.launchObjectAdded(launchObject);
 		// it return original lctype because we did not associate this dynmaically
 		assertEquals(launchConfigType, manager.getLaunchConfigurationType(descriptor, target));
 	}
@@ -344,6 +359,7 @@ public class LaunchBarManager2Test {
 		ILaunchConfiguration lc2 = mockLC("lc2", lctype2);
 		mockProviderElement(descriptorTypeId, 20, descriptor, target, lc2, launchObject);
 		init();
+		manager.launchObjectAdded(launchObject);
 		assertEquals(lctype2, manager.getLaunchConfigurationType(descriptor, target));
 	}
 
@@ -820,6 +836,7 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testGetLaunchConfigurationType() throws CoreException {
+		manager.launchObjectAdded(launchObject);
 		assertNotNull(manager.getLaunchConfigurationType(descriptor, otherTarget));
 	}
 
@@ -830,12 +847,14 @@ public class LaunchBarManager2Test {
 
 	@Test
 	public void testGetLaunchConfigurationNull2() throws CoreException {
+		manager.launchObjectAdded(launchObject);
 		assertNull(manager.getLaunchConfiguration(descriptor, null));
 	}
 
 	@Test
 	public void testGetLaunchConfiguration() throws CoreException {
 		basicSetup();
+		manager.launchObjectAdded(launchObject);
 		assertTrue(manager.supportsTarget(descriptor, otherTarget));
 		assertNotNull(manager.getLaunchConfiguration(descriptor, otherTarget));
 	}
@@ -926,4 +945,23 @@ public class LaunchBarManager2Test {
 		manager.launchConfigurationRemoved(launchConfig);
 		verify(provider).launchConfigurationRemoved(launchConfig);
 	}
+
+	@Test
+	public void testDescriptorEnablement() throws CoreException {
+		basicSetupOnly();
+		elements.clear();
+
+		IConfigurationElement element = mockDescriptorTypeElement("type2", 10, descriptorType);
+		IConfigurationElement enablement = mockEnablementElement(element);
+		IConfigurationElement instance = mock(IConfigurationElement.class);
+		doReturn("instanceof").when(instance).getName();
+		mockSubElement(enablement, new IConfigurationElement[] { instance });
+		doReturn("java.lang.Integer").when(instance).getAttribute("value");
+		init();
+		assertNull(manager.launchObjectAdded(launchObject)); // this will be refused by enablement expression
+		assertNull(manager.launchObjectAdded(1)); // we programmatically refuse this
+		mockLaunchObjectOnDescriptor(1);
+		assertNotNull(manager.launchObjectAdded(1)); // now we both good programmatically and in expression in extension
+	}
+
 }

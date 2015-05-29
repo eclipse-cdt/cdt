@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_1b5fb0f3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-05-29T20:48:08Z",
+      "side": 1,
+      "message": "Please remove the space before the dot. Same below.",
+      "range": {
+        "startLine": 332,
+        "startChar": 25,
+        "endLine": 332,
+        "endChar": 26
+      },
+      "revId": "d8f4c28754affcb48422d3fc423ab182ade617c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

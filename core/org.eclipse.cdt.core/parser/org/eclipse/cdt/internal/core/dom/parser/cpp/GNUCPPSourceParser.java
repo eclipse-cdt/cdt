@@ -3098,6 +3098,27 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			encounteredRawType= true;
         			endOffset= consume().getEndOffset();
         			break;
+        		case IGCCToken.t_decimal32:
+        			if (encounteredTypename)
+        				break declSpecifiers;
+        			simpleType = IASTSimpleDeclSpecifier.t_decimal32;
+        			encounteredRawType= true;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IGCCToken.t_decimal64:
+        			if (encounteredTypename)
+        				break declSpecifiers;
+        			simpleType = IASTSimpleDeclSpecifier.t_decimal64;
+        			encounteredRawType= true;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IGCCToken.t_decimal128:
+        			if (encounteredTypename)
+        				break declSpecifiers;
+        			simpleType = IASTSimpleDeclSpecifier.t_decimal128;
+        			encounteredRawType= true;
+        			endOffset= consume().getEndOffset();
+        			break;
         		case IToken.t_void:
         			if (encounteredTypename)
         				break declSpecifiers;

@@ -46,6 +46,8 @@ public class LocalConnectionPropertyService implements IRemoteConnectionProperty
 			return RemoteCorePlugin.getDefault().getBundle().getBundleContext().getProperty("osgi.os"); //$NON-NLS-1$
 		case IRemoteConnection.OS_ARCH_PROPERTY:
 			return RemoteCorePlugin.getDefault().getBundle().getBundleContext().getProperty("osgi.arch"); //$NON-NLS-1$
+		case IRemoteConnection.LOCALE_CHARMAP_PROPERTY:
+			return System.getProperty("file.encoding"); //$NON-NLS-1$
 		}
 		return System.getProperty(key);
 	}

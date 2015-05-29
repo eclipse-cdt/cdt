@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Google, Inc and others.
+ * Copyright (c) 2011, 2015 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,9 @@ public class SizeofCalculator {
 	public final SizeAndAlignment sizeof_complex_long_double;
 	public final SizeAndAlignment sizeof_float128;
 	public final SizeAndAlignment sizeof_complex_float128;
+	public final SizeAndAlignment sizeof_decimal32;
+	public final SizeAndAlignment sizeof_decimal64;
+	public final SizeAndAlignment sizeof_decimal128;
 
 	private final IASTTranslationUnit ast;
 
@@ -144,6 +147,9 @@ public class SizeofCalculator {
 		sizeof_complex_long_double = getSizeOfPair(sizeof_long_double);
 		sizeof_float128 = size_16;  // GCC does not define __SIZEOF_FLOAT128__
 		sizeof_complex_float128 = getSizeOfPair(sizeof_float128);
+		sizeof_decimal32 = size_4;  // GCC does not define __SIZEOF_DECIMAL32__
+		sizeof_decimal64 = size_8;  // GCC does not define __SIZEOF_DECIMAL64__
+		sizeof_decimal128 = size_16;  // GCC does not define __SIZEOF_DECIMAL128__
 	}
 
 	private SizeofCalculator() {
@@ -167,6 +173,9 @@ public class SizeofCalculator {
 		sizeof_complex_long_double = null;
 		sizeof_float128 = size_16;
 		sizeof_complex_float128 = getSizeOfPair(sizeof_float128);
+		sizeof_decimal32 = size_4;
+		sizeof_decimal64 = size_8;
+		sizeof_decimal128 = size_16;
 		ast = null;
 	}
 
@@ -233,6 +242,12 @@ public class SizeofCalculator {
 					(type.isLong() ? sizeof_complex_long_double : sizeof_complex_double);
 		case eFloat128:
 			return type.isComplex() ? sizeof_complex_float128 : sizeof_float128;
+		case eDecimal32:
+			return sizeof_decimal32;
+		case eDecimal64:
+			return sizeof_decimal64;
+		case eDecimal128:
+			return sizeof_decimal128;
 		case eWChar:
 			return sizeof_wchar_t;
 		case eChar16:

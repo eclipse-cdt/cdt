@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,6 +130,9 @@ public abstract class ArithmeticConversion {
 			case eDouble:
 			case eFloat:
 			case eFloat128:
+			case eDecimal32:
+			case eDecimal64:
+			case eDecimal128:
 			case eUnspecified:
 			case eVoid:
 			case eNullPtr:
@@ -242,6 +245,9 @@ public abstract class ArithmeticConversion {
 			case eDouble:
 			case eFloat:
 			case eFloat128:
+			case eDecimal32:
+			case eDecimal64:
+			case eDecimal128:
 			case eNullPtr:
 				assert false;
 			}
@@ -294,7 +300,8 @@ public abstract class ArithmeticConversion {
 	private boolean isLongDouble(IType type) {
 		if (type instanceof IBasicType) {
 			final IBasicType bt= (IBasicType) type;
-			return bt.isLong() && bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eFloat128;
+			return bt.isLong() && bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eFloat128 ||
+					bt.getKind() == Kind.eDecimal128;
 		}
 		return false;
 	}
@@ -302,7 +309,7 @@ public abstract class ArithmeticConversion {
 	private static boolean isDouble(IType type) {
 		if (type instanceof IBasicType) {
 			final IBasicType bt= (IBasicType) type;
-			return bt.getKind() == Kind.eDouble;
+			return bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eDecimal64;
 		}
 		return false;
 	}
@@ -310,7 +317,7 @@ public abstract class ArithmeticConversion {
 	private static boolean isFloat(IType type) {
 		if (type instanceof IBasicType) {
 			final IBasicType bt= (IBasicType) type;
-			return bt.getKind() == Kind.eFloat;
+			return bt.getKind() == Kind.eFloat || bt.getKind() == Kind.eDecimal32;
 		}
 		return false;
 	}

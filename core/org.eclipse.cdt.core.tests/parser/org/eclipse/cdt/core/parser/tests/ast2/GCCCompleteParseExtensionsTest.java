@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -433,6 +433,27 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGPP(code);
 	}
 	
+	// _Decimal32 x;
+	public void test_Decimal32() throws Exception {
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
+
+	// _Decimal64 x;
+	public void test_Decimal64() throws Exception {
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
+
+	// _Decimal128 x;
+	public void test_Decimal128() throws Exception {
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
+
 	//	struct waldo {
 	//	} __attribute__((__aligned__((1))));
 	public void test__attribute__aligned_bug400204() throws Exception {

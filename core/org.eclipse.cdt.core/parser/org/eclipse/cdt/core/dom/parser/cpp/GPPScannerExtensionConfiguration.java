@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,12 @@ import org.eclipse.cdt.core.parser.Keywords;
  * Configures the preprocessor for c++-sources as accepted by g++.
  */
 public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
+	private static final int VERSION_4_2 = version(4, 2);
 	private static final int VERSION_4_3 = version(4, 3);
 	private static final int VERSION_4_6 = version(4, 6);
 	private static final int VERSION_4_7 = version(4, 7);
 	private static GPPScannerExtensionConfiguration CONFIG= new GPPScannerExtensionConfiguration();
+	private static GPPScannerExtensionConfiguration CONFIG_4_2= new GPPScannerExtensionConfiguration(VERSION_4_2);
 	private static GPPScannerExtensionConfiguration CONFIG_4_3= new GPPScannerExtensionConfiguration(VERSION_4_3);
 	private static GPPScannerExtensionConfiguration CONFIG_4_6= new GPPScannerExtensionConfiguration(VERSION_4_6);
 	private static GPPScannerExtensionConfiguration CONFIG_4_7= new GPPScannerExtensionConfiguration(VERSION_4_7);
@@ -58,6 +60,9 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				if (version >= VERSION_4_3) {
 					return CONFIG_4_3;
 				}
+				if (version >= VERSION_4_2) {
+					return CONFIG_4_2;
+				}
 			} catch (Exception e) {
 				// Fall-back to the default configuration.
 			}
@@ -78,7 +83,12 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		addMacro("__builtin_offsetof(T,m)", "(reinterpret_cast <size_t>(&reinterpret_cast <const volatile char &>(static_cast<T*> (0)->m)))");
 		addKeyword(Keywords.c_COMPLEX, IToken.t__Complex);
 		addKeyword(Keywords.c_IMAGINARY, IToken.t__Imaginary);
-		
+
+		if (version >= VERSION_4_2) {
+			addKeyword(GCCKeywords.cp_decimal32, IGCCToken.t_decimal32);
+			addKeyword(GCCKeywords.cp_decimal64, IGCCToken.t_decimal64);
+			addKeyword(GCCKeywords.cp_decimal128, IGCCToken.t_decimal128);
+		}
 		// Type-traits supported by gcc 4.3
 		if (version >= VERSION_4_3) {
 			addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);

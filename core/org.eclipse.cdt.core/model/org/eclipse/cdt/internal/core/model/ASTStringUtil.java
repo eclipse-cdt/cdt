@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -658,6 +658,15 @@ public class ASTStringUtil {
 				break;
 			case IASTSimpleDeclSpecifier.t_float128:
 				buffer.append(GCCKeywords.cp__float128).append(' ');
+				break;
+			case IASTSimpleDeclSpecifier.t_decimal32:
+				buffer.append(GCCKeywords.cp_decimal32).append(' ');
+				break;
+			case IASTSimpleDeclSpecifier.t_decimal64:
+				buffer.append(GCCKeywords.cp_decimal64).append(' ');
+				break;
+			case IASTSimpleDeclSpecifier.t_decimal128:
+				buffer.append(GCCKeywords.cp_decimal128).append(' ');
 				break;
 			case IASTSimpleDeclSpecifier.t_bool:
 				if (simpleDeclSpec instanceof ICASTSimpleDeclSpecifier) {

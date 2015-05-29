@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -785,6 +785,30 @@ public class ASTSignatureUtil {
 					needSpace = false;
 				}
 				result.append(GCCKeywords.__FLOAT128);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_decimal32:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(GCCKeywords._DECIMAL32);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_decimal64:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(GCCKeywords._DECIMAL64);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_decimal128:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(GCCKeywords._DECIMAL128);
 				needSpace = true;
 				break;
 			case IASTSimpleDeclSpecifier.t_void:

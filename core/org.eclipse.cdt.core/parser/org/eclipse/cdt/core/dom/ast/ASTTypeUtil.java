@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -327,6 +327,18 @@ public class ASTTypeUtil {
 			case eFloat128:
 				if (needSpace) result.append(SPACE);
 				result.append(GCCKeywords.__FLOAT128);
+				break;
+			case eDecimal32:
+				if (needSpace) result .append(SPACE);
+				result.append(GCCKeywords._DECIMAL32);
+				break;
+			case eDecimal64:
+				if (needSpace) result .append(SPACE);
+				result.append(GCCKeywords._DECIMAL64);
+				break;
+			case eDecimal128:
+				if (needSpace) result .append(SPACE);
+				result.append(GCCKeywords._DECIMAL128);
 				break;
 			case eInt:
 				if (needSpace) result.append(SPACE);

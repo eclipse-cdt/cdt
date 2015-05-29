@@ -15,11 +15,15 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.remote.core.IRemoteConnection;
+import org.eclipse.remote.core.IRemoteConnectionType;
+import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.controls.RemoteWizardConfigurationPanel;
+import org.eclipse.tm.terminal.connector.remote.internal.Activator;
 import org.eclipse.tm.terminal.connector.remote.internal.RemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.nls.Messages;
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
@@ -39,7 +43,9 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	// The Remote terminal connection memento handler
 	private final IMementoHandler mementoHandler = new RemoteMementoHandler();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#needsUserConfiguration()
 	 */
 	@Override
@@ -47,32 +53,26 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.
+	 * IConfigurationPanelContainer)
 	 */
 	@Override
 	public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {
 		return new RemoteWizardConfigurationPanel(container);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map,
+	 * org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
 	 */
 	@Override
 	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
 		Assert.isNotNull(properties);
-
-		// Set the terminal tab title
-		String terminalTitle = getTerminalTitle(properties);
-		if (terminalTitle != null) {
-			properties.put(ITerminalsConnectorConstants.PROP_TITLE, terminalTitle);
-		}
-
-		// For Telnet terminals, force a new terminal tab each time it is launched,
-		// if not set otherwise from outside
-		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_FORCE_NEW)) {
-			properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, Boolean.TRUE);
-		}
 
 		// Get the terminal service
 		ITerminalService terminal = TerminalServiceFactory.getService();
@@ -90,50 +90,56 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	 * @return The terminal title string or <code>null</code>.
 	 */
 	private String getTerminalTitle(Map<String, Object> properties) {
-		String connection = (String)properties.get(IRemoteSettings.CONNECTION_NAME);
+		String connection = (String) properties.get(IRemoteSettings.CONNECTION_NAME);
 
 		if (connection != null) {
 			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 			String date = format.format(new Date(System.currentTimeMillis()));
-			return NLS.bind(Messages.RemoteLauncherDelegate_terminalTitle, new String[]{connection, date});
+			return NLS.bind(Messages.RemoteLauncherDelegate_terminalTitle, new String[] { connection, date });
 		}
 		return Messages.RemoteLauncherDelegate_terminalTitle_default;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (IMementoHandler.class.equals(adapter)) {
 			return mementoHandler;
 		}
-	    return super.getAdapter(adapter);
+		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
 	 */
-    @Override
+	@Override
 	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
-    	Assert.isNotNull(properties);
+		Assert.isNotNull(properties);
 
-    	// Check for the terminal connector id
-    	String connectorId = (String)properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
-		if (connectorId == null) connectorId = "org.eclipse.tm.terminal.connector.remote.RemoteConnector"; //$NON-NLS-1$
+		// Check for the terminal connector id
+		String connectorId = (String) properties.get(ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID);
+		if (connectorId == null) {
+			connectorId = "org.eclipse.tm.terminal.connector.remote.RemoteConnector"; //$NON-NLS-1$
+		}
 
 		// Extract the remote properties
-		String services = (String)properties.get(IRemoteSettings.REMOTE_SERVICES);
-		String connection = (String)properties.get(IRemoteSettings.CONNECTION_NAME);
+		String connTypeId = (String) properties.get(IRemoteSettings.CONNECTION_TYPE_ID);
+		String connName = (String) properties.get(IRemoteSettings.CONNECTION_NAME);
 
 		// Construct the terminal settings store
 		ISettingsStore store = new SettingsStore();
 
 		// Construct the remote settings
 		RemoteSettings remoteSettings = new RemoteSettings();
-		remoteSettings.setRemoteServices(services);
-		remoteSettings.setConnectionName(connection);
+		remoteSettings.setConnectionTypeId(connTypeId);
+		remoteSettings.setConnectionName(connName);
 		// And save the settings to the store
 		remoteSettings.save(store);
 
@@ -145,6 +151,33 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 			// And load the real settings
 			connector.load(store);
 		}
+
+		// Set the terminal tab title
+		String terminalTitle = getTerminalTitle(properties);
+		if (terminalTitle != null) {
+			properties.put(ITerminalsConnectorConstants.PROP_TITLE, terminalTitle);
+		}
+
+		// For Telnet terminals, force a new terminal tab each time it is launched,
+		// if not set otherwise from outside
+		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_FORCE_NEW)) {
+			properties.put(ITerminalsConnectorConstants.PROP_FORCE_NEW, Boolean.TRUE);
+		}
+
+		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_ENCODING)) {
+			IRemoteServicesManager svcMgr = Activator.getService(IRemoteServicesManager.class);
+
+			IRemoteConnectionType connType = svcMgr.getConnectionType(connTypeId);
+			if (connType != null) {
+				IRemoteConnection remoteConnection = connType.getConnection(connName);
+				if (remoteConnection != null && remoteConnection.isOpen()) {
+					properties.put(ITerminalsConnectorConstants.PROP_ENCODING,
+							remoteConnection.getProperty(IRemoteConnection.LOCALE_CHARMAP_PROPERTY));
+				}
+			}
+		}
+
+		properties.put(ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR, "/tmp"); //$NON-NLS-1$
 
 		return connector;
 	}

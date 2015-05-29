@@ -28,6 +28,7 @@ import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteProcess;
 import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.IRemoteProcessTerminalService;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
@@ -40,12 +41,14 @@ import org.eclipse.tm.terminal.connector.remote.nls.Messages;
 public class RemoteConnectionManager extends Job {
 	private final static String PARSERS_EXTENSION_POINT = "parsers"; //$NON-NLS-1$
 	private final static String PARSER_ELEMENT = "parser"; //$NON-NLS-1$
+
 	private static int fgNo;
 
 	private final ITerminalControl control;
 	private final RemoteConnector connector;
 
 	private IRemoteTerminalParser parser;
+	private IRemoteProcess remoteProcess;
 
 	protected RemoteConnectionManager(RemoteConnector conn, ITerminalControl control) {
 		super("Remote Terminal-" + fgNo++); //$NON-NLS-1$
@@ -62,31 +65,32 @@ public class RemoteConnectionManager extends Job {
 	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		IRemoteProcess remoteProcess = null;
 		IRemoteConnection remoteConnection = null;
 
 		try {
 			IRemoteServicesManager svcMgr = Activator.getService(IRemoteServicesManager.class);
-			String connTypeId = connector.getRemoteSettings().getRemoteServices();
+			String connTypeId = connector.getRemoteSettings().getConnectionTypeId();
 			IRemoteConnectionType connType = svcMgr.getConnectionType(connTypeId);
 			if (connType != null) {
 				remoteConnection = connType.getConnection(connector.getRemoteSettings().getConnectionName());
 			}
 			if (remoteConnection == null) {
-				throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_0, connector.getRemoteSettings()
-						.getConnectionName()));
+				throw new RemoteConnectionException(
+						NLS.bind(Messages.RemoteConnectionManager_0, connector.getRemoteSettings().getConnectionName()));
 			}
 
 			if (!remoteConnection.isOpen()) {
 				remoteConnection.open(monitor);
 				if (!remoteConnection.isOpen()) {
-					throw new RemoteConnectionException(NLS.bind(Messages.RemoteConnectionManager_1, connector.getRemoteSettings()
-							.getConnectionName()));
+					throw new RemoteConnectionException(
+							NLS.bind(Messages.RemoteConnectionManager_1, connector.getRemoteSettings().getConnectionName()));
 				}
 			}
 
 			if (parser != null) {
-				remoteProcess = parser.initialize(remoteConnection);
+				synchronized (this) {
+					remoteProcess = parser.initialize(remoteConnection);
+				}
 			} else {
 				/*
 				 * Check the terminal shell command preference. If the preference is empty and we support a command shell,
@@ -97,18 +101,23 @@ public class RemoteConnectionManager extends Job {
 				if (!("".equals(terminalShellCommand)) //$NON-NLS-1$
 						&& remoteConnection.hasService(IRemoteCommandShellService.class)) {
 					IRemoteCommandShellService cmdShellSvc = remoteConnection.getService(IRemoteCommandShellService.class);
-					remoteProcess = cmdShellSvc.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
+					synchronized (this) {
+						remoteProcess = cmdShellSvc.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
+					}
 				} else {
 					if ("".equals(terminalShellCommand)) { //$NON-NLS-1$
 						terminalShellCommand = "/bin/bash -l"; //$NON-NLS-1$
 					}
 					IRemoteProcessService procSvc = remoteConnection.getService(IRemoteProcessService.class);
-					IRemoteProcessBuilder processBuilder = procSvc.getProcessBuilder(new ArgumentParser(terminalShellCommand)
-							.getTokenList());
-					remoteProcess = processBuilder.start(IRemoteProcessBuilder.ALLOCATE_PTY);
+					IRemoteProcessBuilder processBuilder = procSvc
+							.getProcessBuilder(new ArgumentParser(terminalShellCommand).getTokenList());
+					synchronized (this) {
+						remoteProcess = processBuilder.start(IRemoteProcessBuilder.ALLOCATE_PTY);
+					}
 				}
 			}
 
+			control.setVT100LineWrapping(true);
 			connector.setInputStream(remoteProcess.getInputStream());
 			control.setState(TerminalState.CONNECTED);
 			control.setTerminalTitle(remoteConnection.getName());
@@ -123,20 +132,27 @@ public class RemoteConnectionManager extends Job {
 		} finally {
 			// make sure the terminal is disconnected when the thread ends
 			connector.disconnect();
-			synchronized (this) {
-				if (remoteProcess != null && !remoteProcess.isCompleted()) {
-					remoteProcess.destroy();
-				}
-			}
 		}
 		return Status.OK_STATUS;
 	}
 
+	@Override
+	protected void canceling() {
+		super.canceling();
+		synchronized (this) {
+			if (remoteProcess != null && !remoteProcess.isCompleted()) {
+				remoteProcess.destroy();
+			}
+		}
+	}
+
 	public void setTerminalSize(int cols, int rows, int width, int height) {
-		// Enable for org.eclipse.remote v1.2
-		// if (remoteProcess instanceof IRemoteTerminal) {
-		// ((IRemoteTerminal) remoteProcess).setTerminalSize(cols, rows, width, height);
-		// }
+		if (remoteProcess != null) {
+			IRemoteProcessTerminalService termSvc = remoteProcess.getService(IRemoteProcessTerminalService.class);
+			if (termSvc != null) {
+				termSvc.setTerminalSize(cols, rows, width, height);
+			}
+		}
 	}
 
 	/**
@@ -147,11 +163,8 @@ public class RemoteConnectionManager extends Job {
 	 */
 	private void readData(InputStream in) throws IOException {
 		byte[] buf = new byte[32 * 1024];
-		while (getState() == Job.RUNNING) {
-			int n = in.read(buf, 0, buf.length);
-			if (n <= 0) {
-				break;
-			}
+		int n;
+		while ((n = in.read(buf, 0, buf.length)) > 0) {
 			if (parser == null || parser.parse(buf)) {
 				control.getRemoteToTerminalOutputStream().write(buf, 0, n);
 			}

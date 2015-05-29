@@ -20,8 +20,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class RemoteTerminalPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	@Override
 	protected void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
+		addField(new StringFieldEditor(IRemoteTerminalConstants.PREF_TERMINAL_TYPE, "Terminal Type", parent));
 		addField(new StringFieldEditor(IRemoteTerminalConstants.PREF_TERMINAL_SHELL_COMMAND,
 				Messages.RemoteTerminalPreferencePage_0, parent));
 	}
@@ -31,6 +33,7 @@ public class RemoteTerminalPreferencePage extends FieldEditorPreferencePage impl
 		return new ScopedPreferenceStore(InstanceScope.INSTANCE, Activator.getUniqueIdentifier());
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// Nothing
 	}

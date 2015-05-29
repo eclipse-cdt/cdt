@@ -56,22 +56,6 @@ public class RemoteConnector extends TerminalConnectorImpl {
 	 */
 	@Override
 	public synchronized void doDisconnect() {
-		if (getInputStream() != null) {
-			try {
-				getInputStream().close();
-			} catch (Exception exception) {
-				Activator.log(exception);
-			}
-		}
-
-		if (getTerminalToRemoteStream() != null) {
-			try {
-				getTerminalToRemoteStream().close();
-			} catch (Exception exception) {
-				Activator.log(exception);
-			}
-		}
-
 		fConnection.cancel();
 	}
 
@@ -117,7 +101,7 @@ public class RemoteConnector extends TerminalConnectorImpl {
 	public void setDefaultSettings() {
 		fSettings.load(new NullSettingsStore());
 	}
-	
+
 	@Override
 	public void save(ISettingsStore store) {
 		fSettings.save(store);

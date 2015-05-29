@@ -22,7 +22,9 @@ import org.eclipse.ui.IMemento;
  */
 public class RemoteMementoHandler implements IMementoHandler {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler#saveState(org.eclipse.ui.IMemento, java.util.Map)
 	 */
 	@Override
@@ -32,12 +34,15 @@ public class RemoteMementoHandler implements IMementoHandler {
 
 		// Do not write the terminal title to the memento -> needs to
 		// be recreated at the time of restoration.
-		memento.putString(IRemoteSettings.CONNECTION_NAME, (String)properties.get(IRemoteSettings.CONNECTION_NAME));
-		memento.putString(IRemoteSettings.REMOTE_SERVICES, (String)properties.get(IRemoteSettings.REMOTE_SERVICES));
-		memento.putString(ITerminalsConnectorConstants.PROP_ENCODING, (String)properties.get(ITerminalsConnectorConstants.PROP_ENCODING));
+		memento.putString(IRemoteSettings.CONNECTION_NAME, (String) properties.get(IRemoteSettings.CONNECTION_NAME));
+		memento.putString(IRemoteSettings.CONNECTION_TYPE_ID, (String) properties.get(IRemoteSettings.CONNECTION_TYPE_ID));
+		memento.putString(ITerminalsConnectorConstants.PROP_ENCODING,
+				(String) properties.get(ITerminalsConnectorConstants.PROP_ENCODING));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler#restoreState(org.eclipse.ui.IMemento, java.util.Map)
 	 */
 	@Override
@@ -47,7 +52,7 @@ public class RemoteMementoHandler implements IMementoHandler {
 
 		// Restore the terminal properties from the memento
 		properties.put(IRemoteSettings.CONNECTION_NAME, memento.getString(IRemoteSettings.CONNECTION_NAME));
-		properties.put(IRemoteSettings.REMOTE_SERVICES, memento.getString(IRemoteSettings.REMOTE_SERVICES));
+		properties.put(IRemoteSettings.CONNECTION_TYPE_ID, memento.getString(IRemoteSettings.CONNECTION_TYPE_ID));
 		properties.put(ITerminalsConnectorConstants.PROP_ENCODING, memento.getString(ITerminalsConnectorConstants.PROP_ENCODING));
 	}
 }

@@ -9,4 +9,5 @@ package org.eclipse.tm.terminal.connector.remote;
 
 public interface IRemoteTerminalConstants {
 	public static final String PREF_TERMINAL_SHELL_COMMAND = "TERMINAL_SHELL_COMMAND"; //$NON-NLS-1$
+	public static final String PREF_TERMINAL_TYPE = "TERMINAL_TYPE"; //$NON-NLS-1$
 }

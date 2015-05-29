@@ -26,6 +26,7 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 public interface IRemoteConnection {
 	/**
 	 * The interface that is extend by services provided for this remote connection.
+	 * 
 	 * @since 2.0
 	 */
 	interface Service {
@@ -44,6 +45,10 @@ public interface IRemoteConnection {
 	final static String PATH_SEPARATOR_PROPERTY = "path.separator"; //$NON-NLS-1$
 	final static String LINE_SEPARATOR_PROPERTY = "line.separator"; //$NON-NLS-1$
 	final static String USER_HOME_PROPERTY = "user.home"; //$NON-NLS-1$
+	/**
+	 * @since 2.0
+	 */
+	final static String LOCALE_CHARMAP_PROPERTY = "locale.charmap"; //$NON-NLS-1$
 
 	/**
 	 * Get the connection type of this connection
@@ -63,9 +68,10 @@ public interface IRemoteConnection {
 	/**
 	 * Get the service for this remote connection that implements the given interface.
 	 * 
-	 * @param service the interface the required service must implements
+	 * @param service
+	 *            the interface the required service must implements
 	 * @return the desired service or null if there is no such service available
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 2.0
 	 */
 	<T extends Service> T getService(Class<T> service);
@@ -73,7 +79,8 @@ public interface IRemoteConnection {
 	/**
 	 * Does this connection support the given service.
 	 * 
-	 * @param service The service to be tested
+	 * @param service
+	 *            The service to be tested
 	 * @return true if this connection supports the service
 	 * @since 2.0
 	 */

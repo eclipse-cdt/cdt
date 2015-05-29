@@ -257,7 +257,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	private boolean isFullySetup; // including sftp channel and environment
 
 	private static final Map<IRemoteConnection, JSchConnection> connectionMap = new HashMap<>();
-	
+
 	public JSchConnection(IRemoteConnection connection) {
 		fRemoteConnection = connection;
 		fJSchService = Activator.getDefault().getService();
@@ -829,11 +829,17 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 
 		String osVersion;
 		String osArch;
+		String encoding;
+
 		String osName = executeCommand("uname", subMon.newChild(10)); //$NON-NLS-1$
-		if (osName.equalsIgnoreCase("Linux")) { //$NON-NLS-1$
+		switch (osName.toLowerCase()) {
+		case "linux": //$NON-NLS-1$
 			osArch = executeCommand("uname -m", subMon.newChild(10)); //$NON-NLS-1$
 			osVersion = executeCommand("uname -r", subMon.newChild(10)); //$NON-NLS-1$
-		} else if (osName.equalsIgnoreCase("Darwin")) { //$NON-NLS-1$
+			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			break;
+
+		case "darwin": //$NON-NLS-1$
 			osName = executeCommand("sw_vers -productName", subMon.newChild(10)); //$NON-NLS-1$
 			osVersion = executeCommand("sw_vers -productVersion", subMon.newChild(10)); //$NON-NLS-1$
 			osArch = executeCommand("uname -m", subMon.newChild(10)); //$NON-NLS-1$
@@ -843,7 +849,10 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 					osArch = "x86_64"; //$NON-NLS-1$
 				}
 			}
-		} else if (osName.equalsIgnoreCase("AIX")) { //$NON-NLS-1$
+			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			break;
+
+		case "aix": //$NON-NLS-1$
 			osArch = executeCommand("uname -p", subMon.newChild(10)); //$NON-NLS-1$
 			osVersion = executeCommand("oslevel", subMon.newChild(10)); //$NON-NLS-1$
 			if (osArch.equalsIgnoreCase("powerpc")) { //$NON-NLS-1$
@@ -855,13 +864,20 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 					osArch += "64"; //$NON-NLS-1$
 				}
 			}
-		} else {
+			encoding = executeCommand("locale charmap", subMon.newChild(10)); //$NON-NLS-1$
+			break;
+
+		default:
 			osVersion = "unknown"; //$NON-NLS-1$
 			osArch = "unknown"; //$NON-NLS-1$
+			encoding = "unknown"; //$NON-NLS-1$
+			break;
 		}
+
 		fProperties.put(IRemoteConnection.OS_NAME_PROPERTY, osName);
 		fProperties.put(IRemoteConnection.OS_VERSION_PROPERTY, osVersion);
 		fProperties.put(IRemoteConnection.OS_ARCH_PROPERTY, osArch);
+		fProperties.put(IRemoteConnection.LOCALE_CHARMAP_PROPERTY, encoding);
 	}
 
 	private Session newSession(IProgressMonitor monitor) throws RemoteConnectionException {

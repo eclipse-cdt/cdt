@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - Initial API and implementation
+ * Martin Oberhuber - [468889] Support Eclipse older than Mars
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
@@ -14,11 +15,11 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnection.Service;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.RemoteServicesUtils;
 
 public class JSchFileManager implements IRemoteFileService {
 
@@ -51,9 +52,9 @@ public class JSchFileManager implements IRemoteFileService {
 
 	@Override
 	public IFileStore getResource(String pathStr) {
-		IPath path = Path.forPosix(pathStr);
+		IPath path = RemoteServicesUtils.posixPath(pathStr);
 		if (!path.isAbsolute()) {
-			path = Path.forPosix(getBaseDirectory()).append(path);
+			path = RemoteServicesUtils.posixPath(getBaseDirectory()).append(path);
 		}
 		return JschFileStore.getInstance(JSchFileSystem.getURIFor(fConnection.getName(), path.toString()));
 	}
@@ -84,7 +85,7 @@ public class JSchFileManager implements IRemoteFileService {
 
 	@Override
 	public URI toURI(String path) {
-		return toURI(Path.forPosix(path));
+		return toURI(RemoteServicesUtils.posixPath(path));
 	}
 
 }

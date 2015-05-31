@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2013 IBM Corporation.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - Initial Implementation
- *
+ * Martin Oberhuber - [468889] Support Eclipse older than Mars
  *****************************************************************************/
 package org.eclipse.remote.internal.jsch.core.commands;
 
@@ -28,8 +28,8 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.remote.core.RemoteServicesUtils;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
 import org.eclipse.remote.internal.jsch.core.messages.Messages;
@@ -107,7 +107,7 @@ public abstract class AbstractRemoteCommand<T> {
 				fMaxWork = max / 1024L;
 			}
 			fWorkToDate = 0;
-			fMonitor.beginTask(Path.forPosix(src).lastSegment(), (int) max);
+			fMonitor.beginTask(RemoteServicesUtils.posixPath(src).lastSegment(), (int) max);
 		}
 	}
 

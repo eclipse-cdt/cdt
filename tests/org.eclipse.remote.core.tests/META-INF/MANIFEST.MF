@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.core.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %pluginProvider
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.11.0",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.9.100",
  org.junit,
  com.jcraft.jsch;bundle-version="0.1.41",
  org.eclipse.core.filesystem;bundle-version="1.2.0",

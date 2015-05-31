@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008,2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    IBM - Initial API and implementation
+ * Martin Oberhuber - [468889] Support Eclipse older than Mars
  *******************************************************************************/
 package org.eclipse.remote.ui.widgets;
 
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -45,6 +45,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteFileService;
 import org.eclipse.remote.core.IRemoteProcessService;
+import org.eclipse.remote.core.RemoteServicesUtils;
 import org.eclipse.remote.internal.ui.DeferredFileStore;
 import org.eclipse.remote.internal.ui.DeferredFileStoreComparer;
 import org.eclipse.remote.internal.ui.PendingUpdateAdapter;
@@ -586,15 +587,15 @@ public class RemoteResourceBrowserWidget extends Composite {
 	 */
 	private IPath findInitialPath(String cwd, String initialPath) {
 		if (initialPath != null) {
-			IPath path = Path.forPosix(initialPath);
+			IPath path = RemoteServicesUtils.posixPath(initialPath);
 			if (!path.isAbsolute()) {
-				path = Path.forPosix(cwd).append(path);
+				path = RemoteServicesUtils.posixPath(cwd).append(path);
 			}
 			if (fFileMgr.getResource(path.toString()).fetchInfo().exists()) {
 				return path;
 			}
 		}
-		return Path.forPosix(cwd);
+		return RemoteServicesUtils.posixPath(cwd);
 	}
 
 	/**
@@ -702,7 +703,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 			fRemotePathText.setText(path);
 			fRemotePathText.setSelection(fRemotePathText.getText().length());
 			fResources.add(root);
-			fRootPath = Path.forPosix(path);
+			fRootPath = RemoteServicesUtils.posixPath(path);
 		}
 	}
 

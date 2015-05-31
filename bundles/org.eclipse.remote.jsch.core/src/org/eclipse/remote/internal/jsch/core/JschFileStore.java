@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *   IBM Corporation - Initial API and implementation
  *   Roland Schulz, University of Tennessee
+ * Martin Oberhuber - [468889] Support Eclipse older than Mars
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
@@ -25,13 +26,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.core.RemoteServicesUtils;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.jsch.core.commands.ChildInfosCommand;
 import org.eclipse.remote.internal.jsch.core.commands.DeleteCommand;
@@ -68,7 +69,7 @@ public class JschFileStore extends FileStore {
 
 	private JschFileStore(URI uri) {
 		fURI = uri;
-		fRemotePath = Path.forPosix(uri.getPath());
+		fRemotePath = RemoteServicesUtils.posixPath(uri.getPath());
 	}
 
 	private JSchConnection checkConnection(IProgressMonitor monitor) throws RemoteConnectionException {

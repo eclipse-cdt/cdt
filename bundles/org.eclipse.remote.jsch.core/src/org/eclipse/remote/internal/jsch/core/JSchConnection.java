@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Corporation - Initial API and implementation
  * Patrick Tasse - [462418] use stored password on non-preferred password based authentication
+ * Martin Oberhuber - [468889] Support Eclipse older than Mars
  *******************************************************************************/
 package org.eclipse.remote.internal.jsch.core;
 
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
@@ -34,6 +34,7 @@ import org.eclipse.remote.core.IRemoteProcessBuilder;
 import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IUserAuthenticatorService;
 import org.eclipse.remote.core.RemoteConnectionChangeEvent;
+import org.eclipse.remote.core.RemoteServicesUtils;
 import org.eclipse.remote.core.exception.AddressInUseException;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.core.exception.UnableToForwardPortException;
@@ -1020,7 +1021,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	 */
 	@Override
 	public void setWorkingDirectory(String path) {
-		if (Path.forPosix(path).isAbsolute()) {
+		if (RemoteServicesUtils.posixPath(path).isAbsolute()) {
 			fWorkingDir = path;
 		}
 	}

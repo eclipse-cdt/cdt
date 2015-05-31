@@ -16,10 +16,10 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -38,6 +38,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+@SuppressWarnings("nls")
 @FixMethodOrder(MethodSorters.JVM)
 public class PerTargetLaunchConfigProviderTest {
 	private IRemoteServicesManager remoteServiceManager;
@@ -85,16 +86,62 @@ public class PerTargetLaunchConfigProviderTest {
 	}
 
 	public class PerTargetLaunchConfigProvider1 extends PerTargetLaunchConfigProvider {
+		public static final String CONNECTION_NAME_ATTR = "connectionName";
+		private ILaunchBarManager manager;
+
 		@Override
 		public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 			return true;
 		}
 
 		@Override
-		public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor, IRemoteConnection target)
-				throws CoreException {
+		public ILaunchConfigurationType getLaunchConfigurationType(ILaunchDescriptor descriptor,
+				IRemoteConnection target) throws CoreException {
 			return launchConfigType;
 		}
+
+		@Override
+		protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
+				ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
+			super.populateLaunchConfiguration(descriptor, target, workingCopy);
+			workingCopy.setAttribute(CONNECTION_NAME_ATTR, target.getName());
+		}
+
+		@Override
+		protected ILaunchDescriptor getLaunchDescriptor(ILaunchConfiguration configuration) throws CoreException {
+			return descriptor;
+		}
+
+		@Override
+		protected IRemoteConnection getLaunchTarget(ILaunchConfiguration configuration) throws CoreException {
+			String name = configuration.getAttribute(CONNECTION_NAME_ATTR, "");
+			if (localTarget.getName().equals(name)) {
+				return localTarget;
+			} else if (otherTarget.getName().equals(name)) {
+				return otherTarget;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		protected ILaunchBarManager getManager() {
+			if (manager == null) {
+				manager = mock(ILaunchBarManager.class);
+			}
+			return manager;
+		}
+
+		@Override
+		public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target)
+				throws CoreException {
+			ILaunchConfiguration config = super.getLaunchConfiguration(descriptor, target);
+			// Since this provider isn't hooked in properly, need to manually
+			// add in the config
+			launchConfigurationAdded(config);
+			return config;
+		}
+
 	};
 
 	@Test
@@ -102,9 +149,7 @@ public class PerTargetLaunchConfigProviderTest {
 		ILaunchConfiguration launchConfig = launchConfigType.newInstance(null, launchName).doSave();
 		ILaunchConfigurationWorkingCopy launchConfigWC = launchConfig.getWorkingCopy();
 		provider.populateLaunchConfiguration(descriptor, localTarget, launchConfigWC);
-		//assertEquals(launchConfig.getName(), launchConfigWC.getAttribute(LaunchBarManager2Test.ATTR_ORIGINAL_NAME, ""));
-		//assertEquals(provider.getClass().getName(), launchConfigWC.getAttribute(LaunchBarManager2Test.ATTR_PROVIDER_CLASS, ""));
-		assertTrue(provider.ownsLaunchConfigurationByAttributes(launchConfigWC));
+		assertTrue(provider.ownsLaunchConfiguration(launchConfigWC));
 	}
 
 	@Test
@@ -139,7 +184,8 @@ public class PerTargetLaunchConfigProviderTest {
 		assertNotNull(launchConfiguration1);
 		// reset provider
 		provider = new PerTargetLaunchConfigProvider1();
-		provider.launchConfigurationAdded(launchConfiguration1); // simulate provider initialization on startup
+		// simulate provider initialization on startup
+		provider.launchConfigurationAdded(launchConfiguration1);
 		ILaunchConfiguration launchConfiguration2 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration2);
 		assertEquals(launchConfiguration1, launchConfiguration2);
@@ -149,7 +195,7 @@ public class PerTargetLaunchConfigProviderTest {
 	public void testGetTarget() throws CoreException {
 		ILaunchConfiguration launchConfiguration1 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration1);
-		assertSame(localTarget, provider.getTarget(launchConfiguration1));
+		assertSame(localTarget, provider.getLaunchTarget(launchConfiguration1));
 	}
 
 	@Test
@@ -177,10 +223,10 @@ public class PerTargetLaunchConfigProviderTest {
 		ILaunchConfiguration launchConfiguration1 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration1);
 		ILaunchConfigurationWorkingCopy wc = launchConfiguration1.getWorkingCopy();
-		wc.setAttribute(provider.getConnectionNameAttribute(), otherTarget.getName());
+		wc.setAttribute(PerTargetLaunchConfigProvider1.CONNECTION_NAME_ATTR, otherTarget.getName());
 		wc.doSave();
 		provider.launchConfigurationChanged(launchConfiguration1);
-		//provider.launchConfigurationChanged(lc3);
+		// provider.launchConfigurationChanged(lc3);
 		ILaunchConfiguration launchConfiguration2 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration2);
 		assertNotEquals(launchConfiguration1, launchConfiguration2);
@@ -192,10 +238,14 @@ public class PerTargetLaunchConfigProviderTest {
 		assertNotNull(launchConfiguration1);
 		ILaunchConfigurationWorkingCopy wc = launchConfiguration1.getWorkingCopy();
 		wc.setAttribute(LaunchBarManager2Test.ATTR_ORIGINAL_NAME, "bla");
-		wc.doSave();
+		launchConfiguration1 = wc.doSave();
 		provider.launchConfigurationChanged(launchConfiguration1);
 		// we should have lost ownership
 		assertFalse(provider.ownsLaunchConfiguration(launchConfiguration1));
+		verify(provider.manager).launchConfigurationRemoved(launchConfiguration1);
+		verify(provider.manager).launchConfigurationAdded(launchConfiguration1);
+		// have to fake out the remove
+		provider.launchConfigurationRemoved(launchConfiguration1);
 		ILaunchConfiguration launchConfiguration2 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration2);
 		assertNotEquals(launchConfiguration1, launchConfiguration2);
@@ -206,7 +256,6 @@ public class PerTargetLaunchConfigProviderTest {
 		ILaunchConfiguration launchConfiguration1 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration1);
 		provider.launchDescriptorRemoved(descriptor);
-		assertEquals(0, provider.getTargetMap(descriptor).size());
 		assertFalse(provider.ownsLaunchConfiguration(launchConfiguration1));
 		assertFalse(launchConfiguration1.exists());
 	}
@@ -214,7 +263,6 @@ public class PerTargetLaunchConfigProviderTest {
 	@Test
 	public void testLaunchDescriptorRemoved2() throws CoreException {
 		provider.launchDescriptorRemoved(descriptor);
-		assertEquals(0, provider.getTargetMap(descriptor).size());
 	}
 
 	@Test
@@ -222,7 +270,6 @@ public class PerTargetLaunchConfigProviderTest {
 		ILaunchConfiguration launchConfiguration1 = provider.getLaunchConfiguration(descriptor, otherTarget);
 		assertNotNull(launchConfiguration1);
 		provider.launchTargetRemoved(otherTarget);
-		assertEquals(0, provider.getTargetMap(descriptor).size());
 		assertFalse(launchConfiguration1.exists());
 	}
 
@@ -233,7 +280,6 @@ public class PerTargetLaunchConfigProviderTest {
 		ILaunchConfiguration launchConfiguration2 = provider.getLaunchConfiguration(descriptor, localTarget);
 		assertNotNull(launchConfiguration2);
 		provider.launchTargetRemoved(otherTarget);
-		assertEquals(1, provider.getTargetMap(descriptor).size());
 		assertFalse(launchConfiguration1.exists());
 		assertTrue(launchConfiguration2.exists());
 	}
@@ -243,7 +289,6 @@ public class PerTargetLaunchConfigProviderTest {
 		ILaunchConfiguration launchConfiguration1 = provider.getLaunchConfiguration(descriptor, otherTarget);
 		assertNotNull(launchConfiguration1);
 		provider.launchTargetRemoved(localTarget);
-		assertEquals(1, provider.getTargetMap(descriptor).size());
 	}
 
 	@Test
@@ -252,7 +297,6 @@ public class PerTargetLaunchConfigProviderTest {
 		assertNotNull(launchConfiguration1);
 		assertTrue(provider.ownsLaunchConfiguration(launchConfiguration1));
 		launchConfiguration1.delete();
-		assertTrue(provider.ownsLaunchConfiguration(launchConfiguration1));
 		provider.launchConfigurationRemoved(launchConfiguration1);
 		assertFalse(provider.ownsLaunchConfiguration(launchConfiguration1));
 	}

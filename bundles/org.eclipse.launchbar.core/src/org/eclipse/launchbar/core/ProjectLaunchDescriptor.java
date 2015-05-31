@@ -14,8 +14,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * A reusable descriptor for wrapping projects that can be used by descriptor types
- * that map to projects.
+ * A reusable descriptor for wrapping projects that can be used by descriptor
+ * types that map to projects.
  */
 public class ProjectLaunchDescriptor extends PlatformObject implements ILaunchDescriptor {
 
@@ -49,4 +49,36 @@ public class ProjectLaunchDescriptor extends PlatformObject implements ILaunchDe
 	public String toString() {
 		return getName(); // for debugging purposes
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((project == null) ? 0 : project.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProjectLaunchDescriptor other = (ProjectLaunchDescriptor) obj;
+		if (project == null) {
+			if (other.project != null)
+				return false;
+		} else if (!project.equals(other.project))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
 }

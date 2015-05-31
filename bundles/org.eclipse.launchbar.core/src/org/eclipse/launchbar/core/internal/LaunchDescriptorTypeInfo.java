@@ -28,7 +28,9 @@ public class LaunchDescriptorTypeInfo {
 				Activator.log(e);
 			}
 		}
+
 		this.element = element;
+
 		IConfigurationElement[] enabledExpressions = element.getChildren("enablement");//$NON-NLS-1$
 		if (enabledExpressions == null || enabledExpressions.length == 0) {
 			Activator.log(new Status(Status.WARNING, Activator.PLUGIN_ID,
@@ -36,7 +38,7 @@ public class LaunchDescriptorTypeInfo {
 		} else if (enabledExpressions.length > 1) {
 			Activator.log(new Status(Status.WARNING, Activator.PLUGIN_ID,
 					"Multiple enablement expressions are detected for descriptor type "//$NON-NLS-1$
-					+ id));
+							+ id));
 		} else {
 			try {
 				expression = ExpressionConverter.getDefault().perform(enabledExpressions[0]);
@@ -51,7 +53,7 @@ public class LaunchDescriptorTypeInfo {
 	}
 
 	// Used for testing
-	public LaunchDescriptorTypeInfo(String id, int priority, ILaunchDescriptorType type) {
+	LaunchDescriptorTypeInfo(String id, int priority, ILaunchDescriptorType type) {
 		this.id = id;
 		this.priority = priority;
 		this.type = type;
@@ -73,10 +75,10 @@ public class LaunchDescriptorTypeInfo {
 		return type;
 	}
 
-	public boolean ownsLaunchObject(Object object) throws CoreException {
+	public boolean enabled(Object launchObject) throws CoreException {
 		if (expression == null)
 			return true;
-		EvaluationResult result = expression.evaluate(new EvaluationContext(null, object));
+		EvaluationResult result = expression.evaluate(new EvaluationContext(null, launchObject));
 		return (result == EvaluationResult.TRUE);
 	}
 }

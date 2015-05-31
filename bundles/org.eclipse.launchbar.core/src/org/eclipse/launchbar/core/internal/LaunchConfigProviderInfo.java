@@ -1,7 +1,12 @@
 package org.eclipse.launchbar.core.internal;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.launchbar.core.ILaunchConfigurationProvider;
 
 public class LaunchConfigProviderInfo {
@@ -9,6 +14,7 @@ public class LaunchConfigProviderInfo {
 	private final int priority;
 	private IConfigurationElement element;
 	private ILaunchConfigurationProvider provider;
+	private Expression expression;
 
 	public LaunchConfigProviderInfo(IConfigurationElement element) {
 		this.descriptorTypeId = element.getAttribute("descriptorType"); //$NON-NLS-1$
@@ -23,6 +29,27 @@ public class LaunchConfigProviderInfo {
 		priority = priorityNum;
 
 		this.element = element;
+
+		IConfigurationElement[] enabledExpressions = element.getChildren("enablement");//$NON-NLS-1$
+		if (enabledExpressions == null || enabledExpressions.length == 0) {
+			Activator.log(new Status(Status.WARNING, Activator.PLUGIN_ID,
+					"Enablement expression is missing for config provider for " + descriptorTypeId)); //$NON-NLS-1$
+		} else if (enabledExpressions.length > 1) {
+			Activator.log(new Status(Status.WARNING, Activator.PLUGIN_ID,
+					"Multiple enablement expressions are detected for config provider for "//$NON-NLS-1$
+							+ descriptorTypeId));
+		} else {
+			try {
+				expression = ExpressionConverter.getDefault().perform(enabledExpressions[0]);
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+			if (expression == null) {
+				Activator.log(new Status(Status.ERROR, Activator.PLUGIN_ID,
+						"Cannot parse enablement expression defined in config provider for " + descriptorTypeId)); //$NON-NLS-1$
+			}
+		}
+
 	}
 
 	public String getDescriptorTypeId() {
@@ -40,4 +67,12 @@ public class LaunchConfigProviderInfo {
 		}
 		return provider;
 	}
+
+	public boolean enabled(Object element) throws CoreException {
+		if (expression == null)
+			return true;
+		EvaluationResult result = expression.evaluate(new EvaluationContext(null, element));
+		return (result == EvaluationResult.TRUE);
+	}
+
 }

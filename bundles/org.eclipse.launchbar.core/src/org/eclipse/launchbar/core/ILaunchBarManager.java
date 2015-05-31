@@ -11,22 +11,32 @@
 package org.eclipse.launchbar.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 
-public interface ILaunchBarManager {
+/**
+ * Interface to the Launch Bar Manager.
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
+public interface ILaunchBarManager extends ILaunchConfigurationListener {
 
 	/**
-	 * A launch object has been added. Create a matching launch descriptor if available.
+	 * A launch object has been added. Create a matching launch descriptor if
+	 * available.
 	 * 
-	 * @param element launch object
+	 * @param element
+	 *            launch object
 	 * @return the launch descriptor that got created, null of none was
 	 * @throws CoreException
 	 */
 	ILaunchDescriptor launchObjectAdded(Object launchObject) throws CoreException;
 
 	/**
-	 * A launch object has been removed. Remove the associated launch descriptor if there is one.
+	 * A launch object has been removed. Remove the associated launch descriptor
+	 * if there is one.
 	 * 
-	 * @param element launch object
+	 * @param element
+	 *            launch object
 	 * @throws CoreException
 	 */
 	void launchObjectRemoved(Object launchObject) throws CoreException;
@@ -38,7 +48,5 @@ public interface ILaunchBarManager {
 	 * @throws CoreException
 	 */
 	void launchObjectChanged(Object launchObject) throws CoreException;
-
-	// TODO API for adding and removing types.
 
 }

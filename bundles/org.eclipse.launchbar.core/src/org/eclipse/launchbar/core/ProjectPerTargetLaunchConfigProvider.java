@@ -15,42 +15,21 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.launchbar.core.internal.Activator;
 import org.eclipse.remote.core.IRemoteConnection;
 
 public abstract class ProjectPerTargetLaunchConfigProvider extends PerTargetLaunchConfigProvider {
+
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 		return (descriptor.getAdapter(IProject.class) != null);
 	}
 
 	@Override
-	protected boolean descriptorMatchesConfiguration(ILaunchDescriptor descriptor, ILaunchConfiguration configuration) {
-		IProject project = descriptor.getAdapter(IProject.class);
-		if (project == null || configuration == null)
-			return false;
-		return (project.equals(getProject(configuration)));
-	}
-
-	protected IProject getProject(ILaunchConfiguration configuration) {
-		IResource[] mappedResources = null;
-		try {
-			mappedResources = configuration.getMappedResources();
-		} catch (CoreException e) {
-			return null;
-		}
-		if (mappedResources == null)
-			return null;
-		for (IResource resource : mappedResources) {
-			if (resource instanceof IProject)
-				return (IProject) resource;
-		}
-		return null;
-	}
-
-	@Override
 	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, IRemoteConnection target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		super.populateLaunchConfiguration(descriptor, target, workingCopy);
+
 		// Add our project to the mapped resources
 		IProject project = descriptor.getAdapter(IProject.class);
 		IResource[] mappedResources = workingCopy.getMappedResources();
@@ -63,4 +42,25 @@ public abstract class ProjectPerTargetLaunchConfigProvider extends PerTargetLaun
 			workingCopy.setMappedResources(newResources);
 		}
 	}
+
+	@Override
+	protected ILaunchDescriptor getLaunchDescriptor(ILaunchConfiguration configuration) throws CoreException {
+		IResource[] mappedResources = configuration.getMappedResources();
+		if (mappedResources == null) {
+			return null;
+		}
+
+		IProject project = null;
+		for (IResource resource : mappedResources) {
+			if (resource instanceof IProject)
+				project = (IProject) resource;
+		}
+		if (project == null) {
+			return null;
+		}
+
+		ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
+		return manager.launchObjectAdded(project);
+	}
+
 }

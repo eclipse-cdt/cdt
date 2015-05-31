@@ -25,8 +25,8 @@ import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchObjectProvider;
 
 /**
- * Injects IProject objects from platform resources into the launch bar model for potential
- * project descriptors.
+ * Injects IProject objects from platform resources into the launch bar model
+ * for potential project descriptors.
  */
 public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IResourceChangeListener {
 	private ILaunchBarManager manager;
@@ -60,8 +60,11 @@ public class ProjectLaunchObjectProvider implements ILaunchObjectProvider, IReso
 						} else if ((kind & IResourceDelta.REMOVED) != 0) {
 							manager.launchObjectRemoved(project);
 						} else if ((kind & IResourceDelta.CHANGED) != 0) {
-							// TODO may need to be more concise as to what changes we're looking for
-							manager.launchObjectChanged(project);
+							int flags = delta.getFlags();
+							// Right now, only care about nature changes
+							if ((flags & IResourceDelta.DESCRIPTION) != 0) {
+								manager.launchObjectChanged(project);
+							}
 						}
 						return false;
 					} else if (res instanceof IFile || res instanceof IFolder) {

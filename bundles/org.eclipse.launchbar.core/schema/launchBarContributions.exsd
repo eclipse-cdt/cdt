@@ -59,7 +59,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="enablement"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -98,6 +98,9 @@ descriptor with priority 5. Priority 0 is reserved for default descriptor.
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="descriptorType" type="string" use="required">
             <annotation>
                <documentation>

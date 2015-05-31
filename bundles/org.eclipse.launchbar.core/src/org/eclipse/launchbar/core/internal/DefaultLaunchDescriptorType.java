@@ -10,8 +10,8 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 
 /**
- * A special descriptor type that managed configurations that aren't owned
- * by other descriptor types.
+ * A special descriptor type that managed configurations that aren't owned by
+ * other descriptor types.
  */
 public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 
@@ -20,16 +20,11 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 	private Map<ILaunchConfiguration, DefaultLaunchDescriptor> descriptors = new HashMap<>();
 
 	@Override
-	public boolean ownsLaunchObject(Object element) {
-		return element instanceof ILaunchConfiguration;
-	}
-
-	@Override
-	public ILaunchDescriptor getDescriptor(Object element) {
-		if (element instanceof ILaunchConfiguration) {
-			ILaunchConfiguration config = (ILaunchConfiguration) element;
+	public ILaunchDescriptor getDescriptor(Object launchObject) {
+		if (launchObject instanceof ILaunchConfiguration) {
+			ILaunchConfiguration config = (ILaunchConfiguration) launchObject;
 			try {
-				if( config.getType() != null &&  config.getType().isPublic() 
+				if (config.getType() != null && config.getType().isPublic()
 						&& !(config.getAttribute(ILaunchManager.ATTR_PRIVATE, false))) {
 
 					DefaultLaunchDescriptor descriptor = descriptors.get(config);
@@ -39,9 +34,9 @@ public class DefaultLaunchDescriptorType implements ILaunchDescriptorType {
 					}
 					return descriptor;
 				}
-			} catch(CoreException ce) {
+			} catch (CoreException ce) {
 				Activator.log(ce.getStatus());
-			} 
+			}
 		}
 
 		return null;

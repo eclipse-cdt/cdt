@@ -14,33 +14,22 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Provides mapping between launch objects and launch descriptors.
- * 
- * It is strongly recommended to extend AbstarctLaunchDescriptorType instead of implementing this directly
  */
 public interface ILaunchDescriptorType {
-	/**
-	 * Does this type own this launch object?
-	 * 
-	 * The main checking should be done in enablement expression of extension declaring the type,
-	 * if enablement expression if defined this method can return true. 
-	 * This also can used for fine-tuning of ownership
-	 * which is hard to declared in xml. 
-	 * 
-	 * @param element
-	 * @return owns element
-	 * @throws CoreException 
-	 */
-	boolean ownsLaunchObject(Object launchObject) throws CoreException;
 
 	/**
 	 * Return a descriptor for the given launch object.
 	 * 
-	 * May return null to essentially eat the element so no other types
-	 * create a descriptor for it.
+	 * May return null to essentially eat the element so no other types create a
+	 * descriptor for it.
 	 * 
-	 * @param descriptor launch object for descriptor
+	 * The enablement expression for a given launch object must pass for this
+	 * clause to be executed.
+	 * 
+	 * @param descriptor
+	 *            launch object for descriptor
 	 * @return the best descriptor
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	ILaunchDescriptor getDescriptor(Object launchObject) throws CoreException;
 

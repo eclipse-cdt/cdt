@@ -6,15 +6,14 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.remote.core.IRemoteConnection;
 
 /**
- * The launch config provider for the default descriptor which is the launch config itself.
+ * The launch config provider for the default descriptor which is the launch
+ * config itself.
  * 
- * Override this class and register an extension if you want to support targets other than the local connection.
+ * Override this class and register an extension if you want to support targets
+ * other than the local connection.
  */
 public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider {
 
-	/**
-	 * Only support local connection. Override to support different types of connection.
-	 */
 	@Override
 	public boolean supports(ILaunchDescriptor descriptor, IRemoteConnection target) throws CoreException {
 		// Only supports Local connection
@@ -37,20 +36,20 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 		return descriptor.getAdapter(ILaunchConfiguration.class);
 	}
 
-	/**
-	 * If you do override this method and return true you would have to make sure you add launch object which matches 
-	 * this configuration, otherwise it will not be visible
-	 */
 	@Override
-	public boolean ownsLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
-		// return false so that the config is added as a launch object
+	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
+		// return false so that the configuration can become a launch object
+		return false;
+	}
+
+	@Override
+	public boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException {
 		return false;
 	}
 
 	@Override
 	public boolean launchConfigurationRemoved(ILaunchConfiguration configuration) throws CoreException {
-		// by contract we return true if we own or use to own configuration
-		return ownsLaunchConfiguration(configuration);
+		return false;
 	}
 
 	@Override
@@ -63,15 +62,4 @@ public class DefaultLaunchConfigProvider implements ILaunchConfigurationProvider
 		// nothing to do
 	}
 
-	@Override
-	public boolean launchConfigurationAdded(ILaunchConfiguration configuration) throws CoreException {
-		// by contract we return true if we own configuration
-		return ownsLaunchConfiguration(configuration);
-	}
-
-	@Override
-	public boolean launchConfigurationChanged(ILaunchConfiguration configuration) throws CoreException {
-		// by contract we return true if we own configuration
-		return ownsLaunchConfiguration(configuration);
-	}
 }

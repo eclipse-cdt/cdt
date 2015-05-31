@@ -12,17 +12,15 @@ package org.eclipse.launchbar.core;
 
 import org.eclipse.core.runtime.IAdaptable;
 
-
 /**
- * Represents a thing that can be launched.
- * It is good practice that the descriptor is adaptable to the launch object
- * it is representing.
+ * Represents a thing that can be launched. It is good practice that the
+ * descriptor is adaptable to the launch object it is representing.
  */
 public interface ILaunchDescriptor extends IAdaptable {
 
 	/**
-	 * Name to show in the launch descriptor selector.
-	 * Names must be unique for all descriptors of a given type.
+	 * Name to show in the launch descriptor selector. Names must be unique for
+	 * all descriptors of a given type.
 	 * 
 	 * @return name of the launch descriptor
 	 */

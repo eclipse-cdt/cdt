@@ -3,7 +3,6 @@ package org.eclipse.launchbar.core.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -46,15 +45,17 @@ public class LaunchBarManagerTest {
 
 	@Test
 	public void defaultTest() throws Exception {
-		// Create a launch config, make sure default mode and local target are active
+		// Create a launch config, make sure default mode and local target are
+		// active
 		// And that that config is the active config.
-		
+
 		// Mocking
 		ILaunchConfigurationType launchConfigType = mock(ILaunchConfigurationType.class);
 		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
 		String launchConfigName = "launchConfig";
 		doReturn(launchConfigName).when(launchConfig).getName();
-		doReturn(launchConfigName).when(launchConfig).getAttribute(eq("org.eclipse.launchbar.core.originalName"), anyString());
+		doReturn(launchConfigName).when(launchConfig).getAttribute(eq("org.eclipse.launchbar.core.originalName"),
+				anyString());
 		doReturn("").when(launchConfig).getAttribute(eq("org.eclipse.launchbar.core.providerClass"), anyString());
 		doReturn(true).when(launchConfigType).isPublic();
 		doReturn(launchConfigType).when(launchConfig).getType();
@@ -80,25 +81,25 @@ public class LaunchBarManagerTest {
 
 		assertNotNull(manager.getActiveLaunchMode());
 		assertEquals("run", manager.getActiveLaunchMode().getIdentifier());
-		
+
 		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
 	}
 
 	@Test
-	@SuppressWarnings("deprecation")
 	public void descriptorTest() throws Exception {
 		// Create a descriptor type and inject an associated object
-		// Make sure the descriptor is active with the local target and proper mode
+		// Make sure the descriptor is active with the local target and proper
+		// mode
 		// Make sure the associated launch config is active too
 
 		// Mocking
 		final IExtensionPoint extensionPoint = mock(IExtensionPoint.class);
 		IExtension extension = mock(IExtension.class);
 		doReturn(new IExtension[] { extension }).when(extensionPoint).getExtensions();
-		
+
 		List<IConfigurationElement> elements = new ArrayList<>();
 		IConfigurationElement element;
-		
+
 		// fake launch object
 		String launchObject = "fakeObject";
 
@@ -110,7 +111,6 @@ public class LaunchBarManagerTest {
 		doReturn(descriptorTypeId).when(element).getAttribute("id");
 		ILaunchDescriptorType descriptorType = mock(ILaunchDescriptorType.class);
 		doReturn(descriptorType).when(element).createExecutableExtension("class");
-		doReturn(true).when(descriptorType).ownsLaunchObject(launchObject);
 		ILaunchDescriptor descriptor = mock(ILaunchDescriptor.class);
 		doReturn(descriptor).when(descriptorType).getDescriptor(launchObject);
 		doReturn(descriptorType).when(descriptor).getType();
@@ -142,13 +142,15 @@ public class LaunchBarManagerTest {
 		doReturn("configProvider").when(element).getName();
 		doReturn(descriptorTypeId).when(element).getAttribute("descriptorType");
 		doReturn("10").when(element).getAttribute("priority");
-		
+
 		ILaunchConfigurationProvider configProvider = mock(ILaunchConfigurationProvider.class);
 		doReturn(configProvider).when(element).createExecutableExtension("class");
 
 		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
-		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(descriptor), any(IRemoteConnection.class));
-		doReturn(launchConfigType).when(configProvider).getLaunchConfigurationType(any(ILaunchDescriptor.class), any(IRemoteConnection.class));
+		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(descriptor),
+				any(IRemoteConnection.class));
+		doReturn(launchConfigType).when(configProvider).getLaunchConfigurationType(any(ILaunchDescriptor.class),
+				any(IRemoteConnection.class));
 		doAnswer(new Answer<Boolean>() {
 			@Override
 			public Boolean answer(InvocationOnMock invocation) throws Throwable {
@@ -158,13 +160,14 @@ public class LaunchBarManagerTest {
 		}).when(configProvider).supports(eq(descriptor), any(IRemoteConnection.class));
 
 		doReturn(elements.toArray(new IConfigurationElement[0])).when(extension).getConfigurationElements();
-		
+
 		// Now inject the launch object
 		LaunchBarManager manager = new LaunchBarManager(false) {
 			@Override
 			IExtensionPoint getExtensionPoint() throws CoreException {
 				return extensionPoint;
 			}
+
 			@Override
 			ILaunchManager getLaunchManager() {
 				return launchManager;
@@ -183,10 +186,13 @@ public class LaunchBarManagerTest {
 		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
 	}
 
-	// TODO - test that changing active target type produces a different launch config type
+	// TODO - test that changing active target type produces a different launch
+	// config type
 	// TODO - test that settings are maintained after a restart
-	// TODO - test that two target types that map to the same desc type and config type share configs
-	// TODO - test duplicating a config. make sure it's default desc and same targets
+	// TODO - test that two target types that map to the same desc type and
+	// config type share configs
+	// TODO - test duplicating a config. make sure it's default desc and same
+	// targets
 	// TODO - test project descriptors and stuff
 	// TODO - test descriptor takeovers (new descriptors on launchObjectChange
 

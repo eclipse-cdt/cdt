@@ -112,6 +112,16 @@
             class="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchDescriptorType"
             id="org.eclipse.cdt.arduino.core.descriptorType"
             priority="5">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IProject">
+            </instanceof>
+            <test
+                  forcePluginActivation="true"
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.eclipse.cdt.arduino.core.arduinoNature">
+            </test>
+         </enablement>
       </descriptorType>
       <configProvider
             class="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationProvider"

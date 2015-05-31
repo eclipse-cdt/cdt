@@ -20,18 +20,9 @@ import org.eclipse.launchbar.core.ProjectLaunchDescriptor;
 public class ArduinoLaunchDescriptorType implements ILaunchDescriptorType {
 
 	@Override
-	public boolean ownsLaunchObject(Object element) throws CoreException {
-		if (element instanceof IProject) {
-			return ArduinoProjectNature.hasNature((IProject) element); 
-		}
-
-		return false;
-	}
-
-	@Override
-	public ILaunchDescriptor getDescriptor(Object element) throws CoreException {
-		if (element instanceof IProject) {
-			return new ProjectLaunchDescriptor(this, (IProject) element);
+	public ILaunchDescriptor getDescriptor(Object launchObject) throws CoreException {
+		if (launchObject instanceof IProject && ArduinoProjectNature.hasNature((IProject) launchObject)) {
+			return new ProjectLaunchDescriptor(this, (IProject) launchObject);
 		}
 
 		return null;

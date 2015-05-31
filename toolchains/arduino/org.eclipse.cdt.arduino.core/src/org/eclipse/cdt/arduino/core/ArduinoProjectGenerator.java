@@ -26,9 +26,7 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -73,26 +71,23 @@ public class ArduinoProjectGenerator {
 	}
 
 	public void setupArduinoProject(IProgressMonitor monitor) throws CoreException {
-		// create the CDT-ness of the project
+		// Add Arduino nature
 		IProjectDescription projDesc = project.getDescription();
-		CCorePlugin.getDefault().createCDTProject(projDesc, project, monitor);
-
 		String[] oldIds = projDesc.getNatureIds();
-		String[] newIds = new String[oldIds.length + 3];
+		String[] newIds = new String[oldIds.length + 1];
 		System.arraycopy(oldIds, 0, newIds, 0, oldIds.length);
 		newIds[newIds.length - 1] = ArduinoProjectNature.ID;
-		newIds[newIds.length - 2] = CCProjectNature.CC_NATURE_ID;
-		newIds[newIds.length - 3] = CProjectNature.C_NATURE_ID;
 		projDesc.setNatureIds(newIds);
 		project.setDescription(projDesc, monitor);
 
+		// create the CDT natures and build setup
+		CCorePlugin.getDefault().createCDTProject(projDesc, project, monitor);
 		ICProjectDescription cprojDesc = CCorePlugin.getDefault().createProjectDescription(project, false);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		ManagedProject mProj = new ManagedProject(cprojDesc);
 		info.setManagedProject(mProj);
 
 		Board board = null;
-
 		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
 		IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
 		Collection<IRemoteConnection> connections = connectionType.getConnections();
@@ -108,7 +103,6 @@ public class ArduinoProjectGenerator {
 		}
 
 		createBuildConfiguration(cprojDesc, board);
-
 		CCorePlugin.getDefault().setProjectDescription(project, cprojDesc, true, monitor);
 
 		// Generate files
@@ -124,7 +118,7 @@ public class ArduinoProjectGenerator {
 			generateFile(fmModel, fmConfig.getTemplate("arduino.mk"), project.getFile("arduino.mk")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			sourceFile = project.getFile(project.getName() + ".cpp"); //$NON-NLS-1$
-			generateFile(fmModel, fmConfig.getTemplate("arduino.cpp"), sourceFile);  //$NON-NLS-1$
+			generateFile(fmModel, fmConfig.getTemplate("arduino.cpp"), sourceFile); //$NON-NLS-1$
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e));
 		} catch (URISyntaxException e) {
@@ -137,7 +131,8 @@ public class ArduinoProjectGenerator {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 	}
 
-	private static void generateFile(Object model, Template template, final IFile outputFile) throws TemplateException, IOException, CoreException {
+	private static void generateFile(Object model, Template template, final IFile outputFile)
+			throws TemplateException, IOException, CoreException {
 		final PipedInputStream in = new PipedInputStream();
 		PipedOutputStream out = new PipedOutputStream(in);
 		final Writer writer = new OutputStreamWriter(out);
@@ -165,11 +160,13 @@ public class ArduinoProjectGenerator {
 			throw new CoreException(status);
 	}
 
-	public static ICConfigurationDescription createBuildConfiguration(ICProjectDescription projDesc, Board board) throws CoreException {
+	public static ICConfigurationDescription createBuildConfiguration(ICProjectDescription projDesc, Board board)
+			throws CoreException {
 		ManagedProject managedProject = new ManagedProject(projDesc);
 		String configId = ManagedBuildManager.calculateChildId(AVR_TOOLCHAIN_ID, null);
 		IToolChain avrToolChain = ManagedBuildManager.getExtensionToolChain(AVR_TOOLCHAIN_ID);
-		org.eclipse.cdt.managedbuilder.internal.core.Configuration newConfig = new org.eclipse.cdt.managedbuilder.internal.core.Configuration(managedProject, (ToolChain) avrToolChain, configId, board.getId());
+		org.eclipse.cdt.managedbuilder.internal.core.Configuration newConfig = new org.eclipse.cdt.managedbuilder.internal.core.Configuration(
+				managedProject, (ToolChain) avrToolChain, configId, board.getId());
 		IToolChain newToolChain = newConfig.getToolChain();
 		IOption newOption = newToolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
 		ManagedBuildManager.setOption(newConfig, newToolChain, newOption, board.getId());

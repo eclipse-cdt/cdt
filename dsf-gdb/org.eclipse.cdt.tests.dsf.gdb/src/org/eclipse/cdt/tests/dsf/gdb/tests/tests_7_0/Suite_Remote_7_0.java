@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
+ *     Jonah Graham (Kichwa Coders) - Bug 469007 - Add MIExpressionsNonStopTest_7_0 to suite
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
 
@@ -36,6 +37,7 @@ import org.junit.runners.Suite;
 	MIRunControlNonStopTargetAvailableTest_7_0.class,
 	MIRunControlTest_7_0.class,
 	MIExpressionsTest_7_0.class,
+	MIExpressionsNonStopTest_7_0.class,
 	GDBPatternMatchingExpressionsTest_7_0.class,
 	MIMemoryTest_7_0.class,
 	MIBreakpointsTest_7_0.class,

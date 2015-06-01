@@ -31,7 +31,7 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <delete includeemptydirs="false">
+                                        <delete includeemptydirs="true">
                                             <fileset dir="${terminal-install}">
                                                 <include name="**"/>
                                             </fileset>

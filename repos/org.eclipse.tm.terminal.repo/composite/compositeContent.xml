@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?compositeMetadataRepository version='1.0.0'?>
+<repository
+        name='TM Terminal - Nightly Development Builds'
+    type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository'
+    version='1.0.0'>
+
+        <properties size='1'>
+			<property name='p2.timestamp' value='1433150343971'/>
+        </properties>
+
+        <children size='2'>
+			<child location='common'/>
+			<child location='remote'/>
+        </children>
+</repository>

@@ -41,7 +41,22 @@
                                                 <include name="${terminal-zipfile}"/>
                                             </fileset>
                                         </copy>
+                                        
+                                        <delete includeemptydirs="false">
+                                            <fileset dir="${terminal-install}/remote">
+                                                <include name="**"/>
+                                            </fileset>
+                                        </delete>
+                                        <copy includeemptydirs="false" todir="${terminal-install}/remote">
+                                            <fileset dir="target/repository">
+                                                <include name="**"/>
+                                            </fileset>
+                                        </copy>
+                                        
                                         <chmod perm="g+w">
+                                            <fileset dir="${terminal-install}/remote">
+                                                <include name="**"/>
+                                            </fileset>
                                             <fileset dir="${terminal-install}">
                                                 <include name="${terminal-zipfile}"/>
                                             </fileset>

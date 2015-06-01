@@ -27,15 +27,12 @@
         <!-- Terminal Connector features and plug-ins -->
         <module>plugins/org.eclipse.tm.terminal.connector.local</module>
         <module>plugins/org.eclipse.tm.terminal.connector.process</module>
-        <module>plugins/org.eclipse.tm.terminal.connector.remote</module>
         <module>plugins/org.eclipse.tm.terminal.connector.serial</module>
         <module>plugins/org.eclipse.tm.terminal.connector.ssh</module>
         <module>plugins/org.eclipse.tm.terminal.connector.telnet</module>
         
         <module>features/org.eclipse.tm.terminal.connector.local.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.local.sdk.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.remote.feature</module>
-        <module>features/org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.serial.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.serial.sdk.feature</module>
         <module>features/org.eclipse.tm.terminal.connector.ssh.feature</module>
@@ -63,10 +60,21 @@
 
     <profiles>
         <profile>
-        <id>tests</id>
-        <modules>
-            <module>plugins/org.eclipse.tm.terminal.test</module>
-        </modules>
-    </profile>
+            <id>tests</id>
+            <modules>
+                <module>plugins/org.eclipse.tm.terminal.test</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>build-remote-connector</id>
+            <modules>
+                <module>plugins/org.eclipse.tm.terminal.connector.remote</module>
+                
+                <module>features/org.eclipse.tm.terminal.connector.remote.feature</module>
+                <module>features/org.eclipse.tm.terminal.connector.remote.sdk.feature</module>
+                
+                <module>repos/org.eclipse.tm.terminal.remote.repo</module>
+            </modules>
+        </profile>
     </profiles>
 </project>

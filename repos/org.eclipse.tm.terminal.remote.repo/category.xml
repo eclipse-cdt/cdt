@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <!-- Terminal Connector Features -->
+   <feature url="features/org.eclipse.tm.terminal.connector.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.remote.feature" version="0.0.0">
+      <category name="terminal_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.remote.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.remote.sdk.feature" version="0.0.0">
+      <category name="terminal_main"/>
+   </feature>
+   
+   <category-def name="terminal_main" label="TM Terminal 4.0 Main Features">
+      <description>
+         TM Terminal Main Features
+      </description>
+   </category-def>
+</site>

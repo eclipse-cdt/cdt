@@ -60,7 +60,7 @@
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20150519210750/repository/</orbit-site>
+		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.6</cdt-site>
         <terminal-site>http://download.eclipse.org/tm/terminal/builds/development/nightly</terminal-site>
       </properties>

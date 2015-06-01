@@ -549,8 +549,9 @@ public class CPPVisitor extends ASTQueries {
         		}
         	}
         	if (scope instanceof ICPPClassScope && isFriend && !qualified) {
-        		while (scope instanceof ICPPClassScope)
+        		while (scope instanceof ICPPClassScope) {
         			scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
+        		}
         	}
         	if (scope != null) {
         		binding = scope.getBinding(elabType.getName(), false);
@@ -2500,8 +2501,9 @@ public class CPPVisitor extends ASTQueries {
 
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
-		// the index cannot return the translation unit as parent scope
-		if (parentScope == null && scope instanceof IIndexScope && unit != null) {
+		// Replace the global scope from index with the global scope of the translation unit.
+		if ((parentScope == null || parentScope.getKind() == EScopeKind.eGlobal) &&
+				scope instanceof IIndexScope && unit != null) {
 			parentScope= unit.getScope();
 		}
 		return parentScope;

@@ -42,10 +42,10 @@ public class SWTImagesFactory {
 	private static final String NAME_PREFIX = DockerLaunchUIPlugin.PLUGIN_ID
 			+ '.';
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
-	public static final String IMG_DOCKER_SMALL = NAME_PREFIX
-			+ "docker_small.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DOCKER_SMALL = createManaged("",
-			IMG_DOCKER_SMALL);
+	public static final String IMG_CONTAINER = NAME_PREFIX
+			+ "repository-middle.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CONTAINER = createManaged("",
+			IMG_CONTAINER);
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

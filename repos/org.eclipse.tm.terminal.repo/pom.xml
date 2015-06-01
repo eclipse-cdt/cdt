@@ -36,6 +36,8 @@
                                                 <include name="**"/>
                                             </fileset>
                                         </delete>
+                                        <mkdir dir="${terminal-install}/common"/>
+                                        <mkdir dir="${terminal-install}/remote"/>
                                         <copy includeemptydirs="false" todir="${terminal-install}">
                                             <fileset dir="composite">
                                                 <include name="**"/>

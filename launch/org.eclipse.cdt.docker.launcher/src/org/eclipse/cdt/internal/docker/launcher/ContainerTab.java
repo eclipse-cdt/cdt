@@ -476,7 +476,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab implements
 
 	@Override
 	public Image getImage() {
-		return SWTImagesFactory.get(SWTImagesFactory.IMG_DOCKER_SMALL);
+		return SWTImagesFactory.get(SWTImagesFactory.IMG_CONTAINER);
 	}
 
 	@Override

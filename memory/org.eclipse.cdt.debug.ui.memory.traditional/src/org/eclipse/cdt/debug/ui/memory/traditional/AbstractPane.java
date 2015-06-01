@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Teodor Madan (Freescale) - Fix PageDn/PageUp
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
@@ -587,9 +588,15 @@ public abstract class AbstractPane extends Canvas
             // The caret was moved outside the viewport bounds:  Scroll the
             // viewport up or down by a row, depending on where the caret is
             
-            boolean upArrow = fCaretAddress.compareTo(vpStart) <= 0;
+        	boolean upArrow = fCaretAddress.compareTo(vpStart) <= 0;
+            int rows = (upArrow ? -1 : 1 );
+            if (upArrow) {
+            	rows -= vpStart.subtract(fCaretAddress).intValue()/fRendering.getAddressableCellsPerRow();
+            } else {
+            	rows += fCaretAddress.subtract(vpEnd).intValue()/fRendering.getAddressableCellsPerRow();
+            }
             ScrollBar vBar = fRendering.getVerticalBar();
-            vBar.setSelection(vBar.getSelection() + (upArrow ? -1 : 1));
+            vBar.setSelection(vBar.getSelection() + rows);
             vBar.notifyListeners(SWT.Selection, new Event());
             
             // Check to see if we're at the beginning or end of a line, and

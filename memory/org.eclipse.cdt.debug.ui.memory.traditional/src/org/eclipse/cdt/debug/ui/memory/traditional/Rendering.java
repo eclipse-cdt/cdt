@@ -9,13 +9,13 @@
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Ling Wang (Silicon Laboratories) - Honor start address (Bug 414519)
+ *     Teodor Madan (Freescale) - Fix scrolling for memory spaces with 64-bit address
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -131,14 +131,6 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     public final static int PANE_TEXT = 3;
 
-	/**
-	 * Decimal precision used when converting between scroll units and number of
-	 * memory rows. Calculations do not need to be exact; two decimal places is
-	 * good enough.
-	 */
-	static private final MathContext SCROLL_CONVERSION_PRECISION = new MathContext(2);
-
-	
     // constants used to identify text, maybe java should be queried for all available sets
     public final static int TEXT_ISO_8859_1 = 1;
     public final static int TEXT_USASCII = 2;
@@ -426,32 +418,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     case SWT.SCROLL_LINE:
                     // See: BUG 203068 selection event details broken on GTK < 2.6 
                     default:
-                    	if(getVerticalBar().getSelection() == getVerticalBar().getMinimum())
-                    	{
-                    		// Set view port start address to the start address of the Memory Block
-                    		fViewportAddress = Rendering.this.getMemoryBlockStartAddress();
-                    	}
-                    	else if(getVerticalBar().getSelection() == getVerticalBar().getMaximum())
-                    	{
-                    		// The view port end address should be less or equal to the the end address of the Memory Block
-                    		// Set view port address to be bigger than the end address of the Memory Block for now
-                    		// and let ensureViewportAddressDisplayable() to figure out the correct view port start address
-                    		fViewportAddress = Rendering.this.getMemoryBlockEndAddress();
-                    	}
-                    	else
-                    	{
-                            // Figure out the delta, ignore events with no delta
-                        	int deltaScroll = getVerticalBar().getSelection() - fCurrentScrollSelection;
-                        	if (deltaScroll == 0)
-                        		break;
-                        	
-							BigInteger deltaRows = scrollbar2rows(deltaScroll);
-							
-							BigInteger newAddress = fViewportAddress.add(BigInteger.valueOf(
-                    				getAddressableCellsPerRow()).multiply(deltaRows));
-							
-							fViewportAddress = newAddress;
-                    	}
+                        // Figure out the delta, ignore events with no delta
+                        int deltaScroll = getVerticalBar().getSelection() - fCurrentScrollSelection;
+                        if (deltaScroll == 0)
+                            break;
+
+                        fViewportAddress = fViewportAddress.add(BigInteger.valueOf(
+                                getAddressableCellsPerRow()).multiply(BigInteger.valueOf(deltaScroll)));
+
                         ensureViewportAddressDisplayable();
                         // Update tooltip
                         // FIXME conversion from slider to scrollbar
@@ -709,7 +683,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
     }
 
     // default visibility for performance
-    ViewportCache fViewportCache = new ViewportCache(); 
+    ViewportCache fViewportCache = new ViewportCache();
+
+	private BigInteger fScrollStartAddress = BigInteger.ZERO;
 
     private interface Request
     {
@@ -1461,7 +1437,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
 	        getVerticalBar().setMinimum(1);
 	        // scrollbar maximum range is Integer.MAX_VALUE. 
-	        getVerticalBar().setMaximum(getMaxScrollRange().min(BigInteger.valueOf(Integer.MAX_VALUE)).intValue());
+	        getVerticalBar().setMaximum(getMaxScrollLines());
 	        getVerticalBar().setIncrement(1);
 	        getVerticalBar().setPageIncrement(this.getRowCount() -1);
 	    	//TW FIXME conversion of slider to scrollbar
@@ -1528,7 +1504,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
         // reset the caret and selection state (no caret and no selection)
         fCaretAddress = null;
         fSelection = new Selection();
-        
+
+        ensureViewportAddressDisplayable();
         redrawPanes();
     }
 
@@ -1545,6 +1522,30 @@ public class Rendering extends Composite implements IDebugEventSetListener
     public BigInteger getViewportEndAddress()
     {
         return fViewportAddress.add(BigInteger.valueOf(this.getBytesPerRow() * getRowCount() / getAddressableSize()));
+    }
+
+    private BigInteger getScrollStartAddress()
+    {
+    	return fScrollStartAddress;
+    }
+
+    private void setScrollStartAddress(BigInteger newAddress)
+    {
+    	fScrollStartAddress = newAddress;
+    }
+
+    private BigInteger getScrollEndAddress()
+    {
+    	int scrollLines = getMaxScrollLines();
+    	// substract scroll thumb as it is not possible to scroll beyond it
+    	scrollLines -= getVerticalBar().getThumb();
+
+		BigInteger newAddress = getScrollStartAddress().add(
+				BigInteger.valueOf(getAddressableCellsPerRow()).multiply(
+						BigInteger.valueOf(scrollLines))
+				);
+
+		return newAddress.min(getMemoryBlockEndAddress());
     }
 
     public String getAddressString(BigInteger address)
@@ -1647,77 +1648,81 @@ public class Rendering extends Composite implements IDebugEventSetListener
     }
 
     /**
-	 *  @return Set current scroll selection
+	 *  Update current scroll selection to match current viewport range
 	 */
 	protected void setCurrentScrollSelection()
 	{
-		BigInteger selection = getViewportStartAddress().divide(
-			BigInteger.valueOf(getAddressableCellsPerRow()));
-				
-		fCurrentScrollSelection = rows2scrollbar(selection);
+		BigInteger viewportStartAddress = getViewportStartAddress();
+		if (TraceOptions.DEBUG) {
+			TraceOptions.trace(MessageFormat.format(
+					"Updating viewport to range=[0x{0} : 0x{1}]; scroll range=[0x{2} : 0x{3}]; current selection = {4}",
+					viewportStartAddress.toString(16), getViewportEndAddress().toString(16),
+					getScrollStartAddress().toString(16), getScrollEndAddress().toString(16),
+					fCurrentScrollSelection));
+		}
+		BigInteger addressableRow = BigInteger.valueOf(getAddressableCellsPerRow());
+		if ((viewportStartAddress.compareTo(getScrollStartAddress()) <= 0)) {
+			// must reposition scroll area, center position into the center of the new scroll area
+			// unless it is already at the start of first line.
+
+			int scrollLines = getMaxScrollLines()/2;
+			BigInteger newScrollStart = BigInteger.ZERO.max(viewportStartAddress.subtract(
+					BigInteger.valueOf(scrollLines).multiply(addressableRow))
+					);
+			setScrollStartAddress(newScrollStart);
+
+			if (TraceOptions.DEBUG) {
+				TraceOptions.trace(MessageFormat.format(
+						"  new scroll range=[0x{0} : 0x{1}]",
+						getScrollStartAddress().toString(16), getScrollEndAddress().toString(16)));
+			}
+		} else if (getViewportEndAddress().compareTo(getScrollEndAddress()) >= 0) {
+			// must reposition scroll area, center position into the center of the new scroll area
+			//  unless when user gets closer to end of addressable size of memory, when leave
+			//  scroll start address at end of block memory scroll start
+
+			BigInteger eomScrollStart = getMemoryBlockEndAddress().add(BigInteger.ONE).
+					subtract( BigInteger.valueOf(getMaxScrollLines() - getVerticalBar().getThumb()).multiply(addressableRow));
+
+			int scrollLines = getMaxScrollLines()/2;
+			BigInteger newScrollStart = eomScrollStart.min(viewportStartAddress.subtract(
+					BigInteger.valueOf(scrollLines).multiply(addressableRow))
+					);
+			setScrollStartAddress(newScrollStart);
+
+			if (TraceOptions.DEBUG) {
+				TraceOptions.trace(MessageFormat.format(
+						"  new scroll range=[0x{0} : 0x{1}]",
+						getScrollStartAddress().toString(16), getScrollEndAddress().toString(16)));
+			}
+		}
+
+		// calculate selection line from the start of scroll area
+		fCurrentScrollSelection = viewportStartAddress.subtract(getScrollStartAddress()).divide(
+				addressableRow).intValue() + 1;
+		if (TraceOptions.DEBUG) {
+			TraceOptions.trace(MessageFormat.format("  new selection={0}", fCurrentScrollSelection));
+		}
 		getVerticalBar().setSelection(fCurrentScrollSelection);
 	}
-    
+
 	/**
 	 * compute the maximum scrolling range.
 	 * @return number of lines that rendering can display
 	 */
-	private BigInteger getMaxScrollRange() {
+	private int getMaxScrollLines() {
 		BigInteger difference = getMemoryBlockEndAddress().subtract(getMemoryBlockStartAddress()).add(BigInteger.ONE);
 		BigInteger maxScrollRange = difference.divide(BigInteger.valueOf(getAddressableCellsPerRow()));
 		if(maxScrollRange.multiply(BigInteger.valueOf(getAddressableCellsPerRow())).compareTo(difference) != 0)
-			maxScrollRange = maxScrollRange.add(BigInteger.ONE);
-		
+			maxScrollRange = maxScrollRange.add(BigInteger.ONE); // add a line to hold bytes that do not fill an entire raw
+
 		// support targets with an addressable size greater than 1
 		maxScrollRange = maxScrollRange.divide(BigInteger.valueOf(getAddressableSize()));
-		return maxScrollRange;
+
+		// cap to maximum lines a SWT ScrollBar can hold.
+		return maxScrollRange.min(BigInteger.valueOf(Integer.MAX_VALUE)).intValue();
 	}
 
-	/**
-	 * The scroll range is limited by SWT. Because it can be less than the
-	 * number of rows (of memory) that we need to display, we need an arithmetic
-	 * mapping.
-	 * 
-	 * @return ratio this function returns how many rows a scroll bar unit
-	 *         represents. The number will be some fractional value, up to but
-	 *         not exceeding the value 1. I.e., when the scroll range exceeds
-	 *         the row range, we use a 1:1 mapping.
-	 */
-	private final BigDecimal getScrollRatio() {
-		BigInteger maxRange = getMaxScrollRange();
-        if (maxRange.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ) {
-        	return new BigDecimal(maxRange).divide(BigDecimal.valueOf(Integer.MAX_VALUE), SCROLL_CONVERSION_PRECISION);
-        } else {
-        	return BigDecimal.ONE;
-        }	
-	}
-
-	/**
-	 * Convert memory row units to scroll bar units. The scroll range is limited
-	 * by SWT. Because it can be less than the number of rows (of memory) that
-	 * we need to display, we need an arithmetic mapping.
-
-	 * @param rows
-	 *            units of memory
-	 * @return scrollbar units
-	 */
-	private int rows2scrollbar(BigInteger rows) {
-		return new BigDecimal(rows).divide(getScrollRatio(), SCROLL_CONVERSION_PRECISION).intValue();
-	}
-
-	/**
-	 * Convert scroll bar units to memory row units. The scroll range is limited
-	 * by SWT. Because it can be less than the number of rows (of memory) that
-	 * we need to display, we need an arithmetic mapping.
-	 * 
-	 * @param scrollbarUnits
-	 *            scrollbar units
-	 * @return number of rows of memory
-	 */
-	private BigInteger scrollbar2rows(int scrollbarUnits) {
-		return getScrollRatio().multiply(BigDecimal.valueOf(scrollbarUnits), SCROLL_CONVERSION_PRECISION).toBigInteger();
-	}
-	
     /**
 	 * @return start address of the memory block
 	 */

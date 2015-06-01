@@ -44,6 +44,19 @@
 	</viewContribution>
 </extension>
 
+   <extension
+		point = "org.eclipse.ui.trace.traceComponents">
+	<component
+		id="org.eclipse.cdt.debug.ui.memory.traditional.component"
+		label="Traditional Rendering">
+		<bundle
+			consumed="true"
+			name="org.eclipse.cdt.debug.ui.memory.traditional">
+		</bundle>
+	</component>
+   </extension>
+
+
 </plugin>
 
 

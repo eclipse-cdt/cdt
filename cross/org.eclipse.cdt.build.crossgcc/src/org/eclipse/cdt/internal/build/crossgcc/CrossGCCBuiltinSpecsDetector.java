@@ -23,14 +23,16 @@ public class CrossGCCBuiltinSpecsDetector extends GCCBuiltinSpecsDetector {
 	protected String getCompilerCommand(String languageId) {
 		// Include the cross command prefix (tool option) in the ${COMMAND} macro
 		// For example: "arch-os-" + "gcc"
-		String prefix = "";
+		String prefix = ""; //$NON-NLS-1$
 		IToolChain toolchain = null;
 		if (currentCfgDescription != null) {
 			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(currentCfgDescription);
 			toolchain = cfg != null ? cfg.getToolChain() : null;
 			if (toolchain != null) {
 				IOption option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.prefix"); //$NON-NLS-1$
-				prefix = (String)option.getValue();
+				if (option != null) {
+					prefix = (String) option.getValue();
+				}
 			}
 		}
 		return prefix + super.getCompilerCommand(languageId);

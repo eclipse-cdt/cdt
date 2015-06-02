@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -1858,5 +1859,86 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	char TableValue[sizeof TableValue];
 	public void testNameLookupFromArrayModifier_435075() {
 		checkBindings();
+	}
+
+	// class NonVirt {
+	//   void m();
+	// };
+	// class C1 : NonVirt {
+	//   virtual void m();
+	// };
+	// class C2 : C1 {
+	//   void m();
+	// };
+	// class C3 : C2 {
+	//   void m(int);
+	// };
+	// class C4 : C3 {
+	//   void m();
+	// };
+	// class C5 : C1 {
+	//   void m();
+	// };
+
+	//	void test(NonVirt* n, C1* c1, C2* c2, C3* c3, C4* c4, C5* c5) {
+	//	  n->m();//0
+	//	  c1->m();//1
+	//	  c2->m();//2
+	//	  c3->m(0);//3
+	//	  c4->m();//4
+	//	  c5->m();//5
+	//	}
+	public void testOverridden_248846() throws Exception {
+		ICPPMethod m0= getBindingFromFirstIdentifier("m();//0");
+		ICPPMethod m1= getBindingFromFirstIdentifier("m();//1");
+		ICPPMethod m2= getBindingFromFirstIdentifier("m();//2");
+		ICPPMethod m3= getBindingFromFirstIdentifier("m(0);");
+		ICPPMethod m4= getBindingFromFirstIdentifier("m();//4");
+		ICPPMethod m5= getBindingFromFirstIdentifier("m();//5");
+
+		assertFalse(ClassTypeHelper.isVirtual(m0));
+		assertFalse(ClassTypeHelper.isVirtual(m3));
+		assertTrue(ClassTypeHelper.isVirtual(m1));
+		assertTrue(ClassTypeHelper.isVirtual(m2));
+		assertTrue(ClassTypeHelper.isVirtual(m4));
+		assertTrue(ClassTypeHelper.isVirtual(m5));
+
+		assertFalse(ClassTypeHelper.isOverrider(m0, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m2, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m4, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m5, m0));
+
+		assertFalse(ClassTypeHelper.isOverrider(m0, m1));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m1));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m1));
+		assertTrue(ClassTypeHelper.isOverrider(m2, m1));
+		assertTrue(ClassTypeHelper.isOverrider(m4, m1));
+		assertTrue(ClassTypeHelper.isOverrider(m5, m1));
+
+		assertFalse(ClassTypeHelper.isOverrider(m0, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m2, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m2));
+		assertFalse(ClassTypeHelper.isOverrider(m5, m2));
+		assertTrue(ClassTypeHelper.isOverrider(m4, m2));
+
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0, null);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m1, null);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m2, null);
+		assertEquals(1, ors.length);
+		assertEquals(ors[0], m1);
+		ors= ClassTypeHelper.findOverridden(m3, null);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m4, null);
+		assertEquals(2, ors.length);
+		assertEquals(ors[0], m2);
+		assertEquals(ors[1], m1);
+		ors= ClassTypeHelper.findOverridden(m5, null);
+		assertEquals(1, ors.length);
+		assertEquals(ors[0], m1);
 	}
 }

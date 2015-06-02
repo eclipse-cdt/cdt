@@ -6423,16 +6423,16 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(0, ors.length);
 		ors= ClassTypeHelper.findOverridden(m2, null);
 		assertEquals(1, ors.length);
-		assertSame(ors[0], m1);
+		assertEquals(ors[0], m1);
 		ors= ClassTypeHelper.findOverridden(m3, null);
 		assertEquals(0, ors.length);
 		ors= ClassTypeHelper.findOverridden(m4, null);
 		assertEquals(2, ors.length);
-		assertSame(ors[0], m2);
-		assertSame(ors[1], m1);
+		assertEquals(ors[0], m2);
+		assertEquals(ors[1], m1);
 		ors= ClassTypeHelper.findOverridden(m5, null);
 		assertEquals(1, ors.length);
-		assertSame(ors[0], m1);
+		assertEquals(ors[0], m1);
 	}
 
 	//  struct A {

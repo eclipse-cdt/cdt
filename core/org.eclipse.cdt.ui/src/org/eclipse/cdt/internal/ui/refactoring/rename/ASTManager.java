@@ -38,11 +38,8 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -55,7 +52,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -80,12 +76,10 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionPrototypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -110,8 +104,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -672,59 +664,6 @@ public class ASTManager implements IDisposable {
         return CVisitor.getContainingScope(name);
     }
         
-    public static int isVirtualMethod(ICPPMethod method) throws DOMException {
-        IASTDeclaration decl= null;
-		if (method instanceof CPPMethod) {
-			decl = ((CPPMethod) method).getPrimaryDeclaration();
-		} else if (method instanceof CPPImplicitMethod) {
-			decl = ((CPPImplicitMethod) method).getPrimaryDeclaration();
-		}
-			
-        IASTDeclSpecifier spec= null;
-        if (decl instanceof IASTFunctionDefinition) {
-            IASTFunctionDefinition def = (IASTFunctionDefinition) decl;
-            spec= def.getDeclSpecifier();
-        } else if (decl instanceof IASTSimpleDeclaration) {
-            IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
-            spec= sdecl.getDeclSpecifier();
-        }
-        if (spec instanceof ICPPASTDeclSpecifier) {
-            ICPPASTDeclSpecifier cppSpec = (ICPPASTDeclSpecifier) spec;
-            if (cppSpec.isVirtual()) {
-                return TRUE;
-            }
-        }
-            
-        IScope scope= method.getScope();
-        if (scope instanceof ICPPClassScope) {
-            ICPPClassScope classScope = (ICPPClassScope) scope;
-            ICPPClassType classType= classScope.getClassType();
-            ICPPBase[] bases= classType.getBases();
-            for (ICPPBase base : bases) {
-                if (!(base.getBaseClass() instanceof ICPPClassType))
-                	continue;
-                ICPPClassType baseType= (ICPPClassType) base.getBaseClass();
-                if (baseType != null) {
-                    IScope baseScope= baseType.getCompositeScope();
-                    if (baseScope != null) {
-                        IBinding[] alternates= baseScope.find(method.getName());
-                        for (IBinding binding : alternates) {
-                            if (binding instanceof CPPMethod) {
-                                CPPMethod alternateMethod = (CPPMethod) binding;
-                                if (hasSameSignature(method, alternateMethod) != FALSE) {
-                                    if (isVirtualMethod(alternateMethod) == TRUE) {
-                                        return TRUE;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return FALSE;
-    }
-
     public static boolean isLocalVariable(IVariable v, IScope scope) {
         if (v instanceof IParameter) {
             return false;

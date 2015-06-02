@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *     Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.core.resources.IFile;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -33,6 +33,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
 /**
  * Represents the input to a refactoring. Important are file and offset, the rest
@@ -126,13 +128,8 @@ public class CRefactoringArgument {
             IFunction func= (IFunction) binding;
             if (binding instanceof ICPPMethod) {
                 ICPPMethod method= (ICPPMethod) binding;
-                int isVirtual= ASTManager.UNKNOWN;
-                try {
-                    isVirtual = ASTManager.isVirtualMethod(method);
-                } catch (DOMException e) {
-                }
-                if (isVirtual == ASTManager.TRUE) {
-                    fKind= CRefactory.ARGUMENT_VIRTUAL_METHOD;
+                if (ClassTypeHelper.isVirtual(method)) {
+                	fKind= CRefactory.ARGUMENT_VIRTUAL_METHOD;
                 }
             } else {
                 boolean isStatic= false;

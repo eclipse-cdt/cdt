@@ -175,6 +175,11 @@ public class TabFolderMenuHandler extends PlatformObject {
 
 		// Create the context menu
 		contextMenu = contextMenuManager.createContextMenu(tabFolder);
+		// Temporarily set the menu on the tab folder to avoid the case
+		// where the menu has a different parent shell than the control.
+		// This can be the case if the tab folder is re-parented to the
+		// "PartRenderingEngine's limbo".
+		tabFolder.setMenu(contextMenu);
 
 		// Create the context menu action instances
 		doCreateContextMenuActions();
@@ -375,10 +380,11 @@ public class TabFolderMenuHandler extends PlatformObject {
 		if (MenuManager.class.isAssignableFrom(adapter)) {
 			return contextMenuManager;
 		} else if (Menu.class.isAssignableFrom(adapter)) {
-			if (contextMenu != null && contextMenu.isDisposed()) {
-				// menu got disposed (should not happen)
+			if (contextMenu == null || contextMenu.isDisposed()) {
 				contextMenu = contextMenuManager.createContextMenu(getTabFolder());
 			}
+			// Clear the menu from the tab folder now - see initialize()
+			getTabFolder().setMenu(null);
 			return contextMenu;
 		}
 

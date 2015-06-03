@@ -189,7 +189,7 @@ public class DefaultGCCDependencyCalculator2Commands implements
 			options[3] = optTxt;
 		} else {
 			// -MT"$(@:%.o=%.d) %.o"
-			options[3] = "-MT\"$(@:%.o=%.d)\"";			//$NON-NLS-1$
+			options[3] = "-MT\"$(@)\"";			//$NON-NLS-1$
 		}
 
 		return options;

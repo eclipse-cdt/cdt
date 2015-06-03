@@ -197,7 +197,8 @@ public class RemoteConnectionWidget extends Composite {
 	 *            list of connection types to select from
 	 * @since 2.0
 	 */
-	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, List<IRemoteConnectionType> connectionTypes) {
+	public RemoteConnectionWidget(Composite parent, int style, String title, int flags,
+			List<IRemoteConnectionType> connectionTypes) {
 		this(parent, style, title, flags, null, connectionTypes);
 	}
 
@@ -218,7 +219,8 @@ public class RemoteConnectionWidget extends Composite {
 	 *            list of connection types to select from
 	 * @since 2.0
 	 */
-	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, IRunnableContext context, List<IRemoteConnectionType> connectionTypes) {
+	public RemoteConnectionWidget(Composite parent, int style, String title, int flags, IRunnableContext context,
+			List<IRemoteConnectionType> connectionTypes) {
 		super(parent, style);
 
 		if (connectionTypes != null) {
@@ -520,8 +522,7 @@ public class RemoteConnectionWidget extends Composite {
 				/*
 				 * Enable 'new' button if new connections are supported
 				 */
-				fNewConnectionButton
-						.setEnabled(selectedConnectionType.canAdd());
+				fNewConnectionButton.setEnabled(selectedConnectionType.canAdd());
 			}
 		} finally {
 			fWidgetListener.setEnabled(enabled);
@@ -651,14 +652,14 @@ public class RemoteConnectionWidget extends Composite {
 				isRemote = !fLocalButton.getSelection();
 			}
 			fConnectionCombo.setEnabled(fEnabled && isRemote);
-			fNewConnectionButton.setEnabled(fEnabled && isRemote
-					&& fDefaultConnectionType.canAdd());
+			fNewConnectionButton.setEnabled(fEnabled && isRemote && fDefaultConnectionType.canAdd());
 		} else {
 			IRemoteConnectionType services = getSelectedConnectionType();
 			fConnectionCombo.setEnabled(fEnabled && services != null);
-			fNewConnectionButton.setEnabled(fEnabled && services != null
-					&& services.canAdd());
-			fConnectionTypeCombo.setEnabled(fEnabled);
+			fNewConnectionButton.setEnabled(fEnabled && services != null && services.canAdd());
+			if (fConnectionTypeCombo != null) {
+				fConnectionTypeCombo.setEnabled(fEnabled);
+			}
 		}
 	}
 }

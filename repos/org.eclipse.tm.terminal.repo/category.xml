@@ -33,6 +33,12 @@
    <feature url="features/org.eclipse.tm.terminal.connector.telnet.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.telnet.sdk.feature" version="0.0.0">
       <category name="terminal_main"/>
    </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.remote.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.remote.feature" version="0.0.0">
+      <category name="terminal_main"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.connector.remote.sdk.feature_0.0.0.jar" id="org.eclipse.tm.terminal.connector.remote.sdk.feature" version="0.0.0">
+      <category name="terminal_main"/>
+   </feature>
 
    <!-- Terminal View Features -->
    <feature url="features/org.eclipse.tm.terminal.view.feature_0.0.0.jar" id="org.eclipse.tm.terminal.view.feature" version="0.0.0">

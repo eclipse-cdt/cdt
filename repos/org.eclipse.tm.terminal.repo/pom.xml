@@ -33,7 +33,10 @@
                                     <target>
                                         <delete includeemptydirs="true">
                                             <fileset dir="${terminal-install}">
-                                                <include name="**"/>
+                                                <include name="composite*"/>
+                                            </fileset>
+                                            <fileset dir="${terminal-install}">
+                                                <include name="${terminal-zipfile}"/>
                                             </fileset>
                                         </delete>
                                         <mkdir dir="${terminal-install}/common"/>

@@ -21,7 +21,8 @@
             name="%TerminalsView.name">
       </view>
 
-      <!-- Contribute another view with the old ID to handle the ID change -->
+      <!-- Bug 466644: Contribute another view with the old (TCF) ID to handle the ID change -->
+      <!-- The sole purpose of this view is to close itself when it's in an old workspace/persepctive -->
       <view
             allowMultiple="true"
             class="org.eclipse.tm.terminal.view.ui.view.OldTerminalsViewHandler"
@@ -137,7 +138,7 @@
             class="org.eclipse.tm.terminal.view.ui.internal.PropertyTester"
             id="org.eclipse.tm.terminal.view.ui.PropertyTester"
             namespace="org.eclipse.tm.terminal.view.ui"
-            properties="oldViewActivityEnabled,hasApplicableLauncherDelegates,canDisconnect"
+            properties="hasApplicableLauncherDelegates,canDisconnect"
             type="java.lang.Object">
       </propertyTester>
    </extension>
@@ -334,23 +335,19 @@
       <defaultEnablement
             id="org.eclipse.tm.terminal.view.ui.activity.views">
       </defaultEnablement>
-      
+     
+      <!-- Hide the old TCF Terminals (Migration Only) View from the View Shortcuts Menu -->
       <activity
             id="org.eclipse.tm.terminal.view.ui.activity.oldview"
             name="Terminal Views (Old)">
-            <enabledWhen>
-               <test
-                     property="org.eclipse.tm.terminal.view.ui.oldViewActivityEnabled"
-                     value="true">
-               </test>
-            </enabledWhen>
       </activity>
       
       <activityPatternBinding
             activityId="org.eclipse.tm.terminal.view.ui.activity.oldview"
             pattern=".*/org\.eclipse\.tcf\.te\.ui\.terminals\.TerminalsView">
       </activityPatternBinding>
-      
+     
+      <!-- TBD Remove this category binding to hide the Migration Capability from the Preferences --> 
       <categoryActivityBinding
             activityId="org.eclipse.tm.terminal.view.ui.activity.oldview"
             categoryId="org.eclipse.tm.terminal.view.ui.category">

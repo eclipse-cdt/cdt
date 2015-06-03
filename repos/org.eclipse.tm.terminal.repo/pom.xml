@@ -33,34 +33,19 @@
                                     <target>
                                         <delete includeemptydirs="true">
                                             <fileset dir="${terminal-install}">
-                                                <include name="composite*"/>
-                                            </fileset>
-                                            <fileset dir="${terminal-install}">
-                                                <include name="${terminal-zipfile}"/>
+                                                <include name="**"/>
                                             </fileset>
                                         </delete>
                                         <mkdir dir="${terminal-install}/common"/>
                                         <mkdir dir="${terminal-install}/remote"/>
                                         <copy includeemptydirs="false" todir="${terminal-install}">
-                                            <fileset dir="composite">
+                                            <fileset dir="target/repository">
                                                 <include name="**"/>
                                             </fileset>
                                             <fileset dir="target">
                                                 <include name="${terminal-zipfile}"/>
                                             </fileset>
                                         </copy>
-                                    
-                                        <delete includeemptydirs="false">
-                                            <fileset dir="${terminal-install}/common">
-                                                <include name="**"/>
-                                            </fileset>
-                                        </delete>
-                                        <copy includeemptydirs="false" todir="${terminal-install}/common">
-                                            <fileset dir="target/repository">
-                                                <include name="**"/>
-                                            </fileset>
-                                        </copy>
-                                        
                                         <chmod perm="g+w">
                                             <fileset dir="${terminal-install}">
                                                 <include name="**"/>

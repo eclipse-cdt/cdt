@@ -146,7 +146,7 @@ public class SetConfigurationParameter extends AbstractTest {
 
 		// Wait until the project is built
 		SWTBotShell shell = bot.shell("Build Project");
-		bot.waitUntil(Conditions.shellCloses(shell), 120000);
+		bot.waitUntil(Conditions.shellCloses(shell), 600000);
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		assertTrue(workspace != null);

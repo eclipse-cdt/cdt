@@ -815,6 +815,11 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		// we have to ignore notifications from working copies, otherwise
+		// we will get thousand of events and we don't track working copies 
+		// (add/remove events are not sent for WCs)
+		if (configuration.isWorkingCopy())
+			return;
 		for (LaunchDescriptorTypeInfo descTypeInfo : orderedDescriptorTypes) {
 			for (LaunchConfigProviderInfo providerInfo : configProviders.get(descTypeInfo.getId())) {
 				try {

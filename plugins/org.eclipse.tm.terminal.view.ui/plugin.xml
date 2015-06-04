@@ -347,11 +347,13 @@
             pattern=".*/org\.eclipse\.tcf\.te\.ui\.terminals\.TerminalsView">
       </activityPatternBinding>
      
-      <!-- TBD Remove this category binding to hide the Migration Capability from the Preferences --> 
+      <!-- TBD Remove this category binding to hide the Migration Capability from the Preferences -->
+      <!-- 
       <categoryActivityBinding
             activityId="org.eclipse.tm.terminal.view.ui.activity.oldview"
             categoryId="org.eclipse.tm.terminal.view.ui.category">
       </categoryActivityBinding>
+      -->
    </extension>
 
    <extension point="org.eclipse.ui.contexts">

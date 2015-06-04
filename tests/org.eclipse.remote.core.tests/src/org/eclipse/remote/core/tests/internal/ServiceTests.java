@@ -11,7 +11,7 @@ import org.eclipse.remote.core.exception.RemoteConnectionException;
 import junit.framework.TestCase;
 
 public class ServiceTests extends TestCase {
-	private static final String USERNAME = "greg"; //$NON-NLS-1$
+	private static final String USERNAME = "test"; //$NON-NLS-1$
 	private static final String PASSWORD = ""; //$NON-NLS-1$
 	private static final String HOST = "localhost"; //$NON-NLS-1$
 

@@ -80,6 +80,10 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 		return null;
 	}
 
+	/**
+	 * Returns the template arguments, or {@code null} if the function set doesn't represent a template
+	 * specialization.
+	 */
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fTemplateArguments;
 	}

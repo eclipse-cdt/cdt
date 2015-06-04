@@ -332,8 +332,10 @@ public class EvalFunctionSet extends CPPDependentEvaluation {
 		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
 		if (fFunctionSet != null) {
 			ICPPTemplateArgument[] templateArguments = fFunctionSet.getTemplateArguments();
-			for (ICPPTemplateArgument arg : templateArguments) {
-				r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+			if (templateArguments != null) {
+				for (ICPPTemplateArgument arg : templateArguments) {
+					r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+				}
 			}
 		}
 		return r;

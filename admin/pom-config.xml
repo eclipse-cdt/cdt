@@ -52,7 +52,7 @@
 
         <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/tm/org.eclipse.tm.terminal.git</tycho.scmUrl>
 
-        <terminal-stream>development</terminal-stream>
+        <terminal-stream>mars</terminal-stream>
         <terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
         <terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
         <sdk-version>4.5</sdk-version>

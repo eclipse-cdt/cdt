@@ -46,11 +46,11 @@
             factory="org.eclipse.remote.internal.jsch.ui.JSchUIFileService$Factory"
             service="org.eclipse.remote.ui.IRemoteUIFileService">
       </connectionTypeService>
-      <connectionTypeService
+      <connectionService
             connectionTypeId="org.eclipse.remote.JSch"
             factory="org.eclipse.remote.internal.jsch.ui.JSchUserAuthenticator$Factory"
             service="org.eclipse.remote.core.IUserAuthenticatorService">
-      </connectionTypeService>
+      </connectionService>
    </extension>
    
 </plugin>

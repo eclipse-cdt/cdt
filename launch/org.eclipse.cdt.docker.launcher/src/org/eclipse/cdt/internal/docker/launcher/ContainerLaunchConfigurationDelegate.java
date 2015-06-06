@@ -85,8 +85,11 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate
 		}
 
 		public String getIpAddress() {
-			IDockerNetworkSettings networkSettings = info.networkSettings();
-			return networkSettings.ipAddress();
+			if (info != null) {
+				IDockerNetworkSettings networkSettings = info.networkSettings();
+				return networkSettings.ipAddress();
+			}
+			return null;
 		}
 
 		public IDockerContainerInfo getContainerInfo() {

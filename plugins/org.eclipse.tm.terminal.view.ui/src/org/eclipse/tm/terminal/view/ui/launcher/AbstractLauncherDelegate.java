@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.launcher;
 
+import java.util.Map;
+
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.Assert;
@@ -18,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
@@ -139,5 +142,19 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	@Override
 	public int hashCode() {
 	    return id.hashCode();
+	}
+
+	/**
+	 * Get the title from the settings, and use it as the default title.
+	 * @param properties the setting properties map.
+	 * @return the value retrieved via the @see {@link ITerminalsConnectorConstants#PROP_TITLE}, or null if the key hasn't been set.
+	 */
+	protected String getDefaultTerminalTitle(Map<String, Object> properties) {
+		String title = (String)properties.get(ITerminalsConnectorConstants.PROP_TITLE);
+
+		if (title != null) {
+			return title;
+		}
+		return null;
 	}
 }

@@ -89,7 +89,14 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 	 *
 	 * @return The terminal title string or <code>null</code>.
 	 */
-	private String getTerminalTitle(Map<String, Object> properties) {
+    private String getTerminalTitle(Map<String, Object> properties) {
+		//Try to see if the user set a title explicitly via the properties map.
+		String title = getDefaultTerminalTitle(properties);
+		if(title!=null){
+			return title;
+		}
+
+		//No title,try to calculate the title
 		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
 
 		if (host != null) {

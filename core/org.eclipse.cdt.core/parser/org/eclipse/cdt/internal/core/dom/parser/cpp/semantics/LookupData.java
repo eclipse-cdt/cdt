@@ -95,7 +95,6 @@ public class LookupData extends ScopeLookupData {
 	public boolean qualified = false;
 	public boolean checkAssociatedScopes= false;
 
-	public boolean forAssociatedScopes = false;
 	public boolean forUsingDeclaration = false;
 	
     /** When computing the cost of a method call, treat the first argument as the implied object. */

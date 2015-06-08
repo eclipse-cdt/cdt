@@ -229,7 +229,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeS
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -815,9 +814,7 @@ public class CPPSemantics {
 		if (binding == null)
 			return null;
         IScope scope = binding.getScope();
-        if (tu != null) {
-        	scope= tu.mapToASTScope(scope);
-        }
+        scope = SemanticUtil.mapToAST(scope, tu);
         while (scope != null && !(scope instanceof ICPPNamespaceScope)) {
             scope = getParentScope(scope, tu);
         }
@@ -997,10 +994,7 @@ public class CPPSemantics {
 				}
 			}
 			ICPPScope scope= useTemplScope ? nextTmplScope : nextScope;
-			CPPASTTranslationUnit tu = data.getTranslationUnit();
-			if (tu != null) {
-				scope= (ICPPScope) tu.mapToASTScope((scope));
-			}
+			scope = (ICPPScope) SemanticUtil.mapToAST(scope, data.getTranslationUnit());
 
 			if (!data.usingDirectivesOnly && !(data.ignoreMembers && scope instanceof ICPPClassScope)) {
 				mergeResults(data, getBindingsFromScope(scope, data), true);
@@ -1367,16 +1361,14 @@ public class CPPSemantics {
 		return ((ICPPASTTemplateDeclaration) parent).getScope();
 	}
 
-	static ICPPScope getParentScope(IScope scope, ICPPASTTranslationUnit unit) throws DOMException {
+	static ICPPScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// The index cannot return the translation unit as parent scope.
-		if (unit instanceof CPPASTTranslationUnit) {
-			if (parentScope == null
-					&& (scope instanceof IIndexScope || scope instanceof ICPPClassSpecializationScope)) {
-				parentScope = unit.getScope();
-			} else {
-				parentScope = ((CPPASTTranslationUnit) unit).mapToASTScope(parentScope);
-			}
+		if (parentScope == null && scope instanceof ICPPClassSpecializationScope
+				&& unit instanceof CPPASTTranslationUnit) {
+			parentScope = unit.getScope();
+		} else {
+			parentScope = SemanticUtil.mapToAST(parentScope, unit);
 		}
 		return (ICPPScope) parentScope;
 	}

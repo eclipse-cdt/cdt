@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -97,6 +98,11 @@ public class CPPScopeMapper {
 		}
 
 		@Override
+		public IBinding[] find(String name, IASTTranslationUnit tu) {
+			return fScope.find(name, tu);
+		}
+
+		@Override @Deprecated
 		public IBinding[] find(String name) {
 			return fScope.find(name);
 		}

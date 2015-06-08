@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -81,6 +82,12 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 	}
 
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		createDelegate();
+		return fDelegate.find(name, tu);
+	}
+
+	@Override @Deprecated
 	public IBinding[] find(String name) {
 		createDelegate();
 		return fDelegate.find(name);

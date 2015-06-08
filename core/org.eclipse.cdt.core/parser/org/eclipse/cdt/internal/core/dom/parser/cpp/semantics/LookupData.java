@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
@@ -135,6 +136,11 @@ public class LookupData extends ScopeLookupData {
 		fTemplateArguments= templateArgs;
 	}
 	
+	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTTranslationUnit tu) {
+		super(name, tu);
+		fTemplateArguments= templateArgs;
+	}
+
 	@Override
 	public CPPASTTranslationUnit getTranslationUnit() {
 		return (CPPASTTranslationUnit) super.getTranslationUnit();

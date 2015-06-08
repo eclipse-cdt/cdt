@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -292,6 +293,11 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 	
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		return getBindings(name.toCharArray());
+	}
+
+	@Override @Deprecated
 	public IBinding[] find(String name) {
 		return getBindings(name.toCharArray());
 	}

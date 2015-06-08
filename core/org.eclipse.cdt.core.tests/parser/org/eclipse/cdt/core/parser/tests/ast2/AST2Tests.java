@@ -20,8 +20,6 @@ import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 
 import java.io.IOException;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -131,6 +129,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 /**
  * Test cases on the AST.
@@ -3080,8 +3080,7 @@ public class AST2Tests extends AST2TestBase {
 	}
 
 	public void testBug90253() throws Exception {
-		IASTTranslationUnit tu = parse(
-				"void f(int par) { int v1; };", C); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse("void f(int par) { int v1; };", C); //$NON-NLS-1$
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -3092,11 +3091,11 @@ public class AST2Tests extends AST2TestBase {
 		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
 		IScope scope = ((IASTCompoundStatement) fdef.getBody()).getScope();
 
-		IBinding[] bs = scope.find("par"); //$NON-NLS-1$
+		IBinding[] bs = scope.find("par", tu); //$NON-NLS-1$
 		assertEquals(1, bs.length);
 		assertSame(bs[0], p);
 
-		bs = scope.find("v1"); //$NON-NLS-1$
+		bs = scope.find("v1", tu); //$NON-NLS-1$
 		assertEquals(bs.length, 1);
 		assertSame(bs[0], v1);
 	}
@@ -3123,7 +3122,7 @@ public class AST2Tests extends AST2TestBase {
 		IASTFunctionDefinition fdef= getDeclaration(tu, 2);
 		IScope scope = ((IASTCompoundStatement) fdef.getBody()).getScope();
 
-		IBinding[] bs = scope.find("S"); //$NON-NLS-1$
+		IBinding[] bs = scope.find("S", tu); //$NON-NLS-1$
 
 		assertNotNull(S2);
 		assertEquals(bs.length, 3);

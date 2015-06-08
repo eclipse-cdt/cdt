@@ -229,7 +229,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeS
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -734,7 +733,8 @@ public class CPPSemantics {
 	        	if (parent != null)
 	        		parent= parent.getParent();     		  // the loop
 	        	if (parent instanceof ICPPASTRangeBasedForStatement) {
-	        		IBinding[] std= parent.getTranslationUnit().getScope().find(CPPVisitor.STD);
+	        		IASTTranslationUnit tu = parent.getTranslationUnit();
+					IBinding[] std= tu.getScope().find(CPPVisitor.STD, tu);
 	        		for (IBinding binding : std) {
 	        			if (binding instanceof ICPPNamespace) {
 	        				namespaces.add(((ICPPNamespace) binding).getNamespaceScope());
@@ -815,9 +815,7 @@ public class CPPSemantics {
 		if (binding == null)
 			return null;
         IScope scope = binding.getScope();
-        if (tu != null) {
-        	scope= tu.mapToASTScope(scope);
-        }
+        scope = SemanticUtil.mapToAST(scope, tu);
         while (scope != null && !(scope instanceof ICPPNamespaceScope)) {
             scope = getParentScope(scope, tu);
         }
@@ -997,10 +995,7 @@ public class CPPSemantics {
 				}
 			}
 			ICPPScope scope= useTemplScope ? nextTmplScope : nextScope;
-			CPPASTTranslationUnit tu = data.getTranslationUnit();
-			if (tu != null) {
-				scope= (ICPPScope) tu.mapToASTScope((scope));
-			}
+			scope = (ICPPScope) SemanticUtil.mapToAST(scope, data.getTranslationUnit());
 
 			if (!data.usingDirectivesOnly && !(data.ignoreMembers && scope instanceof ICPPClassScope)) {
 				mergeResults(data, getBindingsFromScope(scope, data), true);
@@ -1367,16 +1362,14 @@ public class CPPSemantics {
 		return ((ICPPASTTemplateDeclaration) parent).getScope();
 	}
 
-	static ICPPScope getParentScope(IScope scope, ICPPASTTranslationUnit unit) throws DOMException {
+	static ICPPScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
 		IScope parentScope= scope.getParent();
 		// The index cannot return the translation unit as parent scope.
-		if (unit instanceof CPPASTTranslationUnit) {
-			if (parentScope == null
-					&& (scope instanceof IIndexScope || scope instanceof ICPPClassSpecializationScope)) {
-				parentScope = unit.getScope();
-			} else {
-				parentScope = ((CPPASTTranslationUnit) unit).mapToASTScope(parentScope);
-			}
+		if (parentScope == null && scope instanceof ICPPClassSpecializationScope
+				&& unit instanceof CPPASTTranslationUnit) {
+			parentScope = unit.getScope();
+		} else {
+			parentScope = SemanticUtil.mapToAST(parentScope, unit);
 		}
 		return (ICPPScope) parentScope;
 	}
@@ -3585,6 +3578,11 @@ public class CPPSemantics {
 
     	return type instanceof ICPPClassType || type instanceof IEnumeration || type instanceof ICPPUnknownType;
     }
+
+    public static IBinding[] findBindingsInScope(IScope scope, String name, IASTTranslationUnit tu) {
+    	LookupData data = new LookupData(name.toCharArray(), null, tu);
+		return standardLookup(data, scope);
+	}
 
     public static IBinding[] findBindings(IScope scope, String name, boolean qualified) {
 		return findBindings(scope, name.toCharArray(), qualified, null);

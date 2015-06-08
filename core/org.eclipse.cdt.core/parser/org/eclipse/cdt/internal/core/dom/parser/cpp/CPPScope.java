@@ -337,6 +337,11 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	}
 
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+	    return find(name);
+	}
+
+	@Override
 	public IBinding[] find(String name) {
 	    return CPPSemantics.findBindings(this, name, false);
 	}

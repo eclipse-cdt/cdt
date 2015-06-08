@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -28,34 +30,46 @@ public abstract class PDOMGlobalScope implements IIndexScope {
 	}
 
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		logInvalidCallError();
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+
+	@Override
 	public IBinding[] find(String name) {
-		throw new UnsupportedOperationException();
+		logInvalidCallError();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve) {
-		throw new UnsupportedOperationException();
+		logInvalidCallError();
+		return null;
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
-		throw new UnsupportedOperationException();
+		logInvalidCallError();
+		return null;
 	}
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
-		throw new UnsupportedOperationException();
+		logInvalidCallError();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet acceptLocalBindings) {
-		throw new UnsupportedOperationException();
+		logInvalidCallError();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-		throw new UnsupportedOperationException();
+		logInvalidCallError();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
@@ -76,5 +90,10 @@ public abstract class PDOMGlobalScope implements IIndexScope {
 	@Override
 	public String toString() {
 		return "<global scope>"; //$NON-NLS-1$
+	}
+
+	private void logInvalidCallError() {
+		CCorePlugin.log(new UnsupportedOperationException(
+				"Global index scope has to be mapped to the global scope of a particular translation unit.")); //$NON-NLS-1$
 	}
 }

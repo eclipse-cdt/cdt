@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.index.tests;
 import java.io.File;
 import java.io.FileWriter;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -35,6 +33,8 @@ import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+
+import junit.framework.TestSuite;
 
 public class Bug246129 extends IndexTestBase {
 
@@ -76,7 +76,6 @@ public class Bug246129 extends IndexTestBase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		if (fProject == null) {
-
 			// Populate workspace
 			fProject = createProject(true, "resources/indexTests/bug246129");
 			
@@ -144,8 +143,7 @@ public class Bug246129 extends IndexTestBase {
 			IndexerPreferences.set(fProject.getProject(),
 					IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 
-			File falseFriendDirectory = new File(fWrapperIncludeFolder
-					.getLocation().toOSString()
+			File falseFriendDirectory = new File(fWrapperIncludeFolder.getLocation().toOSString()
 					+ "/ext/..");
 
 			fFalseFriendsAccepted = falseFriendDirectory.exists();
@@ -171,16 +169,12 @@ public class Bug246129 extends IndexTestBase {
 	}
 
 	private void assertSymbolInIndex(String symbolName) throws Exception {
-		IIndexBinding[] bindings = fIndex.findBindings(
-				symbolName
-				.toCharArray(), false, IndexFilter.ALL, npm());
+		IIndexBinding[] bindings = fIndex.findBindings(symbolName.toCharArray(), false, IndexFilter.ALL, npm());
 		assertTrue(bindings.length > 0);
 	}
 	
 	public void testIndex() throws Exception {
-
 		try {
-
 			fIndex.acquireReadLock();
 			IIndexFile[] indexFiles = fIndex.getAllFiles();
 
@@ -193,8 +187,7 @@ public class Bug246129 extends IndexTestBase {
 			}
 			
 			// The wrapper classes are found regardless whether false friends
-			// are
-			// accepted or not.
+			// are accepted or not.
 			assertSymbolInIndex("Wrapper");
 			assertSymbolInIndex("ExternalWrapper");
 
@@ -207,15 +200,13 @@ public class Bug246129 extends IndexTestBase {
 			
 			// Check that all paths are normalized.
 			for (IIndexFile indexFile : indexFiles) {
-
 				IIndexInclude[] includes = indexFile.getIncludes();
 				
 				for (IIndexInclude i : includes) {
 					IIndexFileLocation location = i.getIncludesLocation();
 					assertNotNull(location);
 					
-					assertFalse(location.getURI().toASCIIString()
-							.contains(".."));
+					assertFalse(location.getURI().toASCIIString().contains(".."));
 
 					String fullPath = location.getFullPath();
 					if (fullPath != null) {
@@ -223,15 +214,13 @@ public class Bug246129 extends IndexTestBase {
 					}
 				}
 			}
-			
 		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
 	
-	private void assertSymbolInAst(IScope scope, String symbolName)
-			throws Exception {
-		IBinding[] bindings = scope.find(symbolName);
+	private void assertSymbolInAst(IScope scope, String symbolName, IASTTranslationUnit ast) throws Exception {
+		IBinding[] bindings = scope.find(symbolName, ast);
 		assertTrue(bindings.length > 0);
 	}
 	
@@ -245,19 +234,18 @@ public class Bug246129 extends IndexTestBase {
 		// are
 		// accepted or not.
 		IScope topLevel = ast.getScope();
-		assertSymbolInAst(topLevel, "Wrapper");
-		assertSymbolInAst(topLevel, "ExternalWrapper");
+		assertSymbolInAst(topLevel, "Wrapper", ast);
+		assertSymbolInAst(topLevel, "ExternalWrapper", ast);
 
 		// The Type class is only known on platforms with a File
 		// implementation sorting out the false friends.
 		if (!fFalseFriendsAccepted) {
-			assertSymbolInAst(topLevel, "Type");
-			assertSymbolInAst(topLevel, "ExternalType");
+			assertSymbolInAst(topLevel, "Type", ast);
+			assertSymbolInAst(topLevel, "ExternalType", ast);
 		}
 
 		// Check that all paths are normalized.
-		IASTPreprocessorIncludeStatement[] includes = ast
-				.getIncludeDirectives();		
+		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();		
 		for (IASTPreprocessorIncludeStatement i : includes) {
 			String includedPath = i.getPath();
 

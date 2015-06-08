@@ -175,6 +175,11 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     }
 
     @Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+        return IBinding.EMPTY_BINDING_ARRAY;
+    }
+
+    @Override
 	public IBinding[] find(String name) {
         return IBinding.EMPTY_BINDING_ARRAY;
     }

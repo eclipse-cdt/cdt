@@ -42,14 +42,21 @@ public interface IScope {
 	public IScope getParent() throws DOMException;
 
 	/**
-	 * This is the general lookup entry point. It returns the list of valid bindings for a given
-	 * name.  The lookup proceeds as an unqualified lookup.  Constructors are not considered during
-	 * this lookup and won't be returned. No attempt is made to resolve potential ambiguities or
-	 * perform access checking.
+	 * This is the general lookup entry point. It returns the list of valid bindings for a given name.
+	 * The lookup proceeds as an unqualified lookup.  Constructors are not considered during this lookup
+	 * and won't be returned. No attempt is made to resolve potential ambiguities or perform access checking.
 	 * 
 	 * @param name the name of the bindings
-	 * @return An array of bindings.
+	 * @param tu the translation unit determining the global scope for the lookup
+	 * @return An array of bindings
+	 * @since 5.11
 	 */
+	public IBinding[] find(String name, IASTTranslationUnit tu);
+
+	/**
+	 * @deprecated Use {{@link #find(String, IASTTranslationUnit)}
+	 */
+	@Deprecated
 	public IBinding[] find(String name);
 	
 	/**
@@ -127,6 +134,17 @@ public interface IScope {
 			} else {
 				fTu= fLookupPoint.getTranslationUnit();
 			}
+		}
+
+		/**
+		 * @since 5.11
+		 */
+		public ScopeLookupData(char[] name, IASTTranslationUnit tu) {
+			fLookupPoint= null;
+			fLookupPointIsName= false;
+			fLookupKey= name;
+			fIgnorePointOfDeclaration= true;
+			fTu= tu;
 		}
 
 		public final void setPrefixLookup(boolean prefixLookup) {

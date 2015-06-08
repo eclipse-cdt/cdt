@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -25,9 +26,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  */
 @SuppressWarnings({"restriction","unused"})
 public class C99Scope implements IC99Scope, IASTInternalScope {
-
-	
-	
 	private IScope parent;
 	private IASTNode physicalNode;
 	private IName scopeName;
@@ -72,9 +70,13 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 		this.scopeName = scopeName;
 	}
 	
-	
 	@Override
-	public IBinding[] find( String name) {
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override @Deprecated
+	public IBinding[] find(String name) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -87,9 +89,6 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 		throw new UnsupportedOperationException();
 	}
-
-	
-	
 	
 	@Override
 	public void addBinding(IBinding binding) {
@@ -110,9 +109,7 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	}
 
 	@Override
-	public IBinding getBinding(IASTName name, boolean resolve,
-			IIndexFileSet acceptLocalBindings) {
-		// TODO Auto-generated method stub
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
 		return null;
 	}
 
@@ -123,15 +120,11 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve,
 			boolean prefixLookup, IIndexFileSet acceptLocalBindings) {
-				return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
-			}
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
 
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-		// TODO Auto-generated method stub
-		return null;
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
-
-	
-
 }

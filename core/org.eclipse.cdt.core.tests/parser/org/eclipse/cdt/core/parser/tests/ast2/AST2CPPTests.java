@@ -29,8 +29,6 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -152,6 +150,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 public class AST2CPPTests extends AST2TestBase {
 
@@ -3408,16 +3408,16 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPVariable v2 = (ICPPVariable) col.getName(3).resolveBinding();
 
 		String[] s = v1.getQualifiedName();
-		assertEquals(s[0], "v1");
+		assertEquals("v1", s[0]);
 		assertFalse(v1.isGloballyQualified());
 
 		s = v2.getQualifiedName();
-		assertEquals(s[0], "v2");
+		assertEquals("v2", s[0]);
 		assertFalse(v2.isGloballyQualified());
 
 		ICPPBlockScope scope = (ICPPBlockScope) v2.getScope();
-		IBinding[] bs = scope.find("v1");
-		assertEquals(bs.length, 1);
+		IBinding[] bs = scope.find("v1", tu);
+		assertEquals(1, bs.length);
 		assertSame(bs[0], v1);
 	}
 
@@ -3437,17 +3437,17 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPMethod f = (ICPPMethod) col.getName(7).resolveBinding();
 
 		IScope scope = f.getFunctionScope();
-		IBinding[] bs = scope.find("a");
-		assertEquals(bs.length, 1);
+		IBinding[] bs = scope.find("a", tu);
+		assertEquals(1, bs.length);
 		assertSame(bs[0], a);
 
-		bs = scope.find("~B");
-		assertEquals(bs.length, 1);
+		bs = scope.find("~B", tu);
+		assertEquals(1, bs.length);
 		assertTrue(bs[0] instanceof ICPPMethod);
 		assertTrue(bs[0].getName().equals("~B"));
 
-		bs = scope.find("A");
-		assertEquals(bs.length, 1);
+		bs = scope.find("A", tu);
+		assertEquals(1, bs.length);
 		assertSame(bs[0], A);
 	}
 
@@ -3470,16 +3470,16 @@ public class AST2CPPTests extends AST2TestBase {
 
 		IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(5).getParent().getParent();
 		IScope scope = ((IASTCompoundStatement) def.getBody()).getScope();
-		IBinding[] bs = scope.find("f");
+		IBinding[] bs = scope.find("f", tu);
 		assertEquals(3, bs.length);
 		assertSame(bs[0], f3);
 		assertSame(bs[1], f1);
 		assertSame(bs[2], f2);
 
 		String[] s = ((ICPPBinding)  bs[1]).getQualifiedName();
-		assertEquals(s.length, 2);
-		assertEquals(s[0], "A");
-		assertEquals(s[1], "f");
+		assertEquals(2, s.length);
+		assertEquals("A", s[0]);
+		assertEquals("f", s[1]);
 		assertTrue(((ICPPBinding)  bs[1]).isGloballyQualified());
 	}
 
@@ -3508,7 +3508,7 @@ public class AST2CPPTests extends AST2TestBase {
 
 		IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(8).getParent().getParent();
 		IScope scope = ((IASTCompoundStatement) def.getBody()).getScope();
-		IBinding[] bs = scope.find("f");
+		IBinding[] bs = scope.find("f", tu);
 		assertEquals(3, bs.length);
 		assertSame(bs[0], f);
 		assertSame(bs[1], f1);
@@ -3533,21 +3533,21 @@ public class AST2CPPTests extends AST2TestBase {
 		IFunction f1 = (IFunction) col.getName(6).resolveBinding();
 		IScope classScope= f1.getScope();
 		assertTrue(classScope instanceof ICPPClassScope);
-		IBinding[] bindings = classScope.find("bf");
+		IBinding[] bindings = classScope.find("bf", tu);
 		ICPPMethod method= extractSingleMethod(bindings);
-		assertEquals(method.getQualifiedName()[0], "B");
+		assertEquals("B", method.getQualifiedName()[0]);
 
-		bindings= classScope.find("f");
+		bindings= classScope.find("f", tu);
 		method= extractSingleMethod(bindings);
-		assertEquals(method.getQualifiedName()[0], "A");
+		assertEquals("A", method.getQualifiedName()[0]);
 
-		bindings= classScope.find("B");
+		bindings= classScope.find("B", tu);
 		ICPPClassType classType= extractSingleClass(bindings);
-		assertEquals(classType.getQualifiedName()[0], "B");
+		assertEquals("B", classType.getQualifiedName()[0]);
 
-		bindings= classScope.find("A");
+		bindings= classScope.find("A", tu);
 		classType= extractSingleClass(bindings);
-		assertEquals(classType.getQualifiedName()[0], "A");
+		assertEquals("A", classType.getQualifiedName()[0]);
 	}
 
 	// class A {
@@ -3571,39 +3571,39 @@ public class AST2CPPTests extends AST2TestBase {
 		ICPPMethod fb = (ICPPMethod) col.getName(6).resolveBinding();
 
 		Object[] result = B.getDeclaredFields();
-		assertEquals(result.length, 1);
+		assertEquals(1, result.length);
 		assertSame(result[0], b);
 
 		result = B.getFields();
-		assertEquals(result.length, 2);
+		assertEquals(2, result.length);
 		assertSame(result[0], b);
 		assertSame(result[1], a);
 
 		result = B.getDeclaredMethods();
-		assertEquals(result.length, 1);
+		assertEquals(1, result.length);
 		assertSame(result[0], fb);
 
 		result = B.getAllDeclaredMethods();
-		assertEquals(result.length, 2);
+		assertEquals(2, result.length);
 		assertSame(result[0], fb);
 		assertSame(result[1], fa);
 
 		ICPPMethod[] B_implicit = ((ICPPClassScope) B.getCompositeScope()).getImplicitMethods();
-		assertEquals(B_implicit.length, 4);
+		assertEquals(4, B_implicit.length);
 		assertTrue(B_implicit[0].getName().equals("B"));
 		assertTrue(B_implicit[1].getName().equals("B"));
 		assertTrue(B_implicit[2].getName().equals("operator ="));
 		assertTrue(B_implicit[3].getName().equals("~B"));
 
 		ICPPMethod[] A_implicit = ((ICPPClassScope) A.getCompositeScope()).getImplicitMethods();
-		assertEquals(A_implicit.length, 4);
+		assertEquals(4, A_implicit.length);
 		assertTrue(A_implicit[0].getName().equals("A"));
 		assertTrue(A_implicit[1].getName().equals("A"));
 		assertTrue(A_implicit[2].getName().equals("operator ="));
 		assertTrue(A_implicit[3].getName().equals("~A"));
 
 		result = B.getMethods();
-		assertEquals(result.length, 10);
+		assertEquals(10, result.length);
 		assertSame(result[0], fb);
 		assertSame(result[1], B_implicit[0]);
 		assertSame(result[2], B_implicit[1]);
@@ -3617,8 +3617,7 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	public void testBug87424() throws Exception {
-		IASTTranslationUnit tu = parse(
-				"int * __restrict x;", CPP, true);
+		IASTTranslationUnit tu = parse("int * __restrict x;", CPP, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -3638,8 +3637,7 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	public void testBug87705() throws Exception {
-		IASTTranslationUnit tu = parse(
-				"class A { friend class B::C; };", CPP, true);
+		IASTTranslationUnit tu = parse("class A { friend class B::C; };", CPP, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -3659,8 +3657,7 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	public void testBug88501_1() throws Exception {
-		IASTTranslationUnit tu = parse(
-				"void f(); void f(int); struct f;", CPP);
+		IASTTranslationUnit tu = parse("void f(); void f(int); struct f;", CPP);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -3679,7 +3676,6 @@ public class AST2CPPTests extends AST2TestBase {
 	// IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
 	// assertEquals(p.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
 	// }
-
 	public void testBug8342_2() throws Exception {
 		IASTTranslationUnit tu = parse("extern int a; extern char a;", CPP);
 		NameCollector col = new NameCollector();
@@ -3770,7 +3766,7 @@ public class AST2CPPTests extends AST2TestBase {
 		IFunction f2 = (IFunction) col.getName(3).resolveBinding();
 
 		IScope scope = tu.getScope();
-		IBinding[] bs = scope.find("f");
+		IBinding[] bs = scope.find("f", tu);
 		assertEquals(bs.length, 2);
 		assertSame(bs[0], f1);
 		assertSame(bs[1], f2);

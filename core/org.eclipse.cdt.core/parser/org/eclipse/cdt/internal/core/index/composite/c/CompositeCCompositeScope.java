@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.index.composite.c;
 
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
@@ -55,6 +56,12 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 	}
 	
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		IBinding[] preresult = ((ICompositeType) rbinding).getCompositeScope().find(name, tu);
+		return processUncertainBindings(preresult);	
+	}
+	
+	@Override @Deprecated
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICompositeType) rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	

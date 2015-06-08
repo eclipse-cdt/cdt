@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -386,7 +387,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		}
 
 		private IBinding[] getPrefixBindings(char[] name) {
-			List<IBinding> result= new ArrayList<IBinding>();
+			List<IBinding> result= new ArrayList<>();
 			IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(name);
 			for (ICPPMethod m : getMethods()) {
 				if (!(m instanceof ICPPConstructor)) {
@@ -396,6 +397,11 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 				}
 			}
 			return result.toArray(new IBinding[result.size()]);
+		}
+
+		@Override
+		public IBinding[] find(String name, IASTTranslationUnit tu) {
+			return find(name);
 		}
 
 		@Override
@@ -427,8 +433,8 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		@Override
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 				IIndexFileSet acceptLocalBindings) {
-					return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
-				}
+			return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+		}
 
 		@Override
 		public IBinding[] getBindings(ScopeLookupData lookup) {

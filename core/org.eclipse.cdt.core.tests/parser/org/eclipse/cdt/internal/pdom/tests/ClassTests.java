@@ -15,8 +15,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -35,6 +33,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+
+import junit.framework.Test;
 
 /**
  * @author Doug Schaefer
@@ -114,8 +114,8 @@ public class ClassTests extends PDOMTestBase {
 	public void test147903() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), false, IndexFilter.ALL, npm());
 		assertEquals(1, bindings.length);
-		ICPPNamespaceScope ns = ((ICPPNamespace)bindings[0]).getNamespaceScope();
-		bindings = ns.find("testRef");
+		ICPPNamespaceScope ns = ((ICPPNamespace) bindings[0]).getNamespaceScope();
+		bindings = ns.find("testRef", null);
 		assertEquals(1, bindings.length);
 		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
 //		for (int i = 0; i < refs.length; ++i)
@@ -205,19 +205,19 @@ public class ClassTests extends PDOMTestBase {
 		IScope classScope= bindings[0].getScope();
 		
 		assertTrue(classScope instanceof ICPPClassScope);
-		bindings= classScope.find("bf");
+		bindings= classScope.find("bf", null);
 		ICPPMethod method= extractSingleMethod(bindings);
 		assertEquals(method.getQualifiedName()[0], "B");
 
-		bindings= classScope.find("f");
+		bindings= classScope.find("f", null);
 		method= extractSingleMethod(bindings);
 		assertEquals(method.getQualifiedName()[0], "A");
 
-		bindings= classScope.find("B");
+		bindings= classScope.find("B", null);
 		ICPPClassType classType= extractSingleClass(bindings);
 		assertEquals(classType.getQualifiedName()[0], "B");
 
-		bindings= classScope.find("A");
+		bindings= classScope.find("A", null);
 		classType= extractSingleClass(bindings);
 		assertEquals(classType.getQualifiedName()[0], "A");
 	}

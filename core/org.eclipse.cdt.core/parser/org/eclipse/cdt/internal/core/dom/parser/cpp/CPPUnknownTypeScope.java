@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -76,6 +77,11 @@ public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     	if (fScopeType instanceof IBinding)
     		return ((IBinding) fScopeType).getScope();
     	return null;
+    }
+
+    @Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+        return IBinding.EMPTY_BINDING_ARRAY;
     }
 
     @Override

@@ -685,7 +685,7 @@ public class CVisitor extends ASTQueries {
 	
 	static IType getPtrDiffType(IASTBinaryExpression expr) {
 		IScope scope = getContainingScope(expr);
-		IBinding[] bs = scope.find(PTRDIFF_T);
+		IBinding[] bs = scope.find(PTRDIFF_T, expr.getTranslationUnit());
 		for (IBinding b : bs) {
 			if (b instanceof IType) {
 				if (!(b instanceof ICInternalBinding) || 
@@ -701,7 +701,7 @@ public class CVisitor extends ASTQueries {
 	static IType get_SIZE_T(IASTExpression expr) {
 		IASTTranslationUnit tu= expr.getTranslationUnit();
 		if (tu != null) {
-			IBinding[] bs = tu.getScope().find(SIZE_T);
+			IBinding[] bs = tu.getScope().find(SIZE_T, expr.getTranslationUnit());
 			for (IBinding b : bs) {
 				if (b instanceof IType) {
 					if (!(b instanceof ICInternalBinding) || 
@@ -1650,7 +1650,7 @@ public class CVisitor extends ASTQueries {
 	    }
         
         // label names
-        List<ILabel> b3 = new ArrayList<ILabel>();
+        List<ILabel> b3 = new ArrayList<>();
         do {
             char[] n = name.toCharArray();
             if (scope instanceof ICFunctionScope) {

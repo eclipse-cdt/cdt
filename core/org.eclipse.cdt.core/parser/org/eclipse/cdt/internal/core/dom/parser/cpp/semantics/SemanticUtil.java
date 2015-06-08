@@ -27,7 +27,9 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -81,6 +83,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
  * Collection of static methods operating on C++ bindings.
@@ -540,10 +543,15 @@ public class SemanticUtil {
 	}
 
 	public static IScope mapToAST(IScope scope, IASTNode point) {
-		if (point != null) {
-			IASTTranslationUnit ast = point.getTranslationUnit();
-			if (ast instanceof ASTTranslationUnit) {
-				return ((ASTTranslationUnit) ast).mapToASTScope(scope);
+		if (scope instanceof IIndexScope) {
+			if (point != null) {
+				IASTTranslationUnit ast = point.getTranslationUnit();
+				if (ast instanceof ASTTranslationUnit) {
+					return ((ASTTranslationUnit) ast).mapToASTScope(scope);
+				}
+			} else if (scope.getKind() == EScopeKind.eGlobal) {
+				CCorePlugin.log(new Exception(
+						"The point argument was not provided. Returning the global index scope.")); //$NON-NLS-1$
 			}
 		}
 		return scope;

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -74,6 +75,17 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	}
 	
 	@Override
+	final public IBinding[] find(String name, IASTTranslationUnit tu) {
+		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
+		for (int i= 0; i < namespaces.length; i++) {
+			IBinding[] raw = namespaces[i].getNamespaceScope().find(name, tu);
+			preresult[i] = new IIndexFragmentBinding[raw.length];
+			System.arraycopy(raw, 0, preresult[i], 0, raw.length);
+		}
+		return cf.getCompositeBindings(preresult);
+	}
+
+	@Override @Deprecated
 	final public IBinding[] find(String name) {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
 		for (int i= 0; i < namespaces.length; i++) {

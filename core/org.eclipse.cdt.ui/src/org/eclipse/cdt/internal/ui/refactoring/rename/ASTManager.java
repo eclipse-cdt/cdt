@@ -691,10 +691,10 @@ public class ASTManager implements IDisposable {
         }
     }
 
-    public static IBinding[] findInScope(final IScope scope, String name, boolean removeGlobalsWhenClassScope)
-    		throws DOMException {
+    public static IBinding[] findInScope(final IScope scope, String name, IASTTranslationUnit tu,
+    		boolean removeGlobalsWhenClassScope) throws DOMException {
         IBinding[] result= null;
-        result = scope.find(name);
+        result = scope.find(name, tu);
         if (result == null || result.length == 0) {
             return result;
         }
@@ -706,7 +706,7 @@ public class ASTManager implements IDisposable {
             for (int i = 0; i < result.length; i++) {
                 IBinding binding = result[i];
                 IScope bscope= binding.getScope();
-                if (! (bscope instanceof ICPPClassScope || bscope instanceof ICCompositeTypeScope)) {
+                if (!(bscope instanceof ICPPClassScope || bscope instanceof ICCompositeTypeScope)) {
                     result[i]= null;
                 } else {
                     count++;
@@ -1197,7 +1197,7 @@ public class ASTManager implements IDisposable {
                 if (scope != null) {
                     IBinding[] conflicting= null;
                     try {
-                        conflicting= findInScope(scope, fRenameTo, true);
+                        conflicting= findInScope(scope, fRenameTo, name.getTranslationUnit(), true);
                     } catch (Exception e) {
                     	CUIPlugin.log(e);
                     }
@@ -1445,7 +1445,7 @@ public class ASTManager implements IDisposable {
                 try {
                     oldBindingsScope = oldBinding.getScope();
                     if (oldBindingsScope != null) {
-                        newBindingsAboverOrEqual = ASTManager.findInScope(oldBindingsScope, fRenameTo, false);
+                        newBindingsAboverOrEqual = ASTManager.findInScope(oldBindingsScope, fRenameTo, null, false);
                     }
                 } catch (DOMException e) {
                     handleDOMException(tu, e, status);

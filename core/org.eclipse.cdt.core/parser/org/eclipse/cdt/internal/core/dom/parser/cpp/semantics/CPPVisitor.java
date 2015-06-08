@@ -220,7 +220,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
-import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
  * Collection of methods to extract information from a C++ translation unit.
@@ -542,15 +541,15 @@ public class CPPVisitor extends ASTQueries {
         	}
 
         	if (mustBeSimple) {
-        		// 3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype scope that contains
-        		// the declaration
+        		// 3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype
+        		// scope that contains the declaration.
         		while (scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
-        			scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
+        			scope = CPPSemantics.getParentScope(scope, elabType.getTranslationUnit());
         		}
         	}
         	if (scope instanceof ICPPClassScope && isFriend && !qualified) {
         		while (scope instanceof ICPPClassScope) {
-        			scope = (ICPPScope) getParentScope(scope, elabType.getTranslationUnit());
+        			scope = CPPSemantics.getParentScope(scope, elabType.getTranslationUnit());
         		}
         	}
         	if (scope != null) {
@@ -820,7 +819,7 @@ public class CPPVisitor extends ASTQueries {
 			if (isFriendDecl) {
 				try {
 					while (scope.getKind() == EScopeKind.eClassType) {
-						scope = (ICPPScope) getParentScope(scope, name.getTranslationUnit());
+						scope = CPPSemantics.getParentScope(scope, name.getTranslationUnit());
 					}
 				} catch (DOMException e1) {
 				}
@@ -2369,7 +2368,7 @@ public class CPPVisitor extends ASTQueries {
 		if (node == null)
 			return null;
 		ASTTranslationUnit ast = (ASTTranslationUnit) node.getTranslationUnit();
-		IBinding[] std= ast.getScope().find(STD);
+		IBinding[] std= ast.getScope().find(STD, ast);
 		for (IBinding binding : std) {
 			if (binding instanceof ICPPNamespace) {
 				final ICPPNamespaceScope scope = ((ICPPNamespace) binding).getNamespaceScope();
@@ -2497,16 +2496,6 @@ public class CPPVisitor extends ASTQueries {
         ns = ArrayUtil.trim(ns);
         ArrayUtil.reverse(ns);
 	    return ns;
-	}
-
-	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {
-		IScope parentScope= scope.getParent();
-		// Replace the global scope from index with the global scope of the translation unit.
-		if ((parentScope == null || parentScope.getKind() == EScopeKind.eGlobal) &&
-				scope instanceof IIndexScope && unit != null) {
-			parentScope= unit.getScope();
-		}
-		return parentScope;
 	}
 
 	public static boolean isExternC(IASTNode node) {

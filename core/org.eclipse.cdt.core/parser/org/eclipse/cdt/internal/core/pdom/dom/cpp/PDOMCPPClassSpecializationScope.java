@@ -11,10 +11,13 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -42,5 +45,10 @@ public class PDOMCPPClassSpecializationScope extends AbstractCPPClassSpecializat
 	@Override
 	public IIndexName getScopeName() {
 		return null;
+	}
+
+	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+	    return CPPSemantics.findBindingsInScope(this, name, tu);
 	}
 }

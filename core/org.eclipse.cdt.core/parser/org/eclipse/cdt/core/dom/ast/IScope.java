@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 /**
  * Scopes can be used to look-up names. With the exception of template-scopes the scopes
  * can be arranged in a hierarchy.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -31,46 +32,53 @@ public interface IScope {
 	EScopeKind getKind();
 
 	/**
-     * Returns the IName for this scope, may be {@code null} 
+     * Returns the IName for this scope, may be {@code null}.
+     *
      * @return The name of this scope.
      */
     public IName getScopeName();
-    
+
 	/**
 	 * Returns the first enclosing non-template scope, or {@code null} if this is the global scope.
 	 */
 	public IScope getParent() throws DOMException;
 
 	/**
-	 * This is the general lookup entry point. It returns the list of valid bindings for a given
-	 * name.  The lookup proceeds as an unqualified lookup.  Constructors are not considered during
-	 * this lookup and won't be returned. No attempt is made to resolve potential ambiguities or
+	 * This is the general lookup entry point. It returns the list of valid bindings for a given name in this
+	 * scope and its enclosing scopes. The name is treated as unqualified. Constructors are not considered
+	 * during this lookup and won't be returned. No attempt is made to resolve potential ambiguities or
 	 * perform access checking.
-	 * 
+	 *
 	 * @param name the name of the bindings
-	 * @return An array of bindings.
+	 * @param tu the translation unit determining the context for the lookup
+	 * @return An array of bindings
+	 * @since 5.11
 	 */
-	public IBinding[] find(String name);
-	
+	public IBinding[] find(String name, IASTTranslationUnit tu);
+
 	/**
-	 * Returns the binding in this scope that the given name would resolve to. Could
-	 * return null if there is no matching binding in this scope, if the binding has not
-	 * yet been cached in this scope, or if resolve is {@code false} and the appropriate binding 
-	 * has not yet been resolved.
-	 * 
+	 * @deprecated Use {{@link #find(String, IASTTranslationUnit)}
+	 */
+	@Deprecated
+	public IBinding[] find(String name);
+
+	/**
+	 * Returns the binding in this scope that the given name would resolve to. Could return {@code null}
+	 * if there is no matching binding in this scope, if the binding has not yet been cached in this scope,
+	 * or if resolve is {@code false} and the appropriate binding has not yet been resolved.
+	 *
 	 * @param name the name of the binding
 	 * @param resolve whether or not to resolve the matching binding if it has not been so already
 	 * @return the binding in this scope that matches the name, or {@code null}
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve);
-	
+
 	/**
-	 * Returns the binding in this scope that the given name would resolve to. Could
-	 * return null if there is no matching binding in this scope, if the binding has not
-	 * yet been cached in this scope, or if resolve is {@code false} and the appropriate binding 
-	 * has not yet been resolved. Accepts file local bindings from the index for the files
-	 * in the given set, only.
-	 * 
+	 * Returns the binding in this scope that the given name would resolve to. Could return {@code null}
+	 * if there is no matching binding in this scope, if the binding has not yet been cached in this scope,
+	 * or if resolve is {@code false} and the appropriate binding has not yet been resolved. Accepts file
+	 * local bindings from the index for the files in the given set, only.
+	 *
 	 * @param name the name of the binding
 	 * @param resolve whether or not to resolve the matching binding if it has not been so already
 	 * @param acceptLocalBindings a set of files for which to accept local bindings
@@ -88,9 +96,9 @@ public interface IScope {
 	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
 	 */
 	@Deprecated
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings);
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
+			IIndexFileSet acceptLocalBindings);
 
-	
 	/**
 	 * @since 5.5
 	 * @noextend This class is not intended to be subclassed by clients.
@@ -103,7 +111,7 @@ public interface IScope {
 		private boolean fResolve= true;
 		private boolean fPrefixLookup;
 		private boolean fIgnorePointOfDeclaration;
-		
+
 		public ScopeLookupData(IASTName name, boolean resolve, boolean prefixLookup) {
 			if (name == null)
 				throw new IllegalArgumentException();
@@ -127,6 +135,17 @@ public interface IScope {
 			} else {
 				fTu= fLookupPoint.getTranslationUnit();
 			}
+		}
+
+		/**
+		 * @since 5.11
+		 */
+		public ScopeLookupData(char[] name, IASTTranslationUnit tu) {
+			fLookupPoint= null;
+			fLookupPointIsName= false;
+			fLookupKey= name;
+			fIgnorePointOfDeclaration= true;
+			fTu= tu;
 		}
 
 		public final void setPrefixLookup(boolean prefixLookup) {
@@ -183,11 +202,10 @@ public interface IScope {
 	}
 
 	/**
-	 * Returns the bindings in this scope that the given name or prefix could resolve to. Could
-	 * return null if there is no matching bindings in this scope, if the bindings have not
-	 * yet been cached in this scope, or if resolve == false and the appropriate bindings 
-	 * have not yet been resolved.
-	 * 
+	 * Returns the bindings in this scope that the given name or prefix could resolve to. Could return
+	 * {@code null} if there is no matching bindings in this scope, if the bindings have not yet been cached
+	 * in this scope, or if resolve is {@code false} and the appropriate bindings have not yet been resolved.
+	 *
 	 * @return the bindings in this scope that match the name or prefix, or {@code null}
 	 * @since 5.5
 	 */

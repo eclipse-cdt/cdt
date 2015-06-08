@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -427,6 +428,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        }
 	    }
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+	}
+
+	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		return find(name);
 	}
 
 	@Override

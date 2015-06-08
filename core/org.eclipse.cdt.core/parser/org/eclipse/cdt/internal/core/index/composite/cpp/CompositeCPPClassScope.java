@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -77,6 +78,12 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	}
 	
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		IBinding[] preresult = ((ICPPClassType) rbinding).getCompositeScope().find(name, tu);
+		return processUncertainBindings(preresult);	
+	}
+	
+	@Override @Deprecated
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPClassType) rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	

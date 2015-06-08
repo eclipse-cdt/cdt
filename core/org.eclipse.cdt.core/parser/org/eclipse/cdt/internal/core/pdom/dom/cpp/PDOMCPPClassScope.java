@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -258,6 +259,11 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	}
 
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+	    return CPPSemantics.findBindingsInScope(this, name, tu);
+	}
+
+	@Override @Deprecated
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}

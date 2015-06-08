@@ -96,10 +96,10 @@ public class CRenameClassProcessor extends CRenameTypeProcessor {
 			if (ctors != null) {
 			    ArrayUtil.addAll(bindings, ctors);
 			}
-			
+
 			IScope scope= ctype.getCompositeScope();
 			if (scope != null) {
-			    IBinding[] dtors= scope.find("~" + argument.getName()); //$NON-NLS-1$
+			    IBinding[] dtors= scope.find("~" + argument.getName(), argument.getTranslationUnit()); //$NON-NLS-1$
 			    if (dtors != null) {
 			    	ArrayUtil.addAll(bindings, dtors);
 			    }

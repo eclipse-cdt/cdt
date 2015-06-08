@@ -165,6 +165,11 @@ public class CScope implements ICScope, IASTInternalScope {
     }
     
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		return find(name);
+	}
+
+	@Override
 	public IBinding[] find(String name) {
 		return CVisitor.findBindings(this, name);
 	}

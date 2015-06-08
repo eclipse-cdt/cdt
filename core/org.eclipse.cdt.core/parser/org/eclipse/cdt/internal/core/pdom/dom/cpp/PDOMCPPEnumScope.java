@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
@@ -105,6 +106,11 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 	}
 
 	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+	    return CPPSemantics.findBindingsInScope(this, name, tu);
+	}
+
+	@Override @Deprecated
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}

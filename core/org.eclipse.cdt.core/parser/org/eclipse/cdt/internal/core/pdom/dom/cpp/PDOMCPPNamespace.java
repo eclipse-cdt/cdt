@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -164,6 +165,11 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	@Override
 	public ICPPUsingDirective[] getUsingDirectives() {
 		return ICPPUsingDirective.EMPTY_ARRAY;
+	}
+
+	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+		return find(name);
 	}
 
 	@Override

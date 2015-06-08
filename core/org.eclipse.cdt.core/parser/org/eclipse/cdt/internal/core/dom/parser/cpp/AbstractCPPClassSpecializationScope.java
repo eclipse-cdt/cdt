@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -335,6 +336,11 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 			return ((ICPPNamespace) binding).getNamespaceScope();
 		}
 		return getOriginalClassType().getScope();
+	}
+
+	@Override
+	public IBinding[] find(String name, IASTTranslationUnit tu) {
+	    return find(name);
 	}
 
 	@Override

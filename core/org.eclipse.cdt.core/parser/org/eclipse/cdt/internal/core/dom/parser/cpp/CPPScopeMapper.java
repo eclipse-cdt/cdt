@@ -61,14 +61,17 @@ public class CPPScopeMapper {
 			fContainer= container;
 			fNominated= inline;
 		}
+
 		@Override
 		public IScope getContainingScope() {
 			return fContainer;
 		}
+
 		@Override
 		public ICPPNamespaceScope getNominatedScope() throws DOMException {
 			return fNominated;
 		}
+
 		@Override
 		public int getPointOfDeclaration() {
 			return 0;
@@ -97,18 +100,22 @@ public class CPPScopeMapper {
 		public IBinding[] find(String name) {
 			return fScope.find(name);
 		}
+
 		@Override
 		public IBinding getBinding(IASTName name, boolean resolve) {
 			return fScope.getBinding(name, resolve);
 		}
+
 		@Override
 		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
 			return fScope.getBinding(name, resolve, acceptLocalBindings);
 		}
+
 		@Override @Deprecated
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 			return fScope.getBindings(name, resolve, prefixLookup);
 		}
+
 		@Override @Deprecated
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet acceptLocalBindings) {
 			return getBindings(name, resolve, prefixLookup, acceptLocalBindings);
@@ -174,7 +181,7 @@ public class CPPScopeMapper {
 
 		@Override
 		public ICPPInternalNamespaceScope[] getInlineNamespaces() {
-			// Obtain the inline namespaces from the index and map them to the ast
+			// Obtain the inline namespaces from the index and map them to the AST.
 			ICPPNamespaceScope[] pre = fScope.getInlineNamespaces();
 			if (pre.length == 0)
 				return ICPPInternalNamespaceScope.EMPTY_NAMESPACE_SCOPE_ARRAY;

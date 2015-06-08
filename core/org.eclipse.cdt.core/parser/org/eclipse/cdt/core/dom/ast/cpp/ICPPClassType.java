@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,15 +44,15 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public ICPPBase[] getBases();
 
 	/**
-	 * Get fields is restated here just to point out that this method returns a list of ICPPField
+	 * The method is restated here just to point out that this method returns a list of ICPPField
 	 * objects representing all fields, declared or inherited.
 	 */
 	@Override
 	public IField[] getFields();
 
 	/**
-	 * findField is restated here to point out that this method looks through the inheritance tree
-	 * of this class while looking for a field with the given name If no field is found, null is
+	 * The method is restated here to point out that this method looks through the inheritance tree
+	 * of this class while looking for a field with the given name. If no field is found, {@code null} is
 	 * returned, if the name is found to be ambiguous a IProblemBinding is returned.
 	 * 
 	 * @param name
@@ -116,7 +116,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public boolean isFinal();
 
 	/**
-	 * Gets the access specifier of the {@code member}.
+	 * Returns the access specifier of the {@code member}.
 	 *
 	 * @param member The binding of the member to get the visibility for.
 	 * {@code member} must be a member of this class.

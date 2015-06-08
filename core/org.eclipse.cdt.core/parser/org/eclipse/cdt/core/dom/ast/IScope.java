@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,25 +31,21 @@ public interface IScope {
 	EScopeKind getKind();
 
 	/**
-     * Returns the IName for this scope, may be null 
+     * Returns the IName for this scope, may be {@code null} 
      * @return The name of this scope.
      */
     public IName getScopeName();
     
 	/**
-	 * Returns the first enclosing non-template scope, or {@code null} if this
-	 * is the global scope.
-	 * <p>
-	 * For scopes obtained from an index, {@code null} is returned to indicate that the
-	 * scope is only enclosed by the global scope.
+	 * Returns the first enclosing non-template scope, or {@code null} if this is the global scope.
 	 */
 	public IScope getParent() throws DOMException;
 
 	/**
-	 * This is the general lookup entry point. It returns the list of
-	 * valid bindings for a given name.  The lookup proceeds as an unqualified
-	 * lookup.  Constructors are not considered during this lookup and won't be returned.
-	 * No attempt is made to resolve potential ambiguities or perform access checking.
+	 * This is the general lookup entry point. It returns the list of valid bindings for a given
+	 * name.  The lookup proceeds as an unqualified lookup.  Constructors are not considered during
+	 * this lookup and won't be returned. No attempt is made to resolve potential ambiguities or
+	 * perform access checking.
 	 * 
 	 * @param name the name of the bindings
 	 * @return An array of bindings.
@@ -59,11 +55,11 @@ public interface IScope {
 	/**
 	 * Returns the binding in this scope that the given name would resolve to. Could
 	 * return null if there is no matching binding in this scope, if the binding has not
-	 * yet been cached in this scope, or if resolve == false and the appropriate binding 
+	 * yet been cached in this scope, or if resolve is {@code false} and the appropriate binding 
 	 * has not yet been resolved.
 	 * 
 	 * @param name the name of the binding
-	 * @param resolve whether or not to resolve the matching binding if it has not been so already.
+	 * @param resolve whether or not to resolve the matching binding if it has not been so already
 	 * @return the binding in this scope that matches the name, or {@code null}
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve);
@@ -71,14 +67,14 @@ public interface IScope {
 	/**
 	 * Returns the binding in this scope that the given name would resolve to. Could
 	 * return null if there is no matching binding in this scope, if the binding has not
-	 * yet been cached in this scope, or if resolve == false and the appropriate binding 
+	 * yet been cached in this scope, or if resolve is {@code false} and the appropriate binding 
 	 * has not yet been resolved. Accepts file local bindings from the index for the files
 	 * in the given set, only.
 	 * 
 	 * @param name the name of the binding
-	 * @param resolve whether or not to resolve the matching binding if it has not been so already.
-	 * @param acceptLocalBindings a set of files for which to accept local bindings.
-	 * @return the binding in this scope that matches the name, or null
+	 * @param resolve whether or not to resolve the matching binding if it has not been so already
+	 * @param acceptLocalBindings a set of files for which to accept local bindings
+	 * @return the binding in this scope that matches the name, or @code null}
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings);
 

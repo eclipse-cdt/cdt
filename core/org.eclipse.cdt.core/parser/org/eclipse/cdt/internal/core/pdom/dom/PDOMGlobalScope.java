@@ -19,7 +19,9 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
- * Base class for C and C++ global index scopes.
+ * Base class for C and C++ global index scopes. The global index scope contain any bindings.
+ * Bindings in the global scope have to be retrieved from the global scope of a particular
+ * translation unit.
  */
 public abstract class PDOMGlobalScope implements IIndexScope {
 	@Override
@@ -29,33 +31,33 @@ public abstract class PDOMGlobalScope implements IIndexScope {
 
 	@Override
 	public IBinding[] find(String name) {
-		throw new UnsupportedOperationException();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve) {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
-		throw new UnsupportedOperationException();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet acceptLocalBindings) {
-		throw new UnsupportedOperationException();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-		throw new UnsupportedOperationException();
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	@Override

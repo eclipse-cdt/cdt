@@ -81,6 +81,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
  * Collection of static methods operating on C++ bindings.
@@ -540,7 +541,7 @@ public class SemanticUtil {
 	}
 
 	public static IScope mapToAST(IScope scope, IASTNode point) {
-		if (point != null) {
+		if (scope instanceof IIndexScope && point != null) {
 			IASTTranslationUnit ast = point.getTranslationUnit();
 			if (ast instanceof ASTTranslationUnit) {
 				return ((ASTTranslationUnit) ast).mapToASTScope(scope);

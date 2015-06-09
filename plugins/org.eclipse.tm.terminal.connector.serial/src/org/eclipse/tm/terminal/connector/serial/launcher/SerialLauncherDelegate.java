@@ -83,6 +83,10 @@ public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 	 * @return The terminal title string or <code>null</code>.
 	 */
 	private String getTerminalTitle(Map<String, Object> properties) {
+		// Try to see if the user set a title explicitly via the properties map.
+		String title = getDefaultTerminalTitle(properties);
+		if (title != null) return title;
+
 		String device = (String)properties.get(ITerminalsConnectorConstants.PROP_SERIAL_DEVICE);
 
 		if (device != null) {
@@ -90,6 +94,7 @@ public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 			String date = format.format(new Date(System.currentTimeMillis()));
 			return NLS.bind(Messages.SerialLauncherDelegate_terminalTitle, new String[]{device, date});
 		}
+
 		return Messages.SerialLauncherDelegate_terminalTitle_default;
 	}
 

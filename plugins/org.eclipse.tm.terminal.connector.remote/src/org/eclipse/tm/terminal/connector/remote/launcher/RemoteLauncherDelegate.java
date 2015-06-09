@@ -43,9 +43,7 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	// The Remote terminal connection memento handler
 	private final IMementoHandler mementoHandler = new RemoteMementoHandler();
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#needsUserConfiguration()
 	 */
 	@Override
@@ -53,22 +51,16 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.
-	 * IConfigurationPanelContainer)
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#getPanel(org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer)
 	 */
 	@Override
 	public IConfigurationPanel getPanel(IConfigurationPanelContainer container) {
 		return new RemoteWizardConfigurationPanel(container);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map,
-	 * org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
 	 */
 	@Override
 	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
@@ -90,6 +82,10 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	 * @return The terminal title string or <code>null</code>.
 	 */
 	private String getTerminalTitle(Map<String, Object> properties) {
+		// Try to see if the user set a title explicitly via the properties map.
+		String title = getDefaultTerminalTitle(properties);
+		if (title != null) return title;
+
 		String connection = (String) properties.get(IRemoteSettings.CONNECTION_NAME);
 
 		if (connection != null) {
@@ -97,12 +93,11 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 			String date = format.format(new Date(System.currentTimeMillis()));
 			return NLS.bind(Messages.RemoteLauncherDelegate_terminalTitle, new String[] { connection, date });
 		}
+		
 		return Messages.RemoteLauncherDelegate_terminalTitle_default;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -114,9 +109,7 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 		return super.getAdapter(adapter);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
 	 */
 	@Override

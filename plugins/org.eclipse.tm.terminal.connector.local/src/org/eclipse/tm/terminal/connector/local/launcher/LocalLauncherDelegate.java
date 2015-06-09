@@ -220,12 +220,17 @@ public class LocalLauncherDelegate extends AbstractLauncherDelegate {
 	 * @return The terminal title string or <code>null</code>.
 	 */
 	private String getTerminalTitle(Map<String, Object> properties) {
+		// Try to see if the user set a title explicitly via the properties map.
+		String title = getDefaultTerminalTitle(properties);
+		if (title != null) return title;
+
 		try {
 			String hostname = InetAddress.getLocalHost().getHostName();
 			if (hostname != null && !"".equals(hostname.trim())) { //$NON-NLS-1$
 				return hostname;
 			}
 		} catch (UnknownHostException e) { /* ignored on purpose */ }
+
 		return "Local"; //$NON-NLS-1$
 	}
 

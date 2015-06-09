@@ -85,16 +85,14 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 	/**
 	 * Returns the terminal title string.
 	 * <p>
-	 * The default implementation constructs a title like &quot;SSH @ host (Start time) &quot;.
+	 * The default implementation constructs a title like &quot;Telnet @ host (Start time) &quot;.
 	 *
 	 * @return The terminal title string or <code>null</code>.
 	 */
     private String getTerminalTitle(Map<String, Object> properties) {
-		//Try to see if the user set a title explicitly via the properties map.
+		// Try to see if the user set a title explicitly via the properties map.
 		String title = getDefaultTerminalTitle(properties);
-		if(title!=null){
-			return title;
-		}
+		if (title != null) return title;
 
 		//No title,try to calculate the title
 		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
@@ -104,6 +102,7 @@ public class TelnetLauncherDelegate extends AbstractLauncherDelegate {
 			String date = format.format(new Date(System.currentTimeMillis()));
 			return NLS.bind(Messages.TelnetLauncherDelegate_terminalTitle, new String[]{host, date});
 		}
+
 		return Messages.TelnetLauncherDelegate_terminalTitle_default;
 	}
 

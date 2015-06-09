@@ -91,11 +91,9 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 	 * @return The terminal title string or <code>null</code>.
 	 */
     private String getTerminalTitle(Map<String, Object> properties) {
-		//Try to see if the user set a title explicitly via the properties map.
+		// Try to see if the user set a title explicitly via the properties map.
 		String title = getDefaultTerminalTitle(properties);
-		if(title!=null){
-			return title;
-		}
+		if (title != null) return title;
 
 		//No title,try to calculate the title
 		String host = (String)properties.get(ITerminalsConnectorConstants.PROP_IP_HOST);
@@ -111,6 +109,7 @@ public class SshLauncherDelegate extends AbstractLauncherDelegate {
 			}
 			return NLS.bind(Messages.SshLauncherDelegate_terminalTitle, new String[]{user, host, date});
 		}
+
 		return Messages.SshLauncherDelegate_terminalTitle_default;
 	}
 

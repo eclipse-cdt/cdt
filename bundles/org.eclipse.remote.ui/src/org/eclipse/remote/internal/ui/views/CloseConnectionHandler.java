@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionControlService;
 import org.eclipse.remote.internal.ui.RemoteUIPlugin;
+import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class CloseConnectionHandler extends AbstractHandler {
@@ -38,10 +39,12 @@ public class CloseConnectionHandler extends AbstractHandler {
 			}
 
 			new Job(Messages.CloseConnectionHandler_0) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					List<IStatus> status = new ArrayList<>();
 					for (IRemoteConnection connection : connections) {
-						IRemoteConnectionControlService controlService = connection.getService(IRemoteConnectionControlService.class);
+						IRemoteConnectionControlService controlService = connection
+								.getService(IRemoteConnectionControlService.class);
 						if (controlService != null) {
 							controlService.close();
 						}
@@ -50,7 +53,8 @@ public class CloseConnectionHandler extends AbstractHandler {
 					if (status.isEmpty()) {
 						return Status.OK_STATUS;
 					} else {
-						return new MultiStatus(RemoteUIPlugin.PLUGIN_ID, 1, status.toArray(new IStatus[status.size()]), Messages.CloseConnectionHandler_1, null);
+						return new MultiStatus(RemoteUIPlugin.PLUGIN_ID, 1, status.toArray(new IStatus[status.size()]),
+								Messages.CloseConnectionHandler_1, null);
 					}
 				}
 			}.schedule();

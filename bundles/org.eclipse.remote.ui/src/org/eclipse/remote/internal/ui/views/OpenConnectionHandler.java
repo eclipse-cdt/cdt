@@ -18,6 +18,7 @@ import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionControlService;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
 import org.eclipse.remote.internal.ui.RemoteUIPlugin;
+import org.eclipse.remote.internal.ui.messages.Messages;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class OpenConnectionHandler extends AbstractHandler {
@@ -39,10 +40,12 @@ public class OpenConnectionHandler extends AbstractHandler {
 			}
 
 			new Job(Messages.OpenConnectionHandler_0) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					List<IStatus> status = new ArrayList<>();
 					for (IRemoteConnection connection : connections) {
-						IRemoteConnectionControlService controlService = connection.getService(IRemoteConnectionControlService.class);
+						IRemoteConnectionControlService controlService = connection
+								.getService(IRemoteConnectionControlService.class);
 						if (controlService != null) {
 							try {
 								controlService.open(monitor);
@@ -55,7 +58,8 @@ public class OpenConnectionHandler extends AbstractHandler {
 					if (status.isEmpty()) {
 						return Status.OK_STATUS;
 					} else {
-						return new MultiStatus(RemoteUIPlugin.PLUGIN_ID, 1, status.toArray(new IStatus[status.size()]), Messages.OpenConnectionHandler_1, null);
+						return new MultiStatus(RemoteUIPlugin.PLUGIN_ID, 1, status.toArray(new IStatus[status.size()]),
+								Messages.OpenConnectionHandler_1, null);
 					}
 				}
 			}.schedule();

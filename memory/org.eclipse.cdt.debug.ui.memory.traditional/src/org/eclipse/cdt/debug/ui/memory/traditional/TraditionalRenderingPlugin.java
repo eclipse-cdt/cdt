@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006-2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 public class TraditionalRenderingPlugin extends AbstractUIPlugin 
 {
@@ -27,6 +28,12 @@ public class TraditionalRenderingPlugin extends AbstractUIPlugin
 	{
 		super();
 		plugin = this;
+	}
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		new TraceOptions(context, PLUGIN_ID);
 	}
 
 	/**
@@ -68,5 +75,5 @@ public class TraditionalRenderingPlugin extends AbstractUIPlugin
 			return window.getShell();
 		}
 		return null;
-	}
+	}	
 }

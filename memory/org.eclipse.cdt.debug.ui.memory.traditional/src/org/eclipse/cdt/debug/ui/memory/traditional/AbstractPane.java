@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Teodor Madan (Freescale) - Fix PageDn/PageUp
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.traditional;
@@ -211,6 +212,22 @@ public abstract class AbstractPane extends Canvas
             {
             	handlePageUpKey();
             }
+            else if(ke.keyCode == SWT.HOME && (ke.stateMask & SWT.CTRL) != 0)
+            {
+            	fRendering.gotoAddress(fRendering.getMemoryBlockStartAddress());
+            }
+            else if(ke.keyCode == SWT.END && (ke.stateMask & SWT.CTRL) != 0)
+            {
+            	fRendering.gotoAddress(fRendering.getMemoryBlockEndAddress());
+            }
+            else if(ke.keyCode == SWT.HOME && (ke.stateMask & SWT.CTRL) == 0)
+            {
+            	handleHomeKey();
+            }
+            else if(ke.keyCode == SWT.END && (ke.stateMask & SWT.CTRL) == 0)
+            {
+            	handleEndKey();
+            }
             else if(ke.keyCode == SWT.ESC)
             {
                 fRendering.getViewportCache().clearEditBuffer();
@@ -311,7 +328,7 @@ public abstract class AbstractPane extends Canvas
         this.addFocusListener(createFocusListener());
     }
     
-    protected MouseListener createMouseListener(){
+	protected MouseListener createMouseListener(){
     	return new AbstractPaneMouseListener();
     }
     
@@ -422,7 +439,35 @@ public abstract class AbstractPane extends Canvas
         updateCaret();
         ensureCaretWithinViewport();    	
     }
-    
+
+    /**
+	 * @since 1.3
+	 */
+    protected void handleEndKey() {
+    	// calculate offset from the end of the row
+    	BigInteger lastCellAddress = fRendering.getViewportEndAddress().subtract(BigInteger.ONE);
+
+    	int cellOffset = fCaretAddress.subtract(lastCellAddress).intValue();
+    	int row = cellOffset / fRendering.getAddressableCellsPerRow();
+    	setCaretAddress(lastCellAddress.add(BigInteger.valueOf(row * fRendering.getAddressableCellsPerRow())));
+
+    	updateCaret();
+    	ensureCaretWithinViewport();
+    }
+
+    /**
+	 * @since 1.3
+	 */
+    protected void handleHomeKey() {
+    	// calculate offset from the beginning of the row
+    	int cellOffset = fCaretAddress.subtract(fRendering.getViewportStartAddress()).intValue();
+    	int row = cellOffset / fRendering.getAddressableCellsPerRow();
+    	setCaretAddress(fRendering.getViewportStartAddress().add(BigInteger.valueOf(row * fRendering.getAddressableCellsPerRow())));
+
+    	updateCaret();
+    	ensureCaretWithinViewport();
+	}
+
     protected void handleMouseDoubleClick(MouseEvent me)
     {
     	try
@@ -586,10 +631,16 @@ public abstract class AbstractPane extends Canvas
         {
             // The caret was moved outside the viewport bounds:  Scroll the
             // viewport up or down by a row, depending on where the caret is
-            
+
             boolean upArrow = fCaretAddress.compareTo(vpStart) <= 0;
+            int rows = (upArrow ? -1 : 1 );
+            if (upArrow) {
+                rows -= vpStart.subtract(fCaretAddress).intValue()/fRendering.getAddressableCellsPerRow();
+            } else {
+                rows += fCaretAddress.subtract(vpEnd).intValue()/fRendering.getAddressableCellsPerRow();
+            }
             ScrollBar vBar = fRendering.getVerticalBar();
-            vBar.setSelection(vBar.getSelection() + (upArrow ? -1 : 1));
+            vBar.setSelection(vBar.getSelection() + rows);
             vBar.notifyListeners(SWT.Selection, new Event());
             
             // Check to see if we're at the beginning or end of a line, and

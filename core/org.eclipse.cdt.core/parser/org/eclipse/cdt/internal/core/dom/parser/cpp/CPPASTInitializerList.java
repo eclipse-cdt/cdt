@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
  */
 public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializerList, IASTAmbiguityParent {
 	private static final ICPPASTInitializerClause[] NO_CLAUSES = {};
-	private ICPPASTInitializerClause [] initializers;
+	private ICPPASTInitializerClause[] initializers;
     private int initializersPos= -1;
     private int actualSize;
 	private boolean fIsPackExpansion;

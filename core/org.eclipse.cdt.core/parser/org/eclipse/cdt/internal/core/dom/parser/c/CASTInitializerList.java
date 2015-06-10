@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -27,9 +27,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * e.g.: int a[]= {1,2,3};
  */
 public class CASTInitializerList extends ASTNode implements IASTInitializerList, IASTAmbiguityParent {
-    
-    private IASTInitializerClause[] initializers = null;
-    private int initializersPos=-1;
+    private IASTInitializerClause[] initializers;
+    private int initializersPos = -1;
     private int actualSize;
 
 	@Override
@@ -86,7 +85,7 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 	public void addClause(IASTInitializerClause d) {
         assertNotFrozen();
     	if (d != null) {
-    		initializers = ArrayUtil.appendAt( IASTInitializerClause.class, initializers, ++initializersPos, d );
+    		initializers = ArrayUtil.appendAt(IASTInitializerClause.class, initializers, ++initializersPos, d);
     		d.setParent(this);
 			d.setPropertyInParent(NESTED_INITIALIZER);
     	}
@@ -107,11 +106,11 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
     }
     
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitInitializers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitInitializers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default : break;
 	        }
 		}
@@ -120,11 +119,11 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 			if (!clause.accept(action))
 				return false;
 		}
-        if( action.shouldVisitInitializers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitInitializers) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

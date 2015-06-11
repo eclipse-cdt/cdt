@@ -62,7 +62,7 @@
       <category name="terminal_main"/>
    </feature>
    
-   <category-def name="terminal_main" label="TM Terminal 4.0 Main Features">
+   <category-def name="terminal_main" label="TM Terminal 4.1 Main Features">
       <description>
          TM Terminal Main Features
       </description>

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_28ff9b9e",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraceOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2015-06-11T11:20:05Z",
+      "side": 1,
+      "message": "Done. Aligned to DSF-GDB pattern\nInitially raised to adapt the kind of trace messages was sent. But you are right, when monitoring trace in a terminal shell outside of eclipse is hard to grasp such long lines.",
+      "parentUuid": "87f6139c_bbf11858",
+      "revId": "aaf157a77c688fa70f28e0a983710132409fcea2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_fb1a802c",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraceOptions.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-06-10T15:28:38Z",
       "side": 1,
       "message": "The other plugin I looked at uses \u0027print\u0027 here instead of \u0027println\u0027.  The idea was that the caller may not want to always have a newline.  Instead, the caller must include the newline if needed.",
+      "revId": "aaf157a77c688fa70f28e0a983710132409fcea2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_08fc5fa6",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.traditional/src/org/eclipse/cdt/debug/ui/memory/traditional/TraceOptions.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1291
+      },
+      "writtenOn": "2015-06-11T11:20:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_fb1a802c",
       "revId": "aaf157a77c688fa70f28e0a983710132409fcea2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -149,6 +149,8 @@ public abstract class AbstractLauncherDelegate extends PlatformObject implements
 	 *
 	 * @param properties the setting properties map.
 	 * @return the value retrieved via the @see {@link ITerminalsConnectorConstants#PROP_TITLE}, or null if the key hasn't been set.
+	 *
+	 * @since 4.1
 	 */
 	protected String getDefaultTerminalTitle(Map<String, Object> properties) {
 		String title = (String)properties.get(ITerminalsConnectorConstants.PROP_TITLE);

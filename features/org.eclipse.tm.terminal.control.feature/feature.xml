@@ -14,7 +14,7 @@
 <feature
       id="org.eclipse.tm.terminal.control.feature"
       label="%featureName"
-      version="4.0.0.qualifier"
+      version="4.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.tm.terminal.control"
       license-feature="org.eclipse.license"
@@ -33,7 +33,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.1"/>
    </url>
 
    <requires>

@@ -20,12 +20,15 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.1"/>
    </url>
 
+   <includes
+         id="org.eclipse.tm.terminal.view.rse.feature"
+         version="0.0.0"/>
+
    <requires>
-      <import feature="org.eclipse.tm.terminal.view.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.view.rse.feature" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.view.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.view.ui.rse;singleton:=true
-Bundle-Version: 4.0.0.qualifier
+Bundle-Version: 4.1.0.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.ui.rse.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
  org.eclipse.rse.subsystems.files.core;bundle-version="3.3.1",
  org.eclipse.rse.ui;bundle-version="3.3.100",
  org.eclipse.tm.terminal.view.core;bundle-version="4.0.0",
- org.eclipse.tm.terminal.view.ui;bundle-version="4.0.0",
+ org.eclipse.tm.terminal.view.ui;bundle-version="4.1.0",
  org.eclipse.tm.terminal.control;bundle-version="4.0.0",
  org.eclipse.ui;bundle-version="3.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

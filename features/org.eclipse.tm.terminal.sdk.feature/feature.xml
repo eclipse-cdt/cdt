@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.sdk.feature"
       label="%featureName"
-      version="4.0.0.qualifier"
+      version="4.1.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1.qualifier">
@@ -20,7 +20,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.0"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tm/terminal/updates/4.1"/>
    </url>
 
    <includes
@@ -28,12 +28,12 @@
          version="0.0.0"/>
    
    <requires>
-      <import feature="org.eclipse.tm.terminal.connector.local.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.connector.serial.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.connector.ssh.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.connector.telnet.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.control.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.tm.terminal.view.sdk.feature" version="4.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.connector.local.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.connector.serial.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.connector.ssh.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.connector.telnet.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.control.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.tm.terminal.view.sdk.feature" version="4.1.0" match="greaterOrEqual"/>
    </requires>
 
 </feature>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.connector.remote;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.tm.terminal.view.core;bundle-version="4.0.0";resolution:=optional,
- org.eclipse.tm.terminal.view.ui;bundle-version="4.0.0";resolution:=optional,
+ org.eclipse.tm.terminal.view.ui;bundle-version="4.1.0";resolution:=optional,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.tm.terminal.connector.remote,

@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_33eeec2b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPNodeFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-11T18:51:05Z",
+      "side": 1,
+      "message": "It should be stated that this method doesn\u0027t support creation of ICPPASTDecltypeSpecifiers",
+      "range": {
+        "startLine": 282,
+        "startChar": 4,
+        "endLine": 283,
+        "endChar": 39
+      },
+      "revId": "7a22e7a15e877bc102d79453ad7d5cd0fd9403cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_13ebf01a",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/refactoring/togglefunction/ToggleRefactoringTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3436,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-11T18:51:05Z",
+      "side": 1,
+      "message": "Extra blank line.",
+      "revId": "7a22e7a15e877bc102d79453ad7d5cd0fd9403cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_73afd4ed",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/togglefunction/ToggleNodeHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-11T18:51:05Z",
+      "side": 1,
+      "message": "Fits into previous line?",
+      "range": {
+        "startLine": 111,
+        "startChar": 13,
+        "endLine": 111,
+        "endChar": 33
+      },
+      "revId": "7a22e7a15e877bc102d79453ad7d5cd0fd9403cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

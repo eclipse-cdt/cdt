@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - New method to properly created ErrorThread (Bug 350837)
  *     Jason Litton (Sage Electronic Engineering, LLC) - Use Dynamic Tracing option (Bug 379169)
+ *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -819,7 +820,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         		clientMsg.append("Error message from debugger back end:\n"); //$NON-NLS-1$
         		if (parameters != null) {
         			try {
-        				clientMsg.append(MessageFormat.format(message, parameters));
+        				clientMsg.append(MessageFormat.format(message, (Object[])parameters));
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);
@@ -870,7 +871,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	if (message != null) {
         		if (parameters != null) {
         			try {
-        				clientMsg.append(MessageFormat.format(message, parameters));
+        				clientMsg.append(MessageFormat.format(message, (Object[])parameters));
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);

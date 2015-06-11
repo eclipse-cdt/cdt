@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Mentor Graphics and others.
+ * Copyright (c) 2012, 2015 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * 		Salvatore Culcasi (ST) - Bug 407163 - GDB Console: breakpoint not added with MinGW and gdb
  *      Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *      Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
+ *      Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -737,6 +738,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			return createPlatformAddressDynamicPrintf(fileName, miBpt);
 		}
 		// TODO This is currently causing problems because we think a normal dprintf is a function one
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=400628#c16 which says:
+		// "synchronization of function dprintf does not work"
 //		else if (isFunctionBreakpoint(miBpt)) {
 //			return createPlatformFunctionDynamicPrintf(fileName, miBpt);
 //		}
@@ -774,6 +777,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		}
 	}
 
+	// Unused, see TODO in createPlatformDynamicPrintf and Bug 400628 Comment 16
+	@SuppressWarnings("unused")
 	private ICBreakpoint createPlatformFunctionDynamicPrintf(String fileName, MIBreakpoint miBpt) throws CoreException {
 		IResource resource = getResource(fileName);
 

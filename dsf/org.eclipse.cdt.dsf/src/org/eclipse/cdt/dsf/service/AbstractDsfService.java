@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *******************************************************************************/
 package org.eclipse.cdt.dsf.service;
 
@@ -41,7 +42,7 @@ abstract public class AbstractDsfService
     private int fStartupNumber;
     
     /** Registration object for this service. */
-    private ServiceRegistration fRegistration;
+    private ServiceRegistration<?> fRegistration;
     
     /** Tracker for services that this service depends on. */
     private DsfServicesTracker fTracker;
@@ -264,5 +265,5 @@ abstract public class AbstractDsfService
     }
 
     /** Returns the registration object that was obtained when this service was registered */
-    protected ServiceRegistration getServiceRegistration() { return fRegistration; }
+    protected ServiceRegistration<?> getServiceRegistration() { return fRegistration; }
 }

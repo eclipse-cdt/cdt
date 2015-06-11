@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *******************************************************************************/
 package org.eclipse.cdt.dsf.datamodel;
 
@@ -75,7 +76,7 @@ public class CompositeDMContext implements IDMContext {
      * @see #getSessionId()
      */
     @Override
-    public Object getAdapter(Class adapterType) {
+    public <T> T getAdapter(Class<T> adapterType) {
         IDMContext[] parents = getParents(); 
         if (parents.length > 0) {
             return parents[0].getAdapter(adapterType);

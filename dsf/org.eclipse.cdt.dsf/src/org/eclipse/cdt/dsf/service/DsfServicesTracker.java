@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems and others.
+ * Copyright (c) 2009, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *******************************************************************************/
 package org.eclipse.cdt.dsf.service;
 
@@ -90,8 +91,8 @@ public class DsfServicesTracker {
     private final String fSessionId;    
     private volatile boolean fDisposed = false;
     private final BundleContext fBundleContext;
-    private final Map<ServiceKey,ServiceReference> fServiceReferences = new HashMap<ServiceKey,ServiceReference>();
-    private final Map<ServiceReference,Object> fServices = new HashMap<ServiceReference,Object>();
+    private final Map<ServiceKey,ServiceReference<?>> fServiceReferences = new HashMap<ServiceKey,ServiceReference<?>>();
+    private final Map<ServiceReference<?>,Object> fServices = new HashMap<ServiceReference<?>,Object>();
     private final String fServiceFilter;
 
     private final ServiceListener fListner = new ServiceListener() {
@@ -127,8 +128,8 @@ public class DsfServicesTracker {
     };
     
     private void handleUnregisterEvent(ServiceEvent event) {
-        for (Iterator<Map.Entry<ServiceKey, ServiceReference>> itr = fServiceReferences.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry<ServiceKey, ServiceReference> entry = itr.next();
+        for (Iterator<Map.Entry<ServiceKey, ServiceReference<?>>> itr = fServiceReferences.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry<ServiceKey, ServiceReference<?>> entry = itr.next();
             if ( entry.getValue().equals(event.getServiceReference()) ) {
                 itr.remove();
             }
@@ -221,7 +222,7 @@ public class DsfServicesTracker {
      */
     @SuppressWarnings("unchecked")
     public <V> V getService(Class<V> serviceClass, String filter) {
-        ServiceReference serviceRef = getServiceReference(serviceClass, filter);
+        ServiceReference<?> serviceRef = getServiceReference(serviceClass, filter);
         if (serviceRef == null) {
             return null;
         } else {
@@ -270,7 +271,7 @@ public class DsfServicesTracker {
     private void doDispose() {
         try {
             fBundleContext.removeServiceListener(fListner);
-            for (Iterator<ServiceReference> itr = fServices.keySet().iterator(); itr.hasNext();) {
+            for (Iterator<ServiceReference<?>> itr = fServices.keySet().iterator(); itr.hasNext();) {
                 fBundleContext.ungetService(itr.next());
             }
         } catch (IllegalStateException e) {

@@ -23,6 +23,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.dsf.debug.internal.provisional.service.IExecutionContextTranslator;
 import org.eclipse.cdt.dsf.debug.service.AbstractDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.MIExecutionContextTranslator;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
@@ -266,6 +268,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	@Override
 	protected IStack createStackService(DsfSession session) {
 		return new MIStack(session);
+	}
+
+	@Override
+	protected IExecutionContextTranslator createExecutionContextTranslator(DsfSession session) {
+		return new MIExecutionContextTranslator(session);
 	}
 	
 	/** @since 3.0 */

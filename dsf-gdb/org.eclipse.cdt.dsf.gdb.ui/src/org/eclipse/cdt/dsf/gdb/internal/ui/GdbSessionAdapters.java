@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
+import org.eclipse.cdt.debug.core.model.IGroupDebugContextsHandler;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -33,8 +34,11 @@ import org.eclipse.cdt.debug.core.model.IStepIntoSelectionHandler;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.IStopTracingHandler;
 import org.eclipse.cdt.debug.core.model.IUncallHandler;
+import org.eclipse.cdt.debug.core.model.IUngroupDebugContextsHandler;
 import org.eclipse.cdt.debug.ui.IPinProvider;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
+import org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.actions.DsfGroupDebugContextsCommand;
+import org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.actions.DsfUngroupDebugContextsCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfResumeCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoCommand;
 import org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionCommand;
@@ -211,6 +215,8 @@ public class GdbSessionAdapters {
 			ISelectNextTraceRecordHandler.class,
 			ISelectPrevTraceRecordHandler.class,
 			IPinProvider.class,
+			IGroupDebugContextsHandler.class,
+			IUngroupDebugContextsHandler.class,
 			IDebugModelProvider.class, 
 			ILaunch.class,
 			ICEditorTextHover.class));
@@ -332,6 +338,12 @@ public class GdbSessionAdapters {
 		}
 		if (IPinProvider.class.equals(adapterType)) { 
 			return (T)new GdbPinProvider(session);
+		}
+		if (IGroupDebugContextsHandler.class.equals(adapterType)) { 
+			return (T)new DsfGroupDebugContextsCommand(session);
+		}
+		if (IUngroupDebugContextsHandler.class.equals(adapterType)) { 
+			return (T)new DsfUngroupDebugContextsCommand(session);
 		}
 		if (IDebugModelProvider.class.equals(adapterType)) {
 			return (T)new IDebugModelProvider() {

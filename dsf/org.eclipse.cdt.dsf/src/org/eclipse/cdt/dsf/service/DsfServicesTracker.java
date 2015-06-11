@@ -166,8 +166,7 @@ public class DsfServicesTracker {
      * session-ID 
      * @return OSGI service reference object to the desired service, null if not found
      */
-    @SuppressWarnings("rawtypes")
-    public ServiceReference getServiceReference(Class serviceClass, String filter) {
+    public ServiceReference<?> getServiceReference(Class<?> serviceClass, String filter) {
         if (fDisposed) {
             return null;
         }
@@ -185,7 +184,7 @@ public class DsfServicesTracker {
         }
         
         try {
-            ServiceReference[] references = fBundleContext.getServiceReferences(key.fClassName, key.fFilter);
+            ServiceReference<?>[] references = fBundleContext.getServiceReferences(key.fClassName, key.fFilter);
             assert references == null || references.length <= 1;
             if (references == null || references.length == 0) {
                 return null;

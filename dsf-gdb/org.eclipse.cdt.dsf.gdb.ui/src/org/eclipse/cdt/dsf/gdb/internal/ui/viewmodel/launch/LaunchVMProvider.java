@@ -65,15 +65,24 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         IRootVMNode launchNode = new LaunchRootVMNode(this);
         setRootNode(launchNode);
 
-        // Container node to contain all processes and threads
-        IVMNode containerNode = new ContainerVMNode(this, getSession());
-        IVMNode processesNode = new GdbStandardProcessVMNode(this);
-        addChildNodes(launchNode, new IVMNode[] { containerNode, processesNode});
-        
+        IVMNode processesNode = new ContainerVMNode(this, getSession());
+        IVMNode groupsNode = new GroupVMNode(this, getSession());
+        IVMNode launchProcessesNode = new GdbStandardProcessVMNode(this);
         IVMNode threadsNode = new ThreadVMNode(this, getSession());
-        addChildNodes(containerNode, new IVMNode[] { threadsNode });
-        
         IVMNode stackFramesNode = new StackFramesVMNode(this, getSession());
+
+        // Allow the launch node to have processes or groups as children, as well as the launch-processes
+        // nodes (gdb and inferior nodes)
+        addChildNodes(launchNode, new IVMNode[] { processesNode, groupsNode, launchProcessesNode});
+        
+        // Process nodes can have groups or threads as children
+        addChildNodes(processesNode, new IVMNode[] { groupsNode, threadsNode });
+
+        // Group nodes can have other groups, processes or threads as children
+//        addChildNodes(groupsNode, new IVMNode[] { processesNode, groupsNode, threadsNode }); This causes an infinite loop somewhere
+        addChildNodes(groupsNode, new IVMNode[] { groupsNode, threadsNode });
+        
+        // Threads can only have stack frames as children
         addChildNodes(threadsNode, new IVMNode[] { stackFramesNode });
     }
     
@@ -171,4 +180,14 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
             // Session disposed, ignore.
         }
     }
+
+    //TODO why do we need this?
+    // Currently it causes an infinite loop
+//    @Override
+//    protected IVMModelProxy createModelProxyStrategy(Object rootElement) {
+//    	// user groups support
+//    	DefaultVMModelProxyStrategy proxy = new DefaultVMModelProxyStrategy(this, rootElement);
+//    	proxy.setAllowRecursiveVMNodes(true);
+//    	return proxy;
+//    }
 }

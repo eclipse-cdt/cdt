@@ -17,6 +17,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
 
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
@@ -33,18 +34,19 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.provisional.service.IMIExecutionContextTranslator.IGroupDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadExitedDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IThreadRemovedDMEvent;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
@@ -75,7 +77,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
-
+/**
+ * This VMNode represents a GDB process (inferior).
+ */
 public class ContainerVMNode extends AbstractContainerVMNode
     implements IElementLabelProvider, IElementMementoProvider 
 {
@@ -265,26 +269,41 @@ public class ContainerVMNode extends AbstractContainerVMNode
     
 	@Override
 	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-		IProcesses processService = getServicesTracker().getService(IProcesses.class);
-		ICommandControlService controlService = getServicesTracker().getService(ICommandControlService.class);
-		if (processService == null || controlService == null) {
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		if (runControl == null) {
 			handleFailedUpdate(update);
 			return;
 		}
 
-		processService.getProcessesBeingDebugged(
-				controlService.getContext(),
-				new ViewerDataRequestMonitor<IDMContext[]>(getExecutor(), update) {
-					@Override
-					public void handleCompleted() {
-						if (!isSuccess()) {
-							handleFailedUpdate(update);
-							return;
-						}
-						if (getData() != null) fillUpdateWithVMCs(update, getData());
-						update.done();
+		// If there is a group in the path we must ask for its children.
+		// If there is not, we will get a null and then the service will give us the top processes.
+		IContainerDMContext group = findDmcInPath(update.getViewerInput(), update.getElementPath(), IGroupDMContext.class);
+		runControl.getExecutionContexts(
+			group,
+			new ViewerDataRequestMonitor<IExecutionDMContext[]>(getExecutor(), update) {
+				@Override
+				public void handleCompleted() {
+					if (!isSuccess()) {
+						handleFailedUpdate(update);
+						return;
 					}
-				});
+					
+					IExecutionDMContext[] execDmcs = getData();
+					if (execDmcs != null) {
+						// Extract the processes as there could be threads or groups in the answer
+						Vector<IMIContainerDMContext> processes = new Vector<>();
+						for (IExecutionDMContext exec : execDmcs) {
+							if (exec instanceof IMIContainerDMContext) {
+								processes.add((IMIContainerDMContext)exec);
+							}
+						}
+						fillUpdateWithVMCs(
+								update,
+								processes.toArray(new IMIContainerDMContext[processes.size()]));
+					}
+					update.done();
+				}
+			});
 	}
 
     @Override
@@ -292,23 +311,23 @@ public class ContainerVMNode extends AbstractContainerVMNode
         IPropertiesUpdate[] parentUpdates = new IPropertiesUpdate[updates.length]; 
         
         for (int i = 0; i < updates.length; i++) {
-            final IPropertiesUpdate update = updates[i];
-            
-            final ViewerCountingRequestMonitor countringRm = 
-                new ViewerCountingRequestMonitor(ImmediateExecutor.getInstance(), updates[i]);
+        	final IPropertiesUpdate update = updates[i];
+        	
+            final ViewerCountingRequestMonitor countingRm = 
+            		new ViewerCountingRequestMonitor(ImmediateExecutor.getInstance(), update);
             int count = 0;
             
             // Create a delegating update which will let the super-class fill in the 
             // standard container properties.
-            parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
+            parentUpdates[i] = new VMDelegatingPropertiesUpdate(update, countingRm);
             count++;
 
-            // set pin properties
+        	// set pin properties
             IDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IDMContext.class);
             IPinElementColorDescriptor colorDesc = PinCloneUtils.getPinElementColorDescriptor(GdbPinProvider.getPinnedHandles(), dmc);
-            updates[i].setProperty(IGdbLaunchVMConstants.PROP_PIN_COLOR, 
+            update.setProperty(IGdbLaunchVMConstants.PROP_PIN_COLOR, 
             		colorDesc != null ? colorDesc.getOverlayColor() : null);
-        	updates[i].setProperty(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
+        	update.setProperty(IGdbLaunchVMConstants.PROP_PINNED_CONTEXT, 
         			PinCloneUtils.isPinnedTo(GdbPinProvider.getPinnedHandles(), dmc));
             
             if (update.getProperties().contains(PROP_NAME) || 
@@ -333,7 +352,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
             					} else {
             						update.setStatus(getStatus());
             					}
-            					countringRm.done();
+            					countingRm.done();
             				}
             			});
             		count++;
@@ -341,11 +360,11 @@ public class ContainerVMNode extends AbstractContainerVMNode
             }
             
             if (update.getProperties().contains(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY)) {
-            	fillThreadSummary(update, countringRm);
+            	fillThreadSummary(update, countingRm);
             	count++;
             }
             
-            countringRm.setDoneCount(count);
+            countingRm.setDoneCount(count);
         }
         
         super.updatePropertiesInSessionThread(parentUpdates);
@@ -435,6 +454,15 @@ public class ContainerVMNode extends AbstractContainerVMNode
     
 	@Override
 	public int getDeltaFlags(Object e) {
+		//TODO
+//		if (e instanceof IContainerLayoutChangedEvent) {
+//			return IModelDelta.CONTENT;
+//		}
+//		
+//		if (e instanceof ISuspendedDMEvent) {
+//			return IModelDelta.STATE;
+//		}
+
 		if (e instanceof ICommandControlShutdownDMEvent) {
 			return IModelDelta.CONTENT;
 		}
@@ -450,6 +478,19 @@ public class ContainerVMNode extends AbstractContainerVMNode
 
 	@Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+// TODO
+//		if (e instanceof IStartedDMEvent) {
+//			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+//			requestMonitor.done();
+//			return;
+//		}
+//
+//		if (e instanceof IContainerLayoutChangedEvent) {
+//			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+//			requestMonitor.done();
+//			return;
+//		}
+//		
 		if (e instanceof ICommandControlShutdownDMEvent) {
 	        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
 	    } else if (e instanceof IThreadRemovedDMEvent) {
@@ -578,4 +619,27 @@ public class ContainerVMNode extends AbstractContainerVMNode
     		request.done();
     	}
     }
+
+// Not sure this is needed
+//    /*
+//     * (non-Javadoc)
+//     * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode#getContextsForEvent(org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, java.lang.Object, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+//     */
+//    @Override
+//    public void getContextsForEvent(VMDelta parentDelta, Object event, final DataRequestMonitor<IVMContext[]> rm) {
+//    	if (event instanceof FullStackRefreshEvent &&
+//    			((FullStackRefreshEvent)event).getDMContext() instanceof IContainerDMContext)
+//    	{
+//    		// The step sequence end event occurred on a container and not on a thread.  Do not
+//    		// return a context for this event, which will force the view model to generate
+//    		// a delta for all the threads.
+//    		rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+//    		return;
+//    	}
+//
+//    	if( getContextsForRecursiveVMNode( parentDelta, event, rm))
+//    		return;
+//
+//    	super.getContextsForEvent(parentDelta, event, rm);
+//    }
 }

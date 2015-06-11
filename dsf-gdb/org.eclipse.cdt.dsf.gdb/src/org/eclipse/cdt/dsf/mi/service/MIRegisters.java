@@ -261,7 +261,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		// To solve this, we use a bufferedCommandControl that will delay the command
 		// result by two scheduling of the executor.
 		// See bug 280461
-        fRegisterValueCache = new CommandCache(getSession(), bufferedCommandControl);
+        fRegisterValueCache = new MICommandCache(getSession(), bufferedCommandControl, getServicesTracker());
         fRegisterValueCache.setContextAvailable(commandControl.getContext(), true);
 
         // This cache is not affected by events so does not need the bufferedCommandControl

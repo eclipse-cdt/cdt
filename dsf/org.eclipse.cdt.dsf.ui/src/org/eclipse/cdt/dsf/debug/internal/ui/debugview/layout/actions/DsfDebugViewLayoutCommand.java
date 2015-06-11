@@ -16,10 +16,10 @@ import java.util.HashSet;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.provisional.service.IExecutionContextTranslator;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -127,7 +127,7 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
 					IExecutionContextTranslator translator = fTracker.getService(IExecutionContextTranslator.class);
 					if (translator != null) {
 						executeOnDsfThread(translator, executionContexts, 
-		                    new RequestMonitor(fExecutor, null) {
+		                    new DataRequestMonitor<IContainerDMContext>(fExecutor, null) {
 			                    @Override
 			                    protected void handleCompleted() {
 			                    	request.done();
@@ -145,6 +145,6 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
 		return true;
 	}
 	
-	abstract void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, RequestMonitor rm);
+	abstract void executeOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, DataRequestMonitor<IContainerDMContext> rm);
 	abstract void canExecuteOnDsfThread(IExecutionContextTranslator translator, IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
 }

@@ -141,11 +141,11 @@ public class TemplateArgumentDeduction {
 					IType arg = fnArgs.get(j);
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
 					
-					// C++0x: 14.9.2.1-1
+					// C++11: 14.9.2.1-1
 					if (arg instanceof InitializerListType) {
 						par= SemanticUtil.getNestedType(par, TDEF | REF | CVTYPE);
 	
-						// Check if this is a deduced context
+						// Check if this is a deduced context.
 						IType inner= Conversions.getInitListType(par);
 						if (inner != null) {
 							final EvalInitList eval = ((InitializerListType) arg).getEvaluation();

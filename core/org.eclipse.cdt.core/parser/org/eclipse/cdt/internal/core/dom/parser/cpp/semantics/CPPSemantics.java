@@ -233,7 +233,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Name resolution
+ * Name resolution.
  */
 public class CPPSemantics {
 	/**
@@ -274,8 +274,9 @@ public class CPPSemantics {
 
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
-			for (int i = 0; i < traceIndent; i++)
+			for (int i = 0; i < traceIndent; i++) {
 				System.out.print("  "); //$NON-NLS-1$
+			}
 			System.out.println("Resolving " + name + ':' + ((ASTNode) name).getOffset()); //$NON-NLS-1$
 			traceIndent++;
 		}
@@ -311,8 +312,9 @@ public class CPPSemantics {
 		binding = postResolution(binding, data);
 		if (traceBindingResolution) {
 			traceIndent--;
-			for (int i = 0; i < traceIndent; i++)
+			for (int i = 0; i < traceIndent; i++) {
 				System.out.print("  "); //$NON-NLS-1$
+			}
 			System.out.println("Resolved  " + name + ':' + ((ASTNode) name).getOffset() +  //$NON-NLS-1$
 					" to " + DebugUtil.toStringWithClass(binding) + ':' + System.identityHashCode(binding)); //$NON-NLS-1$
 		}
@@ -347,8 +349,9 @@ public class CPPSemantics {
         	// 3.4.1-10 If we don't find a name used in a friend declaration in the member
         	// declaration's class, we should look in the class granting friendship.
 			IASTNode parent = lookupName.getParent();
-        	while (parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier))
+        	while (parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier)) {
         		parent = parent.getParent();
+        	}
         	if (parent instanceof ICPPASTCompositeTypeSpecifier) {
         		IScope scope = ((ICPPASTCompositeTypeSpecifier) parent).getScope();
         		try {
@@ -1528,8 +1531,9 @@ public class CPPSemantics {
 				    continue;
 		        }
 			}
-		    while (item instanceof IASTLabelStatement)
+		    while (item instanceof IASTLabelStatement) {
 		    	item= ((IASTLabelStatement) item).getNestedStatement();
+		    }
 		    if (item instanceof IASTDeclarationStatement)
 		        item = ((IASTDeclarationStatement) item).getDeclaration();
 			if (item instanceof ICPPASTUsingDirective) {
@@ -1906,8 +1910,9 @@ public class CPPSemantics {
                 // Point of declaration for a name is immediately after its complete declarator
             	// and before its initializer.
                 IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
-                while (dtor.getParent() instanceof IASTDeclarator)
+                while (dtor.getParent() instanceof IASTDeclarator) {
                     dtor = (IASTDeclarator) dtor.getParent();
+                }
                 IASTInitializer init = dtor.getInitializer();
             	// [basic.scope.pdecl]/p9: The point of declaration for a template parameter 
             	// is immediately after its complete template-parameter.
@@ -2131,7 +2136,7 @@ public class CPPSemantics {
 	    	return type;
 	    }
 
-		if (fns.size() > 0) {
+		if (!fns.isEmpty()) {
 	    	final ICPPFunction[] fnArray = fns.keyArray(ICPPFunction.class);
 	    	if (type != null && overrulesByRelevance(data, type, fnArray)) {
 	    		return type;
@@ -2878,8 +2883,9 @@ public class CPPSemantics {
     static IBinding resolveTargetedFunction(IASTName name, CPPFunctionSet functionSet) {
     	boolean addressOf= false;
     	IASTNode node= name.getParent();
-    	while (node instanceof IASTName)
+    	while (node instanceof IASTName) {
     		node= node.getParent();
+    	}
 
     	if (!(node instanceof IASTIdExpression))
     		return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD);
@@ -3362,8 +3368,9 @@ public class CPPSemantics {
     static enum LookupMode {NO_GLOBALS, GLOBALS_IF_NO_MEMBERS, LIMITED_GLOBALS, ALL_GLOBALS}
     static ICPPFunction findOverloadedOperator(IASTNode pointOfInstantiation, IScope pointOfDefinition,
     		ICPPEvaluation[] args, IType methodLookupType, OverloadableOperator operator, LookupMode mode) {
-    	while (pointOfInstantiation instanceof IASTName)
+    	while (pointOfInstantiation instanceof IASTName) {
     		pointOfInstantiation= pointOfInstantiation.getParent();
+    	}
 
     	ICPPClassType callToObjectOfClassType= null;
 		IType type2= null;
@@ -3471,8 +3478,9 @@ public class CPPSemantics {
 					}
 				}
 				if (j > 0) {
-					while (j < items.length)
+					while (j < items.length) {
 						items[j++]= null;
+					}
 				}
 			}
 			// 13.3.1.2.3

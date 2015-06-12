@@ -9541,31 +9541,30 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals("A", ASTTypeUtil.getType(expr.getExpressionType()));
 	}
 
-	//	void f() {
-	//		int i;
-	//		int f1();
-	//		int&& f2();
-	//		int g(const int&);
-	//		int g(const int&&);
-	//		int j = g(i); // calls g(const int&)
-	//		int k = g(f1()); // calls g(const int&&)
-	//		int l = g(f2()); // calls g(const int&&)
+	//	void test() {
+	//	  int i;
+	//	  int f1();
+	//	  int&& f2();
+	//	  int g(const int&);
+	//	  int g(const int&&);
+	//	  int j = g(i); // calls g(const int&)
+	//	  int k = g(f1()); // calls g(const int&&)
+	//	  int l = g(f2()); // calls g(const int&&)
 	//	}
 	public void testRankingOfReferenceBindings() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-		IFunction g1= bh.assertNonProblem("g(const int&)", 1);
-		IFunction g2= bh.assertNonProblem("g(const int&&)", 1);
+		BindingAssertionHelper bh= getAssertionHelper();
+		IFunction g1= bh.assertNonProblemOnFirstIdentifier("g(const int&)");
+		IFunction g2= bh.assertNonProblemOnFirstIdentifier("g(const int&&)");
 
 		IFunction ref;
-		ref= bh.assertNonProblem("g(i);", 1);
+		ref= bh.assertNonProblemOnFirstIdentifier("g(i);");
 		assertSame(g1, ref);
-		ref= bh.assertNonProblem("g(f1());", 1);
+		ref= bh.assertNonProblemOnFirstIdentifier("g(f1());");
 		assertSame(g2, ref);
-		ref= bh.assertNonProblem("g(f2());", 1);
+		ref= bh.assertNonProblemOnFirstIdentifier("g(f2());");
 		assertSame(g2, ref);
 	}
-
+		
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}

@@ -34,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeS
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
 
 /**
- * Cost for the entire function call
+ * Cost for the entire function call.
  */
 class FunctionCost {
 	private final ICPPFunction fFunction;
@@ -96,7 +96,7 @@ class FunctionCost {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			Cost udcCost= null;
-			switch(cost.isDeferredUDC()) {
+			switch (cost.isDeferredUDC()) {
 			case NONE: 
 				continue;
 			case COPY_INIT_OF_CLASS:

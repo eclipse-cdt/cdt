@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -91,8 +92,8 @@ public class DsfServicesTracker {
     private final String fSessionId;    
     private volatile boolean fDisposed = false;
     private final BundleContext fBundleContext;
-    private final Map<ServiceKey,ServiceReference<?>> fServiceReferences = new HashMap<ServiceKey,ServiceReference<?>>();
-    private final Map<ServiceReference<?>,Object> fServices = new HashMap<ServiceReference<?>,Object>();
+    private final Map<ServiceKey,ServiceReference<?>> fServiceReferences = new HashMap<>();
+    private final Map<ServiceReference<?>,Object> fServices = new HashMap<>();
     private final String fServiceFilter;
 
     private final ServiceListener fListner = new ServiceListener() {
@@ -166,7 +167,7 @@ public class DsfServicesTracker {
      * session-ID 
      * @return OSGI service reference object to the desired service, null if not found
      */
-    public ServiceReference<?> getServiceReference(Class<?> serviceClass, String filter) {
+	public <V> ServiceReference<V> getServiceReference(Class<V> serviceClass, String filter) {
         if (fDisposed) {
             return null;
         }
@@ -180,17 +181,20 @@ public class DsfServicesTracker {
         
         ServiceKey key = new ServiceKey(serviceClass, filter != null ? filter : fServiceFilter);
         if (fServiceReferences.containsKey(key)) {
-            return fServiceReferences.get(key);
+        	@SuppressWarnings("unchecked")
+        	ServiceReference<V> ref = (ServiceReference<V>)fServiceReferences.get(key);
+        	return ref;
         }
         
         try {
-            ServiceReference<?>[] references = fBundleContext.getServiceReferences(key.fClassName, key.fFilter);
-            assert references == null || references.length <= 1;
-            if (references == null || references.length == 0) {
+        	Collection<ServiceReference<V>> references = fBundleContext.getServiceReferences(serviceClass, key.fFilter);
+            assert references == null || references.size() <= 1;
+            if (references == null || references.isEmpty()) {
                 return null;
             } else {
-                fServiceReferences.put(key, references[0]);
-                return references[0];
+            	ServiceReference<V> ref = references.iterator().next();
+                fServiceReferences.put(key, ref);
+                return ref;
             }
         } catch(InvalidSyntaxException e) {
             assert false : "Invalid session ID syntax"; //$NON-NLS-1$
@@ -219,20 +223,24 @@ public class DsfServicesTracker {
      * session-ID 
      * @return instance of the desired service, null if not found
      */
-    @SuppressWarnings("unchecked")
     public <V> V getService(Class<V> serviceClass, String filter) {
-        ServiceReference<?> serviceRef = getServiceReference(serviceClass, filter);
+        ServiceReference<V> serviceRef = getServiceReference(serviceClass, filter);
         if (serviceRef == null) {
             return null;
-        } else {
-            if (fServices.containsKey(serviceRef)) {
-                return (V)fServices.get(serviceRef);
-            } else {
-                V service = (V)fBundleContext.getService(serviceRef);
-                fServices.put(serviceRef, service);
-                return service;
-            }
         }
+        
+        @SuppressWarnings("unchecked")
+        V service = (V)fServices.get(serviceRef);
+        if (service == null) {
+        	// Check to see if 'null' means we never fetched the
+        	// service, or if there simply is none.
+        	// If we never fetched it, do so now and store the result.
+        	if (fServices.containsKey(serviceRef) == false) {
+        		service = fBundleContext.getService(serviceRef);
+        		fServices.put(serviceRef, service);
+        	}
+        }
+        return service;
     }
     
     /**

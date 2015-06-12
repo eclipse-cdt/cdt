@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_68635e35",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-12T20:36:49Z",
+      "side": 1,
+      "message": "Redundant double checking of the same key.",
+      "range": {
+        "startLine": 231,
+        "startChar": 26,
+        "endLine": 231,
+        "endChar": 37
+      },
+      "revId": "686901d9b959c728d1f7e67b55d584a099860949",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

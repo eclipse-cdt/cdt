@@ -22,6 +22,30 @@
       "revId": "d997a7c313290dfcdcab5ff382435950ff620e03",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_c86412c6",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-06-12T18:19:02Z",
+      "side": 1,
+      "message": "I\u0027ve been looking into this, and it is starting to become clear to me that you are right.  I\u0027m working on a patch to address this, as there are impacts to making that change.\n\nThanks for paying attention!",
+      "parentUuid": "87f6139c_6e67eb9c",
+      "range": {
+        "startLine": 169,
+        "startChar": 11,
+        "endLine": 169,
+        "endChar": 27
+      },
+      "revId": "d997a7c313290dfcdcab5ff382435950ff620e03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

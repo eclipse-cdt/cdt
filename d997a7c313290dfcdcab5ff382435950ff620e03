@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_6e67eb9c",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-12T01:11:11Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this method be declared as:\npublic \u003cT\u003e ServiceReference\u003cT\u003e getServiceReference(Class\u003cT\u003e serviceClass, String filter)\n\n?",
+      "range": {
+        "startLine": 169,
+        "startChar": 11,
+        "endLine": 169,
+        "endChar": 27
+      },
+      "revId": "d997a7c313290dfcdcab5ff382435950ff620e03",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

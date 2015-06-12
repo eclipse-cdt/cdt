@@ -27,4 +27,4 @@ Export-Package: org.eclipse.rse.internal.services;x-internal:=true,
  org.eclipse.rse.services.search,
  org.eclipse.rse.services.shells,
  org.eclipse.rse.services.terminals
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -370,14 +370,14 @@ public class RemoteConnectionWidget extends Composite {
 	}
 
 	private IRemoteConnectionType getSelectedConnectionType() {
-		if (fDefaultConnectionType != null) {
-			return fDefaultConnectionType;
-		}
 		if (fConnectionTypeCombo != null) {
 			int selectionIndex = fConnectionTypeCombo.getSelectionIndex();
 			if (fConnectionTypes.size() > 0 && selectionIndex > 0) {
 				return fConnectionTypes.get(selectionIndex - 1);
 			}
+		}
+		if (fDefaultConnectionType != null) {
+			return fDefaultConnectionType;
 		}
 		return null;
 	}

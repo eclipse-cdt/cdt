@@ -218,31 +218,8 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 		MatchFilter[] result = super.getActiveMatchFilters();
 		if (result == null) {
 			List<MatchFilter> filters = new ArrayList<>();
-			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_SHOW_POLYMORPHIC_CALLS)) {
-				filters.add(HidePolymorphicCalls.FILTER);
-			}
-			if (CUIPlugin.getDefault().getDialogSettings().getBoolean(KEY_HIDE_READ_ONLY_REFERENCES)) {
-				filters.add(HideReadOnlyReferences.READ_ONLY_FILTER);
-			}
 			return filters.toArray(new MatchFilter[filters.size()]);
 		}
 		return result;
-	}
-
-	@Override
-	public void setActiveMatchFilters(MatchFilter[] filters) {
-		boolean showPoly= false;
-		boolean hideReadOnly= false;
-		for (int i = 0; i < filters.length; i++) {
-			if (filters[i] == HidePolymorphicCalls.FILTER) {
-				showPoly= true;
-			}
-			if (filters[i] == HideReadOnlyReferences.READ_ONLY_FILTER) {
-				hideReadOnly = true;
-			}
-		}
-		CUIPlugin.getDefault().getDialogSettings().put(KEY_SHOW_POLYMORPHIC_CALLS, showPoly);
-		CUIPlugin.getDefault().getDialogSettings().put(KEY_HIDE_READ_ONLY_REFERENCES, hideReadOnly);
-		super.setActiveMatchFilters(filters);
 	}
 }

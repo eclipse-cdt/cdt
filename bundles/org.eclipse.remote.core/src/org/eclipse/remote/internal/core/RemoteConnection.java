@@ -68,8 +68,7 @@ public class RemoteConnection implements IRemoteConnection {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Service> T getService(Class<T> service) {
-		String serviceName = service.getName();
-		T obj = (T) servicesMap.get(serviceName);
+		T obj = (T) servicesMap.get(service);
 		if (obj == null) {
 			obj = connectionType.getConnectionService(this, service);
 			if (obj != null) {

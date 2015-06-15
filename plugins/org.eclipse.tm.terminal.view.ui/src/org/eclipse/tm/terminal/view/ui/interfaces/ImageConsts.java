@@ -80,6 +80,21 @@ public interface ImageConsts {
     public static final String  ACTION_PinTerminal_Hover = "PinTerminalAction_hover"; //$NON-NLS-1$
 
     /**
+     * The key to access the new terminal view action image (enabled).
+     */
+    public static final String  ACTION_NewTerminalView_Enabled = "NewTerminalViewAction_enabled"; //$NON-NLS-1$
+
+    /**
+     * The key to access the new terminal view action image (disabled).
+     */
+    public static final String  ACTION_NewTerminalView_Disabled = "NewTerminalViewAction_disabled"; //$NON-NLS-1$
+
+    /**
+     * The key to access the new terminal view action image (hover).
+     */
+    public static final String  ACTION_NewTerminalView_Hover = "NewTerminalViewAction_hover"; //$NON-NLS-1$
+
+    /**
      * The key to access the toggle command field action image (enabled).
      */
     public static final String  ACTION_ToggleCommandField_Enabled = "ToggleCommandField_enabled"; //$NON-NLS-1$

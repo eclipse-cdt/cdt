@@ -73,6 +73,9 @@ public class Messages extends NLS {
 	public static String PinTerminalAction_menu;
 	public static String PinTerminalAction_toolTip;
 
+	public static String NewTerminalViewAction_menu;
+	public static String NewTerminalViewAction_tooltip;
+
 	public static String ToggleCommandFieldAction_menu;
 	public static String ToggleCommandFieldAction_toolTip;
 

@@ -239,6 +239,13 @@ public class UIPlugin extends AbstractUIPlugin {
 		registry.put(ImageConsts.ACTION_ToggleCommandField_Enabled, ImageDescriptor.createFromURL(url));
 		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_DLCL + "command_input_field.gif"); //$NON-NLS-1$
 		registry.put(ImageConsts.ACTION_ToggleCommandField_Disabled, ImageDescriptor.createFromURL(url));
+
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_CLCL + "new_terminal_view.gif"); //$NON-NLS-1$
+		registry.put(ImageConsts.ACTION_NewTerminalView_Hover, ImageDescriptor.createFromURL(url));
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_ELCL + "new_terminal_view.gif"); //$NON-NLS-1$
+		registry.put(ImageConsts.ACTION_NewTerminalView_Enabled, ImageDescriptor.createFromURL(url));
+		url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + ImageConsts.IMAGE_DIR_DLCL + "new_terminal_view.gif"); //$NON-NLS-1$
+		registry.put(ImageConsts.ACTION_NewTerminalView_Disabled, ImageDescriptor.createFromURL(url));
 	}
 
 	/**

@@ -21,6 +21,8 @@
             class="org.eclipse.launchbar.core.DefaultLaunchConfigProvider"
             descriptorType="org.eclipse.launchbar.core.descriptorType.default"
             priority="0">
+            <enablement>
+            </enablement>
       </configProvider>
    </extension>
 

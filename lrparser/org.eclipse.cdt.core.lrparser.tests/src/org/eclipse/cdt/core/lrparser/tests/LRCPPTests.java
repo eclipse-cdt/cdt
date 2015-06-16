@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GPPLanguage;
@@ -20,16 +18,16 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
+import junit.framework.TestSuite;
+
 @SuppressWarnings("restriction")
 public class LRCPPTests extends AST2CPPTests {
-
 	
 	public static TestSuite suite() {
     	return suite(LRCPPTests.class);
     }
     
 	public LRCPPTests() {
-		
 	}
 	
 	public LRCPPTests(String name) {
@@ -126,7 +124,9 @@ public class LRCPPTests extends AST2CPPTests {
 	@Override
 	public void testXValueCategories() throws Exception {}
 	@Override
-	public void testRankingOfReferenceBindings() throws Exception {}
+	public void testRankingOfReferenceBindings_1() throws Exception {}
+	@Override
+	public void testRankingOfReferenceBindings_2() throws Exception {}
 	@Override
 	public void testInlineNamespaceLookup_324096() throws Exception {}
 	@Override

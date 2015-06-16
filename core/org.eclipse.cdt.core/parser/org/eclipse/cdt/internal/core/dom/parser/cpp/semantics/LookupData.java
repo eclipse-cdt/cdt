@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
@@ -106,6 +107,7 @@ public class LookupData extends ScopeLookupData {
 	private IASTDeclarator fDeclarator;
 	private boolean fFunctionCall;
 	private IType fImpliedObjectType;
+	private ValueCategory fImpliedObjectValueCategory;
 	private ICPPEvaluation[] functionArgs;
 	private IType[] functionArgTypes;
 	private ValueCategory[] functionArgValueCategories;
@@ -356,7 +358,7 @@ public class LookupData extends ScopeLookupData {
     }
 
     /**
-     * Returns the implied object type, or <code>null</code>.
+     * Returns the implied object type, or {@code null} if there is no implied object.
      */
     public IType getImpliedObjectType() {
     	if (fImpliedObjectType == null) {
@@ -365,9 +367,9 @@ public class LookupData extends ScopeLookupData {
     	return fImpliedObjectType;
     }
 
-    /**
-     * Explicitly set the implied object type.
-     * This is for use in cases where implied object type cannot
+	/**
+     * Explicitly sets the implied object type.
+     * This method is for use in cases where implied object type cannot
      * be determined automatically because there is no lookup name.
      */
     public void setImpliedObjectType(IType impliedObjectType) {
@@ -403,6 +405,48 @@ public class LookupData extends ScopeLookupData {
 					return CPPVisitor.getImpliedObjectType(scope);
 				}
 			}
+		}
+		return null;
+	}
+
+    /**
+	 * Returns the category of the implied object, or {@code null} if there is no implied object.
+	 * @see ValueCategory
+     */
+    public ValueCategory getImpliedObjectValueCategory() {
+    	if (fImpliedObjectValueCategory == null) {
+    		fImpliedObjectValueCategory= determineImpliedObjectValueCategory();
+    	}
+    	return fImpliedObjectValueCategory;
+    }
+
+    private ValueCategory determineImpliedObjectValueCategory() {
+		IASTName tn = getLookupName();
+		if (tn == null)
+			return null;
+
+		if (tn.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+			tn= (IASTName) tn.getParent();
+		}
+
+		IASTNode parent = tn.getParent();
+		IASTNode nameParent= parent;
+		if (parent instanceof ICPPASTQualifiedName) {
+			final ICPPASTQualifiedName qn = (ICPPASTQualifiedName) parent;
+			if (qn.getLastName() == tn) {
+				nameParent= parent.getParent();
+			}
+		}
+
+		if (nameParent instanceof IASTFieldReference) {
+			ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) nameParent;
+			ICPPASTExpression owner = fieldReference.getFieldOwner();
+			if (fieldReference.isPointerDereference()) {
+				return ValueCategory.LVALUE;
+			}
+			return owner.getValueCategory();
+		} else if (nameParent instanceof IASTIdExpression) {
+			return ValueCategory.LVALUE;
 		}
 		return null;
 	}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_12c921be",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-16T18:09:39Z",
+      "side": 1,
+      "message": "Better: !fServices.containsKey(serviceRef)",
+      "range": {
+        "startLine": 238,
+        "startChar": 13,
+        "endLine": 238,
+        "endChar": 55
+      },
+      "revId": "d5e8ea97e7efa1ae3d939b312281d45d6541e096",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

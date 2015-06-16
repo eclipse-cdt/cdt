@@ -65,7 +65,7 @@ public class CHQueries {
 				return EMPTY_NODES;
 
 			final String ct = tu.getContentTypeId();
-			if (ct.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) {
+			if (ct.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) || ct.equals(CCorePlugin.CONTENT_TYPE_CHEADER)) {
 				// Bug 260262: in a header file we need to consider C and C++.
 				findCalledBy(callee, ILinkage.C_LINKAGE_ID, index, result);
 				findCalledBy(callee, ILinkage.CPP_LINKAGE_ID, index, result);

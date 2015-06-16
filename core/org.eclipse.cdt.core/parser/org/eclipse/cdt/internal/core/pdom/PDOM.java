@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -1538,6 +1539,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 				result = FindBinding.findBinding(c.getIndex(), c,
 						func.getNameCharArray(), new int[] { IIndexCBindingConstants.CFUNCTION }, 0);
 			}
+		} else if (binding instanceof ICPPField) {
+			ICPPField field = (ICPPField) binding;
+			IBinding parent = field.getCompositeTypeOwner();
+			PDOMBinding[] parent_bindings = getCBindingForCPP(parent);
+			if (parent_bindings.length > 0) {
+				result = FindBinding.findBinding(parent_bindings[0], c, 
+						field.getNameCharArray(), new int[] {IIndexCBindingConstants.CFIELD }, 0);
+			}
 		} else if (binding instanceof ICPPVariable) {
 			ICPPVariable var = (ICPPVariable) binding;
 			if (var.isExternC()) {
@@ -1571,6 +1580,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (cpp == null) {
 			return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 		}
+		PDOMNode node = null;
 		IndexFilter filter= null;
 		if (binding instanceof IFunction) {
 			filter= new IndexFilter() {
@@ -1582,6 +1592,18 @@ public class PDOM extends PlatformObject implements IPDOM {
 					return false;
 				}
 			};
+		} else if (binding instanceof IField) {
+			IBinding parent = ((IField) binding).getCompositeTypeOwner();
+			PDOMBinding[] parent_bindings = getCPPBindingForC(parent);
+			if (parent_bindings.length > 0) {
+				node = parent_bindings[0];
+				filter = new IndexFilter() { 
+					@Override
+					public boolean acceptBinding(IBinding binding) {
+						return true;
+					}
+				};
+			}
 		} else if (binding instanceof IVariable) {
 			if (!(binding instanceof IField) && !(binding instanceof IParameter)) {
 				filter= new IndexFilter() {
@@ -1629,7 +1651,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		if (filter != null) {
 			BindingCollector collector= new BindingCollector(cpp, binding.getNameCharArray(), filter, false, false, true);
-			cpp.accept(collector);
+			if (node != null) {
+				node.accept(collector);
+			} else {
+				cpp.accept(collector);
+			}
 			return collector.getBindings();
 		}
 		return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;

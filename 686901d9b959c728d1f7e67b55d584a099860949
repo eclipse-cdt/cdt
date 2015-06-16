@@ -22,6 +22,30 @@
       "revId": "686901d9b959c728d1f7e67b55d584a099860949",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_92fa31e7",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfServicesTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-06-16T17:54:56Z",
+      "side": 1,
+      "message": "I don\u0027t know if it was the intent when this code was written, but checking containsKey() allows to handle null values.  So, if a service does not exist, we would only call fBundleContext.getService(serviceRef) once, and then remember that the result was null in our local fServices map.\n\nRelying on the result of fServices.get() would force us to call fBundleContext.getService(serviceRef) each time for services that don\u0027t exist.\n\nI\u0027m not sure how expensive a call to fBundleContext.getService(serviceRef) really is.  And dealing with a non-existent service is definitely the rare case.\n\nTo optimize and keep the functionality, we could call fServices.get() and only when getting a null then calling containsKey() to see if we need to fall-back to calling fBundleContext.getService(serviceRef).\n\nWhat do you think?",
+      "parentUuid": "87f6139c_68635e35",
+      "range": {
+        "startLine": 231,
+        "startChar": 26,
+        "endLine": 231,
+        "endChar": 37
+      },
+      "revId": "686901d9b959c728d1f7e67b55d584a099860949",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

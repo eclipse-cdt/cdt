@@ -14,8 +14,10 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -289,7 +291,7 @@ public class IndexUI {
 		if (binding != null) {
 			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 
-			ArrayList<ICElementHandle> result= new ArrayList<>();
+			Set<ICElementHandle> result = new HashSet<>();
 			for (IIndexName in : defs) {
 				ICElementHandle definition= getCElementForName((ICProject) null, index, in);
 				if (definition != null) {

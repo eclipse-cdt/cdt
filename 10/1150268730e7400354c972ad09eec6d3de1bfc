@@ -1,0 +1,8 @@
+Code-Review+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Verified+1: Hudson CI
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-by: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-at: Tue, 16 Jun 2015 15:42:16 -0400
+Reviewed-on: https://git.eclipse.org/r/50136
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

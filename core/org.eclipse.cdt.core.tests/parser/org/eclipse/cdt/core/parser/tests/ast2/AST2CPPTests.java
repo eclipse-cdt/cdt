@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9551,7 +9551,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//	  int k = g(f1()); // calls g(const int&&)
 	//	  int l = g(f2()); // calls g(const int&&)
 	//	}
-	public void testRankingOfReferenceBindings() throws Exception {
+	public void testRankingOfReferenceBindings_1() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 		IFunction g1= bh.assertNonProblemOnFirstIdentifier("g(const int&)");
 		IFunction g2= bh.assertNonProblemOnFirstIdentifier("g(const int&&)");
@@ -9564,7 +9564,46 @@ public class AST2CPPTests extends AST2TestBase {
 		ref= bh.assertNonProblemOnFirstIdentifier("g(f2());");
 		assertSame(g2, ref);
 	}
-		
+
+	//	struct A {
+	//	  A& operator<<(int);
+	//	  void p() &;
+	//	  void p() &&;
+	//	};
+	//	A& operator<<(A&&, char);
+	//
+	//	void test() {
+	//	  A a;
+	//	  A() << 1;//1     // calls A::operator<<(int)
+	//	  A() << 'c';//2   // calls operator<<(A&&, char)
+	//	  a << 1;//3       // calls A::operator<<(int)
+	//	  a << 'c';//4     // calls A::operator<<(int)
+	//	  A().p();//5      // calls A::p()&&
+	//	  a.p();//6        // calls A::p()&
+	//  }
+	public void testRankingOfReferenceBindings_2() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPMethod s1= bh.assertNonProblem("operator<<(int)", 10);
+		ICPPFunction s2= bh.assertNonProblem("operator<<(A&&, char)", 10);
+		ICPPMethod p1= bh.assertNonProblemOnFirstIdentifier("p() &;");
+		ICPPMethod p2= bh.assertNonProblemOnFirstIdentifier("p() &&;");
+
+		IASTImplicitName name;
+		name= bh.assertImplicitName("<< 1;//1", 2, ICPPMethod.class);
+		assertSame(s1, name.getBinding());
+		name= bh.assertImplicitName("<< 'c';//2", 2, ICPPFunction.class);
+		assertSame(s2, name.getBinding());
+		name= bh.assertImplicitName("<< 1;//3", 2, ICPPMethod.class);
+		assertSame(s1, name.getBinding());
+		name= bh.assertImplicitName("<< 'c';//4", 2, ICPPMethod.class);
+		assertSame(s1, name.getBinding());
+		ICPPMethod ref;
+		ref= bh.assertNonProblemOnFirstIdentifier("p();//5");
+		assertSame(p2, ref);
+		ref= bh.assertNonProblemOnFirstIdentifier("p();//6");
+		assertSame(p1, ref);
+	}
+
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}

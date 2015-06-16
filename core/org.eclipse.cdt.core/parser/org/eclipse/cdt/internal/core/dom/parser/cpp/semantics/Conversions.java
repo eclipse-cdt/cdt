@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,14 +73,21 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.ReferenceBind
  */
 public class Conversions {
 	public enum UDCMode { ALLOWED, FORBIDDEN, DEFER }
-	public enum Context { ORDINARY, IMPLICIT_OBJECT, FIRST_PARAM_OF_DIRECT_COPY_CTOR, REQUIRE_DIRECT_BINDING }
+	public enum Context {
+		ORDINARY,
+		IMPLICIT_OBJECT_FOR_METHOD_WITHOUT_REF_QUALIFIER,
+		IMPLICIT_OBJECT_FOR_METHOD_WITH_REF_QUALIFIER,
+		FIRST_PARAM_OF_DIRECT_COPY_CTOR,
+		REQUIRE_DIRECT_BINDING
+	}
 
 	private static final char[] INITIALIZER_LIST_NAME = "initializer_list".toCharArray(); //$NON-NLS-1$
 	private static final char[] STD_NAME = "std".toCharArray(); //$NON-NLS-1$
 
 	/**
-	 * Computes the cost of an implicit conversion sequence [over.best.ics] 13.3.3.1
-	 * The semantics of the initialization is explained in 8.5-16
+	 * Computes the cost of an implicit conversion sequence [over.best.ics] 13.3.3.1.
+	 * The semantics of the initialization is explained in 8.5-16.
+	 *
 	 * @param target the target (parameter) type
 	 * @param exprType the source (argument) type
 	 * @param valueCat value category of the expression
@@ -89,7 +96,9 @@ public class Conversions {
 	 */
 	public static Cost checkImplicitConversionSequence(IType target, IType exprType,
 			ValueCategory valueCat, UDCMode udc, Context ctx, IASTNode point) throws DOMException {
-		final boolean isImpliedObject= ctx == Context.IMPLICIT_OBJECT;
+		final boolean isImpliedObject=
+				ctx == Context.IMPLICIT_OBJECT_FOR_METHOD_WITHOUT_REF_QUALIFIER ||
+				ctx == Context.IMPLICIT_OBJECT_FOR_METHOD_WITH_REF_QUALIFIER;
 		if (isImpliedObject)
 			udc= UDCMode.FORBIDDEN;
 
@@ -105,15 +114,7 @@ public class Conversions {
 			final IType cv2T2= exprType;
 			final IType T2= getNestedType(cv2T2, TDEF | REF | ALLCVQ);
 
-			// mstodo: will change when implementing rvalue references on this pointer
-			final boolean isImplicitWithoutRefQualifier = isImpliedObject;
-			if (!isImplicitWithoutRefQualifier) {
-				if (isLValueRef) {
-					refBindingType= ReferenceBinding.LVALUE_REF;
-				} else {
-					refBindingType= ReferenceBinding.RVALUE_REF_BINDS_RVALUE;
-				}
-			}
+			refBindingType= isLValueRef ? ReferenceBinding.LVALUE_REF : ReferenceBinding.RVALUE_REF_BINDS_RVALUE;
 
 			if (exprType instanceof InitializerListType) {
 				if (isLValueRef && getCVQualifier(cv1T1) != CVQualifier.CONST)
@@ -130,7 +131,16 @@ public class Conversions {
 			if (isLValueRef) {
 				// ... the initializer expression is an lvalue (but is not a bit field)
 				// [for overload resolution bit-fields are treated the same, error if selected as best match]
-				if (valueCat == LVALUE) {
+				if (valueCat == LVALUE || ctx == Context.IMPLICIT_OBJECT_FOR_METHOD_WITHOUT_REF_QUALIFIER) {
+					// 13.3.3.5: For non-static member functions declared without a ref-qualifier,
+					// an additional rule applies:
+					//   — even if the implicit object parameter is not const-qualified, an rvalue can be
+					//     bound to the parameter as long as in all other respects the argument can be
+					//     converted to the type of the implicit object parameter.
+					//     [Note: The fact that such an argument is an rvalue does not affect the ranking of
+					//     implicit conversion sequences (13.3.3.2). — end note]
+					if (valueCat != LVALUE)
+						refBindingType= ReferenceBinding.RVALUE_REF_BINDS_RVALUE;
 					// ... and "cv1 T1" is reference-compatible with "cv2 T2"
 					Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObject, point);
 					if (cost != null) {

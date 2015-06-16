@@ -2724,8 +2724,8 @@ public class CPPSemantics {
 
 	private static FunctionCost costForFunctionCall(ICPPFunction fn, boolean allowUDC, LookupData data)
 			throws DOMException {
-		IType[] argTypes = data.getFunctionArgumentTypes();
-		ValueCategory[] isLValue= data.getFunctionArgumentValueCategories();
+		IType[] argTypes= data.getFunctionArgumentTypes();
+		ValueCategory[] argValueCategories= data.getFunctionArgumentValueCategories();
 		int skipArg= 0;
 	    final ICPPFunctionType ftype= fn.getType();
 	    if (ftype == null)
@@ -2733,11 +2733,13 @@ public class CPPSemantics {
 
 		IType implicitParameterType= null;
 		IType impliedObjectType= null;
+		ValueCategory impliedObjectValueCategory= null;
 		final IType[] paramTypes= ftype.getParameterTypes();
 		if (fn instanceof ICPPMethod && !(fn instanceof ICPPConstructor)) {
 		    implicitParameterType = getImplicitParameterType((ICPPMethod) fn);
 		    if (data.argsContainImpliedObject) {
 		    	impliedObjectType= argTypes[0];
+		    	impliedObjectValueCategory= argValueCategories[0];
 		    	skipArg= 1;
 			}
 		}
@@ -2751,10 +2753,15 @@ public class CPPSemantics {
 		} else {
 			result= new FunctionCost(fn, sourceLen + 1, data.getLookupPoint());
 
-			ValueCategory sourceIsLValue= LVALUE;
 			if (impliedObjectType == null) {
 				impliedObjectType= data.getImpliedObjectType();
 			}
+			if (impliedObjectValueCategory == null) {
+				impliedObjectValueCategory= data.getImpliedObjectValueCategory();
+				if (impliedObjectValueCategory == null)
+					impliedObjectValueCategory= ValueCategory.LVALUE;
+			}
+
 			if (fn instanceof ICPPMethod &&
 					(((ICPPMethod) fn).isDestructor() || ASTInternal.isStatic(fn, false))) {
 			    // 13.3.1-4 for static member functions, the implicit object parameter always matches, no cost
@@ -2766,7 +2773,11 @@ public class CPPSemantics {
 				cost = new Cost(impliedObjectType, implicitParameterType, Rank.IDENTITY);
 				cost.setImpliedObject();
 			} else {
-				cost = Conversions.checkImplicitConversionSequence(implicitParameterType, impliedObjectType, sourceIsLValue, UDCMode.FORBIDDEN, Context.IMPLICIT_OBJECT, data.getLookupPoint());
+				Context context = ftype.hasRefQualifier() ?
+						Context.IMPLICIT_OBJECT_FOR_METHOD_WITH_REF_QUALIFIER :
+						Context.IMPLICIT_OBJECT_FOR_METHOD_WITHOUT_REF_QUALIFIER;
+				cost = Conversions.checkImplicitConversionSequence(implicitParameterType, impliedObjectType,
+						impliedObjectValueCategory, UDCMode.FORBIDDEN, context, data.getLookupPoint());
 				if (cost.converts()) {
 					cost.setImpliedObject();
 				} else {
@@ -2783,7 +2794,7 @@ public class CPPSemantics {
 			if (!cost.converts())
 				return null;
 
-			result.setCost(k++, cost, sourceIsLValue);
+			result.setCost(k++, cost, impliedObjectValueCategory);
 		}
 
 		final UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
@@ -2792,7 +2803,7 @@ public class CPPSemantics {
 			if (argType == null)
 				return null;
 
-			final ValueCategory sourceIsLValue = isLValue[j + skipArg];
+			final ValueCategory argValueCategory = argValueCategories[j + skipArg];
 
 			IType paramType;
 			if (j < paramTypes.length) {
@@ -2801,7 +2812,7 @@ public class CPPSemantics {
 				paramType= VOID_TYPE;
 			} else {
 				cost = new Cost(argType, null, Rank.ELLIPSIS_CONVERSION);
-				result.setCost(k++, cost, sourceIsLValue);
+				result.setCost(k++, cost, argValueCategory);
 				continue;
 			}
 
@@ -2822,7 +2833,7 @@ public class CPPSemantics {
 			    		}
 			    	}
 			    }
-				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue,
+				cost = Conversions.checkImplicitConversionSequence(paramType, argType, argValueCategory,
 						udc, ctx, data.getLookupPoint());
 				if (data.fNoNarrowing && cost.isNarrowingConversion(data.getLookupPoint())) {
 					cost= Cost.NO_CONVERSION;
@@ -2831,7 +2842,7 @@ public class CPPSemantics {
 			if (!cost.converts())
 				return null;
 
-			result.setCost(k++, cost, sourceIsLValue);
+			result.setCost(k++, cost, argValueCategory);
 		}
 		return result;
 	}
@@ -2844,7 +2855,7 @@ public class CPPSemantics {
 		}
 		ICPPFunctionType ft= m.getType();
 		implicitType= SemanticUtil.addQualifiers(owner, ft.isConst(), ft.isVolatile(), false);
-		return new CPPReferenceType(implicitType, false);
+		return new CPPReferenceType(implicitType, ft.isRValueReference());
 	}
 
 	private static IBinding resolveUserDefinedConversion(LookupData data, ICPPFunction[] fns) {

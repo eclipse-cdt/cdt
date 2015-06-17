@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7565,7 +7565,19 @@ public class AST2Tests extends AST2TestBase {
 	public void testExpressionLabelReference_84144() throws Exception {
 		parseAndCheckBindings(true);
 	}
-	
+
+	//	void f()
+	//	{
+	//		unsigned long long labelPtr;
+	//		labelPtr = (unsigned long long) &&L;
+	//		goto *labelPtr;
+	//	L:
+	//		return;
+	//	}
+	public void testExpressionLabelReferenceCast_84144() throws Exception {
+		parseAndCheckBindings(true);
+	}
+
 	//	int version = 0;
 	//	int NextVersion() {
 	//		return __atomic_add_fetch(&version, 1, 5);

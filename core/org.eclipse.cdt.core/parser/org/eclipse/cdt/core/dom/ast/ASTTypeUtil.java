@@ -83,6 +83,19 @@ public class ASTTypeUtil {
 		return result.toString();
 	}
 
+	/**
+	 * Returns a string representation for the parameters and the qualifiers of the given function type.
+	 * The representation contains the comma-separated list of the normalized parameter
+	 * type representations wrapped in parentheses followed by the method qualifiers, if any.
+	 *
+	 * @since 5.11
+	 */
+	public static String getParameterTypeStringAndQualifiers(IFunctionType type) {
+		StringBuilder result = new StringBuilder();
+		appendParameterTypeStringAndQualifiers(type, result);
+		return result.toString();
+	}
+
 	private static void appendParameterTypeString(IFunctionType ft, StringBuilder result) {
 		IType[] types = ft.getParameterTypes();
 		result.append(Keywords.cpLPAREN);
@@ -101,6 +114,19 @@ public class ASTTypeUtil {
 			result.append(Keywords.cpELLIPSIS);
 		}
 		result.append(Keywords.cpRPAREN);
+	}
+
+	private static boolean appendParameterTypeStringAndQualifiers(IFunctionType ft, StringBuilder result) {
+		appendParameterTypeString(ft, result);
+		boolean needSpace = false;
+		if (ft instanceof ICPPFunctionType) {
+			ICPPFunctionType cppft= (ICPPFunctionType) ft;
+			needSpace= appendCVQ(result, needSpace, cppft.isConst(), cppft.isVolatile(), false);
+			if (cppft.hasRefQualifier()) {
+				appendRefQualifier(result, needSpace, cppft.isRValueReference()); needSpace = true;
+			}
+		}
+		return needSpace;
 	}
 
 	/**
@@ -406,15 +432,7 @@ public class ASTTypeUtil {
 			result.append(SPACE);
 			appendNameCheckAnonymous((IEnumeration) type, result);
 		} else if (type instanceof IFunctionType) {
-			appendParameterTypeString((IFunctionType) type, result);
-			needSpace = false;
-			if (type instanceof ICPPFunctionType) {
-				ICPPFunctionType ft= (ICPPFunctionType) type;
-				needSpace= appendCVQ(result, needSpace, ft.isConst(), ft.isVolatile(), false);
-				if (ft.hasRefQualifier()) {
-					appendRefQualifier(result, needSpace, ft.isRValueReference()); needSpace = true;
-				}
-			}
+			needSpace = appendParameterTypeStringAndQualifiers((IFunctionType) type, result);
 		} else if (type instanceof IPointerType) {
 			if (type instanceof ICPPPointerToMemberType) {
 				appendTypeString(((ICPPPointerToMemberType) type).getMemberOfClass(), normalize, result);
@@ -528,8 +546,7 @@ public class ASTTypeUtil {
 		ICPPReferenceType ref= null;
 		while (type != null && ++i < 100) {
 			if (type instanceof ITypedef) {
-				// If normalization was not requested, skip the typedef and proceed with its target
-				// type.
+				// If normalization was not requested, skip the typedef and proceed with its target type.
 				if (!normalize) {
 					// Output reference, qualifier and typedef, then stop.
 					if (ref != null) {

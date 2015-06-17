@@ -124,9 +124,9 @@ public class LRCPPTests extends AST2CPPTests {
 	@Override
 	public void testXValueCategories() throws Exception {}
 	@Override
-	public void testRankingOfReferenceBindings_1() throws Exception {}
+	public void testRankingOfReferenceBindings_a() throws Exception {}
 	@Override
-	public void testRankingOfReferenceBindings_2() throws Exception {}
+	public void testRankingOfReferenceBindings_b() throws Exception {}
 	@Override
 	public void testInlineNamespaceLookup_324096() throws Exception {}
 	@Override

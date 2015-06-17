@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Ericsson and others.
+ * Copyright (c) 2010, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public interface ITestConstants {
 	public static final String SUFFIX_GDB_7_7 = "7.7";
 	public static final String SUFFIX_GDB_7_8 = "7.8";
 	public static final String SUFFIX_GDB_7_9 = "7.9";
+	public static final String SUFFIX_GDB_7_10 = "7.10";
 	
 	// Attribute that allows a test to request not to start gdbserver even if the session is a remote one
 	public static final String LAUNCH_GDB_SERVER = TestsPlugin.PLUGIN_ID + ".launchGdbServer";

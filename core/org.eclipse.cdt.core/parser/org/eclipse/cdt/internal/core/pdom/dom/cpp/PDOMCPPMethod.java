@@ -41,10 +41,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Method
+ * Method.
  */
 class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
-
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of
 	 * the record).

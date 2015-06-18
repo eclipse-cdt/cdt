@@ -1,0 +1,8 @@
+Code-Review-1: Hudson CI
+Code-Review+2: Thomas Corbat <tcorbat@hsr.ch>
+Verified+1: Thomas Corbat <tcorbat@hsr.ch>
+Submitted-by: Thomas Corbat <tcorbat@hsr.ch>
+Submitted-at: Thu, 18 Jun 2015 03:03:53 -0400
+Reviewed-on: https://git.eclipse.org/r/50317
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

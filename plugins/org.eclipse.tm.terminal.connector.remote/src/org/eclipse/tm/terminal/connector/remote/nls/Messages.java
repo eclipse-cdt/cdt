@@ -16,6 +16,8 @@ public class Messages extends NLS {
 
 	public static String RemoteConnectionManager_1;
 
+	public static String RemoteConnectionManager_2;
+
 	public static String RemoteTerminalPreferencePage_0;
 
 	public static String TERMINAL_EXCEPTION;

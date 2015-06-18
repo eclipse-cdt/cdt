@@ -77,45 +77,45 @@ public class RemoteConnectionManager extends Job {
 				remoteConnection = connType.getConnection(connector.getRemoteSettings().getConnectionName());
 			}
 			if (remoteConnection == null) {
-				throw new RemoteConnectionException(
+				return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
 						NLS.bind(Messages.RemoteConnectionManager_0, connector.getRemoteSettings().getConnectionName()));
 			}
 
 			if (!remoteConnection.isOpen()) {
 				remoteConnection.open(monitor);
 				if (!remoteConnection.isOpen()) {
-					throw new RemoteConnectionException(
+					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(),
 							NLS.bind(Messages.RemoteConnectionManager_1, connector.getRemoteSettings().getConnectionName()));
 				}
 			}
 
 			if (parser != null) {
-				synchronized (this) {
-					remoteProcess = parser.initialize(remoteConnection);
-				}
-			} else {
+				remoteProcess = parser.initialize(remoteConnection);
+			}
+
+			if (remoteProcess == null) {
 				/*
 				 * Check the terminal shell command preference. If the preference is empty and we support a command shell,
 				 * just use that. Otherwise use the preference value if it is set, or fall back to a default if not.
 				 */
 				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(Activator.getUniqueIdentifier());
 				String terminalShellCommand = prefs.get(IRemoteTerminalConstants.PREF_TERMINAL_SHELL_COMMAND, ""); //$NON-NLS-1$
-				if (!("".equals(terminalShellCommand)) //$NON-NLS-1$
+				if ("".equals(terminalShellCommand) //$NON-NLS-1$
 						&& remoteConnection.hasService(IRemoteCommandShellService.class)) {
 					IRemoteCommandShellService cmdShellSvc = remoteConnection.getService(IRemoteCommandShellService.class);
 					synchronized (this) {
 						remoteProcess = cmdShellSvc.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 					}
-				} else {
+				} else if (remoteConnection.hasService(IRemoteProcessService.class)) {
 					if ("".equals(terminalShellCommand)) { //$NON-NLS-1$
 						terminalShellCommand = "/bin/bash -l"; //$NON-NLS-1$
 					}
 					IRemoteProcessService procSvc = remoteConnection.getService(IRemoteProcessService.class);
 					IRemoteProcessBuilder processBuilder = procSvc
 							.getProcessBuilder(new ArgumentParser(terminalShellCommand).getTokenList());
-					synchronized (this) {
-						remoteProcess = processBuilder.start(IRemoteProcessBuilder.ALLOCATE_PTY);
-					}
+					remoteProcess = processBuilder.start(IRemoteProcessBuilder.ALLOCATE_PTY);
+				} else {
+					return new Status(IStatus.ERROR, Activator.getUniqueIdentifier(), Messages.RemoteConnectionManager_2);
 				}
 			}
 

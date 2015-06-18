@@ -84,6 +84,8 @@ public class ModeSelector extends CSelector {
 						}
 						if (group != null) {
 							ImageDescriptor imageDesc = group.getImageDescriptor();
+							if (imageDesc == null)
+								return null;
 							Image image = images.get(imageDesc);
 							if (image == null) {
 								image = imageDesc.createImage();

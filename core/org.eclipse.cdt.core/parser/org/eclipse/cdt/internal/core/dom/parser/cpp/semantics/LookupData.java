@@ -16,10 +16,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getSimplifiedType;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -77,6 +73,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Context data for IASTName lookup
  */
@@ -87,22 +87,22 @@ public class LookupData extends ScopeLookupData {
 	/** Used to ensure we don't visit things more than once. */
 	public ObjectSet<IScope> visited= new ObjectSet<>(1);
 
-	public boolean contentAssist = false;
+	public boolean contentAssist;
 
-	public boolean typesOnly = false;
-	public boolean usingDirectivesOnly = false;
-	public boolean ignoreUsingDirectives = false;
-	public boolean ignoreMembers = false;
+	public boolean typesOnly;
+	public boolean usingDirectivesOnly;
+	public boolean ignoreUsingDirectives;
+	public boolean ignoreMembers;
 
-	public boolean qualified = false;
-	public boolean checkAssociatedScopes= false;
+	public boolean qualified;
+	public boolean checkAssociatedScopes;
 
-	public boolean forUsingDeclaration = false;
+	public boolean forUsingDeclaration;
 
     /** When computing the cost of a method call, treat the first argument as the implied object. */
-	public boolean argsContainImpliedObject = false;
+	public boolean argsContainImpliedObject;
 	/** In list-initialization **/
-	public boolean fNoNarrowing= false;
+	public boolean fNoNarrowing;
 
 	private IASTDeclarator fDeclarator;
 	private boolean fFunctionCall;
@@ -113,7 +113,7 @@ public class LookupData extends ScopeLookupData {
 	private ValueCategory[] functionArgValueCategories;
 
 	public ICPPClassType skippedScope;
-	public Object foundItems = null;
+	public Object foundItems;
 	public ProblemBinding problem;
 
 	public LookupData(IASTName n) {

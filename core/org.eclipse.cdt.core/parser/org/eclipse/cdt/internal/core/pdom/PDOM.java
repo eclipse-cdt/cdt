@@ -261,11 +261,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  CDT 8.7 development (versions not supported on the 8.6.x branch)
 	 *  181.0 - C function type with varargs, bug 452416.
-	 *  182.0 - A flag added to PDOMCPPClassSpecialization, bug 466362.
+	 *  182.0 - A flag added to PDOMCPPClassSpecialization, bug 466362. <<CDT 8.7>>
+	 *  
+	 *  CDT 8.8 development (versions not supported on the 8.7.x branch)
+	 *  190.0 - Signature change for methods with ref-qualifiers, bug 470014.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(182, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(182, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(182, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(190, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(190, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(190, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

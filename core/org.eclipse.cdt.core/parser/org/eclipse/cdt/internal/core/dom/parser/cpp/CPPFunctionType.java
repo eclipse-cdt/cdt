@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 			            return false;
 			    }
 			} else {
-				if (!SemanticUtil.isEmptyParameterList(parameters) 
+				if (!SemanticUtil.isEmptyParameterList(parameters)
 						|| !SemanticUtil.isEmptyParameterList(fps)) {
 					return false;
 				}
@@ -170,11 +170,12 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		for (int i = 0; i < pars.length; i++) {
 			pars[i]= buffer.unmarshalType();
 		}
-		return new CPPFunctionType(rt, pars, 
-				(firstBytes & ITypeMarshalBuffer.FLAG1) != 0,   // const
-				(firstBytes & ITypeMarshalBuffer.FLAG3) != 0,   // volatile
-				(firstBytes & ITypeMarshalBuffer.FLAG5) != 0,   // has ref-qualifier
-				(firstBytes & ITypeMarshalBuffer.FLAG4) != 0,   // rvalue reference
-				(firstBytes & ITypeMarshalBuffer.FLAG2) != 0);  // takes varargs
+		boolean isConst = (firstBytes & ITypeMarshalBuffer.FLAG1) != 0;
+		boolean takesVarargs = (firstBytes & ITypeMarshalBuffer.FLAG2) != 0;
+		boolean isVolatile = (firstBytes & ITypeMarshalBuffer.FLAG3) != 0;
+		boolean hasRefQualifier = (firstBytes & ITypeMarshalBuffer.FLAG4) != 0;
+		boolean isRValueReference = (firstBytes & ITypeMarshalBuffer.FLAG5) != 0;
+		return new CPPFunctionType(rt, pars, isConst, isVolatile, hasRefQualifier, isRValueReference,
+				takesVarargs);
 	}
 }

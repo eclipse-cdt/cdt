@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -49,6 +47,8 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding CPP language resolution
@@ -657,6 +657,43 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertQNEquals("n1::n2::U", b11);
 		IBinding b12 = getBindingFromASTName("U _u12;", 1);
 		assertQNEquals("n1::n2::U", b12);
+	}
+
+	//	struct A {
+	//	  A& operator<<(int);
+	//	  void p() &;
+	//	  void p() &&;
+	//	};
+	//	A& operator<<(A&&, char);
+
+	//	void test() {
+	//	  A a;
+	//	  A() << 1;//1     // calls A::operator<<(int)
+	//	  A() << 'c';//2   // calls operator<<(A&&, char)
+	//	  a << 1;//3       // calls A::operator<<(int)
+	//	  a << 'c';//4     // calls A::operator<<(int)
+	//	  A().p();//5      // calls A::p()&&
+	//	  a.p();//6        // calls A::p()&
+	//  }
+	public void testRankingOfReferenceBindings() throws Exception {
+		ICPPMethod m= getBindingFromImplicitASTName("<< 1;//1", 2);
+		assertNotNull(m);
+		assertEquals(1, m.getType().getParameterTypes().length);
+		ICPPFunction f= getBindingFromImplicitASTName("<< 'c';//2", 2);
+		assertNotNull(f);
+		assertEquals(2, f.getType().getParameterTypes().length);
+		m= getBindingFromImplicitASTName("<< 1;//3", 2);
+		assertNotNull(m);
+		assertEquals(1, m.getType().getParameterTypes().length);
+		m= getBindingFromImplicitASTName("<< 'c';//4", 2);
+		assertNotNull(m);
+		assertEquals(1, m.getType().getParameterTypes().length);
+		m= getBindingFromFirstIdentifier("p();//5");
+		assertNotNull(m);
+		assertTrue(m.getType().isRValueReference());
+		m= getBindingFromFirstIdentifier("p();//6");
+		assertNotNull(m);
+		assertFalse(m.getType().isRValueReference());
 	}
 
 	// // header content

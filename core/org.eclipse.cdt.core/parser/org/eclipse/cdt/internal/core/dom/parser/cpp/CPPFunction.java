@@ -64,7 +64,12 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for C++ function
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
-	public static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null);
+	public static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null) {
+		@Override
+		public String toString() {
+			return "UNINITIALIZED_FUNCTION"; //$NON-NLS-1$
+		}
+	};
 
 	protected IASTDeclarator[] declarations;
 	protected ICPPASTFunctionDeclarator definition;

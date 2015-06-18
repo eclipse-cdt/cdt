@@ -270,7 +270,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 		height = newHeight;
 
 		if (sizeChanged && remoteIsTelnetServer && localOptions[TELNET_OPTION_NAWS].isEnabled()) {
-			Integer[] sizeData = { new Integer(width), new Integer(height) };
+			Integer[] sizeData = { Integer.valueOf(width), Integer.valueOf(height) };
 
 			localOptions[TELNET_OPTION_NAWS].sendSubnegotiation(sizeData);
 		}
@@ -418,6 +418,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 			// TELNET protocol data.
 
 			byte inputByte = rawBytes[byteIndex];
+			int ubyte = inputByte & 0xFF;
 
 			switch (telnetState) {
 			case STATE_INITIAL:
@@ -427,7 +428,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					// It's not an IAC code, so just append it to
 					// processedBytes.
 
-					processedBytes[nextProcessedByte++] = rawBytes[byteIndex];
+					processedBytes[nextProcessedByte++] = inputByte;
 				}
 				break;
 
@@ -489,7 +490,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 				default:
 					// Unrecognized command! This should never happen.
 					Logger.log("processTelnetProtocol: UNRECOGNIZED TELNET PROTOCOL COMMAND: " + //$NON-NLS-1$
-							inputByte);
+							ubyte);
 					telnetState = STATE_INITIAL;
 					break;
 				}
@@ -500,36 +501,36 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 			// local options.
 
 			case STATE_WILL_RECEIVED:
-				Logger.log("Received WILL " + localOptions[inputByte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
-				remoteOptions[inputByte].handleWill();
+				Logger.log("Received WILL " + localOptions[ubyte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+				remoteOptions[ubyte].handleWill();
 				telnetState = STATE_INITIAL;
 				telnetServerDetected();
 				break;
 
 			case STATE_WONT_RECEIVED:
-				Logger.log("Received WONT " + localOptions[inputByte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
-				remoteOptions[inputByte].handleWont();
+				Logger.log("Received WONT " + localOptions[ubyte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+				remoteOptions[ubyte].handleWont();
 				telnetState = STATE_INITIAL;
 				telnetServerDetected();
 				break;
 
 			case STATE_DO_RECEIVED:
-				Logger.log("Received DO " + localOptions[inputByte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
-				localOptions[inputByte].handleDo();
+				Logger.log("Received DO " + localOptions[ubyte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+				localOptions[ubyte].handleDo();
 				telnetState = STATE_INITIAL;
 				telnetServerDetected();
 				break;
 
 			case STATE_DONT_RECEIVED:
-				Logger.log("Received DONT " + localOptions[inputByte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
-				localOptions[inputByte].handleDont();
+				Logger.log("Received DONT " + localOptions[ubyte].optionName() + "."); //$NON-NLS-1$ //$NON-NLS-2$
+				localOptions[ubyte].handleDont();
 				telnetState = STATE_INITIAL;
 				telnetServerDetected();
 				break;
 
 			case STATE_SUBNEGOTIATION_STARTED:
 				Logger.log("Starting subnegotiation for option " + //$NON-NLS-1$
-						localOptions[inputByte].optionName() + "."); //$NON-NLS-1$
+						localOptions[ubyte].optionName() + "."); //$NON-NLS-1$
 
 				// First, zero out the array of received subnegotiation butes.
 
@@ -608,7 +609,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 
 						receivedSubnegotiation[nextSubnegotiationByteIndex - 1] = 0;
 
-						int subnegotiatedOption = receivedSubnegotiation[0];
+						int subnegotiatedOption = receivedSubnegotiation[0] & 0xFF;
 
 						localOptions[subnegotiatedOption].handleSubnegotiation(receivedSubnegotiation,
 								nextSubnegotiationByteIndex);
@@ -636,7 +637,7 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					Logger.log("SUBNEGOTIATION BUFFER FULL!"); //$NON-NLS-1$
 					ignoreSubnegotiation = true;
 				} else {
-					Logger.log("Recording subnegotiation byte " + (inputByte & 0xff)); //$NON-NLS-1$
+					Logger.log("Recording subnegotiation byte " + ubyte); //$NON-NLS-1$
 
 					receivedSubnegotiation[nextSubnegotiationByteIndex++] = inputByte;
 				}

@@ -262,7 +262,7 @@ class TelnetOption implements TelnetCodes
 	 *         parameter <i>option</i>.
 	 */
 	public String optionName() {
-		return optionNames[option];
+		return optionNames[option & 0xFF];
 	}
 
 	/**
@@ -524,7 +524,7 @@ class TelnetOption implements TelnetCodes
 				break;
 			}
 
-			// Tell the remote endpoint our terminal type is "ansi" using this sequence
+			// Tell the remote endpoint our terminal type is "xterm" using this sequence
 			// of TELNET protocol bytes:
 			//
 			//    IAC SB TERMINAL-TYPE IS x t e r m IAC SE
@@ -565,7 +565,7 @@ class TelnetOption implements TelnetCodes
 			//    IAC SB NAWS <width-highbyte> <width-lowbyte> <height-highbyte>
 			//    <height-lowbyte> IAC SE
 
-			byte[] NAWSData = { TELNET_IAC, TELNET_SB, TELNET_OPTION_NAWS, 0,
+			final byte[] NAWSData = { TELNET_IAC, TELNET_SB, TELNET_OPTION_NAWS, 0,
 					0, 0, 0, TELNET_IAC, TELNET_SE };
 			int width = ((Integer) subnegotiationData[0]).intValue();
 			int height = ((Integer) subnegotiationData[1]).intValue();
@@ -579,12 +579,6 @@ class TelnetOption implements TelnetCodes
 					.log("sending terminal size to remote endpoint: width = " + width + //$NON-NLS-1$
 							", height = " + height + "."); //$NON-NLS-1$ //$NON-NLS-2$
 
-			// This final local variable is a hack to get around the fact that inner
-			// classes cannot reference a non-final local variable in a lexically
-			// enclosing scope.
-
-			final byte[] NAWSDataFinal = NAWSData;
-
 			// Send the NAWS data in a new thread.  The current thread is the display
 			// thread, and calls to write() can block, but blocking the display thread
 			// is _bad_ (it hangs the GUI).
@@ -593,7 +587,7 @@ class TelnetOption implements TelnetCodes
 				@Override
                 public void run() {
 					try {
-						outputStream.write(NAWSDataFinal);
+						outputStream.write(NAWSData);
 					} catch (IOException ex) {
 						Logger.log("IOException sending NAWS subnegotiation!"); //$NON-NLS-1$
 						Logger.logException(ex);

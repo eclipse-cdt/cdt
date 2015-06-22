@@ -55,7 +55,7 @@ public class StopActiveCommandHandler extends AbstractHandler {
 						ILaunchConfiguration activeConfig = launchBarManager.getActiveLaunchConfiguration();
 						for (ILaunch launch : activeLaunches) {
 							ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
-							if (launchConfig.equals(activeConfig)) {
+							if (launchConfig != null && launchConfig.equals(activeConfig)) {
 								launch.terminate();
 							} else if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
 								// There are evil delegates that use a working copy for scratch storage

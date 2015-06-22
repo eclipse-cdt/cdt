@@ -20,11 +20,14 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -49,7 +52,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 	ILaunchConfigurationTabGroup tabGroup;
 	private Text nameText;
 	private CTabFolder tabFolder;
-	private LaunchConfigurationDialog launchConfigurationDialog = new LaunchConfigurationDialog();
+	private LaunchConfigurationDialog launchConfigurationDialog = new LaunchConfigurationDialogFake();
 	private LaunchConfigurationManager launchConfigurationMgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 
 	public NewLaunchConfigEditPage() {
@@ -126,6 +129,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(workingCopy, initialMode);
 			for (CTabItem item : tabFolder.getItems())
 				item.dispose();
+			LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
 			tabGroup.createTabs(launchConfigurationDialog, initialMode);
 			boolean firstTab = true;
 			for (ILaunchConfigurationTab tab : tabGroup.getTabs()) {
@@ -165,12 +169,13 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			return false;
 		for (ILaunchConfigurationTab tab : tabGroup.getTabs())
 			tab.performApply(workingCopy);
+		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(null);
 		return true;
 	}
 
 	public void validateFields() {
 		// page is not complete unless we finish validation successfully
-		setPageComplete(false); 
+		setPageComplete(false);
 		if (workingCopy == null)
 			return;
 		String message = null;
@@ -213,12 +218,31 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 	}
 
-	private class LaunchConfigurationDialog implements ILaunchConfigurationDialog {
+	private class LaunchConfigurationDialogFake extends LaunchConfigurationDialog {
+		public LaunchConfigurationDialogFake() {
+			super(NewLaunchConfigEditPage.this.getShell(), null, null);
+		}
+
+		@Override
+		protected ILaunchConfiguration getLaunchConfiguration() {
+			return workingCopy;
+		}
+
+		@Override
+		public LaunchGroupExtension getLaunchGroup() {
+			return NewLaunchConfigEditPage.this.getLaunchGroup();
+		}
+
+		@Override
+		public String getMode() {
+			return NewLaunchConfigEditPage.this.getMode();
+		}
+
 		@Override
 		public void run(boolean fork, boolean cancelable,
 				IRunnableWithProgress runnable)
 				throws InvocationTargetException, InterruptedException {
-			// TODO Auto-generated method stub
+			// ignore
 		}
 
 		@Override
@@ -232,7 +256,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 
 		@Override
 		public void setName(String name) {
-			// TODO Auto-generated method stub
+			// ignore
 		}
 
 		@Override
@@ -253,10 +277,6 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			return tabGroup.getTabs()[i];
 		}
 
-		@Override
-		public String getMode() {
-			return ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
-		}
 
 		@Override
 		public void setActiveTab(ILaunchConfigurationTab tab) {
@@ -274,6 +294,27 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		@Override
 		public void setActiveTab(int index) {
 			tabFolder.setSelection(index);
+		}
+	}
+
+	public String getMode() {
+		return ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
+	}
+
+	public LaunchGroupExtension getLaunchGroup() {
+		try {
+			if (workingCopy == null)
+				return null;
+			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
+					.getLaunchGroup(workingCopy.getType(), getMode());
+			if (group == null) {
+				return null;
+			}
+			LaunchGroupExtension groupExt = DebugUIPlugin.getDefault().getLaunchConfigurationManager()
+					.getLaunchGroup(group.getIdentifier());
+			return groupExt;
+		} catch (CoreException e) {
+			return null;
 		}
 	}
 }

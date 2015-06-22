@@ -143,15 +143,6 @@ function fixup_gdb() {
 
   echo_header "Fixing up gdb ${version}"
 
-  # Disable building of the doc, which fails anyway with older gdbs and
-  # newer makeinfos.
-  ${dryrun} find ${build} -name '*.texinfo' -exec cp "/dev/null" "{}" \;
-
-  # This file tries to include a non-existent file.
-  if [ "$version" = "7.2" ]; then
-    ${dryrun} cp "/dev/null" "${build}/etc/standards.texi"
-  fi
-
   # glibc or the kernel changed the signal API at some point
   case "$version" in
     "6.6"|"6.7.1"|"6.8"|"7.0.1"|"7.1"|"7.2"|"7.3.1"|"7.4.1")
@@ -224,7 +215,9 @@ function make_install_gdb() {
 
   ${dryrun} pushd "${install}"
 
-  ${dryrun} make install
+  # Disable building of the doc, which fails anyway with older gdbs and
+  # newer makeinfos.
+  ${dryrun} make install MAKEINFO=true
 
   ${dryrun} popd
 }

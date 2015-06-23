@@ -12,12 +12,15 @@
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
  *     Sergey Prigogin (Google)
+ *     Mohamed Azab (Mentor Graphics)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,11 +52,24 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.contentassist.ParameterGuessingProposal;
 import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
 
 public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	public static enum CompareType {
 		ID, DISPLAY, REPLACEMENT, CONTEXT, INFORMATION
+	}
+
+	private class ContentAssistResult {
+		long startTime;
+		long endTime;
+		Object[] results;
+
+		public ContentAssistResult(long startTime, long endTime, Object[] results) {
+			this.startTime = startTime;
+			this.endTime = endTime;
+			this.results = results;
+		}
 	}
 
 	protected ICProject fCProject;
@@ -107,8 +123,9 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	protected void assertContentAssistResults(int offset, int length, String[] expected,
-			boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType) throws Exception {
+	private ContentAssistResult invokeContentAssist(int offset, int length,
+			boolean isCompletion, boolean isTemplate, boolean filterResults)
+					throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting " + this.getClass().getName());
 		}
@@ -138,12 +155,20 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 				results= filterResults(results, isCode);
 			}
 		}
-		String[] resultStrings= toStringArray(results, compareType);
+		return new ContentAssistResult(startTime, endTime, results);
+	}
+
+	protected void assertContentAssistResults(int offset, int length,
+			String[] expected, boolean isCompletion, boolean isTemplate,
+			boolean filterResults, CompareType compareType) throws Exception {
+		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
+
+		String[] resultStrings= toStringArray(r.results, compareType);
 		Arrays.sort(expected);
 		Arrays.sort(resultStrings);
 
 		if (CTestPlugin.getDefault().isDebugging())  {
-			System.out.println("Time: " + (endTime - startTime) + " ms");
+			System.out.println("Time: " + (r.endTime - r.startTime) + " ms");
 			for (String proposal : resultStrings) {
 				System.out.println("Result: " + proposal);
 			}
@@ -175,6 +200,77 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		} else if (doCheckExtraResults())  {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
+	}
+
+	protected void assertContentAssistResults(int offset, int length, Map<String, String[][]> expected,
+			boolean isCompletion, boolean isTemplate, boolean filterResults, CompareType compareType)
+					throws Exception {
+		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
+		Map<String, String[][]> resultMap = toMap(r.results, compareType);
+
+		if (CTestPlugin.getDefault().isDebugging()) {
+			System.out.println("Time : " + (r.endTime - r.startTime) + " ms");
+			for (String proposal : resultMap.keySet()) {
+				System.out.println("Result: " + proposal);
+				String[][] result = resultMap.get(proposal);
+				for (String[] row : result) {
+					for (String s : row) {
+						System.out.print(s + " ");
+					}
+					System.out.println();
+				}
+			}
+			System.out.println();
+		}
+
+		for (String proposal : expected.keySet()) {
+			String[][] result = resultMap.get(proposal);
+			assertNotNull(result);
+			String[][] expectedGuesses = expected.get(proposal);
+			String exp = "";
+			String guess = "";
+			int minLength = expectedGuesses.length < result.length ? expectedGuesses.length : result.length;
+			for (int i = 0; i < minLength; i++) {
+				String[] tmp = expectedGuesses[i];
+				Arrays.sort(tmp);
+				exp += toString(tmp) + "\n";
+				tmp = result[i];
+				Arrays.sort(tmp);
+				guess += toString(tmp) + "\n";
+			}
+			assertEquals(exp, guess);
+		}
+	}
+
+	private Map<String, String[][]> toMap(Object[] results,
+			CompareType compareType) {
+		Map<String, String[][]> resultsMap = new HashMap<>();
+		for (Object result : results) {
+			switch (compareType) {
+			case REPLACEMENT:
+				if (result instanceof ParameterGuessingProposal) {
+					ParameterGuessingProposal proposal = (ParameterGuessingProposal) result;
+					String pName = proposal.getReplacementString();
+					ICompletionProposal[][] pProposals = proposal
+							.getParametersGuesses();
+					String[][] p;
+					if (pProposals != null) {
+						p = new String[pProposals.length][];
+						for (int i = 0; i < pProposals.length; i++) {
+							p[i] = new String[pProposals[i].length];
+							for (int j = 0; j < pProposals[i].length; j++) {
+								p[i][j] = pProposals[i][j].getDisplayString();
+							}
+						}
+					} else {
+						p = new String[0][];
+					}
+					resultsMap.put(pName, p);
+				}
+				break;
+			}
+		}
+		return resultsMap;
 	}
 
 	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, CompareType compareType) throws Exception {

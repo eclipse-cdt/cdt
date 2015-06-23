@@ -17,6 +17,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -166,10 +167,10 @@ public class ASTTypeUtil {
 
 	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
 		result.append('<');
-		for (int i = 0; i < args.length; i++) {
-			if (i != 0) {
-				result.append(',');
-			}
+		if (args.length>0)
+			appendArgument(args[0], normalize, result);
+		for (int i = 1; i < args.length; i++) {
+			result.append(',');
 			appendArgument(args[i], normalize, result);
 		}
 		result.append('>');
@@ -505,6 +506,13 @@ public class ASTTypeUtil {
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
+		String cachedResult = cache.appendType_get(type, normalize);
+		if (cachedResult != null) {
+			result.append(cachedResult);
+			return;
+		}
+		IType _type = type;
+		int startOffset = result.length();
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		int numTypes = 0;
 
@@ -628,6 +636,7 @@ public class ASTTypeUtil {
 				appendTypeString(tj, normalize, result);
 			}
 		}
+		cache.appendType_put(_type, normalize, result.substring(startOffset));
 	}
 
 	/**
@@ -879,4 +888,32 @@ public class ASTTypeUtil {
 		}
 		return 0;
 	}
+	
+	private static final Cache cache = new Cache();
+	private static class Cache {
+		// keep two separate maps for normalized and unnormalized type names
+		private WeakHashMap<IType, String> resultMap_appendType_normalized = new WeakHashMap<>();
+		private WeakHashMap<IType, String> resultMap_appendType_unnormalized = new WeakHashMap<>();
+		/**
+		 * Get the cached name for a type. Returns <code>null</code> when the value was not cached. May return <code>null</code> also
+		 * if the cached value was GC'ed.
+		 */
+		public String appendType_get (IType type, boolean normalize) {
+			if (normalize) {
+				return resultMap_appendType_normalized.get(type);
+			} else {
+				return resultMap_appendType_unnormalized.get(type);
+			}
+		}
+		/**
+		 * Store a computed type name in the cache. 
+		 */
+		public String appendType_put (IType type, boolean normalize, String result) {
+			if (normalize) {
+				return resultMap_appendType_normalized.put(type, result);
+			} else {
+				return resultMap_appendType_unnormalized.put(type, result);
+			}
+		}
+	}	
 }

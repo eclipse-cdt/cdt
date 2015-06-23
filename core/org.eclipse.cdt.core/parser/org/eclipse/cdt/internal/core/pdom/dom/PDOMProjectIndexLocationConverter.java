@@ -13,6 +13,8 @@
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -33,6 +35,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	final private IWorkspaceRoot fRoot;
 	final private String fFullPathPrefix;
 	final private boolean fIgnoreExternal;
+	final Map<String,IIndexFileLocation> fromInternalFormatCache = new HashMap<>();
 
 	public PDOMProjectIndexLocationConverter(IProject project) {
 		this(project, false);
@@ -46,6 +49,10 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	
 	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
+		IIndexFileLocation cachedResult = fromInternalFormatCache.get(raw);
+		if (cachedResult!=null) {
+			return cachedResult;
+		}
 		String fullPath = null;
 		URI uri= null;
 		if (raw.startsWith(EXTERNAL)) {
@@ -65,7 +72,13 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 				uri = member.getLocationURI();
 			}
 		} 
-		return uri == null ? null : new IndexFileLocation(uri, fullPath);
+		if (uri == null) {
+			return null;
+		} else {
+			IndexFileLocation location = new IndexFileLocation(uri, fullPath);
+			fromInternalFormatCache.put(raw, location);
+			return location;
+		}
 	}
 	
 	@Override

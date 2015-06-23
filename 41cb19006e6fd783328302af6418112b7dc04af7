@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_87101e5a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-23T20:47:34Z",
+      "side": 1,
+      "message": "Can this cause an infinite loop?",
+      "range": {
+        "startLine": 525,
+        "startChar": 3,
+        "endLine": 525,
+        "endChar": 39
+      },
+      "revId": "41cb19006e6fd783328302af6418112b7dc04af7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_27068a29",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/BaseTestCase.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-06-23T20:47:34Z",
+      "side": 1,
+      "message": "Why not StringBuilder?",
+      "range": {
+        "startLine": 533,
+        "startChar": 4,
+        "endLine": 533,
+        "endChar": 16
+      },
+      "revId": "41cb19006e6fd783328302af6418112b7dc04af7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

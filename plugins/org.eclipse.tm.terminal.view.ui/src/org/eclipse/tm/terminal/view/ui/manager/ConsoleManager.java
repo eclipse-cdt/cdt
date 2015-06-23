@@ -237,7 +237,7 @@ public class ConsoleManager {
 		for (int i = 0; i < refs.length; i++) {
 			IViewReference ref = refs[i];
 			if (ref.getId().equals(id)) {
-				if (secondaryId == ANY_SECONDARY_ID
+				if (ANY_SECONDARY_ID.equals(secondaryId)
 						|| secondaryId == null && ref.getSecondaryId() == null
 						|| secondaryId != null && secondaryId.equals(ref.getSecondaryId())) {
 					IViewPart part = ref.getView(true);
@@ -362,12 +362,12 @@ public class ConsoleManager {
 						return notPinnedPart;
 					}
 					// else we need to create a new one
-					IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getNextTerminalSecondaryId(id != null ? id : IUIConstants.ID));
+					IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getSecondaryId(secondaryId, id));
 					return newPart;
 				}
 				// we found a active terminal page
 				// if it is pinned search for a non pinned (not active)
-				if (((ITerminalsView) activePart).isPinned() && secondaryId == ANY_SECONDARY_ID) {
+				if (((ITerminalsView) activePart).isPinned() && ANY_SECONDARY_ID.equals(secondaryId)) {
 					// we found one so use it
 					IViewPart notPinnedPart = getFirstNotPinnedTerminalsView(id != null ? id : IUIConstants.ID);
 					if (notPinnedPart != null) {
@@ -380,7 +380,7 @@ public class ConsoleManager {
 						return notPinnedPart;
 					}
 					// else we need to create a new one
-					IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getNextTerminalSecondaryId(id != null ? id : IUIConstants.ID));
+					IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getSecondaryId(secondaryId, id));
 					return newPart;
 				}
 				// else return the active one
@@ -388,11 +388,25 @@ public class ConsoleManager {
 			}
 			// create first new terminal
 			if (activate) {
-				IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getNextTerminalSecondaryId(id != null ? id : IUIConstants.ID));
+				IViewPart newPart = showConsoleView(id != null ? id : IUIConstants.ID, getSecondaryId(secondaryId, id));
 				return newPart;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Return the secondary id to use.
+	 * @param secondaryId
+	 * @param id
+	 * @return the secondaryId argument is not null, or *, otherwise use the auto generated secondary id.
+	 */
+	private String getSecondaryId(String secondaryId, String id){
+		if(secondaryId==null || ANY_SECONDARY_ID.equals(secondaryId)){
+			return getNextTerminalSecondaryId(id != null ? id : IUIConstants.ID);
+		}
+
+		return secondaryId;
 	}
 
 	/**

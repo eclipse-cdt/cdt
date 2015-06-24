@@ -139,6 +139,9 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
     
         @Override
         public boolean equals(Object other) {
+        	if (other == null)
+        		return false;
+        	
             return super.baseEquals(other) && 
                 fExpression == null 
                     ? ((InvalidExpressionDMContext) other).getExpression() == null 

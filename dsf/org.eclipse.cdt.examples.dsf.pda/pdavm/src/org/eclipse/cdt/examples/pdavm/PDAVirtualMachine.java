@@ -662,6 +662,9 @@ public class PDAVirtualMachine {
             try {
                 if (allThreadsSuspended || fCommandReceiveStream.ready()) {
                     line = fCommandReceiveStream.readLine();
+                    if (line == null)
+                    	return;
+                    
                     processDebugCommand(line);
                 }
             } catch (IOException e) {
@@ -698,6 +701,10 @@ public class PDAVirtualMachine {
                 System.exit(1);
                 return;
             }
+            
+            if (line == null)
+            	break;
+            
             processDebugCommand(line);
         }
 

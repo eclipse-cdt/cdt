@@ -699,6 +699,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * @param item The associated tab item. Must not be <code>null</code>.
 	 *
 	 * @return The command input field handler. Must not be <code>null</code>.
+	 *
+	 * @since 4.1
 	 */
 	protected TabCommandFieldHandler createTabCommandFieldHandler(TabFolderManager tabFolderManager, CTabItem item) {
 		return new TabCommandFieldHandler(tabFolderManager, item);

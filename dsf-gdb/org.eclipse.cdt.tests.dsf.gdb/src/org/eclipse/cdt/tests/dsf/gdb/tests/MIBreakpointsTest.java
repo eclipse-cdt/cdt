@@ -64,6 +64,7 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -2843,7 +2844,14 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_AfterRestart() throws Throwable {
-		try {
+    	// Restart is not supported for a remote session
+    	if (isRemoteSession()) {
+    		Assert.assertFalse("Restart operation should not be allowed for a remote session",
+    				           SyncUtil.canRestart());
+    	    return;
+    	}
+
+    	try {
 			// Create a line breakpoint in the platform.  To do that, create a bp from
 			// the gdb console and let CDT create the corresponding platform bp.
 			queueConsoleCommand(String.format("break %s:%d", SOURCE_NAME, LINE_NUMBER_5));

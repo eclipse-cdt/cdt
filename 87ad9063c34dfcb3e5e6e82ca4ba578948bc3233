@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_6d77d145",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/service/PDAExpressions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-06-24T18:00:27Z",
+      "side": 1,
+      "message": "Note that this is taken care of by super.baseEquals().  However, to avoid the FindBugs warning, might as well make the change.",
+      "revId": "87ad9063c34dfcb3e5e6e82ca4ba578948bc3233",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

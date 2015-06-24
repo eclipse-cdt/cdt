@@ -222,7 +222,7 @@ public class DataGeneratorWithThread extends Thread
     private void randomCountReset() {
         // Calculate the new count.
         Random random = new java.util.Random();
-        fCount = MIN_COUNT + Math.abs(random.nextInt()) % (MAX_COUNT - MIN_COUNT);
+        fCount = MIN_COUNT + random.nextInt(MAX_COUNT - MIN_COUNT);
 
         // Reset the changed values.
         fChangedValues.clear();
@@ -238,8 +238,8 @@ public class DataGeneratorWithThread extends Thread
         Random random = new java.util.Random();
         Map<Integer, Integer> changed = new HashMap<Integer, Integer>();
         for (int i = 0; i < fCount * RANDOM_CHANGE_SET_PERCENTAGE / 100; i++) {
-            int randomIndex = Math.abs(random.nextInt()) % fCount;
-            int randomValue = Math.abs(random.nextInt()) % fCount;
+            int randomIndex = random.nextInt(fCount);
+            int randomValue = random.nextInt(fCount);
             changed.put(randomIndex, randomValue);
         }                
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_4d349593",
+        "filename": "dsf/org.eclipse.cdt.examples.dsf/src_preprocess/org/eclipse/cdt/examples/dsf/dataviewer/DataGeneratorWithExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-06-24T17:55:55Z",
+      "side": 1,
+      "message": "Why extract this?  It is not re-used anywhere else than the constructor.  Instead you can create, in the constructor\n\nfinal Random random \u003d new Random()\n\nand use it in the repeating call.",
+      "revId": "e132dd1324608eb18242ad8e5268a618f68296e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

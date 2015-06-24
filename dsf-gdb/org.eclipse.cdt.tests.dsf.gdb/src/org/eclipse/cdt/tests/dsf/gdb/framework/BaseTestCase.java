@@ -303,7 +303,7 @@ public class BaseTestCase {
      * Launch GDB.  The launch attributes must have been set already.
      */
  	protected void doLaunch() throws Exception {
- 		boolean remote = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE).equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+ 		boolean remote = isRemoteSession();
  		
     	if (GdbDebugOptions.DEBUG) {
     		GdbDebugOptions.trace("===============================================================================================\n");
@@ -394,8 +394,7 @@ public class BaseTestCase {
  			return;
  		}
 
- 		if (launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
- 				              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
+ 		if (isRemoteSession()) {
  			if (launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
  				String server = (String)launchAttributes.get(ATTR_DEBUG_SERVER_NAME);
  				String port = (String)launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_PORT);

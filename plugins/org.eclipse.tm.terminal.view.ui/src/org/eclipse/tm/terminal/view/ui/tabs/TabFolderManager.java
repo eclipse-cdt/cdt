@@ -685,10 +685,23 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 
 		TabCommandFieldHandler handler = commandFieldHandler.get(item);
 		if (handler == null) {
-			handler = new TabCommandFieldHandler(this, item);
+			handler = createTabCommandFieldHandler(this, item);
+			Assert.isNotNull(handler);
 			commandFieldHandler.put(item, handler);
 		}
 		return handler;
+	}
+
+	/**
+	 * Create the command input field handler for the given tab item.
+	 *
+	 * @param tabFolderManager The parent tab folder manager. Must not be <code>null</code>
+	 * @param item The associated tab item. Must not be <code>null</code>.
+	 *
+	 * @return The command input field handler. Must not be <code>null</code>.
+	 */
+	protected TabCommandFieldHandler createTabCommandFieldHandler(TabFolderManager tabFolderManager, CTabItem item) {
+		return new TabCommandFieldHandler(tabFolderManager, item);
 	}
 
 	/**

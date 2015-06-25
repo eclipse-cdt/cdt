@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+
+import junit.framework.TestCase;
 
 /**
  * @author Doug Schaefer
@@ -49,5 +50,29 @@ public class CharArrayUtilsTest extends TestCase {
 		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 3, "ABC".toCharArray(), true));
 		assertFalse(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 4, "abcd".toCharArray(), true));
 		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 2, "AB".toCharArray(), true));
+	}
+
+	public void testTrim() {
+		assertEquals("", new String(CharArrayUtils.trim("".toCharArray())));
+		assertEquals("", new String(CharArrayUtils.trim("   ".toCharArray())));
+		assertEquals("a", new String(CharArrayUtils.trim("   a".toCharArray())));
+		assertEquals("a", new String(CharArrayUtils.trim("   a  ".toCharArray())));
+		assertEquals("a  b", new String(CharArrayUtils.trim("   a  b  ".toCharArray())));
+		assertEquals("a  b", new String(CharArrayUtils.trim("a  b ".toCharArray())));
+	}
+
+	public void testLastIndexOf() {
+		assertEquals(-1, CharArrayUtils.lastIndexOf('a', "".toCharArray()));
+		assertEquals(3, CharArrayUtils.lastIndexOf('a', "array".toCharArray()));
+		assertEquals(-1, CharArrayUtils.lastIndexOf('a', "array".toCharArray(), 4));
+		assertEquals(3, CharArrayUtils.lastIndexOf('a', "array".toCharArray(), 3));
+
+		assertEquals(8, CharArrayUtils.lastIndexOf("aaabbbaa".toCharArray(),
+				"aaabbbaaaaabbbaabbbaa".toCharArray()));
+		assertEquals(-1, CharArrayUtils.lastIndexOf("aaabbbaa".toCharArray(),
+				"aabbbaabbbaa".toCharArray()));
+		assertEquals(6, CharArrayUtils.lastIndexOf("".toCharArray(), "123456".toCharArray()));
+		assertEquals(4, CharArrayUtils.lastIndexOf("56".toCharArray(), "123456".toCharArray()));
+		assertEquals(-1, CharArrayUtils.lastIndexOf("123".toCharArray(), "".toCharArray()));
 	}
 }

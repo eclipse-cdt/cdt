@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class CharArrayUtils {
 		int end = start + length;
 
 		for (int curr = start; curr < end; ++curr) {
-			h += (h << 3) + str[curr];
+			h = 31 * h + str[curr];
 		}
 
 		return h;
@@ -300,33 +300,65 @@ public class CharArrayUtils {
 	}
 
 	public static final int lastIndexOf(char[] toBeFound, char[] array) {
-	    int j = toBeFound.length - 1;
-		for (int i = array.length; --i >= 0;) {
-			if (toBeFound[j] == array[i]) {
-			    if (--j == -1)
-			        return i;
-			} else {
-				j = toBeFound.length - 1;
+		return lastIndexOf(toBeFound, array, 0);
+	}
+	
+	/**
+	 * @since 5.11
+	 */
+	public static int lastIndexOf(char toBeFound, char[] array) {
+		return lastIndexOf(toBeFound, array, 0);
+	}
+	
+	/**
+	 * @since 5.11
+	 */
+	public static int lastIndexOf(char toBeFound, char[] array, int fromIndex) {
+		for (int i = array.length; --i >= fromIndex;) {
+			if (array[i] == toBeFound) {
+				return i;
 			}
 		}
 		return -1;
 	}
-
+	
+	/**
+	 * @since 5.11
+	 */
+	public static int lastIndexOf(char[] toBeFound, char[] array, int fromIndex) {
+		int i = array.length;
+		int j = toBeFound.length;
+		while (true) {
+			if (--j < 0)
+				return i;
+			if (--i < fromIndex)
+				return -1;
+			if (toBeFound[j] != array[i]) {
+				i += toBeFound.length - j - 1;
+				j = toBeFound.length;
+			}
+		}
+	}
+	
 	static final public char[] trim(char[] chars) {
 		if (chars == null)
 			return null;
 
-		int start = 0, length = chars.length, end = length - 1;
+		int length = chars.length;
+		int start = 0;
 		while (start < length && chars[start] == ' ') {
 			start++;
 		}
-		while (end > start && chars[end] == ' ') {
-			end--;
+		if (start == length)
+			return EMPTY_CHAR_ARRAY;
+
+		int end = length;
+		while (--end > start && chars[end] == ' ') {
 		}
-		if (start != 0 || end != length - 1) {
-			return subarray(chars, start, end + 1);
-		}
-		return chars;
+		end++;
+		if (start == 0 && end == length)
+			return chars;
+		return subarray(chars, start, end);
 	}
 
 	static final public char[] lastSegment(char[] array, char[] separator) {
@@ -369,6 +401,8 @@ public class CharArrayUtils {
      */
 	public static char[] extractChars(StringBuilder buf) {
 		final int len = buf.length();
+		if (len == 0)
+			return EMPTY_CHAR_ARRAY;
 		char[] result= new char[len];
 		buf.getChars(0, len, result, 0);
 		return result;

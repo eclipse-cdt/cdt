@@ -176,8 +176,7 @@ public class AST2CPPTests extends AST2TestBase {
 	}
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
-		String code= getAboveComment();
-		return new BindingAssertionHelper(code, true);
+		return getAssertionHelper(CPP);
 	}
 
 	private void assertProblemBinding(int id, IBinding b) {
@@ -7841,15 +7840,6 @@ public class AST2CPPTests extends AST2TestBase {
 		defNames=  new String[] {};
 		IASTCompositeTypeSpecifier cls= getCompositeType(tu, 1);
 		checkDeclDef(declNames, defNames, cls.getMembers());
-	}
-
-	//	#define MACRO "macro"
-	//	void f(const char* s);
-	//	void test() {
-	//	  f("aaa"MACRO);
-	//	}
-	public void testStringConcatenationWithMacro() throws Exception {
-		parseAndCheckBindings();
 	}
 
 	//	class X {

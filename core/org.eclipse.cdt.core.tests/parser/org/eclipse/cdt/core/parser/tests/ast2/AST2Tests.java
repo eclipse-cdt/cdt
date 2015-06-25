@@ -715,6 +715,23 @@ public class AST2Tests extends AST2TestBase {
 		}
 	}
 
+	//	#define _MACRO "macro"
+	//	#define MACRO _MACRO
+	//	void f(const char* s);
+	//	void test() {
+	//	  f("aaa"MACRO);
+	//	}
+	public void testStringConcatenationWithMacro() throws Exception {
+		for (ParserLanguage lang : C_AND_CPP) {
+			BindingAssertionHelper bh = getAssertionHelper(lang);
+			IASTName name = bh.findName("f(\"", 1);
+			assertNotNull(name);
+			IASTFunctionCallExpression call = (IASTFunctionCallExpression) name.getParent().getParent();
+			IASTLiteralExpression arg = (IASTLiteralExpression) call.getArguments()[0];
+			assertEquals("\"aaamacro\"", arg.toString());
+		}
+	}
+
 	public void testStructureDef() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct A;                \r\n"); //$NON-NLS-1$

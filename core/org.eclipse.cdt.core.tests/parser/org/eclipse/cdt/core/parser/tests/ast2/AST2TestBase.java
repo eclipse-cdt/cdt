@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.core.parser.ParserLanguage.C;
 import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 
 import java.io.IOException;
@@ -110,6 +111,7 @@ import junit.framework.AssertionFailedError;
  */
 public class AST2TestBase extends BaseTestCase {
 	public final static String TEST_CODE = "<testcode>";
+	protected static final ParserLanguage[] C_AND_CPP = new ParserLanguage[] { C, CPP };
     protected static final IParserLogService NULL_LOG = new NullLogService();
     protected static boolean sValidateCopy;
 
@@ -836,6 +838,11 @@ public class AST2TestBase extends BaseTestCase {
 		tu.accept(col);
 		assertNoProblemBindings(col);
 		return tu;
+	}
+
+	protected BindingAssertionHelper getAssertionHelper(ParserLanguage lang) throws ParserException, IOException {
+		String code= getAboveComment();
+		return new BindingAssertionHelper(code, lang);
 	}
 
 	final protected void assertNoProblemBindings(NameCollector col) {

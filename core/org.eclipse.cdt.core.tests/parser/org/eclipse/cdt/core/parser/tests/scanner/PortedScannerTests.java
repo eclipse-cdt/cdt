@@ -1,13 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
@@ -16,8 +16,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -30,8 +28,10 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
+import junit.framework.TestSuite;
+
 /**
- * Scanner2Tests ported to use the CPreprocessor
+ * Scanner2Tests ported to use the CPreprocessor.
  */
 public class PortedScannerTests extends PreprocessorTestsBase {
     public static TestSuite suite() {
@@ -47,7 +47,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug102825_1() throws Exception {
-		StringBuffer buffer = new StringBuffer(
+		StringBuilder buffer = new StringBuilder(
 				"#define CURLOPTTYPE_OBJECTPOINT   10000\n"); 
 		buffer.append("#define CINIT = CURLOPTTYPE_##OBJECTPOINT + 1\n"); 
 		buffer.append("CINIT\n"); 
@@ -57,10 +57,9 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug102825_2() throws Exception {
-		StringBuffer buffer = new StringBuffer(
+		StringBuilder buffer = new StringBuilder(
 				"#define CURLOPTTYPE_OBJECTPOINT   10000\n"); 
-		buffer
-				.append("#define CINIT(name,type,number) = CURLOPTTYPE_##type + number\n"); 
+		buffer.append("#define CINIT(name,type,number) = CURLOPTTYPE_##type + number\n"); 
 		buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n"); 
 		initializeScanner(buffer.toString());
 		validateToken(IToken.tASSIGN);
@@ -68,10 +67,9 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug102825_3() throws Exception {
-		StringBuffer buffer = new StringBuffer(
+		StringBuilder buffer = new StringBuilder(
 				"#define CURLOPTTYPE_OBJECTPOINT   10000\n"); 
-		buffer
-				.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_	## type + number\n"); 
+		buffer.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_	## type + number\n"); 
 		buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n"); 
 		initializeScanner(buffer.toString());
 		validateIdentifier("CURLOPT_FILE"); 
@@ -80,7 +78,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug102825_4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue( a, b ) a ## b\n"); 
 		buffer.append("#define HIGHLOW \"hello\"\n"); 
 		buffer.append("glue( HIGH, LOW )\n"); 
@@ -91,7 +89,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug195610_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue(x, y, z) x ## y ## z\n"); 
 		buffer.append("glue(, b, c)\n"); 
 
@@ -101,7 +99,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug195610_2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue(x, y, z) x ## y ## z\n"); 
 		buffer.append("glue(a, , c)\n"); 
 
@@ -111,7 +109,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug195610_3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue(x, y, z) x ## y ## z\n"); 
 		buffer.append("glue(a, b, )\n"); 
 
@@ -132,10 +130,9 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 		@Override
 		public String toString() {
-			StringBuffer s = new StringBuffer();
+			StringBuilder s = new StringBuilder();
 			for (int i = 0; i < length; ++i) {
-				s
-						.append("var").append(i).append("=").append(values[i]).append(" ");   //$NON-NLS-3$
+				s.append("var").append(i).append("=").append(values[i]).append(" ");   //$NON-NLS-3$
 			}
 			return s.toString();
 		}
@@ -153,7 +150,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 				return "Array must have at least 2 elements"; 
 			}
 			int numberOfElsifs = length - 1;
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("#if ").append(values[0]).append("\n#\tdefine ");  
 			buffer.append(symbolName(0)).append(" ").append(symbolValue(0)); 
 			for (int i = 0; i < numberOfElsifs; ++i)
@@ -847,7 +844,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug36045() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append('"');
 		buffer.append('\\');
 		buffer.append('"');
@@ -963,16 +960,11 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	public void testBug36047() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("# define MAD_VERSION_STRINGIZE(str)	#str\n"); 
-		writer
-				.write("# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n"); 
-		writer
-				.write("# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\" \\\n"); 
-		writer
-				.write("                         MAD_VERSION_STRING(MAD_VERSION_MINOR) \".\" \\\n"); 
-		writer
-				.write("                         MAD_VERSION_STRING(MAD_VERSION_PATCH) \".\" \\\n"); 
-		writer
-				.write("                         MAD_VERSION_STRING(MAD_VERSION_EXTRA)\n"); 
+		writer.write("# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n"); 
+		writer.write("# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\" \\\n"); 
+		writer.write("                         MAD_VERSION_STRING(MAD_VERSION_MINOR) \".\" \\\n"); 
+		writer.write("                         MAD_VERSION_STRING(MAD_VERSION_PATCH) \".\" \\\n"); 
+		writer.write("                         MAD_VERSION_STRING(MAD_VERSION_EXTRA)\n"); 
 		writer.write("# define MAD_VERSION_MAJOR 2\n"); 
 		writer.write("# define MAD_VERSION_MINOR 1\n"); 
 		writer.write("# define MAD_VERSION_PATCH 3\n"); 
@@ -997,8 +989,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	public void testBug36509() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer
-				.write("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"); 
+		writer.write("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"); 
 		writer.write("                    x ## s, x ## t) \n"); 
 		writer.write("debug(1, 2);"); 
 
@@ -1173,7 +1164,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug45476() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define X 5\n"); 
 		buffer.append("#if defined X\n"); 
 		buffer.append("#define Y 10\n"); 
@@ -1184,7 +1175,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug45477() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define D\n"); 
 		buffer.append("#define D\n"); 
 		buffer.append("#define sum(x,y) x+y\n"); 
@@ -1208,7 +1199,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 		for (int i = 0; i < 5; ++i) {
 
-			buffer = new StringBuffer();
+			buffer = new StringBuilder();
 
 			buffer.append("#define D blah\n"); 
 
@@ -1235,7 +1226,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 			validateEOF();
 		}
 
-		buffer = new StringBuffer();
+		buffer = new StringBuilder();
 		buffer.append("#define X 5\n"); 
 		buffer.append("#define Y 7\n"); 
 		buffer.append("#define SUMXY X    _+     Y"); 
@@ -1245,7 +1236,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug45551() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define stdio someNonExistantIncludeFile\n"); 
 		buffer.append("#include <stdio.h>\n"); 
 
@@ -1258,7 +1249,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug46402() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define X 5\n"); 
 		buffer.append("#if defined( X )\n"); 
 		buffer.append("// blah\n"); 
@@ -1389,10 +1380,8 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		writer.write("int big = 999999999999999;//ok \n"); 
 		writer.write("void main() { \n"); 
 		writer.write("caller(4);  //ok\n"); 
-		writer
-				.write("caller(2172748163);//causes java.lang.NumberFormatException \n"); 
-		writer
-				.write("caller(999999999999999); //also causes NumberFormatException \n"); 
+		writer.write("caller(2172748163);//causes java.lang.NumberFormatException \n"); 
+		writer.write("caller(999999999999999); //also causes NumberFormatException \n"); 
 		writer.write("}\n"); 
 		initializeScanner(writer.toString(), ParserMode.QUICK_PARSE);
 		fullyTokenize();
@@ -1554,7 +1543,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug62571() throws Exception {
-		StringBuffer buffer = new StringBuffer("#define J(X,Y) X##Y\n"); 
+		StringBuilder buffer = new StringBuilder("#define J(X,Y) X##Y\n"); 
 		buffer.append("J(A,1Xxyz)\n"); 
 		buffer.append("J(B,1X1X1Xxyz)\n"); 
 		buffer.append("J(C,0Xxyz)\n"); 
@@ -1585,7 +1574,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug70073() throws Exception {
-		StringBuffer buffer = new StringBuffer(
+		StringBuilder buffer = new StringBuilder(
 				"#if CONST \n #endif \n #elif CONST \n int"); 
 		final List problems = new ArrayList();
 		initializeScanner(buffer.toString());
@@ -1596,8 +1585,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	public void testBug73652() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define DoSuperMethodA IDoSuperMethodA\n"); 
-		writer
-				.write("#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n"); 
+		writer.write("#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n"); 
 		writer.write("DoSuperMethodA(0,0,0);\n"); 
 
 		initializeScanner(writer.toString());
@@ -1621,8 +1609,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		writer.write("#define DoSuperMethodA DoSuperMethodB //doobalie\n"); 
 		writer.write("#define DoSuperMethodB DoSuperMethodC /*oogalie*/ \n"); 
 		writer.write("#define DoSuperMethodC IDoSuperMethodA \\\n\n"); 
-		writer
-				.write("#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n"); 
+		writer.write("#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n"); 
 		writer.write("DoSuperMethodA  (0,0,0);\n"); 
 
 		initializeScanner(writer.toString());
@@ -1650,7 +1637,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	public void testBug72725() throws Exception {
 		for (int i = 0; i < 2; ++i) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append("#define a \\"); 
 			if (i == 0)
 				buffer.append("\r"); 
@@ -1808,23 +1795,23 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		IASTProblem[] problems= fLocationResolver.getScannerProblems();
 		assertEquals(17, problems.length);
 		int i= 0;
-		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_DECIMAL_FORMAT,        problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_DIVIDE_BY_ZERO,            problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_ILLEGAL_IDENTIFIER,        problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION,problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_BAD_CHARACTER,   			 problems[++i].getID() );  
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED,    problems[++i].getID() ); 
-		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[++i].getID() ); 
+		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[i].getID());
+		assertEquals(IProblem.SCANNER_BAD_DECIMAL_FORMAT,        problems[++i].getID());  
+		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID());  
+		assertEquals(IProblem.SCANNER_BAD_HEX_FORMAT,            problems[++i].getID());  
+		assertEquals(IProblem.SCANNER_DIVIDE_BY_ZERO,            problems[++i].getID());
+		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID());
+		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID());
+		assertEquals(IProblem.SCANNER_ILLEGAL_IDENTIFIER,        problems[++i].getID());
+		assertEquals(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION,problems[++i].getID());
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID());
+		assertEquals(IProblem.SCANNER_BAD_CHARACTER,   			 problems[++i].getID());
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID());
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID());
+		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID());
+		assertEquals(IProblem.SCANNER_MISSING_R_PAREN,           problems[++i].getID());
+		assertEquals(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED,    problems[++i].getID());
+		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[++i].getID());
 	}
 
 	public void testExpressionEvalProblems() throws Exception {
@@ -1890,8 +1877,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		Writer writer = new StringWriter();
 		writer.write("#define debug(...) fprintf(stderr, __VA_ARGS__)\n"); 
 		writer.write("#define showlist(...) puts(#__VA_ARGS__)\n"); 
-		writer
-				.write("#define report(test, ...) ((test)?puts(#test):\\\n   printf(__VA_ARGS__))\n"); 
+		writer.write("#define report(test, ...) ((test)?puts(#test):\\\n   printf(__VA_ARGS__))\n"); 
 		writer.write("int main() {\n"); 
 		writer.write("debug(\"Flag\");\n"); 
 		writer.write("debug(\"X = %d\\n\", x);\n"); 
@@ -1913,13 +1899,11 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		
 		IMacroBinding showlist = defs.get("showlist"); 
 		assertTrue(new String(showlist.getParameterPlaceholderList()[0]).equals("__VA_ARGS__")); 
-		assertTrue(new String(showlist.getExpansion())
-				.equals("puts(#__VA_ARGS__)")); 
+		assertTrue(new String(showlist.getExpansion()).equals("puts(#__VA_ARGS__)")); 
 		IMacroBinding report = defs.get("report"); 
 		assertTrue(new String(report.getParameterPlaceholderList()[0]).equals("test")); 
 		assertTrue(new String(report.getParameterPlaceholderList()[1]).equals("__VA_ARGS__")); 
-		assertTrue(new String(report.getExpansion())
-				.equals("((test)?puts(#test): printf(__VA_ARGS__))")); 
+		assertTrue(new String(report.getExpansion()).equals("((test)?puts(#test): printf(__VA_ARGS__))")); 
 
 		check39688Tokens(writer);
 	}
@@ -1928,8 +1912,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		Writer writer = new StringWriter();
 		writer.write("#define debug(vars...) fprintf(stderr, vars)\n"); 
 		writer.write("#define showlist(vars...) puts(#vars)\n"); 
-		writer
-				.write("#define report(test, vars...) ((test)?puts(#test):\\\n   printf(vars))\n"); 
+		writer.write("#define report(test, vars...) ((test)?puts(#test):\\\n   printf(vars))\n"); 
 		writer.write("int main() {\n"); 
 		writer.write("debug(\"Flag\");\n"); 
 		writer.write("debug(\"X = %d\\n\", x);\n"); 
@@ -1947,16 +1930,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertTrue(defs.containsKey("report")); 
 		IMacroBinding debug = (IMacroBinding) defs.get("debug"); 
 		assertTrue(new String(debug.getParameterPlaceholderList()[0]).equals("vars")); 
-		assertTrue(new String(debug.getExpansion())
-				.equals("fprintf(stderr, vars)")); 
+		assertTrue(new String(debug.getExpansion()).equals("fprintf(stderr, vars)")); 
 		IMacroBinding showlist = (IMacroBinding) defs.get("showlist"); 
 		assertTrue(new String(showlist.getParameterPlaceholderList()[0]).equals("vars")); 
 		assertTrue(new String(showlist.getExpansion()).equals("puts(#vars)")); 
 		IMacroBinding report = (IMacroBinding) defs.get("report"); 
 		assertTrue(new String(report.getParameterPlaceholderList()[0]).equals("test")); 
 		assertTrue(new String(report.getParameterPlaceholderList()[1]).equals("vars")); 
-		assertTrue(new String(report.getExpansion())
-				.equals("((test)?puts(#test): printf(vars))")); 
+		assertTrue(new String(report.getExpansion()).equals("((test)?puts(#test): printf(vars))")); 
 
 		check39688Tokens(writer);
 	}
@@ -2027,16 +2008,11 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	public void testMacroArgumentExpansion() throws Exception {
 		Writer writer = new StringWriter();
-		writer
-				.write("#define g_return( expr ) ( expr )                                   \n"); 
-		writer
-				.write("#define ETH( obj ) ( CHECK( (obj), boo ) )                          \n"); 
-		writer
-				.write("#define CHECK CHECK_INSTANCE                                        \n"); 
-		writer
-				.write("#define CHECK_INSTANCE( instance, type ) (foo((instance), (type)))  \n"); 
-		writer
-				.write("g_return( ETH(ooga) )                                               \n"); 
+		writer.write("#define g_return( expr ) ( expr )                                   \n"); 
+		writer.write("#define ETH( obj ) ( CHECK( (obj), boo ) )                          \n"); 
+		writer.write("#define CHECK CHECK_INSTANCE                                        \n"); 
+		writer.write("#define CHECK_INSTANCE( instance, type ) (foo((instance), (type)))  \n"); 
+		writer.write("g_return( ETH(ooga) )                                               \n"); 
 
 		initializeScanner(writer.toString());
 
@@ -2202,7 +2178,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug126136() throws Exception {
-		StringBuffer buffer = new StringBuffer("#define C C\n"); 
+		StringBuilder buffer = new StringBuilder("#define C C\n"); 
 		buffer.append("#if !C\n"); 
 		buffer.append("true\n"); 
 		buffer.append("#endif\n"); 
@@ -2211,7 +2187,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug156137() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#if (3 % 2 == 1)                              \n");
 		buffer.append("C                                             \n");
 		buffer.append("#endif                                        \n");
@@ -2222,7 +2198,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug162214() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef xxx  // is not defined            \n");
 		buffer.append("A                                        \n");
 		buffer.append("#endif                                   \n");
@@ -2244,7 +2220,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug156988() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define a        			\n");
 		buffer.append("#define b \"      		\n");
 		buffer.append("#define c <     			\n");
@@ -2267,7 +2243,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug156988_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define a(x) x  			\n");
 		buffer.append("#define b \"      		\n");
 		buffer.append("#define c <     			\n");
@@ -2290,7 +2266,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug162410() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#pragma message (\"test\") \n");
 		buffer.append("a       		             \n");
 		initializeScanner(buffer.toString());
@@ -2299,7 +2275,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172
 	public void testBug180172() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		String value = "\"https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172\"";
 		buffer.append("#define bug180172 ").append(value).append(" // bla \n");
 		initializeScanner(buffer.toString());
@@ -2309,7 +2285,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
 	public void testBug182180_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append(
 				"printf(\"Hello World /*.ap\\n\");\n").append("#endif\n")
 				.append("bug182180\n");
@@ -2319,7 +2295,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
 	public void testBug182180_2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append(
 				"char c='\"'; printf(\"Hello World /*.ap\\n\");\n").append(
 				"#endif\n").append("bug182180\n");
@@ -2329,7 +2305,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
 	public void testBug182180_3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append(
 				"char c1='\\'',c2='\\\"'; printf(\"Hello World /*.ap\\n\");\n")
 				.append("#endif\n").append("bug182180\n");
@@ -2339,7 +2315,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
 	public void testBug182180_4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append(
 				"printf(\"Hello '\"'World /*.ap\\n\");\n").append("#endif\n")
 				.append("bug182180\n");
@@ -2349,7 +2325,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
 	public void testBug182180_5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append(
 				"printf(\"Hello \\\"World /*.ap\\n\");\n").append("#endif\n")
 				.append("bug182180\n");
@@ -2359,7 +2335,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
 	public void testBug200830_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define string BROKEN\r\n");
 		buffer.append("#define macro(inst) (char*)inst\r\n");
 		buffer.append("macro(\"string\");\r\n");
@@ -2373,7 +2349,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
 	public void testBug200830_2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define string BROKEN\r\n");
 		buffer.append("#define macro(inst) (char*)inst\r\n");
 		buffer.append("macro(\" string \");\r\n");
@@ -2387,7 +2363,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
 	public void testBug200830_3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define string BROKEN\r\n");
 		buffer.append("#define macro(inst) (char*)inst\r\n");
 		buffer.append("macro(\"\\\"string \");\r\n");
@@ -2401,7 +2377,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
 	public void testBug200830_4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define s B\r\n");
 		buffer.append("#define macro(inst) (char*)inst\r\n");
 		buffer.append("macro('s');\r\n");
@@ -2414,7 +2390,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug185120_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define TEST_DEFINE 1UL\n");
 		buffer.append("#if TEST_DEFINE != 1UL\n");
 		buffer.append("-\n");
@@ -2426,7 +2402,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	public void testBug185120_2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define TEST_DEFINE 1LLU\n");
 		buffer.append("#if TEST_DEFINE != 1ULL\n");
 		buffer.append("-\n");
@@ -2459,8 +2435,8 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
         
     public void testImaginary() throws Exception {
-        initializeScanner( "3i", ParserLanguage.C ); 
-        validateInteger( "3i" ); 
+        initializeScanner("3i", ParserLanguage.C); 
+        validateInteger("3i"); 
         validateEOF();
     }
 }

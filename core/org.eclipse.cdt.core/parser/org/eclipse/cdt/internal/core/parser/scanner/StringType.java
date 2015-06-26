@@ -6,20 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Mike Kucera (IBM) - Initial API and implementation
+ *     Mike Kucera (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
- * Utility class that provides some simple operations
- * for string literals.
+ * Utility class that provides some simple operations for string literals.
  */
 @SuppressWarnings("nls")
 public enum StringType {
-
-	// listed in order of "wideness"
+	// Listed in order of "wideness"
 	NARROW("", IToken.tSTRING),
 	WIDE("L",  IToken.tLSTRING),
 	UTF16("u", IToken.tUTF16STRING),

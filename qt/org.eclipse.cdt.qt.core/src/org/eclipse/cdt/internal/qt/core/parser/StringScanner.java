@@ -1,10 +1,13 @@
-/*
+/*******************************************************************************
  * Copyright (c) 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- */
+ *
+ * Contributors:
+ *     Andrew Eidness (QNX) - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.qt.core.parser;
 
 import java.util.Map;
@@ -23,8 +26,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 /**
- * The standard CDT scanner is CPreprocessor, which uses a Lexer to read from a file.  The
- * relationships look like:
+ * The standard CDT scanner is CPreprocessor, which uses a Lexer to read from a file.
+ * The relationships look like:
  * <br>
  * GNUCPPSourceParser - CPreprocessor - Lexer
  * <p>
@@ -38,7 +41,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
  */
 @SuppressWarnings("restriction")
 public class StringScanner implements IScanner {
-
 	private final Lexer lexer;
 	private final CharArrayIntMap keywords;
 
@@ -50,7 +52,6 @@ public class StringScanner implements IScanner {
 
 	@Override
 	public IToken nextToken() throws EndOfFileException {
-
 		IToken token = lexer.nextToken();
 		if (token.getType() != IToken.tIDENTIFIER)
 			return token;

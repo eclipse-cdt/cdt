@@ -44,13 +44,14 @@ public class ExpressionEvaluator {
 
 	private Token fTokens;
 	private CharArrayMap<PreprocessorMacro> fDictionary;
-	private ArrayList<IASTName> fMacrosInDefinedExpressions= new ArrayList<IASTName>();
+	private ArrayList<IASTName> fMacrosInDefinedExpressions= new ArrayList<>();
 	private LocationMap fLocationMap;
 
 	ExpressionEvaluator() {
 	}
 
-	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap map) throws EvalException {
+	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary,
+			LocationMap map) throws EvalException {
 		fTokens= condition.first();
 		fDictionary= macroDictionary;
 		fLocationMap= map;

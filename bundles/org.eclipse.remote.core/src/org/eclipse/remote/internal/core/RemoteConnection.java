@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.core;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -127,11 +129,21 @@ public class RemoteConnection implements IRemoteConnection {
 	}
 
 	Preferences getPreferences() {
-		return connectionType.getPreferenceNode().node(name);
+		try {
+			return connectionType.getPreferenceNode().node(URLEncoder.encode(name, "UTF-8")); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			// Should not happen!
+			throw new RuntimeException(e);
+		}
 	}
 
 	ISecurePreferences getSecurePreferences() {
-		return connectionType.getSecurePreferencesNode().node(name);
+		try {
+			return connectionType.getSecurePreferencesNode().node(URLEncoder.encode(name, "UTF-8")); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+			// Should not happen!
+			throw new RuntimeException(e);
+		}
 	}
 
 	/*

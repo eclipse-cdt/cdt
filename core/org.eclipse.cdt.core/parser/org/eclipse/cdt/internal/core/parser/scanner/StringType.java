@@ -22,28 +22,27 @@ public enum StringType {
 	WIDE("L",  IToken.tLSTRING),
 	UTF16("u", IToken.tUTF16STRING),
 	UTF32("U", IToken.tUTF32STRING);
-	
-	
+
+
 	private char[] prefix;
 	private int tokenVal;
-	
+
 	private StringType(String prefix, int tokenVal) {
 		this.prefix = prefix.toCharArray();
 		this.tokenVal = tokenVal;
 	}
-	
+
 	public char[] getPrefix() {
 		return prefix;
 	}
-	
+
 	public int getTokenValue() {
 		return tokenVal;
 	}
-	
+
 	/**
-	 * Returns the StringType value that represesnts the 'wider'
-	 * of the two given StringTypes.
-	 * @thows NullPointerException if an argument is null
+	 * Returns the StringType value that represents the 'wider' of the two given StringTypes.
+	 * @throws NullPointerException if an argument is null
 	 */
 	public static StringType max(StringType st1, StringType st2) {
 		return values()[Math.max(st1.ordinal(), st2.ordinal())];
@@ -51,12 +50,12 @@ public enum StringType {
 
 	/**
 	 * Returns the StringType value for the given string literal type.
-	 * 
+	 *
 	 * @see IToken#tSTRING
 	 * @see IToken#tLSTRING
 	 * @see IToken#tUTF16STRING
 	 * @see IToken#tUTF32STRING
-	 * 
+	 *
 	 * @throws IllegalArgumentException if the tokenVal does not represent a string literal
 	 */
 	public static StringType fromToken(int tokenVal) {

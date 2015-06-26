@@ -46,15 +46,19 @@ public class TerminalConsoleConnector {
 		public OutThread() {
 			super("Terminal Output"); //$NON-NLS-1$
 		}
+
+		@Override
 		public void run() {
 			try {
 				byte[] buff = new byte[1024];
-				InputStream in = remoteProcess.getInputStream();
-				for (int n = in.read(buff); n >= 0; n = in.read(buff)) {
-					for (PageConnector connector : pageConnectors) {
-						ITerminalControl control = connector.control;
-						if (control != null) {
-							control.getRemoteToTerminalOutputStream().write(buff, 0, n);
+				if (remoteProcess != null) {
+					InputStream in = remoteProcess.getInputStream();
+					for (int n = in.read(buff); n >= 0; n = in.read(buff)) {
+						for (PageConnector connector : pageConnectors) {
+							ITerminalControl control = connector.control;
+							if (control != null) {
+								control.getRemoteToTerminalOutputStream().write(buff, 0, n);
+							}
 						}
 					}
 				}
@@ -67,6 +71,7 @@ public class TerminalConsoleConnector {
 			}
 		}
 	}
+
 	private OutThread outThread;
 
 	public TerminalConsoleConnector(IRemoteConnection connection) {
@@ -76,7 +81,7 @@ public class TerminalConsoleConnector {
 	public IRemoteConnection getConnection() {
 		return connection;
 	}
-	
+
 	public ITerminalConnector newPageConnector() {
 		PageConnector connector = new PageConnector();
 		List<PageConnector> list = new ArrayList<>(Arrays.asList(pageConnectors));
@@ -153,7 +158,7 @@ public class TerminalConsoleConnector {
 	}
 
 	public void disconnect() {
-		if (!remoteProcess.isCompleted()) {
+		if (remoteProcess != null && !remoteProcess.isCompleted()) {
 			new Job(ConsoleMessages.DISCONNECTING) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
@@ -200,7 +205,7 @@ public class TerminalConsoleConnector {
 
 		@Override
 		public OutputStream getTerminalToRemoteStream() {
-			return remoteProcess.getOutputStream();
+			return remoteProcess != null ? remoteProcess.getOutputStream() : null;
 		}
 
 		@Override

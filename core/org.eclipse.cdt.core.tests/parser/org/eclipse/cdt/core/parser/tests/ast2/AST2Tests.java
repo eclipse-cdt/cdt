@@ -699,11 +699,12 @@ public class AST2Tests extends AST2TestBase {
 		}
 	}
 
+	//	#define F(a) a
 	//	#define _MACRO "macro"
 	//	#define MACRO _MACRO
 	//	void f(const char* s);
 	//	void test() {
-	//	  f("aaa"MACRO);
+	//	  F(f("aaa"MACRO));
 	//	}
 	public void testStringConcatenationWithMacro() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {

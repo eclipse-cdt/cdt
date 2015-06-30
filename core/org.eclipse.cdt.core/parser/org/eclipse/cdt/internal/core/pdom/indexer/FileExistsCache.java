@@ -25,9 +25,9 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A cache for checking whether a file exists. The cache shall be used for a limited amount of time, only (e.g. one 
- * indexer task). It uses as much memory as it needs. To protect against OutOfMemory situations, a soft reference is
- * used.
+ * A cache for checking whether a file exists. The cache shall be used for a limited amount of time,
+ * only (e.g. one indexer task). It uses as much memory as it needs. To protect against OutOfMemory
+ * situations, a soft reference is used.
  * @since 5.0
  */
 public final class FileExistsCache {
@@ -48,7 +48,9 @@ public final class FileExistsCache {
 
 	public FileExistsCache(boolean caseInsensitive) {
 		fCaseInSensitive= caseInsensitive;
-		fCache= new SoftReference<Map<String, Content>>(new HashMap<String, Content>());	// before running out of memory the entire map will be thrown away.
+		Map<String, Content> cache = new HashMap<>();
+		// Before running out of memory the entire map will be thrown away.
+		fCache= new SoftReference<>(cache);
 	}
 	
 	public boolean isFile(String path) {
@@ -132,8 +134,9 @@ public final class FileExistsCache {
 	private Map<String, Content> getExistsCache() {
 		Map<String, Content> cache= fCache.get();
 		if (cache == null) {
-			cache= new HashMap<String, Content>();
-			fCache= new SoftReference<Map<String, Content>>(cache); // before running out of memory the entire map will be thrown away.
+			cache= new HashMap<>();
+			// Before running out of memory the entire map will be thrown away.
+			fCache= new SoftReference<>(cache);
 		}
 		return cache;
 	}

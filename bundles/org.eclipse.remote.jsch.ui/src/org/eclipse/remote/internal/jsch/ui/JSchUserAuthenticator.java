@@ -20,7 +20,6 @@ import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IUserAuthenticatorService;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -91,7 +90,7 @@ public class JSchUserAuthenticator implements IUserAuthenticatorService {
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
-				final MessageDialog dialog = new MessageDialog(new Shell(display), title, null /* title image */, message,
+				final MessageDialog dialog = new MessageDialog(display.getActiveShell(), title, null /* title image */, message,
 						promptType, buttons, defaultResponseIndex);
 				retval[0] = dialog.open();
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Karsten Thoms (itemis) - Bug 471103
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -44,6 +45,8 @@ public final class FileExistsCache {
 	}
 
 	private Reference<Map<String, Content>> fCache;
+	// Cache for recent results of isFile calls (bug 471103).
+	private final Map<String, Boolean> fCacheIsFile = new HashMap<>();
 	private final boolean fCaseInSensitive;
 
 	public FileExistsCache(boolean caseInsensitive) {
@@ -54,6 +57,19 @@ public final class FileExistsCache {
 	}
 
 	public boolean isFile(String path) {
+		// Fast return when path was already queried. The method is potentially called multiple times with
+		// the same path on each return statement the returned value is stored in the cache (bug 471103).
+		Boolean cachedResult = fCacheIsFile.get(path);
+		if (!BYPASS_CACHE && cachedResult != null) {
+			return cachedResult.booleanValue();
+		}
+
+		boolean result = isFileInternal(path);
+		fCacheIsFile.put(path, result);
+		return result;
+	}
+
+	private boolean isFileInternal(String path) {
 		String parent;
 		String name;
 		File file = null;

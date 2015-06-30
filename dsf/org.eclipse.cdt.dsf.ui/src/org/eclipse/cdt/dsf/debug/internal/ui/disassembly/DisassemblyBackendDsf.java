@@ -21,6 +21,7 @@ import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils
 import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
 
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -175,7 +176,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		
 		if (!dsfSessionId.equals(fDsfSessionId)) {
 			// switch to different session or initiate session
-			if (DEBUG) System.out.println("DisassemblyBackendDsf() " + dsfSessionId); //$NON-NLS-1$
+			if (DEBUG) {
+				System.out.println(MessageFormat.format("DisassemblyBackendDsf: switch session [{0}<<{1}]. Input context={2}", dsfSessionId, //$NON-NLS-1$
+					fDsfSessionId, dmContext));
+			}
 			fTargetContext= null;
 			fTargetFrameContext = null;
 			result.contextChanged = true;
@@ -257,7 +261,11 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			fTargetFrameContext = null;
 			result.contextChanged = true;
 		}
-		
+		if (DEBUG) {
+			System.out.println(MessageFormat.format(
+				"DisassemblyBackendDsf: switch session done [id={0};context={1};\n\t\t\tframe={2}].\n\t\t\tInput context={3}", //$NON-NLS-1$
+				fDsfSessionId, fTargetContext, fTargetFrameContext, dmContext));
+		}
 		return result;
 	}
 
@@ -669,6 +677,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions, boolean showSymbols, boolean showDisassembly) {
         if (!fCallback.hasViewer() || fDsfSessionId == null || fTargetContext == null) {
+    		if (DEBUG) {
+    			System.out.println(MessageFormat.format(
+						"insertDisassembly ignored at {0} due to missing context: [fDsfSessionId={1};fTargetContext={2}]", //$NON-NLS-1$
+						DisassemblyUtils.getAddressText(startAddress), fDsfSessionId, fTargetContext));
+    		}
+    		if (fTargetContext == null) {
+    			fCallback.setUpdatePending(false);
+    		}
 			// return true to avoid a retry
 			return true;
 		}
@@ -788,6 +804,14 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 */
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions, boolean showSymbols, boolean showDisassembly) {
         if (!fCallback.hasViewer() || fDsfSessionId == null || fTargetContext == null) {
+    		if (DEBUG) {
+    			System.out.println(MessageFormat.format(
+						"insertDisassembly ignored at {0} : missing context: [fDsfSessionId={1};fTargetContext={2}]", //$NON-NLS-1$
+						DisassemblyUtils.getAddressText(startAddress), fDsfSessionId, fTargetContext));
+    		}
+    		if (fTargetContext == null) {
+    			fCallback.setUpdatePending(false);
+    		}
 			// return true to avoid a retry
 			return true;
 		}

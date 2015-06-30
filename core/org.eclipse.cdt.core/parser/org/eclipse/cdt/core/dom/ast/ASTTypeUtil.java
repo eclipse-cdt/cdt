@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Karsten Thoms (itemis) - Bug 471103
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,6 +18,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -194,10 +196,11 @@ public class ASTTypeUtil {
 
 	private static void appendArgumentList(ICPPTemplateArgument[] args, boolean normalize, StringBuilder result) {
 		result.append('<');
-		for (int i = 0; i < args.length; i++) {
-			if (i != 0) {
-				result.append(',');
-			}
+		// Slightly more efficient than checking within a loop whether to add a comma.
+		if (args.length > 0)
+			appendArgument(args[0], normalize, result);
+		for (int i = 1; i < args.length; i++) {
+			result.append(',');
 			appendArgument(args[i], normalize, result);
 		}
 		result.append('>');
@@ -537,6 +540,15 @@ public class ASTTypeUtil {
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
+		// Performance: check if the type was appended before (bug 471103).
+		String cachedResult = cache.get(type, normalize);
+		if (cachedResult != null) {
+			result.append(cachedResult);
+			return;
+		}
+		final IType originalType = type; // Type argument for caching.
+		final int startOffset = result.length(); // Start offset of the appended string.
+
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		int numTypes = 0;
 
@@ -659,6 +671,8 @@ public class ASTTypeUtil {
 				appendTypeString(tj, normalize, result);
 			}
 		}
+
+		cache.put(originalType, normalize, result.substring(startOffset)); // Store result in the cache.
 	}
 
 	/**
@@ -909,5 +923,36 @@ public class ASTTypeUtil {
 			}
 		}
 		return 0;
+	}
+
+	private static final Cache cache = new Cache();
+	private static class Cache {
+		// Keep two separate maps for normalized and unnormalized type names.
+		// Maps are weak to allow entries to be garbage-collected.
+		private WeakHashMap<IType, String> normalizedTypes = new WeakHashMap<>();
+		private WeakHashMap<IType, String> rawTypes = new WeakHashMap<>();
+
+		/**
+		 * Returns the cached name for a type. Returns {@code null} when the value was not cached,
+		 * or if the cached value was garbage-collected.
+		 */
+		public String get(IType type, boolean normalized) {
+			if (normalized) {
+				return normalizedTypes.get(type);
+			} else {
+				return rawTypes.get(type);
+			}
+		}
+
+		/**
+		 * Store a computed type name in the cache.
+		 */
+		public String put(IType type, boolean normalized, String typeString) {
+			if (normalized) {
+				return normalizedTypes.put(type, typeString);
+			} else {
+				return rawTypes.put(type, typeString);
+			}
+		}
 	}
 }

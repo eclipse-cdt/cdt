@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Karsten Thoms (itemis) - Bug#471103
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -44,6 +45,8 @@ public final class FileExistsCache {
 	}
 
 	private Reference<Map<String, Content>> fCache;
+	// Bug#471103: [performance] cache for recent results of isFile calls
+	private final Map<String, Boolean> fCache_isFile = new HashMap<>();
 	private final boolean fCaseInSensitive;
 
 	public FileExistsCache(boolean caseInsensitive) {
@@ -52,6 +55,13 @@ public final class FileExistsCache {
 	}
 	
 	public boolean isFile(String path) {
+		// Bug#471103: [performance] fast return when path was already queried. The method is potentially called multiple times with the same path
+		// on each return statement the returned value is stored in the cache 
+		Boolean cachedResult = fCache_isFile.get(path);
+		if (!BYPASS_CACHE && cachedResult != null) {
+			return cachedResult.booleanValue();
+		}
+
 		String parent;
 		String name;
 		File file = null;
@@ -72,6 +82,7 @@ public final class FileExistsCache {
 				parent = parentStore.toURI().toString();
 				name = fileStore.getName();
 			} catch (CoreException e) {
+				fCache_isFile.put(path, Boolean.FALSE);
 				return false;
 			}
 		} else {
@@ -81,8 +92,10 @@ public final class FileExistsCache {
 			}
 			
 			parent= file.getParent();
-			if (parent == null)
+			if (parent == null) {
+				fCache_isFile.put(path, Boolean.FALSE);
 				return false;
+			}
 			
 			name= file.getName();
 		}
@@ -111,21 +124,29 @@ public final class FileExistsCache {
 			getExistsCache().put(parent, avail);
 		}
 		int idx= Arrays.binarySearch(avail.fNames, name);
-		if (idx < 0)
+		if (idx < 0) {
+			fCache_isFile.put(path, Boolean.FALSE);
 			return false;
+		}
 		idx *= 2;
 		
 		final BitSet isFileBitset = avail.fIsFile;
-		if (isFileBitset.get(idx))
+		if (isFileBitset.get(idx)) {
+			fCache_isFile.put(path, Boolean.TRUE);
 			return true;
-		if (isFileBitset.get(idx + 1))
+		}
+		if (isFileBitset.get(idx + 1)) {
+			fCache_isFile.put(path, Boolean.FALSE);
 			return false;
+		}
 		
 		if ((file != null && file.isFile()) || (fileStore != null && !fileStore.fetchInfo().isDirectory())) {
 			isFileBitset.set(idx);
+			fCache_isFile.put(path, Boolean.TRUE);
 			return true;
 		}
 		isFileBitset.set(idx + 1);
+		fCache_isFile.put(path, Boolean.FALSE);
 		return false;
 	}
 

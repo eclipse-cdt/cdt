@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_54aff015",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-01T02:37:14Z",
+      "side": 1,
+      "message": "It turns out equal types may produce different string representations. I\u0027m investigating.",
+      "range": {
+        "startLine": 544,
+        "startChar": 9,
+        "endLine": 544,
+        "endChar": 21
+      },
+      "revId": "1b5f7b6b4153f67c5bed8fd09ea38d049dee92fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -11142,4 +11142,25 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testAlignas_451082() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	constexpr int lambdas_supported = 
+	//	#if __has_feature(cxx_lambdas)
+	//		1;
+	//	#else
+	//		0;
+	//	#endif
+	//
+	//	constexpr int user_literals_supported = 
+	//	#if __has_feature(cxx_user_literals)
+	//		1;
+	//	#else
+	//		0;
+	//	#endif
+	public void testHasFeature_442325() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("lambdas_supported", 1);
+		// Note: when support for user literals are implemented,
+		// this test will need to be updated.
+		helper.assertVariableValue("user_literals_supported", 0);
+	}
 }

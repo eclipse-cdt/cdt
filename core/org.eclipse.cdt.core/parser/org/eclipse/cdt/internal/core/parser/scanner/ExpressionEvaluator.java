@@ -258,6 +258,8 @@ public class ExpressionEvaluator {
         	return 0;
         case CPreprocessor.tDEFINED:
             return handleDefined();
+        case CPreprocessor.t__HAS_FEATURE:
+        	return handleHasFeature();
         case IToken.tLPAREN:
             consume();
             long r1 = expression();
@@ -321,6 +323,25 @@ public class ExpressionEvaluator {
     		consume();
     	}
     	return result;
+    }
+    
+    private long handleHasFeature() throws EvalException {
+    	consume();  // '__has_feature'
+    	if (LA() != IToken.tLPAREN) {
+    		throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+    	}
+    	consume();  // opening parenthesis
+    	if (LA() != IToken.tIDENTIFIER) {
+    		throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+    	}
+    	final char[] featureName = fTokens.getCharImage();
+    	boolean supported = CPreprocessor.getSupportedFeatures().contains(new String(featureName));
+    	consume();  // feature name token
+		if (LA() != IToken.tRPAREN) {
+			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+		}
+		consume();  // closing parenthesis
+    	return supported ? 1 : 0;
     }
 
     private int LA() {

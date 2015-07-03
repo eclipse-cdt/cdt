@@ -85,6 +85,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	public static final int tSPACE= IToken.FIRST_RESERVED_PREPROCESSOR + 3;
 	public static final int tNOSPACE= IToken.FIRST_RESERVED_PREPROCESSOR + 4;
 	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR + 5;
+	public static final int t__HAS_FEATURE = IToken.FIRST_RESERVED_PREPROCESSOR + 6;
 
 	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 	private static final int ORIGIN_INACTIVE_CODE = OffsetLimitReachedException.ORIGIN_INACTIVE_CODE;
@@ -108,7 +109,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final char[] ONCE = "once".toCharArray(); //$NON-NLS-1$
 
 	static final int NO_EXPANSION 		 					= 0x01;
-	static final int PROTECT_DEFINED 	 					= 0x02;
+	// Set in contexts where preprocessor intrinsics such as 'defined'
+	// or '__has_feature' need to be recognized.
+	static final int PROTECT_INTRINSICS 	 				= 0x02;
 	static final int STOP_AT_NL 		 					= 0x04;
 	static final int CHECK_NUMBERS 		 					= 0x08;
 	static final int REPORT_SIGNIFICANT_MACROS 				= 0x10;
@@ -224,6 +227,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 	}
 
+	private static Set<String> sSupportedFeatures;
+	
 	TokenSequence fInputToMacroExpansion= new TokenSequence(false);
 	TokenSequence fLineInputToMacroExpansion= new TokenSequence(true);
 
@@ -1883,7 +1888,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	scannerCtx.clearInactiveCodeMarkerToken();
     	int options= STOP_AT_NL | REPORT_SIGNIFICANT_MACROS;
     	if (isCondition)
-    		options |= PROTECT_DEFINED;
+    		options |= PROTECT_INTRINSICS;
     	
     	loop: while (true) {
 			Token t= internalFetchToken(scannerCtx, options, withinExpansion);
@@ -1897,6 +1902,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		case IToken.tIDENTIFIER:
     			break;
     		case tDEFINED:
+    			options |= NO_EXPANSION;
+    			break;
+    		case t__HAS_FEATURE:
     			options |= NO_EXPANSION;
     			break;
     		case IToken.tLPAREN:
@@ -1988,9 +1996,15 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			boolean withinExpansion) throws OffsetLimitReachedException {
 		final boolean reportSignificant = (options & REPORT_SIGNIFICANT_MACROS) != 0;
 		final char[] name= identifier.getCharImage();
-		if ((options & PROTECT_DEFINED) != 0 && CharArrayUtils.equals(name, Keywords.cDEFINED)) {
-			identifier.setType(tDEFINED);
-			return false;
+		if ((options & PROTECT_INTRINSICS) != 0) {
+			if (CharArrayUtils.equals(name, Keywords.cDEFINED)) {
+				identifier.setType(tDEFINED);
+				return false;
+			}
+			if (CharArrayUtils.equals(name, Keywords.c__HAS_FEATURE)) {
+				identifier.setType(t__HAS_FEATURE);
+				return false;
+			}
 		}
         PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
@@ -2065,5 +2079,95 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			|| CharArrayUtils.equals(__FILE__.getNameCharArray(), name)
 			|| CharArrayUtils.equals(__DATE__.getNameCharArray(), name)
 			|| CharArrayUtils.equals(__TIME__.getNameCharArray(), name);
+	}
+	
+	@SuppressWarnings("nls")
+	public static Set<String> getSupportedFeatures() {
+		if (sSupportedFeatures == null) {
+			sSupportedFeatures = new HashSet<>();
+			
+			// C++98 features
+			sSupportedFeatures.add("cxx_exceptions");
+			sSupportedFeatures.add("cxx_rtti");
+			
+			// C++11 features
+			// missing: cxx_access_control_sfinae (needs to be tested)
+			sSupportedFeatures.add("cxx_alias_templates");
+			sSupportedFeatures.add("cxx_alignas");
+			sSupportedFeatures.add("cxx_alignof");
+			sSupportedFeatures.add("cxx_attributes");
+			sSupportedFeatures.add("cxx_auto_type");
+			sSupportedFeatures.add("cxx_constexpr");
+			sSupportedFeatures.add("cxx_decltype");
+			// missing: cxx_decltype_incomplete_return_types (needs to be tested; see bug 324096)
+			sSupportedFeatures.add("cxx_default_function_template_args");
+			sSupportedFeatures.add("cxx_defaulted_functions");
+			sSupportedFeatures.add("cxx_delegating_constructors");
+			sSupportedFeatures.add("cxx_explicit_conversions");
+			sSupportedFeatures.add("cxx_generalized_initializers");
+			// missing: cxx_implicit_moves (bug 327301)
+			sSupportedFeatures.add("cxx_inheriting_constructors");
+			sSupportedFeatures.add("cxx_inline_namespaces");
+			sSupportedFeatures.add("cxx_lambdas");
+			sSupportedFeatures.add("cxx_local_type_template_args");
+			sSupportedFeatures.add("cxx_noexcept");
+			sSupportedFeatures.add("cxx_nonstatic_member_init");
+			sSupportedFeatures.add("cxx_nullptr");
+			sSupportedFeatures.add("cxx_override_control");
+			sSupportedFeatures.add("cxx_range_for");
+			sSupportedFeatures.add("cxx_raw_string_literals");
+			sSupportedFeatures.add("cxx_reference_qualified_functions");
+			sSupportedFeatures.add("cxx_rvalue_references");
+			sSupportedFeatures.add("cxx_static_assert");
+			sSupportedFeatures.add("cxx_strong_enums");
+			sSupportedFeatures.add("cxx_thread_local");
+			sSupportedFeatures.add("cxx_trailing_return");
+			sSupportedFeatures.add("cxx_unicode_literals");
+			// missing: cxx_unrestricted_unions (bug 327299)
+			sSupportedFeatures.add("cxx_user_literals");
+			sSupportedFeatures.add("cxx_variadic_templates");
+			
+			// C++14 features
+			// none supported yet
+			
+			// C11 features
+			sSupportedFeatures.add("c_alignas");
+			sSupportedFeatures.add("c_alignof");
+			// missing: c_atomic (bug 445297)
+			// missing: c_generic_selections (bug 445296)
+			// missing: c_static_assert (bug 445297)
+			// missing: c_thread_local (bug 445297)
+			
+			// Type trait primitives
+			// missing: has_nothrow_assign
+			// missing: has_nothrow_copy
+			// missing: has_nothrow_constructor
+			// missing: has_trivial_assign
+			sSupportedFeatures.add("has_trivial_copy");
+			// missing: has_trivial_constructor
+			// missing: has_trivial_destructor
+			// missing: has_virtual_destructor
+			sSupportedFeatures.add("is_abstract");
+			sSupportedFeatures.add("is_base_of");
+			sSupportedFeatures.add("is_class");
+			// missing: is_constructible
+			// missing: is_convertible_to
+			// missing: is_destructible
+			// missing: is_empty
+			sSupportedFeatures.add("is_enum");
+			sSupportedFeatures.add("is_final");
+			// missing: is_interface_class
+			// missing: is_literal
+			// missing: is_nothrow_assignable
+			// missing: is_nothrow_constructible
+			// missing: is_nothrow_destructible
+			sSupportedFeatures.add("is_pod");
+			sSupportedFeatures.add("is_polymorphic");
+			// missing: is_trivially_assignable
+			// missing: is_trivially_constructible
+			sSupportedFeatures.add("is_union");
+			sSupportedFeatures.add("underlying_type");
+		}
+		return sSupportedFeatures;
 	}
 }

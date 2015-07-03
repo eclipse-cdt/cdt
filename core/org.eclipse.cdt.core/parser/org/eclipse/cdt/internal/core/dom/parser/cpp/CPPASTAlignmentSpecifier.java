@@ -13,10 +13,13 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTAlignmentSpecifier extends ASTNode implements IASTAlignmentSpecifier {
+public class CPPASTAlignmentSpecifier extends ASTNode implements IASTAlignmentSpecifier,
+		IASTAmbiguityParent {
 	// Precisely one of these is null.
 	private IASTExpression fExpression;
 	private IASTTypeId fTypeId;
@@ -65,5 +68,18 @@ public class CPPASTAlignmentSpecifier extends ASTNode implements IASTAlignmentSp
 			return fExpression.accept(visitor);
 		}
 		return fTypeId.accept(visitor);
+	}
+
+	@Override
+	public void replace(IASTNode child, IASTNode other) {
+		if (child instanceof IASTExpression && other instanceof IASTExpression && fExpression == child) {
+			fExpression = (IASTExpression) other;
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+		} else if (child instanceof IASTTypeId && other instanceof IASTTypeId && fTypeId == child) {
+			fTypeId = (IASTTypeId) other;
+			other.setParent(child.getParent());
+			other.setPropertyInParent(child.getPropertyInParent());
+		}
 	}
 }

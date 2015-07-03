@@ -151,7 +151,7 @@ public class SemanticHighlightingTest extends TestCase {
 		BaseTestCase.waitForIndexer(fCProject);
 		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile("/SHTest/" + sourceFileName), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 1000000, 1000));
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
 		EditorTestHelper.joinBackgroundActivities();
 		
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);

@@ -310,6 +310,8 @@ public class Keywords {
 	public static final char[] cPRAGMA = "pragma".toCharArray();
 	public static final char[] cLINE = "line".toCharArray();
 	public static final char[] cDEFINED= "defined".toCharArray();
+	/** @since 5.11 */
+	public static final char[] c__HAS_FEATURE = "__has_feature".toCharArray();
 	/** @since 5.2*/
 	public static final char[] _Pragma= "_Pragma".toCharArray();
 	public static final char[] cVA_ARGS= "__VA_ARGS__".toCharArray();

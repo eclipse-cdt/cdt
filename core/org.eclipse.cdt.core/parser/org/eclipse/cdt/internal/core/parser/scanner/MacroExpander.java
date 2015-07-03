@@ -155,7 +155,7 @@ public class MacroExpander {
 	public TokenList expand(ITokenSequence lexer, final int ppOptions,
 			PreprocessorMacro macro, Token identifier, boolean completionMode,
 			ScannerContext scannerContext) throws OffsetLimitReachedException {
-		final boolean protectDefined= (ppOptions & CPreprocessor.PROTECT_DEFINED) != 0;
+		final boolean protectIntrinsics= (ppOptions & CPreprocessor.PROTECT_INTRINSICS) != 0;
 		if ((ppOptions & CPreprocessor.REPORT_SIGNIFICANT_MACROS) != 0) {
 			fReportMacros= scannerContext;
 			fReportUndefined= (ppOptions & CPreprocessor.IGNORE_UNDEFINED_SIGNIFICANT_MACROS) == 0;
@@ -184,7 +184,7 @@ public class MacroExpander {
 
 			input.prepend(firstExpansion);
 
-			result= expandAll(input, forbidden, protectDefined, null);
+			result= expandAll(input, forbidden, protectIntrinsics, null);
 		} catch (CompletionInMacroExpansionException e) {
 			// For content assist in macro expansions, we return the list of tokens of the
 			// parameter at the current cursor position and hope that they make sense if
@@ -351,7 +351,7 @@ public class MacroExpander {
 	}
 
 	private TokenList expandAll(TokenSource input, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden,
-			boolean protectDefinedConstructs, MacroExpansionTracker tracker) throws OffsetLimitReachedException {
+			boolean protectIntrinsics, MacroExpansionTracker tracker) throws OffsetLimitReachedException {
 		final TokenList result= new TokenList();
 		boolean protect= false;
 		Token l= null;
@@ -366,8 +366,12 @@ public class MacroExpander {
 				PreprocessorMacro macro= fDictionary.get(image);
 				if (protect || (tracker != null && tracker.isDone())) {
 					result.append(t);
-				} else if (protectDefinedConstructs && Arrays.equals(image, Keywords.cDEFINED)) {
+				} else if (protectIntrinsics && Arrays.equals(image, Keywords.cDEFINED)) {
 					t.setType(CPreprocessor.tDEFINED);
+					result.append(t);
+					protect= true;
+				} else if (protectIntrinsics && Arrays.equals(image, Keywords.c__HAS_FEATURE)) {
+					t.setType(CPreprocessor.t__HAS_FEATURE);
 					result.append(t);
 					protect= true;
 				} else if (macro == null || (macro.isFunctionStyle() && !input.findLParenthesis())) {

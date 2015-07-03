@@ -11541,5 +11541,26 @@ public class AST2CPPTests extends AST2TestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPVariable test = bh.assertNonProblemOnFirstIdentifier("test");
 		assertTrue(test.getType() instanceof IProblemType); // resolution is ambiguous
+  }
+	
+	//	constexpr int lambdas_supported = 
+	//	#if __has_feature(cxx_lambdas)
+	//		1;
+	//	#else
+	//		0;
+	//	#endif
+	//
+	//	constexpr int generic_lambdas_supported = 
+	//	#if __has_feature(cxx_generic_lambdas)
+	//		1;
+	//	#else
+	//		0;
+	//	#endif
+	public void testHasFeature_442325() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("lambdas_supported", 1);
+		// Note: when support for generic lambdas is implemented,
+		// this test will need to be updated.
+		helper.assertVariableValue("generic_lambdas_supported", 0);
 	}
 }

@@ -2389,39 +2389,95 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// double d = 2.0;
-	// double& rd = d; // rd refers to d
-	// const double& rcd = d; // rcd refers to d
-	// struct A { };
-	// struct B : public A { } b;
-	// A& ra = b; // ra refers to A subobject in b
-	// const A& rca = b; // rca refers to A subobject in b
+	// Note: the examples for 8.5.3/5 are written slightly differently
+	// than they appear in the standard. In the standard, the examples
+	// demonstrate the rules with variable initialiation, but CDT doesn't
+	// currently issue problem bindings for variable initialization,
+	// so in the tests the examples are rewritten to use function calls.
+	
+	//	void f1(double);
+	//	void f2(double&);
+	//	void f3(const double&);
+	//	struct A { };
+	//	struct B : public A { operator int&(); } b;
+	//	void f4(A&);
+	//	void f5(const A&);
+	//	void f6(int&);
+	//	int main() {
+	//		f1(2.0);
+	//		double d;
+	//		f2(d);
+	//		f3(d);
+	//		f4(b);
+	//		f5(b);
+	//		f6(B());
+	//	}
 	public void test8_5_3s5a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
-	// double& rd2 = 2.0; // error: not an lvalue and reference not const
-	// int i = 2;
-	// double& rd3 = i; // error: type mismatch and reference not const
+	//	void f1(double&);
+	//	void f2(double&);
+	//	int main() {
+	//		f1(2.0);  // error: not an lvalue and reference not const
+	//		int i = 2;
+	//		f2(i);    // error: type mismatch and reference not const
+	//	}
 	public void test8_5_3s5b() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper helper = getAssertionHelper(ParserLanguage.CPP);
+		helper.assertProblem("f1(2", "f1");
+		helper.assertProblem("f2(i", "f2");
 	}
 
-	// struct A { };
-	// struct B : public A { } b;
-	// extern B f();
-	// const A& rca = f(); // Either bound to the A subobject of the B rvalue,
-	// // or the entire B object is copied and the reference
-	// // is bound to the A subobject of the copy
+	//	struct A { };
+	//	struct B : public A { } b;
+	//	extern B f();
+	//	void f1(const A&);
+	//	void f2(A&&);
+	//	struct X {
+	//		operator B();
+	//		operator int&();
+	//	} x;
+	//	void f3(int&&);
+	//	void f4(B&&);
+	//	int main() {
+	//		f1(f());  // bound to the A subobject of the B rvalue
+	//		f2(f());  // same as above
+	//		f1(x);    // bound to the A subobject of the result of the conversion
+	//		f3(static_cast<int&&>(i));  // bound directly to i
+	//		f4(x);    // bound directly to the result of operator B
+	//		f3(X());  // error: lvalue-to-rvalue conversion applied to result of operator int&
+	//	}
 	public void test8_5_3s5c() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper helper = getAssertionHelper(ParserLanguage.CPP);
+		helper.assertNonProblem("f1(f", "f1");
+		helper.assertNonProblem("f2(f", "f2");
+		helper.assertNonProblem("f1(x", "f1");
+		helper.assertNonProblem("f3(s", "f3");
+		helper.assertNonProblem("f4(x", "f4");
+		helper.assertProblem("f3(X", "f3");
 	}
 
-	// const double& rcd2 = 2; // rcd2 refers to temporary with value 2.0
-	// const volatile int cvi = 1;
-	// const int& r = cvi; // error: type qualifiers dropped
+	//	void f1(const double&);
+	//	void f2(double&&);
+	//	void f3(const int&);
+	//	int main() {
+	//		f1(2);
+	//		f2(2);
+	//		const volatile int cvi = 1;
+	//		f3(cvi);  // error: type qualifiers dropped
+	//		double d;
+	//		int i;
+	//		f2(d);    // error: copying lvalue of related type
+	//		f2(i);
+	//	}
 	public void test8_5_3s5d() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		BindingAssertionHelper helper = getAssertionHelper(ParserLanguage.CPP);
+		helper.assertNonProblem("f1(2", "f1");
+		helper.assertNonProblem("f2(2", "f2");
+		helper.assertProblem("f3(cv", "f3");
+		helper.assertProblem("f2(d)", "f2");
+		helper.assertNonProblem("f2(i", "f2");
 	}
 
 	// struct X { int a; };

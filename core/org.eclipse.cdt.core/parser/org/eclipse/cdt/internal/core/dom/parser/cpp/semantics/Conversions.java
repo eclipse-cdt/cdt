@@ -153,7 +153,7 @@ public class Conversions {
 				// 'cv3 T3' (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
 				// and choosing the best one through overload resolution (13.3)),
 				if (T2 instanceof ICPPClassType && udc != UDCMode.FORBIDDEN && isReferenceRelated(T1, T2, point) < 0) {
-					Cost cost= initializationByConversionForDirectReference(cv1T1, cv2T2, (ICPPClassType) T2, true, ctx, point);
+					Cost cost= initializationByConversionForDirectReference(cv1T1, cv2T2, (ICPPClassType) T2, true, false, ctx, point);
 					if (cost != null) {
 						cost.setReferenceBinding(refBindingType);
 						return cost;
@@ -162,97 +162,65 @@ public class Conversions {
 			}
 
 			// Otherwise, the reference shall be an lvalue reference to a non-volatile const type (i.e., cv1
-			// shall be const), or the reference shall be an rvalue reference and the initializer expression
-			// shall be an rvalue or have function type.
-			boolean ok;
-			if (isLValueRef) {
-				ok = getCVQualifier(cv1T1) == CVQualifier.CONST;
-			} else {
-				ok= valueCat.isRValue() || T2 instanceof IFunctionType;
-			}
-			if (!ok) {
+			// shall be const), or the reference shall be an rvalue reference.
+			if (isLValueRef && getCVQualifier(cv1T1) != CVQualifier.CONST) {
 				return Cost.NO_CONVERSION;
 			}
-
-			// If T1 is a function type, then
-			if (T1 instanceof IFunctionType) {
-				// if T2 is the same type as T1, the reference is bound to the initializer expression lvalue;
-				if (T2.isSameType(T1)) {
-					Cost cost= new Cost(T1, T2, Rank.IDENTITY);
-					cost.setReferenceBinding(refBindingType);
-					return cost;
-				}
-				// if T2 is a class type and the initializer expression can be implicitly converted to an lvalue of
-				// type T1 (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
-				// and choosing the best one through overload resolution (13.3)), the reference is bound to the
-				// function lvalue that is the result of the conversion;
-				if (T2 instanceof ICPPClassType) {
-					Cost cost= initializationByConversionForDirectReference(cv1T1, cv2T2, (ICPPClassType) T2, true, ctx, point);
-					if (cost != null) {
-						cost.setReferenceBinding(refBindingType);
-						return cost;
-					}
-				}
-				// otherwise, the program is ill-formed.
-				return Cost.NO_CONVERSION;
-			}
-
-			// Otherwise, if T2 is a class type and
-			if (T2 instanceof ICPPClassType) {
-				// ... the initializer expression is an rvalue and 'cv1 T1' is reference-compatible with 'cv2 T2'
-				// ..., then the reference is bound to the initializer expression rvalue in the first case
-				if (valueCat.isRValue()) {
-					Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObject, point);
-					if (cost != null) {
-						// [13.3.3.1.4-1] direct binding has either identity or conversion rank.
-						if (cost.getInheritanceDistance() > 0) {
-							cost.setRank(Rank.CONVERSION);
-						}
-						cost.setReferenceBinding(refBindingType);
-						return cost;
-					}
-				}
-
-				// or T1 is not reference-related to T2 and the initializer expression can be implicitly
-				// converted to an rvalue of type 'cv3 T3' (this conversion is selected by enumerating the
-				// applicable conversion functions (13.3.1.6) and choosing the best one through overload
-				// resolution (13.3)), then the reference is bound to the initializer expression rvalue in the
-				// first case and to the object that is the result of the conversion in the second case (or,
-				// in either case, to the appropriate base class sub-object of the object).
-				if (udc != UDCMode.FORBIDDEN && isReferenceRelated(T1, T2, point) < 0) {
-					Cost cost= initializationByConversionForDirectReference(cv1T1, cv2T2, (ICPPClassType) T2, false, ctx, point);
-					if (cost != null) {
-						cost.setReferenceBinding(refBindingType);
-						return cost;
-					}
-				}
-			}
-
-			// If the initializer expression is an rvalue, with T2 an array type, and 'cv1 T1' is
-			// reference-compatible with 'cv2 T2' the reference is bound to the object represented by the
-			// rvalue (see 3.10).
-			if (T2 instanceof IArrayType && valueCat.isRValue()) {
-				Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObject, point);
+			
+			// If the initializer expression is an xvalue, class prvalue, array prvalue, or function lvalue 
+			// and 'cv1 T1' is reference-compatible with 'cv2 T2', then the reference is bound to the value
+			// of the initializer expression (or the appropriate base class subobject).
+			if (valueCat == ValueCategory.XVALUE
+			    || (valueCat == ValueCategory.PRVALUE && (T2 instanceof ICPPClassType || T2 instanceof IArrayType))
+			    || (valueCat == ValueCategory.LVALUE && T2 instanceof ICPPFunctionType)) {
+				Cost cost = isReferenceCompatible(cv1T1, cv2T2, isImpliedObject, point);
 				if (cost != null) {
 					cost.setReferenceBinding(refBindingType);
 					return cost;
 				}
 			}
+			
+			// If the initializer expression has class type (i.e. T2 is a class type), where T1 is not
+			// reference-related to T2, and can be implicitly converted to an xvalue, class prvalue,
+			// or function lvalue of type 'cv3 T3', where 'cv1 T1' is reference-compatible with 'cv3 T3',
+			// then the reference is bound to the result of the conversion (or the appropriate base class
+			// subobject). If the reference is an rvalue reference and the second standard conversion
+			// sequence of the user-defined conversion sequence includes an lvalue-to-rvalue
+			// conversion, the program is ill-formed [this is why we pass illFormedIfLValue = true].
+			if (T2 instanceof ICPPClassType) {
+				if (udc != UDCMode.FORBIDDEN && isReferenceRelated(T1, T2, point) < 0) {
+					Cost cost= initializationByConversionForDirectReference(cv1T1, cv2T2, (ICPPClassType) T2, false, true, ctx, point);
+					if (cost != null) {
+						if (cost != Cost.NO_CONVERSION) {
+							cost.setReferenceBinding(refBindingType);
+						}
+						return cost;
+					}
+				}
+			}
 
 			// Otherwise, a temporary of type 'cv1 T1' is created and initialized from the initializer
 			// expression using the rules for a non-reference copy initialization (8.5). The reference is then
-			// bound to the temporary. If T1 is reference-related to T2, cv1 must be the same cv-qualification
-			// as, or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
+			// bound to the temporary.
 
 			// 13.3.3.1.7 no temporary object when converting the implicit object parameter
 			if (!isImpliedObject && ctx != Context.REQUIRE_DIRECT_BINDING) {
-				if (isReferenceRelated(T1, T2, point) < 0 || compareQualifications(cv1T1, cv2T2) >= 0) {
-					Cost cost= nonReferenceConversion(valueCat, cv2T2, T1, udc, point);
-					if (cost.converts()) {
-						cost.setReferenceBinding(refBindingType);
-					}
-					return cost;
+				Cost cost= nonReferenceConversion(valueCat, cv2T2, T1, udc, point);
+				if (cost.converts()) {
+					cost.setReferenceBinding(refBindingType);
 				}
+				boolean referenceRelated = isReferenceRelated(T1, T2, point) >= 0;
+				// If T1 is reference-related to T2, cv1 shall be the same cv-qualification as,
+				// or greater cv-qualification than, cv2.
+				if (referenceRelated && compareQualifications(cv1T1, cv2T2) < 0) {
+					return Cost.NO_CONVERSION;
+				}
+				// if T1 is reference-related to T2 and the reference is an rvalue reference,
+				// the initializer expression shall not be an lvalue.
+				if (referenceRelated && !isLValueRef && valueCat == ValueCategory.LVALUE) {
+					return Cost.NO_CONVERSION;
+				}
+				return cost;
 			}
 			return Cost.NO_CONVERSION;
 		}
@@ -263,9 +231,15 @@ public class Conversions {
 
 	/**
 	 * C++0x: 13.3.1.6 Initialization by conversion function for direct reference binding
-	 * @param point
+	 * @param needLValue don't consider conversion functions that return rvalue references
+	 * @param illFormedIfLValue make the conversion ill-formed (by returning Cost.NO_CONVERSION)
+	 *                          if the best match is a conversion function that returns an
+	 *                          lvalue reference
+	 * Note that there's a difference between returning null and returning Cost.NO_CONVERSION:
+	 * in the former case, the caller will continue trying other conversion methods.
 	 */
-	private static Cost initializationByConversionForDirectReference(final IType cv1T1, final IType cv2T2, final ICPPClassType T2, boolean needLValue, Context ctx, IASTNode point)
+	private static Cost initializationByConversionForDirectReference(final IType cv1T1, final IType cv2T2, final ICPPClassType T2, 
+			boolean needLValue, boolean illFormedIfLValue, Context ctx, IASTNode point)
 			throws DOMException {
 		ICPPMethod[] fcns= SemanticUtil.getConversionOperators(T2, point);
 		Cost operatorCost= null;
@@ -281,21 +255,26 @@ public class Conversions {
 				final ICPPFunctionType ft = op.getType();
 				IType t= getNestedType(ft.getReturnType(), TDEF);
 				final boolean isLValueRef= t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference();
-				if (isLValueRef == needLValue) { // require an lvalue or rvalue
-					IType implicitParameterType= CPPSemantics.getImplicitParameterType(op);
-					Cost udcCost= isReferenceCompatible(getNestedType(implicitParameterType, TDEF | REF), cv2T2, true, point); // expression type to implicit object type
-					if (udcCost != null) {
-						// Make sure top-level cv-qualifiers are compared
-						udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
-						FunctionCost udcFuncCost= new FunctionCost(op, udcCost, point);
-						int cmp= udcFuncCost.compareTo(null, bestUdcCost);
-						if (cmp <= 0) {
-							Cost cost= isReferenceCompatible(cv1T1, getNestedType(t, TDEF | REF), false, point); // converted to target
-							if (cost != null) {
-								bestUdcCost= udcFuncCost;
-								ambiguousConversionOperator= cmp == 0;
-								operatorCost= cost;
-								operatorCost.setUserDefinedConversion(op);
+				if (needLValue && !isLValueRef) {
+					continue;
+				}
+				IType implicitParameterType= CPPSemantics.getImplicitParameterType(op);
+				Cost udcCost= isReferenceCompatible(getNestedType(implicitParameterType, TDEF | REF), cv2T2, true, point); // expression type to implicit object type
+				if (udcCost != null) {
+					// Make sure top-level cv-qualifiers are compared
+					udcCost.setReferenceBinding(ReferenceBinding.LVALUE_REF);
+					FunctionCost udcFuncCost= new FunctionCost(op, udcCost, point);
+					int cmp= udcFuncCost.compareTo(null, bestUdcCost);
+					if (cmp <= 0) {
+						Cost cost= isReferenceCompatible(cv1T1, getNestedType(t, TDEF | REF), false, point); // converted to target
+						if (cost != null) {
+							bestUdcCost= udcFuncCost;
+							ambiguousConversionOperator= cmp == 0;
+							operatorCost= cost;
+							operatorCost.setUserDefinedConversion(op);
+							
+							if (illFormedIfLValue && isLValueRef) {
+								operatorCost = Cost.NO_CONVERSION;
 							}
 						}
 					}

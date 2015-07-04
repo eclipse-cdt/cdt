@@ -8281,7 +8281,7 @@ public class AST2CPPTests extends AST2TestBase {
 	//    caref(b);
 	//	  dref(2.0); // error: not an lvalue and reference not const
 	//	  dref(i);   // error: type mismatch and reference not const
-	//	  drref(i);  // error: rvalue reference cannot bind to lvalue
+	//	  drref(i);  // bound to temporary double object
 	//    caref(f());  // bound to the A subobject of the B rvalue.
 	//    carref(f()); // same as above
 	//    caref(x);    // bound to the A subobject of the result of the conversion
@@ -8298,7 +8298,7 @@ public class AST2CPPTests extends AST2TestBase {
 		bh.assertNonProblem("caref(b)", 5);
 		bh.assertProblem("dref(2.0)", 4);
 		bh.assertProblem("dref(i)", 4);
-		bh.assertProblem("drref(i)", 5);
+		bh.assertNonProblem("drref(i)", 5);
 		bh.assertNonProblem("caref(f())", 5);
 		bh.assertNonProblem("carref(f())", 6);
 		bh.assertNonProblem("caref(x)", 5);
@@ -11100,6 +11100,16 @@ public class AST2CPPTests extends AST2TestBase {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
 		isParameterSignatureEqual(sd.getDeclarators()[0], "(int&&)");
+	}
+	
+	//	struct S { S(int); };
+	//	void find(S&&);
+	//	int main() {
+	//		int waldo = 42;
+	//		find(waldo);
+	//	}
+	public void testRValueReferenceBindingToTemporary_470943() throws Exception {
+		parseAndCheckBindings();
 	}
 	
 	//	constexpr int waldo1 = 42;

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_da5f7d6b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done.\nAdded a utility getLastNonWhitespaceChar(str) and used it.",
+      "parentUuid": "87f6139c_9419583b",
+      "range": {
+        "startLine": 625,
+        "startChar": 22,
+        "endLine": 625,
+        "endChar": 26
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_54d9b0e9",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2015-07-01T00:25:18Z",
       "side": 1,
       "message": "Better to remember the editor from the context passed to computeCompletionProposals and use here.",
+      "range": {
+        "startLine": 653,
+        "startChar": 38,
+        "endLine": 653,
+        "endChar": 50
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_fa1243e2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_54d9b0e9",
       "range": {
         "startLine": 653,
         "startChar": 38,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_d175ad71",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_f4337ca9",
+      "range": {
+        "startLine": 76,
+        "startChar": 78,
+        "endLine": 76,
+        "endChar": 86
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_944038ef",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2015-07-01T00:25:18Z",
       "side": 1,
       "message": "Use an enum instead.",
+      "range": {
+        "startLine": 79,
+        "startChar": 26,
+        "endLine": 79,
+        "endChar": 31
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_51489d32",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_944038ef",
       "range": {
         "startLine": 79,
         "startChar": 26,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_913e858e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_b43d747c",
+      "range": {
+        "startLine": 101,
+        "startChar": 25,
+        "endLine": 101,
+        "endChar": 30
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_540b70dd",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 1
@@ -128,6 +248,30 @@
       "writtenOn": "2015-07-01T00:25:18Z",
       "side": 1,
       "message": "toString methods should not be used for anything but debugging.",
+      "range": {
+        "startLine": 105,
+        "startChar": 16,
+        "endLine": 105,
+        "endChar": 24
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_b110e107",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_540b70dd",
       "range": {
         "startLine": 105,
         "startChar": 16,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_910b25dd",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_74102c07",
+      "range": {
+        "startLine": 122,
+        "startChar": 37,
+        "endLine": 122,
+        "endChar": 43
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_d436409a",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 1
@@ -174,6 +342,30 @@
       "writtenOn": "2015-07-01T00:25:18Z",
       "side": 1,
       "message": "Redundant \u0027else\u0027 clause.",
+      "range": {
+        "startLine": 152,
+        "startChar": 4,
+        "endLine": 152,
+        "endChar": 10
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_3134f192",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_d436409a",
       "range": {
         "startLine": 152,
         "startChar": 4,
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_11373598",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_343184a1",
+      "range": {
+        "startLine": 166,
+        "startChar": 51,
+        "endLine": 166,
+        "endChar": 53
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_54225055",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 1
@@ -220,6 +436,30 @@
       "writtenOn": "2015-07-01T00:25:18Z",
       "side": 1,
       "message": "This is a wrong approach. Use ClassTypeHelper.isSubclass(ICPPClassType, ICPPClassType, IASTNode). The last parameter for calling this method should be the function name expression of the call being completed.",
+      "range": {
+        "startLine": 206,
+        "startChar": 17,
+        "endLine": 206,
+        "endChar": 25
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_d10f6dbe",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "I didn\u0027t find a proper way to get the function call expression.\ni.e.\nI tried the following:\nnode \u003d getAST().getNodeSelector(ast.getFilePath()).findEnclosingNode(\u003ccall_expression_start_offset\u003e, 100);\nand the returned was null.\nEven if I statically specify the offset to an actual node before the call expression I get the node, but isSubclass() returns false.",
+      "parentUuid": "87f6139c_54225055",
       "range": {
         "startLine": 206,
         "startChar": 17,
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_31e51152",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_946b1867",
+      "range": {
+        "startLine": 55,
+        "startChar": 30,
+        "endLine": 55,
+        "endChar": 41
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_b468d46c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
         "patchSetId": 1
@@ -266,6 +530,30 @@
       "writtenOn": "2015-07-01T00:25:18Z",
       "side": 1,
       "message": "Holding on to the AST beyond the lifetime of the index read lock that was used to build the AST is unsafe.\n\nI can see two potential solutions:\na) Make sure that the index read lock is held for the duration of parameter guessing process. A special care has to be taken to make sure that the index read lock doesn\u0027t leak.\nb) Get a fresh AST in places where the original AST cannot be used.",
+      "range": {
+        "startLine": 78,
+        "startChar": 22,
+        "endLine": 78,
+        "endChar": 37
+      },
+      "revId": "3d9c5bd9acd25bfcdae408ca19977c3fcbd887f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_1a7625fa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-06T13:47:39Z",
+      "side": 1,
+      "message": "Done.\nWent with option (b).",
+      "parentUuid": "87f6139c_b468d46c",
       "range": {
         "startLine": 78,
         "startChar": 22,

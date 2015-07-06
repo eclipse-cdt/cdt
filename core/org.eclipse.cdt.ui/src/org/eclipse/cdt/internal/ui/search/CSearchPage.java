@@ -439,7 +439,7 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 				final String text = patternCombo.getText();
 				final char[] newChars= event.text.toCharArray();
 				final StringBuilder result= new StringBuilder(newChars.length);
-				boolean relax= prefix(text, event.start, result).contains(Keywords.OPERATOR + " "); //$NON-NLS-1$
+				boolean relax= prefix(text, event.start, result).contains(Keywords.OPERATOR);
 				for (final char c : newChars) {
 					switch (c) {
 					case  '_': 
@@ -459,7 +459,6 @@ public class CSearchPage extends DialogPage implements ISearchPage {
 					case '%': case '^': case '(': case ')':
 					case '[': case ']': 
 						if (prefix(text, event.start, result).endsWith(Keywords.OPERATOR)) {
-							result.append(' ');
 							relax= true;
 						}
 						if (relax)

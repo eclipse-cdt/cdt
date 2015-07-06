@@ -74,6 +74,9 @@ public class CSearchPatternQuery extends CSearchQuery {
 			int flags) throws PatternSyntaxException {
 		super(scope, flags);
 		this.scopeDesc = scopeDesc;
+
+		// adjust the pattern string to accomodate searches for operators
+		patternStr = CSearchUtil.adjustSearchStringForOperators(patternStr);
 		
 		// remove spurious whitespace, which will make the search fail 100% of the time
 		this.patternStr = patternStr.trim();

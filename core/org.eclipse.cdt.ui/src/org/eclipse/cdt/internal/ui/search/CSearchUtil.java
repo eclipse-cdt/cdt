@@ -66,4 +66,36 @@ public class CSearchUtil {
 		}
 		return isWrite;
 	}
+	
+	
+	/**
+	 * Returns true whether 'ch' could the first character of an overloadable C++ operator. 
+	 */
+	private static boolean isOperatorChar(char ch) {
+		switch (ch) {
+		case '&': case '|': case '+': case '-':
+		case '!': case '=': case '>': case '<':
+		case '%': case '^': case '(': case ')':
+		case '[': case '~':
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * If 'searchStr' contains the name of an overloadable operator with no
+	 * space between 'operator' and the operator (e.g. 'operator<'), insert
+	 * a space (yielding e.g. 'operator <'). This is necessary because the
+	 * binding names for overloaded operators in the index contain such a 
+	 * space, and the search wouldn't find them otherwise. 
+	 */
+	public static String adjustSearchStringForOperators(String searchStr) {
+		int operatorIndex = searchStr.indexOf("operator");  //$NON-NLS-1$
+		int operatorCharIndex = operatorIndex + 8;  // "operator" is 8 characters
+		if (operatorCharIndex < searchStr.length() && isOperatorChar(searchStr.charAt(operatorCharIndex))) {
+			searchStr = searchStr.substring(0, operatorCharIndex) + ' ' + searchStr.substring(operatorCharIndex);
+		}
+		return searchStr;
+	}
 }

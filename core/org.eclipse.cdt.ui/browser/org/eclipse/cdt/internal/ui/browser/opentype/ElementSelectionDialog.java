@@ -54,6 +54,7 @@ import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 import org.eclipse.cdt.internal.core.browser.IndexModelUtil;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 
 /**
  * A dialog to select an element from a filterable list of elements.
@@ -349,6 +350,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	protected void scheduleUpdate(String filterText) {
+		filterText= CSearchUtil.adjustSearchStringForOperators(filterText);
 		char[] newPrefix= toPrefix(filterText);
 		final char[] currentPrefix= fUpdateJob.getCurrentPrefix();
 		final boolean equivalentPrefix= isEquivalentPrefix(currentPrefix, newPrefix);

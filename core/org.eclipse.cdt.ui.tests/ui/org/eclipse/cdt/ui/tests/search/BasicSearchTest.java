@@ -379,4 +379,14 @@ public class BasicSearchTest extends BaseUITestCase {
 		query= makeProjectQuery("f");
 		assertOccurrences(query, 6);
 	}
+	
+	//	struct S {
+	//		bool operator<(const S&, const S&);
+	//	};
+	
+	//	// empty
+	public void testOverloadedOperatorNoSpace_408870() throws Exception {
+		CSearchQuery query = makeProjectQuery("operator<");
+		assertOccurrences(query, 1);
+	}
 }

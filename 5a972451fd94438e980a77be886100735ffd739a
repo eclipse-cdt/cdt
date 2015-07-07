@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_00c2332b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11163,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-07T19:02:59Z",
+      "side": 1,
+      "message": "Support for user defined literal has been submitted.",
+      "range": {
+        "startLine": 11162,
+        "startChar": 2,
+        "endLine": 11163,
+        "endChar": 39
+      },
+      "revId": "5a972451fd94438e980a77be886100735ffd739a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

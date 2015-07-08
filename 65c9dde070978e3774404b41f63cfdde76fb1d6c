@@ -2,6 +2,190 @@
   "comments": [
     {
       "key": {
+        "uuid": "87f6139c_4fde24d6",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1548,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Rename to cOwners.",
+      "range": {
+        "startLine": 1548,
+        "startChar": 17,
+        "endLine": 1548,
+        "endChar": 32
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_2fd918eb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1550,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Ignoring everything except the first element is unsafe.",
+      "range": {
+        "startLine": 1550,
+        "startChar": 37,
+        "endLine": 1550,
+        "endChar": 55
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_8febec6f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1551,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Add a space after {",
+      "range": {
+        "startLine": 1551,
+        "startChar": 43,
+        "endLine": 1551,
+        "endChar": 66
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_cfe1748e",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1586,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Uninformative name.",
+      "range": {
+        "startLine": 1586,
+        "startChar": 11,
+        "endLine": 1586,
+        "endChar": 15
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_0ffffc27",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1600,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Rename to cppOwners.",
+      "range": {
+        "startLine": 1600,
+        "startChar": 17,
+        "endLine": 1600,
+        "endChar": 32
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_afe4e89c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1602,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Ignoring everything except the first element is unsafe.",
+      "range": {
+        "startLine": 1602,
+        "startChar": 11,
+        "endLine": 1602,
+        "endChar": 26
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_6fee8081",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1603,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "Use IndexFilter.ALL instead.",
+      "range": {
+        "startLine": 1603,
+        "startChar": 17,
+        "endLine": 1603,
+        "endChar": 28
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_eff9d041",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1660,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T22:45:00Z",
+      "side": 1,
+      "message": "It seems wrong that this line is executed only when node \u003d\u003d null.",
+      "range": {
+        "startLine": 1660,
+        "startChar": 4,
+        "endLine": 1660,
+        "endChar": 25
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_68bdffac",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/IndexUI.java",
         "patchSetId": 5

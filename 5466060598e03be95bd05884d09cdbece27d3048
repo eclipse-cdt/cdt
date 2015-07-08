@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f6139c_0f21bcd2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T17:34:52Z",
+      "side": 1,
+      "message": "Better to use CharArrayUtils.EMPTY_CHAR_ARRAY.",
+      "range": {
+        "startLine": 77,
+        "startChar": 29,
+        "endLine": 77,
+        "endChar": 40
+      },
+      "revId": "5466060598e03be95bd05884d09cdbece27d3048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_4f174478",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T17:34:52Z",
+      "side": 1,
+      "message": "Assign new HashSet\u003c\u003e() here.",
+      "range": {
+        "startLine": 78,
+        "startChar": 27,
+        "endLine": 78,
+        "endChar": 47
+      },
+      "revId": "5466060598e03be95bd05884d09cdbece27d3048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_8fdbec61",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T17:34:52Z",
+      "side": 1,
+      "message": "Why not call this method getPriority?",
+      "range": {
+        "startLine": 96,
+        "startChar": 13,
+        "endLine": 96,
+        "endChar": 21
+      },
+      "revId": "5466060598e03be95bd05884d09cdbece27d3048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_8f064c5a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-08T17:34:52Z",
+      "side": 1,
+      "message": "Don\u0027t we need an index-based AST?",
+      "range": {
+        "startLine": 447,
+        "startChar": 34,
+        "endLine": 447,
+        "endChar": 38
+      },
+      "revId": "5466060598e03be95bd05884d09cdbece27d3048",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

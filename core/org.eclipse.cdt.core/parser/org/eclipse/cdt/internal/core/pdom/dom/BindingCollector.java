@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public final class BindingCollector extends NamedNodeCollector {
-	private IndexFilter filter;
+	private final IndexFilter filter;
 	private boolean fSkipGlobalEnumerators;
 
 	/**

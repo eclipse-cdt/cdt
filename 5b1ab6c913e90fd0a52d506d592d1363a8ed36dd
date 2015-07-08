@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_3467adc6",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_e3473121",
+      "range": {
+        "startLine": 621,
+        "startChar": 16,
+        "endLine": 621,
+        "endChar": 17
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_4343a515",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2015-07-08T00:25:55Z",
       "side": 1,
       "message": "Does the number 3 have any significance? If so, explain.",
+      "range": {
+        "startLine": 87,
+        "startChar": 9,
+        "endLine": 87,
+        "endChar": 10
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_9459410c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "Done.\nIt is for giving the global variables a bit lower priority.\n\nCommented on the code.",
+      "parentUuid": "87f6139c_4343a515",
       "range": {
         "startLine": 87,
         "startChar": 9,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_b4527de0",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_83c46d0c",
+      "range": {
+        "startLine": 117,
+        "startChar": 25,
+        "endLine": 117,
+        "endChar": 30
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_83ebcd6f",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2015-07-08T00:25:55Z",
       "side": 1,
       "message": "Is there a possibility that this method will be caused multiple times for a single user action? If so, parsing the same code multiple times should be avoided.",
+      "range": {
+        "startLine": 426,
+        "startChar": 29,
+        "endLine": 426,
+        "endChar": 35
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_74c7750f",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "Currently it is only used once, and can\u0027t be called multiple times in same user action.\n\nI added a cache for it just in case.",
+      "parentUuid": "87f6139c_83ebcd6f",
       "range": {
         "startLine": 426,
         "startChar": 29,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_f4f9a541",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "Sorry, I am now confused.\nWhat I understood from previous review is that it is not safe to store the translation unit after the context in which it was created is closed, and this is the reason I am creating a new one here.",
+      "parentUuid": "87f6139c_43de05d6",
+      "range": {
+        "startLine": 435,
+        "startChar": 28,
+        "endLine": 435,
+        "endChar": 43
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_23d939eb",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 2
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "87f6139c_54107906",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "I think we don\u0027t need to parse any headers at this point, and rely only on the bindings and definitions already stored on the index.",
+      "parentUuid": "87f6139c_23d939eb",
+      "range": {
+        "startLine": 445,
+        "startChar": 64,
+        "endLine": 445,
+        "endChar": 84
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_03d87de8",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 2
@@ -151,6 +295,30 @@
       "writtenOn": "2015-07-08T00:25:55Z",
       "side": 1,
       "message": "Combine the \u0027catch\u0027 clauses.",
+      "range": {
+        "startLine": 447,
+        "startChar": 11,
+        "endLine": 447,
+        "endChar": 26
+      },
+      "revId": "5b1ab6c913e90fd0a52d506d592d1363a8ed36dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f6139c_744015ee",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-07-08T15:09:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_03d87de8",
       "range": {
         "startLine": 447,
         "startChar": 11,

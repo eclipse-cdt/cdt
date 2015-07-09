@@ -186,6 +186,9 @@ public class LookupData extends ScopeLookupData {
 			fDeclarator= (IASTDeclarator) nameParent;
 		} else if (nameParent instanceof IASTFieldReference) {
 			qualified= true;
+			if (nameParent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+				fFunctionCall= true;
+			}
 		} else if (nameParent instanceof IASTIdExpression) {
 			if (nameParent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 				fFunctionCall= true;

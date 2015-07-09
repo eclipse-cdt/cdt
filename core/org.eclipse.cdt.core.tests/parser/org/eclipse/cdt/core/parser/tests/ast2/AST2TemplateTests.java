@@ -8816,4 +8816,22 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAmbiguityResolutionOrder_462348b() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename>
+	//	struct Base {
+	//	    template <typename>
+	//	    void method(int);
+	//	};
+	//
+	//	template <typename V>
+	//	struct C : Base<V> {
+	//	  typedef int WALDO;
+	//
+	//	  C() {
+	//	    this->template method<WALDO>(0);    
+	//	  }
+	//	};
+	public void testRegression_421823() throws Exception {
+		parseAndCheckBindings();
+	}
 }

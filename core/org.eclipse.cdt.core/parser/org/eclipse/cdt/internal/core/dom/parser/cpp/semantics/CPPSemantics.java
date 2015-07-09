@@ -217,6 +217,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
@@ -497,8 +498,10 @@ public class CPPSemantics {
 		if (binding == null && data.skippedScope != null) {
 			if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
 				binding= new CPPUnknownMemberClass(data.skippedScope, name.getSimpleID());
-			} else {
+			} else if (data.isFunctionCall()) {
 				binding= new CPPUnknownMethod(data.skippedScope, name.getSimpleID());
+			} else {
+				binding= new CPPUnknownField(data.skippedScope, name.getSimpleID());
 			}
 		}
 

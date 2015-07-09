@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67275ff5_0a419b62",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/console/ConsolePageParticipant.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-09T12:05:55Z",
+      "side": 1,
+      "message": "Should not we be doing this inside the if just before \nwe display console? What is context changed, but console\nprocess is not current process, next time can it happened that current process changes but context does not?",
+      "revId": "81038f834aea782f89e582d1d3e8b8882e15d5cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

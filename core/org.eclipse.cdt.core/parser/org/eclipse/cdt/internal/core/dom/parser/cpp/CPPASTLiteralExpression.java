@@ -130,7 +130,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 				if (udOffset > 0) {
 					/*
 					 * 2.14.8.1
-					 * "If a token matches both user-defined-literal and another literal kind, it is treated as the latter"
+					 * "If a token matches both user-defined-literal and another literal kind, it is
+					 * treated as the latter"
 					 */
 					setSuffix(CharArrayUtils.subarray(fValue, udOffset, -1));
 					for (int i = 0; i < fSuffix.length; i++) {

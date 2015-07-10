@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,37 @@ import org.eclipse.core.runtime.CoreException;
  * Access to methods on scopes and bindings internal to the parser.
  */
 public class ASTInternal {
+	/**
+	 * Returns the definition for an AST binding. Calling this method for an index binding
+	 * is considered an error.
+	 *
+	 * @param binding the binding to get the definition for
+	 * @return the definition node for the binding or {@code null}
+	 */
+	public static IASTNode getDefinitionOfBinding(IBinding binding) {
+		if (binding instanceof ICPPInternalBinding) {
+			return ((ICPPInternalBinding) binding).getDefinition();
+		}
+		if (binding instanceof ICInternalBinding) {
+			return ((ICInternalBinding) binding).getDefinition();
+		}
+		assert false;
+		return null;
+	}
+
+	/**
+	 * Returns the declarations for an AST binding. Calling this method for an index binding
+	 * is considered an error.
+	 *
+	 * @param binding the binding to get the declarations for
+	 * @return the declaration nodes for the binding, possibly none
+	 */
 	public static IASTNode[] getDeclarationsOfBinding(IBinding binding) {
 		if (binding instanceof ICPPInternalBinding) {
 			return ((ICPPInternalBinding) binding).getDeclarations();
+		}
+		if (binding instanceof ICInternalBinding) {
+			return ((ICInternalBinding) binding).getDeclarations();
 		}
 		assert false;
 		return IASTNode.EMPTY_NODE_ARRAY;

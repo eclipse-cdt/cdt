@@ -22,6 +22,30 @@
       "revId": "1b5f7b6b4153f67c5bed8fd09ea38d049dee92fa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_9ef8293f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-10T21:40:08Z",
+      "side": 1,
+      "message": "The regression caused by mismatching string representations of the same type was fixed by commit http://git.eclipse.org/c/cdt/org.eclipse.cdt.git/commit/?id\u003d037f64f533da3fe96b90cd84cbdb911b44096d4e. I no longer see the problem on my code base.",
+      "parentUuid": "87f6139c_54aff015",
+      "range": {
+        "startLine": 544,
+        "startChar": 9,
+        "endLine": 544,
+        "endChar": 21
+      },
+      "revId": "1b5f7b6b4153f67c5bed8fd09ea38d049dee92fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

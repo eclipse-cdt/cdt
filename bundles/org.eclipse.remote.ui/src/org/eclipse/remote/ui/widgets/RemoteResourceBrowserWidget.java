@@ -12,6 +12,7 @@
 package org.eclipse.remote.ui.widgets;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,7 +186,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	private String fDialogLabel;
 
 	private boolean fShowHidden;
-	private final List<IFileStore> fResources = new ArrayList<IFileStore>();
+	private final List<IFileStore> fResources = new ArrayList<>();
 	private String fResource;
 	private String fInitialPath;
 	private IPath fRootPath;
@@ -304,7 +305,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 								TreePath treePath = treePaths[0];
 								if (treePath.getLastSegment() instanceof DeferredFileStore) {
 									DeferredFileStore element = ((DeferredFileStore) treePath.getLastSegment());
-									String path = element.getFileStore().toURI().getPath();
+									String path = toPath(element.getFileStore().toURI());
 									String newPath = createNewFolder(path);
 									if (newPath != null) {
 										fTreeViewer.expandToLevel(element, 1);
@@ -322,7 +323,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 						}
 					} else {
 						DeferredFileStore root = (DeferredFileStore) fTreeViewer.getInput();
-						String path = root.getFileStore().toURI().getPath();
+						String path = toPath(root.getFileStore().toURI());
 						String newPath = createNewFolder(path);
 						if (newPath != null) {
 							fTreeViewer.refresh();
@@ -372,7 +373,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 						}
 					}
 					if (fResources.size() > 0) {
-						fRemotePathText.setText(fResources.get(0).toURI().getPath());
+						fRemotePathText.setText(toPath(fResources.get(0).toURI()));
 					}
 					updateEnablement();
 					notifySelectionChangedListeners(event);
@@ -419,6 +420,10 @@ public class RemoteResourceBrowserWidget extends Composite {
 		}
 
 		updateEnablement();
+	}
+
+	private String toPath(URI uri) {
+		return getConnection().getService(IRemoteFileService.class).toPath(uri);
 	}
 
 	/**

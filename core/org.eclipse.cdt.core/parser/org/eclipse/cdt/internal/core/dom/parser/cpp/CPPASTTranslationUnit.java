@@ -139,14 +139,18 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
     }
     
     @Override
-	public IBinding resolveBinding() {
+	public ICPPNamespace getGlobalNamespace() {
         if (fBinding == null)
             fBinding = new CPPNamespace(this);
         return fBinding;
     }
 	
-    @Override
-	@Deprecated
+    @Override @Deprecated
+	public IBinding resolveBinding() {
+        return getGlobalNamespace();
+    }
+
+    @Override @Deprecated
     public ParserLanguage getParserLanguage() {
         return ParserLanguage.CPP;
     }

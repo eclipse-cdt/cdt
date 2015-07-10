@@ -2364,6 +2364,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					endOffset = calculateEndOffset(identifierName);
 				} else {
 					identifierName = nodeFactory.newName();
+					setRange(identifierName, endOffset, endOffset);
 				}
 				if (LT(1) == IToken.tASSIGN) { // optional = type-id
 					if (parameterPack)

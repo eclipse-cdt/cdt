@@ -2683,4 +2683,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IVariable var2 = getBindingFromASTName("var2", 4);
 		assertSameType(var1.getType(), var2.getType());
 	}
+	
+	//	template <typename T>
+	//	struct allocator {
+	//	    typedef T value_type;
+	//	};
+	
+	//	template <typename> struct allocator;
+	//
+	//	struct Item {
+	//	    int waldo;
+	//	};
+	//
+	//	int main() {
+	//	    allocator<Item>::value_type item;
+	//	    item.waldo = 5;
+	//	}
+	public void testWaldo_472199() throws Exception {
+		checkBindings();
+	}
 }

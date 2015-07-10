@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.io.File;
@@ -52,14 +52,14 @@ public final class FileExistsCache {
 		// Before running out of memory the entire map will be thrown away.
 		fCache= new SoftReference<>(cache);
 	}
-	
+
 	public boolean isFile(String path) {
 		String parent;
 		String name;
 		File file = null;
 		IFileStore parentStore = null;
 		IFileStore fileStore = null;
-		
+
 		if (UNCPathConverter.isUNC(path)) {
 			try {
 				URI uri = UNCPathConverter.getInstance().toURI(path);
@@ -81,17 +81,17 @@ public final class FileExistsCache {
 			if (BYPASS_CACHE) {
 				return file.isFile();
 			}
-			
+
 			parent= file.getParent();
 			if (parent == null)
 				return false;
-			
+
 			name= file.getName();
 		}
 		if (fCaseInSensitive)
 			name= name.toUpperCase();
-		
-		Content avail= getExistsCache().get(parent); 
+
+		Content avail= getExistsCache().get(parent);
 		if (avail == null) {
 			String[] files = null;
 			try {
@@ -116,13 +116,13 @@ public final class FileExistsCache {
 		if (idx < 0)
 			return false;
 		idx *= 2;
-		
+
 		final BitSet isFileBitset = avail.fIsFile;
 		if (isFileBitset.get(idx))
 			return true;
 		if (isFileBitset.get(idx + 1))
 			return false;
-		
+
 		if ((file != null && file.isFile()) || (fileStore != null && !fileStore.fetchInfo().isDirectory())) {
 			isFileBitset.set(idx);
 			return true;

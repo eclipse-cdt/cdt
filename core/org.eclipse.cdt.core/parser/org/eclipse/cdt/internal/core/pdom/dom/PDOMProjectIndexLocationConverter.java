@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *******************************************************************************/ 
+ *******************************************************************************/
  package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.net.URI;
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Path;
 public class PDOMProjectIndexLocationConverter implements IIndexLocationConverter {
 	private static final String EXTERNAL = "<EXT>"; //$NON-NLS-1$
 	private static final String WS = "<WS>"; //$NON-NLS-1$
-	
+
 	final private IWorkspaceRoot fRoot;
 	final private String fFullPathPrefix;
 	final private boolean fIgnoreExternal;
@@ -43,7 +43,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 		fFullPathPrefix= project.getFullPath().toString() + IPath.SEPARATOR;
 		fIgnoreExternal= ignoreWSExternal;
 	}
-	
+
 	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		String fullPath = null;
@@ -57,30 +57,30 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 			if (raw.startsWith(WS)) {
 				fullPath= raw.substring(WS.length());
 			} else {
-				fullPath= fFullPathPrefix + raw;  
+				fullPath= fFullPathPrefix + raw;
 			}
 			final IPath path= new Path(fullPath);
 			if (path.segmentCount() > 1) {
 				IResource member= fRoot.getFile(path);
 				uri = member.getLocationURI();
 			}
-		} 
+		}
 		return uri == null ? null : new IndexFileLocation(uri, fullPath);
 	}
-	
+
 	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
 		String fullPath= location.getFullPath();
 		if (fullPath != null) {
 			if (fullPath.startsWith(fFullPathPrefix)) {
 				return fullPath.substring(fFullPathPrefix.length());
-			} 
+			}
 			return WS + fullPath;
 		}
-	
+
 		if (fIgnoreExternal)
 			return null;
-		
+
 		return EXTERNAL + location.getURI().toString();
 	}
 }

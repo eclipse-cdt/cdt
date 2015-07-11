@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_9ebb09ba",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1548,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-11T21:44:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_4fde24d6",
+      "range": {
+        "startLine": 1548,
+        "startChar": 17,
+        "endLine": 1548,
+        "endChar": 32
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_2fd918eb",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2015-07-08T22:45:00Z",
       "side": 1,
       "message": "Ignoring everything except the first element is unsafe.",
+      "range": {
+        "startLine": 1550,
+        "startChar": 37,
+        "endLine": 1550,
+        "endChar": 55
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_7ed575e3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1550,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-11T21:44:20Z",
+      "side": 1,
+      "message": "I can change to an iteration to go through the array. But the a field can only have one owner, and getCBindingForCPP() really only returns either an empty array or an array with one element.",
+      "parentUuid": "87f6139c_2fd918eb",
       "range": {
         "startLine": 1550,
         "startChar": 37,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_dec58132",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1551,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-11T21:44:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_8febec6f",
+      "range": {
+        "startLine": 1551,
+        "startChar": 43,
+        "endLine": 1551,
+        "endChar": 66
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87f6139c_cfe1748e",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
         "patchSetId": 5
@@ -82,6 +154,30 @@
       "writtenOn": "2015-07-08T22:45:00Z",
       "side": 1,
       "message": "Uninformative name.",
+      "range": {
+        "startLine": 1586,
+        "startChar": 11,
+        "endLine": 1586,
+        "endChar": 15
+      },
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_9e94a916",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1586,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-11T21:44:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_cfe1748e",
       "range": {
         "startLine": 1586,
         "startChar": 11,
@@ -197,6 +293,24 @@
       "writtenOn": "2015-06-25T00:55:05Z",
       "side": 1,
       "message": "LinkedHashSet to preserve the order?",
+      "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_12bb8daa",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/viewsupport/IndexUI.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-11T21:44:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87f6139c_68bdffac",
       "revId": "65c9dde070978e3774404b41f63cfdde76fb1d6c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

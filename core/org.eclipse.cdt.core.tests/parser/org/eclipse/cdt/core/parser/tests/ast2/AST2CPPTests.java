@@ -10090,6 +10090,16 @@ public class AST2CPPTests extends AST2TestBase {
 		assertNotSame(g1, g2);
 		assertSame(g2, g3);
 	}
+	
+	//	int test() {
+	//		extern int *e();
+	//		if (auto r = e()) { return *r; }
+	//		int r = 12;
+	//		return r;
+	//	}
+	public void testVariableDeclarationInIfStatement() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	class A : A {
 	//	};

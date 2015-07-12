@@ -4689,6 +4689,19 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(code, C, true);
 		parseAndCheckBindings(code, CPP, true);
 	}
+    
+	//    struct test {
+	//        int field;
+	//    };
+	//
+	//    int main() {
+	//        struct test t;
+	//        const typeof(t) x;
+	//        x.field;
+	//    }
+    public void testTypeofInsideQualifier_471907() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), C);
+    }
 
 	// void test(int count) {
 	//    switch(count) {

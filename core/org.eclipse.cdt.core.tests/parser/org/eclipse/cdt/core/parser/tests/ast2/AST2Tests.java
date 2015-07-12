@@ -7547,4 +7547,17 @@ public class AST2Tests extends AST2TestBase {
     public void testAlignas_451082() throws Exception {
     	parseAndCheckBindings(getAboveComment(), C);
     }
+    
+	//    struct test {
+	//        int field;
+	//    };
+	//
+	//    int main() {
+	//        struct test t;
+	//        const typeof(t) x;
+	//        x.field;
+	//    }
+    public void testWaldo() throws Exception {
+    	parseAndCheckBindings(getAboveComment(), C);
+    }
 }

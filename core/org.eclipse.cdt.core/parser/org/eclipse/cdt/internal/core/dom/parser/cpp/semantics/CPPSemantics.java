@@ -1503,6 +1503,12 @@ public class CPPSemantics {
 			} else {
 				nodes= new IASTNode[] {initDeclaration};
 			}
+		} else if (parent instanceof ICPPASTSwitchStatement) {
+			nodes = new IASTNode[] { ((ICPPASTSwitchStatement) parent).getControllerDeclaration() };
+		} else if (parent instanceof ICPPASTIfStatement) {
+			nodes = new IASTNode[] { ((ICPPASTIfStatement) parent).getConditionDeclaration() };
+		} else if (parent instanceof ICPPASTWhileStatement) {
+			nodes = new IASTNode[] { ((ICPPASTWhileStatement) parent).getConditionDeclaration() };
 		} else if (parent instanceof ICPPASTRangeBasedForStatement) {
 			ICPPASTRangeBasedForStatement forStatement = (ICPPASTRangeBasedForStatement) parent;
 			final IASTDeclaration decl = forStatement.getDeclaration();
@@ -1632,12 +1638,6 @@ public class CPPSemantics {
 			declaration = ((IASTDeclarationStatement) node).getDeclaration();
 	    } else if (node instanceof ICPPASTCatchHandler) {
 			declaration = ((ICPPASTCatchHandler) node).getDeclaration();
-	    } else if (node instanceof ICPPASTSwitchStatement) {
-        	declaration = ((ICPPASTSwitchStatement) node).getControllerDeclaration();
-        } else if (node instanceof ICPPASTIfStatement) {
-        	declaration = ((ICPPASTIfStatement) node).getConditionDeclaration();
-	    } else if (node instanceof ICPPASTWhileStatement) {
-	    	declaration = ((ICPPASTWhileStatement) node).getConditionDeclaration();
 	    } else if (node instanceof IASTParameterDeclaration) {
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
 		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();

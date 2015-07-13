@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_a67ebf5b",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1560,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_329971d2",
+      "range": {
+        "startLine": 1560,
+        "startChar": 45,
+        "endLine": 1560,
+        "endChar": 56
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "472a5bc0_928e5d8a",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
         "patchSetId": 6
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_6684c7ec",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1568,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_928e5d8a",
+      "range": {
+        "startLine": 1568,
+        "startChar": 19,
+        "endLine": 1568,
+        "endChar": 30
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_4689c302",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1568,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_7293e9af",
+      "range": {
+        "startLine": 1568,
+        "startChar": 88,
+        "endLine": 1568,
+        "endChar": 106
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "472a5bc0_b5754b3f",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
         "patchSetId": 6
@@ -82,6 +154,30 @@
       "writtenOn": "2015-07-13T04:16:06Z",
       "side": 1,
       "message": "Remove trailing whitespace.",
+      "range": {
+        "startLine": 1617,
+        "startChar": 44,
+        "endLine": 1617,
+        "endChar": 47
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_8683bbe0",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1617,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_b5754b3f",
       "range": {
         "startLine": 1617,
         "startChar": 44,
@@ -111,6 +207,24 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_26b5af64",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/search/SearchReferencesAcrossLanguagesTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_956f6773",
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "472a5bc0_5565ef92",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/search/SearchReferencesAcrossLanguagesTest.java",
         "patchSetId": 6
@@ -122,6 +236,30 @@
       "writtenOn": "2015-07-13T04:16:06Z",
       "side": 1,
       "message": "Redundant initialization.",
+      "range": {
+        "startLine": 33,
+        "startChar": 37,
+        "endLine": 33,
+        "endChar": 38
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_660967bc",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/search/SearchReferencesAcrossLanguagesTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_5565ef92",
       "range": {
         "startLine": 33,
         "startChar": 37,
@@ -157,6 +295,30 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_8618db04",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/search/SearchReferencesAcrossLanguagesTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "472a5bc0_356afb64",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 1
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "472a5bc0_d578bf38",
         "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/search/SearchReferencesAcrossLanguagesTest.java",
         "patchSetId": 6
@@ -168,6 +330,30 @@
       "writtenOn": "2015-07-13T04:16:06Z",
       "side": 1,
       "message": "Can this test case be added to BasicSearchTest instead?",
+      "range": {
+        "startLine": 83,
+        "startChar": 13,
+        "endLine": 83,
+        "endChar": 51
+      },
+      "revId": "473dc1179fb0c2dd916d4ec56231b28b9b8d445b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_a6799f6e",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/search/SearchReferencesAcrossLanguagesTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T19:50:20Z",
+      "side": 1,
+      "message": "it would be look awkward from the code, because the setUp() in BasicSearchTest assumes two blocks of test data, one header and one cpp file, but this test case needs 3. So the test case would need re-read the test data again in the test case.",
+      "parentUuid": "472a5bc0_d578bf38",
       "range": {
         "startLine": 83,
         "startChar": 13,

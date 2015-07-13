@@ -82,7 +82,7 @@ public interface IScope {
 	 * @param name the name of the binding
 	 * @param resolve whether or not to resolve the matching binding if it has not been so already
 	 * @param acceptLocalBindings a set of files for which to accept local bindings
-	 * @return the binding in this scope that matches the name, or @code null}
+	 * @return the binding in this scope that matches the name, or {@code null}
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings);
 

@@ -301,7 +301,7 @@ public class CPPASTFieldReference extends ASTNode
 				return EvalFixed.INCOMPLETE;
 			}
 		}		
-		return new EvalID(ownerEval, qualifier, fName.getSimpleID(), false, true, args, this);
+		return new EvalID(ownerEval, qualifier, fName.getSimpleID(), false, true, fIsDeref, args, this);
 	}
 
 	@Override

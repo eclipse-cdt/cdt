@@ -399,7 +399,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			ICPPTemplateArgument[] c2 = TemplateInstanceUtil.convert(this, c);
 			
 			if (a != a2 || b != b2 || c != c2 || templateDefinition != compositeTemplateDefinition)
-				e= new EvalID(a2, b2, e.getName(), e.isAddressOf(), e.isQualified(), c2, compositeTemplateDefinition);
+				e= new EvalID(a2, b2, e.getName(), e.isAddressOf(), e.isQualified(), e.isPointerDeref(), c2, 
+						compositeTemplateDefinition);
 			return e;
 		}
 		if (eval instanceof EvalInitList) {

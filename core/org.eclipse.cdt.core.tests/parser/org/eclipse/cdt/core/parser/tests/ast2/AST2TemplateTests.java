@@ -8008,11 +8008,30 @@ public class AST2TemplateTests extends AST2TestBase {
 	//		S s;
 	//		auto waldo = bar(&s);
 	//	}
-	public void testDependentFieldReference_472436() throws Exception {
+	public void testDependentFieldReference_472436a() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);    	
 	}
     
+	//	struct T {
+	//		int foo;
+	//	};
+	//	struct S {
+	//		T* other;
+	//	};
+	//
+	//	template <typename T>
+	//	auto bar(T t) -> decltype(t->other->foo);
+	//	
+	//	int main() {
+	//		S s;
+	//		auto waldo = bar(&s);
+	//	}
+	public void testDependentFieldReference_472436b() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);    	
+	}
+	
 	//	template <typename>
 	//	struct Bind {};
 	//	template <typename Func, typename ... BoundArgs>

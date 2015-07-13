@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *	   Sergey Prigogin (Google)
+ *     Nathan Ridge
 ******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
@@ -91,6 +92,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
@@ -199,7 +201,20 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			}
 			IName[] targets = IName.EMPTY_ARRAY;
 			String filename = ast.getFilePath();
-			for (IBinding binding : bindings) {
+			for (int i = 0; i < bindings.length; ++i) {
+				IBinding binding = bindings[i];
+				if (binding instanceof ICPPUnknownBinding) {
+					// We're not going to find declarations for an unknown binding.
+					// To try to do something useful anyways, we try to heuristically
+					// resolve the unknown binding to one or more concrete bindings,
+					// and use those instead.
+					IBinding[] resolved = HeuristicResolver.resolveUnknownBinding(
+							(ICPPUnknownBinding) binding, sourceName);
+					if (resolved.length > 0) {
+						bindings = ArrayUtil.addAll(bindings, resolved);
+						continue;
+					}
+				}
 				if (binding != null && !(binding instanceof IProblemBinding)) {
 					IName[] names = findDeclNames(ast, kind, binding);
 					for (final IName name : names) {

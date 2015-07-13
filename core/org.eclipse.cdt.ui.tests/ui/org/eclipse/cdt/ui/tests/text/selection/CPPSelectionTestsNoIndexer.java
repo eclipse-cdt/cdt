@@ -18,9 +18,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -47,6 +44,9 @@ import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * It is required to test the selection performance independent of the indexer to make sure that the DOM
@@ -1210,12 +1210,42 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 	public void testAmbiguityWithImplicitName_463234() throws Exception {
 		String code = getAboveComment();
 		IFile file = importFile("testBug463234.cpp", code);
-		
+
 		int offset = code.indexOf("new B<A>") + 6;
         // There should be two ambiguous targets, the class A and the constructor B::B,
         // with the class A being the first one (index 0).
 		IASTNode target = testF3WithAmbiguity(file, offset, 0);
 		assertTrue(target instanceof IASTName);
 		assertEquals("A", ((IASTName) target).toString());
+	}
+
+	//	class Other {
+	//	  int foo();
+	//	};
+	//
+	//	template<class X>
+	//	class Base {
+	//	  Other *other;
+	//	};
+	//
+	//	template<class X>
+	//	class Child : public Base<X> {
+	//	  void bar() {
+	//	    this->other->foo();		// can't find other and foo
+	//	    Base<X>::other->foo();	// can find other can't find foo
+	//	  }
+	//	};
+	public void testMemberOfDependentBase_421823() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug421823.cpp", code);
+
+		int offset = code.indexOf("this->other") + 6;
+		assertTrue(testF3(file, offset) instanceof IASTName);
+
+		offset += 7;  // 'foo' in 'this->other->foo'
+		assertTrue(testF3(file, offset) instanceof IASTName);
+
+		offset = code.indexOf("::other->foo") + 9;
+		assertTrue(testF3(file, offset) instanceof IASTName);
 	}
 }

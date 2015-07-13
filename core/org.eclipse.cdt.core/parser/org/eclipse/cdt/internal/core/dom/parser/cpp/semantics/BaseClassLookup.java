@@ -238,7 +238,7 @@ class BaseClassLookup {
 					}
 
 					ICPPClassType grandBaseClass = (ICPPClassType) grandBaseBinding;
-					if (data.contentAssist && grandBaseClass instanceof ICPPDeferredClassInstance) {
+					if (data.fHeuristicBaseLookup && grandBaseClass instanceof ICPPDeferredClassInstance) {
 						// Support content assist for members of deferred instances.
 						grandBaseClass= ((ICPPDeferredClassInstance) grandBaseClass).getClassTemplate();
 					}

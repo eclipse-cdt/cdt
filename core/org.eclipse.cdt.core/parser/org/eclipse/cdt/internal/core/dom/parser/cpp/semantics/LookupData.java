@@ -103,6 +103,9 @@ public class LookupData extends ScopeLookupData {
 	public boolean argsContainImpliedObject;
 	/** In list-initialization **/
 	public boolean fNoNarrowing;
+	/** When doing lookup in base classes, replace deferred class instances with their class template.
+	 *  This is used by editor actions like content assist. */
+	public boolean fHeuristicBaseLookup;
 
 	private IASTDeclarator fDeclarator;
 	private boolean fFunctionCall;

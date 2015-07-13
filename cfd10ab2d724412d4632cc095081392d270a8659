@@ -22,6 +22,30 @@
       "revId": "cfd10ab2d724412d4632cc095081392d270a8659",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_c1ad9d71",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 10870
+      },
+      "writtenOn": "2015-07-13T21:59:53Z",
+      "side": 1,
+      "message": "For all the existing cases that is handled by this function, cppOwners would be null, it is unconditional in a way. The only case where cppOwner is not null is the case for the IFeild case that\u0027s added for this fix. In this case, we need call the parent composite type owner of IField to search for the references, i.e. calling owner.accept().",
+      "parentUuid": "472a5bc0_a1a7c991",
+      "range": {
+        "startLine": 1675,
+        "startChar": 4,
+        "endLine": 1675,
+        "endChar": 26
+      },
+      "revId": "cfd10ab2d724412d4632cc095081392d270a8659",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1151,6 +1151,7 @@ public class CPPSemantics {
 		ld2.setIgnorePointOfDeclaration(data.isIgnorePointOfDeclaration());
 		ld2.contentAssist= data.contentAssist;
 		ld2.fNoNarrowing= data.fNoNarrowing;
+		ld2.fHeuristicBaseLookup= data.fHeuristicBaseLookup;
 		ld2.qualified= parent instanceof ICPPASTQualifiedName;
 		ld2.typesOnly= true;
 		lookup(ld2, getLookupScope(typeDtorName));
@@ -3787,6 +3788,7 @@ public class CPPSemantics {
 			String[] additionalNamespaces) {
 		LookupData data = createLookupData(name);
 		data.contentAssist = true;
+		data.fHeuristicBaseLookup = true;
 		data.setPrefixLookup(prefixLookup);
 		data.foundItems = new CharArrayObjectMap<>(2);
 

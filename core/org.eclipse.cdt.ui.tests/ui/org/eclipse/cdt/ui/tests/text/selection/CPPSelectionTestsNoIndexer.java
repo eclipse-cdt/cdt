@@ -1218,4 +1218,34 @@ public class CPPSelectionTestsNoIndexer extends BaseSelectionTests {
 		assertTrue(target instanceof IASTName);
 		assertEquals("A", ((IASTName) target).toString());
 	}
+	
+	//	class Other {
+	//	  int foo();
+	//	};
+	//
+	//	template<class X>
+	//	class Base {
+	//	  Other *other;
+	//	};
+	//
+	//	template<class X>
+	//	class Child : public Base<X> {
+	//	  void bar() {
+	//	    this->other->foo();		// can't find other and foo
+	//	    Base<X>::other->foo();	// can find other can't find foo
+	//	  }
+	//	};
+	public void testMemberOfDependentBase_421823() throws Exception {
+		String code = getAboveComment();
+		IFile file = importFile("testBug421823.cpp", code);
+		
+		int offset = code.indexOf("this->other") + 6;
+		assertTrue(testF3(file, offset) instanceof IASTName);
+		
+		offset += 7;  // 'foo' in 'this->other->foo' 
+		assertTrue(testF3(file, offset) instanceof IASTName);
+		
+		offset = code.indexOf("::other->foo") + 9;
+		assertTrue(testF3(file, offset) instanceof IASTName);
+	}
 }

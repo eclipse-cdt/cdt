@@ -30,10 +30,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * Represents a C++ class, declaration of which is not yet available.
  */
 public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnknownMemberClass {
-	public static CPPUnknownMemberClass createUnnamedInstance() {
-    	return new CPPUnknownMemberClass(null, CharArrayUtils.EMPTY);
-    }
-
     public CPPUnknownMemberClass(IType owner, char[] name) {
     	super(owner, name);
     }

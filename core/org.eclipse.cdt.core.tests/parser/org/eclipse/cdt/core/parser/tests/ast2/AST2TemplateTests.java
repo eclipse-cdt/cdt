@@ -7997,6 +7997,22 @@ public class AST2TemplateTests extends AST2TestBase {
     	parseAndCheckBindings();
     }
 
+	//	struct S {
+	//		int foo;
+	//	};
+	//
+	//	template <typename T>
+	//	auto bar(T t) -> decltype(t->foo);
+	//	
+	//	int main() {
+	//		S s;
+	//		auto waldo = bar(&s);
+	//	}
+	public void testDependentFieldReference_472436() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableType("waldo", CommonCPPTypes.int_);    	
+	}
+    
 	//	template <typename>
 	//	struct Bind {};
 	//	template <typename Func, typename ... BoundArgs>

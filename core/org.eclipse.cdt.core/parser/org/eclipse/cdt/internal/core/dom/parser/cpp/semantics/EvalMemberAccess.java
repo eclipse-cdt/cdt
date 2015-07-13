@@ -27,6 +27,7 @@ import java.util.Collection;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -46,7 +47,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -166,7 +166,7 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 	}
 
 	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref, IASTNode point, Collection<ICPPFunction> functionBindings,
-			boolean returnUnnamed) {
+			boolean returnDependent) {
     	IType type= fieldOwnerExpressionType;
     	if (!isDeref)
     		return type;
@@ -208,8 +208,13 @@ public class EvalMemberAccess extends CPPDependentEvaluation {
 			return glvalueType(((IPointerType) prValue).getType());
 		}
 
-		if (CPPTemplates.isDependentType(type))
-			return returnUnnamed ? CPPUnknownMemberClass.createUnnamedInstance() : null;
+		if (CPPTemplates.isDependentType(type)) {
+			return returnDependent 
+					  // The type resulting from dereferecing 'type' 
+					? new TypeOfDependentExpression(new EvalUnary(IASTUnaryExpression.op_star, 
+							new EvalFixed(type, LVALUE, Value.UNKNOWN), null, point)) 
+					: null;
+		}
 
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}

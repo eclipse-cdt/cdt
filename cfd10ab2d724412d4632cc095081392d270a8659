@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "472a5bc0_a1a7c991",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-13T21:53:40Z",
+      "side": 1,
+      "message": "This statement used to be executed unconditionally but now it is conditioned on cppOwners being null. Could you please explain why this is not a bug.",
+      "range": {
+        "startLine": 1675,
+        "startChar": 4,
+        "endLine": 1675,
+        "endChar": 26
+      },
+      "revId": "cfd10ab2d724412d4632cc095081392d270a8659",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

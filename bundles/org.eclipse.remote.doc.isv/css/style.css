@@ -1,0 +1,17 @@
+code {
+    	color: Crimson;
+    	font-family: monaco,consolas,"courier new",monospace;
+	}
+
+pre {
+	background-color: lightgrey;
+    width: auto;
+    overflow: auto;
+    padding: 25px;
+    border: 1px solid navy;
+    margin: 1em;
+}
+
+p {
+    font: 15px arial, sans-serif;
+}

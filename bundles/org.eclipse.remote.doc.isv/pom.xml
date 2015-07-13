@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.remote</groupId>
+    <artifactId>remote-parent</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+    <relativePath>../../releng/org.eclipse.remote.build/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>org.eclipse.remote.doc.isv</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>eclipse-plugin</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-document-bundle-plugin</artifactId>
+        <version>${tycho-extras-version}</version>
+        <configuration>
+           <outputDirectory>${basedir}/html/reference/api</outputDirectory>
+           <!-- TODO: bump tycho-extras version. Excludes option requires >= 0.23
+           <javadocOptions>
+               <excludes>
+                   <exclude>org.eclipse.remote.internal.*</exclude>
+               </excludes>
+           </javadocOptions>
+           -->
+        </configuration>
+        <executions>
+            <execution>
+                <id>javadoc</id>
+                <goals>
+                    <goal>javadoc</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

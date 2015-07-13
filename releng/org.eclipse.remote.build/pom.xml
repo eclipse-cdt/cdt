@@ -61,6 +61,8 @@
 		<module>../../bundles/org.eclipse.remote.telnet.core</module>
 		<module>../../bundles/org.eclipse.remote.telnet.ui</module>
 		<module>../../features/org.eclipse.remote.telnet-feature</module>
+		<!-- Documentation -->
+		<module>../../bundles/org.eclipse.remote.doc.isv</module>
 	</modules>
 
 	<repositories>

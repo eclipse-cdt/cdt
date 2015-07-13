@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Concepts</title>
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+</style>
+</head>
+
+<body>
+<p>This section describes the main concepts and services implemented by the Eclipse remote framework.</p>
+
+<!--
+ Concepts
+-->
+
+<h1>Concepts</h1>
+
+<p>Some few concepts are needed to understand the framework's services overall. They are described in the next sections.</p>
+
+<h3>Connection type</h3>
+<p>An connection type (<code>IRemoteConnectionType</code>) abstracts a remote protocol to host access. As of version 2.0.1, the framework provides the <b>ssh</b> (implemented through JSch framework), <b>Telnet</b> and <b>Local</b> types.</p> 
+<p>The connection type is obtained from the remote services manager either by passing its scheme ID (Identification) or an URI.</p>
+<p>It has the <code>newConnection</code> method where a new connection of this type is created. It also holds the list of all connections already created that belongs to it.</p>
+
+<h3>Remote connection</h3>
+<p>The remote connection (<code>IRemoteConnection</code>) interface is used to manage a connection to a single remote host. A connection must be established (open) before any other operations are permitted. All operations carried out on remote host should be evoked from its associated services, which are get with <code>getService</code> method.</p>
+<p>Connections are read-only objects. In order to change the attributes of a connection, a working copy (<code>IRemoteConnectionWorkingCopy</code>) must be created. The host attributes getters and setters can also be managed with connection host service (<code>IRemoteConnectionHostService</code>). 
+
+<p>Every remote connection belongs to a connection type.</p>
+
+
+<h3>Remote resource</h3>
+<p>The remote resource interface (<code>IRemoteResource</code>) provides an adapter to a remote resource.</p>
+<p>As of version 2.0.1, there are two types of remote resources: fully remote and synchronized. This interface provides a common mechanism for accessing resource information from either types.</p> 
+
+<h3>Process builder</h3>
+<p>The process builder (<code>IRemoteProcessBuilder</code>) provides process operations on the remote host. This interface is intended to be a drop-in replacement for the Java SE <code>ProcessBuilder</code> class. See the <code>java.lang.ProcessBuilder</code> documentation for a description of the methods.</p>
+<p>It is obtained from the process service (see <code>IRemoteProcessService</code> below) associated with a connection object that holds access information to the remote host.</p>
+
+<h3>Remote process</h3>
+<p>The remote process (<code>IRemoteProcess</code>) represents a process running on the remote host. Use it to manage the process (destroy), get exit status, and input/output/error streams.</p>
+<p>Remote process are created using the <code>IRemoteProcessBuilder</code> interface.</p>
+
+<!--
+ Services
+-->
+
+<h1>Services</h1>
+
+<p>The remote services are implemented as OSGi services. There are available non-UI (core) and UI services.</p>
+
+<p>Any given service can be associated with objects of the model (concepts) or nested to another one. In either case, an service instance is obtained by calling the <code>getService</code> method of its object's provider.</p> 
+
+<p>The main remote services are detailed in the next sections.</p>
+
+<h3>Services manager</h3>
+<p>The services manager (<code>IRemoteServicesManager</code>) interface provides the <b>main entry point</b> for accessing remote services. It can be obtained by calling <code>RemoteServicesUtils.getService(IRemoteServicesManager.class)</code> or using the Plugin's bundle context to access a OSGi service.</p> 
+<p>It provides access to connection types implemented by the framework and any connection already created.</p>
+
+<h3>File Service</h3>
+<p>The file service (<code>IRemoteFileService</code>) provides remote file manipulation operations on a given connection. It is obtained from a remote connection object by calling its <code>getService(IRemoteFileService.class)</code> method.</p>
+
+<p>Using this interface, a path can be translated into an <code>IFileStore</code> object, and then manipulated using any of the normal EFS operations.</p>
+<p>Its UI counterpart service (<code>IRemoteUIFileService</code>) comes with dialog widgets to browse files and directories on remote filesystem. 
+
+<h3>Process Service</h3>
+<p>The process service (<code>IRemoteProcessService</code>) provides services for starting up processes on a remote host. It is obtained from a remote connection object by calling its <code>getService(IRemoteProcessService.class)</code> method.</p>
+<p>It is the entry point to get an <code>IRemoteProcessBuilder</code> object, used to spawn processes on the remote host. Environment variables of remote host are accessed using this service too.</p>
+
+<h3>Connection Service</h3>
+<p>The UI Connection service (<code>IRemoteUIConnectionService</code>) is used for manipulating connections in the UI, such as adding, editing, and opening connections.</p>
+<p>Non-UI connection manipulation should use the <code>IRemoteConnectionType</code> interface (obtained from services manager) and the services related with <code>IRemoteConnection</code> interface.</p> 
+</body>
+</html>

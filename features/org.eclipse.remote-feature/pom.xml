@@ -15,6 +15,11 @@
       <plugin>
         <groupId>org.eclipse.tycho.extras</groupId>
         <artifactId>tycho-source-feature-plugin</artifactId>
+        <configuration>
+            <excludes>
+                <plugin id="org.eclipse.remote.doc.isv"/>
+            </excludes>
+        </configuration>
         <executions>
           <execution>
             <id>source-feature</id>

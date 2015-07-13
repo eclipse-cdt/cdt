@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Samples</title>
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+</head>
+
+<body>
+<h1>Usage examples</h1>
+<p>This section shows usage examples for using the Eclipse Remote API.</p>
+
+<p>The services manager can be obtained using <code>RemoteServicesUtils</code> (since 2.0.1) helper:</p>
+
+<pre><code class="snippet">
+IRemoteServicesManager servicesManager = RemoteServicesUtils.getService(IRemoteServicesManager.class);
+</code></pre>
+
+<p>An alternative is to use the bundle's context to get the service reference:</p>
+
+<pre><code class="snippet">
+BundleContext context = plugin.getBundle().getBundleContext();
+ServiceReference<T> ref = context.getServiceReference(IRemoteServicesManager.class);
+IRemoteServicesManager servicesManager = context.getService(ref);
+</code></pre>
+
+<p>Once with services manager object, you obtain a connection type by its scheme ID or any URI to the remote host, as in:</p>
+<pre><code class="snippet">
+IRemoteConnectionType connType;
+// Get connection type by Scheme ID
+connType = servicesManager.getConnectionType("ssh");
+// Get connection type by URI
+URI uri = URI.create("ssh://MyConnection/path/to/file");
+connType = servicesManager.getConnectionType(uri);
+</code></pre>
+
+<p>The Telnet connection type can not be obtained by URI, instead you must use its ID:
+<pre><code class="snippet">
+IRemoteConnectionType connType;
+connType = servicesManager.getConnectionType("org.eclipse.remote.telnet.core.connectionType");
+</code></pre>
+
+<p>The remote connection is obtained from connection type object by either name or an URI. For example:
+<pre><code class="snippet">
+IRemoteConnection connection;
+// Get connection by URI
+URI uri = URI.create("ssh://MyConnection/path/to/file");
+connection = connType.getConnection(uri);
+// Get connection by name
+connection = connType.getConnection("MyConnection");
+</code></pre>
+
+<p>If the connection does not exist, it can be created with a connection type (<code>IRemoteConnectionType</code>) instance. Use the connection type object to delete it as well:
+
+<pre><code class="snippet">
+IRemoteConnectionWorkingCopy rcwc; // Writable connection working copy 
+rcwc = connType.newConnection(connectionName); // Create connection of connection type
+IRemoteConnectionHostService hostServices; // Fill connection information through host service
+hostServices = rcwc.getService(IRemoteConnectionHostService.class); // Obtain the service from working copy instance
+hostServices.setHostname(address);
+hostServices.setUsername(username);
+hostServices.setUsePassword(true);
+hostServices.setPassword(passwd);
+IRemoteConnection connection = rcwc.save(); // Finally save the working copy, then get the connection (read-only) object
+
+connType.removeConnection(connection); // Remove connection and all resources associated with it
+</code></pre>
+
+<p>Connections can be opened or closed programmatically. Some operations requires the connection opened:</p>
+<pre><code class="snippet">
+connection.open(monitor); // Open the connection but allow the user to cancel the progress monitor
+connection.close(); // Now close it
+</code></pre>
+
+<p>The file service is obtained from a connection object. Remote resources can be manipulated with <code>IFileStore</code>:</p>
+<pre><code class="snippet">
+IRemoteFileService fileService = connection.getService(IRemoteFileService.class);
+// The remote connection does not need to be open to get the resource
+IFileStore fs = fileService.getResource("/path/to/resource");
+// But the remote connection need to be open to operate on the resource
+if (fs.fetchInfo().exists()) {
+    System.out.println("It exists!");
+}
+</code></pre>
+
+<p>In the other hand, the UI file service is obtained from a connection type rather than the connection. The reason is that it allows user to select the connection in a list. It is also possible to set the connection:</p>
+<pre><code class="snippet">
+IRemoteUIFileService uiFileService = conn.getConnectionType().getService(IRemoteUIFileService.class);
+uiFileService.setConnection(connection); // Set default connection (optional)
+uiFileService.showConnections(true); // Also show list of available connections
+// The return value is the path of the directory selected on the remote system
+String path = uiFileService.browseDirectory(shell, "Browse /home", "/home", IRemoteUIConstants.NONE);
+</code></pre>
+
+<p>Use a connection object to get its associated process service (<code>IRemoteProcessService</code>). Then obtain a process builder (<code>IRemoteProcessBuilder</code>), so that commands can be executed on remote host:</p>
+<pre><code class="snippet">
+IRemoteProcessService ps = connection.getService(IRemoteProcessService.class);
+IRemoteProcessBuilder pb = ps.getProcessBuilder("/bin/ls", "-l");
+IRemoteProcess process = pb.start();
+// Use IRemoteProcess to manage the process. Alternatively, use an adaptor to java.lang.Process
+Process process2 = new RemoteProcessAdapter(process);
+</code></pre>
+
+<p>Use the <code>IRemoteResource</code> adapter to get a location URI of the project (<code>IProject</code>): 
+<pre><code class="snippet">
+IRemoteResource resource = (IRemoteResource)project.getAdapter(IRemoteResource.class);
+URI projectLocation = resource.getActiveLocationURI(); // Get URI to active location
+</code></pre>
+
+</body>
+</html>

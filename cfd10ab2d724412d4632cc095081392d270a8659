@@ -46,6 +46,30 @@
       "revId": "cfd10ab2d724412d4632cc095081392d270a8659",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_01b855aa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOM.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-13T22:07:00Z",
+      "side": 1,
+      "message": "Lines 1671-1673 take care of the C++ owner. Don\u0027t we need to check the C owner (compOwner) too?",
+      "parentUuid": "472a5bc0_c1ad9d71",
+      "range": {
+        "startLine": 1675,
+        "startChar": 4,
+        "endLine": 1675,
+        "endChar": 26
+      },
+      "revId": "cfd10ab2d724412d4632cc095081392d270a8659",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

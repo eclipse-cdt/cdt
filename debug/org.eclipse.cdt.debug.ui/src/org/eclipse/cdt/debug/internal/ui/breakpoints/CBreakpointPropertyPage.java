@@ -63,6 +63,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -155,6 +157,19 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			super( name, labelText, parent );
 		}
 
+		@Override
+		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			super.doFillIntoGrid(parent, numColumns);
+			// also validate on mouse clicks, eg. middle-mouse-paste
+			Text textControl = getTextControl();
+			textControl.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseUp(MouseEvent e) {
+					valueChanged();
+				}
+			});
+		}
+
 		/**
 		 * @see StringFieldEditor#checkState()
 		 */
@@ -175,6 +190,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				super.doStore();
 			}
 		}
+		@Override
 		protected void doLoad()  {
 			String value = getPreferenceStore().getString(getPreferenceName());
             setStringValue(value);
@@ -922,6 +938,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
         return null;
 	}
 
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 	    IAdaptable element = getElement();
 	    if (element instanceof ICBreakpointContext) {

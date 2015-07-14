@@ -217,14 +217,19 @@ public final class SourceHeaderPartnerFinder {
 		IResourceProxyVisitor visitor= new IResourceProxyVisitor() {
 			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
-				if (result[0] != null) {
-					return false;
-				}
 				if (!proxy.isAccessible()) {
 					return false;
 				}
 				if (proxy.getType() == IResource.FILE && proxy.getName().equals(basename)) {
-					result[0]= (IFile)proxy.requestResource();
+					IFile candidate = (IFile) proxy.requestResource();
+					if (result[0] == null) {
+						result[0] = candidate;
+					} else {
+						// Prefer files closer to the root of the container.
+						if (candidate.getFullPath().segmentCount() < result[0].getFullPath().segmentCount()) {
+							result[0] = candidate;
+						}
+					}
 					return false;
 				}
 				return true;
@@ -278,13 +283,10 @@ public final class SourceHeaderPartnerFinder {
 		}
 		IPath partnerBasePath= sourceFileLocation.removeFileExtension();
 		IContentType[] contentTypes= getPartnerContentTypes(tu.getContentTypeId());
-		HashSet<String> extensionsTried= new HashSet<String>();
-		for (int j = 0; j < contentTypes.length; j++) {
-			IContentType contentType= contentTypes[j];
-			String[] partnerExtensions;
-			partnerExtensions= contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-			for (int i= 0; i < partnerExtensions.length; i++) {
-				String ext= partnerExtensions[i];
+		HashSet<String> extensionsTried= new HashSet<>();
+		for (IContentType contentType : contentTypes) {
+			String[] partnerExtensions = contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+			for (String ext : partnerExtensions) {
 				if (extensionsTried.add(ext)) {
 					String partnerFileBasename= partnerBasePath.addFileExtension(ext).lastSegment();
 					

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
+import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
@@ -78,7 +79,10 @@ public class DisassemblySelection implements IDisassemblySelection {
 		}
 		if (docAddress != null) {
 			try {
-				fStartAddress = new Addr64(docAddress);
+				if (docAddress.bitLength() > 32)
+					fStartAddress = new Addr64(docAddress);
+				else
+					fStartAddress = new Addr32(docAddress.longValue());
 			} catch (RuntimeException rte) {
 				// not a valid address
 				fStartAddress = null;

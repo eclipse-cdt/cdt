@@ -230,7 +230,11 @@ public final class SourceHeaderPartnerFinder {
 				return true;
 			}};
 		try {
-			container.accept(visitor, 0);
+			// Prefer direct children of the container. If none were found, search recursively.
+			container.accept(visitor, IResource.DEPTH_ONE, 0);
+			if (result[0] == null) {
+				container.accept(visitor, IResource.DEPTH_INFINITE, 0);
+			}
 		} catch (CoreException e) {
 			// Ignore
 		}
@@ -278,13 +282,10 @@ public final class SourceHeaderPartnerFinder {
 		}
 		IPath partnerBasePath= sourceFileLocation.removeFileExtension();
 		IContentType[] contentTypes= getPartnerContentTypes(tu.getContentTypeId());
-		HashSet<String> extensionsTried= new HashSet<String>();
-		for (int j = 0; j < contentTypes.length; j++) {
-			IContentType contentType= contentTypes[j];
-			String[] partnerExtensions;
-			partnerExtensions= contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-			for (int i= 0; i < partnerExtensions.length; i++) {
-				String ext= partnerExtensions[i];
+		HashSet<String> extensionsTried= new HashSet<>();
+		for (IContentType contentType : contentTypes) {
+			String[] partnerExtensions = contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+			for (String ext : partnerExtensions) {
 				if (extensionsTried.add(ext)) {
 					String partnerFileBasename= partnerBasePath.addFileExtension(ext).lastSegment();
 					

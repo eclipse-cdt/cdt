@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
  * Manages the current evaluation context (stack frame) for evaluation actions.
  * In each page, the selection is tracked in each debug view (if any). When a debug
  * target selection exists, the "debuggerActive" System property is set to true.
- * This property is used to make the "Run To Line" and "Resume At Line" actions
+ * This property is used to make the "Run to Line" and "Resume at Line" actions
  * visible in editors only if there is a running debug session. 
  */
 public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {

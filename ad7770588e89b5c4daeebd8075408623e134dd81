@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "472a5bc0_97e2c790",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/SourceHeaderPartnerFinder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-14T17:24:04Z",
+      "side": 1,
+      "message": "I think the algorithm should be more general and prefer files that are closer in terms of distance in the directory graph.",
+      "range": {
+        "startLine": 233,
+        "startChar": 3,
+        "endLine": 233,
+        "endChar": 86
+      },
+      "revId": "ad7770588e89b5c4daeebd8075408623e134dd81",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

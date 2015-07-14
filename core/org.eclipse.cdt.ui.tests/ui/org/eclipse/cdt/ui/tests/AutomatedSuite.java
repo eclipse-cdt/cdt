@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.ui.tests.buildconsole.BuildConsoleTests;
 import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.chelp.CHelpTest;
+import org.eclipse.cdt.ui.tests.editor.EditorTestSuite;
 import org.eclipse.cdt.ui.tests.includebrowser.IncludeBrowserTestSuite;
 import org.eclipse.cdt.ui.tests.misc.MiscTestSuite;
 import org.eclipse.cdt.ui.tests.outline.OutlineTestSuite;
@@ -102,6 +103,9 @@ public class AutomatedSuite extends TestSuite {
 
 		// tests from package org.eclipse.cdt.ui.tests.misc
 		addTest(MiscTestSuite.suite());
+		
+		// tests from package org.eclipse.cdt.ui.tests.editor
+		addTest(EditorTestSuite.suite());
 
 		addTest(AllTemplateEngineTests.suite());
 	}

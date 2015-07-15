@@ -15,10 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
@@ -520,25 +522,19 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		if (encodingCombo != null) {
 			List<String> encodings = new ArrayList<String>();
 
-			// Some hard-coded encodings
+			// Default encoding
 			encodings.add("Default (ISO-8859-1)"); //$NON-NLS-1$
-			encodings.add("UTF-8"); //$NON-NLS-1$
 
 			// The currently selected IDE encoding from the preferences
 			String ideEncoding = getResourceEncoding();
-			if (ideEncoding != null && !encodings.contains(ideEncoding)) encodings.add(ideEncoding);
 
 			// The default Eclipse Workbench encoding (configured in the preferences)
 			String eclipseEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
-			if (eclipseEncoding != null && !encodings.contains(eclipseEncoding)) encodings.add(eclipseEncoding);
 
 			// The default host (Java VM) encoding
-			//
-			// Note: We do not use Charset.defaultCharset().displayName() here as it returns the bit
-			//       unusual name "windows-1252" on Windows. As there is no access to the "historical"
-			//       name "Cp1252" stored in MS1252.class, stick to the older way of retrieving an encoding.
-			String hostEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
-			if (!encodings.contains(hostEncoding)) encodings.add(hostEncoding);
+			String hostEncoding = Charset.defaultCharset().name();
+
+			addEncodings(encodings, "UTF-8", ideEncoding, eclipseEncoding, hostEncoding); //$NON-NLS-1$
 
 			// The "Other..." encoding
 			encodings.add(Messages.AbstractConfigurationPanel_encoding_custom);
@@ -547,6 +543,29 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			encodingCombo.select(0);
 
 			lastSelectedEncoding = encodingCombo.getText();
+		}
+	}
+
+	/**
+	 * Add given encoding names to the list. Duplicates are filtered out by comparing aliases.
+	 */
+	private void addEncodings(List<String> encodings, String... toadd) {
+		Set<String> aliases = new HashSet<String>();
+		for (String name : toadd) {
+			if (name == null)
+				continue;
+			try {
+				Charset cs = Charset.forName(name);
+				if (aliases.containsAll(cs.aliases()))
+					continue;
+				if (aliases.contains(name.toLowerCase()))
+					continue;
+				aliases.addAll(cs.aliases());
+				aliases.add(name.toLowerCase());
+				encodings.add(name);
+			} catch (Exception e) {
+				// skip
+			}
 		}
 	}
 

@@ -10,7 +10,8 @@ Require-Bundle: org.junit,
  org.eclipse.cdt.testsrunner;bundle-version="7.0.0",
  org.eclipse.cdt.testsrunner.boost;bundle-version="7.0.0",
  org.eclipse.cdt.testsrunner.qttest;bundle-version="7.0.0",
- org.eclipse.cdt.testsrunner.gtest;bundle-version="7.0.0"
+ org.eclipse.cdt.testsrunner.gtest;bundle-version="7.0.0",
+ org.eclipse.cdt.testsrunner.tap;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: %Bundle-Vendor

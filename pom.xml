@@ -203,6 +203,7 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.boost</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.gtest</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.qttest</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.tap</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.test</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.source.feature</module>

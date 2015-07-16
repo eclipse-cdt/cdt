@@ -7226,6 +7226,20 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testAliasTemplate_416280_2() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T>
+	//	struct Struct {};
+	//
+	//	template <typename T> using Alias = Struct<T>;
+	//
+	//	void waldo(Struct<int>);
+	//
+	//	int main() {
+	//	    waldo(Alias<int>());
+	//	}
+	public void testTemplateIdNamingAliasTemplateInExpression_472615() throws Exception {
+		parseAndCheckBindings();
+	}
 
 	//	template<typename U>
 	//	struct A {

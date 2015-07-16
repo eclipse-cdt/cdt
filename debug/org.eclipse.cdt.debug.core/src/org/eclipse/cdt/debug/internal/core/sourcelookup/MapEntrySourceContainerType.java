@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -27,9 +28,6 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 	private final static String BACKEND_PATH = "backendPath"; //$NON-NLS-1$
 	private final static String LOCAL_PATH = "localPath"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
@@ -46,7 +44,7 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 				if (!local.isValidPath(path)) {
 					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_1, null);
 				}
-				return new MapEntrySourceContainer(backend, local);
+				return createEntrySourceContainer(backend, local);
 			}
 			abort(InternalSourceLookupMessages.MapEntrySourceContainerType_2, null);
 		}
@@ -54,9 +52,16 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.core.sourcelookup.ISourceContainer)
+	/**
+	 * Return a new container map entry for the given parameters.
+	 * 
+	 * May be overridden by other container type delegates which deserialize to
+	 * alternate entry container types.
 	 */
+	protected MapEntrySourceContainer createEntrySourceContainer(IPath backend, IPath local) {
+		return new MapEntrySourceContainer(backend, local);
+	}
+
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		MapEntrySourceContainer entry = (MapEntrySourceContainer) container;

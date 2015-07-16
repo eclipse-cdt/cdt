@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "472a5bc0_60178151",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceSubstitutePathSourceContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-16T14:10:23Z",
+      "side": 1,
+      "message": "usually that would be called createSomething, i.e.\ncreateSourceContainer",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_4014fd4a",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/CSourceLookupDirector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-16T14:10:23Z",
+      "side": 1,
+      "message": "That seems weird that source lookup director would know about a speicifc type, why this this in here?",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_a02059a4",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainerType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-16T14:10:23Z",
+      "side": 1,
+      "message": "protected ISourceContainer createEntrySourceContainer...",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_e01a5174",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MappingSourceContainerType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-16T14:10:23Z",
+      "side": 1,
+      "message": "pprotected ISourceContainer createSourceContainer",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_00bcc5b0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-16T14:10:23Z",
+      "side": 1,
+      "message": "Just to make it safer\ntry {\n  ...\n} catch (Eception e) {\n   requestMonitor.done();\n}\naround whole method body probably",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_80a27581",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/CSourceSubstitutePath.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-16T14:10:23Z",
+      "side": 1,
+      "message": "Not sure this is right, if you monitor is done on first element, and next element is your source container how you can use now in queue? And it is not yours you will be doing done again on the same monitor.",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

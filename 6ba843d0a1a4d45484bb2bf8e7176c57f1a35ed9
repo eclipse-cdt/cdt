@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "472a5bc0_c37e3754",
+        "filename": "testsrunner/org.eclipse.cdt.testsrunner.tap/src/org/eclipse/cdt/testsrunner/internal/tap/TAPTestsRunnerPlugin.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-16T17:28:35Z",
+      "side": 1,
+      "message": "Update javadoc",
+      "revId": "6ba843d0a1a4d45484bb2bf8e7176c57f1a35ed9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

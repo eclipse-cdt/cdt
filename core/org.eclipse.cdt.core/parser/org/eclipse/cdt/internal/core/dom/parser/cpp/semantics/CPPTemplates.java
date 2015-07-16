@@ -667,7 +667,7 @@ public class CPPTemplates {
 			// Functions are instantiated as part of the resolution process.
 			IBinding result= CPPVisitor.createBinding(id);
 			IASTName templateName = id.getTemplateName();
-			if (result instanceof ICPPClassTemplate) {
+			if (result instanceof ICPPClassTemplate || result instanceof ICPPAliasTemplate) {
 				templateName.setBinding(result);
 				id.setBinding(null);
 			} else {

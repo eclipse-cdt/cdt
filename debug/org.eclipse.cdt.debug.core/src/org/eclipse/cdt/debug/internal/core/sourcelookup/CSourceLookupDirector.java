@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,14 @@
  *     Nokia - Added support for AbsoluteSourceContainer(159833)
  *     Texas Instruments - added extension point for source container type (279473) 
  *     Sergey Prigogin (Google)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -22,6 +25,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
+import org.eclipse.cdt.debug.core.sourcelookup.ISourceSubstitutePathContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -204,4 +208,16 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		}
 	}
 	// << Bugzilla 279473
+
+	public ISourceSubstitutePathContainer[] getSourceSubstitutePathContainers() {
+		ISourceContainer[] sourceContainers = getSourceContainers();
+		List<ISourceSubstitutePathContainer> list = new ArrayList<>();
+		for (ISourceContainer sourceContainer : sourceContainers) {
+			if (sourceContainer instanceof ISourceSubstitutePathContainer) {
+				ISourceSubstitutePathContainer subPathContainer = (ISourceSubstitutePathContainer) sourceContainer;
+				list.add(subPathContainer);
+			}
+		}
+		return list.toArray(new ISourceSubstitutePathContainer[list.size()]);
+	}
 }

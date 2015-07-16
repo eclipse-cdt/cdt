@@ -11,6 +11,7 @@
  *     Simon Marchi (Ericsson) - Make canRestart and restart throw Exception instead of Throwable.
  *     Simon Marchi (Ericsson) - Add getThreadData.
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -697,6 +698,33 @@ public class SyncUtil {
 		assertTrue("unexpected number of threads", threadIndex < threads.length);
 		assertNotNull("unexpected thread context type ", threads[threadIndex]);
 		return threads[threadIndex];
+	}
+
+	/**
+	 * Utility method to return a specific frame DM context.
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IFrameDMContext getFrameContext(int threadIndex, final int level)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		final IMIExecutionDMContext execCtx = getExecutionContext(threadIndex);
+		Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
+				fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
+					@Override
+					protected void handleSuccess() {
+						IFrameDMContext[] frameDmcs = getData();
+						assert frameDmcs != null;
+						assert frameDmcs.length == 1;
+						rm.setData(frameDmcs[0]);
+						rm.done();
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		return query.get(500, TimeUnit.MILLISECONDS);
 	}
 
 	/** 

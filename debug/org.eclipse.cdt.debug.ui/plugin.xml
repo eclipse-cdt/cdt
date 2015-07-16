@@ -1557,6 +1557,15 @@
             containerTypeID="org.eclipse.cdt.debug.core.containerType.sourceFoldersRelativePath"
             icon="icons/obj16/proj_anchor_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.sourceFoldersRelativePath"/>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.NewSourceSubstiturePathSourceContainerBrowser"
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.sourceSubstitutePath"
+            icon="icons/obj16/substitute_obj.png"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.sourceSubstiturePath"/>
+      <sourceContainerPresentation
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.sourceSubstitutePathEntry"
+            icon="icons/obj16/subentry_obj.png"
+            id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.sourceSubstiturePathEntry"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">

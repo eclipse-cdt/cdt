@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup; 
 
@@ -16,7 +17,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceSubstitutePathSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceSubstitutePathEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -42,8 +45,14 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object o) {
+		if (o instanceof SourceSubstitutePathSourceContainer) {
+			return CDebugImages.DESC_OBJS_PATH_SUBSTITUTE;
+		}
 		if (o instanceof MappingSourceContainer) {
 			return CDebugImages.DESC_OBJS_PATH_MAPPING;
+		}
+		if (o instanceof SourceSubstitutePathEntrySourceContainer) {
+			return CDebugImages.DESC_OBJS_PATH_SUB_ENTRY;
 		}
 		if (o instanceof MapEntrySourceContainer) {
 			return CDebugImages.DESC_OBJS_PATH_MAP_ENTRY;
@@ -77,8 +86,14 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	@Override
 	public String getLabel(Object o) {
+		if (o instanceof SourceSubstitutePathSourceContainer) {
+			return SourceLookupUIMessages.SourceContainerWorkbenchAdapter_1 + ((MappingSourceContainer)o).getName();
+		}
 		if (o instanceof MappingSourceContainer) {
 			return SourceLookupUIMessages.SourceContainerWorkbenchAdapter_0 + ((MappingSourceContainer)o).getName();
+		}
+		if (o instanceof SourceSubstitutePathEntrySourceContainer) {
+			return ((SourceSubstitutePathEntrySourceContainer)o).getName();
 		}
 		if (o instanceof MapEntrySourceContainer) {
 			return ((MapEntrySourceContainer)o).getName();

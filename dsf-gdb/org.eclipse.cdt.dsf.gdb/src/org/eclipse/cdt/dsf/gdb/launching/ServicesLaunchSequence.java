@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     IBM Corporation 
  *     Ericsson           - Support for Tracing Control service
  *     Marc Khouzam (Ericsson) - Start IGDBHardware service for the multicore visualizer (Bug 335027)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -27,6 +28,7 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.cdt.dsf.debug.service.ISourceSubstitutePath;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
@@ -94,6 +96,10 @@ public class ServicesLaunchSequence extends Sequence {
        		ISourceLookupDMContext sourceLookupDmc = (ISourceLookupDMContext)fCommandControl.getContext();
             fSourceLookup.setSourceLookupDirector(sourceLookupDmc, (CSourceLookupDirector)fLaunch.getSourceLocator());
             requestMonitor.done();
+        }},
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+        	fLaunch.getServiceFactory().createService(ISourceSubstitutePath.class, fSession).initialize(requestMonitor);
         }},
         new Step() { @Override
         public void execute(final RequestMonitor requestMonitor) {

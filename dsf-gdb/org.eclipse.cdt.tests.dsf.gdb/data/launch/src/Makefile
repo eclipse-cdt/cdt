@@ -1,4 +1,5 @@
 BINDIR = ../bin
+BUILDDIR = ../build
 SRC_C = $(wildcard *.c)
 SRC_CXX = $(wildcard *.cc)
 
@@ -12,8 +13,10 @@ COREFILE = $(BINDIR)/core
 CC = gcc
 CXX = g++
 
-CFLAGS = -g3 -O0
-CXXFLAGS = -g3 -O0
+# Uncomment the OLDDWARFFLAGS to run newer GCC against older GDB
+# OLDDWARFFLAGS =  -gdwarf-2 -gstrict-dwarf
+CFLAGS = -g3 -O0 $(OLDDWARFFLAGS)
+CXXFLAGS = -g3 -O0  $(OLDDWARFFLAGS)
 
 # Don't try to use pthread on Windows
 # The OS environment variable exists on Windows
@@ -33,16 +36,25 @@ all: $(BINS) $(COREFILE)
 $(BINDIR):
 	$(MKDIR) $@
 
-$(BINDIR)/%.exe: %.c $(HEADERS) | $(BINDIR)
+$(BUILDDIR):
+	$(MKDIR) $@
+
+$(BINDIR)/%.exe: %.c $(HEADERS) Makefile | $(BINDIR)
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(BINDIR)/%.exe: %.cc $(HEADERS) | $(BINDIR)
+$(BINDIR)/%.exe: %.cc $(HEADERS) Makefile | $(BINDIR)
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 # Generate a core file that is needed for post-morted core-file tests
-$(COREFILE): $(BINDIR)/ExpressionTestApp.exe | $(BINDIR)
+$(COREFILE): $(BINDIR)/ExpressionTestApp.exe Makefile | $(BINDIR)
 	gdb -nx --batch -ex 'b testLocals' -ex 'run' --ex 'next 16' \
 		-ex 'gcore ../bin/core' $(BINDIR)/ExpressionTestApp.exe > /dev/null
+
+# Compile a source file from an alternate directory
+$(BINDIR)/SourceLookup.exe: SourceLookup.cc $(HEADERS) Makefile | $(BINDIR) $(BUILDDIR)
+	cp SourceLookup.cc $(BUILDDIR)/SourceLookup.cc
+	cd $(BUILDDIR) && $(CXX) $(CXXFLAGS) -o $@ SourceLookup.cc
+	rm $(BUILDDIR)/SourceLookup.cc
 
 clean:
 	$(RM) -r $(BINDIR)

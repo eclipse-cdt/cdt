@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_c02f4d11",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/CSourceLookupDirector.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-07-16T14:58:47Z",
+      "side": 1,
+      "message": "This method should have been removed, the functionality was actually moved into org.eclipse.cdt.dsf.mi.service.CSourceSubstitutePath.setSourceSubstitutePath(ISourceSubstituteDMContext, ISourceContainer[], RequestMonitor)",
+      "parentUuid": "472a5bc0_4014fd4a",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "472a5bc0_a02059a4",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/MapEntrySourceContainerType.java",
         "patchSetId": 3
@@ -98,6 +116,24 @@
       "writtenOn": "2015-07-16T14:10:23Z",
       "side": 1,
       "message": "Not sure this is right, if you monitor is done on first element, and next element is your source container how you can use now in queue? And it is not yours you will be doing done again on the same monitor.",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_c0010d7a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/CSourceSubstitutePath.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-07-16T14:58:47Z",
+      "side": 1,
+      "message": "The monitor is a counting one, have I used it incorrectly? For each container there should be two done() calls, first for the MI command if applicable, second for the recursion, if applicable. And of course on the recursion a further counting monitor is created, which means in total there needs to be done() call twice for each node in the tree.\n\nPlease let me know if I have completely missed the point of your feedback.",
+      "parentUuid": "472a5bc0_80a27581",
       "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

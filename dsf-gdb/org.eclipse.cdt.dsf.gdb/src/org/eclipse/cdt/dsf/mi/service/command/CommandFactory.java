@@ -26,6 +26,7 @@
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
  *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -899,6 +900,11 @@ public class CommandFactory {
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIRemoveInferior(ICommandControlDMContext ctx, String groupId) {
 		return new MIRemoveInferior(ctx, groupId);
+	}
+
+	/** @since 4.9 */
+	public ICommand<MIInfo> createMISetSubstitutePath(IDMContext context, String from, String to) {
+		return new MISetSubstitutePath(context, from, to);
 	}
 
 	public ICommand<MIStackInfoDepthInfo> createMIStackInfoDepth(IMIExecutionDMContext ctx) {

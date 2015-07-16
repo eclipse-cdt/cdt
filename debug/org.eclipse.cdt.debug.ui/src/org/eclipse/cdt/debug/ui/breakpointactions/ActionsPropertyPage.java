@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Nokia and others.
+ * Copyright (c) 2007, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,6 +80,9 @@ public class ActionsPropertyPage extends PropertyPage {
 		String actionNames = breakpointMarker.getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
 		actionsList.setNames(actionNames);
 
+		// connect attached actions list to global list
+		globalActionsList.setClientList(actionsList);
+
 		globalActionsList.getAttachButton().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -98,7 +101,6 @@ public class ActionsPropertyPage extends PropertyPage {
 	}
 
 	protected void HandleAttachButton() {
-
 		IBreakpointAction[] selectedActions = globalActionsList.getSelectedActions();
 		for (int i = 0; i < selectedActions.length; i++) {
 			actionsList.addAction(selectedActions[i]);
@@ -111,13 +113,7 @@ public class ActionsPropertyPage extends PropertyPage {
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {
-
-		// First remove any attached action that was just deleted
-		IBreakpointAction[] selectedActions = globalActionsList.getSelectedActions();
-		for (int i = 0; i < selectedActions.length; i++) {
-			actionsList.removeAction(selectedActions[i]);
-		}
-		// Now cleanup the global action list
+		// attached actions are now handled by the GlobalActionsList
 		globalActionsList.HandleDeleteButton();
 	}
 

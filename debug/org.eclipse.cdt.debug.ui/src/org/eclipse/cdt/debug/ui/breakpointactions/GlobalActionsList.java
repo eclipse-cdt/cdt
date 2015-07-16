@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Nokia and others.
+ * Copyright (c) 2007, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     Nokia - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpointactions;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction;
@@ -35,6 +32,7 @@ public class GlobalActionsList extends Composite {
 	private Button editButton = null;
 	private Button newButton = null;
 	private Table table = null;
+	private ActionsList clientList;
 
 	public GlobalActionsList(Composite parent, int style, boolean useAttachButton) {
 		super(parent, style);
@@ -74,10 +72,7 @@ public class GlobalActionsList extends Composite {
 		summaryTableColumn.setWidth(120);
 		summaryTableColumn.setText(Messages.getString("GlobalActionsList.2")); //$NON-NLS-1$
 
-		ArrayList actions = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActions();
-
-		for (Iterator iter = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActions().iterator(); iter.hasNext();) {
-			IBreakpointAction element = (IBreakpointAction) iter.next();
+		for (IBreakpointAction element : CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActions()) {
 			final TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(0, element.getName());
 			tableItem.setText(1, element.getTypeName());
@@ -111,7 +106,6 @@ public class GlobalActionsList extends Composite {
 		editButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
 				HandleEditButton();
 			}
 		});
@@ -150,6 +144,8 @@ public class GlobalActionsList extends Composite {
 		TableItem[] selectedItems = table.getSelection();
 		for (int i = 0; i < selectedItems.length; i++) {
 			IBreakpointAction action = (IBreakpointAction) selectedItems[i].getData();
+			if (clientList != null)
+				clientList.removeAction(action);
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().deleteAction(action);
 		}
 		table.remove(table.getSelectionIndices());
@@ -160,7 +156,6 @@ public class GlobalActionsList extends Composite {
 	}
 
 	protected void HandleEditButton() {
-
 		TableItem[] selectedItems = table.getSelection();
 		IBreakpointAction action = (IBreakpointAction) selectedItems[0].getData();
 
@@ -171,12 +166,12 @@ public class GlobalActionsList extends Composite {
 			selectedItems[0].setText(0, action.getName());
 			selectedItems[0].setText(1, action.getTypeName());
 			selectedItems[0].setText(2, action.getSummary());
+			if (clientList != null)
+				clientList.updateAction(action);
 		}
-
 	}
 
 	protected void HandleNewButton() throws CoreException {
-
 		ActionDialog dialog = new ActionDialog(this.getShell(), null);
 		int result = dialog.open();
 		if (result == Window.OK) {
@@ -188,9 +183,7 @@ public class GlobalActionsList extends Composite {
 			tableItem.setText(1, action.getTypeName());
 			tableItem.setText(2, action.getSummary());
 			tableItem.setData(action);
-
 		}
-
 	}
 
 	public void updateButtons() {
@@ -199,6 +192,14 @@ public class GlobalActionsList extends Composite {
 			attachButton.setEnabled(selectedItems.length > 0);
 		deleteButton.setEnabled(selectedItems.length > 0);
 		editButton.setEnabled(selectedItems.length > 0);
+	}
+
+	/**
+	 * Register client list to be notified of changes to actions.
+	 * @param actionsList
+	 */
+	void setClientList(ActionsList actionsList) {
+		clientList = actionsList;
 	}
 
 }

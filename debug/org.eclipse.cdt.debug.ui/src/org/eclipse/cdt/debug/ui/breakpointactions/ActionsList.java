@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Nokia and others.
+ * Copyright (c) 2007, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,6 +198,24 @@ public class ActionsList extends Composite {
 	public void updateButtons() {
 		TableItem[] selectedItems = table.getSelection();
 		removeButton.setEnabled(selectedItems.length > 0);
+	}
+
+	/**
+	 * Update the appearance of given action.
+	 * @param action
+	 */
+	void updateAction(IBreakpointAction action) {
+		TableItem[] currentItems = table.getItems();
+		for (int i = 0; i < currentItems.length; i++) {
+			if (((IBreakpointAction) currentItems[i].getData()).equals(action)) {
+				TableItem tableItem = currentItems[i];
+				tableItem.setText(0, action.getName());
+				tableItem.setText(1, action.getTypeName());
+				tableItem.setText(2, action.getSummary());
+				break;
+			}
+		}
+		updateButtons();
 	}
 
 }

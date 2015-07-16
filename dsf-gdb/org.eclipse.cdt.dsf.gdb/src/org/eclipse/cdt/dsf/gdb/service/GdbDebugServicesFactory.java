@@ -19,6 +19,7 @@
  *     Marc Khouzam (Ericsson) - Support dynamic printf in bp service 7.5 (Bug 400628)
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *     Marc Dumais (Ericsson) - Update GDBHardwareAndOS service to take advantage of GDB providing CPU/core info (bug 464184)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -33,6 +34,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
+import org.eclipse.cdt.dsf.debug.service.ISourceSubstitutePath;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_7;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
+import org.eclipse.cdt.dsf.mi.service.CSourceSubstitutePath;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
@@ -261,6 +264,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	@Override
 	protected ISourceLookup createSourceLookupService(DsfSession session) {
 		return new CSourceLookup(session);
+	}
+
+	@Override
+	protected ISourceSubstitutePath createSourceSubstitutePathService(DsfSession session) {
+		return new CSourceSubstitutePath(session);
 	}
 	
 	@Override

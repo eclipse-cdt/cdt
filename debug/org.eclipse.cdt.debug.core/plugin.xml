@@ -383,6 +383,18 @@
             id="org.eclipse.cdt.debug.core.containerType.programRelativePath"
             name="%containerName.programRelativePath">
       </sourceContainerType>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.SourceSubstitutePathContainerType"
+            description="%containerDescription.sourceSubstitutePathMapping"
+            id="org.eclipse.cdt.debug.core.containerType.sourceSubstitutePath"
+            name="%containerName.sourceSubstitutePathMapping">
+      </sourceContainerType>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.SourceSubstitutePathEntryContainerType"
+            description="%containerDescription.sourceSubstitutePathMappingEntry"
+            id="org.eclipse.cdt.debug.core.containerType.sourceSubstitutePathEntry"
+            name="%containerName.sourceSubstitutePathMappingEntry">
+      </sourceContainerType>
    </extension>
  
    <extension
@@ -428,6 +440,10 @@
             id="org.eclipse.debug.core.containerType.workspace"/>
       <sourceContainer
             id="org.eclipse.debug.core.containerType.directory"/>
+      <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.sourceSubstitutePath"/>
+      <sourceContainer
+            id="org.eclipse.cdt.debug.core.containerType.sourceSubstitutePathEntry"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

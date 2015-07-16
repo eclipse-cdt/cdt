@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.sourcelookup; 
 
@@ -175,12 +176,20 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	}
 
 	public MappingSourceContainer copy() {
-		MappingSourceContainer copy = new MappingSourceContainer(fName);
+		MappingSourceContainer copy = newMappingSourceContainer(fName);
 		MapEntrySourceContainer[] entries = new MapEntrySourceContainer[fContainers.size()];
 		for (int i = 0; i < entries.length; ++i) {
 			copy.addMapEntry(fContainers.get(i).copy());
 		}
 		return copy;
+	}
+
+	/**
+	 * Create a new MappingSourceContainer
+	 * @since 7.8
+	 */
+	protected MappingSourceContainer newMappingSourceContainer(String name) {
+		return new MappingSourceContainer(name);
 	}
 	
 	public void setName(String name) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Jens Elmenthaler (Advantest) - Fix empty names for functions in anonymous namespaces (bug 341336)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -66,6 +67,7 @@ public class MIFrame {
         buffer.append(",addr=\"" + addr + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",func=\"" + func + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",file=\"" + file + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+        buffer.append(",fullname=\"" + fullname + "\"");  //$NON-NLS-1$//$NON-NLS-2$
         buffer.append(",line=\"").append(line).append('"'); //$NON-NLS-1$
         buffer.append(",args=["); //$NON-NLS-1$
         for (int i = 0; i < args.length; i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
@@ -46,6 +47,7 @@ public class SourceLookupUIMessages extends NLS {
 	public static String PathMappingDialog_16;
 	public static String RemoveAction_0;
 	public static String SourceContainerWorkbenchAdapter_0;
+	public static String SourceContainerWorkbenchAdapter_1;
 	public static String UpAction_0;
 	public static String CSourceNotFoundEditor_0;
 	public static String CSourceNotFoundEditor_1;

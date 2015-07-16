@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 ARM Limited and others.
+ * Copyright (c) 2009, 2015 ARM Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * ARM Limited - Initial API and implementation
+ * Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
@@ -558,13 +559,17 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
     }
 
     void addPathEntry() {
-        MapEntrySourceContainer entry = new MapEntrySourceContainer();
+        MapEntrySourceContainer entry = newMapEntrySourceContainer();
         fContainer.addMapEntry(entry);
         fViewer.refresh();
         fViewer.setSelection(new StructuredSelection(entry), true);
         updateViewerButtons();
         fViewer.editElement(entry, 0);
     }
+
+	protected MapEntrySourceContainer newMapEntrySourceContainer() {
+		return new MapEntrySourceContainer();
+	}
 
     void removePathEntries() {
         MapEntrySourceContainer[] entries = getSelectedEntries();

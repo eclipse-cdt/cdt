@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
@@ -32,9 +33,6 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 	private final static String ATTR_NAME = "name"; //$NON-NLS-1$
 	private final static String ATTR_MEMENTO = "memento"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
-	 */
 	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
@@ -54,14 +52,14 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 							if (childMemento == null || childMemento.length() == 0) {
 								abort(InternalSourceLookupMessages.MappingSourceContainerType_0, null);
 							}
-							ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(MapEntrySourceContainer.TYPE_ID);
+							ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(getMapEntryTypeId());
 							MapEntrySourceContainer entry = (MapEntrySourceContainer) type.createSourceContainer(childMemento);
 							entries.add(entry);
 						}
 					}
 					childNode = childNode.getNextSibling();
 				}
-				MappingSourceContainer container = new MappingSourceContainer(name);
+				MappingSourceContainer container = newSourceContainer(name);
 				for (MapEntrySourceContainer entry : entries) {
 					container.addMapEntry(entry);
 				}
@@ -73,9 +71,26 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 		return null;		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.core.sourcelookup.ISourceContainer)
+	/**
+	 * Return a new container for the given parameters.
+	 * 
+	 * May be overridden by other container type delegates which deserialize to
+	 * alternate container types.
 	 */
+	protected MappingSourceContainer newSourceContainer(String name) {
+		return new MappingSourceContainer(name);
+	}
+
+	/**
+	 * Return the type id of the entry's source container type.
+	 * 
+	 * May be overridden by other container type delegates which deserialize to
+	 * alternate entry container types.
+	 */
+	protected String getMapEntryTypeId() {
+		return MapEntrySourceContainer.TYPE_ID;
+	}
+
 	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		Document document = newDocument();

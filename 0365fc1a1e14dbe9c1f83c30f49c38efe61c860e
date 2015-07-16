@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "472a5bc0_6011410b",
+        "filename": "testsrunner/org.eclipse.cdt.testsrunner.tap/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-16T14:42:36Z",
+      "side": 1,
+      "message": "This should be 8.8.0-SNAPSHOT",
+      "revId": "0365fc1a1e14dbe9c1f83c30f49c38efe61c860e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "472a5bc0_202e2946",
+        "filename": "testsrunner/org.eclipse.cdt.testsrunner.test/src/org/eclipse/cdt/testsrunner/testsrunners/TAPTestCase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-16T14:42:36Z",
+      "side": 1,
+      "message": "Need copyright header",
+      "revId": "0365fc1a1e14dbe9c1f83c30f49c38efe61c860e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

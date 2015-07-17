@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class TracepointGlobalActionsList extends Composite {
 	private Button editButton;
 	private Button newButton;
 	private Table table;
+	private TracepointActionsList clientList;
 	private boolean isSubAction;
 
 	public TracepointGlobalActionsList(Composite parent, int style, boolean useAttachButton, boolean isSub) {
@@ -149,6 +150,9 @@ public class TracepointGlobalActionsList extends Composite {
 		TableItem[] selectedItems = table.getSelection();
 		for (int i = 0; i < selectedItems.length; i++) {
 			ITracepointAction action = (ITracepointAction) selectedItems[i].getData();
+			if (clientList != null) {
+				clientList.removeAction(action);
+			}
 			TracepointActionManager.getInstance().deleteAction(action);
 		}
 		table.remove(table.getSelectionIndices());
@@ -170,6 +174,9 @@ public class TracepointGlobalActionsList extends Composite {
 			selectedItems[0].setText(0, action.getName());
 			selectedItems[0].setText(1, action.getTypeName());
 			selectedItems[0].setText(2, action.getSummary());
+			if (clientList != null) {
+				clientList.updateAction(action);
+			}
 		}
 
 	}
@@ -199,5 +206,12 @@ public class TracepointGlobalActionsList extends Composite {
 		deleteButton.setEnabled(selectedItems.length > 0);
 		editButton.setEnabled(selectedItems.length == 1);
 	}
-
+	
+	/**
+	 * Register client list to be notified of changes to actions.
+	 * @param actionsList
+	 */
+	void setClientList(TracepointActionsList actionsList) {
+		clientList = actionsList;
+	}
 }

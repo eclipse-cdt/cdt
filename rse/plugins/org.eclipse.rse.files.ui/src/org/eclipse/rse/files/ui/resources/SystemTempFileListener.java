@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2015  IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [256048] Saving a member open in Remote LPEX editor while Working Offline doesn't set the dirty property
  * David McKnight   (IBM)        - [381482] Improper use of save participant is causing a workspace hang
  * David McKnight   (IBM)        - [390609] Cached file opened twice in case of eclipse linked resource..
+ * David McKnight   (IBM)        - [468096] NullPointerException in SystemTempFileListener.checkLocalChanges (379)
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -376,7 +378,13 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			else
 			{
 				pathOfChild = resource.getLocation().toOSString();
-				pathOfParent = resource.getParent().getLocation().toOSString();
+				IContainer container = resource.getParent();
+				if (container != null){
+					IPath containerPath = container.getLocation();
+					if (containerPath != null){
+						pathOfParent = containerPath.toOSString();
+					}
+				}
 			}
 		
 	

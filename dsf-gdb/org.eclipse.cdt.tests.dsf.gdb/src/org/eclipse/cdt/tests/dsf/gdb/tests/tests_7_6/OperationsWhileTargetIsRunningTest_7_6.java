@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,4 +22,10 @@ public class OperationsWhileTargetIsRunningTest_7_6 extends OperationsWhileTarge
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_6);
 	}
+    
+    @Override
+    public boolean isRemoteDetachFailing() {
+    	// This only fails for GDB 7.5
+    	return false;
+    }
 }

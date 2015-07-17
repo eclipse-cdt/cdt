@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Nokia and others.
+ * Copyright (c) 2010, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,6 +84,9 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 		String actionNames = tracepointMarker.getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
 		actionsList.setNames(actionNames);
 
+		// connect attached actions list to global list
+		globalActionsList.setClientList(actionsList);
+		
 		globalActionsList.getAttachButton().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -115,13 +118,8 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {
+		// attached actions are now handled by the GlobalActionsList
 
-		// First remove any attached action that was just deleted
-		ITracepointAction[] selectedActions = globalActionsList.getSelectedActions();
-		for (int i = 0; i < selectedActions.length; i++) {
-			actionsList.removeAction(selectedActions[i]);
-		}
-		// Now cleanup the global action list
 		globalActionsList.HandleDeleteButton();
 	}
 

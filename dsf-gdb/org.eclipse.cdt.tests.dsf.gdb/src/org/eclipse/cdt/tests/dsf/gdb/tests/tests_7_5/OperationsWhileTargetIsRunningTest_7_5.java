@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,4 +22,27 @@ public class OperationsWhileTargetIsRunningTest_7_5 extends OperationsWhileTarge
 	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_5);
 	}
+    
+    @Override
+    public void detachWhileTargetRunningGDBAlive() throws Throwable {
+    	if (isRemoteSession() && isRemoteDetachFailing()) {
+    		return;
+    	}
+   		super.detachWhileTargetRunningGDBAlive();
+    }
+    
+    @Override
+    public void detachWhileTargetRunningKillGDB() throws Throwable {
+    	if (isRemoteSession() && isRemoteDetachFailing()) {
+    		return;
+    	}
+   		super.detachWhileTargetRunningKillGDB();
+    }
+    
+    public boolean isRemoteDetachFailing() {
+    	// With GDB 7.5 in the remote case, the detach test
+    	// case does not kill gdbserver which prevents the next
+    	// testcase from passing.
+    	return true;
+    }
 }

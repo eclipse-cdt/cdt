@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="build">
+	<description>
+		Build file to generate the ANTLR 4 parsers and lexers
+    </description>
+
+	<target name="getAntlr">
+		<get src="http://www.antlr.org/download/antlr-4.5-complete.jar" dest="antlr-4.5-complete.jar" skipexisting="true"/>
+		<get src="http://www.antlr.org/download/antlr-runtime-4.5.jar" dest="antlr-runtime-4.5.jar" skipexisting="true"/>
+	</target>
+		
+    <target name="build" depends="getAntlr">
+    	<java jar="antlr-4.5-complete.jar" fork="true">
+    		<arg value="-o"/>
+    		<arg value="src-gen/org/eclipse/cdt/qt/qml/core/parser"/>
+    		<arg value="-package"/>
+    		<arg value="org.eclipse.cdt.qt.qml.core.parser"/>
+    		<arg value="ECMAScript.g4"/>
+    	</java>
+    	<java jar="antlr-4.5-complete.jar" fork="true">
+    		<arg value="-o"/>
+    		<arg value="src-gen/org/eclipse/cdt/qt/qml/core/parser"/>
+    		<arg value="-package"/>
+    		<arg value="org.eclipse.cdt.qt.qml.core.parser"/>
+    		<arg value="QML.g4"/>
+    	</java>
+    </target>
+
+	<target name="clean">
+	</target>
+		
+</project>

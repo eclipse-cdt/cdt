@@ -105,6 +105,24 @@
     },
     {
       "key": {
+        "uuid": "472a5bc0_d97e285d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-07-17T08:47:30Z",
+      "side": 1,
+      "message": "On further review, I am not sure why adding the try/catch makes it safer? Can you elaborate. It seems that if I add it, it could lead to situations where something has gone wrong, the sub path has not been performed, but the user has not had any indication as to why.\n\nI can guess that the issue has something to do with reluctance to change FinalLaunchSequence, but if so, how can you suggest de-risking adding the new feature, without making the feature\u0027s failures invisible?\n\nNote that the Step\u0027s execution catches Throwable and terminates the sequence.",
+      "parentUuid": "472a5bc0_00bcc5b0",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "472a5bc0_80a27581",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/CSourceSubstitutePath.java",
         "patchSetId": 3

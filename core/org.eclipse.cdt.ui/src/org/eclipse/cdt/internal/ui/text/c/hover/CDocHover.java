@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
@@ -46,7 +47,11 @@ public class CDocHover extends AbstractCEditorTextHover {
 		if (getEditor() == null) 
 			return null;
 		try {
-			expression = viewer.getDocument().get(region.getOffset(), region.getLength());
+			IDocument document = viewer.getDocument();
+			if (document == null) {
+				return null;
+			}
+			expression = document.get(region.getOffset(), region.getLength());
 			expression = expression.trim();
 			if (expression.isEmpty())
 				return null; 

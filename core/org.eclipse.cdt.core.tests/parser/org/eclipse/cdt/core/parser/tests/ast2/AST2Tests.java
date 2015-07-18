@@ -4661,6 +4661,15 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(code, C, true);
 		parseAndCheckBindings(code, CPP, true);
 	}
+	
+	//  int main() {
+	//      (typeof(({ 0; }))) 0;  // syntax error
+	//  }
+	public void testTypeofStatementExpressionInCastExpression_427950() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code, C, true);
+		parseAndCheckBindings(code, CPP, true);
+	}
 
 	// void test(int count) {
 	//    __typeof__(count) a= 1;

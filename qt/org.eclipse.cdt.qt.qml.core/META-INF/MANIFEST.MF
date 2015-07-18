@@ -7,5 +7,5 @@ Bundle-Activator: org.eclipse.cdt.qt.qml.core.internal.Activator
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: antlr-runtime-4.5.jar,
+Bundle-ClassPath: antlr-runtime-4.5.1.jar,
  .

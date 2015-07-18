@@ -10,6 +10,33 @@
 
 grammar ECMAScript;
 
+@lexer::members {
+	private boolean strictMode;
+
+	private boolean regexPermitted() {
+		return false;
+	}
+}
+
+@parser::members {
+	private boolean insertSemi() {
+		if (getTokenStream().LT(1).getType() == RBRACE) {
+			return true;
+		}
+
+		// TODO - look for line terminator in hidden channel before
+		// another token in the default channel
+
+		return false;
+	}
+}
+
+semi
+	: SEMI
+	| EOF
+	| {insertSemi()}?
+	;
+
 singleExpression
 	: Identifier
 	;
@@ -23,7 +50,9 @@ WhiteSpaceSequence
 	;
 
 fragment WhiteSpace
-	: [\t\u000B\u000C]
+	: '\u0009'
+	| '\u000B'
+	| '\u000C'
 	// Unicode cat: Zs
 	| '\u0020'
 	| '\u00A0'
@@ -32,6 +61,18 @@ fragment WhiteSpace
 	| '\u202F'
 	| '\u205F'
 	| '\u3000'
+	| '\uFEFF'
+	;
+
+fragment LineTerminator
+	: [\u000A\u000D\u2028\u2029]
+	;
+
+fragment LineTerminatorSequence
+	: '\u000A'
+	| '\u000D' '\u000A'?
+	| '\u2028'
+	| '\u2029'
 	;
 
 MultiLineComment
@@ -39,7 +80,248 @@ MultiLineComment
 	;
 
 SingleLineCOmment
-	: '//' ~[\r\n\u2028\u2029]* -> channel(HIDDEN)
+	: '//' ~[\u000A\u000D\u2028\u2029]* -> channel(HIDDEN)
+	;
+
+// Keywords
+BREAK : 'break' ;
+DO : 'do' ;
+INSTANCEOF : 'instanceof' ;
+TYPEOF : 'typeof' ;
+CASE : 'case' ;
+ELSE : 'else' ;
+NEW : 'new' ;
+VAR : 'var' ;
+CATCH : 'catch' ;
+FINALLY : 'finally' ;
+RETURN : 'return' ;
+VOID : 'void' ;
+CONTINUE : 'continue' ;
+FOR : 'for' ;
+SWITCH : 'switch' ;
+WHILE : 'while' ;
+DEBUGGER : 'debugger' ;
+FUNCTION : 'function' ;
+THIS : 'this' ;
+WITH : 'with' ;
+DEFAULT : 'default' ;
+IF : 'if' ;
+THROW : 'throw' ;
+DELETE : 'delete' ;
+IN : 'in' ;
+TRY : 'try' ;
+
+// Future Reserved Words
+CLASS : 'class' ;
+ENUM : 'enum' ;
+EXTENDS : 'extends' ;
+SUPER : 'super' ;
+CONST : 'const' ;
+EXPORT : 'export' ;
+IMPORT : 'import' ;
+
+// Strict Future Reserved Words
+IMPLEMENTS : {strictMode}? 'implements' ;
+LET : {strictMode}? 'let' ;
+PRIVATE : {strictMode}? 'private' ;
+PUBLIC : {strictMode}? 'public' ;
+YIELD : {strictMode}? 'yield' ;
+INTERFACE : {strictMode}? 'interface' ;
+PACKAGE : {strictMode}? 'package' ;
+PROTECTED : {strictMode}? 'protected' ;
+STATIC : {strictMode}? 'static' ;
+
+LBRACE : '{' ;
+RBRACE : '}' ;
+LPAREN : '(' ;
+RPAREN : ')' ;
+LBRACK : '[' ;
+RBRACK : ']' ;
+DOT : '.' ;
+SEMI : ';' ;
+COMMA : ',' ;
+LT : '<' ;
+GT : '>' ;
+LTE : '<=' ;
+GTE : '>=' ;
+EQUAL : '==' ;
+NEQUAL : '!=' ;
+IEQUAL : '===' ;
+NIEQUAL : '!==' ;
+PLUS : '+' ;
+MINUS : '-' ;
+MULT : '*' ;
+MOD : '%' ;
+INCR : '++' ;
+DECR : '--' ;
+SHIFTL : '<<' ;
+SHIFTR : '>>' ;
+USHIFTR : '>>>' ;
+BAND : '&' ;
+BOR : '|' ;
+BXOR : '^' ;
+LNOT : '!' ;
+BNOT : '~' ;
+LAND : '&&' ;
+LOR : '||' ;
+QUEST : '?' ;
+COLON : ':' ;
+ASSIGN : '=' ;
+PLUSASSIGN : '+=' ;
+MINUSASSIGN : '-=' ;
+MULTASSIGN : '*=' ;
+MODASSIGN : '%=' ;
+SHIFTLASSIGN : '<<=' ;
+SHIFTRASSIGN : '>>=' ;
+USHIFTRASSIGN : '>>>=' ;
+BANDASSIGN : '&=' ;
+BORASSIGN : '|=' ;
+BXORASSIGN : '^=' ;
+DIV : '/' ;
+DIVASSIGN : '/=' ;
+
+NullLiteral
+	: 'null'
+	;
+
+BooleanLiteral
+	: 'true'
+	| 'false'
+	;
+
+DecimalLiteral
+	: DecimalIntegerLiteral '.' DecimalDigit* ExponentPart?
+	| '.' DecimalDigit+ ExponentPart?
+	| DecimalIntegerLiteral ExponentPart?
+	;
+
+fragment DecimalIntegerLiteral
+	: '0'
+	| NonZeroDigit DecimalDigit*
+	;
+
+fragment DecimalDigit
+	: [0-9]
+	;
+
+fragment NonZeroDigit
+	: [1-9]
+	;
+
+fragment ExponentPart
+	: ExponentIndicator SignedInteger
+	;
+
+fragment ExponentIndicator
+	: [eE]
+	;
+
+fragment SignedInteger
+	: [+-]? DecimalDigit+
+	;
+
+HexIntegerLiteral
+	: '0' [xX] HexDigit+
+	;
+
+fragment HexDigit
+	: [0-9a-fA-F]
+	;
+
+StringLiteral
+	: '"' DoubleStringCharacter* '"'
+	| '\'' SingleStringCharacter* '\''
+	;
+
+fragment DoubleStringCharacter
+	: ~["\\\u000A\u000D\u2028\u2029]
+	| '\\' EscapeSequence
+	| LineContinuation
+	;
+
+fragment SingleStringCharacter
+	: ~['\\\u000A\u000D\u2028\u2029]
+ 	| '\\' EscapeSequence 
+	| LineContinuation
+	;
+
+fragment LineContinuation
+	: '\\' LineTerminatorSequence
+	;
+
+fragment EscapeSequence
+	: CharacterEscapeSequence
+	| '0'
+	| HexEscapeSequence
+	| UnicodeEscapeSequence
+	;
+
+fragment CharacterEscapeSequence
+	: SingleEscapeCharacter
+	| NonEscapeCharacter
+	;
+
+fragment SingleEscapeCharacter
+	: ['"\\bfnrtv]
+	;
+
+fragment NonEscapeCharacter
+	: ~['"\\bfnrtv0-9xu\r\n]
+	;
+ 
+fragment EscapeCharacter
+	: SingleEscapeCharacter
+	| DecimalDigit
+	| [xu]
+	;
+
+fragment HexEscapeSequence
+	: '\\' HexDigit HexDigit
+	;
+
+fragment UnicodeEscapeSequence
+	: '\\' HexDigit HexDigit HexDigit HexDigit
+	;
+
+RegularExpressionLiteral
+	: {regexPermitted()}? '/' RegularExpressionBody '/' RegularExpressionFlags
+	;
+
+fragment RegularExpressionBody
+	: RegularExpressionFirstChar RegularExpressionChar*
+	;
+
+fragment RegularExpressionFirstChar
+	: ~[\u000A\u000D\u2028\u2029*\\/[]
+	| RegularExpressionBackslashSequence 
+	| RegularExpressionClass
+	;
+
+fragment RegularExpressionChar
+	: ~[\u000A\u000D\u2028\u2029\\/[]
+	| RegularExpressionBackslashSequence
+	| RegularExpressionClass
+	;
+
+fragment RegularExpressionBackslashSequence
+	: '\\' RegularExpressionNonTerminator
+	;
+
+fragment RegularExpressionNonTerminator
+	: ~[\u000A\u000D\u2028\u2029]
+	;
+
+fragment RegularExpressionClass
+	: '[' RegularExpressionClassChar* ']'
+	;
+
+fragment RegularExpressionClassChar
+	: ~[\u000A\u000D\u2028\u2029\]\\]
+	| RegularExpressionBackslashSequence
+	;
+
+fragment RegularExpressionFlags
+	: IdentifierPart*
 	;
 
 Identifier
@@ -58,14 +340,6 @@ fragment IdentifierPart
 	| UnicodeDigit
 	| UnicodeConnectorPunctuation
 	| [\u200C\u200D]
-	;
-
-fragment HexDigit
-	: [0-9a-fA-f]
-	;
-
-fragment UnicodeEscapeSequence
-	: '\\' HexDigit HexDigit HexDigit HexDigit
 	;
 
 // Unicode cats: Lu, Ll, Lt, Lm, Lo, Nl

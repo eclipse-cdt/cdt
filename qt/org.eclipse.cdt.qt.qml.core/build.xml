@@ -5,19 +5,28 @@
     </description>
 
 	<target name="getAntlr">
-		<get src="http://www.antlr.org/download/antlr-4.5-complete.jar" dest="antlr-4.5-complete.jar" skipexisting="true"/>
-		<get src="http://www.antlr.org/download/antlr-runtime-4.5.jar" dest="antlr-runtime-4.5.jar" skipexisting="true"/>
+		<get src="http://www.antlr.org/download/antlr-4.5.1-complete.jar" dest="antlr-4.5.1-complete.jar" skipexisting="true"/>
+		<get src="http://www.antlr.org/download/antlr-runtime-4.5.1.jar" dest="antlr-runtime-4.5.1.jar" skipexisting="true"/>
+		<get src="https://github.com/antlr/antlr4/archive/4.5.1.zip" dest="antlr-4.5.1.zip" skipexisting="true"/>
 	</target>
 		
     <target name="build" depends="getAntlr">
-    	<java jar="antlr-4.5-complete.jar" fork="true">
+    	<java classname="org.antlr.v4.Tool" fork="true">
+			<classpath>
+				<pathelement location="antlr-4.5.1-complete.jar"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
     		<arg value="-o"/>
     		<arg value="src-gen/org/eclipse/cdt/qt/qml/core/parser"/>
     		<arg value="-package"/>
     		<arg value="org.eclipse.cdt.qt.qml.core.parser"/>
     		<arg value="ECMAScript.g4"/>
     	</java>
-    	<java jar="antlr-4.5-complete.jar" fork="true">
+    	<java classname="org.antlr.v4.Tool" fork="true">
+			<classpath>
+				<pathelement location="antlr-4.5.1-complete.jar"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
     		<arg value="-o"/>
     		<arg value="src-gen/org/eclipse/cdt/qt/qml/core/parser"/>
     		<arg value="-package"/>

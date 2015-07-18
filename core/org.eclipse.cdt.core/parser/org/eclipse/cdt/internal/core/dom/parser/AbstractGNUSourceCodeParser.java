@@ -2664,9 +2664,23 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected void skipBrackets(int left, int right, int terminator) throws EndOfFileException, BacktrackException {
 		consume(left);
-		int nesting= 0;
+		int nesting = 0;
+		int braceNesting = 0;
 		while (true) {
 			final int lt1= LT(1);
+
+			// Ignore passages inside braces (such as for a statement-expression),
+			// as they can basically contain tokens of any kind.
+			if (lt1 == IToken.tLBRACE) {
+				braceNesting++;
+			} else if (lt1 == IToken.tRBRACE) {
+				braceNesting--;
+			}
+			if (braceNesting > 0) {
+				consume();
+				continue;
+			}
+
 			if (lt1 == IToken.tEOC || lt1 == terminator)
 				throwBacktrack(LA(1));
 

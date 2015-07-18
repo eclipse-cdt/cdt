@@ -46,6 +46,9 @@ public class CDocHover extends AbstractCEditorTextHover {
 		if (getEditor() == null) 
 			return null;
 		try {
+			if (viewer.getDocument() == null) {
+				return null;
+			}
 			expression = viewer.getDocument().get(region.getOffset(), region.getLength());
 			expression = expression.trim();
 			if (expression.isEmpty())

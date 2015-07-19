@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_ebdecdd4",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7238,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-19T18:00:10Z",
+      "side": 1,
+      "message": "Please remove the \"error on \u0027waldo\u0027\" comment.",
+      "range": {
+        "startLine": 7238,
+        "startChar": 33,
+        "endLine": 7238,
+        "endChar": 49
+      },
+      "revId": "8e5ebb22f169b2157dc702fc2ddd4b3e3e9530ab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

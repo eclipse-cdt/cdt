@@ -9235,6 +9235,35 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(0, ors.length);
 	}
 
+	//	struct A {
+	//		virtual void f();  // A
+	//	};
+	//
+	//	struct B : virtual A {
+	//		virtual void f();  // B
+	//	};
+	//
+	//	struct C : B , virtual A {
+	//		using A::f;
+	//	};
+	//
+	//	void foo() {
+	//		C c;
+	//		c.f();
+	//		c.C::f();
+	//	}
+	public void testResolutionToFinalOverrider_86654() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		ICPPMethod actual = helper.assertNonProblem("c.f()", "f");
+		ICPPMethod expected = helper.assertNonProblem("virtual void f();  // B", "f");
+		assertEquals(expected, actual);
+		
+		actual = helper.assertNonProblem("c.C::f()", "f");
+		expected = helper.assertNonProblem("virtual void f();  // A", "f");
+		assertEquals(expected, actual);
+	}
+
 	//	struct X {
 	//		X();
 	//	};

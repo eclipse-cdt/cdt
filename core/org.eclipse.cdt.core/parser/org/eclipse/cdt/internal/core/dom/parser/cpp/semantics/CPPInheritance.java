@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,9 +90,29 @@ public class CPPInheritance {
 				}
 				Map<Integer, List<ICPPMethod>> otherOverriders = other.fMap.get(method);
 				for (Integer i : otherOverriders.keySet()) {
-					CollectionUtils.listMapGet(overriders, i).addAll(otherOverriders.get(i));
+					mergeOverriders(CollectionUtils.listMapGet(overriders, i), otherOverriders.get(i));
 				}
 			}
+		}
+		
+		/**
+		 * Merges the overriders from 'source' into 'target'.
+		 * Excludes methods in 'source' which themselves have an overrider in 'target'.
+		 */
+		private void mergeOverriders(List<ICPPMethod> target, List<ICPPMethod> source) {
+			List<ICPPMethod> toAdd = new ArrayList<>();
+			for (ICPPMethod candidate : source) {
+				boolean superseded = false;
+				for (ICPPMethod existing : target) {
+					if (existing != candidate && ClassTypeHelper.isOverrider(existing, candidate)) {
+						superseded = true;
+					}
+				}
+				if (!superseded) {
+					toAdd.add(candidate);
+				}
+			}
+			target.addAll(toAdd);
 		}
 	}
 
@@ -116,12 +137,34 @@ public class CPPInheritance {
 		if (result == null) {
 			result = FinalOverriderAnalysis.computeFinalOverriderMap(classType, point);
 		}
-		if (result != null && cache != null) {
+		if (cache != null) {
 			cache.put(classType, result);
 		}
 		return result;
 	}
+	
+	/**
+	 * If a given virtual method has a unique final overrider in the class hierarchy rooted at the
+	 * given class, returns that final overrider. Otherwise, returns null. 
 
+	 * @param point The point of template instantiation, if applicable.
+	 *              Also used to access the final overrider map cache in the AST.
+	 */
+	public static ICPPMethod getFinalOverrider(ICPPMethod method, ICPPClassType hierarchyRoot, 
+			IASTNode point) {
+		FinalOverriderMap map = getFinalOverriderMap(hierarchyRoot, point);
+		Map<Integer, List<ICPPMethod>> finalOverriders = map.getMap().get(method);
+		if (finalOverriders != null && finalOverriders.size() == 1) {
+			for (Integer subobjectNumber : finalOverriders.keySet()) {
+				List<ICPPMethod> overridersForSubobject = finalOverriders.get(subobjectNumber);
+				if (overridersForSubobject.size() == 1) {
+					return overridersForSubobject.get(0);
+				}
+			}
+		}
+		return null;
+	}
+	
 	private static class FinalOverriderAnalysis {
 		/**
 		 * Computes the final overrider map for a class hierarchy.
@@ -207,6 +250,12 @@ public class CPPInheritance {
 
 			// Go through our own methods.
 			for (ICPPMethod method : ClassTypeHelper.getOwnMethods(classType, point)) {
+				// Skip methods that don't actually belong to us, such as methods brought
+				// into scope via a using-declaration.
+				if (method.getOwner() != classType) {
+					continue;
+				}
+				
 				// For purposes of this computation, every virtual method is
 				// deemed for override itself.
 				result.add(method, subobjectNumber, method);

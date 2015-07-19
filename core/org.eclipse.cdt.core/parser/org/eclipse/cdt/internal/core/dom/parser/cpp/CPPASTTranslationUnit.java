@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -33,6 +36,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPInheritance.FinalOverriderMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
@@ -45,6 +49,9 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
     private ICPPNamespace fBinding;
 	private final CPPScopeMapper fScopeMapper= new CPPScopeMapper(this);
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
+	
+	// Caches
+	private Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
 	
 	public CPPASTTranslationUnit() {
 	}
@@ -210,5 +217,9 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		if (fAmbiguityResolver != null) {
 			fAmbiguityResolver.resolvePendingAmbiguities(node);
 		}
+	}
+	
+	public Map<ICPPClassType, FinalOverriderMap> getFinalOverriderMapCache() {
+		return fFinalOverriderMapCache;
 	}
 }

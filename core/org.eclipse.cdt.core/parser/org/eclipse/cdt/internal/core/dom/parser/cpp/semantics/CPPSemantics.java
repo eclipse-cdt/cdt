@@ -559,6 +559,21 @@ public class CPPSemantics {
 				}
 			}
 		}
+		
+		// If the result is a virtual method called without explicit qualification, and we can determine a 
+		// unique final overrider for it in the hierarchy of the method call's implied object type, replace 
+		// the method with its final overrider.
+		if (!(lookupName.getParent() instanceof ICPPASTQualifiedName) &&  binding instanceof ICPPMethod && 
+				((ICPPMethod) binding).isVirtual()) {
+			IType impliedObjectType = data.getImpliedObjectType();
+			if (impliedObjectType instanceof ICPPClassType) {
+				ICPPMethod finalOverrider = CPPInheritance.getFinalOverrider((ICPPMethod) binding, 
+						(ICPPClassType) impliedObjectType, lookupName);
+				if (finalOverrider != null) {
+					binding = finalOverrider;
+				}
+			}
+		}
 
 		// If we're still null...
 		if (binding == null) {

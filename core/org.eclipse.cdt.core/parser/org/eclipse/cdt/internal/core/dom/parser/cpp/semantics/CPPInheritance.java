@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
 /**
@@ -96,13 +97,29 @@ public class CPPInheritance {
 	
 	/**
 	 * Get the final overrider map for a class hierarchy.
+	 * Final overrider maps are cached in the AST.
 	 * 
 	 * @param classType the root of the class hierarchy
-	 * @param point the point of template instantiation, if applicable
+	 * @param point The point of template instantiation, if applicable.
+	 *              Also used to access the cache in the AST.
 	 * @return the computed final overrider map
 	 */
 	public static FinalOverriderMap getFinalOverriderMap(ICPPClassType classType, IASTNode point) {
-		return FinalOverriderAnalysis.computeFinalOverriderMap(classType, point);
+		Map<ICPPClassType, FinalOverriderMap> cache = null;
+		if (point != null && point.getTranslationUnit() instanceof CPPASTTranslationUnit) {
+			cache = ((CPPASTTranslationUnit) point.getTranslationUnit()).getFinalOverriderMapCache();
+		}
+		FinalOverriderMap result = null;
+		if (cache != null) {
+			result = cache.get(classType);
+		}
+		if (result == null) {
+			result = FinalOverriderAnalysis.computeFinalOverriderMap(classType, point);
+		}
+		if (result != null && cache != null) {
+			cache.put(classType, result);
+		}
+		return result;
 	}
 	
 	private static class FinalOverriderAnalysis {

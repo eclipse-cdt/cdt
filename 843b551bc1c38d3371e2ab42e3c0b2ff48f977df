@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_8b463126",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPInheritance.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-19T16:26:10Z",
+      "side": 1,
+      "message": "Copyright has to belong to somebody, hasn\u0027t it?",
+      "range": {
+        "startLine": 2,
+        "startChar": 3,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "843b551bc1c38d3371e2ab42e3c0b2ff48f977df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

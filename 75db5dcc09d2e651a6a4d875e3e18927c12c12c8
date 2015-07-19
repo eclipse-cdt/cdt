@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_0b5b6103",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4666,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-19T16:23:38Z",
+      "side": 1,
+      "message": "Remove the \"syntax error\" comment",
+      "range": {
+        "startLine": 4666,
+        "startChar": 30,
+        "endLine": 4666,
+        "endChar": 47
+      },
+      "revId": "75db5dcc09d2e651a6a4d875e3e18927c12c12c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -34,6 +34,24 @@
       "revId": "9c2dc7165e214f4ed9c8bd2cf544f247f706d872",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_d1b736ba",
+        "filename": "debug/org.eclipse.cdt.debug.application.tests/StandaloneTests.launch",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-07-20T17:37:54Z",
+      "side": 1,
+      "message": "I see. I think qttest should not have been added in the first place. It looks like this launch is just enabling everything, which is not idea. If you could revert your change in this file I think it would be better. We can clean up this file (qttest, etc) in another patch (although it doesn\u0027t really hurt anything).",
+      "parentUuid": "2721e7e2_71880a2f",
+      "revId": "9c2dc7165e214f4ed9c8bd2cf544f247f706d872",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

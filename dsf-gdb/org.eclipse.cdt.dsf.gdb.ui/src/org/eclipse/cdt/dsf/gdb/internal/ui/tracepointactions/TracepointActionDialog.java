@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Nokia and others.
+ * Copyright (c) 2010, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,10 @@ public class TracepointActionDialog extends Dialog {
 	private int lastSelectedActionTypeIndex;
 	private IBreakpointAction originalAction;
 	private boolean isSubAction;
+	
+	// If this dialog is for a "while-stepping" action, we keep track
+	// of the parent global list, so that it can be updated.
+	private TracepointGlobalActionsList parentGlobalList;
 
 	private IExtension[] breakpointActionPageExtensions;
 	
@@ -82,13 +86,15 @@ public class TracepointActionDialog extends Dialog {
 	/**
 	 * Create the dialog
 	 */
-	public TracepointActionDialog(Shell parentShell, ITracepointAction action, boolean isSub) {
+	public TracepointActionDialog(Shell parentShell, ITracepointAction action,
+			                      TracepointGlobalActionsList parentList, boolean isSub) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		originalAction = action;
 		tracepointAction = action;
 		lastSelectedActionTypeIndex = 0;
 		isSubAction = isSub;
+		parentGlobalList = parentList;
 	}
 
 	@Override
@@ -235,6 +241,9 @@ public class TracepointActionDialog extends Dialog {
 		if (actionPage == null) {
 			actionPages[selectedTypeIndex] = getActionPage(tracepointActions.get(selectedTypeIndex));
 			actionPage = actionPages[selectedTypeIndex];
+			if (actionPage instanceof WhileSteppingActionPage) {
+				((WhileSteppingActionPage)actionPage).setParentGlobalList(parentGlobalList);
+			}
 		}
 		if (actionComposites[selectedTypeIndex] == null) {
 			Composite actionComposite = actionPages[selectedTypeIndex].createComposite(tracepointAction, actionArea, SWT.NONE);

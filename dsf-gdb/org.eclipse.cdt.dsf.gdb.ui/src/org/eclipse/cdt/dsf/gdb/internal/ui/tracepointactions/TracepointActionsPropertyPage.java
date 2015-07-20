@@ -76,7 +76,7 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 		allAvailableActionsLabel.setLayoutData(gridData_3);
 		allAvailableActionsLabel.setText(MessagesForTracepointActions.TracepointActions_Available_actions);
 
-		globalActionsList = new TracepointGlobalActionsList(container, SWT.NONE, true, false);
+		globalActionsList = new TracepointGlobalActionsList(container, SWT.NONE, true, null, false);
 		final GridData gridData_1 = new GridData(GridData.FILL_BOTH);
 		gridData_1.horizontalSpan = 2;
 		globalActionsList.setLayoutData(gridData_1);

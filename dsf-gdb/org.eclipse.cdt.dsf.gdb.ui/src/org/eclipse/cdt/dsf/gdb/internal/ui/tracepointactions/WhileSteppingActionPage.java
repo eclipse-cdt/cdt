@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,9 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 	private Text fStepCountText;
 	private TracepointActionsList actionsList;
 	private TracepointGlobalActionsList globalActionsList;
+	// When dealing with a "while-stepping" action, we deal with a "child" global
+	// list, and must keep track of the parent global list, to properly update it.
+	private TracepointGlobalActionsList parentGlobalActionsList;
 
 	/**
 	 * Create the composite
@@ -74,13 +77,16 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 		allAvailableActionsLabel.setLayoutData(gridData);
 		allAvailableActionsLabel.setText(MessagesForTracepointActions.TracepointActions_Available_actions);
 
-		globalActionsList = new TracepointGlobalActionsList(composite, SWT.NONE, true, true);
+		globalActionsList = new TracepointGlobalActionsList(composite, SWT.NONE, true, parentGlobalActionsList, true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.horizontalSpan = 2;
 		globalActionsList.setLayoutData(gridData);
 
 		String actionNames = fWhileSteppingAction.getSubActionsNames();
 		actionsList.setNames(actionNames);
+
+		// connect attached actions list to global list
+		globalActionsList.setClientList(actionsList);
 
 		globalActionsList.getAttachButton().addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -112,12 +118,8 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {
-		// First remove any attached action that was just deleted
-		ITracepointAction[] selectedActions = globalActionsList.getSelectedActions();
-		for (ITracepointAction action : selectedActions) {
-			actionsList.removeAction(action);
-		}
-		// Now cleanup the global action list
+		// attached actions are now handled by the GlobalActionsList
+		
 		globalActionsList.HandleDeleteButton();
 	}
 	
@@ -148,4 +150,8 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 		fWhileSteppingAction = (WhileSteppingAction)action;
 		return createWhileSteppingActionComposite(composite, style);
 	}
+    
+    void setParentGlobalList(TracepointGlobalActionsList list) {
+    	parentGlobalActionsList = list;
+    }
 }

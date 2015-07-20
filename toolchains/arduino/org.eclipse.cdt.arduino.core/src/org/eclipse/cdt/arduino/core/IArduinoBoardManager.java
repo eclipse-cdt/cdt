@@ -12,7 +12,21 @@ package org.eclipse.cdt.arduino.core;
 
 import java.util.Collection;
 
+/**
+ * Interface into the board package data.
+ */
 public interface IArduinoBoardManager {
+
+	/**
+	 * Many of the calls into the board manager require reaching out to the web.
+	 * In order to not block UI, these calls are asynchronous. This handler
+	 * interface is how the results of the call are returned.
+	 *
+	 * @param <T>
+	 */
+	public interface Handler<T> {
+		void handle(T result);
+	}
 
 	Board getBoard(String id);
 

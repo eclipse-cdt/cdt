@@ -8,11 +8,16 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core.internal.remote;
+package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,13 +28,62 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.eclipse.cdt.arduino.core.ArduinoHome;
 import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import com.google.gson.Gson;
 
 public class ArduinoBoardManager implements IArduinoBoardManager {
 
 	private Map<String, Board> boards;
+
+	// TODO make this a preference
+	private Path arduinoHome = Paths.get(System.getProperty("user.home"), ".arduinocdt"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	public void getPackageIndex(final Handler<PackageIndex> handler) {
+		new Job("Fetching package index") {
+			// Closeable isn't API yet but it's recommended.
+			@SuppressWarnings("restriction")
+			protected IStatus run(IProgressMonitor monitor) {
+				try (CloseableHttpClient client = HttpClients.createDefault()) {
+					HttpGet get = new HttpGet("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
+					try (CloseableHttpResponse response = client.execute(get)) {
+						if (response.getStatusLine().getStatusCode() >= 400) {
+							return new Status(IStatus.ERROR, Activator.getId(),
+									response.getStatusLine().getReasonPhrase());
+						} else {
+							HttpEntity entity = response.getEntity();
+							if (entity == null) {
+								return new Status(IStatus.ERROR, Activator.getId(),
+										"Package index missing from response");
+							}
+							Files.createDirectories(arduinoHome);
+							Path indexPath = arduinoHome.resolve("package_index.json"); //$NON-NLS-1$
+							Files.copy(entity.getContent(), indexPath, StandardCopyOption.REPLACE_EXISTING);
+							try (FileReader reader = new FileReader(indexPath.toFile())) {
+								PackageIndex index = new Gson().fromJson(reader, PackageIndex.class);
+								handler.handle(index);
+							}
+						}
+					}
+				} catch (IOException e) {
+					return new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e);
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+	}
 
 	@Override
 	public Board getBoard(String id) {

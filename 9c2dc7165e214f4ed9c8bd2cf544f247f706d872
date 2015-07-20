@@ -52,6 +52,23 @@
       "revId": "9c2dc7165e214f4ed9c8bd2cf544f247f706d872",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_518346e1",
+        "filename": "testsrunner/org.eclipse.cdt.testsrunner.feature/feature.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-07-20T17:42:27Z",
+      "side": 1,
+      "message": "it looks like line endings were converted to Windows. Could you change them back with File \u003e Convert Live Delimiters To \u003e Unix ?",
+      "revId": "9c2dc7165e214f4ed9c8bd2cf544f247f706d872",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

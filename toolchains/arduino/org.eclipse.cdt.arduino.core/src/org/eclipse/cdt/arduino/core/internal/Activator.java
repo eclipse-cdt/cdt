@@ -11,7 +11,7 @@
 package org.eclipse.cdt.arduino.core.internal;
 
 import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.remote.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;

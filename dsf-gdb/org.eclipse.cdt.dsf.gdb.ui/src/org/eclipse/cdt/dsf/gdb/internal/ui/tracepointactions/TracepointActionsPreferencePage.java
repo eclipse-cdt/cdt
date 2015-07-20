@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Nokia and others.
+ * Copyright (c) 2007, 2015 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class TracepointActionsPreferencePage extends PreferencePage implements I
 
 		final Label breakpointActionsAvailableLabel = new Label(container, SWT.NONE);
 		breakpointActionsAvailableLabel.setText(MessagesForTracepointActions.TracepointActions_Preferences_Actions_Available);
-		final TracepointGlobalActionsList actionsList = new TracepointGlobalActionsList(container, SWT.NONE, false, false);
+		final TracepointGlobalActionsList actionsList = new TracepointGlobalActionsList(container, SWT.NONE, false, null, false);
 		actionsList.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
 		actionsList.getDeleteButton().addSelectionListener(new SelectionAdapter() {

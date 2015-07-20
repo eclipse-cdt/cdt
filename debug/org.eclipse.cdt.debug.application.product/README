@@ -8,4 +8,4 @@ You can find more information about command-line options in
 org.eclipse.cdt.debug.application/scripts/README.
 
 Note that this product is currently only built for the more popular architecture x86 and x86_64 on
-Linux.
+Linux and Windows.

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.debug.application.GCCCompileOptionsParser;
 import org.eclipse.cdt.debug.application.Messages;
+import org.eclipse.cdt.utils.coff.parser.PEParser;
 import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -64,9 +65,13 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 		try {
 			// Calculate how many source files we have to process and use that as a basis
 			// for our work estimate.
-			GNUElfParser binParser = new GNUElfParser();
-			IBinaryFile bf = binParser
-					.getBinary(new Path(executable));
+			IBinaryFile bf;
+			try {
+				bf = new GNUElfParser().getBinary(new Path(executable));
+			} catch (IOException e) {
+				// Try Portable Executable (Windows)
+				bf = new PEParser().getBinary(new Path(executable));
+			}
 			ISymbolReader reader = bf.getAdapter(ISymbolReader.class);
 			String[] sourceFiles = reader
 					.getSourceFiles();

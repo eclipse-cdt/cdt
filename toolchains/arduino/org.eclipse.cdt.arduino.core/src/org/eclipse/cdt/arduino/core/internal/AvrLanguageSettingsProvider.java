@@ -14,8 +14,8 @@ import java.io.File;
 import java.util.List;
 
 import org.eclipse.cdt.arduino.core.ArduinoHome;
-import org.eclipse.cdt.arduino.core.ArduinoProjectGenerator;
-import org.eclipse.cdt.arduino.core.Board;
+import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.board.Board;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
@@ -35,8 +35,8 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 
 		try {
 			IConfiguration config = ManagedBuildManager.getConfigurationForDescription(currentCfgDescription);
-			Board board = ArduinoProjectGenerator.getBoard(config);
-			String mcu = board.getMCU();
+			Board board = ArduinoBoardManager.instance.getBoard(config);
+			String mcu = board.getBuildSetting("mcu"); //$NON-NLS-1$
 			if (mcu != null) {
 				opts += " -mmcu=" + mcu; //$NON-NLS-1$
 			}
@@ -46,7 +46,7 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 
 		return opts;
 	}
-	
+
 	@Override
 	protected List<String> parseOptions(String line) {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -58,7 +58,7 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 
 		return super.parseOptions(line);
 	}
-	
+
 	@Override
 	public AvrLanguageSettingsProvider cloneShallow() throws CloneNotSupportedException {
 		return (AvrLanguageSettingsProvider) super.cloneShallow();

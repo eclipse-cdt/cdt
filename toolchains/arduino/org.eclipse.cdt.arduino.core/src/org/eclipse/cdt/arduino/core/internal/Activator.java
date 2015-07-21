@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
-import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -45,7 +43,6 @@ public class Activator extends Plugin {
 
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
-		bundleContext.registerService(IArduinoBoardManager.class, new ArduinoBoardManager(), null);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {

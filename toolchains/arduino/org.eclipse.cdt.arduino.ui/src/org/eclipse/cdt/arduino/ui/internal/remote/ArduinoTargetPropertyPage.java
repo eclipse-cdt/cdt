@@ -3,9 +3,9 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.eclipse.cdt.arduino.core.Board;
-import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
 import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
+import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.board.Board;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
@@ -26,7 +26,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 
 	private Combo portSelector;
 	private Combo boardSelector;
-	
+
 	private Board[] boards;
 
 	@Override
@@ -71,9 +71,9 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		boardSelector = new Combo(comp, SWT.READ_ONLY);
 		boardSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Board currentBoard = arduinoRemote.getBoard();
-		IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
-		Collection<Board> boardList = boardManager.getBoards();
+		Board currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardId(),
+				arduinoRemote.getPlatformId(), arduinoRemote.getPackageId());
+		Collection<Board> boardList = ArduinoBoardManager.instance.getBoards();
 		boards = new Board[boardList.size()];
 		i = 0;
 		int boardSel = 0;
@@ -108,5 +108,5 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		}
 		return true;
 	}
-	
+
 }

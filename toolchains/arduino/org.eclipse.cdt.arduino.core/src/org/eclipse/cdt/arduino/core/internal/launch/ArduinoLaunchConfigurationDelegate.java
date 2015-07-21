@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.arduino.core.ArduinoLaunchConsoleService;
-import org.eclipse.cdt.arduino.core.ArduinoProjectGenerator;
 import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
+import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.board.Board;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
@@ -68,7 +69,8 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		boolean newConfig = false;
 		if (configDesc == null) {
 			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-			configDesc = ArduinoProjectGenerator.createBuildConfiguration(projDesc, arduinoRemote.getBoard());
+			configDesc = ArduinoBoardManager.instance.createBuildConfiguration(projDesc, arduinoRemote.getBoardId(),
+					arduinoRemote.getPlatformId(), arduinoRemote.getPackageId());
 			newConfig = true;
 		}
 		if (newConfig || !projDesc.getActiveConfiguration().equals(configDesc)) {
@@ -172,17 +174,27 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 	private ICConfigurationDescription getBuildConfiguration(ICProjectDescription projDesc, IRemoteConnection target)
 			throws CoreException {
 		String boardId;
+		String platformId;
+		String packageId;
 		if (target != null) {
 			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-			boardId = arduinoRemote.getBoard().getId();
+			boardId = arduinoRemote.getBoardId();
+			platformId = arduinoRemote.getPlatformId();
+			packageId = arduinoRemote.getPackageId();
 		} else {
+			// TODO preference for this
 			boardId = "uno"; //$NON-NLS-1$
+			platformId = "avr"; //$NON-NLS-1$
+			packageId = "arduino"; //$NON-NLS-1$
 		}
 
 		for (ICConfigurationDescription configDesc : projDesc.getConfigurations()) {
 			IConfiguration config = ManagedBuildManager.getConfigurationForDescription(configDesc);
-			if (ArduinoProjectGenerator.getBoard(config).getId().equals(boardId))
+			Board board = ArduinoBoardManager.instance.getBoard(config);
+			if (boardId.equals(board.getId()) && platformId.equals(board.getPlatform().getArchitecture())
+					&& packageId.equals(board.getPlatform().getPackage().getName())) {
 				return configDesc;
+			}
 		}
 
 		return null;

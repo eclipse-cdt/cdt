@@ -2,8 +2,8 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.arduino.core.Board;
-import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.board.Board;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
@@ -83,14 +83,12 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 			}
 		});
 
-		IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
-
 		Label boardLabel = new Label(comp, SWT.NONE);
 		boardLabel.setText(Messages.NewArduinoTargetWizardPage_5);
 
 		boardCombo = new Combo(comp, SWT.READ_ONLY);
 		boardCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		boards = boardManager.getBoards().toArray(new Board[0]);
+		boards = ArduinoBoardManager.instance.getBoards().toArray(new Board[0]);
 		for (Board board : boards) {
 			boardCombo.add(board.getName());
 		}

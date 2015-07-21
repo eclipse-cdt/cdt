@@ -22,5 +22,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: libs/freemarker-2.3.22.jar,
  .
-Export-Package: org.eclipse.cdt.arduino.core
+Export-Package: org.eclipse.cdt.arduino.core,
+ org.eclipse.cdt.arduino.core.board
 Bundle-Localization: plugin

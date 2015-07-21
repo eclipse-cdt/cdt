@@ -23,6 +23,8 @@ public interface IArduinoRemoteConnection extends IRemoteConnection.Service {
 	final String TYPE_ID = "org.eclipse.cdt.arduino.core.connectionType"; //$NON-NLS-1$
 	final String PORT_NAME = "ardiuno.portname"; //$NON-NLS-1$
 	final String BOARD_ID = "arduino.board"; //$NON-NLS-1$
+	final String PLATFORM_ID = "arduino.platform"; //$NON-NLS-1$
+	final String PACKAGE_ID = "arduino.package"; //$NON-NLS-1$
 
 	/**
 	 * Return the serial port name.
@@ -31,13 +33,12 @@ public interface IArduinoRemoteConnection extends IRemoteConnection.Service {
 	 */
 	String getPortName();
 
-	/**
-	 * Get the board type at the end of this connection.
-	 * 
-	 * @return Board
-	 */
-	Board getBoard();
-	
+	String getBoardId();
+
+	String getPlatformId();
+
+	String getPackageId();
+
 	void pause();
 
 	void resume();

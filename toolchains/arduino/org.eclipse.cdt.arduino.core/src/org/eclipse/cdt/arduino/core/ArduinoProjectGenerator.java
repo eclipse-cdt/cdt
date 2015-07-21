@@ -22,22 +22,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -59,9 +53,6 @@ import freemarker.template.TemplateException;
 
 @SuppressWarnings("restriction")
 public class ArduinoProjectGenerator {
-
-	public static final String BOARD_OPTION_ID = "org.eclipse.cdt.arduino.option.board"; //$NON-NLS-1$
-	public static final String AVR_TOOLCHAIN_ID = "org.eclipse.cdt.arduino.toolChain.avr"; //$NON-NLS-1$
 
 	private final IProject project;
 	private IFile sourceFile;
@@ -87,22 +78,23 @@ public class ArduinoProjectGenerator {
 		ManagedProject mProj = new ManagedProject(cprojDesc);
 		info.setManagedProject(mProj);
 
-		Board board = null;
+		// TODO make this a preference, the default board
+		String boardId = "uno"; //$NON-NLS-1$
+		String platformId = "avr"; //$NON-NLS-1$
+		String packageId = "arduino"; //$NON-NLS-1$
+
 		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
 		IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
 		Collection<IRemoteConnection> connections = connectionType.getConnections();
 		if (!connections.isEmpty()) {
 			IRemoteConnection firstConnection = connections.iterator().next();
 			IArduinoRemoteConnection firstArduino = firstConnection.getService(IArduinoRemoteConnection.class);
-			board = firstArduino.getBoard();
+			boardId = firstArduino.getBoardId();
+			platformId = firstArduino.getPlatformId();
+			packageId = firstArduino.getPackageId();
 		}
 
-		if (board == null) {
-			IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
-			board = boardManager.getBoard("uno"); // the default //$NON-NLS-1$
-		}
-
-		createBuildConfiguration(cprojDesc, board);
+		ArduinoBoardManager.instance.createBuildConfiguration(cprojDesc, boardId, platformId, packageId);
 		CCorePlugin.getDefault().setProjectDescription(project, cprojDesc, true, monitor);
 
 		// Generate files
@@ -158,39 +150,6 @@ public class ArduinoProjectGenerator {
 		IStatus status = job.getResult();
 		if (!status.isOK())
 			throw new CoreException(status);
-	}
-
-	public static ICConfigurationDescription createBuildConfiguration(ICProjectDescription projDesc, Board board)
-			throws CoreException {
-		ManagedProject managedProject = new ManagedProject(projDesc);
-		String configId = ManagedBuildManager.calculateChildId(AVR_TOOLCHAIN_ID, null);
-		IToolChain avrToolChain = ManagedBuildManager.getExtensionToolChain(AVR_TOOLCHAIN_ID);
-		org.eclipse.cdt.managedbuilder.internal.core.Configuration newConfig = new org.eclipse.cdt.managedbuilder.internal.core.Configuration(
-				managedProject, (ToolChain) avrToolChain, configId, board.getId());
-		IToolChain newToolChain = newConfig.getToolChain();
-		IOption newOption = newToolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
-		ManagedBuildManager.setOption(newConfig, newToolChain, newOption, board.getId());
-
-		CConfigurationData data = newConfig.getConfigurationData();
-		return projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-	}
-
-	public static Board getBoard(IConfiguration configuration) throws CoreException {
-		try {
-			IToolChain toolChain = configuration.getToolChain();
-			IOption boardOption = toolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
-			String boardId = boardOption.getStringValue();
-
-			IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
-			Board board = boardManager.getBoard(boardId);
-			if (board == null) {
-				board = boardManager.getBoard("uno"); //$NON-NLS-1$
-			}
-			return board;
-		} catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e));
-		}
-
 	}
 
 	public IFile getSourceFile() {

@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.arduino.core.Board;
-import org.eclipse.cdt.arduino.core.IArduinoBoardManager;
 import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.serial.SerialPort;
@@ -30,7 +28,6 @@ import org.eclipse.remote.serial.core.SerialPortCommandShell;
 public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService, IRemoteCommandShellService,
 		IArduinoRemoteConnection, IRemoteConnectionChangeListener {
 
-	private final IArduinoBoardManager boardManager = Activator.getService(IArduinoBoardManager.class);
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;
 	private SerialPortCommandShell commandShell;
@@ -90,12 +87,18 @@ public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService
 	}
 
 	@Override
-	public Board getBoard() {
-		String boardId = remoteConnection.getAttribute(BOARD_ID);
-		if (boardId == null) {
-			boardId = "uno"; //$NON-NLS-1$
-		}
-		return boardManager.getBoard(boardId);
+	public String getBoardId() {
+		return remoteConnection.getAttribute(BOARD_ID);
+	}
+
+	@Override
+	public String getPlatformId() {
+		return remoteConnection.getAttribute(PLATFORM_ID);
+	}
+
+	@Override
+	public String getPackageId() {
+		return remoteConnection.getAttribute(PACKAGE_ID);
 	}
 
 	@Override

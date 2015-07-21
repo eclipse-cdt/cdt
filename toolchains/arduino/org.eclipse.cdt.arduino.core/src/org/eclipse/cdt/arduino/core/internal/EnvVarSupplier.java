@@ -15,13 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.arduino.core.ArduinoHome;
-import org.eclipse.cdt.arduino.core.ArduinoProjectGenerator;
-import org.eclipse.cdt.arduino.core.Board;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
 public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier {
@@ -31,7 +28,6 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 	private EnvVar path;
 
 	private static final String OUTPUT_DIR = "OUTPUT_DIR"; //$NON-NLS-1$
-	private static final String BOARD = "BOARD"; //$NON-NLS-1$
 
 	private static final class EnvVar implements IBuildEnvironmentVariable {
 		String name;
@@ -89,22 +85,6 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 		return outputDir;
 	}
 
-	private IBuildEnvironmentVariable getBoard(IConfiguration configuration) {
-		try {
-			Board board = ArduinoProjectGenerator.getBoard(configuration);
-			if (board == null)
-				return null;
-
-			EnvVar boardVar = new EnvVar();
-			boardVar.name = BOARD;
-			boardVar.value = board.getId();
-			return boardVar;
-		} catch (CoreException e) {
-			Activator.getPlugin().getLog().log(e.getStatus());
-			return null;
-		}
-	}
-
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
@@ -116,8 +96,6 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 			return arduinoLibs;
 		} else if (variableName.equals(OUTPUT_DIR)) {
 			return getOutputDir(configuration);
-		} else if (variableName.equals(BOARD)) {
-			return getBoard(configuration);
 		}
 		return null;
 	}
@@ -133,10 +111,6 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 
 		if (configuration != null) {
 			vars.add(getOutputDir(configuration));
-
-			IBuildEnvironmentVariable boardVar = getBoard(configuration);
-			if (boardVar != null)
-				vars.add(boardVar);
 		}
 
 		return vars.toArray(new IBuildEnvironmentVariable[vars.size()]);

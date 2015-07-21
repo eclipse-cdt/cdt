@@ -49,6 +49,22 @@
                resourceFilter="all"
                valueType="string">
          </option>
+         <option
+               category="org.eclipse.cdt.arduino.optionCategory.board"
+               id="org.eclipse.cdt.arduino.option.platform"
+               isAbstract="false"
+               name="Board Platform"
+               resourceFilter="all"
+               valueType="string">
+         </option>
+         <option
+               category="org.eclipse.cdt.arduino.optionCategory.board"
+               id="org.eclipse.cdt.arduino.option.package"
+               isAbstract="false"
+               name="Board Package"
+               resourceFilter="all"
+               valueType="string">
+         </option>
          <optionCategory
                id="org.eclipse.cdt.arduino.optionCategory.board"
                name="Board Type">

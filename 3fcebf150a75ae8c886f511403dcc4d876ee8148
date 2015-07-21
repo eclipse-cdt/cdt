@@ -155,6 +155,24 @@
       "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_bc789937",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/CSourceSubstitutePath.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-07-21T00:58:53Z",
+      "side": 1,
+      "message": "Yeah I read what counting monitor does and it probably fine.\nStill not safe in case on uncaught exception though",
+      "parentUuid": "472a5bc0_c0010d7a",
+      "revId": "3fcebf150a75ae8c886f511403dcc4d876ee8148",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

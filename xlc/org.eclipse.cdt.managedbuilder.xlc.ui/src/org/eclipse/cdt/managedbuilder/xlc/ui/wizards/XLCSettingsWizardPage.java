@@ -60,8 +60,9 @@ public class XLCSettingsWizardPage extends MBSCustomPage {
 			// open a browse dialog
 			DirectoryDialog dirDialog = new DirectoryDialog(composite.getShell(), SWT.APPLICATION_MODAL);
 			String browsedDirectory = dirDialog.open();
-			fDirTextBox.setText(browsedDirectory);
-
+			if (browsedDirectory != null) {
+				fDirTextBox.setText(browsedDirectory);
+			}
 		}
 	}
 

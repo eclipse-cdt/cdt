@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Ericsson and others.
+ * Copyright (c) 2012, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ class Messages extends NLS {
 	public static String RegisterGroup_name_reserved;
 	public static String RegisterGroup_name_used;
 	public static String RegisterGroup_invalid_number_of_registers;
+	public static String GDB_Version_Mismatch;
 	
 	static {
 		// initialize resource bundle

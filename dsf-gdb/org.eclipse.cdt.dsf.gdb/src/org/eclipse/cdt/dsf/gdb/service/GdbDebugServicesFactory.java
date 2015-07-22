@@ -77,9 +77,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_6_VERSION = "7.5.50"; //$NON-NLS-1$
 	/** @since 4.4 */
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
-	/** @since 4.7 */
-	// TODO: replace with version 7.10, when released
-	private static final String GDB_7_10_VERSION = "7.9.50.20150402"; //$NON-NLS-1$
+	/** @since 4.8 */
+	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
 
 	private final String fVersion;
 	

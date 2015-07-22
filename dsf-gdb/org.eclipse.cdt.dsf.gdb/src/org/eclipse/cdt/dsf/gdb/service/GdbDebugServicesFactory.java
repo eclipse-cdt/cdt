@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.dsf.debug.service.AbstractDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
+import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IModules;
@@ -35,6 +36,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
@@ -53,7 +56,12 @@ import org.eclipse.cdt.dsf.mi.service.MIModules;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.service.IDsfService;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.osgi.util.NLS;
 
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
@@ -77,9 +85,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_6_VERSION = "7.5.50"; //$NON-NLS-1$
 	/** @since 4.4 */
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
-	/** @since 4.7 */
-	// TODO: replace with version 7.10, when released
-	private static final String GDB_7_10_VERSION = "7.9.50.20150402"; //$NON-NLS-1$
+	/** @since 4.8 */
+	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
 
 	private final String fVersion;
 	
@@ -301,5 +308,38 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 */
 	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
 		return new MIBreakpointsSynchronizer(session);
+	}
+	
+	/**
+	 * A static method that will compare the version of GDB for the specified session and
+	 * the minimum GDB version required by the caller.  A warning will be logged if the
+	 * running version is not sufficient.
+	 * 
+	 * @param session The debug session running GDB
+	 * @param minVersion The minimum version of GDB required
+	 * @param service The service requesting the check.
+	 *   
+	 * @since 4.8
+	 */
+	public static void validateGdbVersion(DsfSession session, String minVersion, IDsfService service) {
+		ILaunch launch = (ILaunch)session.getModelAdapter(ILaunch.class);
+		if (launch instanceof GdbLaunch) {
+			IDsfDebugServicesFactory servicesFactory = ((GdbLaunch)launch).getServiceFactory();
+			if (servicesFactory instanceof GdbDebugServicesFactory) {
+				String version = ((GdbDebugServicesFactory)servicesFactory).getVersion();
+				if (minVersion.compareTo(version) > 0) {
+					assert false;
+					
+					GdbPlugin.log(
+							new Status(
+								IStatus.WARNING, GdbPlugin.PLUGIN_ID,
+							    NLS.bind(
+							    	Messages.GDB_Version_Mismatch, 
+							    	new Object[] { version, service.getClass().getName(), minVersion })));
+				}
+				return;
+			}
+		}
+		assert false;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson and others.
+ * Copyright (c) 2014, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,12 @@ import org.eclipse.cdt.examples.dsf.gdb.service.IGDBExtendedFunctions;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class GdbExtendedFinalLaunchSequence_7_7 extends FinalLaunchSequence_7_7 {
+public class GdbExtendedFinalLaunchSequence extends FinalLaunchSequence_7_7 {
 
 	private IGDBControl fControl;
 	private DsfServicesTracker fTracker;
 
-	public GdbExtendedFinalLaunchSequence_7_7(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
+	public GdbExtendedFinalLaunchSequence(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
 		super(session, attributes, rm);
 	}
 
@@ -46,10 +46,10 @@ public class GdbExtendedFinalLaunchSequence_7_7 extends FinalLaunchSequence_7_7 
 			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our init step right after the initialization of the base class.
-			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_7") + 1, "stepInitializeExtendedFinalLaunchSequence_7_7"); //$NON-NLS-1$ //$NON-NLS-2$
+			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_7") + 1, "stepInitializeExtendedFinalLaunchSequence"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// As the first operation to do, show the user the version of GDB
-			orderList.add(orderList.indexOf("stepInitializeExtendedFinalLaunchSequence_7_7") + 1, "stepNotifyVersion"); //$NON-NLS-1$ //$NON-NLS-2$
+			orderList.add(orderList.indexOf("stepInitializeExtendedFinalLaunchSequence") + 1, "stepNotifyVersion"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Add the step to set pagination before the .gdbinit file is sourced
 			// that way the user can override this setting using .gdbinit.
@@ -62,7 +62,7 @@ public class GdbExtendedFinalLaunchSequence_7_7 extends FinalLaunchSequence_7_7 
 	}
 	
 	@Execute
-	public void stepInitializeExtendedFinalLaunchSequence_7_7(RequestMonitor rm) {
+	public void stepInitializeExtendedFinalLaunchSequence(RequestMonitor rm) {
 		fTracker = new DsfServicesTracker(GDBExamplePlugin.getBundleContext(), getSession().getId());
 		fControl = fTracker.getService(IGDBControl.class);
 		
@@ -74,8 +74,8 @@ public class GdbExtendedFinalLaunchSequence_7_7 extends FinalLaunchSequence_7_7 
 		rm.done();
 	}
 
-	@RollBack("stepInitializeExtendedFinalLaunchSequence_7_7")
-	public void rollBackInitializeExtendedFinalLaunchSequence_7_7(RequestMonitor rm) {
+	@RollBack("stepInitializeExtendedFinalLaunchSequence")
+	public void rollBackInitializeExtendedFinalLaunchSequence(RequestMonitor rm) {
 		if (fTracker != null) fTracker.dispose();
 		fTracker = null;
 		rm.done();
@@ -116,7 +116,7 @@ public class GdbExtendedFinalLaunchSequence_7_7 extends FinalLaunchSequence_7_7 
 	}
 
 	@Execute
-	public void stepCleanupExtendedFinalLaunchSequence_7_7(final RequestMonitor rm) {
+	public void stepCleanupExtendedFinalLaunchSequence(final RequestMonitor rm) {
 		if (fTracker != null) fTracker.dispose();
 		fTracker = null;
 		rm.done();

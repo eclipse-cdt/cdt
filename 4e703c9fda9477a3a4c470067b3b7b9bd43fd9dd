@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_4f7f1ed4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-22T18:24:58Z",
+      "side": 1,
+      "message": "Rename to priority.",
+      "range": {
+        "startLine": 91,
+        "startChar": 20,
+        "endLine": 91,
+        "endChar": 23
+      },
+      "revId": "4e703c9fda9477a3a4c470067b3b7b9bd43fd9dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_ef9ed2b3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-22T18:24:58Z",
+      "side": 1,
+      "message": "Rename val to priority.",
+      "range": {
+        "startLine": 93,
+        "startChar": 27,
+        "endLine": 93,
+        "endChar": 30
+      },
+      "revId": "4e703c9fda9477a3a4c470067b3b7b9bd43fd9dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_2f846a62",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-22T18:24:58Z",
+      "side": 1,
+      "message": "We probably need dependent projects too (getIndex(unit.getCProject(), ADD_DEPENDENCIES)",
+      "range": {
+        "startLine": 441,
+        "startChar": 64,
+        "endLine": 441,
+        "endChar": 72
+      },
+      "revId": "4e703c9fda9477a3a4c470067b3b7b9bd43fd9dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_8f89167d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-22T18:24:58Z",
+      "side": 1,
+      "message": "To safely use an index-based AST, an index read lock has to be held for the lifetime of the AST.",
+      "range": {
+        "startLine": 441,
+        "startChar": 27,
+        "endLine": 441,
+        "endChar": 33
+      },
+      "revId": "4e703c9fda9477a3a4c470067b3b7b9bd43fd9dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

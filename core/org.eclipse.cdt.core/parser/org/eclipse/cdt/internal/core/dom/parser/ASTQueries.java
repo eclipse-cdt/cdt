@@ -11,7 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
@@ -117,7 +117,7 @@ public class ASTQueries {
 		while (result.getPointerOperators().length == 0 
 				&& !(result instanceof IASTFieldDeclarator)
 				&& !(result instanceof IASTFunctionDeclarator)
-				&& !(result instanceof IASTArrayModifier)) {
+				&& !(result instanceof IASTArrayDeclarator)) {
 			final IASTNode parent= result.getParent();
 			if (parent instanceof IASTDeclarator) {
 				result= (IASTDeclarator) parent;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControlAsync;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -148,32 +149,59 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
      */
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void updatePropertiesInSessionThread(final IPropertiesUpdate[] updates) {
-        IRunControl service = getServicesTracker().getService(IRunControl.class);
+        IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+        final IRunControlAsync asyncRunControl = getServicesTracker().getService(IRunControlAsync.class);
         
         for (final IPropertiesUpdate update : updates) {
-            if (service == null) {
+            if (runControl == null && asyncRunControl == null) {
                 handleFailedUpdate(update);
                 continue;
             }
 
-            IExecutionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
+            final IExecutionDMContext dmc = 
+            		findDmcInPath(update.getViewerInput(), update.getElementPath(), IExecutionDMContext.class);
             if (dmc == null) {
                 handleFailedUpdate(update);
                 continue;
             }
 
-            update.setProperty(ILaunchVMConstants.PROP_IS_SUSPENDED, service.isSuspended(dmc));
-            update.setProperty(ILaunchVMConstants.PROP_IS_STEPPING, service.isStepping(dmc));
-            
-            service.getExecutionData(
-                dmc, 
-                new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) { 
+            if (asyncRunControl != null) {
+            	asyncRunControl.isSuspended(
+            			dmc, 
+            			new ViewerDataRequestMonitor<Boolean>(getSession().getExecutor(), update) {
                     @Override
                     protected void handleSuccess() {
-                        fillExecutionDataProperties(update, getData());
-                        update.done();
-                    }
-                });
+                    	update.setProperty(ILaunchVMConstants.PROP_IS_SUSPENDED, getData());
+                    	asyncRunControl.isStepping(
+                    			dmc, 
+                    			new ViewerDataRequestMonitor<Boolean>(getSession().getExecutor(), update) {
+                    		@Override
+                    		protected void handleSuccess() {
+                    			update.setProperty(ILaunchVMConstants.PROP_IS_STEPPING, getData());
+                    			asyncRunControl.getExecutionData(
+                    					dmc, 
+                    					new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) { 
+                    						@Override
+                    						protected void handleSuccess() {
+                    							fillExecutionDataProperties(update, getData());
+                    							update.done();
+                    						}});
+                    		}});
+                }});
+            } else if (runControl != null) { // Need the if check to quiet the compiler although we know runControl can't be null
+            	update.setProperty(ILaunchVMConstants.PROP_IS_SUSPENDED, runControl.isSuspended(dmc));
+            	update.setProperty(ILaunchVMConstants.PROP_IS_STEPPING, runControl.isStepping(dmc));
+
+            	runControl.getExecutionData(
+            			dmc, 
+            			new ViewerDataRequestMonitor<IExecutionDMData>(getSession().getExecutor(), update) { 
+            				@Override
+            				protected void handleSuccess() {
+            					fillExecutionDataProperties(update, getData());
+            					update.done();
+            				}
+            			});
+            }
         }        
     }
     

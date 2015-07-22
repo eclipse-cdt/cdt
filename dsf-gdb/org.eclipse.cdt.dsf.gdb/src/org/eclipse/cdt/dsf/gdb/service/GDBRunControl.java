@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl3;
+import org.eclipse.cdt.dsf.debug.service.IRunControlAsync;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionActiveOperation;
@@ -124,6 +125,7 @@ public class GDBRunControl extends MIRunControl {
         register(new String[]{IRunControl.class.getName(), 
            		IRunControl2.class.getName(),
            		IRunControl3.class.getName(),
+           		IRunControlAsync.class.getName(),
            		IMIRunControl.class.getName(),
            		MIRunControl.class.getName(), 
         		GDBRunControl.class.getName()}, new Hashtable<String,String>());

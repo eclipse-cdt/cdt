@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl3;
+import org.eclipse.cdt.dsf.debug.service.IRunControlAsync;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -101,7 +102,8 @@ import org.osgi.framework.BundleContext;
  * state.
  * @since 3.0
  */
-public class MIRunControl extends AbstractDsfService implements IMIRunControl, ICachingService, IRunControl3
+public class MIRunControl extends AbstractDsfService 
+implements IMIRunControl, ICachingService, IRunControl3, IRunControlAsync
 {
 	private static class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext, IDisassemblyDMContext
 	{
@@ -718,9 +720,21 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		return !fTerminated && fSuspended;
 	}
 
+	/** @since 4.8 */
+	@Override
+	public void isSuspended(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+    	rm.done(isSuspended(context));
+    }
+
 	@Override
 	public boolean isStepping(IExecutionDMContext context) {
     	return !fTerminated && fStepping;
+    }
+
+	/** @since 4.8 */
+	@Override
+	public void isStepping(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
+    	rm.done(isStepping(context));
     }
 
 	@Override

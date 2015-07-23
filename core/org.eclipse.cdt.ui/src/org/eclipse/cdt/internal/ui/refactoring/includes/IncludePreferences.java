@@ -52,7 +52,7 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 	public final String[] extensionsOfAutoExportedFiles;
 
 	public IncludePreferences(ICProject project) {
-		includeStyles = new HashMap<IncludeKind, IncludeGroupStyle>();
+		includeStyles = new HashMap<>();
 		loadStyle(IncludeKind.RELATED, PreferenceConstants.INCLUDE_STYLE_RELATED, project);
 		loadStyle(IncludeKind.PARTNER, PreferenceConstants.INCLUDE_STYLE_PARTNER, project);
 		loadStyle(IncludeKind.IN_SAME_FOLDER, PreferenceConstants.INCLUDE_STYLE_SAME_FOLDER, project);
@@ -67,7 +67,7 @@ public class IncludePreferences implements Comparator<StyledInclude> {
 		// Unclassified includes are always kept together.
 		includeStyles.get(IncludeKind.OTHER).setKeepTogether(true);
 		// Normalize order property of the styles to make sure that the numbers are sequential.
-		List<IncludeGroupStyle> styles = new ArrayList<IncludeGroupStyle>(includeStyles.values());
+		List<IncludeGroupStyle> styles = new ArrayList<>(includeStyles.values());
 		Collections.sort(styles);
 		for (int i = 0; i < styles.size(); i++) {
 			styles.get(i).setOrder(i);

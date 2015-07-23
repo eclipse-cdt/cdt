@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.eclipse.debug.core.ILaunchMode;
+
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
@@ -29,6 +30,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class LaunchBarControl implements Listener {
 	public static final String ID = "org.eclipse.launchbar"; //$NON-NLS-1$
@@ -48,9 +51,9 @@ public class LaunchBarControl implements Listener {
 
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		GridLayout layout = new GridLayout(7, false);
-		layout.marginHeight = 8;
-		layout.marginWidth = 8;
+		GridLayout layout = new GridLayout(5, false);
+		layout.marginHeight = 2;
+		layout.marginWidth = 2;
 		container.setLayout(layout);
 		container.addDisposeListener(new DisposeListener() {
 			@Override
@@ -59,9 +62,10 @@ public class LaunchBarControl implements Listener {
 			}
 		});
 
-		createButton(container, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
-		createButton(container, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
-		createButton(container, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop, Activator.CMD_STOP);
+		ToolBar toolBar = new ToolBar(container, SWT.FLAT);
+		createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build, Activator.CMD_BUILD);
+		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch, Activator.CMD_LAUNCH);
+		createButton(toolBar, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop, Activator.CMD_STOP);
 
 		modeSelector = new ModeSelector(container, SWT.NONE);
 		modeSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -97,11 +101,11 @@ public class LaunchBarControl implements Listener {
 	}
 
 	private void createButton(Composite parent, String imageName, String toolTipText, final String command) {
-		CButton button = new CButton(parent, SWT.NONE);
-		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
+		//button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		Image srcImage = Activator.getDefault().getImage(imageName);
-		Image image = new Image(parent.getDisplay(), srcImage, SWT.IMAGE_COPY);
-		button.setHotImage(image);
+		//Image image = new Image(parent.getDisplay(), srcImage, SWT.IMAGE_COPY);
+		button.setImage(srcImage);
 		button.setToolTipText(toolTipText);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {

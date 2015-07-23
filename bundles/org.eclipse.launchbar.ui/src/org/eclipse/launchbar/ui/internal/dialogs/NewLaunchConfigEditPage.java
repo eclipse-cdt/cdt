@@ -104,7 +104,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			if (name.isEmpty()) {
 				return Messages.NewLaunchConfigEditPage_4;
 			}
-			
+
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			if (manager.isExistingLaunchConfigurationName(name)) {
 				ILaunchConfiguration config = ((LaunchManager) manager).findLaunchConfiguration(name);
@@ -125,20 +125,19 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			return;
 		try {
 			String initialMode = ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
-			workingCopy = type.newInstance(null, Messages.NewLaunchConfigEditPage_6);
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+			String name = manager.generateLaunchConfigurationName("launchConfiguration"); //$NON-NLS-1$
+			workingCopy = type.newInstance(null, name);
 			tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(workingCopy, initialMode);
 			for (CTabItem item : tabFolder.getItems())
 				item.dispose();
 			LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
 			tabGroup.createTabs(launchConfigurationDialog, initialMode);
-			boolean firstTab = true;
+
 			for (ILaunchConfigurationTab tab : tabGroup.getTabs()) {
 				tab.setLaunchConfigurationDialog(launchConfigurationDialog);
 				tab.createControl(tabFolder);
 				tab.setDefaults(workingCopy);
-				if (firstTab) {
-					firstTab = false;
-				}
 			}
 
 			// Do this after all the tabs have their controls created
@@ -164,6 +163,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 	}
 
+
 	boolean performFinish() {
 		if (workingCopy == null)
 			return false;
@@ -171,6 +171,11 @@ public class NewLaunchConfigEditPage extends WizardPage {
 			tab.performApply(workingCopy);
 		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(null);
 		return true;
+	}
+
+	@Override
+	public void dispose() {
+		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(null);
 	}
 
 	public void validateFields() {
@@ -226,6 +231,13 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		@Override
 		protected ILaunchConfiguration getLaunchConfiguration() {
 			return workingCopy;
+		}
+
+		@Override
+		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+			if (getLaunchConfiguration() == null)
+				return;
+			super.launchConfigurationAdded(configuration);
 		}
 
 		@Override

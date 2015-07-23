@@ -17,12 +17,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.launchbar.ui.IHoverProvider;
+import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -368,7 +370,7 @@ public abstract class CSelector extends Composite {
 		if (popup != null && !popup.isDisposed()) {
 			popup.dispose();
 		}
-		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP);
+		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP | SWT.RESIZE);
 		popup.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
 
 
@@ -395,11 +397,8 @@ public abstract class CSelector extends Composite {
 		Point popupLocation = popup.getDisplay().map(this, null, 0,
 				buttonBounds.height);
 		popup.setLocation(popupLocation.x, popupLocation.y + 5);
-		Point size = popup.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		Point buttonSize = getSize();
-		size.x = Math.max(size.x, buttonSize.x);
-		size.y = Math.min(size.y, 300);
-		popup.setSize(size);
+
+		restoreShellSize();
 		popup.setVisible(true);
 		popup.setFocus();
 		getDisplay().addFilter(SWT.FocusIn, focusOutListener);
@@ -411,11 +410,43 @@ public abstract class CSelector extends Composite {
 				getDisplay().removeFilter(SWT.FocusIn, focusOutListener);
 				getDisplay().removeFilter(SWT.FocusOut, focusOutListener);
 				getDisplay().removeFilter(SWT.MouseUp, focusOutListener);
+				saveShellSize();
 			}
+
 		});
 		if (hoverProvider != null) {
 			hoverProvider.dismissHover(selection != null ? selection : null, true);
 		}
+	}
+
+	protected String getDialogPreferencePrefix() {
+		return getClass().getSimpleName();
+	}
+
+	protected void restoreShellSize() {
+		Point size = popup.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point buttonSize = getSize();
+		size.x = Math.max(size.x, buttonSize.x);
+		size.y = Math.min(size.y, 300);
+		try {
+			IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+			String prefName = getDialogPreferencePrefix();
+			int w = store.getInt(prefName + ".shell.w");
+			int h = store.getInt(prefName + ".shell.h");
+			size.x = Math.max(size.x, w);
+			size.y = Math.max(size.y, h);
+		} catch (Exception e) {
+			Activator.log(e);
+		}
+		popup.setSize(size);
+	}
+
+	protected void saveShellSize() {
+		Point size = popup.getSize();
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		String prefName = getDialogPreferencePrefix();
+		store.setValue(prefName + ".shell.w", size.x);
+		store.setValue(prefName + ".shell.h", size.y);
 	}
 
 	protected void initializeListViewer(LaunchBarListViewer listViewer) {
@@ -501,7 +532,7 @@ public abstract class CSelector extends Composite {
 
 	/**
 	 * Set sorter for the bottom part of the selector
-	 * 
+	 *
 	 * @param sorter
 	 */
 	public void setSorter(Comparator<?> sorter) {
@@ -510,7 +541,7 @@ public abstract class CSelector extends Composite {
 
 	/**
 	 * Set sorter for the "history" part of the selector
-	 * 
+	 *
 	 * @param sorter
 	 */
 	public void setHistorySortComparator(Comparator<?> sorter) {

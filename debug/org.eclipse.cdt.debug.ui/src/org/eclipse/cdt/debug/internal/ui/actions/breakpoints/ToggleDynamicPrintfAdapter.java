@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson and others.
+ * Copyright (c) 2014, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,12 +81,12 @@ public class ToggleDynamicPrintfAdapter extends AbstractToggleBreakpointAdapter 
 
             // Although the user will be given the opportunity to provide the printf string 
             // in the properties dialog, we pre-fill it with the default string to be nice
-        	dprintf.setPrintfString(NLS.bind(Messages.Default_FunctionDynamicPrintf_String, sourceHandle, functionName));
+        	dprintf.setPrintfString(NLS.bind(Messages.Default_FunctionDynamicPrintf_String, escapeBackslashes(sourceHandle), functionName));
 
         	openBreakpointPropertiesDialog(dprintf, part, resource, attributes);
         } else {
         	// We provide a default printf string to make the dynamic printf useful automatically
-        	String printfStr = NLS.bind(Messages.Default_FunctionDynamicPrintf_String, sourceHandle, functionName);
+        	String printfStr = NLS.bind(Messages.Default_FunctionDynamicPrintf_String, escapeBackslashes(sourceHandle), functionName);
         	
         	CDIDebugModel.createFunctionDynamicPrintf(sourceHandle, resource, getBreakpointType(), functionName, charStart,
                 charEnd, lineNumber, true, 0, "", printfStr, true); //$NON-NLS-1$

@@ -6,6 +6,5 @@ Bundle-Version: 2.0.2.qualifier
 Bundle-Vendor: %provider
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.help,
- org.eclipse.ui.cheatsheets,
- org.apache.ant;bundle-version="1.7.1"
+ org.eclipse.ui.cheatsheets
 

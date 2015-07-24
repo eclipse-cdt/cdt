@@ -82,6 +82,34 @@
         </activeWhen>
     </handler>
 </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
+         <action
+               class="org.eclipse.cdt.debug.ui.memory.search.FindReplaceActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.FindReplaceActionDelegate.1"
+               label="%FindReplaceMemory.label"
+               menubarPath="additions"
+               tooltip="%FindReplaceMemory.tooltip">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.2"
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2">
+         <action
+               class="org.eclipse.cdt.debug.ui.memory.search.FindReplaceActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.FindReplaceActionDelegate.2"
+               label="%FindReplaceMemory.label"
+               menubarPath="additions"
+               tooltip="%FindReplaceMemory.tooltip">
+         </action>
+      </viewerContribution>
+</extension>
+
 
 </plugin>
 

@@ -870,7 +870,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		}
 
 		public String getId() {
-			return "???"; //$NON-NLS-1$
+			return ID;
 		}
 
 		public String getLabel() {

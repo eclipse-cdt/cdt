@@ -43,6 +43,7 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_6_8.class,
 	CommandTimeoutTest_6_8.class,
 	StepIntoSelectionTest_6_8.class,
+	RunGDBScriptTest_6_8.class,
 	/* Add your test class here */
 })
 

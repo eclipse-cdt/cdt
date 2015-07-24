@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb;singleton:=true
-Bundle-Version: 4.7.0.qualifier
+Bundle-Version: 4.8.0.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.gdb.internal.GdbPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
@@ -34,6 +34,7 @@ Export-Package: org.eclipse.cdt.dsf.gdb,
  org.eclipse.cdt.dsf.gdb.internal.tracepointactions;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.tests.dsf.gdb",
  org.eclipse.cdt.dsf.gdb.launching,
  org.eclipse.cdt.dsf.gdb.service,
+ org.eclipse.cdt.dsf.gdb.service.breakpoint.actions,
  org.eclipse.cdt.dsf.gdb.service.command,
  org.eclipse.cdt.dsf.gdb.service.macos,
  org.eclipse.cdt.dsf.mi.service,

@@ -50,6 +50,7 @@ import org.junit.runners.Suite;
 	GDBMultiNonStopRunControlTest_7_2.class,
 	StepIntoSelectionTest_7_2.class,
 	StepIntoSelectionNonStopTest_7_2.class,
+	RunGDBScriptTest_7_2.class,
 	/* Add your test class here */
 })
 

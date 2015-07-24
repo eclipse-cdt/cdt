@@ -47,6 +47,7 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -84,6 +85,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
 import org.eclipse.core.resources.IMarker;
@@ -92,6 +94,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -1483,7 +1486,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         		{ setSystem(true); }
         		@Override
         		protected IStatus run(IProgressMonitor monitor) {
-        			fBreakpointActionManager.executeActions(breakpoint, new BreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
+        			fBreakpointActionManager.executeActions(breakpoint, createBreakpointActionAdapter(getExecutor(), getServicesTracker(), context));
         			return Status.OK_STATUS;
         		};
         	}.schedule();
@@ -2156,5 +2159,13 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 	 */
     public void removeBreakpointsTrackingListener(IMIBreakpointsTrackingListener listener) {
     	fTrackingListeners.remove(listener);
+    }
+    
+    /**
+	 * @since 4.8
+	 */
+    protected IAdaptable createBreakpointActionAdapter(
+    		DsfExecutor executor, DsfServicesTracker serviceTracker, IDMContext context) {
+    	return new BreakpointActionAdapter(executor, serviceTracker, context);
     }
 }

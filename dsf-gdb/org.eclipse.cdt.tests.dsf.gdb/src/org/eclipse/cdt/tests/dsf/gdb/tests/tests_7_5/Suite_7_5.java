@@ -51,6 +51,7 @@ import org.junit.runners.Suite;
 	GDBConsoleBreakpointsTest_7_5.class,
 	StepIntoSelectionTest_7_5.class,
 	StepIntoSelectionNonStopTest_7_5.class,
+	RunGDBScriptTest_7_5.class,
 	/* Add your test class here */
 })
 

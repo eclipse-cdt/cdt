@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_6_7.class,
 	CommandTimeoutTest_6_7.class,
 	StepIntoSelectionTest_6_7.class,
+	RunGDBScriptTest_6_7.class,
 	/* Add your test class here */
 })
 

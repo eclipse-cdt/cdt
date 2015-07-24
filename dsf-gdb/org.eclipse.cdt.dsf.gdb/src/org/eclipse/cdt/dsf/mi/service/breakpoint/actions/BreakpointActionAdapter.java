@@ -15,8 +15,10 @@ package org.eclipse.cdt.dsf.mi.service.breakpoint.actions;
 import org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler;
 import org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler;
 import org.eclipse.cdt.debug.core.breakpointactions.IReverseDebugEnabler;
+import org.eclipse.cdt.debug.core.breakpointactions.IScriptActionEnabler;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.gdb.service.breakpoint.actions.GDBScriptActionEnabler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -46,6 +48,9 @@ public class BreakpointActionAdapter implements IAdaptable {
         }
         if (adapter.equals(IReverseDebugEnabler.class)) {
         	return (T)new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
+        }
+        if (adapter.equals(IScriptActionEnabler.class)) {
+        	return (T)new GDBScriptActionEnabler(fExecutor, fServiceTracker, fContext);
         }
         return null;
     }

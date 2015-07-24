@@ -52,6 +52,7 @@ import org.junit.runners.Suite;
 	TraceFileTest_7_4.class,
 	StepIntoSelectionTest_7_4.class,
 	StepIntoSelectionNonStopTest_7_4.class,
+	RunGDBScriptTest_7_4.class,
 	/* Add your test class here */
 })
 

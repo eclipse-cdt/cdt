@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService, IRunControl3 {
+public class GDBRunControl_7_0_NS extends AbstractDsfService implements IGDBRunControl, IMultiRunControl, ICachingService, IRunControl3 {
 	// /////////////////////////////////////////////////////////////////////////
 	// CONSTANTS
 	// /////////////////////////////////////////////////////////////////////////
@@ -423,6 +423,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         register(new String[]{ IRunControl.class.getName(), 
         					   IRunControl2.class.getName(),
         					   IMIRunControl.class.getName(),
+        					   IGDBRunControl.class.getName(),
         					   IMultiRunControl.class.getName(),
         					   IRunControl3.class.getName()}, 
         	     new Hashtable<String,String>());
@@ -2634,4 +2635,23 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			rm.done();
 		}
 	}
+
+	/**
+	 * @since 4.8
+	 */
+	@Override
+	public void canRunGDBScript(IContainerDMContext contDmc, DataRequestMonitor<Boolean> rm) {
+		rm.setData(doCanResume(contDmc));
+		rm.done();
+	}
+
+	/**
+	 * @since 4.8
+	 */
+	@Override
+	public void runGDBScript(IContainerDMContext contDmc, String scriptFile, RequestMonitor rm) {
+		fConnection.queueCommand(
+			fCommandFactory.createCLISource(fConnection.getContext(), scriptFile), 
+			new ImmediateDataRequestMonitor<MIInfo>(rm));
+	}    
 }

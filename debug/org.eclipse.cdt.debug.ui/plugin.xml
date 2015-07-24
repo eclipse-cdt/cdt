@@ -1660,6 +1660,14 @@
            name="%ReverseDebugAction.name">
      </actionType>
   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.core.BreakpointActionType">
+      <actionType
+            class="org.eclipse.cdt.debug.ui.breakpointactions.ScriptAction"
+            id="org.eclipse.cdt.debug.ui.breakpointactions.ScriptAction"
+            name="%ScriptAction.name">
+      </actionType>
+   </extension>
  <extension
          point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
       <actionPage
@@ -1696,6 +1704,14 @@
            actionType="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugAction"
            class="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugActionPage"
            id="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugActionPage">
+     </actionPage>
+  </extension>
+  <extension
+        point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+     <actionPage
+           actionType="org.eclipse.cdt.debug.ui.breakpointactions.ScriptAction"
+           class="org.eclipse.cdt.debug.ui.breakpointactions.ScriptActionPage"
+           id="org.eclipse.cdt.debug.ui.breakpointactions.ScriptActionPage">
      </actionPage>
   </extension>
 

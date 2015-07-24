@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-public class GDBRunControl extends MIRunControl {
+/**
+ * @since 4.8
+ */
+public class GDBRunControl extends MIRunControl implements IGDBRunControl {
 	
 	private static class RunToLineActiveOperation {
 		private IMIExecutionDMContext fThreadContext;
@@ -125,6 +128,7 @@ public class GDBRunControl extends MIRunControl {
            		IRunControl2.class.getName(),
            		IRunControl3.class.getName(),
            		IMIRunControl.class.getName(),
+           		IGDBRunControl.class.getName(),
            		MIRunControl.class.getName(), 
         		GDBRunControl.class.getName()}, new Hashtable<String,String>());
         requestMonitor.done();
@@ -739,5 +743,23 @@ public class GDBRunControl extends MIRunControl {
 			rm.done();
 		}
 	}
-    
+
+	/**
+	 * @since 4.8
+	 */
+	@Override
+	public void canRunGDBScript(IContainerDMContext contDmc, DataRequestMonitor<Boolean> rm) {
+		rm.setData(doCanResume(contDmc));
+		rm.done();
+	}
+
+	/**
+	 * @since 4.8
+	 */
+	@Override
+	public void runGDBScript(IContainerDMContext contDmc, String scriptFile, RequestMonitor rm) {
+		fConnection.queueCommand(
+			fCommandFactory.createCLISource(fConnection.getContext(), scriptFile), 
+			new ImmediateDataRequestMonitor<MIInfo>(rm));
+	}    
 }

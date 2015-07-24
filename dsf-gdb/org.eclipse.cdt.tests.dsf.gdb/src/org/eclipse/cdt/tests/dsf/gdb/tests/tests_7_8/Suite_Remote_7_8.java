@@ -53,6 +53,7 @@ import org.junit.runners.Suite;
 	GDBConsoleSynchronizingTest_7_8.class,
 	StepIntoSelectionTest_7_8.class,
 	StepIntoSelectionNonStopTest_7_8.class,
+	RunGDBScriptTest_7_8.class,
 	/* Add your test class here */
 })
 

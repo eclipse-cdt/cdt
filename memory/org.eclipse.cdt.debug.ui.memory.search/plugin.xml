@@ -82,7 +82,22 @@
         </activeWhen>
     </handler>
 </extension>
-
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.MemoryView.RenderingViewPane.1?after=additions">
+         <command
+               commandId="org.eclipse.ui.edit.findReplace"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser?after=additions">
+         <command
+               commandId="org.eclipse.ui.edit.findReplace"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
 </plugin>
 
 

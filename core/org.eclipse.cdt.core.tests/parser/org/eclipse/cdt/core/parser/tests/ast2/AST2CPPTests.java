@@ -11573,4 +11573,57 @@ public class AST2CPPTests extends AST2TestBase {
 		// this test will need to be updated.
 		helper.assertVariableValue("generic_lambdas_supported", 0);
 	}
+	
+	//	struct A {
+	//		A() {}
+	//	};
+	//
+	//	struct B {
+	//		B() {}
+	//	};
+	//
+	//	struct C : A {
+	//		C() {}
+	//	};
+	//	
+	//	struct D : virtual A, virtual B {
+	//		D() {}
+	//	};
+	//
+	//	struct E {
+	//		E() {}
+	//	};
+	//
+	//	struct F : D, virtual E {
+	//		F() {}
+	//	};
+	public void testImplicitlyCalledBaseConstructor_393717() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		ICPPConstructor aCtor = helper.assertNonProblem("A()", "A");
+		ICPPConstructor bCtor = helper.assertNonProblem("B()", "B");
+		ICPPConstructor dCtor = helper.assertNonProblem("D()", "D");
+		ICPPConstructor eCtor = helper.assertNonProblem("E()", "E");
+
+		ICPPASTFunctionDefinition ctorDef = helper.assertNode("C() {}");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) ctorDef).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		assertEquals(aCtor, implicitNames[0].resolveBinding());
+		
+		ctorDef = helper.assertNode("D() {}");
+		implicitNames = ((IASTImplicitNameOwner) ctorDef).getImplicitNames();
+		sortNames(implicitNames);
+		assertEquals(2, implicitNames.length);
+		assertEquals(aCtor, implicitNames[0].resolveBinding());
+		assertEquals(bCtor, implicitNames[1].resolveBinding());
+		
+		ctorDef = helper.assertNode("F() {}");
+		implicitNames = ((IASTImplicitNameOwner) ctorDef).getImplicitNames();
+		sortNames(implicitNames);
+		assertEquals(4, implicitNames.length);
+		assertEquals(aCtor, implicitNames[0].resolveBinding());
+		assertEquals(bCtor, implicitNames[1].resolveBinding());
+		assertEquals(dCtor, implicitNames[2].resolveBinding());
+		assertEquals(eCtor, implicitNames[3].resolveBinding());
+	}
 }

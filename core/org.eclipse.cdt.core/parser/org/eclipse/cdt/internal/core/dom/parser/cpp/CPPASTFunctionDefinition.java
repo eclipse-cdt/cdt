@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,30 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -32,11 +44,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * it may contain member initializers.
  */
 public class CPPASTFunctionDefinition extends ASTAttributeOwner
-		implements ICPPASTFunctionDefinition, IASTAmbiguityParent {
+		implements ICPPASTFunctionDefinition, IASTAmbiguityParent, IASTImplicitNameOwner {
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
     private ICPPASTConstructorChainInitializer[] memInits;
+    private IASTImplicitName[] implicitNames;  // for constructors: base constructors called implicitly
     private int memInitPos= -1;
     private boolean fDeleted;
     private boolean fDefaulted;
@@ -198,6 +211,14 @@ public class CPPASTFunctionDefinition extends ASTAttributeOwner
 			if (!memInit.accept(action))
 				return false;
 		}
+		
+		if (action.shouldVisitImplicitNames) {
+			for (IASTImplicitName implicitName : getImplicitNames()) {
+				if (!implicitName.accept(action)) {
+					return false;
+				}
+			}
+		}
 
 		if (bodyStatement != null && !bodyStatement.accept(action))
 			return false;
@@ -226,4 +247,67 @@ public class CPPASTFunctionDefinition extends ASTAttributeOwner
             bodyStatement = (IASTStatement) other;
         }
     }
+
+	@Override
+	public IASTImplicitName[] getImplicitNames() {
+		if (implicitNames == null) {
+			implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			IASTName functionName = ASTQueries.findInnermostDeclarator(declarator).getName();
+			IBinding function = functionName.resolveBinding();
+			if (function instanceof ICPPConstructor) {
+				ICPPClassType classOwner = ((ICPPConstructor) function).getClassOwner();
+				
+				// Determine the bases of 'classOwner' that need to be initialized by this constructor.
+				Set<ICPPClassType> basesThatNeedInitialization = new HashSet<>();
+				for (ICPPBase base : ClassTypeHelper.getBases(classOwner, this)) {
+					IType baseType = base.getBaseClassType();
+					if (baseType instanceof ICPPClassType) {
+						basesThatNeedInitialization.add((ICPPClassType) baseType);
+					}
+				}
+				for (ICPPClassType virtualBase : ClassTypeHelper.getVirtualBases(classOwner, this)) {
+					basesThatNeedInitialization.add(virtualBase);
+				}
+				
+				// Go through the bases determined above, and see which ones aren't initialized
+				// explicitly in the mem-initializer list.
+				for (ICPPClassType base : basesThatNeedInitialization) {
+					if (!isInitializedExplicitly(base)) {
+						// Try to find a default constructor to create an implicit name for.
+						for (ICPPConstructor constructor : ClassTypeHelper.getConstructors(base, this)) {
+							if (constructor.getRequiredArgumentCount() == 0) {  // default constructor
+								CPPASTImplicitName ctorName = new CPPASTImplicitName(
+										constructor.getNameCharArray(), this);
+								ctorName.setBinding(constructor);
+								ctorName.setOffsetAndLength((ASTNode) functionName);
+								implicitNames = ArrayUtil.append(implicitNames, ctorName);
+								break;
+							}
+						}
+					}
+				}
+			}
+			implicitNames = ArrayUtil.trim(implicitNames);
+		}
+		return implicitNames;
+	}
+	
+	// Returns whether the base type 'base' is explicitly initialized by one of the mem-initializers
+	// of this constructor.
+	private boolean isInitializedExplicitly(ICPPClassType base) {
+		for (ICPPASTConstructorChainInitializer memInitializer : getMemberInitializers()) {
+			IBinding binding = memInitializer.getMemberInitializerId().resolveBinding();
+			if (binding instanceof IType) {
+				if (((IType) binding).isSameType(base)) {
+					return true;
+				}
+			}
+			if (binding instanceof ICPPConstructor) {
+				if (((ICPPConstructor) binding).getClassOwner().isSameType(base)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

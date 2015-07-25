@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_a0ace076",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPInheritance.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-25T17:06:40Z",
+      "side": 1,
+      "message": "Merge -\u003e Merges",
+      "range": {
+        "startLine": 99,
+        "startChar": 5,
+        "endLine": 99,
+        "endChar": 10
+      },
+      "revId": "074d5eb206305b972e2c493d045087b23f9be86f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_00b16cc9",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPInheritance.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-07-25T17:06:40Z",
+      "side": 1,
+      "message": "Exclude -\u003e Excludes",
+      "range": {
+        "startLine": 100,
+        "startChar": 5,
+        "endLine": 100,
+        "endChar": 12
+      },
+      "revId": "074d5eb206305b972e2c493d045087b23f9be86f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

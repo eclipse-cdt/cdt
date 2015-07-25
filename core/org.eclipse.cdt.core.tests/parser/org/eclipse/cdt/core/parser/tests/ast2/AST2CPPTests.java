@@ -11655,4 +11655,20 @@ public class AST2CPPTests extends AST2TestBase {
 		assertEquals(dCtor, implicitNames[2].resolveBinding());
 		assertEquals(eCtor, implicitNames[3].resolveBinding());
 	}
+	
+	//	struct A {
+	//		A(int, int);
+	//	};
+	//	void a(A);
+	//	int main() {
+	//		a(A{3, 4});
+	//	}
+	public void testImplicitConstructorNameInTypeConstructorExpression_447431() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		ICPPConstructor ctor = helper.assertNonProblem("A(int, int)", "A");
+		ICPPASTSimpleTypeConstructorExpression typeConstructorExpr = helper.assertNode("A{3, 4}");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) typeConstructorExpr).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		assertEquals(ctor, implicitNames[0].resolveBinding());
+	}
 }

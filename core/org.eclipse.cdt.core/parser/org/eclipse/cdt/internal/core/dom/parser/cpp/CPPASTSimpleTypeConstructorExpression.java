@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
@@ -32,11 +35,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
 public class CPPASTSimpleTypeConstructorExpression extends ASTNode
-		implements ICPPASTSimpleTypeConstructorExpression {
+		implements ICPPASTSimpleTypeConstructorExpression, IASTImplicitNameOwner {
 	private ICPPASTDeclSpecifier fDeclSpec;
 	private IASTInitializer fInitializer;
 	private ICPPEvaluation fEvaluation;
 	private IASTImplicitDestructorName[] fImplicitDestructorNames;
+	private IASTImplicitName[] fImplicitNames;  // for class types: the constructor being called
 
     public CPPASTSimpleTypeConstructorExpression() {
 	}
@@ -147,6 +151,14 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
 
 		if (fDeclSpec != null && !fDeclSpec.accept(action))
 			return false;
+		
+		if (action.shouldVisitImplicitNames) {
+			for (IASTImplicitName implicitName : getImplicitNames()) {
+				if (!implicitName.accept(action)) {
+					return false;
+				}
+			}
+		}
 
 		if (fInitializer != null && !fInitializer.accept(action))
 			return false;
@@ -266,4 +278,22 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode
     	init.setExpression(expression);
     	setInitializer(init);
     }
+
+	@Override
+	public IASTImplicitName[] getImplicitNames() {
+		if (fImplicitNames == null) {
+			fImplicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			ICPPEvaluation eval = getEvaluation();
+			if (eval instanceof EvalTypeId) {
+				ICPPFunction constructor = ((EvalTypeId) eval).getConstructor(this);
+				if (constructor != null) {
+					CPPASTImplicitName name = new CPPASTImplicitName(constructor.getNameCharArray(), this);
+					name.setOffsetAndLength((ASTNode) fDeclSpec);
+					name.setBinding(constructor);
+					fImplicitNames = new IASTImplicitName[] { name };
+				}
+			}
+		}
+		return fImplicitNames;
+	}
 }

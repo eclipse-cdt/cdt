@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -45,9 +47,17 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
     private Position fPosition;
     private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
     private IPreferenceStore fStore;
-    private boolean fHasCorrection;
     private ResourceBundle fBundle;
-	private Annotation fAnnotation;
+    // Annotations at the ruler's current line of activity, keyed by their presentation layer,
+    // in decreasing order (i.e. top to bottom).
+    private static Comparator<Integer> decreasingOrder = new Comparator<Integer>(){
+		@Override
+		public int compare(Integer a, Integer b) {
+			return b - a;
+		}};
+    private TreeMap<Integer, Annotation> fAnnotations = new TreeMap<>(decreasingOrder);
+    // For each layer, whether the annotation at that layer has a correction.
+    private TreeMap<Integer, Boolean> fHasCorrection = new TreeMap<>(decreasingOrder);
 
     public CSelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
         super(bundle, prefix, editor, ruler);
@@ -72,20 +82,25 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
      */
     @Override
 	public void runWithEvent(Event event) {
-		if (fAnnotation instanceof OverrideIndicatorManager.OverrideIndicator) {
-			((OverrideIndicatorManager.OverrideIndicator)fAnnotation).open();
-			return;
-		}
-    	
-        if (fHasCorrection) {
-            ITextOperationTarget operation= fTextEditor.getAdapter(ITextOperationTarget.class);
-            final int opCode= ISourceViewer.QUICK_ASSIST;
-            if (operation != null && operation.canDoOperation(opCode)) {
-                fTextEditor.selectAndReveal(fPosition.getOffset(), fPosition.getLength());
-                operation.doOperation(opCode);
-            }
-            return;
-        }
+    	// Give each annotation at the current line, from top to bottom, a chance to handle
+    	// the action. If there are no takers, fall back to the super class implementation.
+    	for (Integer layer : fAnnotations.keySet()) {
+    		Annotation annotation = fAnnotations.get(layer);
+			if (annotation instanceof OverrideIndicatorManager.OverrideIndicator) {
+				((OverrideIndicatorManager.OverrideIndicator)annotation).open();
+				return;
+			}
+	    	
+	        if (fHasCorrection.get(layer)) {
+	            ITextOperationTarget operation= fTextEditor.getAdapter(ITextOperationTarget.class);
+	            final int opCode= ISourceViewer.QUICK_ASSIST;
+	            if (operation != null && operation.canDoOperation(opCode)) {
+	                fTextEditor.selectAndReveal(fPosition.getOffset(), fPosition.getLength());
+	                operation.doOperation(opCode);
+	            }
+	            return;
+	        }
+    	}
 
         super.run();
     }
@@ -99,14 +114,17 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
         findCAnnotation();
         setEnabled(true); 
 
-		if (fAnnotation instanceof OverrideIndicatorManager.OverrideIndicator) {
-			initialize(fBundle, "CSelectAnnotationRulerAction.OpenSuperImplementation."); //$NON-NLS-1$
-			return;
-		}
-        if (fHasCorrection) {
-            initialize(fBundle, "CSelectAnnotationRulerAction.QuickFix."); //$NON-NLS-1$
-            return;
-        }
+    	for (Integer layer : fAnnotations.keySet()) {
+    		Annotation annotation = fAnnotations.get(layer);
+			if (annotation instanceof OverrideIndicatorManager.OverrideIndicator) {
+				initialize(fBundle, "CSelectAnnotationRulerAction.OpenSuperImplementation."); //$NON-NLS-1$
+				return;
+			}
+	        if (fHasCorrection.get(layer)) {
+	            initialize(fBundle, "CSelectAnnotationRulerAction.QuickFix."); //$NON-NLS-1$
+	            return;
+	        }
+    	}
 
         initialize(fBundle, "CSelectAnnotationRulerAction.GotoAnnotation."); //$NON-NLS-1$;
         super.update();
@@ -114,8 +132,8 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 
     private void findCAnnotation() {
         fPosition= null;
-        fAnnotation = null;
-        fHasCorrection= false;
+        fAnnotations.clear();
+        fHasCorrection.clear();
 
         AbstractMarkerAnnotationModel model= getAnnotationModel();
         IAnnotationAccessExtension annotationAccess= getAnnotationAccessExtension();
@@ -125,18 +143,15 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
             return ;
 
         Iterator<?> iter= model.getAnnotationIterator();
-        int layer= Integer.MIN_VALUE;
 
         while (iter.hasNext()) {
             Annotation annotation= (Annotation) iter.next();
             if (annotation.isMarkedDeleted())
                 continue;
 
-            int annotationLayer= layer;
+            int layer = IAnnotationAccessExtension.DEFAULT_LAYER;
             if (annotationAccess != null) {
-                annotationLayer= annotationAccess.getLayer(annotation);
-                if (annotationLayer < layer)
-                    continue;
+                layer= annotationAccess.getLayer(annotation);
             }
 
             Position position= model.getPosition(annotation);
@@ -148,9 +163,8 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
             if (!isReadOnly && CCorrectionProcessor.hasCorrections(annotation)) {
                 
                 fPosition= position;
-                fAnnotation = annotation;
-                fHasCorrection= true;
-                layer= annotationLayer;
+                fAnnotations.put(layer, annotation);
+                fHasCorrection.put(layer, true);
                 continue;
             }
 			AnnotationPreference preference= fAnnotationPreferenceLookup.getAnnotationPreference(annotation);
@@ -163,9 +177,8 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 
 			if (fStore.getBoolean(key)) {
 			    fPosition= position;
-			    fAnnotation = annotation;
-			    fHasCorrection= false;
-			    layer= annotationLayer;
+			    fAnnotations.put(layer, annotation);
+			    fHasCorrection.put(layer, false);
 			}
         }
     }

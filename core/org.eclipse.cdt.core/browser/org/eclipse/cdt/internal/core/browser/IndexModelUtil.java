@@ -162,10 +162,15 @@ public class IndexModelUtil {
 	 */
 	public static String[] extractParameterTypes(IFunction function) throws DOMException {
 		IParameter[] params= function.getParameters();
-		String[] parameterTypes= new String[params.length];
+		boolean vararg = function.takesVarArgs();
+		int paramCount = params.length + (vararg ? 1 : 0);
+		String[] parameterTypes= new String[paramCount];
 		for (int i = 0; i < params.length; i++) {
 			IParameter param = params[i];
 			parameterTypes[i]= ASTTypeUtil.getType(param.getType(), false);
+		}
+		if (vararg) {
+			parameterTypes[paramCount - 1] = "...";  //$NON-NLS-1$
 		}
 		if (parameterTypes.length == 1 && parameterTypes[0].equals("void")) { //$NON-NLS-1$
 			return EMPTY_STRING_ARRAY;

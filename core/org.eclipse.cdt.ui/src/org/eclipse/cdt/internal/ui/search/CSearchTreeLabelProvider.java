@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.search;
 import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IStructure;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
@@ -56,7 +57,7 @@ public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 		String enclosingName = ""; //$NON-NLS-1$
 		ICElement enclosingElement = lineElement.getMatches()[0].getEnclosingElement();
 		if (fPage.isShowEnclosingDefinitions() && enclosingElement != null) {
-			enclosingName = enclosingElement.getElementName() + ", "; //$NON-NLS-1$
+			enclosingName = getElementDescription(enclosingElement) + ", "; //$NON-NLS-1$
 		}
 		Integer lineNumber = lineElement.getLineNumber();
 		String prefix = Messages.format(CSearchMessages.CSearchResultCollector_line, enclosingName, lineNumber);
@@ -65,4 +66,11 @@ public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 		return location.append(super.getStyledText(element));
 	}
 
+	private String getElementDescription(ICElement element) {
+		ICElement parent = element.getParent();
+		if (parent instanceof IStructure) {
+			return parent.getElementName() + "::" + element.getElementName();  //$NON-NLS-1$
+		}
+		return element.getElementName();
+	}
 }

@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_3492ee28",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/breakpointactions/IScriptActionEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "Please add javadoc to explain what the action should do.",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_545b2202",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "I don\u0027t think this is right.  It implies the entire service and every method is new.",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_d4943217",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "Please add javadoc for interfaces",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f46216b7",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "I\u0027m not sure this interface should be part of RunControl.  Since it is about running different GDB commands, maybe it should be part of the CommandControl service or the Backend service?\n\nLooking at IMIRunControl, I feel I made a mistake in putting it in RunControl; it is not related to that service.",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_9483dae0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "Please add javadoc",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f497b618",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBRunControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "Please add javadoc",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_94ac7a77",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/breakpoint/actions/GDBScriptActionEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "I was trying to test this case by putting an invalid file but couldn\u0027t trigger it.  I traced it to BreakpointActionManager.doExecuteActions, which looks at the code of the status not the severity.  So, the status above should be built with an explicit IStatus.ERROR code parameter as its third parameter.\n\nHOWEVER, doing this will cause an error dialog to pop up with an error message.  I\u0027m don\u0027t think that is the desired behaviour since it will be during a debugging session.\n\nI wonder if we can check for a bad script file when the user inputs it?",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_142b6a83",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/breakpoint/actions/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-27T20:19:31Z",
+      "side": 1,
+      "message": "If you use Messages.class.getName() (which I agree is nicer), you must name the properties file: Messages.properties.  Notice the capital letter.\n\nI\u0027ve made the change since I was changing copyright dates (adding 2015) anyway.",
+      "revId": "27701ca8f5ceec788765d7f4f6d827efab613483",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

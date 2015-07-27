@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson and others.
+ * Copyright (c) 2014, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,9 +63,21 @@ public class DisassemblyToggleDynamicPrintfTarget extends AbstractDisassemblyBre
 	@Override
 	protected void createAddressBreakpoint(IResource resource, IAddress address) throws CoreException {
 		// We provide a default printf string to make the dynamic printf useful automatically
-		String printfStr = NLS.bind(Messages.Default_AddressDynamicPrintf_String, address);
-
+		String format = getAddressFormat(address);
+		String printfStr = NLS.bind(Messages.Default_AddressDynamicPrintf_String, address, format);
+			
 		CDIDebugModel.createAddressDynamicPrintf(null, null, resource, getBreakpointType(), -1, address, true, 0, "", printfStr, true); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param address
+	 * @return
+	 */
+	private String getAddressFormat(IAddress address) {
+		String format = "0x%x"; //$NON-NLS-1$
+		if (address.getValue().bitLength() > 32)
+			format = "0x%llx"; //$NON-NLS-1$
+		return format;
 	}
 
     @Override
@@ -77,10 +89,9 @@ public class DisassemblyToggleDynamicPrintfTarget extends AbstractDisassemblyBre
         CDIDebugModel.setAddressBreakpointAttributes(
             attributes, null, null, getBreakpointType(), -1, address, true, 0, "" ); //$NON-NLS-1$
 
-        // Although the user will be given the opportunity to provide the printf string 
-        // in the properties dialog, we pre-fill it with the default string to be nice
-        attributes.put(ICDynamicPrintf.PRINTF_STRING, 
-        		       NLS.bind(Messages.Default_AddressDynamicPrintf_String, address));
+        String format = getAddressFormat(address);
+		String printfStr = NLS.bind(Messages.Default_AddressDynamicPrintf_String, address, format);
+        attributes.put(ICDynamicPrintf.PRINTF_STRING, printfStr);
 
         openBreakpointPropertiesDialog(dprintf, part, resource, attributes);
     }

@@ -13,7 +13,7 @@ package org.eclipse.cdt.arduino.ui.internal.launch;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.cdt.arduino.core.ArduinoLaunchConsoleService;
+import org.eclipse.cdt.arduino.core.internal.ArduinoLaunchConsoleService;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

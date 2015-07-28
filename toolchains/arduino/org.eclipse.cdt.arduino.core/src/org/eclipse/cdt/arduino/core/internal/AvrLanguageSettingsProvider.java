@@ -13,9 +13,8 @@ package org.eclipse.cdt.arduino.core.internal;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.cdt.arduino.core.ArduinoHome;
-import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.board.Board;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.Board;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
@@ -36,7 +35,7 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 		try {
 			IConfiguration config = ManagedBuildManager.getConfigurationForDescription(currentCfgDescription);
 			Board board = ArduinoBoardManager.instance.getBoard(config);
-			String mcu = board.getBuildSetting("mcu"); //$NON-NLS-1$
+			String mcu = board.getProperty("build.mcu"); //$NON-NLS-1$
 			if (mcu != null) {
 				opts += " -mmcu=" + mcu; //$NON-NLS-1$
 			}
@@ -51,7 +50,8 @@ public class AvrLanguageSettingsProvider extends GCCBuiltinSpecsDetector {
 	protected List<String> parseOptions(String line) {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			if (line.startsWith(" /arduino/")) { //$NON-NLS-1$
-				File full = new File(ArduinoHome.getArduinoHome().getParentFile(), line.trim());
+				// TODO
+				File full = new File(ArduinoPreferences.getArduinoHome().toFile(), line.trim());
 				return parseOptions(" " + full.getAbsolutePath()); //$NON-NLS-1$
 			}
 		}

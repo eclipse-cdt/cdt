@@ -3,12 +3,13 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
-import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.board.Board;
+import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.Board;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionWorkingCopy;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
@@ -71,21 +72,25 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		boardSelector = new Combo(comp, SWT.READ_ONLY);
 		boardSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Board currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardId(),
-				arduinoRemote.getPlatformId(), arduinoRemote.getPackageId());
-		Collection<Board> boardList = ArduinoBoardManager.instance.getBoards();
-		boards = new Board[boardList.size()];
-		i = 0;
-		int boardSel = 0;
-		for (Board board : boardList) {
-			boards[i] = board;
-			boardSelector.add(board.getName());
-			if (board.equals(currentBoard)) {
-				boardSel = i;
+		try {
+			Board currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardId(),
+					arduinoRemote.getPlatformId(), arduinoRemote.getPackageId());
+			Collection<Board> boardList = ArduinoBoardManager.instance.getBoards();
+			boards = new Board[boardList.size()];
+			i = 0;
+			int boardSel = 0;
+			for (Board board : boardList) {
+				boards[i] = board;
+				boardSelector.add(board.getName());
+				if (board.equals(currentBoard)) {
+					boardSel = i;
+				}
+				i++;
 			}
-			i++;
+			boardSelector.select(boardSel);
+		} catch (CoreException e) {
+			Activator.log(e);
 		}
-		boardSelector.select(boardSel);
 
 		return comp;
 	}

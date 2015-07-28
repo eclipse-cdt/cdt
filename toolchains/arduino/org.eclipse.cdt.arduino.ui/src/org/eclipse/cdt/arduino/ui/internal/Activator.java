@@ -13,8 +13,11 @@ package org.eclipse.cdt.arduino.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -22,6 +25,8 @@ import org.osgi.framework.ServiceReference;
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
+
+	private IPreferenceStore corePreferenceStore;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.arduino.ui"; //$NON-NLS-1$
@@ -75,6 +80,13 @@ public class Activator extends AbstractUIPlugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
+	}
+
+	public IPreferenceStore getCorePreferenceStore() {
+		if (corePreferenceStore == null) {
+			corePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, "org.eclipse.cdt.qrduino.core"); //$NON-NLS-1$
+		}
+		return corePreferenceStore;
 	}
 
 }

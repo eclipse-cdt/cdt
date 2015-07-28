@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.remote.core.IRemoteCommandShellService;
 import org.eclipse.remote.core.IRemoteConnection;

@@ -8,11 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.ui.internal;
+package org.eclipse.cdt.arduino.ui.internal.preferences;
 
-import org.eclipse.cdt.arduino.core.ArduinoHome;
+import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
+import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -23,15 +26,22 @@ public class ArduinoPreferencePage extends FieldEditorPreferencePage implements 
 	}
 
 	@Override
+	public IPreferenceStore getPreferenceStore() {
+		// TODO Auto-generated method stub
+		return super.getPreferenceStore();
+	}
+
+	@Override
 	protected void createFieldEditors() {
-		addField(new DirectoryFieldEditor(ArduinoHome.preferenceName, Messages.ArduinoPreferencePage_0,
+		addField(new DirectoryFieldEditor(ArduinoPreferences.ARDUINO_HOME, Messages.ArduinoPreferencePage_0,
 				getFieldEditorParent()));
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
 		setDescription(Messages.ArduinoPreferencePage_1);
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		// Preferences are stored in core
+		setPreferenceStore(Activator.getDefault().getCorePreferenceStore());
 	}
 
 }

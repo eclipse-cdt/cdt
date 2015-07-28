@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core;
+package org.eclipse.cdt.arduino.core.internal;
 
 import org.eclipse.remote.core.IRemoteConnection;
 

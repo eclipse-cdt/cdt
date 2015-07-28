@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,24 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Find / Replace for 16 bits addressable sizes (Bug 462073)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.search;
 
-import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.nio.ByteOrder;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.ui.memory.IMemoryRendering;
-import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.IAction;
@@ -34,7 +32,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -61,9 +58,11 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 public class FindReplaceDialog extends SelectionDialog 
 {
 
-	private IMemoryBlockExtension fMemoryBlock;
-	
-	final static int preFetchSize = 20 * 1024;
+	private final IMemoryBlockExtension fMemoryBlock;
+	private final MemorySearch fSearchQuery;
+	private final IMemoryRenderingSite fMemoryView;
+	private final Properties fProperties;
+	private final IAction fFindAction;
 	
 	private Text fFindText;
 	private Text fReplaceText;
@@ -77,8 +76,6 @@ public class FindReplaceDialog extends SelectionDialog
 	private Button fReplaceFindButton;
 	private Button fReplaceAllButton;
 
-	private IMemoryRenderingSite fMemoryView;
-	
 	private Button fFormatAsciiButton;
 	private Button fFormatHexButton;
 	private Button fFormatOctalButton;
@@ -91,8 +88,8 @@ public class FindReplaceDialog extends SelectionDialog
 	private Button fWrapCheckbox;
 	
 	private Button fForwardButton;
+	private int fWordSize;
 	
-	private Properties fProperties;
 	
 	protected final static String SEARCH_FIND = "SEARCH_FIND"; //$NON-NLS-1$
 	protected final static String SEARCH_REPLACE = "SEARCH_REPLACE"; //$NON-NLS-1$
@@ -115,8 +112,7 @@ public class FindReplaceDialog extends SelectionDialog
 	//the width of text fields of Find and Replace, increase it to 400 to fix the tvt defect 356901
 	protected final static int FIND_REPLACE_TEXT_WIDTH = 400;
 	
-	private IAction fFindAction = null;
-	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties, IAction findAction)
+	public FindReplaceDialog(Shell parent, IMemoryBlockExtension memoryBlock, IMemoryRenderingSite memoryView, Properties properties, IAction findAction) throws DebugException
 	{
 		super(parent);
 		super.setTitle(Messages.getString("FindReplaceDialog.Title"));  //$NON-NLS-1$
@@ -127,6 +123,26 @@ public class FindReplaceDialog extends SelectionDialog
 		fProperties = properties;
 		this.setBlockOnOpen(false);
 		fFindAction = findAction;
+		fSearchQuery = new MemorySearch(fMemoryBlock, fMemoryView, fProperties, fFindAction);
+		fWordSize = fMemoryBlock.getAddressableSize();
+		validateSystem(memoryBlock);
+	}
+	
+	protected void validateSystem(IMemoryBlockExtension memoryBlock) throws DebugException {
+		int addressableSize = memoryBlock.getAddressableSize();
+		
+		// validate memory block
+		MemoryByte[] bytes = memoryBlock.getBytesFromAddress(memoryBlock.getBigBaseAddress(), 1L);
+		if (bytes == null || bytes.length < 1) {
+			MemorySearchPlugin.getDefault();
+			throw new DebugException(new Status(IStatus.ERROR, MemorySearchPlugin.getUniqueIdentifier(), "Unable to perform \"Find\" on an empty memory block"));
+		}
+
+		// At the time of writing there is no known interest to support Little Endian systems 
+		// with an addressable size larger than one octet. So we spare this effort for later if needed.
+		if (addressableSize > 1 && !bytes[0].isBigEndian()) {
+			throw new DebugException(new Status(IStatus.WARNING, MemorySearchPlugin.getUniqueIdentifier(), "Memory find not yet supportted for little endian systems with addressable size > 1"));
+		}
 	}
 	
 	private BigInteger getUserStart()
@@ -156,7 +172,7 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		if(fFormatAsciiButton.getSelection())
 		{
-			phrase = new AsciiSearchPhrase(fFindText.getText(), fCaseInSensitiveCheckbox.getSelection());
+			phrase = new AsciiSearchPhrase(fFindText.getText(), fCaseInSensitiveCheckbox.getSelection(), fWordSize);
 		}
 		else if(fFormatHexButton.getSelection())
 		{
@@ -185,7 +201,7 @@ public class FindReplaceDialog extends SelectionDialog
 		return phrase;
 	}
 	
-	protected byte[] parseByteSequence(String s)
+	protected static byte[] parseByteSequence(String s)
 	{
 		Vector<Byte> sequence = new Vector<Byte>();
 		StringTokenizer st = new StringTokenizer(s, " "); //$NON-NLS-1$
@@ -813,215 +829,6 @@ public class FindReplaceDialog extends SelectionDialog
 		MemoryByte memoryCacheData[] = new MemoryByte[0];
 	}
 	
-	/**
-	 * Function : getSearchableBytes
-	 * 
-	 * This function returns to the user an array of memory 
-	 * @param start Address ( inclusive ) of the beginning byte of the memory region to be searched
-	 * @param end Address ( inclusive ) of the ending 
-	 * @param forwardSearch direction of the search ( true == searching forward , false = searching backwards
-	 * @param address Address ( inclusive ) of the byte set being requested/returned
-	 * @param length Number of bytes of data to be returned
-	 * @param cache Cached memory byte data ( this routine fetches additional bytes of memory to try and reduce interaction with the debug engine )
-	 * @return MemoryByte[] array which contains the requested bytes
-	 * @throws DebugException
-	 */
-	private MemoryByte[] getSearchableBytes(BigInteger start, BigInteger end, boolean forwardSearch, BigInteger address, int length, FindReplaceMemoryCache cache) throws DebugException
-	{
-		BigInteger endCacheAddress = cache.memoryCacheStartAddress.add(BigInteger.valueOf(cache.memoryCacheData.length));
-
-		/*
-		 * Determine if the requested data is already within the cache.
-		 */
-
-		if( ! ( ( address.compareTo(cache.memoryCacheStartAddress) >= 0                  ) &&
-				( address.add(BigInteger.valueOf(length)).compareTo(endCacheAddress) < 0 )    ) )
-		{
-			BigInteger prefetchSize = BigInteger.valueOf(preFetchSize);
-			BigInteger len          = BigInteger.valueOf(length);
-			BigInteger fetchAddress = address;
-			BigInteger fetchSize;
-
-			/*
-			 *  Determine which way we are searching. Whichever way we are searching we need to make sure
-			 *  we capture the minimum requested amount of data in the forward direction.
-			 */
-
-			if ( forwardSearch ) {
-				/*
-				 *  Legend : "#" == minimum requested data , "*" == additional data we want to prefetch/cache
-				 *
-				 *  This is the best case where everything cleanly fits within the starting/ending ranges
-				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user 
-				 *  has specified them, if they are in error that is OK, but we must respect the boundaries 
-				 *  they specified.
-				 *
-				 *  +-- address
-				 *  |
-				 *  +--length--+--prefetch--+------------------------------------+
-				 *  |##########|************|                                    |
-				 *  |##########|************|                                    |
-				 *  |##########|************|                                    |
-				 *  +----------+------------+------------------------------------+
-				 *  |                                                            |
-				 *  +-- start                                              end --+
-				 *
-				 *  This is the worst case scenario. We cannot even get the requested minimum ( no matter
-				 *  the desired prefetch ) before we run out of the specified range.
-				 *
-				 *                                                       +-- address
-				 *                                                       |
-				 *  +----------------------------------------------------+--length--+--prefetch--+
-				 *  |                                                    |##########|************|
-				 *  |                                                    |##########|************|
-				 *  |                                                    |##########|************|
-				 *  +----------------------------------------------------+-------+--+------------+
-				 *  |                                                            |
-				 *  +-- start                                              end --+
-				 *
-				 *  See if the desired size ( minimum length + desired prefetch ) fits in to the current range.
-				 *  If so there is nothing to adjust.
-				 */
-
-				if ( prefetchSize.compareTo(len) >= 0 ) {
-					fetchSize = prefetchSize;
-				}
-				else {
-					fetchSize = len;
-				}
-				
-				if ( address.add( fetchSize ).compareTo(end) > 0 ) {
-					/*
-					 *  It does not all fit. Get as much as we can ( end - current ) + 1.
-					 */
-					fetchSize = end.subtract(address).add(BigInteger.ONE);
-
-					/*
-					 *  If the amount of data we can get does not even meet the minimum request. In this case
-					 *  we have to readjust how much we copy to match what we can actually read. If we do not
-					 *  do this then we will run past the actual data fetched and generate an exception.
-					 */
-					if ( fetchSize.compareTo(len) < 0 ) {
-						length = fetchSize.intValue();
-					}
-				}
-
-				/*
-				 *  The fetch address just starts at the current requested location since we are searching in
-				 *  the forward direction and thus prefetching in the forward direction.
-				 */
-				fetchAddress = address;
-			}
-			else {
-
-				/*
-				 *  Legend : "#" == minimum requested data , "*" == additional data we want to prefetch/cache
-				 *
-				 *  This is the best case where everything cleanly fits within the starting/ending ranges
-				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user 
-				 *  has specified them, if they are in error that is OK, but we must respect the boundaries 
-				 *  they specified.
-				 *
-				 *               +-- address
-				 *               |
-				 *  +--prefetch--+--length--+------------------------------------+
-				 *  |************|##########|                                    |
-				 *  |************|##########|                                    |
-				 *  |************|##########|                                    |
-				 *  +------------+----------+------------------------------------+
-				 *  |                                                            |
-				 *  +-- start                                              end --+
-				 *
-				 *  This is the second worst case scenario. We cannot even get the requested minimum ( no matter
-				 *  the desired prefetch ) before we run out of the specified range.
-				 *
-				 *                                                            +-- address
-				 *                                                            |
-				 *  +--------------------------------------------+--prefetch--+--length--+
-				 *  |                                            |************|##########|
-				 *  |                                            |************|##########|
-				 *  |                                            |************|##########|
-				 *  +--------------------------------------------+------------+--+-------+
-				 *  |                                                            |
-				 *  +-- start                                              end --+
-				 *
-				 *  This is the worst case scenario. The minimum length moves us off the end of the high range
-				 *  end and the prefetch before this minimum data request ( remember we are fetching backwards
-				 *  since we are searching backwards ) runs us off the start of the data.
-				 *
-				 *                                                                +-- address
-				 *                                                                |
-				 *  +---+-----------------------------------------------prefetch--+--length--+
-				 *  |*************************************************************|##########|
-				 *  |*************************************************************|##########|
-				 *  |*************************************************************|##########|
-				 *  +---+---------------------------------------------------------+--+-------+
-				 *      |                                                            |
-				 *      +-- start                                              end --+
-				 *
-				 *  See if the desired size ( minimum length + desired prefetch ) fits in to the current range.
-				 *  Without running off the end. 
-				 */
-				if ( address.add(len).compareTo(end) > 0 ) {
-					/*
-					 *  We need to reduce the amount we can ask for to whats left. Also make sure to reduce the
-					 *  amount to copy, otherwise we will overrun the buffer and generate an exception.
-					 */
-					len    = end.subtract(address).add(BigInteger.ONE);
-					length = len.intValue();
-				}
-
-				/*
-				 *  Now determine  if the prefetch is going to run backwards past the "start" of where we are allowed
-				 *  to access the memory. We will normalize the prefetch size so it takes in to account the amount of
-				 *  data being gathered as part of the length requested portion.  This should insure that  in the end
-				 *  we will request the prefetch amount of data unless there is not enough to service this request.
-				 */
-				if ( len.compareTo(prefetchSize) > 0 ) {
-					prefetchSize = BigInteger.ZERO;
-				}
-				else {
-					prefetchSize = prefetchSize.subtract(len);
-				}
-				
-				if ( address.subtract(prefetchSize).compareTo(start) < 0) {
-					/*
-					 *  Just get what we can from the beginning up to the current required address.
-					 */
-					prefetchSize = address.subtract(start);
-					fetchAddress = start;
-				}
-				else {
-					/*
-					 *  It fits so just start reading from the calculated position prior to the requested point.
-					 */
-					fetchAddress = address.subtract(prefetchSize);
-				}
-
-				fetchSize = len.add(prefetchSize);
-			}
-
-			/*
-			 *  OK, we have determined where to start reading the data and how much. Just get the data
-			 *  and store it in the cache.
-			 */
-			MemoryByte bytes[] = fMemoryBlock.getBytesFromAddress(fetchAddress, fetchSize.longValue());
-
-			cache.memoryCacheStartAddress = fetchAddress;
-			cache.memoryCacheData = bytes;
-		}
-
-		/*
-		 * Either it was already cached or just has been, either way we have the data so copy what we can
-		 * back to the user buffer.
-		 */
-
-		MemoryByte bytes[] = new MemoryByte[length];
-		System.arraycopy(cache.memoryCacheData, address.subtract(cache.memoryCacheStartAddress).intValue(), bytes, 0, length);
-
-		return bytes;
-	}
-	
 	private BigInteger parseHexBigInteger(String s)
 	{
 		if(s.toUpperCase().startsWith("0X")) //$NON-NLS-1$
@@ -1042,7 +849,7 @@ public class FindReplaceDialog extends SelectionDialog
 			String findText = fProperties.getProperty(SEARCH_FIND);
 			
 			if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_ASCII))
-				phrase = new AsciiSearchPhrase(findText, caseInSensitive);
+				phrase = new AsciiSearchPhrase(findText, caseInSensitive, fWordSize);
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_HEX))
 				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0X") ? findText.substring(2) : findText, 16), 16); //$NON-NLS-1$
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_OCTAL))
@@ -1064,187 +871,11 @@ public class FindReplaceDialog extends SelectionDialog
 	}
 	
 	private void performFind(final BigInteger start, final BigInteger end, final SearchPhrase searchPhrase, 
-		final boolean searchForward, final byte[] replaceData, final boolean all, final boolean replaceThenFind)
-	{		
-		final ISearchQuery query = new IMemorySearchQuery() 
+			final boolean searchForward, final byte[] replaceData, final boolean all, final boolean replaceThenFind)
 		{
-			private ISearchResult fSearchResult = null;
-			
-			public boolean canRerun() {
-				return false;
-			}
-
-			public boolean canRunInBackground() {
-				return true;
-			}
-
-			public String getLabel() {
-				return Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase; //$NON-NLS-1$
-			}
-
-			public ISearchResult getSearchResult() {
-				if(fSearchResult == null)
-					fSearchResult = new MemorySearchResult(this, Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase);	 //$NON-NLS-1$
-				return fSearchResult;
-			}
-
-			public IStatus run(IProgressMonitor monitor)
-					throws OperationCanceledException {
-
-				final BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
-				BigInteger range = end.subtract(start).add(BigInteger.ONE);
-				BigInteger currentPosition = searchForward ? start : end.subtract(searchPhraseLength);
-
-				if ( searchPhraseLength.compareTo(range) >= 0 ) {
-					return Status.OK_STATUS;
-				}
-				
-				boolean isReplace = replaceData != null;
-				
-				BigInteger jobs = range;
-				BigInteger factor = BigInteger.ONE;
-				if(jobs.compareTo(BigInteger.valueOf(0x07FFFFFF)) > 0)
-				{
-					factor = jobs.divide(BigInteger.valueOf(0x07FFFFFF));
-					jobs = jobs.divide(factor);
-				}
-				
-				BigInteger jobCount = BigInteger.ZERO;
-				
-				BigInteger replaceCount = BigInteger.ZERO;
-				
-				FindReplaceMemoryCache cache = new FindReplaceMemoryCache();
-				
-				monitor.beginTask(Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase, jobs.intValue()); //$NON-NLS-1$
 		
-				boolean matched = false;
-				while(((searchForward && currentPosition.compareTo(end.subtract(searchPhraseLength)) < 0) 
-					|| (!searchForward && currentPosition.compareTo(start) > 0)) && !monitor.isCanceled()) 
-				{
-					try
-					{
-						MemoryByte bytes[] = getSearchableBytes(start, end, searchForward, currentPosition, searchPhraseLength.intValue(), cache);
-						matched = searchPhrase.isMatch(bytes);
-						if(matched)
-						{
-							if(all && !isReplace)
-								((MemorySearchResult) getSearchResult()).addMatch(new MemoryMatch(currentPosition, searchPhraseLength));
-						
-							if(isReplace)
-							{
-								try
-								{
-									if ((searchPhrase instanceof BigIntegerSearchPhrase) && (bytes.length > 0) && bytes[0].isEndianessKnown() && !bytes[0].isBigEndian())
-									{
-										// swap the bytes when replacing an integer on little-endian targets
-										fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), swapBytes(replaceData));
-									}
-									else
-									{
-										fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), replaceData);
-									}
-								}
-								catch(DebugException de)
-								{
-									MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemoryReadFailed"), de); //$NON-NLS-1$
-								}
-
-								replaceCount = replaceCount.add(BigInteger.ONE);
-							}
-							
-							if(isReplace && replaceThenFind && replaceCount.compareTo(BigInteger.ONE) == 0)
-							{
-								isReplace = false;
-								matched = false;
-							}
-							
-							if(matched && !all)
-							{
-								final BigInteger finalCurrentPosition = currentPosition;
-								final BigInteger finalStart = start ;
-								final BigInteger finalEnd = end;
-								Display.getDefault().asyncExec(new Runnable(){
-
-									public void run() {
-										IMemoryRenderingContainer containers[] = getMemoryView().getMemoryRenderingContainers();
-										for(int i = 0; i < containers.length; i++)
-										{
-											IMemoryRendering rendering = containers[i].getActiveRendering();
-											if(rendering instanceof IRepositionableMemoryRendering)
-											{
-												try {
-													((IRepositionableMemoryRendering) rendering).goToAddress(finalCurrentPosition);
-												} catch (DebugException e) {
-													MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
-												}
-											}
-											if(rendering != null)
-											{
-												// Temporary, until platform accepts/adds new interface for setting the selection
-												try {
-													Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } ); //$NON-NLS-1$
-													if(m != null)
-														m.invoke(rendering, finalCurrentPosition, finalCurrentPosition.add(searchPhraseLength));
-												} catch (Exception e) {
-													// do nothing
-												}
-											}
-										}
-									}
-									
-								});
-								
-								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, Boolean.TRUE.toString());
-								if ( searchForward ) {
-									BigInteger newFinalStart = finalCurrentPosition.add(BigInteger.ONE);
-									fProperties.setProperty(SEARCH_LAST_START, "0x" + newFinalStart.toString(16)); //$NON-NLS-1$
-									fProperties.setProperty(SEARCH_LAST_END, "0x" + finalEnd.toString(16)); //$NON-NLS-1$
-								}
-								else {
-									BigInteger newFinalEnd = finalCurrentPosition.subtract(BigInteger.ONE);
-									fProperties.setProperty(SEARCH_LAST_START, "0x" + finalStart.toString(16)); //$NON-NLS-1$
-									fProperties.setProperty(SEARCH_LAST_END, "0x" + newFinalEnd.toString(16)); //$NON-NLS-1$
-								}
-								if ( fFindAction != null ) {
-									fFindAction.setEnabled(true);
-								}
-								return Status.OK_STATUS;
-							}
-						}
-						
-						matched = false;
-						
-						if(searchForward)
-							currentPosition = currentPosition.add(BigInteger.ONE);
-						else
-							currentPosition = currentPosition.subtract(BigInteger.ONE);
-						
-					}
-					catch(DebugException e)
-					{
-						MemorySearchPlugin.logError(Messages.getString("FindReplaceDialog.MemorySearchFailure"), e); //$NON-NLS-1$
-						return Status.CANCEL_STATUS;
-					}
-					
-					jobCount = jobCount.add(BigInteger.ONE);
-					if(jobCount.compareTo(factor) == 0)
-					{
-						jobCount = BigInteger.ZERO;
-						monitor.worked(1);
-					}	
-				}
-				
-				if(monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				
-				return Status.OK_STATUS;
-			}
-
-			public IMemoryRenderingSite getMemoryView() {
-				return fMemoryView;
-			}
-		};
-		
+		final IMemorySearchQuery query = fSearchQuery.createSearchQuery(start,   end,   searchPhrase, 
+				  searchForward,  replaceData,   all,  replaceThenFind);
 		if(all && replaceData == null)
 		{
 			Display.getDefault().asyncExec(new Runnable() {
@@ -1265,30 +896,34 @@ public class FindReplaceDialog extends SelectionDialog
 			};
 			job.schedule();
 		}
-			
 	}
 
-	interface SearchPhrase
+	public interface SearchPhrase
 	{
 		boolean isMatch(MemoryByte[] bytes);
 		int getByteLength();
 		String toString();
 	}
 	
-	class AsciiSearchPhrase implements SearchPhrase
+	public static class AsciiSearchPhrase implements SearchPhrase
 	{
 		private String fPhrase;
 		private boolean fIsCaseInsensitive;
+		private int fWord_Size;
 		
-		public AsciiSearchPhrase(String phrase, boolean isCaseInsensitive)
+		public AsciiSearchPhrase(String phrase, boolean isCaseInsensitive, int wordSize)
 		{
-			fPhrase = phrase;
+			fPhrase = phrase == null ? "" : phrase;
 			fIsCaseInsensitive = isCaseInsensitive;
+			fWord_Size = wordSize;
 		}
 		
 		public int getByteLength()
 		{
-			return fPhrase.length();
+			// This represents the size of the memory chunks being retrieve from memory to compare against
+			// this phrase.
+			// One character uses one word
+			return fPhrase.length() * fWord_Size;
 		}
 		
 		@Override
@@ -1297,14 +932,18 @@ public class FindReplaceDialog extends SelectionDialog
 			return fPhrase;
 		}
 		
-		public boolean isMatch(MemoryByte[] bytes)
+		public boolean isMatch(MemoryByte[] octets)
 		{
-			byte[] targetBytes = new byte[bytes.length];
-			for(int i = 0; i < bytes.length; i++)
-				targetBytes[i] = bytes[i].getValue();
+			// validate
+			if (octets == null || octets.length < 1) {
+				return false;
+			}
+
+			// We expect to match chunks of the same size as this phrase
+			assert octets.length == getByteLength();
 			
+			String targetString = getTargetString(octets);
 			String searchString = fPhrase;
-			String targetString = new String(targetBytes);
 			
 			if(fIsCaseInsensitive)
 			{
@@ -1314,9 +953,21 @@ public class FindReplaceDialog extends SelectionDialog
 	
 			return searchString.equals(targetString);
 		}
+		
+		private String getTargetString(MemoryByte[] octets) {
+			ByteOrder bo = octets[0].isBigEndian() ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
+			MemoryByteBuffer memByteBuff = new MemoryByteBuffer(octets, bo, fWord_Size);
+			byte[] targetAsciiVals = new byte[memByteBuff.length()];
+			// Each word shall contain an ASCII character value which fits in a byte
+			for (int i=0; i < memByteBuff.length(); i++) {
+				targetAsciiVals[i] = (byte) memByteBuff.getNextWord();
+			}
+			
+			return new String(targetAsciiVals);
+		}
 	}
 	
-	class ByteSequenceSearchPhrase implements SearchPhrase
+	public static class ByteSequenceSearchPhrase implements SearchPhrase
 	{
 		private byte[] fBytes = null;
 		
@@ -1357,7 +1008,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 	}
 	
-	class BigIntegerSearchPhrase implements SearchPhrase
+	public static class BigIntegerSearchPhrase implements SearchPhrase
 	{
 		private BigInteger fPhrase;
 		private int fRadix;
@@ -1402,7 +1053,7 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 	}
 	
-	private byte[] removeZeroPrefixByte(byte[] bytes)
+	private static byte[] removeZeroPrefixByte(byte[] bytes)
 	{
 		if(bytes[0] != 0 || bytes.length == 1)
 			return bytes;
@@ -1412,15 +1063,7 @@ public class FindReplaceDialog extends SelectionDialog
 		return processedBytes;
 	}
 	
-	private byte[] swapBytes(byte[] bytes)
-	{
-		byte[] processedBytes = new byte[bytes.length];
-		for (int i = 0; i < bytes.length; i++)
-			processedBytes[i] = bytes[bytes.length - i - 1];
-		return processedBytes;
-	}	
-	
-	interface IMemorySearchQuery extends ISearchQuery
+	public interface IMemorySearchQuery extends ISearchQuery
 	{
 		public IMemoryRenderingSite getMemoryView();
 	};

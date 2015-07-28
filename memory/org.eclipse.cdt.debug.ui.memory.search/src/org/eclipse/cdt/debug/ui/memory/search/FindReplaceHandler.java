@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems and others.
+ * Copyright (c) 2010-2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Make find / replace work for systems using 16 bits addressable sizes (Bug 462073)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.search;
@@ -15,6 +16,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -47,9 +49,14 @@ public class FindReplaceHandler extends AbstractHandler implements IHandler {
                     }
                     
                     if (memBlock instanceof IMemoryBlockExtension) {
-                    	FindReplaceDialog dialog = new FindReplaceDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                				(IMemoryBlockExtension) memBlock, fView, FindAction.getProperties(), null);
-                    	dialog.open();
+                    	FindReplaceDialog dialog;
+						try {
+							dialog = new FindReplaceDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+									(IMemoryBlockExtension) memBlock, fView, FindAction.getProperties(), null);
+							dialog.open();
+						} catch (DebugException e) {
+							MemorySearchPlugin.logError("Unable to create FindReplaceDialog", e);
+						}
                     }
                 }
             }

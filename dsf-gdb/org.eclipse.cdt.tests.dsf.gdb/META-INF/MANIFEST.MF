@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.launch,
  org.eclipse.cdt.gdb,
  org.eclipse.cdt.dsf.gdb,
- org.eclipse.core.variables
+ org.eclipse.core.variables,
+ org.eclipse.cdt.debug.ui.memory.search
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .

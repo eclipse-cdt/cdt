@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
+ *     Alvaro Sanchez-Leon (Ericsson) - Find / Replace for 16 bits addressable size systems (Bug 462073)
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.framework;
+package org.eclipse.cdt.debug.ui.memory.search;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -21,11 +22,16 @@ public class MemoryByteBuffer {
 
 	public MemoryByteBuffer(MemoryByte[] memoryByteArr, ByteOrder bo,
 			int wordSize) {
-		assert (memoryByteArr != null);
 
-		fWordSize = wordSize;
+		// The number of bytes shall be divisible by the word size
+		assert (memoryByteArr != null);
+		assert (memoryByteArr.length % wordSize) == 0;
+
+		// Wordsize can not be 0
+		fWordSize = wordSize > 0 ? wordSize : 1;
 		fBuffer = ByteBuffer.allocate(memoryByteArr.length);
 		fBuffer.order(bo);
+		
 		// Fill with given octet values
 		for (MemoryByte aByte : memoryByteArr) {
 			fBuffer.put(aByte.getValue());
@@ -35,6 +41,18 @@ public class MemoryByteBuffer {
 		fBuffer.flip();
 	}
 
+	public MemoryByteBuffer(ByteBuffer byteBuff, ByteOrder bo,
+			int wordSize) {
+		assert (byteBuff != null);
+
+		fWordSize = wordSize;
+		fBuffer = byteBuff;
+		fBuffer.order(bo);
+		// Content is ready to be read from beginning
+		fBuffer.flip();
+		
+	}
+	
 	public long getNextWord() {
 		// case x number of octets
 		switch (fWordSize) {
@@ -54,5 +72,9 @@ public class MemoryByteBuffer {
 			assert (false);
 			return 0;
 		}
+	}
+	
+	public int length() {
+		return fBuffer.array().length / fWordSize;
 	}
 }

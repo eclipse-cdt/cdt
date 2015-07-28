@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007-2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     Alvaro Sanchez-Leon (Ericsson) - Find / Replace for 16 bits addressable sizes (Bug 462073)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.search;
@@ -14,6 +15,7 @@ package org.eclipse.cdt.debug.ui.memory.search;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -65,22 +67,27 @@ public class FindAction implements IViewActionDelegate {
 			}
 			
 			Shell shell = CDebugUIPlugin.getActiveWorkbenchShell();
-			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
-				fView, fSearchDialogProperties, fAction);
-			if(action.getId().equals(FIND_NEXT_ID))
-			{
-				if(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())))
+			FindReplaceDialog dialog;
+			try {
+				dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
+					fView, fSearchDialogProperties, fAction);
+				if(action.getId().equals(FIND_NEXT_ID))
 				{
-					dialog.performFindNext();
+					if(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())))
+					{
+						dialog.performFindNext();
+					}
+					return;
 				}
-				return;
-			}
-			else
-			{
-				dialog.open();
+				else
+				{
+					dialog.open();
 
-				// TODO: finish feature?
-				//Object results[] = dialog.getResult();
+					// TODO: finish feature?
+					//Object results[] = dialog.getResult();
+				}
+			} catch (DebugException e) {
+				MemorySearchPlugin.logError("Unable to create FindReplaceDialog", e);
 			}
 		}
 

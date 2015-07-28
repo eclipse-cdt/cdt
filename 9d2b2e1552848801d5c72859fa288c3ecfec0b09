@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_241e3d98",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-28T17:29:54Z",
+      "side": 1,
+      "message": "Why not use the same text as for the view menu (above)?  For instance, using ... implies a dialogue will open, which is the case here.",
+      "revId": "9d2b2e1552848801d5c72859fa288c3ecfec0b09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_c4b641f3",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-28T17:29:54Z",
+      "side": 1,
+      "message": "This extension point is deprecated.  Should we instead use org.eclipse.ui.menus, which would hook to the command org.eclipse.ui.edit.findReplace of the platform, which in turn would use our existing handler?",
+      "revId": "9d2b2e1552848801d5c72859fa288c3ecfec0b09",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -2,11 +2,12 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.board.Board;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.Board;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -88,11 +89,15 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 
 		boardCombo = new Combo(comp, SWT.READ_ONLY);
 		boardCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		boards = ArduinoBoardManager.instance.getBoards().toArray(new Board[0]);
-		for (Board board : boards) {
-			boardCombo.add(board.getName());
+		try {
+			boards = ArduinoBoardManager.instance.getBoards().toArray(new Board[0]);
+			for (Board board : boards) {
+				boardCombo.add(board.getName());
+			}
+			boardCombo.select(0);
+		} catch (CoreException e) {
+			Activator.log(e);
 		}
-		boardCombo.select(0);
 		boardCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

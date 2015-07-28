@@ -1,6 +1,6 @@
 package org.eclipse.cdt.arduino.ui.internal.project;
 
-import org.eclipse.cdt.arduino.core.ArduinoProjectGenerator;
+import org.eclipse.cdt.arduino.core.internal.ArduinoProjectGenerator;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.runtime.CoreException;

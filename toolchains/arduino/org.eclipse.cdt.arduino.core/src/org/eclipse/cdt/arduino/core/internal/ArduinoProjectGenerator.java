@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core;
+package org.eclipse.cdt.arduino.core.internal;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,16 +22,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature;
-import org.eclipse.cdt.arduino.core.internal.Messages;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -69,6 +68,12 @@ public class ArduinoProjectGenerator {
 		System.arraycopy(oldIds, 0, newIds, 0, oldIds.length);
 		newIds[newIds.length - 1] = ArduinoProjectNature.ID;
 		projDesc.setNatureIds(newIds);
+
+		// Add Arduino Builder
+		ICommand command = projDesc.newCommand();
+		command.setBuilderName(ArduinoBuilder.ID);
+		projDesc.setBuildSpec(new ICommand[] { command });
+
 		project.setDescription(projDesc, monitor);
 
 		// create the CDT natures and build setup

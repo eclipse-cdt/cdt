@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.arduino.core.ArduinoHome;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
@@ -63,13 +62,13 @@ public class EnvVarSupplier implements IConfigurationEnvironmentVariableSupplier
 	public EnvVarSupplier() {
 		arduinoHome = new EnvVar();
 		arduinoHome.name = "ARDUINO_HOME"; //$NON-NLS-1$
-		arduinoHome.value = clean(ArduinoHome.getArduinoHome().getAbsolutePath());
+		arduinoHome.value = clean(ArduinoPreferences.getArduinoHome().toString());
 
 		arduinoLibs = new EnvVar();
 		arduinoLibs.name = "ARDUINO_USER_LIBS"; //$NON-NLS-1$
 		arduinoLibs.value = clean(System.getProperty("user.home") + "/Documents/Arduino/libraries"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		String avrDir = ArduinoHome.getArduinoHome().toString() + "/hardware/tools/avr/bin"; //$NON-NLS-1$
+		String avrDir = ArduinoPreferences.getArduinoHome().toString() + "/hardware/tools/avr/bin"; //$NON-NLS-1$
 		String installDir = Platform.getInstallLocation().getURL().getPath();
 		path = new EnvVar();
 		path.name = "PATH"; //$NON-NLS-1$

@@ -5,25 +5,31 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core.board;
+package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.util.List;
 
 public class PackageIndex {
 
-	private List<Package> packages;
+	private List<BoardPackage> packages;
 
-	public List<Package> getPackages() {
+	public List<BoardPackage> getPackages() {
 		return packages;
 	}
 
-	public Package getPackage(String packageName) {
-		for (Package pkg : packages) {
+	public BoardPackage getPackage(String packageName) {
+		for (BoardPackage pkg : packages) {
 			if (pkg.getName().equals(packageName)) {
 				return pkg;
 			}
 		}
 		return null;
+	}
+
+	void setOwners(ArduinoBoardManager manager) {
+		for (BoardPackage pkg : packages) {
+			pkg.setOwners(manager);
+		}
 	}
 
 }

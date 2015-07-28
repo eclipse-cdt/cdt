@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -43,6 +47,14 @@ public class Activator extends Plugin {
 
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
+
+		// register listener for build config changes
+		CoreModel.getDefault().addCProjectDescriptionListener(new ICProjectDescriptionListener() {
+			@Override
+			public void handleEvent(CProjectDescriptionEvent event) {
+				ArduinoBuilder.handleProjectDescEvent(event);
+			}
+		}, CProjectDescriptionEvent.APPLIED);
 	}
 
 	public void stop(BundleContext bundleContext) throws Exception {

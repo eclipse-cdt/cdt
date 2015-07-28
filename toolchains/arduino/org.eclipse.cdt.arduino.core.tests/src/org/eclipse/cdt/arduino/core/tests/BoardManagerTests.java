@@ -2,7 +2,7 @@ package org.eclipse.cdt.arduino.core.tests;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
 import org.junit.Test;
 
 public class BoardManagerTests {

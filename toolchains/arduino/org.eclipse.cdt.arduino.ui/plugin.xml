@@ -69,15 +69,21 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.arduino.ui.internal.ArduinoPreferencePage"
+            class="org.eclipse.cdt.arduino.ui.internal.preferences.ArduinoPreferencePage"
             id="org.eclipse.cdt.arduino.preference.page"
             name="%preferencePage.name">
+      </page>
+      <page
+            category="org.eclipse.cdt.arduino.preference.page"
+            class="org.eclipse.cdt.arduino.ui.internal.preferences.ArduinoBoardsPreferencePage"
+            id="org.eclipse.cdt.arduino.preference.page.boards"
+            name="Boards">
       </page>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.eclipse.cdt.arduino.ui.internal.ArduinoPreferenceInitializer">
+            class="org.eclipse.cdt.arduino.ui.internal.preferences.ArduinoPreferenceInitializer">
       </initializer>
    </extension>
 </plugin>

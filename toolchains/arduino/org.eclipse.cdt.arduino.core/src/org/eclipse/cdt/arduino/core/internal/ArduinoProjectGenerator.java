@@ -84,9 +84,9 @@ public class ArduinoProjectGenerator {
 		info.setManagedProject(mProj);
 
 		// TODO make this a preference, the default board
-		String boardId = "uno"; //$NON-NLS-1$
-		String platformId = "avr"; //$NON-NLS-1$
-		String packageId = "arduino"; //$NON-NLS-1$
+		String boardName = "Arduino Uno"; //$NON-NLS-1$
+		String platformName = "Arduino AVR Boards"; //$NON-NLS-1$
+		String packageName = "arduino"; //$NON-NLS-1$
 
 		IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
 		IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
@@ -94,12 +94,12 @@ public class ArduinoProjectGenerator {
 		if (!connections.isEmpty()) {
 			IRemoteConnection firstConnection = connections.iterator().next();
 			IArduinoRemoteConnection firstArduino = firstConnection.getService(IArduinoRemoteConnection.class);
-			boardId = firstArduino.getBoardId();
-			platformId = firstArduino.getPlatformId();
-			packageId = firstArduino.getPackageId();
+			boardName = firstArduino.getBoardName();
+			platformName = firstArduino.getPlatformName();
+			packageName = firstArduino.getPackageName();
 		}
 
-		ArduinoBoardManager.instance.createBuildConfiguration(cprojDesc, boardId, platformId, packageId);
+		ArduinoBoardManager.instance.createBuildConfiguration(cprojDesc, boardName, platformName, packageName);
 		CCorePlugin.getDefault().setProjectDescription(project, cprojDesc, true, monitor);
 
 		// Generate files

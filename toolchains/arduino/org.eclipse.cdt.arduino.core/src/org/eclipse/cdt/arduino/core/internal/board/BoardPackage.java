@@ -137,6 +137,15 @@ public class BoardPackage {
 		return tools;
 	}
 
+	public Tool getTool(String toolName, String version) {
+		for (Tool tool : tools) {
+			if (tool.getName().equals(toolName) && tool.getName().equals(version)) {
+				return tool;
+			}
+		}
+		return null;
+	}
+
 	public void install(IProgressMonitor monitor) {
 
 	}

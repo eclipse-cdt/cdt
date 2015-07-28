@@ -118,25 +118,24 @@ public class ArduinoBoardManager {
 		return projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 	}
 
-	public Board getBoard(String boardId, String platformId, String packageId) throws CoreException {
-		return packageIndex.getPackage(packageId).getPlatform(platformId).getBoard(boardId);
+	public Board getBoard(String boardName, String platformName, String packageName) throws CoreException {
+		return packageIndex.getPackage(packageName).getPlatform(platformName).getBoard(boardName);
 	}
 
 	public Board getBoard(IConfiguration configuration) throws CoreException {
 		try {
 			IToolChain toolChain = configuration.getToolChain();
 			IOption boardOption = toolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
-			String boardId = boardOption.getStringValue();
+			String boardName = boardOption.getStringValue();
 			IOption platformOption = toolChain.getOptionBySuperClassId(PLATFORM_OPTION_ID);
-			String platformId = platformOption.getStringValue();
+			String platformName = platformOption.getStringValue();
 			IOption packageOption = toolChain.getOptionBySuperClassId(PACKAGE_OPTION_ID);
-			String packageId = packageOption.getStringValue();
+			String packageName = packageOption.getStringValue();
 
-			return getBoard(boardId, platformId, packageId);
+			return getBoard(boardName, platformName, packageName);
 		} catch (BuildException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e));
 		}
-
 	}
 
 	public List<Board> getBoards() throws CoreException {
@@ -147,6 +146,11 @@ public class ArduinoBoardManager {
 			}
 		}
 		return boards;
+	}
+
+	public Tool getTool(String packageName, String toolName, String version) {
+		BoardPackage pkg = packageIndex.getPackage(packageName);
+		return pkg != null ? pkg.getTool(toolName, version) : null;
 	}
 
 }

@@ -73,8 +73,8 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		boardSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		try {
-			Board currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardId(),
-					arduinoRemote.getPlatformId(), arduinoRemote.getPackageId());
+			Board currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardName(),
+					arduinoRemote.getPlatformName(), arduinoRemote.getPackageName());
 			Collection<Board> boardList = ArduinoBoardManager.instance.getBoards();
 			boards = new Board[boardList.size()];
 			i = 0;

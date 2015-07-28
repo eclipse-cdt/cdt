@@ -33,11 +33,11 @@ public interface IArduinoRemoteConnection extends IRemoteConnection.Service {
 	 */
 	String getPortName();
 
-	String getBoardId();
+	String getBoardName();
 
-	String getPlatformId();
+	String getPlatformName();
 
-	String getPackageId();
+	String getPackageName();
 
 	void pause();
 

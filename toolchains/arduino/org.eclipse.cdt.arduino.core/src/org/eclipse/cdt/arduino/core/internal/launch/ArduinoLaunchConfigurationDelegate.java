@@ -69,8 +69,8 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		boolean newConfig = false;
 		if (configDesc == null) {
 			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-			configDesc = ArduinoBoardManager.instance.createBuildConfiguration(projDesc, arduinoRemote.getBoardId(),
-					arduinoRemote.getPlatformId(), arduinoRemote.getPackageId());
+			configDesc = ArduinoBoardManager.instance.createBuildConfiguration(projDesc, arduinoRemote.getBoardName(),
+					arduinoRemote.getPlatformName(), arduinoRemote.getPackageName());
 			newConfig = true;
 		}
 		if (newConfig || !projDesc.getActiveConfiguration().equals(configDesc)) {
@@ -173,26 +173,26 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 	 */
 	private ICConfigurationDescription getBuildConfiguration(ICProjectDescription projDesc, IRemoteConnection target)
 			throws CoreException {
-		String boardId;
-		String platformId;
-		String packageId;
+		String boardName;
+		String platformName;
+		String packageName;
 		if (target != null) {
 			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-			boardId = arduinoRemote.getBoardId();
-			platformId = arduinoRemote.getPlatformId();
-			packageId = arduinoRemote.getPackageId();
+			boardName = arduinoRemote.getBoardName();
+			platformName = arduinoRemote.getPlatformName();
+			packageName = arduinoRemote.getPackageName();
 		} else {
-			// TODO preference for this
-			boardId = "uno"; //$NON-NLS-1$
-			platformId = "avr"; //$NON-NLS-1$
-			packageId = "arduino"; //$NON-NLS-1$
+			// TODO
+			boardName = "Arduino Uno"; //$NON-NLS-1$
+			platformName = "Arduino AVR Boards"; //$NON-NLS-1$
+			packageName = "arduino"; //$NON-NLS-1$
 		}
 
 		for (ICConfigurationDescription configDesc : projDesc.getConfigurations()) {
 			IConfiguration config = ManagedBuildManager.getConfigurationForDescription(configDesc);
 			Board board = ArduinoBoardManager.instance.getBoard(config);
-			if (boardId.equals(board.getId()) && platformId.equals(board.getPlatform().getArchitecture())
-					&& packageId.equals(board.getPlatform().getPackage().getName())) {
+			if (boardName.equals(board.getId()) && platformName.equals(board.getPlatform().getArchitecture())
+					&& packageName.equals(board.getPlatform().getPackage().getName())) {
 				return configDesc;
 			}
 		}

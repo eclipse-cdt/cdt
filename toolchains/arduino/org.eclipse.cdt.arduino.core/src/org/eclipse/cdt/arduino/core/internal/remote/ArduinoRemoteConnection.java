@@ -87,17 +87,17 @@ public class ArduinoRemoteConnection implements IRemoteConnectionPropertyService
 	}
 
 	@Override
-	public String getBoardId() {
+	public String getBoardName() {
 		return remoteConnection.getAttribute(BOARD_ID);
 	}
 
 	@Override
-	public String getPlatformId() {
+	public String getPlatformName() {
 		return remoteConnection.getAttribute(PLATFORM_ID);
 	}
 
 	@Override
-	public String getPackageId() {
+	public String getPackageName() {
 		return remoteConnection.getAttribute(PACKAGE_ID);
 	}
 

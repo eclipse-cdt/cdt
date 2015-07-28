@@ -2,7 +2,7 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.util.Set;
 
-import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
+import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.remote.core.IRemoteConnectionType;

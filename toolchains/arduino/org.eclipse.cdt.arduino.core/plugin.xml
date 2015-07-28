@@ -109,7 +109,7 @@
       <connectionService
             connectionTypeId="org.eclipse.cdt.arduino.core.connectionType"
             factory="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection$Factory"
-            service="org.eclipse.cdt.arduino.core.IArduinoRemoteConnection">
+            service="org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection">
       </connectionService>
       <connectionService
             connectionTypeId="org.eclipse.cdt.arduino.core.connectionType"
@@ -163,5 +163,15 @@
                class="org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature">
          </run>
       </runtime>
+   </extension>
+   <extension
+         id="arduinoBuilder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder">
+         </run>
+      </builder>
    </extension>
 </plugin>

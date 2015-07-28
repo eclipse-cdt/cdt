@@ -17,11 +17,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.remote.serial.core;bundle-version="1.0.0",
  com.google.gson;bundle-version="2.2.4",
  org.apache.httpcomponents.httpclient;bundle-version="4.3.6",
- org.apache.httpcomponents.httpcore;bundle-version="4.3.3"
+ org.apache.httpcomponents.httpcore;bundle-version="4.3.3",
+ org.apache.commons.compress;bundle-version="1.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: libs/freemarker-2.3.22.jar,
  .
-Export-Package: org.eclipse.cdt.arduino.core,
- org.eclipse.cdt.arduino.core.board
+Export-Package: org.eclipse.cdt.arduino.core.internal;x-friends:="org.eclipse.cdt.arduino.ui",
+ org.eclipse.cdt.arduino.core.internal.board;x-friends:="org.eclipse.cdt.arduino.ui",
+ org.eclipse.cdt.arduino.core.internal.build;x-friends:="org.eclipse.cdt.arduino.ui"
 Bundle-Localization: plugin

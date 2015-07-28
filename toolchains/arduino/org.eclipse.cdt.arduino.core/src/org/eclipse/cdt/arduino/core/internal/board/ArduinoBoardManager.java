@@ -8,13 +8,12 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core.board;
+package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -56,9 +56,7 @@ public class ArduinoBoardManager {
 	public static final String PACKAGE_OPTION_ID = "org.eclipse.cdt.arduino.option.package"; //$NON-NLS-1$
 	public static final String AVR_TOOLCHAIN_ID = "org.eclipse.cdt.arduino.toolChain.avr"; //$NON-NLS-1$
 
-	// TODO make this a preference
-	private Path arduinoHome = Paths.get(System.getProperty("user.home"), ".arduinocdt"); //$NON-NLS-1$ //$NON-NLS-2$
-	private Path packageIndexPath;
+	private Path packageIndexPath = ArduinoPreferences.getArduinoHome().resolve("package_index.json"); //$NON-NLS-1$
 	private PackageIndex packageIndex;
 
 	public ArduinoBoardManager() {
@@ -75,8 +73,7 @@ public class ArduinoBoardManager {
 							if (entity == null) {
 								return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoBoardManager_1);
 							}
-							Files.createDirectories(arduinoHome);
-							packageIndexPath = arduinoHome.resolve("package_index.json"); //$NON-NLS-1$
+							Files.createDirectories(packageIndexPath.getParent());
 							Files.copy(entity.getContent(), packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
 						}
 					}
@@ -88,14 +85,11 @@ public class ArduinoBoardManager {
 		}.schedule();
 	}
 
-	Path getArduinoHome() {
-		return arduinoHome;
-	}
-
 	public PackageIndex getPackageIndex() throws IOException {
 		if (packageIndex == null) {
 			try (FileReader reader = new FileReader(packageIndexPath.toFile())) {
 				packageIndex = new Gson().fromJson(reader, PackageIndex.class);
+				packageIndex.setOwners(this);
 			}
 		}
 		return packageIndex;
@@ -124,7 +118,7 @@ public class ArduinoBoardManager {
 		return projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 	}
 
-	public Board getBoard(String boardId, String platformId, String packageId) {
+	public Board getBoard(String boardId, String platformId, String packageId) throws CoreException {
 		return packageIndex.getPackage(packageId).getPlatform(platformId).getBoard(boardId);
 	}
 
@@ -145,9 +139,9 @@ public class ArduinoBoardManager {
 
 	}
 
-	public List<Board> getBoards() {
+	public List<Board> getBoards() throws CoreException {
 		List<Board> boards = new ArrayList<>();
-		for (Package pkg : packageIndex.getPackages()) {
+		for (BoardPackage pkg : packageIndex.getPackages()) {
 			for (Platform platform : pkg.getPlatforms()) {
 				boards.addAll(platform.getBoards());
 			}

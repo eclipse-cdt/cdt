@@ -15,12 +15,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.arduino.core.ArduinoLaunchConsoleService;
-import org.eclipse.cdt.arduino.core.IArduinoRemoteConnection;
-import org.eclipse.cdt.arduino.core.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.board.Board;
 import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.cdt.arduino.core.internal.ArduinoLaunchConsoleService;
+import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.core.internal.Messages;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.Board;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;

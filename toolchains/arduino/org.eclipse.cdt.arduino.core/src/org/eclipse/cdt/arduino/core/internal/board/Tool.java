@@ -1,4 +1,4 @@
-package org.eclipse.cdt.arduino.core.board;
+package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.util.List;
 

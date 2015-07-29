@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_d7c1d1ca",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-29T01:56:52Z",
+      "side": 1,
+      "message": "False is the default, so I suggest we remove it.  I\u0027ve never seen it used before and it just made me scratch my head as to what it was for.",
+      "revId": "92406bf27ec8c62d5407d4e4b4d1081ea42f542b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_b7c6dddf",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-29T01:56:52Z",
+      "side": 1,
+      "message": "Nice.  How did you find the \"RenderingViewPane\" id?",
+      "revId": "92406bf27ec8c62d5407d4e4b4d1081ea42f542b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

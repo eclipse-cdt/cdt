@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_5017a750",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-07-29T21:28:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_d7c1d1ca",
+      "revId": "92406bf27ec8c62d5407d4e4b4d1081ea42f542b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_b7c6dddf",
         "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.xml",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-07-29T01:56:52Z",
       "side": 1,
       "message": "Nice.  How did you find the \"RenderingViewPane\" id?",
+      "revId": "92406bf27ec8c62d5407d4e4b4d1081ea42f542b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_10340fe1",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.search/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-07-29T21:28:13Z",
+      "side": 1,
+      "message": "You can see it from the Plugin Selection Spy Shft-Alt-F1 over the memory view,  under: \"The active menu contribution identifiers\".. Pretty useful :-)",
+      "parentUuid": "2721e7e2_b7c6dddf",
       "revId": "92406bf27ec8c62d5407d4e4b4d1081ea42f542b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -59,8 +59,50 @@ public class MacroExpansionHandler {
 		if (nodeLocations != null && nodeLocations.length > 1) {
 			for (IASTNodeLocation loc : nodeLocations) {
 				if (loc instanceof IASTMacroExpansionLocation) {
-					return true;
+					if (!hasChildEnclosingMacroLocation(node, (IASTMacroExpansionLocation)loc)) {
+						return true;
+					}
 				}
+			}
+		}
+		return false;
+	}
+
+	private boolean hasChildEnclosingMacroLocation(IASTNode node, IASTMacroExpansionLocation loc) {
+		IASTNode[] children = node.getChildren();
+		for (IASTNode child : children) {
+			if (childEnclosesMacroLocation(child, loc)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean childEnclosesMacroLocation(IASTNode child, IASTMacroExpansionLocation loc) {
+		IASTNodeLocation[] childLocations = child.getNodeLocations();
+		if (childLocations.length > 0 && hasMacroExpansionLocation(child, loc)) {
+			if (childLocations[0] instanceof IASTMacroExpansionLocation) {
+				IASTMacroExpansionLocation childMacroExpansionLocation = (IASTMacroExpansionLocation) childLocations[0];
+				return macroContainsOnlyPartsOfChild(loc, childMacroExpansionLocation);
+			} else if (childLocations[childLocations.length - 1] instanceof IASTMacroExpansionLocation) {
+				IASTMacroExpansionLocation childMacroExpansionLocation = (IASTMacroExpansionLocation) childLocations[childLocations.length - 1];
+				return macroContainsOnlyPartsOfChild(loc, childMacroExpansionLocation);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean macroContainsOnlyPartsOfChild(IASTMacroExpansionLocation macroLocation, IASTMacroExpansionLocation childMacroLocation) {
+		return 	childMacroLocation.getExpansion().getMacroDefinition().equals(macroLocation.getExpansion().getMacroDefinition()) 
+				&& childMacroLocation.getNodeOffset() == macroLocation.getNodeOffset()
+				&& childMacroLocation.getNodeLength() == macroLocation.getNodeLength();
+	}
+
+	private boolean hasMacroExpansionLocation(IASTNode child, IASTMacroExpansionLocation macroLocation) {
+		for (IASTNodeLocation childLocation : child.getNodeLocations()) {
+			if (childLocation instanceof IASTMacroExpansionLocation) {
+				return true;
 			}
 		}
 		return false;

@@ -312,16 +312,14 @@ int foo()
 int foo()
 {
     int i = 1;
-    if (i == ZWO)
-    {
+    if (i == ZWO){
     }
 }
 //=
 int foo()
 {
     int i = 1;
-    if (i == ZWO)
-    {
+    if (i == ZWO){
     }
 }
 

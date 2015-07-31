@@ -877,7 +877,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 		}
 		
-		int line = fLineEditor.getIntValue();
+		// A Watchpoint will not have an associated line number
+		if (fLineEditor == null) {
+			return false;
+		}
+		
+ 		int line = fLineEditor.getIntValue();
 
 		// Look for any breakpoint that has the same source file and line number as what
 		// is currently being inputed.  Careful not to compare with the current breakpoint

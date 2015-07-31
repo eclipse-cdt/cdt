@@ -16,6 +16,24 @@
       "revId": "dd116c2ba681ecd6ac0c2042f17a81297293cc01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_9e5ac9c7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-07-31T20:38:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_5eb171c8",
+      "revId": "dd116c2ba681ecd6ac0c2042f17a81297293cc01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

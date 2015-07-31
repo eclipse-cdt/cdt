@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_5eb171c8",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-31T19:20:58Z",
+      "side": 1,
+      "message": "Instead of this, I think we should update the method above, i.e., propertyChange() to not only check for ICFunctionBreakpoint and ICAddressBreakpoint, but also for ICWatchpoint and ICEventBreakpoint.\n\nYou can still leave the null check here just in case there is another type of bp we forget, but please change the comment to say something along the lines of \"Breakpoints without lines numbers will not be duplicates\".",
+      "revId": "dd116c2ba681ecd6ac0c2042f17a81297293cc01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

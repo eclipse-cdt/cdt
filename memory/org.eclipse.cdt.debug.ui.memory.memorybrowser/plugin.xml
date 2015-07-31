@@ -73,6 +73,18 @@
        </action>
      </viewContribution>
    </extension>
-   
-   
+  <extension point="org.eclipse.ui.popupMenus">
+     <viewerContribution
+        id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+        targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+         <action
+               class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.1"
+               label="%AddWatchpoint.label"
+               menubarPath="additions"
+               tooltip="%AddWatchpoint.tooltip">
+         </action>
+      </viewerContribution>
+  </extension>
 </plugin>

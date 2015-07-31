@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_beaceda8",
+        "filename": "memory/org.eclipse.cdt.debug.ui.memory.memorybrowser/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-07-31T18:23:02Z",
+      "side": 1,
+      "message": "You should add the icon field:\n\nicon\u003d\"icons/watchpoint_co.gif\"\n\nYou can copy the icon from o.e.cdt.debug.ui/icons/elcl16/watchpoint_co.gif\"",
+      "revId": "1d5ec656d0ab1cee23b854a866f08499acb4ad0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

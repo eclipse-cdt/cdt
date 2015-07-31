@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -43,14 +43,18 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralDeclarationNode;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralStatementNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
 public class AppendTests extends ChangeGeneratorTest {
@@ -498,6 +502,53 @@ public class AppendTests extends ChangeGeneratorTest {
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//void foo() {
+	//}
+
+	//void foo() {
+	//#pragma xxx
+	//}
+	public void testInsertLiteralAsStatement_319493() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof ICPPASTCompoundStatement) {
+					ASTLiteralStatementNode pragmaNode = new ASTLiteralStatementNode("#pragma xxx\n");
+					addModification(null, APPEND_CHILD, statement, pragmaNode);
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	
+	//namespace NS {
+	//}
+
+	//namespace NS {
+	//
+	//#pragma xxx
+	//
+	//}
+	public void testInsertLiteralAsDeclaration_319493() throws Exception {
+		compareResult(new ASTVisitor() {
+			{
+				shouldVisitNamespaces = true;
+			}
+
+			@Override
+			public int visit(ICPPASTNamespaceDefinition namespace) {
+				ASTLiteralDeclarationNode pragmaNode = new ASTLiteralDeclarationNode("#pragma xxx\n");
+				addModification(null, APPEND_CHILD, namespace, pragmaNode);
+				return PROCESS_SKIP;
 			}
 		});
 	}

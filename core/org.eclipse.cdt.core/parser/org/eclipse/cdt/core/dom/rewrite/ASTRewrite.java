@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,22 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.rewrite;
 
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralDeclarationNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralStatementNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
@@ -107,6 +112,36 @@ public final class ASTRewrite {
 	 */
 	public final IASTNode createLiteralNode(String code) {
 		return new ASTLiteralNode(code);
+	}
+
+	/**
+	 * Creates and returns a node for a source string that is to be inserted into
+	 * the output document at the location of a statement.
+	 * The string will be inserted without being reformatted beyond correcting
+	 * the indentation level.
+	 *
+	 * @param code the string to be inserted; lines should not have extra indentation
+	 * @return a synthetic node as IASTStatement representing the literal code.
+	 * @throws IllegalArgumentException if the code is null.
+	 * @since 5.11
+	 */
+	public final IASTStatement createLiteralStatementNode(String code) {
+		return new ASTLiteralStatementNode(code);
+	}
+
+	/**
+	 * Creates and returns a node for a source string that is to be inserted into
+	 * the output document at the location of a declaration.
+	 * The string will be inserted without being reformatted beyond correcting
+	 * the indentation level.
+	 *
+	 * @param code the string to be inserted; lines should not have extra indentation
+	 * @return a synthetic node as IASTDeclaration representing the literal code.
+	 * @throws IllegalArgumentException if the code is null.
+	 * @since 5.11
+	 */
+	public final IASTDeclaration createLiteralDeclarationNode(String code) {
+		return new ASTLiteralDeclarationNode(code);
 	}
 
 	/**

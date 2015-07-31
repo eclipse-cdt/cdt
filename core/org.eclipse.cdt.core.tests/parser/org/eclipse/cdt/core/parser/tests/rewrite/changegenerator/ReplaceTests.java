@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -728,6 +728,153 @@ public class ReplaceTests extends ChangeGeneratorTest {
 					newFor.setBody(factory.newNullStatement());
 
 					addModification(null, REPLACE, forStatement, newFor);
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//#define ONE 1
+	//void foo() {
+	//	if (true) {
+	//		int one = ONE;
+	//		int three = 2;
+	//	}
+	//}
+
+	//#define ONE 1
+	//void foo() {
+	//	if (true) {
+	//		int one = ONE;
+	//		int three = 2;
+	//	}
+	//	if (true) {
+	//		int one = ONE;
+	//		int two = 2;
+	//	}
+	//}
+	public void testNestedReplacementInIfStatementWithMacroInSibling_474020() throws Exception {
+		compareResult(new ASTVisitor() {
+			private ASTModification parentModification;
+
+			{
+				shouldVisitNames = true;
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTIfStatement) {
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+				}
+				return super.visit(statement);
+			}
+
+			@Override
+			public int visit(IASTName name) {
+				if (name.toString().equals("three")) {
+					IASTName newName = factory.newName("two");
+					addModification(parentModification, REPLACE, name, newName);
+					
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//#define TRUE true
+	//void foo() {
+	//	if (TRUE) {
+	//		int one = 1;
+	//		int three = 2;
+	//	}
+	//}
+
+	//#define TRUE true
+	//void foo() {
+	//	if (TRUE) {
+	//		int one = 1;
+	//		int three = 2;
+	//	}
+	//	if (TRUE) {
+	//		int one = 1;
+	//		int two = 2;
+	//	}
+	//}
+	public void testNestedReplacementInIfStatementWithMacroInCondition_474020() throws Exception {
+		compareResult(new ASTVisitor() {
+			private ASTModification parentModification;
+
+			{
+				shouldVisitNames = true;
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTIfStatement) {
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+				}
+				return super.visit(statement);
+			}
+
+			@Override
+			public int visit(IASTName name) {
+				if (name.toString().equals("three")) {
+					IASTName newName = factory.newName("two");
+					addModification(parentModification, REPLACE, name, newName);
+					
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
+
+	//#define TRUE true
+	//void foo() {
+	//	if (!TRUE) {
+	//		int one = 1;
+	//		int three = 2;
+	//	}
+	//}
+
+	//#define TRUE true
+	//void foo() {
+	//	if (!TRUE) {
+	//		int one = 1;
+	//		int three = 2;
+	//	}
+	//	if (!TRUE) {
+	//		int one = 1;
+	//		int two = 2;
+	//	}
+	//}
+	public void testNestedReplacementInIfStatementWithMacroAsPartOfCondition_474020() throws Exception {
+		compareResult(new ASTVisitor() {
+			private ASTModification parentModification;
+
+			{
+				shouldVisitNames = true;
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTIfStatement) {
+					parentModification = addModification(null, ModificationKind.APPEND_CHILD, statement.getParent(), statement);
+				}
+				return super.visit(statement);
+			}
+
+			@Override
+			public int visit(IASTName name) {
+				if (name.toString().equals("three")) {
+					IASTName newName = factory.newName("two");
+					addModification(parentModification, REPLACE, name, newName);
+					
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;

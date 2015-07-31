@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -59,6 +60,26 @@ public class MacroExpansionHandler {
 		if (nodeLocations != null && nodeLocations.length > 1) {
 			for (IASTNodeLocation loc : nodeLocations) {
 				if (loc instanceof IASTMacroExpansionLocation) {
+					IASTPreprocessorMacroExpansion macroExpansion = ((IASTMacroExpansionLocation)loc).getExpansion();
+					if (!hasChildStatementEnclosingMacroLocation(node, macroExpansion.getFileLocation())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean hasChildStatementEnclosingMacroLocation(IASTNode node, IASTNodeLocation loc) {
+		IASTNode[] children = node.getChildren();
+		for (IASTNode child : children) {
+			if (child instanceof IASTStatement) {
+				IASTFileLocation childFileLocation = child.getFileLocation();
+				int childStart = childFileLocation.getNodeOffset();
+				int locStart = loc.getNodeOffset();
+				int childEnd = childFileLocation.getNodeLength() + childStart;
+				int locEnd = loc.getNodeLength() + locStart;
+				if (childStart < locStart && childEnd > locEnd) {
 					return true;
 				}
 			}

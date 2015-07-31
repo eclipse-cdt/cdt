@@ -734,4 +734,50 @@ public class ReplaceTests extends ChangeGeneratorTest {
 			}
 		});
 	}
+
+	//#define ONE 1
+	//void foo() {
+	//	if (true) {
+	//		int one = ONE;
+	//		int three = 2;
+	//	}
+	//}
+
+	//#define ONE 1
+	//void foo() {
+	//	if (true) {
+	//		int one = ONE;
+	//		int two = 2;
+	//	}
+	//}
+	public void testNestedStatementReplacementWithMacro() throws Exception {
+		compareResult(new ASTVisitor() {
+			private ASTModification parentModification;
+
+			{
+				shouldVisitNames = true;
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement statement) {
+				if (statement instanceof IASTIfStatement) {
+					//Replace if statement with itself for creating a nested modification later.
+					parentModification = addModification(null, REPLACE, statement, statement);
+				}
+				return super.visit(statement);
+			}
+
+			@Override
+			public int visit(IASTName name) {
+				if (name.toString().equals("three")) {
+					IASTName newName = factory.newName("two");
+					addModification(parentModification, REPLACE, name, newName);
+					
+					return PROCESS_ABORT;
+				}
+				return PROCESS_CONTINUE;
+			}
+		});
+	}
 }

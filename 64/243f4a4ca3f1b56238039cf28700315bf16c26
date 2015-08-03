@@ -1,0 +1,8 @@
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Hudson CI
+Submitted-by: Alvaro Sanchez-Leon <alvsan09@gmail.com>
+Submitted-at: Mon, 03 Aug 2015 08:41:07 -0400
+Reviewed-on: https://git.eclipse.org/r/52984
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

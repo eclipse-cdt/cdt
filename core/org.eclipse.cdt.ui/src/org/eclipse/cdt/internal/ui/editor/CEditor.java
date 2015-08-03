@@ -314,7 +314,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 	}
 
-	class AdaptedSourceViewer extends CSourceViewer  {
+	class AdaptedSourceViewer extends CSourceViewer {
 
 		public AdaptedSourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler,
 				                   boolean showAnnotationsOverview, int styles, IPreferenceStore store) {
@@ -2536,10 +2536,18 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	@Override
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 		super.configureSourceViewerDecorationSupport(support);
-		//Enhance the stock source viewer decorator with a bracket matcher
+		// Enhance the stock source viewer decorator with a bracket matcher
 		support.setCharacterPairMatcher(fBracketMatcher);
 		support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
 		((CSourceViewerDecorationSupport) support).setInactiveCodePainterPreferenceKeys(INACTIVE_CODE_ENABLE, INACTIVE_CODE_COLOR);
+
+		// The base class will have already called setMarginPainterPreferenceKeys. We override it
+		// here with more specific values for the C/C++ editor. Note that this needs to go after
+		// the call to super since the last invocation wins.
+		support.setMarginPainterPreferenceKeys(
+				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN,
+				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR,
+				DefaultCodeFormatterConstants.FORMATTER_LINE_SPLIT);
 	}
 
 	/**

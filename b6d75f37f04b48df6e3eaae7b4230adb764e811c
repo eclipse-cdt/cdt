@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_368e5a3b",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/ReplaceTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-03T19:42:30Z",
+      "side": 1,
+      "message": "The test case should probably be closer to what is described in https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d474020#c0 and contain a real node insertion.",
+      "range": {
+        "startLine": 740,
+        "startChar": 8,
+        "endLine": 740,
+        "endChar": 12
+      },
+      "revId": "b6d75f37f04b48df6e3eaae7b4230adb764e811c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_168fd63a",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/rewrite/changegenerator/ReplaceTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-03T19:42:30Z",
+      "side": 1,
+      "message": "Please add a space after //",
+      "range": {
+        "startLine": 765,
+        "startChar": 7,
+        "endLine": 765,
+        "endChar": 14
+      },
+      "revId": "b6d75f37f04b48df6e3eaae7b4230adb764e811c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_9682a60a",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/MacroExpansionHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-03T19:42:30Z",
+      "side": 1,
+      "message": "I don\u0027t quite understand why this check is limited to child statements as opposed to any child nodes.",
+      "range": {
+        "startLine": 76,
+        "startChar": 24,
+        "endLine": 76,
+        "endChar": 37
+      },
+      "revId": "b6d75f37f04b48df6e3eaae7b4230adb764e811c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

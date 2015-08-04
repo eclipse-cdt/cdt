@@ -187,6 +187,30 @@
       "revId": "4e703c9fda9477a3a4c470067b3b7b9bd43fd9dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_36bdba20",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-04T17:18:35Z",
+      "side": 1,
+      "message": "I don\u0027t see this change.",
+      "parentUuid": "2721e7e2_15e6c1d4",
+      "range": {
+        "startLine": 441,
+        "startChar": 27,
+        "endLine": 441,
+        "endChar": 33
+      },
+      "revId": "4e703c9fda9477a3a4c470067b3b7b9bd43fd9dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

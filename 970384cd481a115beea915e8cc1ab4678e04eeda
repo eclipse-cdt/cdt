@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_16aeb6f1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-04T03:40:49Z",
+      "side": 1,
+      "message": "Change to AST_SKIP_INDEXED_HEADERS.",
+      "range": {
+        "startLine": 443,
+        "startChar": 22,
+        "endLine": 443,
+        "endChar": 42
+      },
+      "revId": "970384cd481a115beea915e8cc1ab4678e04eeda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f6b20250",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-04T03:40:49Z",
+      "side": 1,
+      "message": "\u003c\u003e is sufficient.",
+      "range": {
+        "startLine": 260,
+        "startChar": 63,
+        "endLine": 260,
+        "endChar": 82
+      },
+      "revId": "970384cd481a115beea915e8cc1ab4678e04eeda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_56b82e30",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-04T03:40:49Z",
+      "side": 1,
+      "message": "The editor should be obtained from CContentAssistInvocationContext. It can be remembered for later use if necessary.",
+      "range": {
+        "startLine": 350,
+        "startChar": 47,
+        "endLine": 350,
+        "endChar": 62
+      },
+      "revId": "970384cd481a115beea915e8cc1ab4678e04eeda",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

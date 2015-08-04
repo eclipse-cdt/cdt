@@ -12,19 +12,15 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
 
-
 /**
- * Turns off occurrences highlighting on a C editor until linked mode is
- * left.
+ * Turns off occurrences highlighting on a C editor until linked mode is left.
  *
  * @since 5.0
  */
 public class EditorHighlightingSynchronizer implements ILinkedModeListener {
-
 	private final CEditor fEditor;
 	private final boolean fWasOccurrencesOn;
 
@@ -43,9 +39,6 @@ public class EditorHighlightingSynchronizer implements ILinkedModeListener {
 			fEditor.uninstallOccurrencesFinder();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
-	 */
 	@Override
 	public void left(LinkedModeModel environment, int flags) {
 		if (fWasOccurrencesOn && !isEditorDisposed())
@@ -56,18 +49,11 @@ public class EditorHighlightingSynchronizer implements ILinkedModeListener {
 		return fEditor == null || fEditor.getSelectionProvider() == null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.link.ILinkedModeListener#suspend(org.eclipse.jface.text.link.LinkedModeModel)
-	 */
 	@Override
 	public void suspend(LinkedModeModel environment) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.link.ILinkedModeListener#resume(org.eclipse.jface.text.link.LinkedModeModel, int)
-	 */
 	@Override
 	public void resume(LinkedModeModel environment, int flags) {
 	}
-
 }

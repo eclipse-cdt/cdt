@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_9d475e71",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/astwriter/MacroExpansionHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-05T16:49:46Z",
+      "side": 1,
+      "message": "It looks like more tests are needed to have better coverage of these conditions.",
+      "range": {
+        "startLine": 81,
+        "startChar": 17,
+        "endLine": 81,
+        "endChar": 43
+      },
+      "revId": "d82d1e9c4276f0439fa7283a6aafb46ed9ddd00e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

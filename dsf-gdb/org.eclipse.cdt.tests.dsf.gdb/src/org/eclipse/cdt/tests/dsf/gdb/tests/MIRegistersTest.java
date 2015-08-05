@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -337,22 +339,25 @@ public class MIRegistersTest extends BaseTestCase {
 		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
+		// Make sure register #0 contains a known value.
+		writeRegister(frameDmc, 0, "0x1234", IFormattedValues.HEX_FORMAT);
+
 		String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
-		Long.parseLong(val);
+		assertThat(Long.parseLong(val), equalTo(0x1234L));
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.HEX_FORMAT, 0);
 		assertTrue("Register Value is not in HEX_FORMAT: " + val, val.startsWith("0x"));
-		Long.parseLong(val.substring(2), 16);
+		assertThat(Long.parseLong(val.substring(2), 16), equalTo(0x1234L));
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, 0);
-		Long.parseLong(val, 2);
+		assertThat(Long.parseLong(val, 2), equalTo(0x1234L));
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.DECIMAL_FORMAT, 0);
-		Long.parseLong(val);
+		assertThat(Long.parseLong(val), equalTo(0x1234L));
 
 		val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, 0);
 		assertTrue("Register Value is not in OCTAL_FORMAT: " + val, val.startsWith("0"));
-		Long.parseLong(val.substring(1), 8);
+		assertThat(Long.parseLong(val.substring(1), 8), equalTo(0x1234L));
 	}
 
 	@Test
@@ -372,7 +377,7 @@ public class MIRegistersTest extends BaseTestCase {
 		
 	    fRegService.getExecutor().submit(queryExecutionContexts);
 
-		IExecutionDMContext[] ctxts = queryExecutionContexts.get(500, TimeUnit.MILLISECONDS);
+		IExecutionDMContext[] ctxts = queryExecutionContexts.get(TestsPlugin.massageTimeout(500), TimeUnit.MILLISECONDS);
 
 		assertNotNull(ctxts);
 		assertTrue(ctxts.length > 1);

@@ -305,6 +305,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	public void selectAll() {
 		getCtlText().selectAll();
+		fTerminalListener.setTerminalSelectionChanged();
 	}
 
 	/* (non-Javadoc)
@@ -330,8 +331,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	public void clearTerminal() {
 		// The TerminalText object does all text manipulation.
-
 		getTerminalText().clearTerminal();
+		getCtlText().clearSelection();
+		fTerminalListener.setTerminalSelectionChanged();
 	}
 
 	/* (non-Javadoc)

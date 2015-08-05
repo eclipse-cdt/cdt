@@ -30,4 +30,13 @@ public interface ITerminalListener {
 	 * @param title
 	 */
 	void setTerminalTitle(String title);
+
+	/**
+	 * selection has been changed internally e.g. select all
+	 * clients might want to react on that
+	 * NOTE: this does not include mouse selections
+	 * those are handled in separate MouseListeners
+	 * TODO should be unified
+	 */
+	void setTerminalSelectionChanged();
 }

@@ -770,6 +770,22 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	}
 
 	/**
+	 * Fire the selection changed event with the terminal text!
+	 * to the registered listeners.
+	 * see also TerminalControlSelectionListener- mouseUp
+	 */
+	protected void fireTerminalSelectionChanged() {
+		updateStatusLine();
+		CTabItem item = getActiveTabItem();
+		if (item != null && !item.isDisposed()) {
+			ITerminalViewControl terminal = (ITerminalViewControl)item.getData();
+			if (terminal != null && !terminal.isDisposed()) {
+				fireSelectionChanged(new StructuredSelection(terminal.getSelection()));
+			}
+		}
+	}
+
+	/**
 	 * Fire the selection changed event to the registered listeners.
 	 */
 	protected final void fireSelectionChanged(ISelection selection) {

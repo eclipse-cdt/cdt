@@ -149,4 +149,9 @@ public class TabTerminalListener implements ITerminalListener {
 	@Override
 	public void setTerminalTitle(String title) {
 	}
+
+	@Override
+	public void setTerminalSelectionChanged() {
+		tabFolderManager.fireTerminalSelectionChanged();
+	}
 }

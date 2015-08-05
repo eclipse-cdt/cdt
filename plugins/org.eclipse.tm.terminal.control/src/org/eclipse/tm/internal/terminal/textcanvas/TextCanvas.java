@@ -344,6 +344,9 @@ public class TextCanvas extends GridCanvas {
 		fCellCanvasModel.setSelectionAnchor(new Point(0,0));
 	}
 
+	/**
+	 * @since 4.1
+	 */
 	public void clearSelection() {
 		fCellCanvasModel.setSelection(-1,-1,-1,-1);
 	}

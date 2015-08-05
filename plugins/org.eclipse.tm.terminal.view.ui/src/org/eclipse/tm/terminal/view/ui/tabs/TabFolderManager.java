@@ -773,6 +773,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 	 * Fire the selection changed event with the terminal text!
 	 * to the registered listeners.
 	 * see also TerminalControlSelectionListener- mouseUp
+	 *
+	 * @since 4.1
 	 */
 	protected void fireTerminalSelectionChanged() {
 		updateStatusLine();

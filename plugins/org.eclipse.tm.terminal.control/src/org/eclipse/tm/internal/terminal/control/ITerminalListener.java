@@ -37,6 +37,8 @@ public interface ITerminalListener {
 	 * NOTE: this does not include mouse selections
 	 * those are handled in separate MouseListeners
 	 * TODO should be unified
+	 * 
+	 * @since 4.1
 	 */
 	void setTerminalSelectionChanged();
 }

@@ -20,8 +20,6 @@ import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -914,16 +912,5 @@ public class AST2TestBase extends BaseTestCase {
 		IASTStatement stmt= getStatement(fdef, i);
 		assertInstance(stmt, IASTExpressionStatement.class);
 		return (T) ((IASTExpressionStatement) stmt).getExpression();
-	}
-	
-	/**
-	 * Sort the given array of AST names lexicographically.
-	 */
-	protected static <T extends IASTName> void sortNames(T[] names) {
-		Arrays.sort(names, new Comparator<IASTName>() {
-			@Override
-			public int compare(IASTName a, IASTName b) {
-				return a.toString().compareTo(b.toString());
-			}});
 	}
 }

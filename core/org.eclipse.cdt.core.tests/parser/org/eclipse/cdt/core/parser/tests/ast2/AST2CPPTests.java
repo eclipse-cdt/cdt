@@ -24,11 +24,7 @@ import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
 import static org.junit.Assert.assertNotEquals;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.HashSet;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -155,7 +151,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-import junit.framework.TestSuite;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class AST2CPPTests extends AST2TestBase {
 
@@ -11580,7 +11580,7 @@ public class AST2CPPTests extends AST2TestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPVariable test = bh.assertNonProblemOnFirstIdentifier("test");
 		assertTrue(test.getType() instanceof IProblemType); // resolution is ambiguous
-  }
+	}
 	
 	//	constexpr int lambdas_supported = 
 	//	#if __has_feature(cxx_lambdas)
@@ -11601,74 +11601,5 @@ public class AST2CPPTests extends AST2TestBase {
 		// Note: when support for generic lambdas is implemented,
 		// this test will need to be updated.
 		helper.assertVariableValue("generic_lambdas_supported", 0);
-	}
-	
-	//	struct A {
-	//		A() {}
-	//	};
-	//
-	//	struct B {
-	//		B() {}
-	//	};
-	//
-	//	struct C : A {
-	//		C() {}
-	//	};
-	//	
-	//	struct D : virtual A, virtual B {
-	//		D() {}
-	//	};
-	//
-	//	struct E {
-	//		E() {}
-	//	};
-	//
-	//	struct F : D, virtual E {
-	//		F() {}
-	//	};
-	public void testImplicitlyCalledBaseConstructor_393717() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		
-		ICPPConstructor aCtor = helper.assertNonProblem("A()", "A");
-		ICPPConstructor bCtor = helper.assertNonProblem("B()", "B");
-		ICPPConstructor dCtor = helper.assertNonProblem("D()", "D");
-		ICPPConstructor eCtor = helper.assertNonProblem("E()", "E");
-
-		ICPPASTFunctionDefinition ctorDef = helper.assertNode("C() {}");
-		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) ctorDef).getImplicitNames();
-		assertEquals(1, implicitNames.length);
-		assertEquals(aCtor, implicitNames[0].resolveBinding());
-		
-		ctorDef = helper.assertNode("D() {}");
-		implicitNames = ((IASTImplicitNameOwner) ctorDef).getImplicitNames();
-		sortNames(implicitNames);
-		assertEquals(2, implicitNames.length);
-		assertEquals(aCtor, implicitNames[0].resolveBinding());
-		assertEquals(bCtor, implicitNames[1].resolveBinding());
-		
-		ctorDef = helper.assertNode("F() {}");
-		implicitNames = ((IASTImplicitNameOwner) ctorDef).getImplicitNames();
-		sortNames(implicitNames);
-		assertEquals(4, implicitNames.length);
-		assertEquals(aCtor, implicitNames[0].resolveBinding());
-		assertEquals(bCtor, implicitNames[1].resolveBinding());
-		assertEquals(dCtor, implicitNames[2].resolveBinding());
-		assertEquals(eCtor, implicitNames[3].resolveBinding());
-	}
-	
-	//	struct A {
-	//		A(int, int);
-	//	};
-	//	void a(A);
-	//	int main() {
-	//		a(A{3, 4});
-	//	}
-	public void testImplicitConstructorNameInTypeConstructorExpression_447431() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPConstructor ctor = helper.assertNonProblem("A(int, int)", "A");
-		ICPPASTSimpleTypeConstructorExpression typeConstructorExpr = helper.assertNode("A{3, 4}");
-		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) typeConstructorExpr).getImplicitNames();
-		assertEquals(1, implicitNames.length);
-		assertEquals(ctor, implicitNames[0].resolveBinding());
 	}
 }

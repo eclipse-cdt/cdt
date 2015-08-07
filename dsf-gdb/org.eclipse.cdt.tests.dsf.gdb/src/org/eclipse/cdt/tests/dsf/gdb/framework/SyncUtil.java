@@ -95,6 +95,11 @@ public class SyncUtil {
 
 	private static CommandFactory fCommandFactory;
 	private static IGDBProcesses fProcessesService;
+	
+	/**
+	 * To be used by test cases that need multi-process, otherwise leave it as null
+	 */
+	private static IContainerDMContext fActiveContainerContext = null;
 
 	// Initialize some common things, once the session has been established
 	public static void initialize(DsfSession session) throws Exception {
@@ -462,6 +467,20 @@ public class SyncUtil {
 		return query.get(500, TimeUnit.MILLISECONDS);
 	}
 
+	public static IThreadDMData getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
+				SyncUtil.getContainerContext(), IProcessDMContext.class);
+		Query<IThreadDMData> query = new Query<IThreadDMData>() {
+			@Override
+			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
+				fProcessesService.getExecutionData(processContext, rm);
+			}
+		};
+
+		fProcessesService.getExecutor().execute(query);
+		return query.get(TestsPlugin.massageTimeout(2000),  TimeUnit.MILLISECONDS);
+	}
+
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
         throws Throwable {
         Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
@@ -621,28 +640,121 @@ public class SyncUtil {
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IContainerDMContext getContainerContext() throws InterruptedException, ExecutionException, TimeoutException {
+		// Using multi-process, return the active container.
+		if (fActiveContainerContext != null) {
+			// Check that the active container context is still being debugged if not i.e. unexpected flow
+			assertTrue("The active container is no longer being debugged !", validContainerContext(fActiveContainerContext));
+			return fActiveContainerContext;
+		}
+		
+		IContainerDMContext[] contexts = getContainerContexts();
+		assertNotNull("invalid return value from service", contexts);
+		assertEquals("unexpected number of processes", 1, contexts.length);
+		IDMContext context = contexts[0];    
+		assertNotNull("unexpected process context type ", context);
+		return (IContainerDMContext) context;
+	}
+
+	/**
+	 * Utility method to return the container DM contexts of the processes being debugged. 
+	 * 
+	 * <p>
+	 * This must NOT be called from the DSF executor.
+	 * 
+	 * @return the contexts to all processes being debugged
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IContainerDMContext[] getContainerContexts()
+			throws InterruptedException, ExecutionException, TimeoutException {
+		assert!fProcessesService.getExecutor().isInExecutorThread();
+
+		Query<IContainerDMContext[]> query = new Query<IContainerDMContext[]>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IContainerDMContext[]> rm) {
+				fProcessesService.getProcessesBeingDebugged(fGdbControl.getContext(),
+						new ImmediateDataRequestMonitor<IDMContext[]>() {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							IDMContext[] contexts = getData();
+							rm.done((IContainerDMContext[]) contexts);
+						} else {
+							rm.done(getStatus());
+						}
+					}
+				});
+			}
+		};
+
+		fGdbControl.getExecutor().execute(query);
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+	}
+
+	/**
+	 * Scan all container context being debugged to find out if the given one is still present
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static boolean validContainerContext(final IContainerDMContext gContext)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		assert!fProcessesService.getExecutor().isInExecutorThread();
+
+		Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				fProcessesService.getProcessesBeingDebugged(fGdbControl.getContext(),
+						new ImmediateDataRequestMonitor<IDMContext[]>() {
+					@Override
+					protected void handleCompleted() {
+						boolean valid = false;
+						if (isSuccess()) {
+							IDMContext[] contexts = getData();
+							assertNotNull("invalid return value from service", contexts);
+							for (IDMContext ctx : contexts) {
+								assert(ctx instanceof IContainerDMContext);
+									if (gContext.equals(ctx)) {
+										valid = true;
+										break;
+									}
+							}
+						}
+
+						rm.done(valid);
+					}
+				});
+			}
+		};
+
+		fGdbControl.getExecutor().execute(query);
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+	}
+
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IContainerDMContext debugNewProcess(GdbLaunch launch, final String pathToExecutable) throws InterruptedException, ExecutionException, TimeoutException, CoreException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
+		// Read the launch configuration attributes
+		final Map<String, Object> attributes = launch.getLaunchConfiguration().getAttributes();
 		Query<IContainerDMContext> query = new Query<IContainerDMContext>() {
 			@Override
 			protected void execute(final DataRequestMonitor<IContainerDMContext> rm) {
-				fProcessesService.getProcessesBeingDebugged(
-            			fGdbControl.getContext(), 
-            			new ImmediateDataRequestMonitor<IDMContext[]>() {
-                    @Override
-                    protected void handleCompleted() {
-                    	if (isSuccess()) {
-                    		IDMContext[] contexts = getData();
-                    		assertNotNull("invalid return value from service", contexts);
-                    		assertEquals("unexpected number of processes", 1, contexts.length);
-                    		IDMContext context = contexts[0];    
-                    		assertNotNull("unexpected process context type ", context);
-                    		rm.done((IContainerDMContext)context);
-                    	} else {
-                            rm.done(getStatus());
-                    	}
-                    }
-            	});
+				// Start a new process
+				fProcessesService.debugNewProcess(fGdbControl.getContext(), pathToExecutable, attributes,  new DataRequestMonitor<IDMContext>(fProcessesService.getExecutor(), null) {
+					@Override
+					protected void handleCompleted() {
+						if (isSuccess()) {
+							IDMContext context = getData();
+							
+							assert (context instanceof IContainerDMContext);
+							
+							//New process created, return its context
+							rm.done((IContainerDMContext) getData());
+						}  else {
+							System.out.println(getStatus().toString());
+							rm.done(getStatus());
+						}
+						
+					}
+				});
 			}
 		};
 		
@@ -923,5 +1035,13 @@ public class SyncUtil {
 
 		return memoryService.isBigEndian(dmc) ? ByteOrder.BIG_ENDIAN
 				: ByteOrder.LITTLE_ENDIAN;
+	}
+
+	/**
+	 * Used by test cases using multiprocess. This switches the run control actions to the given container context
+	 * @param ctx - setting it to null, sets it back to use default single process behavior 
+	 */
+	public static void setActiveContainerContext(IContainerDMContext ctx) {
+		fActiveContainerContext = ctx;
 	}
 }

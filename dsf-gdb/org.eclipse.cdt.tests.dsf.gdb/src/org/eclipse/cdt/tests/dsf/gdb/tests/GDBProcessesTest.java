@@ -15,18 +15,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
@@ -42,13 +36,11 @@ public class GDBProcessesTest extends BaseTestCase {
 	/*
 	 * Name of the executable
 	 */
-	private static final String EXEC_NAME = "MultiThread.exe";
-	private static final String SOURCE_NAME = "MultiThread.cc";
+	protected static final String EXEC_NAME = "MultiThread.exe";
+	protected static final String SOURCE_NAME = "MultiThread.cc";
 
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
-
-	private IMIProcesses fProcService;
 
 	@Override
 	public void doBeforeTest() throws Exception {
@@ -61,7 +53,6 @@ public class GDBProcessesTest extends BaseTestCase {
             @Override
 			public void run() {
             	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
-            	fProcService = fServicesTracker.getService(IMIProcesses.class);
             }
         };
         fSession.getExecutor().submit(runnable).get();
@@ -71,7 +62,6 @@ public class GDBProcessesTest extends BaseTestCase {
 	public void doAfterTest() throws Exception {
 		super.doAfterTest();
 
-		fProcService = null;
 		fServicesTracker.dispose();
 	}
 	
@@ -88,21 +78,10 @@ public class GDBProcessesTest extends BaseTestCase {
      *  Get the process data for the current program. Process is executable name in case of GDB back end
      */
 	public void getProcessData() throws InterruptedException, ExecutionException, TimeoutException {
-		final IProcessDMContext processContext = DMContexts.getAncestorOfType(
-				SyncUtil.getContainerContext(), IProcessDMContext.class);
-		Query<IThreadDMData> query = new Query<IThreadDMData>() {
-			@Override
-			protected void execute(DataRequestMonitor<IThreadDMData> rm) {
-				fProcService.getExecutionData(processContext, rm);
-			}
-		};
-
-		fProcService.getExecutor().execute(query);
-
 		/*
 		 * Get process data. Name of the process is the executable name in case of GDB back-end.
 		 */
-		IThreadDMData processData = query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+		IThreadDMData processData = SyncUtil.getProcessData();
 		Assert.assertNotNull("No process data is returned for Process DMC", processData);
 		Assert.assertTrue("Process data should be executable name " + EXEC_NAME +
 				"but we got " + processData.getName(), processData.getName().contains(EXEC_NAME));
@@ -129,6 +108,11 @@ public class GDBProcessesTest extends BaseTestCase {
 
 		}
 
+		validateThreadData();
+	}
+
+	protected void validateThreadData()
+			throws Throwable, InterruptedException, ExecutionException, TimeoutException {
 		// We need to get there to make sure that all the threads have their name set.
 		SyncUtil.runToLocation(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"));
 
@@ -141,8 +125,7 @@ public class GDBProcessesTest extends BaseTestCase {
 
 		// Check the thread names. We did not change the main thread's name, so
 		// it should be the same as the executable name.
-		final String names[] = { EXEC_NAME, "monday", "tuesday", "wednesday",
-				"thursday", "friday" };
+		final String names[] = { EXEC_NAME, "monday", "tuesday", "wednesday", "thursday", "friday" };
 
 		// Check that we have correct data for PrintHello
 		for (int i = 1; i <= 6; i++) {

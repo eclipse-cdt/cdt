@@ -43,6 +43,9 @@ static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg)
 	return THREAD_DEFAULT_RET;
 }
 
+/* 
+	 use first argument i.e. argv[1] to pass the sleep time 
+*/
 int main(int argc, char *argv[])
 {
 	ThreadHandle threads[NUM_THREADS];
@@ -91,7 +94,15 @@ int main(int argc, char *argv[])
 
 	printf("In main thread, all threads created.\n"); /* Breakpoint LINE_MAIN_ALL_THREADS_STARTED */
 
-	SLEEP(30);
+	int threadsHoldingTime;
+	if (argc > 1) {
+		// Receive timer value	
+		threadsHoldingTime = atoi(argv[1]);
+	} else {
+		threadsHoldingTime = 30;
+	}
+
+	SLEEP(threadsHoldingTime);
 
 	/* Unlock the threads and let the program finish. */
 	ThreadBarrierWait(&barrier_finish);

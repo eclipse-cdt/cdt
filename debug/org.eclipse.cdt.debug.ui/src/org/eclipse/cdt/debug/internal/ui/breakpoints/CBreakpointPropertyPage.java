@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -867,6 +868,23 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				}
 			}
 		}
+		
+		// Calculate any warnings if there are no errors
+		if (getErrorMessage() == null) {
+			String warningMessage = null;
+			
+			if (!isFileExists()) {
+				warningMessage = BreakpointsMessages.getString("CBreakpointPropertyPage.fileDoesNotExist_warningMessage"); //$NON-NLS-1$
+			}
+			
+			// add additional warning checks here.
+			
+			if (warningMessage == null) {
+				setMessage(null);
+			} else {
+				setMessage(warningMessage, WARNING);
+			}
+		}
 	}
 	
 	private boolean isDuplicateBreakpoint() {
@@ -906,6 +924,20 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			}
 		}
 		return false;
+	}
+
+	private boolean isFileExists() {
+		String source = null;
+		if (fFileEditor != null) {
+			source = fFileEditor.getStringValue();
+		} else {
+			// If the source file is not editable, we should fetch
+			// it from the preference store
+			source = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
+		}
+
+		File sourceFile = new File(source);
+		return sourceFile.getAbsoluteFile().exists();
 	}
 
 	protected ICBreakpoint getBreakpoint() {

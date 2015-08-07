@@ -43,6 +43,7 @@ import org.junit.runners.Suite;
 	MICatchpointsTest_7_5.class,
 	MIDisassemblyTest_7_5.class,
 	GDBProcessesTest_7_5.class,
+	GDBProcessesNonStopTest_7_5.class,
 	LaunchConfigurationAndRestartTest_7_5.class,
 	OperationsWhileTargetIsRunningTest_7_5.class,
 	OperationsWhileTargetIsRunningNonStopTest_7_5.class,

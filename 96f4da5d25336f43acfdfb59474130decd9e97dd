@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_3612c810",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-08-07T21:28:12Z",
+      "side": 1,
+      "message": "I am not sure that adding this is a good idea.  If methods need to work on different data, it\u0027s better to pass it directly (by parameters) instead of indirectly (by global variable).\n\nFor example, instead of having to do\n\nSyncUtil.setActiveContainerContext(p1);\nSyncUtil.resume();\nSyncUtil.setActiveContainerContext(p2);\nSyncUtil.resume();\n\nit would be\n\nSyncUtil.resume(p1);\nSyncUtil.resume(p2);\n\nIt\u0027s clearer and safer. Since we will now have multiple container contexts, get SyncUtil.getContainerContext could be renamed to SyncUtil.getFirstContainerContext. It would still be useful to tests that use a single process. To keep those existing tests working, there could be a version of resume() where you don\u0027t specify a context (just like right now) and a new version where you do. The first one would resume the first container context (by calling getFirstContainerContext) and the second would resume the specified context.\n\nThis way, existing tests that don\u0027t care about multiple contexts would not need to be modified.",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_b6ccf833",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-08-07T21:28:12Z",
+      "side": 1,
+      "message": "There is already a field like that in GDBProcessesTest, is there a reason we need another?",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_56177c05",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1069
+      },
+      "writtenOn": "2015-08-07T21:28:12Z",
+      "side": 1,
+      "message": "You could do that check at very iteration, it wouldn\u0027t hurt.\n\nAlso, you could do the same check in the other for loop, when launching the first process. If you want to, I think that the launching of that particular program (with the for loop and the validation), could be made into its own function, since it\u0027s repeated. I also think it would be useful for future multi-process/multi-thread tests.",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

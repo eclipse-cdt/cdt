@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -293,6 +294,22 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			});
 		}
 
+		@Override
+		protected boolean doCheckState() {
+			// Check that the file name supplied is absolute and exists so that we can 
+			// associate it to an IResource later for creating a breakpoint marker.
+			String stringValue = getStringValue();
+			if (stringValue == null) {
+				return false;
+			}
+			File sourceFile = new File(stringValue);
+			if (!sourceFile.isAbsolute() || !sourceFile.exists() || !sourceFile.isFile()) {
+				return false;
+			}
+
+			return super.doCheckState();
+		}
+		
 	}
 
     class WatchpointRangeFieldEditor extends IntegerFieldEditor {

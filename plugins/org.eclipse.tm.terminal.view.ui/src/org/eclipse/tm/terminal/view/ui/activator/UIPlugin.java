@@ -223,13 +223,6 @@ public class UIPlugin extends AbstractUIPlugin {
 			registry.put(ImageConsts.ACTION_ScrollLock_Enabled, ImageDescriptor.createFromURL(url));
 			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_DLCL + "lock_co.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 			registry.put(ImageConsts.ACTION_ScrollLock_Disabled, ImageDescriptor.createFromURL(url));
-
-			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_CLCL + "pin.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.ACTION_PinTerminal_Hover, ImageDescriptor.createFromURL(url));
-			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_ELCL + "pin.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.ACTION_PinTerminal_Enabled, ImageDescriptor.createFromURL(url));
-			url = bundle.getEntry(ImageConsts.IMAGE_DIR_ROOT + "full/" + ImageConsts.IMAGE_DIR_DLCL + "pin.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			registry.put(ImageConsts.ACTION_PinTerminal_Disabled, ImageDescriptor.createFromURL(url));
 		}
 
 		bundle = getBundle();

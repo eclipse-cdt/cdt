@@ -65,21 +65,6 @@ public interface ImageConsts {
     public static final String  ACTION_ScrollLock_Hover = "ScrollLockAction_hover"; //$NON-NLS-1$
 
     /**
-     * The key to access the pin terminal action image (enabled).
-     */
-    public static final String  ACTION_PinTerminal_Enabled = "PinTerminalAction_enabled"; //$NON-NLS-1$
-
-    /**
-     * The key to access the pin terminal action image (disabled).
-     */
-    public static final String  ACTION_PinTerminal_Disabled = "PinTerminalAction_disabled"; //$NON-NLS-1$
-
-    /**
-     * The key to access the pin terminal action image (hover).
-     */
-    public static final String  ACTION_PinTerminal_Hover = "PinTerminalAction_hover"; //$NON-NLS-1$
-
-    /**
      * The key to access the new terminal view action image (enabled).
      */
     public static final String  ACTION_NewTerminalView_Enabled = "NewTerminalViewAction_enabled"; //$NON-NLS-1$

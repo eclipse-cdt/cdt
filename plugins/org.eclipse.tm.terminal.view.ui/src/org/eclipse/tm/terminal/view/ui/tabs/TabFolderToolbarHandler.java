@@ -30,7 +30,6 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.view.ui.actions.AbstractAction;
 import org.eclipse.tm.terminal.view.ui.actions.NewTerminalViewAction;
-import org.eclipse.tm.terminal.view.ui.actions.PinTerminalAction;
 import org.eclipse.tm.terminal.view.ui.actions.TabScrollLockAction;
 import org.eclipse.tm.terminal.view.ui.actions.ToggleCommandFieldAction;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
@@ -275,8 +274,8 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			}
 		});
 
-		// Create and add the pin view action
-		add (new PinTerminalAction(getParentView()) {
+		// Create and add the new terminal view action
+		add (new NewTerminalViewAction(getParentView()) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
 			 */
@@ -285,17 +284,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 				return getActiveTerminalViewControl();
 			}
 		});
-
-		// Create and add the new terminal view action
-//		add (new NewTerminalViewAction(getParentView()) {
-//			/* (non-Javadoc)
-//			 * @see org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction#getTarget()
-//			 */
-//			@Override
-//			protected ITerminalViewControl getTarget() {
-//				return getActiveTerminalViewControl();
-//			}
-//		});
 	}
 
 	/**
@@ -313,7 +301,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 		manager.add(new Separator("anchor")); //$NON-NLS-1$
 
 		// we want that at the end
-		PinTerminalAction pinAction = null;
 		NewTerminalViewAction newTerminalAction = null;
 
 		// Loop all actions and add them to the menu manager
@@ -323,11 +310,6 @@ public class TabFolderToolbarHandler extends PlatformObject {
 				|| (action instanceof AbstractAction && ((AbstractAction)action).isSeparator())) {
 				manager.insertAfter("anchor", new Separator()); //$NON-NLS-1$
 			}
-			// skip pin action for now
-			if (action instanceof PinTerminalAction){
-				pinAction=(PinTerminalAction)action;
-				continue;
-			}
 			// skip new terminal view action for now
 			if (action instanceof NewTerminalViewAction){
 				newTerminalAction = (NewTerminalViewAction)action;
@@ -336,10 +318,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			// Add the action itself
 			manager.insertAfter("anchor", action); //$NON-NLS-1$
 		}
-		// now add pin at the end
-		if (pinAction != null){
-			manager.add(pinAction);
-		}
+		// now add to the end
 		if (newTerminalAction != null){
 			manager.add(newTerminalAction);
 		}
@@ -358,7 +337,7 @@ public class TabFolderToolbarHandler extends PlatformObject {
 			// If the terminal control is not available, the updateAction
 			// method of certain actions enable the action (bugzilla #260372).
 			// Workaround by forcing the action to get disabled with setEnabled.
-			if (control == null && !(action instanceof PinTerminalAction) && !(action instanceof NewTerminalViewAction)) {
+			if (control == null && !(action instanceof NewTerminalViewAction)) {
 				action.setEnabled(false);
 			}
 			else {

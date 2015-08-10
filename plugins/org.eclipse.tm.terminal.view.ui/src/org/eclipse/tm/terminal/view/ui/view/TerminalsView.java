@@ -86,8 +86,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 	private TabFolderToolbarHandler tabFolderToolbarHandler;
 	// Reference to the empty page control (to be show if no console is open)
 	private Control emptyPageControl;
-	// Whether this terminal is pinned.
-	private boolean pinned = false;
 	// The view's memento handler
 	private final TerminalsViewMementoHandler mementoHandler = new TerminalsViewMementoHandler();
 
@@ -627,22 +625,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		}
 
 		return super.getAdapter(adapter);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView#setPinned(boolean)
-	 */
-	@Override
-	public void setPinned(boolean pin) {
-		this.pinned = pin;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView#isPinned()
-	 */
-	@Override
-	public boolean isPinned() {
-		return pinned;
 	}
 
 	/* (non-Javadoc)

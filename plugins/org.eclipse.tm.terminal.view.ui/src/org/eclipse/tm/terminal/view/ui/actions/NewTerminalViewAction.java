@@ -13,7 +13,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 import org.eclipse.tm.terminal.view.ui.interfaces.ITerminalsView;
+import org.eclipse.tm.terminal.view.ui.interfaces.IUIConstants;
 import org.eclipse.tm.terminal.view.ui.interfaces.ImageConsts;
+import org.eclipse.tm.terminal.view.ui.manager.ConsoleManager;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
 
 /**
@@ -21,7 +23,7 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
  */
 public class NewTerminalViewAction extends AbstractTerminalAction {
 
-	private ITerminalsView view = null;
+	//private ITerminalsView view = null;
 
 	/**
 	 * Constructor.
@@ -29,7 +31,7 @@ public class NewTerminalViewAction extends AbstractTerminalAction {
 	public NewTerminalViewAction(ITerminalsView view) {
 		super(null, NewTerminalViewAction.class.getName(), IAction.AS_PUSH_BUTTON);
 
-		this.view = view;
+		//this.view = view;
 		setupAction(Messages.NewTerminalViewAction_menu, Messages.NewTerminalViewAction_tooltip,
 						UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Hover),
 						UIPlugin.getImageDescriptor(ImageConsts.ACTION_NewTerminalView_Enabled),
@@ -42,6 +44,8 @@ public class NewTerminalViewAction extends AbstractTerminalAction {
 	 */
 	@Override
 	public void run() {
+		String secondaryId = ConsoleManager.getInstance().getNextTerminalSecondaryId(IUIConstants.ID);
+		ConsoleManager.getInstance().showConsoleView(IUIConstants.ID, secondaryId);
 	}
 
 }

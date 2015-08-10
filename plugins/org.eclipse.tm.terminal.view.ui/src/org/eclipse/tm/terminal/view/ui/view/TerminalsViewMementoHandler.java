@@ -13,19 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.actions.PinTerminalAction;
 import org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate;
 import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
 import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager;
-import org.eclipse.tm.terminal.view.ui.tabs.TabFolderToolbarHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 
@@ -67,9 +62,6 @@ public class TerminalsViewMementoHandler {
 		// Write the view id and secondary id
 		memento.putString("id", view.getViewSite().getId()); //$NON-NLS-1$
 		memento.putString("secondaryId", view.getViewSite().getSecondaryId()); //$NON-NLS-1$
-
-		// Save the pinned state
-		memento.putBoolean("pinned", view.isPinned()); //$NON-NLS-1$
 
 		// Loop the saveable items and store the connection data of each
 		// item to the memento
@@ -133,31 +125,6 @@ public class TerminalsViewMementoHandler {
 			String secondaryId = memento.getString("secondaryId"); //$NON-NLS-1$
 			if ("null".equals(secondaryId)) secondaryId = null; //$NON-NLS-1$
 
-			final IMemento finMemento = memento;
-			// Restore the pinned state of the after all connections completed
-			final Runnable runnable = new Runnable() {
-				@Override
-				public void run() {
-					if (finMemento.getBoolean("pinned") != null) { //$NON-NLS-1$
-						asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								view.setPinned(finMemento.getBoolean("pinned").booleanValue()); //$NON-NLS-1$
-
-								TabFolderToolbarHandler toolbarHandler = (TabFolderToolbarHandler)view.getAdapter(TabFolderToolbarHandler.class);
-								if (toolbarHandler != null) {
-									PinTerminalAction action = (PinTerminalAction)toolbarHandler.getAdapter(PinTerminalAction.class);
-									if (action != null) action.setChecked(view.isPinned());
-								}
-							}
-						});
-					}
-				}
-			};
-
-			final AtomicBoolean allProcessed = new AtomicBoolean(false);
-			final List<ITerminalService.Done> callbacks = new ArrayList<ITerminalService.Done>();
-
 			// Get all the "connection" memento's.
 			IMemento[] connections = memento.getChildren("connection"); //$NON-NLS-1$
 			for (IMemento connection : connections) {
@@ -191,22 +158,9 @@ public class TerminalsViewMementoHandler {
 
                 // Restore the terminal connection
                 if (delegate != null && !properties.isEmpty()) {
-                	ITerminalService.Done done = new ITerminalService.Done() {
-                		@Override
-                		public void done(IStatus status) {
-							callbacks.remove(this);
-							if (allProcessed.get() && callbacks.isEmpty()) {
-								asyncExec(runnable);
-							}
-						}
-					};
-					callbacks.add(done);
-                	delegate.execute(properties, done);
+                	delegate.execute(properties, null);
                 }
 			}
-
-			allProcessed.set(true);
-			if (callbacks.isEmpty()) asyncExec(runnable);
 		}
 	}
 

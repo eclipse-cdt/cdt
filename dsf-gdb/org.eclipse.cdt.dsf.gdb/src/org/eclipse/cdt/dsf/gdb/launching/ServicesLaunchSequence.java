@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,13 +40,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ServicesLaunchSequence extends Sequence {
 
-    DsfSession fSession;
-    GdbLaunch fLaunch;
+    private DsfSession fSession;
+    private GdbLaunch fLaunch;
 
-    ICommandControlService fCommandControl;
-    CSourceLookup fSourceLookup;
+    private ICommandControlService fCommandControl;
+    private CSourceLookup fSourceLookup;
     
-    Step[] fSteps = new Step[] {
+    private Step[] fSteps = new Step[] {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             fLaunch.getServiceFactory().createService(IMIBackend.class, fSession, fLaunch.getLaunchConfiguration()).initialize(requestMonitor);

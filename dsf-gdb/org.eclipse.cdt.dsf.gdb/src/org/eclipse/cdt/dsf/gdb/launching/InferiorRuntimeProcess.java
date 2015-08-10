@@ -74,6 +74,7 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 			try {
 				type = config.getType().getName();
 			} catch (CoreException e) {
+				type = null;
 			}
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(config.getName());

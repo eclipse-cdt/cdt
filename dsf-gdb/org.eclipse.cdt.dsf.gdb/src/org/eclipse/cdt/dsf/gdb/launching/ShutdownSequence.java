@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class ShutdownSequence extends Sequence {
 
 	class ServiceShutdownStep extends Step {
 		
-		IDsfService fService;
+		private IDsfService fService;
 
 		ServiceShutdownStep( IDsfService service ) {
 			super();
@@ -73,8 +73,9 @@ public class ShutdownSequence extends Sequence {
 	private Step[] createSteps() {
 		IDsfService[] services = getServices();
 		ServiceShutdownStep[] steps = new ServiceShutdownStep[services.length];
-		for ( int i = 0; i < steps.length; ++i )
+		for ( int i = 0; i < steps.length; ++i ) {
 			steps[i] = new ServiceShutdownStep( services[i] );
+		}
 		return steps;
 	}
 	

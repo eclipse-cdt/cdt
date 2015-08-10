@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,8 +174,10 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 */
 	@RollBack("stepInitializeFinalLaunchSequence")
 	public void rollBackInitializeFinalLaunchSequence(RequestMonitor requestMonitor) {
-		if (fTracker != null) fTracker.dispose();
-		fTracker = null;
+		if (fTracker != null) {
+			fTracker.dispose();
+			fTracker = null;
+		}
 		requestMonitor.done();
 	}
 
@@ -481,7 +483,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
 	}
 
-	private final static String INVALID = "invalid";   //$NON-NLS-1$
+	private static final String INVALID = "invalid";   //$NON-NLS-1$
 	/** 
 	 * If we are dealing with a remote-attach debugging session, connect to the target.
 	 * @since 4.0

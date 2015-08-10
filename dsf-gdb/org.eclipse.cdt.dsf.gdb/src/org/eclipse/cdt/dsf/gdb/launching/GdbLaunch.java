@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class GdbLaunch extends DsfLaunch
     // ITerminate
     
     static class LaunchCommandRequest extends CRequest implements IDebugCommandRequest {
-    	Object[] elements;
+    	private Object[] elements;
     	
     	public LaunchCommandRequest(Object[] objects) {
     		elements = objects;
@@ -323,8 +323,9 @@ public class GdbLaunch extends DsfLaunch
                     // updating of some of the Debug view actions.
                     // 'DebugEvent.TERMINATE' will be fired when each of the corresponding processes 
                     // exits and handled by 'handleDebugEvents()' method.
-                    if (isTerminated())
+                    if (isTerminated()) {
                         fireTerminate();
+                    }
                     
                     rm.setStatus(getStatus());
                     rm.done();
@@ -363,7 +364,7 @@ public class GdbLaunch extends DsfLaunch
     
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-    	if (adapter.equals(ITerminateHandler.class) == false) {
+    	if (!adapter.equals(ITerminateHandler.class)) {
     		// Must force adapters to be loaded.
     		// Except in the case of terminate.  Terminate can be used
     		// when running headless (no UI) and therefore we should not

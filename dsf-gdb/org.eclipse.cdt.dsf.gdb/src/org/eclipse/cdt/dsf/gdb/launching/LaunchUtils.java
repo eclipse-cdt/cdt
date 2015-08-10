@@ -449,39 +449,45 @@ public class LaunchUtils {
 			return null;
 		}
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		if (project == null || !project.isAccessible())
+		if (project == null || !project.isAccessible()) {
 			return null;
+		}
 
 		ICProjectDescription projDesc =	CoreModel.getDefault().getProjectDescription(project, false);
 
 		// Not a CDT project?
-		if (projDesc == null)
+		if (projDesc == null) {
 		    return null;
+		}
 
 		String buildConfigID = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
 		ICConfigurationDescription cfg = null;
-		if (buildConfigID.length() != 0)
+		if (buildConfigID.length() != 0) {
 		    cfg = projDesc.getConfigurationById(buildConfigID);
+		}
 
 		// if configuration is null fall-back to active
-		if (cfg == null)
+		if (cfg == null) {
 		    cfg = projDesc.getActiveConfiguration();
+		}
 
 		// Environment variables and inherited vars
 		HashMap<String, String> envMap = new HashMap<String, String>();
 		IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg, true);
-		for (IEnvironmentVariable var : vars)
+		for (IEnvironmentVariable var : vars) {
 			envMap.put(var.getName(), var.getValue());
+		}
 
 		// Add variables from build info
-		ICdtVariable[] build_vars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
-		for (ICdtVariable var : build_vars) {
+		ICdtVariable[] buildVars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
+		for (ICdtVariable var : buildVars) {
 			try {
 				// The project_classpath variable contributed by JDT is useless for running C/C++
 				// binaries, but it can be lethal if it has a very large value that exceeds shell
 				// limit. See http://bugs.eclipse.org/bugs/show_bug.cgi?id=408522
-				if (!"project_classpath".equals(var.getName())) //$NON-NLS-1$
+				if (!"project_classpath".equals(var.getName())) {//$NON-NLS-1$
 					envMap.put(var.getName(), var.getStringValue());
+				}
 			} catch (CdtVariableException e) {
 				// Some Eclipse dynamic variables can't be resolved dynamically... we don't care.
 			}

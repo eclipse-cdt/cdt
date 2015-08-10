@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Ericsson - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
-
-
 
 /**
  * @noextend This interface is not intended to be extended by clients.
@@ -22,13 +20,13 @@ public interface IProcessExtendedInfo {
 	/**
 	 * Returns the pid of the process, as assigned by the OS.
 	 */
-	public int getPid();
+	int getPid();
 	
 	/**
 	 * Returns the name of the process, as assigned by the OS.
  	 * Returns null if that information is not available.
 	 */
-	public String getName();
+	String getName();
 	
 	/**
 	 * Returns a list of cores on which the process is located.
@@ -36,12 +34,12 @@ public interface IProcessExtendedInfo {
 	 * process is located.
 	 * Returns null if that information is not available.
 	 */
-	public String[] getCores();
+	String[] getCores();
 	
 	/**
 	 * Returns the owner of the process.  Usually the userId
 	 * that started the process.  Returns null if that 
 	 * information is not available.
 	 */
-	public String getOwner();
+	String getOwner();
 }

@@ -63,14 +63,14 @@ import org.eclipse.debug.core.model.ISourceLocator;
 @ThreadSafe
 public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 {
-    public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
+    public static final String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
-    private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
+    private static final String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
     
     // Can be removed once we remove the deprecated newServiceFactory(String)
 	private boolean fIsNonStopSession = false;
 	
-    private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
+    private static final String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
 	
     private GdbLaunch fGdbLaunch;
     

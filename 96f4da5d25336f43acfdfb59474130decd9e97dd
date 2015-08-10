@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_a554bccf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-10T20:01:20Z",
+      "side": 1,
+      "message": "You can override handleSuccess() instead I believe.",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_b6ccf833",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
         "patchSetId": 1
@@ -30,6 +47,23 @@
       "writtenOn": "2015-08-07T21:28:12Z",
       "side": 1,
       "message": "There is already a field like that in GDBProcessesTest, is there a reason we need another?",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_a5d95c21",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-10T20:01:20Z",
+      "side": 1,
+      "message": "If you run these tests using NonStop it should be from another class called GDBProcessesNonStopTest_7_2.  The current class should continue to use all-stop.",
       "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

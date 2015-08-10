@@ -254,6 +254,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     public static String SPACES  = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_Spaces_label;   
     public static String CRLF    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_CarriageReturn_label;
     public static String DOTS    = MessagesForNumberFormatDetailPane.NumberFormatDetailPane_DotDotDot_label;
+    public static String PARENTHESES = MessagesForNumberFormatDetailPane.NumberFormatDetailPane__End_parentheses;
     
     /**
      * Job to compute the details for a selection
@@ -353,7 +354,21 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                     
                                     @Override
                                     protected void handleErrorOrWarning() {
-                                        detailComputed(null, getStatus().getMessage());  
+                                    	String rootMessage = new String(getStatus().getMessage()).trim();
+                                    	// Provide a detail Error message to the user
+                                        StringBuilder finalResult = new StringBuilder(rootMessage);
+                                    	IStatus[] statuses = getStatus().getChildren();
+                                    	if (statuses != null) {
+                                        	for (int i=0; i < statuses.length; i++) {
+                                        		String childMessage = statuses[i].getMessage().trim();
+                                        		// Avoid root message duplication
+                                        		if (!childMessage.equals(rootMessage)) {
+                                            		finalResult.append(CRLF + CRLF + (i+1) + PARENTHESES + childMessage);	
+                                        		}
+                                        	}
+                                    	}
+
+                                        detailComputed(null, finalResult.toString());
                                     };
                                 }) 
                             });

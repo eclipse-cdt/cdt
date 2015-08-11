@@ -59,11 +59,12 @@
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
+        <platform-update-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-update-site>
+        <platform-release-site>http://download.eclipse.org/releases/mars</platform-release-site>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/</orbit-site>
-        <cdt-site>http://download.eclipse.org/tools/cdt/builds/mars/milestones</cdt-site>
-        <rse-site>http://download.eclipse.org/tm/updates/4.0milestones</rse-site>
-        <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/mars/milestones</remote-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.7</cdt-site>
+        <rse-site>http://download.eclipse.org/tm/updates/4.0</rse-site>
+        <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>
         <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
         <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
       </properties>
@@ -75,8 +76,13 @@
             <layout>p2</layout>
         </repository>    
         <repository>
-            <id>platform</id>
-            <url>${platform-site}</url>
+            <id>platform-update</id>
+            <url>${platform-update-site}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>platform-release</id>
+            <url>${platform-release-site}</url>
             <layout>p2</layout>
         </repository>
         <repository>

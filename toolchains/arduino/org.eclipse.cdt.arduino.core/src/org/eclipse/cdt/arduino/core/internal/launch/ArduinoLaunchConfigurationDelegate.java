@@ -16,25 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.arduino.core.internal.ArduinoLaunchConsoleService;
 import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.core.internal.Messages;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.board.Board;
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -64,19 +53,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 
 		// 1. make sure proper build config is set active
 		IProject project = configuration.getMappedResources()[0].getProject();
-		ICProjectDescription projDesc = CCorePlugin.getDefault().getProjectDescription(project);
-		ICConfigurationDescription configDesc = getBuildConfiguration(projDesc, target);
-		boolean newConfig = false;
-		if (configDesc == null) {
-			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-			configDesc = ArduinoBoardManager.instance.createBuildConfiguration(projDesc, arduinoRemote.getBoardName(),
-					arduinoRemote.getPlatformName(), arduinoRemote.getPackageName());
-			newConfig = true;
-		}
-		if (newConfig || !projDesc.getActiveConfiguration().equals(configDesc)) {
-			projDesc.setActiveConfiguration(configDesc);
-			CCorePlugin.getDefault().setProjectDescription(project, projDesc);
-		}
+		// TODO set active build config for the selected target
 
 		// 2. Run the build
 		return super.buildForLaunch(configuration, mode, monitor);
@@ -95,7 +72,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		new Job(Messages.ArduinoLaunchConfigurationDelegate_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					ArduinoLaunchConsoleService consoleService = getConsoleService();
+					ArduinoConsoleService consoleService = Activator.getConsoleService();
 					IRemoteConnection target = getTarget(configuration);
 					if (target == null) {
 						return new Status(IStatus.ERROR, Activator.getId(),
@@ -106,14 +83,8 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 					IProject project = (IProject) configuration.getMappedResources()[0];
 
 					// The build environment
-					ICProjectDescription projDesc = CCorePlugin.getDefault().getProjectDescription(project);
-					ICConfigurationDescription configDesc = getBuildConfiguration(projDesc, target);
-					IEnvironmentVariable[] envVars = CCorePlugin.getDefault().getBuildEnvironmentManager()
-							.getVariables(configDesc, true);
-					List<String> envVarList = new ArrayList<String>(envVars.length + 1);
-					for (IEnvironmentVariable var : envVars) {
-						envVarList.add(var.getName() + '=' + var.getValue());
-					}
+					List<String> envVarList = new ArrayList<>();
+
 					// Add in the serial port based on launch config
 					IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
 					envVarList.add("SERIAL_PORT=" + arduinoRemote.getPortName()); //$NON-NLS-1$
@@ -123,8 +94,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 					File projectDir = new File(project.getLocationURI());
 
 					// The build command
-					IConfiguration buildConfig = ManagedBuildManager.getConfigurationForDescription(configDesc);
-					String command = buildConfig.getBuilder().getCommand();
+					String command = "make";
 
 					// If opened, temporarily close the connection so we can use
 					// it to download the firmware.
@@ -135,7 +105,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 
 					// Run the process and capture the results in the console
 					Process process = Runtime.getRuntime().exec(command + " load", envp, projectDir); //$NON-NLS-1$
-					consoleService.monitor(process);
+					consoleService.monitor(process, null);
 					try {
 						process.waitFor();
 					} catch (InterruptedException e) {
@@ -156,48 +126,6 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 				return Status.OK_STATUS;
 			};
 		}.schedule();
-	}
-
-	private ArduinoLaunchConsoleService getConsoleService() throws CoreException {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.getId(), "consoleService"); //$NON-NLS-1$
-		IExtension extension = point.getExtensions()[0]; // should only be one
-		return (ArduinoLaunchConsoleService) extension.getConfigurationElements()[0].createExecutableExtension("class"); //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns the build configuration for the active target and the launch
-	 * configuration.
-	 * 
-	 * @param launchConfig
-	 * @return
-	 */
-	private ICConfigurationDescription getBuildConfiguration(ICProjectDescription projDesc, IRemoteConnection target)
-			throws CoreException {
-		String boardName;
-		String platformName;
-		String packageName;
-		if (target != null) {
-			IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-			boardName = arduinoRemote.getBoardName();
-			platformName = arduinoRemote.getPlatformName();
-			packageName = arduinoRemote.getPackageName();
-		} else {
-			// TODO
-			boardName = "Arduino Uno"; //$NON-NLS-1$
-			platformName = "Arduino AVR Boards"; //$NON-NLS-1$
-			packageName = "arduino"; //$NON-NLS-1$
-		}
-
-		for (ICConfigurationDescription configDesc : projDesc.getConfigurations()) {
-			IConfiguration config = ManagedBuildManager.getConfigurationForDescription(configDesc);
-			Board board = ArduinoBoardManager.instance.getBoard(config);
-			if (boardName.equals(board.getId()) && platformName.equals(board.getPlatform().getArchitecture())
-					&& packageName.equals(board.getPlatform().getPackage().getName())) {
-				return configDesc;
-			}
-		}
-
-		return null;
 	}
 
 }

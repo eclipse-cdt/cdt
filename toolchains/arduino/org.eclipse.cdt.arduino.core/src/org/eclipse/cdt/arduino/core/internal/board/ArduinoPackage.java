@@ -15,22 +15,25 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class BoardPackage {
+public class ArduinoPackage {
 
 	private String name;
 	private String maintainer;
 	private String websiteURL;
 	private String email;
-	private Help help;
-	private List<Platform> platforms;
-	private List<Tool> tools;
+	private ArduinoHelp help;
+	private List<ArduinoPlatform> platforms;
+	private List<ArduinoTool> tools;
 
 	private transient ArduinoBoardManager manager;
 
-	void setOwners(ArduinoBoardManager manager) {
+	void setOwner(ArduinoBoardManager manager) {
 		this.manager = manager;
-		for (Platform platform : platforms) {
-			platform.setOwners(this);
+		for (ArduinoPlatform platform : platforms) {
+			platform.setOwner(this);
+		}
+		for (ArduinoTool tool : tools) {
+			tool.setOwner(this);
 		}
 	}
 
@@ -54,11 +57,11 @@ public class BoardPackage {
 		return email;
 	}
 
-	public Help getHelp() {
+	public ArduinoHelp getHelp() {
 		return help;
 	}
 
-	public Collection<Platform> getPlatforms() {
+	public Collection<ArduinoPlatform> getPlatforms() {
 		return Collections.unmodifiableCollection(platforms);
 	}
 
@@ -67,10 +70,10 @@ public class BoardPackage {
 	 * 
 	 * @return latest platforms
 	 */
-	public Collection<Platform> getLatestPlatforms() {
-		Map<String, Platform> platformMap = new HashMap<>();
-		for (Platform platform : platforms) {
-			Platform p = platformMap.get(platform.getName());
+	public Collection<ArduinoPlatform> getLatestPlatforms() {
+		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
+		for (ArduinoPlatform platform : platforms) {
+			ArduinoPlatform p = platformMap.get(platform.getName());
 			if (p == null || compareVersions(platform.getVersion(), p.getVersion()) > 0) {
 				platformMap.put(platform.getName(), platform);
 			}
@@ -124,22 +127,30 @@ public class BoardPackage {
 		return 0;
 	}
 
-	public Platform getPlatform(String architecture) {
-		for (Platform platform : platforms) {
-			if (platform.getArchitecture().equals(architecture)) {
-				return platform;
+	public ArduinoPlatform getPlatform(String name) {
+		ArduinoPlatform foundPlatform = null;
+		for (ArduinoPlatform platform : platforms) {
+			if (platform.getName().equals(name)) {
+				if (foundPlatform == null) {
+					foundPlatform = platform;
+				} else {
+					if (platform.isInstalled()
+							&& compareVersions(platform.getVersion(), foundPlatform.getVersion()) > 0) {
+						foundPlatform = platform;
+					}
+				}
 			}
 		}
-		return null;
+		return foundPlatform;
 	}
 
-	public List<Tool> getTools() {
+	public List<ArduinoTool> getTools() {
 		return tools;
 	}
 
-	public Tool getTool(String toolName, String version) {
-		for (Tool tool : tools) {
-			if (tool.getName().equals(toolName) && tool.getName().equals(version)) {
+	public ArduinoTool getTool(String toolName, String version) {
+		for (ArduinoTool tool : tools) {
+			if (tool.getName().equals(toolName) && tool.getVersion().equals(version)) {
 				return tool;
 			}
 		}
@@ -148,6 +159,19 @@ public class BoardPackage {
 
 	public void install(IProgressMonitor monitor) {
 
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ArduinoPackage) {
+			return ((ArduinoPackage) obj).getName().equals(name);
+		}
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 
 }

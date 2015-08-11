@@ -7,7 +7,6 @@ public class Messages extends NLS {
 	public static String ArduinoLaunchConsole_0;
 	public static String ArduinoLaunchConsole_1;
 	public static String ArduinoLaunchConsole_2;
-	public static String ArduinoLaunchConsole_3;
 	public static String ArduinoPreferencePage_0;
 	public static String ArduinoPreferencePage_1;
 	public static String ArduinoTargetPropertyPage_0;

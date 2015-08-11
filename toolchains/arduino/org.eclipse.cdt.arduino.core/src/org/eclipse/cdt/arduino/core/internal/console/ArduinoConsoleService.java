@@ -8,16 +8,21 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.arduino.core.internal;
+package org.eclipse.cdt.arduino.core.internal.console;
 
+import java.io.IOException;
 
-public interface ArduinoLaunchConsoleService {
+public interface ArduinoConsoleService {
 
 	/**
 	 * Capture the output for the process and display on the console.
 	 * 
 	 * @param process
 	 */
-	void monitor(Process process);
+	void monitor(Process process, ConsoleParser[] consoleParsers) throws IOException;
+
+	void writeOutput(String msg) throws IOException;
+
+	void writeError(String msg) throws IOException;
 
 }

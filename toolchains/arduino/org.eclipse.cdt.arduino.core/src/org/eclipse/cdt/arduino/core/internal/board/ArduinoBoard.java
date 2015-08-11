@@ -7,23 +7,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.util.Properties;
+
 import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
 
-public class Board {
+public class ArduinoBoard {
 
 	private String name;
 
 	private String id;
 
-	private Platform platform;
+	private ArduinoPlatform platform;
 	private HierarchicalProperties properties;
 
-	public Board() {
+	public ArduinoBoard() {
 	}
 
-	public Board(HierarchicalProperties properties) {
+	public ArduinoBoard(String id, HierarchicalProperties properties) {
 		this.properties = properties;
-		this.id = this.properties.getValue();
+		this.id = id;
 		this.name = this.properties.getChild("name").getValue(); //$NON-NLS-1$
 	}
 
@@ -35,11 +37,11 @@ public class Board {
 		return id;
 	}
 
-	public Platform getPlatform() {
+	public ArduinoPlatform getPlatform() {
 		return platform;
 	}
 
-	Board setOwners(Platform platform) {
+	ArduinoBoard setOwners(ArduinoPlatform platform) {
 		this.platform = platform;
 		return this;
 	}
@@ -48,12 +50,8 @@ public class Board {
 		return properties.getProperty(key);
 	}
 
-	public String getPlatformId() {
-		return platform.getArchitecture();
-	}
-
-	public String getPackageId() {
-		return platform.getPackage().getName();
+	public Properties getBoardProperties() {
+		return properties.flatten();
 	}
 
 }

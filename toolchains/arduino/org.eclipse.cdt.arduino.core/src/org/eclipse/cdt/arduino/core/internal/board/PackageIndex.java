@@ -11,14 +11,14 @@ import java.util.List;
 
 public class PackageIndex {
 
-	private List<BoardPackage> packages;
+	private List<ArduinoPackage> packages;
 
-	public List<BoardPackage> getPackages() {
+	public List<ArduinoPackage> getPackages() {
 		return packages;
 	}
 
-	public BoardPackage getPackage(String packageName) {
-		for (BoardPackage pkg : packages) {
+	public ArduinoPackage getPackage(String packageName) {
+		for (ArduinoPackage pkg : packages) {
 			if (pkg.getName().equals(packageName)) {
 				return pkg;
 			}
@@ -27,8 +27,8 @@ public class PackageIndex {
 	}
 
 	void setOwners(ArduinoBoardManager manager) {
-		for (BoardPackage pkg : packages) {
-			pkg.setOwners(manager);
+		for (ArduinoPackage pkg : packages) {
+			pkg.setOwner(manager);
 		}
 	}
 

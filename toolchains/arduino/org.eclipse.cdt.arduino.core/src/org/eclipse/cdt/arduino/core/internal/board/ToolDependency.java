@@ -7,11 +7,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import org.eclipse.cdt.arduino.core.internal.Activator;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 public class ToolDependency {
 
 	private String packager;
 	private String name;
 	private String version;
+
+	private transient ArduinoPlatform platform;
+
+	public void setOwner(ArduinoPlatform platform) {
+		this.platform = platform;
+	}
 
 	public String getPackager() {
 		return packager;
@@ -23,6 +35,28 @@ public class ToolDependency {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public ArduinoTool getTool() throws CoreException {
+		ArduinoPackage pkg = platform.getPackage();
+		if (!pkg.getName().equals(packager)) {
+			pkg = pkg.getManager().getPackageIndex().getPackage(packager);
+		}
+
+		return pkg.getTool(name, version);
+	}
+
+	public IStatus install(IProgressMonitor monitor) {
+		try {
+			ArduinoTool tool = getTool();
+			if (tool == null) {
+				return new Status(IStatus.ERROR, Activator.getId(),
+						String.format("Tool not found %s %s", name, version));
+			}
+			return getTool().install(monitor);
+		} catch (CoreException e) {
+			return e.getStatus();
+		}
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.board.Board;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
@@ -28,7 +28,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 	private Combo portSelector;
 	private Combo boardSelector;
 
-	private Board[] boards;
+	private ArduinoBoard[] boards;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -73,13 +73,13 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		boardSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		try {
-			Board currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardName(),
+			ArduinoBoard currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardName(),
 					arduinoRemote.getPlatformName(), arduinoRemote.getPackageName());
-			Collection<Board> boardList = ArduinoBoardManager.instance.getBoards();
-			boards = new Board[boardList.size()];
+			Collection<ArduinoBoard> boardList = ArduinoBoardManager.instance.getBoards();
+			boards = new ArduinoBoard[boardList.size()];
 			i = 0;
 			int boardSel = 0;
-			for (Board board : boardList) {
+			for (ArduinoBoard board : boardList) {
 				boards[i] = board;
 				boardSelector.add(board.getName());
 				if (board.equals(currentBoard)) {
@@ -103,7 +103,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		String portName = portSelector.getItem(portSelector.getSelectionIndex());
 		workingCopy.setAttribute(IArduinoRemoteConnection.PORT_NAME, portName);
 
-		Board board = boards[boardSelector.getSelectionIndex()];
+		ArduinoBoard board = boards[boardSelector.getSelectionIndex()];
 		workingCopy.setAttribute(IArduinoRemoteConnection.BOARD_ID, board.getId());
 
 		try {

@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_50b65971",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-11T20:31:49Z",
+      "side": 1,
+      "message": "Could you remove the [] to make a full sentence?",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_508499ad",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/MessagesForNumberFormatDetailPane.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-11T20:31:49Z",
+      "side": 1,
+      "message": "The above does not seem to be used",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_10ace123",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/MessagesForNumberFormatDetailPane.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-11T20:31:49Z",
+      "side": 1,
+      "message": "I don\u0027t believe you need the \\ before the space",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_1061817b",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-11T20:31:49Z",
+      "side": 1,
+      "message": "You can use StringBuilder which is faster, since we don\u0027t need to be thread-safe",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

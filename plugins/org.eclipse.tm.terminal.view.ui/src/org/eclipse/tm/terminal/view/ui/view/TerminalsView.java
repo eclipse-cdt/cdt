@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.view;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.core.commands.Command;
@@ -19,12 +22,14 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -55,6 +60,7 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderMenuHandler;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderToolbarHandler;
+import org.eclipse.tm.terminal.view.ui.view.showin.GitShowInContextHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewSite;
@@ -656,29 +662,92 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 		if (context != null) {
 			// Get the selection from the context
 			ISelection selection = context.getSelection();
-			// The selection must contain elements that can be adapted to IResource
+
+			// If the selection is not set or empty, look at the input element of
+			// the show in context.
+			if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
+				Object input = context.getInput();
+				// If coming from the EGit repository viewer, the input element is
+				// org.eclipse.egit.ui.internal.history.HistoryPageInput
+				if ("org.eclipse.egit.ui.internal.history.HistoryPageInput".equals(input.getClass().getName())) { //$NON-NLS-1$
+					Bundle bundle = Platform.getBundle("org.eclipse.egit.ui"); //$NON-NLS-1$
+					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+						selection = GitShowInContextHandler.getSelection(input);
+					}
+				}
+			}
+
+			// The selection must contain elements that can be adapted to IResource, File or IPath
 			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 				boolean isValid = true;
+
+				// Build a new structured selection with the adapted elements
+				List<Object> elements = new ArrayList<Object>();
 
 				Iterator<?> iterator = ((IStructuredSelection)selection).iterator();
 				while (iterator.hasNext() && isValid) {
 					Object element = iterator.next();
 					Object adapted = null;
 
+					if (element instanceof File) {
+						if (!elements.contains(element)) elements.add(element);
+						continue;
+					}
+					adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(File.class) : null;
+					if (adapted == null) adapted = Platform.getAdapterManager().getAdapter(element, File.class);
+					if (adapted == null) adapted = Platform.getAdapterManager().loadAdapter(element, File.class.getName());
+					if (adapted != null) {
+						if (!elements.contains(adapted)) elements.add(adapted);
+						continue;
+					}
+
+					if (element instanceof IPath) {
+						if (!elements.contains(element)) elements.add(element);
+						continue;
+					}
+					adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(IPath.class) : null;
+					if (adapted == null) adapted = Platform.getAdapterManager().getAdapter(element, IPath.class);
+					if (adapted == null) adapted = Platform.getAdapterManager().loadAdapter(element, IPath.class.getName());
+					if (adapted != null) {
+						if (!elements.contains(adapted)) elements.add(adapted);
+						continue;
+					}
+
 					Bundle bundle = Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
 					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-						if (element instanceof org.eclipse.core.resources.IResource) continue;
+						if (element instanceof org.eclipse.core.resources.IResource) {
+							if (!elements.contains(element)) elements.add(element);
+							continue;
+						}
 
 						adapted = element instanceof IAdaptable ? ((IAdaptable)element).getAdapter(org.eclipse.core.resources.IResource.class) : null;
 						if (adapted == null) adapted = Platform.getAdapterManager().getAdapter(element, org.eclipse.core.resources.IResource.class);
 						if (adapted == null) adapted = Platform.getAdapterManager().loadAdapter(element, org.eclipse.core.resources.IResource.class.getName());
 					}
+					if (adapted != null) {
+						if (!elements.contains(adapted)) elements.add(adapted);
+						continue;
+					}
 
-					isValid = adapted != null;
+					// The EGit repository view can also set a RepositoryTreeNode (and subclasses)
+					// "org.eclipse.egit.ui.internal.repository.tree...."
+					if (element.getClass().getName().startsWith("org.eclipse.egit.ui.internal.repository.tree")) { //$NON-NLS-1$
+						bundle = Platform.getBundle("org.eclipse.egit.ui"); //$NON-NLS-1$
+						if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
+							adapted = GitShowInContextHandler.getPath(element);
+						}
+					}
+					if (adapted != null) {
+						if (!elements.contains(adapted)) elements.add(adapted);
+						continue;
+					}
+
+					isValid = false;
 				}
 
 				// If the selection is valid, fire the command to open the local terminal
 				if (isValid) {
+					selection =  new StructuredSelection(elements);
 					ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 					Command command = service != null ? service.getCommand("org.eclipse.tm.terminal.connector.local.command.launch") : null; //$NON-NLS-1$
 					if (command != null && command.isDefined() && command.isEnabled()) {

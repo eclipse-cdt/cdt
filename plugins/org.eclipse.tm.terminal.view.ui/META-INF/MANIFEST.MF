@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
  org.eclipse.core.runtime;bundle-version="3.8.0",
  org.eclipse.core.resources;bundle-version="3.8.1";resolution:=optional,
+ org.eclipse.egit.ui;bundle-version="4.0.0";resolution:=optional,
  org.eclipse.tm.terminal.view.core;bundle-version="4.0.0",
  org.eclipse.tm.terminal.control;bundle-version="4.0.0",
  org.eclipse.ui;bundle-version="3.8.0"
@@ -31,4 +32,5 @@ Export-Package: org.eclipse.tm.terminal.view.ui.actions,
  org.eclipse.tm.terminal.view.ui.services,
  org.eclipse.tm.terminal.view.ui.streams,
  org.eclipse.tm.terminal.view.ui.tabs,
- org.eclipse.tm.terminal.view.ui.view
+ org.eclipse.tm.terminal.view.ui.view,
+ org.eclipse.tm.terminal.view.ui.view.showin

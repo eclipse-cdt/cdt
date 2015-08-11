@@ -43,11 +43,35 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	/** @since 5.2 */ // set to true to print build events on the console in debug mode
 	protected static final boolean DEBUG_EVENTS = false;
 
+	private IProject currentProject;
+
 	/**
 	 * Constructor for ACBuilder
 	 */
 	public ACBuilder() {
 		super();
+	}
+
+	/**
+	 * Set the current project that this builder is running.
+	 * 
+	 * @since 5.11
+	 */
+	protected void setCurrentProject(IProject project) {
+		this.currentProject = project;
+	}
+
+	/**
+	 * Returns the current project that this builder is running.
+	 * 
+	 * @return the project
+	 * @since 5.11
+	 */
+	protected IProject getCurrentProject() {
+		if (currentProject != null) {
+			return currentProject;
+		}
+		return super.getProject();
 	}
 
 	@Override
@@ -56,13 +80,13 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		addMarker(problemMarkerInfo);
 	}
 
-	/*
-	 * callback from Output Parser
+	/**
+	 * Callback from Output Parser
 	 */
 	@Override
 	public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 		try {
-			IProject project = getProject();
+			IProject project = getCurrentProject();
 			IResource markerResource = problemMarkerInfo.file;
 			if (markerResource == null)  {
 				markerResource = project;
@@ -136,7 +160,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	}
 
-	int mapMarkerSeverity(int severity) {
+	private int mapMarkerSeverity(int severity) {
 		switch (severity) {
 		case SEVERITY_ERROR_BUILD :
 		case SEVERITY_ERROR_RESOURCE :
@@ -190,7 +214,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	@SuppressWarnings("nls")
 	private String cfgIdToNames(String strIds) {
-		IProject project = getProject();
+		IProject project = getCurrentProject();
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project, false);
 		if (prjDesc == null) {
 			return strIds;
@@ -233,7 +257,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			String ids = args!=null ? args.get(CONTENTS_CONFIGURATION_IDS) : null;
 			System.out.println("t"+Thread.currentThread().getId()+": "
 					+ kindToString(kind)
-					+ ", " +  getProject()
+					+ ", " +  getCurrentProject()
 					+ "[" + cfgIdToNames(ids) +"]"
 					+ ", " + this.getClass().getSimpleName()
 				);

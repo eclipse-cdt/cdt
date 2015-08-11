@@ -1407,6 +1407,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			for (List<IFile> filesInProject : projectMap.values()) {
 				IProject project = filesInProject.get(0).getProject();
+				setCurrentProject(project);
 				monitor.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", project.getName())); //$NON-NLS-1$
 				invokeInternalBuilderForOneProject(filesInProject, new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			}

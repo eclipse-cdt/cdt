@@ -59,7 +59,7 @@
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-        <platform-update-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-update-site>
+        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
         <platform-release-site>http://download.eclipse.org/releases/mars</platform-release-site>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.7</cdt-site>
@@ -76,8 +76,8 @@
             <layout>p2</layout>
         </repository>    
         <repository>
-            <id>platform-update</id>
-            <url>${platform-update-site}</url>
+            <id>platform</id>
+            <url>${platform-site}</url>
             <layout>p2</layout>
         </repository>
         <repository>
@@ -144,9 +144,10 @@
             <id>juno</id>
             
             <properties>
-                <tm-stream>juno</tm-stream>
+                <terminal-stream>juno</terminal-stream>
                 <sdk-version>3.8</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+                <platform-release-site>http://download.eclipse.org/releases/${terminal-stream}</platform-release-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
@@ -155,9 +156,10 @@
             <id>kepler</id>
             
             <properties>
-                <tm-stream>kepler</tm-stream>
+                <terminal-stream>kepler</terminal-stream>
                 <sdk-version>4.3</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+                <platform-release-site>http://download.eclipse.org/releases/${terminal-stream}</platform-release-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.4</cdt-site>
             </properties>
         </profile>
@@ -166,9 +168,10 @@
             <id>luna</id>
             
             <properties>
-                <tm-stream>luna</tm-stream>
+                <terminal-stream>luna</terminal-stream>
                 <sdk-version>4.4</sdk-version>
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+                <platform-release-site>http://download.eclipse.org/releases/${terminal-stream}</platform-release-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
             </properties>
         </profile>

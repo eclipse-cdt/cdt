@@ -3,7 +3,7 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 import java.io.IOException;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.board.Board;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
@@ -30,8 +30,8 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 	private String[] portNames;
 	private Combo portCombo;
 
-	Board board;
-	private Board[] boards;
+	ArduinoBoard board;
+	private ArduinoBoard[] boards;
 	private Combo boardCombo;
 
 	public NewArduinoTargetWizardPage() {
@@ -90,8 +90,8 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		boardCombo = new Combo(comp, SWT.READ_ONLY);
 		boardCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		try {
-			boards = ArduinoBoardManager.instance.getBoards().toArray(new Board[0]);
-			for (Board board : boards) {
+			boards = ArduinoBoardManager.instance.getBoards().toArray(new ArduinoBoard[0]);
+			for (ArduinoBoard board : boards) {
 				boardCombo.add(board.getName());
 			}
 			boardCombo.select(0);

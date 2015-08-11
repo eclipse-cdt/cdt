@@ -68,7 +68,7 @@ public class HierarchicalProperties {
 			HierarchicalProperties child = children.get(key);
 			if (child == null) {
 				child = new HierarchicalProperties();
-				children.put(qualifiedKey, child);
+				children.put(key, child);
 			}
 			String childKey = qualifiedKey.substring(i + 1);
 			child.putProperty(childKey, value);
@@ -129,6 +129,28 @@ public class HierarchicalProperties {
 			HierarchicalProperties node = list.get(i);
 			if (node != null) {
 				children.put(Integer.toString(i), node);
+			}
+		}
+	}
+
+	public Properties flatten() {
+		Properties properties = new Properties();
+		flatten(null, this, properties);
+		return properties;
+	}
+
+	private static void flatten(String prefix, HierarchicalProperties tree, Properties props) {
+		if (tree.getValue() != null && prefix != null) {
+			props.put(prefix, tree.getValue());
+		}
+
+		if (tree.getChildren() != null) {
+			for (Map.Entry<String, HierarchicalProperties> entry : tree.getChildren().entrySet()) {
+				String childPrefix = entry.getKey();
+				if (prefix != null) {
+					childPrefix = prefix + "." + childPrefix; //$NON-NLS-1$
+				}
+				flatten(childPrefix, entry.getValue(), props);
 			}
 		}
 	}

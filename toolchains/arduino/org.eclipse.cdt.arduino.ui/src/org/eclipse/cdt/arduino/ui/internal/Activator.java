@@ -11,6 +11,7 @@
 package org.eclipse.cdt.arduino.ui.internal;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -18,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -41,9 +43,14 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 
-		ImageRegistry imageRegistry = getImageRegistry();
-		imageRegistry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
-		imageRegistry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
+		new UIJob("Arduino UI Startup") {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				ImageRegistry imageRegistry = getImageRegistry();
+				imageRegistry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
+				imageRegistry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
 	public void stop(BundleContext context) throws Exception {

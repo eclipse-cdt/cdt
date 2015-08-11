@@ -10,32 +10,28 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.compressors.CompressorException;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.Messages;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -62,21 +58,10 @@ public class ArduinoBoardManager {
 	public ArduinoBoardManager() {
 		new Job(Messages.ArduinoBoardManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				try (CloseableHttpClient client = HttpClients.createDefault()) {
-					HttpGet get = new HttpGet("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
-					try (CloseableHttpResponse response = client.execute(get)) {
-						if (response.getStatusLine().getStatusCode() >= 400) {
-							return new Status(IStatus.ERROR, Activator.getId(),
-									response.getStatusLine().getReasonPhrase());
-						} else {
-							HttpEntity entity = response.getEntity();
-							if (entity == null) {
-								return new Status(IStatus.ERROR, Activator.getId(), Messages.ArduinoBoardManager_1);
-							}
-							Files.createDirectories(packageIndexPath.getParent());
-							Files.copy(entity.getContent(), packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
-						}
-					}
+				try {
+					URL url = new URL("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
+					Files.createDirectories(packageIndexPath.getParent());
+					Files.copy(url.openStream(), packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException e) {
 					return new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e);
 				}
@@ -85,72 +70,99 @@ public class ArduinoBoardManager {
 		}.schedule();
 	}
 
-	public PackageIndex getPackageIndex() throws IOException {
+	public PackageIndex getPackageIndex() throws CoreException {
 		if (packageIndex == null) {
 			try (FileReader reader = new FileReader(packageIndexPath.toFile())) {
 				packageIndex = new Gson().fromJson(reader, PackageIndex.class);
 				packageIndex.setOwners(this);
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Reading package index", e));
 			}
 		}
 		return packageIndex;
 	}
 
-	public ICConfigurationDescription createBuildConfiguration(ICProjectDescription projDesc, String boardId,
-			String platformId, String packageId) throws CoreException {
-		Board board = packageIndex.getPackage(packageId).getPlatform(platformId).getBoard(boardId);
-		ManagedProject managedProject = new ManagedProject(projDesc);
-		// TODO find toolchain based on package (os), platform (arch).
-		String configId = ManagedBuildManager.calculateChildId(ArduinoBoardManager.AVR_TOOLCHAIN_ID, null);
-		IToolChain avrToolChain = ManagedBuildManager.getExtensionToolChain(ArduinoBoardManager.AVR_TOOLCHAIN_ID);
-
-		org.eclipse.cdt.managedbuilder.internal.core.Configuration newConfig = new org.eclipse.cdt.managedbuilder.internal.core.Configuration(
-				managedProject, (ToolChain) avrToolChain, configId, board.getName());
-
-		IToolChain newToolChain = newConfig.getToolChain();
-		IOption boardOption = newToolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
-		ManagedBuildManager.setOption(newConfig, newToolChain, boardOption, boardId);
-		IOption platformOption = newToolChain.getOptionBySuperClassId(PLATFORM_OPTION_ID);
-		ManagedBuildManager.setOption(newConfig, newToolChain, platformOption, platformId);
-		IOption packageOption = newToolChain.getOptionBySuperClassId(PACKAGE_OPTION_ID);
-		ManagedBuildManager.setOption(newConfig, newToolChain, packageOption, packageId);
-
-		CConfigurationData data = newConfig.getConfigurationData();
-		return projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {
+		return getPackageIndex().getPackage(packageName).getPlatform(platformName).getBoard(boardName);
 	}
 
-	public Board getBoard(String boardName, String platformName, String packageName) throws CoreException {
-		return packageIndex.getPackage(packageName).getPlatform(platformName).getBoard(boardName);
-	}
-
-	public Board getBoard(IConfiguration configuration) throws CoreException {
-		try {
-			IToolChain toolChain = configuration.getToolChain();
-			IOption boardOption = toolChain.getOptionBySuperClassId(BOARD_OPTION_ID);
-			String boardName = boardOption.getStringValue();
-			IOption platformOption = toolChain.getOptionBySuperClassId(PLATFORM_OPTION_ID);
-			String platformName = platformOption.getStringValue();
-			IOption packageOption = toolChain.getOptionBySuperClassId(PACKAGE_OPTION_ID);
-			String packageName = packageOption.getStringValue();
-
-			return getBoard(boardName, platformName, packageName);
-		} catch (BuildException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e));
-		}
-	}
-
-	public List<Board> getBoards() throws CoreException {
-		List<Board> boards = new ArrayList<>();
-		for (BoardPackage pkg : packageIndex.getPackages()) {
-			for (Platform platform : pkg.getPlatforms()) {
+	public List<ArduinoBoard> getBoards() throws CoreException {
+		List<ArduinoBoard> boards = new ArrayList<>();
+		for (ArduinoPackage pkg : packageIndex.getPackages()) {
+			for (ArduinoPlatform platform : pkg.getPlatforms()) {
 				boards.addAll(platform.getBoards());
 			}
 		}
 		return boards;
 	}
 
-	public Tool getTool(String packageName, String toolName, String version) {
-		BoardPackage pkg = packageIndex.getPackage(packageName);
+	public ArduinoTool getTool(String packageName, String toolName, String version) {
+		ArduinoPackage pkg = packageIndex.getPackage(packageName);
 		return pkg != null ? pkg.getTool(toolName, version) : null;
 	}
 
+	public static IStatus downloadAndInstall(String url, String archiveFileName, Path installPath,
+			IProgressMonitor monitor) {
+		try {
+			URL dl = new URL(url);
+			Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads");
+			Files.createDirectories(dlDir);
+			Path archivePath = dlDir.resolve(archiveFileName);
+			Files.copy(dl.openStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);
+
+			// extract
+			ArchiveInputStream archiveIn = null;
+			try {
+				String compressor = null;
+				String archiver = null;
+				if (archiveFileName.endsWith("tar.bz2")) { //$NON-NLS-1$
+					compressor = CompressorStreamFactory.BZIP2;
+					archiver = ArchiveStreamFactory.TAR;
+				} else if (archiveFileName.endsWith(".tar.gz") || archiveFileName.endsWith(".tgz")) { //$NON-NLS-1$ //$NON-NLS-2$
+					compressor = CompressorStreamFactory.GZIP;
+					archiver = ArchiveStreamFactory.TAR;
+				} else if (archiveFileName.endsWith(".tar.xz")) { //$NON-NLS-1$
+					compressor = CompressorStreamFactory.XZ;
+					archiver = ArchiveStreamFactory.TAR;
+				} else if (archiveFileName.endsWith(".zip")) { //$NON-NLS-1$
+					archiver = ArchiveStreamFactory.ZIP;
+				}
+
+				InputStream in = new BufferedInputStream(new FileInputStream(archivePath.toFile()));
+				if (compressor != null) {
+					in = new CompressorStreamFactory().createCompressorInputStream(compressor, in);
+				}
+				archiveIn = new ArchiveStreamFactory().createArchiveInputStream(archiver, in);
+
+				for (ArchiveEntry entry = archiveIn.getNextEntry(); entry != null; entry = archiveIn.getNextEntry()) {
+					if (entry.isDirectory()) {
+						continue;
+					}
+
+					// TODO check for soft links in tar files.
+					Path entryPath = installPath.resolve(entry.getName());
+					Files.createDirectories(entryPath.getParent());
+					Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+				}
+			} finally {
+				if (archiveIn != null) {
+					archiveIn.close();
+				}
+			}
+
+			// Fix up directory
+			File[] children = installPath.toFile().listFiles();
+			if (children.length == 1 && children[0].isDirectory()) {
+				// make that directory the install path
+				Path childPath = children[0].toPath();
+				Path tmpPath = installPath.getParent().resolve("_t"); //$NON-NLS-1$
+				Files.move(childPath, tmpPath);
+				Files.delete(installPath);
+				Files.move(tmpPath, installPath);
+			}
+			return Status.OK_STATUS;
+		} catch (IOException | CompressorException | ArchiveException e) {
+			return new Status(IStatus.ERROR, Activator.getId(), "Installing Platform", e);
+		}
+	}
 }

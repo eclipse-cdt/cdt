@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.preferences;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,16 +14,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
-import org.eclipse.cdt.arduino.core.internal.board.Board;
-import org.eclipse.cdt.arduino.core.internal.board.BoardPackage;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.PackageIndex;
-import org.eclipse.cdt.arduino.core.internal.board.Platform;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
@@ -47,7 +46,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 
 	private Table table;
 	private Button installButton;
-	private Set<Board> toInstall = new HashSet<>();
+	private Set<ArduinoBoard> toInstall = new HashSet<>();
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -100,7 +99,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 			@Override
 			public void handleEvent(Event event) {
 				for (TableItem item : table.getSelection()) {
-					Board board = (Board) item.getData();
+					ArduinoBoard board = (ArduinoBoard) item.getData();
 					toInstall.add(board);
 					item.setText(2, "selected");
 					updateButtons();
@@ -123,11 +122,11 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 
 		try {
 			PackageIndex packageIndex = ArduinoBoardManager.instance.getPackageIndex();
-			List<Board> boards = new ArrayList<>();
-			for (BoardPackage pkg : packageIndex.getPackages()) {
-				for (Platform platform : pkg.getLatestPlatforms()) {
+			List<ArduinoBoard> boards = new ArrayList<>();
+			for (ArduinoPackage pkg : packageIndex.getPackages()) {
+				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
 					try {
-						for (Board board : platform.getBoards()) {
+						for (ArduinoBoard board : platform.getBoards()) {
 							boards.add(board);
 						}
 					} catch (CoreException e) {
@@ -136,13 +135,13 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 				}
 			}
 
-			Collections.sort(boards, new Comparator<Board>() {
-				public int compare(Board o1, Board o2) {
+			Collections.sort(boards, new Comparator<ArduinoBoard>() {
+				public int compare(ArduinoBoard o1, ArduinoBoard o2) {
 					return o1.getName().compareTo(o2.getName());
 				}
 			});
 
-			for (Board board : boards) {
+			for (ArduinoBoard board : boards) {
 				TableItem item = new TableItem(table, SWT.NONE);
 				item.setData(board);
 				item.setText(0, board.getName());
@@ -155,7 +154,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 				}
 				item.setText(2, msg);
 			}
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			Activator.log(e);
 		}
 	}
@@ -167,11 +166,11 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 
 		boolean enable = false;
 		for (TableItem item : table.getSelection()) {
-			Board board = (Board) item.getData();
+			ArduinoBoard board = (ArduinoBoard) item.getData();
 			if (toInstall.contains(board)) {
 				continue;
 			}
-			Platform platform = board.getPlatform();
+			ArduinoPlatform platform = board.getPlatform();
 			if (!platform.isInstalled()) {
 				enable = true;
 			}
@@ -184,17 +183,15 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 		new Job("Installing Arduino Board Platforms") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				Set<Platform> platforms = new HashSet<>();
-				for (Board board : toInstall) {
+				Set<ArduinoPlatform> platforms = new HashSet<>();
+				for (ArduinoBoard board : toInstall) {
 					platforms.add(board.getPlatform());
 				}
 
-				for (Platform platform : platforms) {
-					try {
-						platform.install(monitor);
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
+				MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, 0, "Installing Arduino Board Platforms",
+						null);
+				for (ArduinoPlatform platform : platforms) {
+					status.add(platform.install(monitor));
 				}
 
 				toInstall.clear();
@@ -208,7 +205,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 					});
 				}
 
-				return Status.OK_STATUS;
+				return status;
 			}
 		}.schedule();
 		return true;

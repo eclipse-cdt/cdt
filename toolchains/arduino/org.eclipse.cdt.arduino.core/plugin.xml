@@ -3,95 +3,6 @@
 <plugin>
    <extension-point id="consoleService" name="Arduino Launch Console Service" schema="schema/consoleService.exsd"/>
    <extension
-         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
-      <managedBuildRevision
-            fileVersion="4.0.0">
-      </managedBuildRevision>
-      <toolChain
-            archList="all"
-            configurationEnvironmentSupplier="org.eclipse.cdt.arduino.core.internal.EnvVarSupplier"
-            id="org.eclipse.cdt.arduino.toolChain.avr"
-            isAbstract="false"
-            languageSettingsProviders="org.eclipse.cdt.arduino.avr.builtins;org.eclipse.cdt.arduino.avr.outputParser"
-            name="Arduino AVR C++"
-            osList="all"
-            supportsManagedBuild="false">
-         <targetPlatform
-               id="org.eclipse.cdt.arduino.targetPlatform"
-               isAbstract="false"
-               name="Arduino">
-         </targetPlatform>
-         <builder
-               autoBuildTarget="all"
-               buildRunner="org.eclipse.cdt.managedbuilder.core.ExternalBuildRunner"
-               cleanBuildTarget="clean"
-               command="make"
-               commandLauncher="org.eclipse.cdt.core.CommandLauncher"
-               id="org.eclipse.cdt.arduino.builder.make"
-               incrementalBuildTarget="all"
-               isAbstract="false"
-               isVariableCaseSensitive="false"
-               name="Arduino Make">
-         </builder>
-         <tool
-               command="avr-g++"
-               id="org.eclipse.cdt.arduino.tool.avr.compiler"
-               isAbstract="false"
-               name="Arduino AVR C++ Compiler"
-               natureFilter="ccnature"
-               superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
-         </tool>
-         <option
-               category="org.eclipse.cdt.arduino.optionCategory.board"
-               id="org.eclipse.cdt.arduino.option.board"
-               isAbstract="false"
-               name="Board Type"
-               resourceFilter="all"
-               valueType="string">
-         </option>
-         <option
-               category="org.eclipse.cdt.arduino.optionCategory.board"
-               id="org.eclipse.cdt.arduino.option.platform"
-               isAbstract="false"
-               name="Board Platform"
-               resourceFilter="all"
-               valueType="string">
-         </option>
-         <option
-               category="org.eclipse.cdt.arduino.optionCategory.board"
-               id="org.eclipse.cdt.arduino.option.package"
-               isAbstract="false"
-               name="Board Package"
-               resourceFilter="all"
-               valueType="string">
-         </option>
-         <optionCategory
-               id="org.eclipse.cdt.arduino.optionCategory.board"
-               name="Board Type">
-         </optionCategory>
-      </toolChain>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.LanguageSettingsProvider">
-      <provider
-            class="org.eclipse.cdt.arduino.core.internal.AvrLanguageSettingsProvider"
-            id="org.eclipse.cdt.arduino.avr.builtins"
-            name="Arduino AVR Compiler Built-ins"
-            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
-            prefer-non-shared="true">
-         <language-scope
-               id="org.eclipse.cdt.core.g++">
-         </language-scope>
-      </provider>
-      <provider
-            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
-            id="org.eclipse.cdt.arduino.avr.outputParser"
-            name="Arduino AVR Built Output Parser"
-            parameter="(avr-gcc)|(avr-g\+\+)"
-            prefer-non-shared="true">
-      </provider>
-   </extension>
-   <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             delegate="org.eclipse.cdt.arduino.core.internal.launch.ArduinoLaunchConfigurationDelegate"
@@ -163,15 +74,39 @@
                class="org.eclipse.cdt.arduino.core.internal.ArduinoProjectNature">
          </run>
       </runtime>
+      <builder
+            id="org.eclipse.cdt.arduino.core.arduinoBuilder">
+      </builder>
    </extension>
    <extension
          id="arduinoBuilder"
+         name="%ArduinoBuilder.name"
          point="org.eclipse.core.resources.builders">
       <builder
-            hasNature="true">
+            callOnEmptyDelta="true"
+            hasNature="true"
+            isConfigurable="true"
+            supportsConfigurations="true">
          <run
                class="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder">
          </run>
       </builder>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.ScannerInfoProvider2">
+      <provider
+            builder="org.eclipse.cdt.arduino.core.arduinoBuilder"
+            class="org.eclipse.cdt.arduino.core.ArduinoScannerInfoProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.IBuildConfiguration"
+            class="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration$Factory">
+         <adapter
+               type="org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration">
+         </adapter>
+      </factory>
    </extension>
 </plugin>

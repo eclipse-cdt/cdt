@@ -33,7 +33,7 @@
    <extension
          point="org.eclipse.cdt.arduino.core.consoleService">
       <provider
-            class="org.eclipse.cdt.arduino.ui.internal.launch.ArduinoLaunchConsole">
+            class="org.eclipse.cdt.arduino.ui.internal.launch.ArduinoConsole">
       </provider>
    </extension>
    <extension

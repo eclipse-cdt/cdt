@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.tm.internal.terminal.control.ITerminalListener;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener2;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
 
@@ -22,7 +22,7 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
  * Terminal tab default terminal listener implementation.
  */
 @SuppressWarnings("restriction")
-public class TabTerminalListener implements ITerminalListener {
+public class TabTerminalListener implements ITerminalListener2 {
 	private static final String TAB_TERMINAL_LISTENER = "TabTerminalListener"; //$NON-NLS-1$
 	/* default */ final TabFolderManager tabFolderManager;
 	private CTabItem tabItem;
@@ -150,6 +150,9 @@ public class TabTerminalListener implements ITerminalListener {
 	public void setTerminalTitle(String title) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.tm.internal.terminal.control.ITerminalListener2#setTerminalSelectionChanged()
+	 */
 	@Override
 	public void setTerminalSelectionChanged() {
 		tabFolderManager.fireTerminalSelectionChanged();

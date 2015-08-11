@@ -89,6 +89,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener2;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
@@ -136,7 +137,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private Composite                 fWndParent;
     private Clipboard                 fClipboard;
     private KeyListener               fKeyHandler;
-    private final ITerminalListener         fTerminalListener;
+    private final ITerminalListener   fTerminalListener;
     private String                    fMsg = ""; //$NON-NLS-1$
     private TerminalFocusListener     fFocusListener;
     private ITerminalConnector		  fConnector;
@@ -163,7 +164,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 * Listens to changes in the preferences
 	 */
 	private final IPropertyChangeListener fPreferenceListener=new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
+		@Override
+        public void propertyChange(PropertyChangeEvent event) {
 			if(event.getProperty().equals(ITerminalConstants.PREF_BUFFERLINES)
 					|| event.getProperty().equals(ITerminalConstants.PREF_INVERT_COLORS)) {
 				updatePreferences();
@@ -171,7 +173,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 	};
 	private final IPropertyChangeListener fFontListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
+		@Override
+        public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(ITerminalConstants.FONT_DEFINITION)) {
 				onTerminalFontChanged();
 			}
@@ -222,7 +225,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		setupTerminal(wndParent);
 	}
 
-	public void setEncoding(String encoding) throws UnsupportedEncodingException {
+	@Override
+    public void setEncoding(String encoding) throws UnsupportedEncodingException {
 		if (encoding == null) {
 			// TODO better use a standard remote-to-local encoding?
 			encoding = "ISO-8859-1"; //$NON-NLS-1$
@@ -235,18 +239,21 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fTerminalText.setInputStreamReader(fInputStreamReader);
 	}
 
-	public String getEncoding() {
+	@Override
+    public String getEncoding() {
 		return fEncoding;
 	}
 
-	public ITerminalConnector[] getConnectors() {
+	@Override
+    public ITerminalConnector[] getConnectors() {
 		return fConnectors;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#copy()
 	 */
-	public void copy() {
+	@Override
+    public void copy() {
 		copy(DND.CLIPBOARD);
 	}
 
@@ -262,7 +269,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#paste()
 	 */
-	public void paste() {
+	@Override
+    public void paste() {
 		paste(DND.CLIPBOARD);
 // TODO paste in another thread.... to avoid blocking
 //		new Thread() {
@@ -284,7 +292,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/**
 	 * @param strText the text to paste
 	 */
-	public boolean pasteString(String strText) {
+	@Override
+    public boolean pasteString(String strText) {
 		if(!isConnected())
 			return false;
 		if (strText == null)
@@ -303,15 +312,19 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#selectAll()
 	 */
-	public void selectAll() {
+	@Override
+    public void selectAll() {
 		getCtlText().selectAll();
-		fTerminalListener.setTerminalSelectionChanged();
+		if (fTerminalListener instanceof ITerminalListener2) {
+			((ITerminalListener2)fTerminalListener).setTerminalSelectionChanged();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#sendKey(char)
 	 */
-	public void sendKey(char character) {
+	@Override
+    public void sendKey(char character) {
 		Event event;
 		KeyEvent keyEvent;
 
@@ -329,24 +342,29 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#clearTerminal()
 	 */
-	public void clearTerminal() {
+	@Override
+    public void clearTerminal() {
 		// The TerminalText object does all text manipulation.
 		getTerminalText().clearTerminal();
 		getCtlText().clearSelection();
-		fTerminalListener.setTerminalSelectionChanged();
+		if (fTerminalListener instanceof ITerminalListener2) {
+			((ITerminalListener2)fTerminalListener).setTerminalSelectionChanged();
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#getClipboard()
 	 */
-	public Clipboard getClipboard() {
+	@Override
+    public Clipboard getClipboard() {
 		return fClipboard;
 	}
 
 	/**
 	 * @return non null selection
 	 */
-	public String getSelection() {
+	@Override
+    public String getSelection() {
 		String txt= fCtlText.getSelectionText();
 		if(txt==null)
 			txt=""; //$NON-NLS-1$
@@ -356,35 +374,40 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setFocus()
 	 */
-	public void setFocus() {
+	@Override
+    public void setFocus() {
 		getCtlText().setFocus();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isEmpty()
 	 */
-	public boolean isEmpty() {
+	@Override
+    public boolean isEmpty() {
 		return getCtlText().isEmpty();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isDisposed()
 	 */
-	public boolean isDisposed() {
+	@Override
+    public boolean isDisposed() {
 		return getCtlText().isDisposed();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isConnected()
 	 */
-	public boolean isConnected() {
+	@Override
+    public boolean isConnected() {
 		return fState==TerminalState.CONNECTED;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#disposeTerminal()
 	 */
-	public void disposeTerminal() {
+	@Override
+    public void disposeTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
 		if(fUseCommonPrefs) {
 			TerminalPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
@@ -395,7 +418,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		getTerminalText().dispose();
 	}
 
-	public void connectTerminal() {
+	@Override
+    public void connectTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
 		if(getTerminalConnector()==null)
 			return;
@@ -415,13 +439,15 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		waitForConnect();
 	}
 
-	public ITerminalConnector getTerminalConnector() {
+	@Override
+    public ITerminalConnector getTerminalConnector() {
 		return fConnector;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#disconnectTerminal()
 	 */
-	public void disconnectTerminal() {
+	@Override
+    public void disconnectTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
 
 		//Disconnect the remote side first
@@ -458,7 +484,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			if (!fDisplay.readAndDispatch())
 				fDisplay.sleep();
 		} while (getState()==TerminalState.CONNECTING);
-		
+
 		if (getCtlText().isDisposed()) {
 			disconnectTerminal();
 			return;
@@ -479,7 +505,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private synchronized void startReaderJob() {
 		if(fJob==null) {
 			fJob=new Job("Terminal data reader") { //$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor) {
+				@Override
+                protected IStatus run(IProgressMonitor monitor) {
 					IStatus status=Status.OK_STATUS;
 					try {
 						while(true) {
@@ -561,7 +588,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 	}
 
-	public Shell getShell() {
+	@Override
+    public Shell getShell() {
 		return getCtlText().getShell();
 	}
 
@@ -634,7 +662,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setupTerminal(org.eclipse.swt.widgets.Composite)
 	 */
-	public void setupTerminal(Composite parent) {
+	@Override
+    public void setupTerminal(Composite parent) {
 		Assert.isNotNull(parent);
 		boolean wasDisposed = true;
 		TerminalState oldState = fState;
@@ -659,7 +688,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			JFaceResources.getFontRegistry().addListener(fFontListener);
 		}
 		setupHelp(fWndParent, TerminalPlugin.HELP_VIEW);
-		
+
 		if (!wasDisposed) {
 			fState = oldState;
 		}
@@ -685,7 +714,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 * (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.control.ITerminalViewControl#setFont(java.lang.String)
 	 */
-	public void setFont(String fontName) {
+	@Override
+    public void setFont(String fontName) {
 		Font font=JFaceResources.getFont(fontName);
 		getCtlText().setFont(font);
 		if(fCommandInputField!=null) {
@@ -699,7 +729,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.control.ITerminalViewControl#setFont(org.eclipse.swt.graphics.Font)
 	 */
-	@Deprecated
+	@Override
+    @Deprecated
 	public void setFont(Font font) {
 		getCtlText().setFont(font);
 		if(fCommandInputField!=null) {
@@ -710,13 +741,16 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fCtlText.onFontChange();
 		getTerminalText().fontChanged();
 	}
-	public Font getFont() {
+	@Override
+    public Font getFont() {
 		return getCtlText().getFont();
 	}
-	public Control getControl() {
+	@Override
+    public Control getControl() {
 		return fCtlText;
 	}
-	public Control getRootControl() {
+	@Override
+    public Control getRootControl() {
 		return fWndParent;
 	}
 	protected void setupControls(Composite parent) {
@@ -733,12 +767,14 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fCtlText.addResizeHandler(new TextCanvas.ResizeListener() {
-			public void sizeChanged(int lines, int columns) {
+			@Override
+            public void sizeChanged(int lines, int columns) {
 				fTerminalText.setDimensions(lines, columns);
 			}
 		});
 		fCtlText.addMouseListener(new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
+			@Override
+            public void mouseUp(MouseEvent e) {
 				// update selection used by middle mouse button paste
 				if (e.button == 1 && getSelection().length() > 0) {
 					copy(DND.SELECTION_CLIPBOARD);
@@ -777,7 +813,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#displayTextInTerminal(java.lang.String)
 	 */
-	public void displayTextInTerminal(String text) {
+	@Override
+    public void displayTextInTerminal(String text) {
 		writeToTerminal("\r\n"+text+"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	private void writeToTerminal(String text) {
@@ -792,7 +829,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 	}
 
-	public OutputStream getRemoteToTerminalOutputStream() {
+	@Override
+    public OutputStream getRemoteToTerminalOutputStream() {
 		if(Logger.isLogEnabled()) {
 			return new LoggingOutputStream(fInputStream.getOutputStream());
 		} else {
@@ -803,7 +841,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		return TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_CHAR);
 	}
 
-	public OutputStream getOutputStream() {
+	@Override
+    public OutputStream getOutputStream() {
 		if(getTerminalConnector()!=null)
 			return getTerminalConnector().getTerminalToRemoteStream();
 		return null;
@@ -812,7 +851,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setMsg(java.lang.String)
 	 */
-	public void setMsg(String msg) {
+	@Override
+    public void setMsg(String msg) {
 		fMsg = msg;
 	}
 
@@ -841,7 +881,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			super();
 		}
 
-		@SuppressWarnings("cast")
+		@Override
+        @SuppressWarnings("cast")
 		public void focusGained(FocusEvent event) {
 			// Disable all keyboard accelerators (e.g., Control-B) so the Terminal view
 			// can see every keystroke.  Without this, Emacs, vi, and Bash are unusable
@@ -853,7 +894,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			editContextActivation = contextService.activateContext("org.eclipse.tm.terminal.EditContext"); //$NON-NLS-1$
 		}
 
-		@SuppressWarnings("cast")
+		@Override
+        @SuppressWarnings("cast")
 		public void focusLost(FocusEvent event) {
 			// Enable all keybindings.
 			captureKeyEvents(false);
@@ -890,7 +932,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	protected class TerminalKeyHandler extends KeyAdapter {
-		public void keyPressed(KeyEvent event) {
+		@Override
+        public void keyPressed(KeyEvent event) {
 			//TODO next 2 lines are probably obsolete now
 			if (getState()==TerminalState.CONNECTING)
 				return;
@@ -948,7 +991,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				sendString("\u001b[3~"); //$NON-NLS-1$
 				return;
 			}
-			
+
 			// TODO Linux tty is usually expecting a DEL (^?) character
 			// but this causes issues with some telnet servers and
 			// serial connections. Workaround: stty erase ^H
@@ -1016,7 +1059,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					if (!anyModifierPressed)
 						escSeq = "\u001b[5~"; //$NON-NLS-1$
 					break;
-					
+
 				case 0x1000006: // PgDn key.
 					if (!anyModifierPressed)
 						escSeq = "\u001b[6~"; //$NON-NLS-1$
@@ -1232,22 +1275,26 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	}
 
-	public void setTerminalTitle(String title) {
+	@Override
+    public void setTerminalTitle(String title) {
 		fTerminalListener.setTerminalTitle(title);
 	}
 
 
-	public TerminalState getState() {
+	@Override
+    public TerminalState getState() {
 		return fState;
 	}
 
 
-	public void setState(TerminalState state) {
+	@Override
+    public void setState(TerminalState state) {
 		fState=state;
 		fTerminalListener.setState(state);
 		// enable the (blinking) cursor if the terminal is connected
 		runAsyncInDisplayThread(new Runnable() {
-			public void run() {
+			@Override
+            public void run() {
 				if(fCtlText!=null && !fCtlText.isDisposed()) {
 					if (isConnected()) {
 						fCtlText.setCursorEnabled(true);
@@ -1271,21 +1318,25 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		// else should not happen and we ignore it...
 	}
 
-	public String getSettingsSummary() {
+	@Override
+    public String getSettingsSummary() {
 		if(getTerminalConnector()!=null)
 			return getTerminalConnector().getSettingsSummary();
 		return ""; //$NON-NLS-1$
 	}
 
-	public void setConnector(ITerminalConnector connector) {
+	@Override
+    public void setConnector(ITerminalConnector connector) {
 		fConnector=connector;
 
 	}
-	public ICommandInputField getCommandInputField() {
+	@Override
+    public ICommandInputField getCommandInputField() {
 		return fCommandInputField;
 	}
 
-	public void setCommandInputField(ICommandInputField inputField) {
+	@Override
+    public void setCommandInputField(ICommandInputField inputField) {
 		if(fCommandInputField!=null)
 			fCommandInputField.dispose();
 		fCommandInputField=inputField;
@@ -1295,11 +1346,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			fWndParent.layout(true);
 	}
 
-	public int getBufferLineLimit() {
+	@Override
+    public int getBufferLineLimit() {
 		return fTerminalModel.getMaxHeight();
 	}
 
-	public void setBufferLineLimit(int bufferLineLimit) {
+	@Override
+    public void setBufferLineLimit(int bufferLineLimit) {
 		if(bufferLineLimit<=0)
 			return;
 		synchronized (fTerminalModel) {
@@ -1309,42 +1362,50 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 	}
 
-	public boolean isScrollLock() {
+	@Override
+    public boolean isScrollLock() {
 		return fCtlText.isScrollLock();
 	}
 
-	public void setScrollLock(boolean on) {
+	@Override
+    public void setScrollLock(boolean on) {
 		fCtlText.setScrollLock(on);
 	}
 
-	public void setInvertedColors(boolean invert) {
+	@Override
+    public void setInvertedColors(boolean invert) {
 		fCtlText.setInvertedColors(invert);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setConnectOnEnterIfClosed(boolean)
 	 */
-	public final void setConnectOnEnterIfClosed(boolean on) {
+	@Override
+    public final void setConnectOnEnterIfClosed(boolean on) {
 		connectOnEnterIfClosed = on;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isConnectOnEnterIfClosed()
 	 */
-	public final boolean isConnectOnEnterIfClosed() {
+	@Override
+    public final boolean isConnectOnEnterIfClosed() {
 		return connectOnEnterIfClosed;
 	}
 
-	public void setVT100LineWrapping(boolean enable) {
+	@Override
+    public void setVT100LineWrapping(boolean enable) {
 		getTerminalText().setVT100LineWrapping(enable);
 	}
 
-	public boolean isVT100LineWrapping() {
+	@Override
+    public boolean isVT100LineWrapping() {
 		return getTerminalText().isVT100LineWrapping();
 	}
 
-	public void enableApplicationCursorKeys(boolean enable) {
+	@Override
+    public void enableApplicationCursorKeys(boolean enable) {
 		fApplicationCursorKeys = enable;
 	}
-	
+
 }

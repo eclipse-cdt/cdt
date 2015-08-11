@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_9003b183",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T21:06:57Z",
+      "side": 1,
+      "message": "Sure, I was keeping the title in sync with the bugzilla keyword but does not need to follow it.",
+      "parentUuid": "2721e7e2_50b65971",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_508499ad",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/MessagesForNumberFormatDetailPane.properties",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-08-11T20:31:49Z",
       "side": 1,
       "message": "The above does not seem to be used",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_104501cc",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/MessagesForNumberFormatDetailPane.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T21:06:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_508499ad",
       "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_503f793d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/MessagesForNumberFormatDetailPane.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T21:06:57Z",
+      "side": 1,
+      "message": "Done\nYou\u0027re right it\u0027s not actually needed, we still get the space as part of the string.",
+      "parentUuid": "2721e7e2_10ace123",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_1061817b",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-08-11T20:31:49Z",
       "side": 1,
       "message": "You can use StringBuilder which is faster, since we don\u0027t need to be thread-safe",
+      "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_303ac54c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T21:06:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_1061817b",
       "revId": "1111d8dc3c1dbd551c88f00b850eff60ffa0dc26",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

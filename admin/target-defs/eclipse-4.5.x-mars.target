@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Terminals Eclipse 4.5.x (Mars)" sequenceNumber="75">
+<?pde version="3.8"?><target name="Terminals Eclipse 4.5.x (Mars)" sequenceNumber="88">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
@@ -10,21 +10,19 @@
 <repository location="http://archive.eclipse.org/tm/updates/rxtx"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.5.0.I20150430-1445"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.5milestones"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.cdt.native.source.feature.group" version="8.7.0.201505050312"/>
-<unit id="org.eclipse.cdt.native.feature.group" version="8.7.0.201505050312"/>
-<repository location="http://download.eclipse.org/tools/cdt/builds/mars/milestones"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.rse.sdk.feature.group" version="3.7.0.201504291424"/>
 <repository location="http://download.eclipse.org/tm/updates/4.0milestones"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150323-0420"/>
+<unit id="org.eclipse.cdt.sdk.feature.group" version="8.7.0.201506070905"/>
+<unit id="org.eclipse.egit.feature.group" version="4.0.0.201506090130-r"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
 <repository location="http://download.eclipse.org/releases/mars"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.test.feature.group" version="3.7.0.v20150428-2048"/>
+<unit id="org.eclipse.sdk.ide" version="4.5.0.I20150603-2000"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
 </location>
 </locations>
 </target>

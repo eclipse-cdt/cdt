@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_d07a4960",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T20:22:24Z",
+      "side": 1,
+      "message": "Yes, as we discussed, I was settling for simplicity. \nBut I see your point, so the new patch reflects the re-factoring.",
+      "parentUuid": "2721e7e2_3612c810",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_a554bccf",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-08-10T20:01:20Z",
       "side": 1,
       "message": "You can override handleSuccess() instead I believe.",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_b07d155a",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T20:22:24Z",
+      "side": 1,
+      "message": "Upps, A leftover from troubleshooting,\n\nDone,",
+      "parentUuid": "2721e7e2_a554bccf",
       "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_1064e1c2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T20:22:24Z",
+      "side": 1,
+      "message": "True, the field is private and can be changed to protected and make it visible, however the new patch set moves the methods inside the base super class (to address the test hierarchy mentioned by Marc below) so there is no need for this variable.",
+      "parentUuid": "2721e7e2_b6ccf833",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_a5d95c21",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
         "patchSetId": 1
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_7050bdac",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T20:22:24Z",
+      "side": 1,
+      "message": "That\u0027s true, the test cases were therefore moved to the base root class with an additional check to be running under Non Stop.  \n   The non-stop launch attribute is then set in all NonStop variants created from 7.2 till 7.10\n    The test suites from 7.2 till 7.10 were updated as well to include the new corresponding NonStop classes.",
+      "parentUuid": "2721e7e2_a5d95c21",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_56177c05",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
         "patchSetId": 1
@@ -81,6 +153,24 @@
       "writtenOn": "2015-08-07T21:28:12Z",
       "side": 1,
       "message": "You could do that check at very iteration, it wouldn\u0027t hurt.\n\nAlso, you could do the same check in the other for loop, when launching the first process. If you want to, I think that the launching of that particular program (with the for loop and the validation), could be made into its own function, since it\u0027s repeated. I also think it would be useful for future multi-process/multi-thread tests.",
+      "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_506e59a4",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_2/GDBProcessesTest_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-11T20:22:24Z",
+      "side": 1,
+      "message": "Good idea, \nDone",
+      "parentUuid": "2721e7e2_56177c05",
       "revId": "96f4da5d25336f43acfdfb59474130decd9e97dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

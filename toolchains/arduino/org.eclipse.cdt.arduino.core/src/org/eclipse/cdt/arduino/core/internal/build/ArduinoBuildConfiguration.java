@@ -1,13 +1,19 @@
 package org.eclipse.cdt.arduino.core.internal.build;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
@@ -24,6 +30,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -48,16 +56,30 @@ public class ArduinoBuildConfiguration {
 
 	private final IBuildConfiguration config;
 
+	private Properties properties;
+
+	// Cache for scanner info
+	private IScannerInfo cScannerInfo;
+	private IScannerInfo cppScannerInfo;
+
 	private ArduinoBuildConfiguration(IBuildConfiguration config) {
 		this.config = config;
 	}
+
+	private static Map<IBuildConfiguration, ArduinoBuildConfiguration> cache = new HashMap<>();
 
 	public static class Factory implements IAdapterFactory {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 			if (adapterType.equals(ArduinoBuildConfiguration.class) && adaptableObject instanceof IBuildConfiguration) {
-				return (T) new ArduinoBuildConfiguration((IBuildConfiguration) adaptableObject);
+				IBuildConfiguration config = (IBuildConfiguration) adaptableObject;
+				ArduinoBuildConfiguration arduinoConfig = cache.get(config);
+				if (arduinoConfig == null) {
+					arduinoConfig = new ArduinoBuildConfiguration(config);
+					cache.put(config, arduinoConfig);
+				}
+				return (T) arduinoConfig;
 			}
 			return null;
 		}
@@ -96,9 +118,26 @@ public class ArduinoBuildConfiguration {
 		return ArduinoBoardManager.instance.getBoard(boardName, platformName, packageName);
 	}
 
+	private Properties getProperties() throws CoreException {
+		if (properties == null) {
+			ArduinoBoard board = getBoard();
+			ArduinoPlatform platform = board.getPlatform();
+			properties = board.getBoardProperties();
+			properties.putAll(board.getPlatform().getPlatformProperties());
+			for (ToolDependency toolDep : platform.getToolsDependencies()) {
+				properties.putAll(toolDep.getTool().getToolProperties());
+			}
+		}
+		return properties;
+	}
+
 	public IFolder getBuildFolder() throws CoreException {
 		IProject project = config.getProject();
 		return project.getFolder("build"); //$NON-NLS-1$
+	}
+
+	public File getBuildDirectory() throws CoreException {
+		return new File(getBuildFolder().getLocationURI());
 	}
 
 	public IFile getMakeFile() throws CoreException {
@@ -153,11 +192,8 @@ public class ArduinoBuildConfiguration {
 		buildModel.put("project_srcs", sourceFiles); //$NON-NLS-1$
 
 		// the recipes
-		Properties properties = board.getBoardProperties();
-		properties.putAll(board.getPlatform().getPlatformProperties());
-		for (ToolDependency toolDep : platform.getToolsDependencies()) {
-			properties.putAll(toolDep.getTool().getToolProperties());
-		}
+		Properties properties = new Properties();
+		properties.putAll(getProperties());
 		properties.put("runtime.ide.version", "1.6.7"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
 		properties.put("build.path", "$(OUTPUT_DIR)"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -185,8 +221,11 @@ public class ArduinoBuildConfiguration {
 				return name.endsWith(".cpp") || name.endsWith(".c");
 			}
 		});
+
 		String[] platformSource = new String[platformFiles.length];
-		for (int i = 0; i < platformSource.length; ++i) {
+		for (int i = 0; i < platformSource.length; ++i)
+
+		{
 			platformSource[i] = platformFiles[i].getAbsolutePath();
 		}
 		buildModel.put("platform_srcs", platformSource); //$NON-NLS-1$
@@ -202,6 +241,7 @@ public class ArduinoBuildConfiguration {
 		buildModel.put("recipe_c_combine_pattern", resolveProperty("recipe.c.combine.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("recipe_objcopy_eep_pattern", resolveProperty("recipe.objcopy.eep.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("recipe_objcopy_hex_pattern", resolveProperty("recipe.objcopy.hex.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("recipe_size_pattern", resolveProperty("recipe.size.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();
 		templateGen.generateFile(buildModel, "board.mk", makeFile, monitor); //$NON-NLS-1$
@@ -234,17 +274,7 @@ public class ArduinoBuildConfiguration {
 		return res;
 	}
 
-	public String[] getBuildCommand() throws CoreException {
-		return new String[] { "make", "-f", getMakeFile().getName() }; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	public String[] getCleanCommand() throws CoreException {
-		return new String[] { "make", "-f", getMakeFile().getName(), "clean" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	public String[] getEnvironment() throws CoreException {
-		Map<String, String> env = new HashMap<>(System.getenv());
-
+	public void setEnvironment(Map<String, String> env) throws CoreException {
 		// Arduino home to find platforms and libraries
 		env.put("ARDUINO_HOME", ArduinoPreferences.getArduinoHome().toString()); //$NON-NLS-1$
 
@@ -284,13 +314,109 @@ public class ArduinoBuildConfiguration {
 			pathKey = "PATH"; //$NON-NLS-1$
 		}
 		env.put(pathKey, path);
+	}
 
-		// Reformat as a proper env.
-		List<String> strEnv = new ArrayList<>(env.size());
-		for (Map.Entry<String, String> entry : env.entrySet()) {
-			strEnv.add(entry.getKey() + "=" + entry.getValue()); //$NON-NLS-1$
+	public String[] getBuildCommand() throws CoreException {
+		return new String[] { "make", "-f", getMakeFile().getName() }; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public String[] getCleanCommand() throws CoreException {
+		return new String[] { "make", "-f", getMakeFile().getName(), "clean" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	public String[] getSizeCommand() throws CoreException {
+		return new String[] { "make", "-f", getMakeFile().getName(), "size" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	public String getCodeSizeRegex() throws CoreException {
+		return (String) getBoard().getPlatform().getPlatformProperties().getProperty("recipe.size.regex"); //$NON-NLS-1$
+	}
+
+	public int getMaxCodeSize() throws CoreException {
+		String sizeStr = (String) getBoard().getBoardProperties().getProperty("upload.maximum_size"); //$NON-NLS-1$
+		return sizeStr != null ? Integer.parseInt(sizeStr) : -1;
+	}
+
+	public String getDataSizeRegex() throws CoreException {
+		return (String) getBoard().getPlatform().getPlatformProperties().getProperty("recipe.size.regex.data"); //$NON-NLS-1$
+	}
+
+	public int getMaxDataSize() throws CoreException {
+		String sizeStr = (String) getBoard().getBoardProperties().getProperty("upload.maximum_data_size"); //$NON-NLS-1$
+		return sizeStr != null ? Integer.parseInt(sizeStr) : -1;
+	}
+
+	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
+		// what language is this resource and pick the right path;
+		switch (CCorePlugin.getContentType(resource.getProject(), resource.getName()).getId()) {
+		case CCorePlugin.CONTENT_TYPE_CXXSOURCE:
+		case CCorePlugin.CONTENT_TYPE_CXXHEADER:
+			if (cppScannerInfo == null) {
+				cppScannerInfo = calculateScannerInfo("recipe.cpp.o.pattern", resource); //$NON-NLS-1$
+			}
+			return cppScannerInfo;
+		default:
+			if (cScannerInfo == null) {
+				cScannerInfo = calculateScannerInfo("recipe.c.o.pattern", resource); //$NON-NLS-1$
+			}
+			return cScannerInfo;
 		}
-		return strEnv.toArray(new String[strEnv.size()]);
+	}
+
+	private IScannerInfo calculateScannerInfo(String recipe, IResource resource) throws CoreException {
+		try {
+			ArduinoPlatform platform = getBoard().getPlatform();
+			Properties properties = new Properties();
+			properties.putAll(getProperties());
+			properties.put("runtime.ide.version", "1.6.7"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
+
+			Path tmpFile = Files.createTempFile("cdt", ".cpp");
+			properties.put("source_file", tmpFile.toString()); //$NON-NLS-1$
+			properties.put("object_file", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+
+			String includes = "-E -P -v -dD"; //$NON-NLS-1$
+			for (Path include : platform.getIncludePath()) {
+				includes += " -I\"" + include.toString() + '"'; //$NON-NLS-1$
+			}
+			properties.put("includes", includes); //$NON-NLS-1$
+
+			// TODO Windows
+			String[] command = new String[] { "sh", "-c", resolveProperty(recipe, properties) }; //$NON-NLS-1$ //$NON-NLS-2$
+			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(getBuildDirectory())
+					.redirectErrorStream(true);
+			setEnvironment(processBuilder.environment());
+			Process process = processBuilder.start();
+
+			Map<String, String> symbols = new HashMap<>();
+			List<String> includePath = new ArrayList<>();
+			Pattern definePattern = Pattern.compile("#define (.*)\\s(.*)"); //$NON-NLS-1$
+			boolean inIncludePaths = false;
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+					if (inIncludePaths) {
+						if (line.equals("End of search list.")) { //$NON-NLS-1$
+							inIncludePaths = false;
+						} else {
+							includePath.add(line.trim());
+						}
+					} else if (line.startsWith("#define ")) { //$NON-NLS-1$
+						Matcher matcher = definePattern.matcher(line);
+						if (matcher.matches()) {
+							symbols.put(matcher.group(1), matcher.group(2));
+						}
+					} else if (line.equals("#include <...> search starts here:")) { //$NON-NLS-1$
+						inIncludePaths = true;
+					}
+				}
+			}
+			Files.delete(tmpFile);
+			ExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(symbols,
+					includePath.toArray(new String[includePath.size()]));
+			return scannerInfo;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Compiler built-ins", e));
+		}
 	}
 
 }

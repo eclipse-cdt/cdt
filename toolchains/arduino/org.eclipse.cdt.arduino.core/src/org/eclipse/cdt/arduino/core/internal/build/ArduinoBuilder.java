@@ -7,13 +7,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.build;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -40,13 +42,18 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			ArduinoBuildConfiguration config = getBuildConfig().getAdapter(ArduinoBuildConfiguration.class);
 			config.generateMakeFile(monitor);
 
-			IFolder buildFolder = config.getBuildFolder();
-			Process process = Runtime.getRuntime().exec(config.getBuildCommand(), config.getEnvironment(),
-					new File(buildFolder.getLocationURI()));
+			ProcessBuilder processBuilder = new ProcessBuilder().command(config.getBuildCommand())
+					.directory(config.getBuildDirectory());
+			config.setEnvironment(processBuilder.environment());
+			Process process = processBuilder.start();
 
 			consoleService.monitor(process, null);
 
-			buildFolder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			if (process.exitValue() == 0) {
+				showSizes(config, consoleService);
+			}
+
+			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e));
 		}
@@ -64,15 +71,70 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 
 			ArduinoBuildConfiguration config = getBuildConfig().getAdapter(ArduinoBuildConfiguration.class);
 
-			IFolder buildFolder = config.getBuildFolder();
-			Process process = Runtime.getRuntime().exec(config.getCleanCommand(), config.getEnvironment(),
-					new File(buildFolder.getLocationURI()));
+			ProcessBuilder processBuilder = new ProcessBuilder().command(config.getCleanCommand())
+					.directory(config.getBuildDirectory());
+			config.setEnvironment(processBuilder.environment());
+			Process process = processBuilder.start();
 
 			consoleService.monitor(process, null);
 
-			buildFolder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e));
+		}
+	}
+
+	private void showSizes(ArduinoBuildConfiguration config, ArduinoConsoleService console) throws CoreException {
+		try {
+			int codeSize = -1;
+			int dataSize = -1;
+
+			String codeSizeRegex = config.getCodeSizeRegex();
+			Pattern codeSizePattern = codeSizeRegex != null ? Pattern.compile(codeSizeRegex) : null;
+			String dataSizeRegex = config.getDataSizeRegex();
+			Pattern dataSizePattern = codeSizeRegex != null ? Pattern.compile(dataSizeRegex) : null;
+
+			if (codeSizePattern == null && dataSizePattern == null) {
+				return;
+			}
+
+			int maxCodeSize = config.getMaxCodeSize();
+			int maxDataSize = config.getMaxDataSize();
+
+			ProcessBuilder processBuilder = new ProcessBuilder().command(config.getSizeCommand())
+					.directory(config.getBuildDirectory()).redirectErrorStream(true);
+			config.setEnvironment(processBuilder.environment());
+			Process process = processBuilder.start();
+			try (BufferedReader processOut = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+				for (String line = processOut.readLine(); line != null; line = processOut.readLine()) {
+					if (codeSizePattern != null) {
+						Matcher matcher = codeSizePattern.matcher(line);
+						if (matcher.matches()) {
+							codeSize += Integer.parseInt(matcher.group(1));
+						}
+					}
+					if (dataSizePattern != null) {
+						Matcher matcher = dataSizePattern.matcher(line);
+						if (matcher.matches()) {
+							dataSize += Integer.parseInt(matcher.group(1));
+						}
+					}
+				}
+			}
+
+			console.writeOutput("Program store usage: " + codeSize);
+			if (maxCodeSize > 0) {
+				console.writeOutput(" of maximum " + maxCodeSize);
+			}
+			console.writeOutput(" bytes\n");
+
+			console.writeOutput("Initial RAM usage: " + dataSize);
+			if (maxCodeSize > 0) {
+				console.writeOutput(" of maximum " + maxDataSize);
+			}
+			console.writeOutput(" bytes\n");
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Checking sizes", e));
 		}
 	}
 

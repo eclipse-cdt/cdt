@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_e161812e",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-12T17:31:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_41cb2d96",
+      "revId": "5e55bb6c3d7f16311a077b2095dcf4a68d53426a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_a1d9496c",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-08-12T15:05:11Z",
       "side": 1,
       "message": "Same idea here, the CRLF should be added before putting a new line, instead of after, so that we don\u0027t put it at the end.  We can just remove the ones with rootMessage, and put the two above at the beginning of the append instead of at the end.\n\nAlso, there should be () around i+1",
+      "revId": "5e55bb6c3d7f16311a077b2095dcf4a68d53426a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_215b9980",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/viewmodel/numberformat/detail/NumberFormatDetailPane.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-12T17:31:08Z",
+      "side": 1,
+      "message": "Done, \nMuch better to include it at the beginning of a child message.\nThanks !",
+      "parentUuid": "2721e7e2_a1d9496c",
       "revId": "5e55bb6c3d7f16311a077b2095dcf4a68d53426a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

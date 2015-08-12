@@ -17,6 +17,7 @@ import java.util.concurrent.Semaphore;
 
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.cdt.arduino.core.internal.console.ConsoleParser;
+import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -91,13 +92,9 @@ public class ArduinoConsole implements ArduinoConsoleService {
 
 		try {
 			sema.acquire();
-			int rc = process.waitFor();
-			if (rc != 0) {
-				writeError("failed.");
-			}
+			process.waitFor();
 		} catch (InterruptedException e) {
-			// TODO
-			e.printStackTrace();
+			Activator.log(e);
 		}
 	}
 

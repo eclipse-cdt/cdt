@@ -9,6 +9,7 @@ package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
@@ -69,6 +70,12 @@ public class ArduinoTool {
 
 		// No valid system
 		return new Status(IStatus.ERROR, Activator.getId(), "No valid system found for " + name);
+	}
+
+	public Properties getToolProperties() {
+		Properties properties = new Properties();
+		properties.put("runtime.tools." + name + ".path", getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		return properties;
 	}
 
 }

@@ -20,13 +20,17 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.eclipse.cdt.arduino.core.internal.Activator;
@@ -35,6 +39,7 @@ import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -110,6 +115,8 @@ public class ArduinoBoardManager {
 			Path archivePath = dlDir.resolve(archiveFileName);
 			Files.copy(dl.openStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);
 
+			boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
+
 			// extract
 			ArchiveInputStream archiveIn = null;
 			try {
@@ -139,10 +146,24 @@ public class ArduinoBoardManager {
 						continue;
 					}
 
-					// TODO check for soft links in tar files.
 					Path entryPath = installPath.resolve(entry.getName());
 					Files.createDirectories(entryPath.getParent());
-					Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+
+					if (entry instanceof TarArchiveEntry) {
+						TarArchiveEntry tarEntry = (TarArchiveEntry) entry;
+						if (tarEntry.isLink()) {
+							Path linkPath = installPath.resolve(tarEntry.getLinkName());
+							Files.createSymbolicLink(entryPath, entryPath.getParent().relativize(linkPath));
+						} else {
+							Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+						}
+						if (!isWin) {
+							int mode = tarEntry.getMode();
+							Files.setPosixFilePermissions(entryPath, toPerms(mode));
+						}
+					} else {
+						Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+					}
 				}
 			} finally {
 				if (archiveIn != null) {
@@ -165,4 +186,37 @@ public class ArduinoBoardManager {
 			return new Status(IStatus.ERROR, Activator.getId(), "Installing Platform", e);
 		}
 	}
+
+	private static Set<PosixFilePermission> toPerms(int mode) {
+		Set<PosixFilePermission> perms = new HashSet<>();
+		if ((mode & 0400) != 0) {
+			perms.add(PosixFilePermission.OWNER_READ);
+		}
+		if ((mode & 0200) != 0) {
+			perms.add(PosixFilePermission.OWNER_WRITE);
+		}
+		if ((mode & 0100) != 0) {
+			perms.add(PosixFilePermission.OWNER_EXECUTE);
+		}
+		if ((mode & 0040) != 0) {
+			perms.add(PosixFilePermission.GROUP_READ);
+		}
+		if ((mode & 0020) != 0) {
+			perms.add(PosixFilePermission.GROUP_WRITE);
+		}
+		if ((mode & 0010) != 0) {
+			perms.add(PosixFilePermission.GROUP_EXECUTE);
+		}
+		if ((mode & 0004) != 0) {
+			perms.add(PosixFilePermission.OTHERS_READ);
+		}
+		if ((mode & 0002) != 0) {
+			perms.add(PosixFilePermission.OTHERS_WRITE);
+		}
+		if ((mode & 0001) != 0) {
+			perms.add(PosixFilePermission.OTHERS_EXECUTE);
+		}
+		return perms;
+	}
+
 }

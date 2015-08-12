@@ -96,7 +96,7 @@
          point="org.eclipse.cdt.core.ScannerInfoProvider2">
       <provider
             builder="org.eclipse.cdt.arduino.core.arduinoBuilder"
-            class="org.eclipse.cdt.arduino.core.ArduinoScannerInfoProvider">
+            class="org.eclipse.cdt.arduino.core.internal.ArduinoScannerInfoProvider">
       </provider>
    </extension>
    <extension

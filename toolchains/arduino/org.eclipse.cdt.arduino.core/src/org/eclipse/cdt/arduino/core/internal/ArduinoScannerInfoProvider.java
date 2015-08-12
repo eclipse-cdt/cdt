@@ -1,4 +1,4 @@
-package org.eclipse.cdt.arduino.core;
+package org.eclipse.cdt.arduino.core.internal;
 
 import java.util.HashMap;
 import java.util.Map;

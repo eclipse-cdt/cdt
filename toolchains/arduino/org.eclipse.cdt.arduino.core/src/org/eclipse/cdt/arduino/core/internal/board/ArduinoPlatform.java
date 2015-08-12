@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -125,7 +126,7 @@ public class ArduinoPlatform {
 
 	public Properties getPlatformProperties() throws CoreException {
 		Properties properties = new Properties();
-		try (Reader reader = new FileReader(getInstallPath().resolve("boards.txt").toFile())) { //$NON-NLS-1$
+		try (Reader reader = new FileReader(getInstallPath().resolve("platform.txt").toFile())) { //$NON-NLS-1$
 			properties.load(reader);
 			return properties;
 		} catch (IOException e) {
@@ -137,9 +138,15 @@ public class ArduinoPlatform {
 		return getInstallPath().resolve("boards.txt").toFile().exists(); //$NON-NLS-1$
 	}
 
-	private Path getInstallPath() {
+	public Path getInstallPath() {
 		return ArduinoPreferences.getArduinoHome().resolve("hardware").resolve(pkg.getName()).resolve(architecture) //$NON-NLS-1$
 				.resolve(version);
+	}
+
+	public List<Path> getIncludePath() {
+		Path installPath = getInstallPath();
+		return Arrays.asList(installPath.resolve("cores/{build.core}"), //$NON-NLS-1$
+				installPath.resolve("variants/{build.variant}")); //$NON-NLS-1$
 	}
 
 	public IStatus install(IProgressMonitor monitor) {

@@ -74,9 +74,6 @@ public class ArduinoProjectGenerator {
 		Map<String, Object> fmModel = new HashMap<>();
 		fmModel.put("projectName", project.getName()); //$NON-NLS-1$
 
-		templateGen.generateFile(fmModel, "Makefile", project.getFile("Makefile"), monitor); //$NON-NLS-1$ //$NON-NLS-2$
-		templateGen.generateFile(fmModel, "arduino.mk", project.getFile("arduino.mk"), monitor); //$NON-NLS-1$ //$NON-NLS-2$
-
 		IFolder sourceFolder = project.getFolder("src"); //$NON-NLS-1$
 		if (!sourceFolder.exists()) {
 			sourceFolder.create(true, true, monitor);

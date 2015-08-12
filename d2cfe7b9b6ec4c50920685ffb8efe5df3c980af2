@@ -22,6 +22,30 @@
       "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_46ece331",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IProcessExtendedInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-12T14:38:06Z",
+      "side": 1,
+      "message": "Sonar has an warning (maybe \u0027info\u0027) about having the public keyword there.  That is why I removed it.  BTW, can we turn off some sonar warnings?",
+      "parentUuid": "2721e7e2_26f72f00",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 11
+      },
+      "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

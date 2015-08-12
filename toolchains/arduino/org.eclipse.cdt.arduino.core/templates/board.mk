@@ -44,6 +44,9 @@ $(OUTPUT_DIR)/libc.a:	$(PLATFORM_OBJS)
 clean:
 	$(RMDIR) $(OUTPUT_DIR)
 
+size:
+	${recipe_size_pattern}
+
 <#list project_srcs as file>
 <#assign cpp = file?matches("(.*)\\.cpp")>
 <#if cpp>

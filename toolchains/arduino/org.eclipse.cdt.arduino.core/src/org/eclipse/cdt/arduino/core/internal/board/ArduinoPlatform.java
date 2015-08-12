@@ -7,9 +7,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.board;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +43,7 @@ public class ArduinoPlatform {
 
 	private transient ArduinoPackage pkg;
 	private transient HierarchicalProperties boardsFile;
+	private transient Properties platformProperties;
 
 	void setOwner(ArduinoPackage pkg) {
 		this.pkg = pkg;
@@ -125,13 +128,24 @@ public class ArduinoPlatform {
 	}
 
 	public Properties getPlatformProperties() throws CoreException {
-		Properties properties = new Properties();
-		try (Reader reader = new FileReader(getInstallPath().resolve("platform.txt").toFile())) { //$NON-NLS-1$
-			properties.load(reader);
-			return properties;
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading platform.txt", e));
+		if (platformProperties == null) {
+			platformProperties = new Properties();
+			try (BufferedReader reader = new BufferedReader(
+					new FileReader(getInstallPath().resolve("platform.txt").toFile()))) { //$NON-NLS-1$
+				// There are regex's here and need to preserve the \'s
+				StringBuffer buffer = new StringBuffer();
+				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+					buffer.append(line.replace("\\", "\\\\")); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append('\n');
+				}
+				try (Reader reader1 = new StringReader(buffer.toString())) {
+					platformProperties.load(reader1);
+				}
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading platform.txt", e));
+			}
 		}
+		return platformProperties;
 	}
 
 	public boolean isInstalled() {

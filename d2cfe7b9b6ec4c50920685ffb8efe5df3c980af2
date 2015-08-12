@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_26f72f00",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IProcessExtendedInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-12T14:36:14Z",
+      "side": 1,
+      "message": "I have seen discussions on this type of change, some people do prefer to keep \"public\", \n I don\u0027t have a strong opinion on this one but it would be nice to be consistent.  \n  The Eclipse \"Extract Interface\" action creates the interface with \"public\" and \"abstract\".",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 11
+      },
+      "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -11,6 +11,7 @@ package org.eclipse.tm.terminal.view.ui.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
@@ -60,8 +61,11 @@ public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	 */
 	@Override
 	public void updateAction(boolean aboutToShow) {
-		setEnabled(aboutToShow && getCommandFieldHandler() != null
-						&& getTarget() != null && getTarget().getState() == TerminalState.CONNECTED);
+		TabCommandFieldHandler handler = getCommandFieldHandler();
+		ITerminalViewControl target = getTarget();
+		setEnabled(aboutToShow && handler != null
+						&& target != null && target.getState() == TerminalState.CONNECTED);
+		setChecked(handler != null && handler.hasCommandInputField());
 	}
 
 	/**

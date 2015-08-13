@@ -217,8 +217,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 			table.setFont(parent.getFont());
 			treeViewer.setComparator(new ViewerComparator());
 			treeViewer.addCheckStateListener(this);
-		} else {
-			checkParent(table, parent);
 		}
 		return table;
 	}

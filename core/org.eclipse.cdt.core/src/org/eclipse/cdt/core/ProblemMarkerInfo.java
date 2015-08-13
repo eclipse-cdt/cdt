@@ -87,8 +87,8 @@ public  class ProblemMarkerInfo {
 			this.externalPath = null ;
 			this.type = null;
 			this.attributes = new HashMap<String, String>();
-			this.startChar = -1;
-			this.endChar = -1;
+			this.startChar = startChar;
+			this.endChar = endChar;
 		}
 
 		/**

@@ -101,8 +101,8 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 			marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
 			marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
-			marker.setAttribute(IMarker.CHAR_START, -1);
-			marker.setAttribute(IMarker.CHAR_END, -1);
+			marker.setAttribute(IMarker.CHAR_START, problemMarkerInfo.startChar);
+			marker.setAttribute(IMarker.CHAR_END, problemMarkerInfo.endChar);
 			if (problemMarkerInfo.variableName != null) {
 				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
 			}

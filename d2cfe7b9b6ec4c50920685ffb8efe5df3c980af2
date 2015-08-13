@@ -94,6 +94,30 @@
       "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_ab648313",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IProcessExtendedInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-13T16:52:25Z",
+      "side": 1,
+      "message": "-1 for fixing this specific warnings. Eclipse generates code with public in interface methods. Why sonar is even complaining about it? +1 for turning this off",
+      "parentUuid": "2721e7e2_a8cac9c1",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 11
+      },
+      "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

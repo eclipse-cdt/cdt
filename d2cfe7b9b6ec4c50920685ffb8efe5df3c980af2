@@ -46,6 +46,30 @@
       "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_28cff959",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IProcessExtendedInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-08-13T14:20:32Z",
+      "side": 1,
+      "message": "I think it\u0027s possible but we don\u0027t seem to have the privileges to do it :-(",
+      "parentUuid": "2721e7e2_46ece331",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 11
+      },
+      "revId": "d2cfe7b9b6ec4c50920685ffb8efe5df3c980af2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

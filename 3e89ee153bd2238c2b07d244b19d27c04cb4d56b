@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_4bcce764",
+        "filename": "codan/org.eclipse.cdt.codan.ui/src/org/eclipse/cdt/codan/internal/ui/preferences/CheckedTreeEditor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-13T17:28:49Z",
+      "side": 1,
+      "message": "Remove the \u0027else\u0027 branch.",
+      "range": {
+        "startLine": 220,
+        "startChar": 4,
+        "endLine": 220,
+        "endChar": 8
+      },
+      "revId": "3e89ee153bd2238c2b07d244b19d27c04cb4d56b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

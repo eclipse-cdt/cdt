@@ -11,6 +11,8 @@ package org.eclipse.tm.internal.terminal.control;
 
 /**
  * Terminal listener allowing to listen to terminal selection changes.
+ * 
+ * @since 4.1
  */
 public interface ITerminalListener2 extends ITerminalListener {
 
@@ -20,8 +22,6 @@ public interface ITerminalListener2 extends ITerminalListener {
 	 * NOTE: this does not include mouse selections
 	 * those are handled in separate MouseListeners
 	 * TODO should be unified
-	 *
-	 * @since 4.1
 	 */
 	void setTerminalSelectionChanged();
 }

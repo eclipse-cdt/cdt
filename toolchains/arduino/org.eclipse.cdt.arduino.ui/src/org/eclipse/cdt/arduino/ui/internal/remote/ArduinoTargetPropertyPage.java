@@ -3,9 +3,11 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
+import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
@@ -36,7 +38,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		comp.setLayout(new GridLayout(2, false));
 
 		IRemoteConnection remoteConnection = (IRemoteConnection) getElement().getAdapter(IRemoteConnection.class);
-		IArduinoRemoteConnection arduinoRemote = remoteConnection.getService(IArduinoRemoteConnection.class);
+		ArduinoRemoteConnection arduinoRemote = remoteConnection.getService(ArduinoRemoteConnection.class);
 
 		Label portLabel = new Label(comp, SWT.NONE);
 		portLabel.setText(Messages.ArduinoTargetPropertyPage_0);
@@ -73,8 +75,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		boardSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		try {
-			ArduinoBoard currentBoard = ArduinoBoardManager.instance.getBoard(arduinoRemote.getBoardName(),
-					arduinoRemote.getPlatformName(), arduinoRemote.getPackageName());
+			ArduinoBoard currentBoard = arduinoRemote.getBoard();
 			Collection<ArduinoBoard> boardList = ArduinoBoardManager.instance.getBoards();
 			boards = new ArduinoBoard[boardList.size()];
 			i = 0;
@@ -101,10 +102,14 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 		IRemoteConnectionWorkingCopy workingCopy = remoteConnection.getWorkingCopy();
 
 		String portName = portSelector.getItem(portSelector.getSelectionIndex());
-		workingCopy.setAttribute(IArduinoRemoteConnection.PORT_NAME, portName);
+		workingCopy.setAttribute(ArduinoRemoteConnection.PORT_NAME, portName);
 
 		ArduinoBoard board = boards[boardSelector.getSelectionIndex()];
-		workingCopy.setAttribute(IArduinoRemoteConnection.BOARD_ID, board.getId());
+		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getName());
+		ArduinoPlatform platform = board.getPlatform();
+		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getName());
+		ArduinoPackage pkg = platform.getPackage();
+		workingCopy.setAttribute(ArduinoRemoteConnection.PACKAGE_NAME, pkg.getName());
 
 		try {
 			workingCopy.save();

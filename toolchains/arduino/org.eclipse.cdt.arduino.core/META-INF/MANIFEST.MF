@@ -24,5 +24,6 @@ Bundle-ClassPath: libs/freemarker-2.3.22.jar,
 Export-Package: org.eclipse.cdt.arduino.core.internal;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.board;x-friends:="org.eclipse.cdt.arduino.ui",
  org.eclipse.cdt.arduino.core.internal.build;x-friends:="org.eclipse.cdt.arduino.ui",
- org.eclipse.cdt.arduino.core.internal.console;x-friends:="org.eclipse.cdt.arduino.ui"
+ org.eclipse.cdt.arduino.core.internal.console;x-friends:="org.eclipse.cdt.arduino.ui",
+ org.eclipse.cdt.arduino.core.internal.remote;x-friends:="org.eclipse.cdt.arduino.ui"
 Bundle-Localization: plugin

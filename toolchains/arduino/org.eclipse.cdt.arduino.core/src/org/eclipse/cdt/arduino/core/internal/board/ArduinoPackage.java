@@ -78,7 +78,19 @@ public class ArduinoPackage {
 				platformMap.put(platform.getName(), platform);
 			}
 		}
+		return Collections.unmodifiableCollection(platformMap.values());
+	}
 
+	public Collection<ArduinoPlatform> getInstalledPlatforms() {
+		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
+		for (ArduinoPlatform platform : platforms) {
+			if (platform.isInstalled()) {
+				ArduinoPlatform p = platformMap.get(platform.getName());
+				if (p == null || compareVersions(platform.getVersion(), p.getVersion()) > 0) {
+					platformMap.put(platform.getName(), platform);
+				}
+			}
+		}
 		return Collections.unmodifiableCollection(platformMap.values());
 	}
 

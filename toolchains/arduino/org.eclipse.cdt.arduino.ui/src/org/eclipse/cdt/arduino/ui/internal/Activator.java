@@ -42,15 +42,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
-		new UIJob("Arduino UI Startup") {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				ImageRegistry imageRegistry = getImageRegistry();
-				imageRegistry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
-				imageRegistry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
-				return Status.OK_STATUS;
-			}
-		}.schedule();
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -58,6 +49,14 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
+	@Override
+	protected ImageRegistry createImageRegistry() {
+		ImageRegistry registry = super.createImageRegistry();
+		registry.put(IMG_ARDUINO, imageDescriptorFromPlugin(PLUGIN_ID, "icons/cprojects.gif")); //$NON-NLS-1$
+		registry.put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arduino.png")); //$NON-NLS-1$
+		return registry;
+	}
+	
 	/**
 	 * Returns the shared instance
 	 *

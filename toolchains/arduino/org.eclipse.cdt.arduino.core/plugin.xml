@@ -20,7 +20,7 @@
       <connectionService
             connectionTypeId="org.eclipse.cdt.arduino.core.connectionType"
             factory="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection$Factory"
-            service="org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection">
+            service="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection">
       </connectionService>
       <connectionService
             connectionTypeId="org.eclipse.cdt.arduino.core.connectionType"

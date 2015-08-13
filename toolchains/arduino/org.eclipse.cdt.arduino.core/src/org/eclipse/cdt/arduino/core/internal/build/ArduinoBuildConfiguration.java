@@ -9,9 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,7 @@ import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
@@ -50,12 +53,13 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class ArduinoBuildConfiguration {
 
-	private static final String PACKAGE_NAME = "packageId"; //$NON-NLS-1$
+	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 	private static final String PLATFORM_NAME = "platformName"; //$NON-NLS-1$
 	private static final String BOARD_NAME = "boardName"; //$NON-NLS-1$
 
 	private final IBuildConfiguration config;
 
+	private ArduinoBoard board;
 	private Properties properties;
 
 	// Cache for scanner info
@@ -90,12 +94,59 @@ public class ArduinoBuildConfiguration {
 		}
 	}
 
+	public static ArduinoBuildConfiguration getConfig(IProject project, ArduinoBoard board, IProgressMonitor monitor)
+			throws CoreException {
+		// return it if it exists already
+		for (IBuildConfiguration config : project.getBuildConfigs()) {
+			ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
+			if (board.equals(arduinoConfig.getBoard())) {
+				return arduinoConfig;
+			}
+		}
+
+		// Not found, need to create one
+		Set<String> configNames = new HashSet<>();
+		for (IBuildConfiguration config : project.getBuildConfigs()) {
+			configNames.add(config.getName());
+		}
+		String newName = board.getId();
+		int n = 0;
+		while (configNames.contains(newName)) {
+			newName = board.getId() + (++n);
+		}
+		configNames.add(newName);
+		IProjectDescription projectDesc = project.getDescription();
+		projectDesc.setBuildConfigs(configNames.toArray(new String[configNames.size()]));
+		project.setDescription(projectDesc, monitor);
+
+		// set it up for the board
+		IBuildConfiguration config = project.getBuildConfig(newName);
+		ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
+		arduinoConfig.setBoard(board);
+
+		return arduinoConfig;
+	}
+
+	public void setActive(IProgressMonitor monitor) throws CoreException {
+		IProject project = config.getProject();
+		if (config.equals(project.getActiveBuildConfig())) {
+			// already set
+			return;
+		}
+
+		IProjectDescription projectDesc = project.getDescription();
+		projectDesc.setActiveBuildConfig(config.getName());
+		project.setDescription(projectDesc, monitor);
+	}
+
 	public IEclipsePreferences getSettings() {
 		return (IEclipsePreferences) new ProjectScope(config.getProject()).getNode(Activator.getId()).node("config") //$NON-NLS-1$
 				.node(config.getName());
 	}
 
 	public void setBoard(ArduinoBoard board) throws CoreException {
+		this.board = board;
+
 		ArduinoPlatform platform = board.getPlatform();
 		ArduinoPackage pkg = platform.getPackage();
 
@@ -111,11 +162,14 @@ public class ArduinoBuildConfiguration {
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		IEclipsePreferences settings = getSettings();
-		String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
-		String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
-		String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-		return ArduinoBoardManager.instance.getBoard(boardName, platformName, packageName);
+		if (board == null) {
+			IEclipsePreferences settings = getSettings();
+			String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
+			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
+			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
+			board = ArduinoBoardManager.instance.getBoard(boardName, platformName, packageName);
+		}
+		return board;
 	}
 
 	private Properties getProperties() throws CoreException {
@@ -127,7 +181,12 @@ public class ArduinoBuildConfiguration {
 			for (ToolDependency toolDep : platform.getToolsDependencies()) {
 				properties.putAll(toolDep.getTool().getToolProperties());
 			}
+			properties.put("runtime.ide.version", "1.6.7"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
+			properties.put("build.path", config.getName()); //$NON-NLS-1$
 		}
+		// always do this in case the project changes names
+		properties.put("build.project_name", config.getProject().getName()); //$NON-NLS-1$
 		return properties;
 	}
 
@@ -150,7 +209,6 @@ public class ArduinoBuildConfiguration {
 	public IFile generateMakeFile(IProgressMonitor monitor) throws CoreException {
 		final IProject project = config.getProject();
 
-		// Make sure build folder exists
 		IFolder buildFolder = getBuildFolder();
 		if (!buildFolder.exists()) {
 			buildFolder.create(true, true, monitor);
@@ -194,10 +252,7 @@ public class ArduinoBuildConfiguration {
 		// the recipes
 		Properties properties = new Properties();
 		properties.putAll(getProperties());
-		properties.put("runtime.ide.version", "1.6.7"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
-		properties.put("build.path", "$(OUTPUT_DIR)"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("build.project_name", project.getName()); //$NON-NLS-1$
+		buildModel.put("build_path", properties.get("build.path")); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("project_name", project.getName()); //$NON-NLS-1$
 
 		String includes = null;
@@ -218,7 +273,7 @@ public class ArduinoBuildConfiguration {
 		File[] platformFiles = corePath.toFile().listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".cpp") || name.endsWith(".c");
+				return name.endsWith(".cpp") || name.endsWith(".c"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 
@@ -325,6 +380,8 @@ public class ArduinoBuildConfiguration {
 	}
 
 	public String[] getSizeCommand() throws CoreException {
+		// TODO this shouldn't be in the makefile
+		// should be like the upload command
 		return new String[] { "make", "-f", getMakeFile().getName(), "size" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -344,6 +401,25 @@ public class ArduinoBuildConfiguration {
 	public int getMaxDataSize() throws CoreException {
 		String sizeStr = (String) getBoard().getBoardProperties().getProperty("upload.maximum_data_size"); //$NON-NLS-1$
 		return sizeStr != null ? Integer.parseInt(sizeStr) : -1;
+	}
+
+	public String[] getUploadCommand(String serialPort) throws CoreException {
+		String toolName = getProperties().getProperty("upload.tool"); //$NON-NLS-1$
+		ArduinoTool tool = board.getPlatform().getTool(toolName);
+
+		Properties properties = getProperties();
+		properties.put("runtime.tools." + toolName + ".path", tool.getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("serial.port", serialPort); //$NON-NLS-1$
+		// to make up for some cheating in the platform.txt file
+		properties.put("path", "{tools." + toolName + ".path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.put("cmd.path", "{tools." + toolName + ".cmd.path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.put("config.path", "{tools." + toolName + ".config.path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		properties.put("upload.verbose", "{tools." + toolName + ".upload.params.quiet}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		String command = resolveProperty("tools." + toolName + ".upload.pattern", properties); //$NON-NLS-1$ //$NON-NLS-2$
+		// TODO Windows
+		return new String[] { "sh", "-c", command }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
@@ -368,10 +444,8 @@ public class ArduinoBuildConfiguration {
 			ArduinoPlatform platform = getBoard().getPlatform();
 			Properties properties = new Properties();
 			properties.putAll(getProperties());
-			properties.put("runtime.ide.version", "1.6.7"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
 
-			Path tmpFile = Files.createTempFile("cdt", ".cpp");
+			Path tmpFile = Files.createTempFile("cdt", ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("source_file", tmpFile.toString()); //$NON-NLS-1$
 			properties.put("object_file", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -383,7 +457,7 @@ public class ArduinoBuildConfiguration {
 
 			// TODO Windows
 			String[] command = new String[] { "sh", "-c", resolveProperty(recipe, properties) }; //$NON-NLS-1$ //$NON-NLS-2$
-			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(getBuildDirectory())
+			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(tmpFile.getParent().toFile())
 					.redirectErrorStream(true);
 			setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();

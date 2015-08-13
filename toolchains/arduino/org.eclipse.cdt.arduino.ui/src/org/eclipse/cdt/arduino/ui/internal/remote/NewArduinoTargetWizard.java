@@ -2,7 +2,10 @@ package org.eclipse.cdt.arduino.ui.internal.remote;
 
 import java.util.Set;
 
-import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
+import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.remote.core.IRemoteConnectionType;
@@ -27,9 +30,16 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 		if (getConnection() == null) {
 			return false;
 		}
-		
-		workingCopy.setAttribute(IArduinoRemoteConnection.PORT_NAME, page.portName);
-		workingCopy.setAttribute(IArduinoRemoteConnection.BOARD_ID, page.board.getId());
+
+		workingCopy.setAttribute(ArduinoRemoteConnection.PORT_NAME, page.portName);
+
+		ArduinoBoard board = page.board;
+		workingCopy.setAttribute(ArduinoRemoteConnection.BOARD_NAME, board.getName());
+		ArduinoPlatform platform = board.getPlatform();
+		workingCopy.setAttribute(ArduinoRemoteConnection.PLATFORM_NAME, platform.getName());
+		ArduinoPackage pkg = platform.getPackage();
+		workingCopy.setAttribute(ArduinoRemoteConnection.PACKAGE_NAME, pkg.getName());
+
 		return true;
 	}
 
@@ -42,7 +52,7 @@ public class NewArduinoTargetWizard extends Wizard implements IRemoteUIConnectio
 	public IRemoteConnectionWorkingCopy getConnection() {
 		if (workingCopy == null) {
 			IRemoteServicesManager remoteManager = Activator.getService(IRemoteServicesManager.class);
-			IRemoteConnectionType connectionType = remoteManager.getConnectionType(IArduinoRemoteConnection.TYPE_ID);
+			IRemoteConnectionType connectionType = remoteManager.getConnectionType(ArduinoRemoteConnection.TYPE_ID);
 			try {
 				workingCopy = connectionType.newConnection(page.name);
 			} catch (RemoteConnectionException e) {

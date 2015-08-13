@@ -41,9 +41,9 @@ public class ArduinoPlatform {
 	private List<ArduinoBoard> boards;
 	private List<ToolDependency> toolsDependencies;
 
-	private transient ArduinoPackage pkg;
-	private transient HierarchicalProperties boardsFile;
-	private transient Properties platformProperties;
+	private ArduinoPackage pkg;
+	private HierarchicalProperties boardsFile;
+	private Properties platformProperties;
 
 	void setOwner(ArduinoPackage pkg) {
 		this.pkg = pkg;
@@ -127,6 +127,15 @@ public class ArduinoPlatform {
 		return toolsDependencies;
 	}
 
+	public ArduinoTool getTool(String name) throws CoreException {
+		for (ToolDependency toolDep : toolsDependencies) {
+			if (toolDep.getName().equals(name)) {
+				return toolDep.getTool();
+			}
+		}
+		return null;
+	}
+
 	public Properties getPlatformProperties() throws CoreException {
 		if (platformProperties == null) {
 			platformProperties = new Properties();
@@ -192,6 +201,43 @@ public class ArduinoPlatform {
 		// TODO on Windows install make from equations.org
 
 		return mstatus != null ? mstatus : Status.OK_STATUS;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((pkg == null) ? 0 : pkg.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ArduinoPlatform other = (ArduinoPlatform) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (pkg == null) {
+			if (other.pkg != null)
+				return false;
+		} else if (!pkg.equals(other.pkg))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
 	}
 
 }

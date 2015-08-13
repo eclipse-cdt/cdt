@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal.launch;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.arduino.core.internal.IArduinoRemoteConnection;
 import org.eclipse.cdt.arduino.core.internal.Messages;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
 import org.eclipse.core.resources.IProject;
@@ -50,10 +48,13 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
 			throws CoreException {
 		IRemoteConnection target = getTarget(configuration);
+		ArduinoRemoteConnection arduinoTarget = target.getService(ArduinoRemoteConnection.class);
+		ArduinoBoard targetBoard = arduinoTarget.getBoard();
 
 		// 1. make sure proper build config is set active
 		IProject project = configuration.getMappedResources()[0].getProject();
-		// TODO set active build config for the selected target
+		ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, targetBoard, monitor);
+		arduinoConfig.setActive(monitor);
 
 		// 2. Run the build
 		return super.buildForLaunch(configuration, mode, monitor);
@@ -78,42 +79,40 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 						return new Status(IStatus.ERROR, Activator.getId(),
 								Messages.ArduinoLaunchConfigurationDelegate_2);
 					}
+					ArduinoRemoteConnection arduinoTarget = target.getService(ArduinoRemoteConnection.class);
 
 					// The project
 					IProject project = (IProject) configuration.getMappedResources()[0];
 
-					// The build environment
-					List<String> envVarList = new ArrayList<>();
-
-					// Add in the serial port based on launch config
-					IArduinoRemoteConnection arduinoRemote = target.getService(IArduinoRemoteConnection.class);
-					envVarList.add("SERIAL_PORT=" + arduinoRemote.getPortName()); //$NON-NLS-1$
-					String[] envp = envVarList.toArray(new String[envVarList.size()]);
-
-					// The project directory to launch from
-					File projectDir = new File(project.getLocationURI());
-
-					// The build command
-					String command = "make";
+					// The build config
+					ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project,
+							arduinoTarget.getBoard(), monitor);
+					String[] uploadCmd = arduinoConfig.getUploadCommand(arduinoTarget.getPortName());
 
 					// If opened, temporarily close the connection so we can use
 					// it to download the firmware.
 					boolean wasOpened = target.isOpen();
 					if (wasOpened) {
-						arduinoRemote.pause();
+						arduinoTarget.pause();
 					}
 
 					// Run the process and capture the results in the console
-					Process process = Runtime.getRuntime().exec(command + " load", envp, projectDir); //$NON-NLS-1$
+					ProcessBuilder processBuilder = new ProcessBuilder(uploadCmd)
+							.directory(arduinoConfig.getBuildDirectory());
+					arduinoConfig.setEnvironment(processBuilder.environment());
+					Process process = processBuilder.start();
+
 					consoleService.monitor(process, null);
 					try {
 						process.waitFor();
 					} catch (InterruptedException e) {
 					}
 
+					consoleService.writeOutput("Upload complete\n");
+
 					// Reopen the connection
 					if (wasOpened) {
-						arduinoRemote.resume();
+						arduinoTarget.resume();
 					}
 				} catch (CoreException e) {
 					return e.getStatus();

@@ -57,15 +57,13 @@ public class ArduinoProjectGenerator {
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		projDesc.setBuildSpec(new ICommand[] { command });
 
-		// Create the default config
-		projDesc.setBuildConfigs(new String[] { "arduinoDefault" }); //$NON-NLS-1$
+		// Create the default config - uno
+		projDesc.setBuildConfigs(new String[] { "uno" }); //$NON-NLS-1$
 
 		project.setDescription(projDesc, monitor);
 
-		// Test config
-		IBuildConfiguration config = project.getBuildConfig("arduinoDefault"); //$NON-NLS-1$
+		IBuildConfiguration config = project.getBuildConfig("uno"); //$NON-NLS-1$
 		ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-		// TODO for now assume Uno
 		ArduinoBoard board = ArduinoBoardManager.instance.getBoard("Arduino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arduinoConfig.setBoard(board);
 

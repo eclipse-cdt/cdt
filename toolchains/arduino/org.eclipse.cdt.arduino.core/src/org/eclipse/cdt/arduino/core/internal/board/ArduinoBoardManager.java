@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import com.google.gson.Gson;
 
 // Closeable isn't API yet but it's recommended.
-@SuppressWarnings("restriction")
 public class ArduinoBoardManager {
 
 	public static final ArduinoBoardManager instance = new ArduinoBoardManager();
@@ -93,8 +92,18 @@ public class ArduinoBoardManager {
 
 	public List<ArduinoBoard> getBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
-		for (ArduinoPackage pkg : packageIndex.getPackages()) {
-			for (ArduinoPlatform platform : pkg.getPlatforms()) {
+		for (ArduinoPackage pkg : getPackageIndex().getPackages()) {
+			for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
+				boards.addAll(platform.getBoards());
+			}
+		}
+		return boards;
+	}
+
+	public List<ArduinoBoard> getInstalledBoards() throws CoreException {
+		List<ArduinoBoard> boards = new ArrayList<>();
+		for (ArduinoPackage pkg : getPackageIndex().getPackages()) {
+			for (ArduinoPlatform platform : pkg.getInstalledPlatforms()) {
 				boards.addAll(platform.getBoards());
 			}
 		}

@@ -218,9 +218,12 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 				if (!foundInDirectlyDerivedBaseClass) {
 					ICPPClassType indirectingClass = null;
 					for (ICPPBase base : bases) {
-						indirectingClass = (ICPPClassType)base.getBaseClass();
-						if (getOverriddenMethodInBaseClass(indirectingClass, method, point) != null)
-							break;
+						IBinding baseClass = base.getBaseClass();
+						if (baseClass instanceof ICPPClassType) {
+							indirectingClass = (ICPPClassType) baseClass;
+							if (getOverriddenMethodInBaseClass(indirectingClass, method, point) != null)
+								break;
+						}
 					}
 					if (indirectingClass != null) {
 						sb.append(' ');

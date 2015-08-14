@@ -130,15 +130,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 
 	// Service breakpoints tracking
 	// The breakpoints are stored per context and keyed on the back-end breakpoint reference
-	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>> fBreakpoints =
-		new HashMap<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>>();
+	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>> fBreakpoints = new HashMap<>();
 
 	/**
 	 * Map tracking which threads are currently suspended on a breakpoint.
 	 * @since 3.0
 	 */
-	private Map<IExecutionDMContext, IBreakpointDMContext[]> fBreakpointHitMap = 
-	    new HashMap<IExecutionDMContext, IBreakpointDMContext[]>();
+	private Map<IExecutionDMContext, IBreakpointDMContext[]> fBreakpointHitMap = new HashMap<>();
 	
 	/**
 	 * Returns a map of existing breakpoints for the specified context
@@ -157,36 +155,36 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	 * @since 3.0
 	 */
 	protected Map<Integer, MIBreakpointDMData> createNewBreakpointMap(IBreakpointsTargetDMContext ctx) {
-		Map<Integer, MIBreakpointDMData> map = new HashMap<Integer, MIBreakpointDMData>();
+		Map<Integer, MIBreakpointDMData> map = new HashMap<>();
 		fBreakpoints.put(ctx, map);
 		return map;
 	}
 	
 	// Error messages
 	/** @since 3.0 */
-	public final static String NULL_STRING = ""; //$NON-NLS-1$
+	public static final String NULL_STRING = ""; //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String UNKNOWN_EXECUTION_CONTEXT    = "Unknown execution context";    //$NON-NLS-1$
+	public static final String UNKNOWN_EXECUTION_CONTEXT    = "Unknown execution context";    //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String UNKNOWN_BREAKPOINT_CONTEXT   = "Unknown breakpoint context";   //$NON-NLS-1$
+	public static final String UNKNOWN_BREAKPOINT_CONTEXT   = "Unknown breakpoint context";   //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String UNKNOWN_BREAKPOINT_TYPE      = "Unknown breakpoint type";      //$NON-NLS-1$
+	public static final String UNKNOWN_BREAKPOINT_TYPE      = "Unknown breakpoint type";      //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String UNKNOWN_BREAKPOINT           = "Unknown breakpoint";           //$NON-NLS-1$
+	public static final String UNKNOWN_BREAKPOINT           = "Unknown breakpoint";           //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String BREAKPOINT_INSERTION_FAILURE = "Breakpoint insertion failure"; //$NON-NLS-1$
+	public static final String BREAKPOINT_INSERTION_FAILURE = "Breakpoint insertion failure"; //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String WATCHPOINT_INSERTION_FAILURE = "Watchpoint insertion failure"; //$NON-NLS-1$
+	public static final String WATCHPOINT_INSERTION_FAILURE = "Watchpoint insertion failure"; //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String INVALID_CONDITION            = "Invalid condition";            //$NON-NLS-1$
+	public static final String INVALID_CONDITION            = "Invalid condition";            //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String TRACEPOINT_INSERTION_FAILURE = "Tracepoint insertion failure"; //$NON-NLS-1$
+	public static final String TRACEPOINT_INSERTION_FAILURE = "Tracepoint insertion failure"; //$NON-NLS-1$
 	/** @since 4.4 */
-	public final static String DYNAMIC_PRINTF_INSERTION_FAILURE = "Dynamic printf insertion failure"; //$NON-NLS-1$
+	public static final String DYNAMIC_PRINTF_INSERTION_FAILURE = "Dynamic printf insertion failure"; //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String INVALID_BREAKPOINT_TYPE      = "Invalid breakpoint type";      //$NON-NLS-1$
+	public static final String INVALID_BREAKPOINT_TYPE      = "Invalid breakpoint type";      //$NON-NLS-1$
 	/** @since 3.0 */
-	public final static String CATCHPOINT_INSERTION_FAILURE = "Catchpoint insertion failure"; //$NON-NLS-1$
+	public static final String CATCHPOINT_INSERTION_FAILURE = "Catchpoint insertion failure"; //$NON-NLS-1$
 
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -268,6 +266,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
          */
         @Override
         public boolean equals(Object obj) {
+        	if (!(obj instanceof MIBreakpointDMContext)) {
+        		return false;
+        	}
             return baseEquals(obj) && (fReference.equals(((MIBreakpointDMContext)obj).fReference));
         }
         
@@ -817,10 +818,10 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		}
 
 		// Though CDT allows setting a temporary catchpoint, CDT never makes use of it
-		assert (Boolean) getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false) == false;
+		assert !(Boolean)getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false);
 
 		// GDB has no support for hardware catchpoints
-		assert (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false) == false;
+		assert !(Boolean)getProperty(attributes, MIBreakpointDMData.IS_HARDWARE, false);
 
 		final String event = (String) getProperty(attributes, CATCHPOINT_TYPE, NULL_STRING);
 		final String[] args = (String[]) getProperty(attributes, CATCHPOINT_ARGS, null);
@@ -1038,8 +1039,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
             protected void handleSuccess() {
-           		if (generateUpdateEvent)
+           		if (generateUpdateEvent) {
            			getSession().dispatchEvent(new BreakpointUpdatedEvent(dmc), getProperties());
+           		}
         		rm.done();
             }
         };
@@ -1049,7 +1051,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		if (properties.containsKey(conditionAttribute)) {
 			String oldValue = breakpoint.getCondition();
 			String newValue = (String) properties.get(conditionAttribute);
-			if (newValue == null) newValue = NULL_STRING;
+			if (newValue == null) {
+				newValue = NULL_STRING;
+			}
 	        if (!oldValue.equals(newValue)) {
 	        	changeCondition(context, reference, newValue, countingRm);
 	        	numberOfChanges++;
@@ -1062,7 +1066,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		if (properties.containsKey(ignoreCountAttribute)) {
 			Integer oldValue = breakpoint.getIgnoreCount();
 			Integer newValue = (Integer) properties.get(ignoreCountAttribute);
-			if (newValue == null) newValue = 0;
+			if (newValue == null) {
+				newValue = 0;
+			}
 	        if (!oldValue.equals(newValue)) {
 	        	changeIgnoreCount(context, reference, newValue, countingRm);
 	        	numberOfChanges++;
@@ -1075,13 +1081,16 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		if (properties.containsKey(enableAttribute)) {
 			Boolean oldValue = breakpoint.isEnabled();
 			Boolean newValue = (Boolean) properties.get(enableAttribute);
-			if (newValue == null) newValue = false;
+			if (newValue == null) {
+				newValue = false;
+			}
 	        if (!oldValue.equals(newValue)) {
 	        	numberOfChanges++;
-				if (newValue)
+				if (newValue) {
 					enableBreakpoint(context, reference, countingRm);
-				else
+				} else {
 					disableBreakpoint(context, reference, countingRm);
+				}
 	        }
 			properties.remove(enableAttribute);
 		}

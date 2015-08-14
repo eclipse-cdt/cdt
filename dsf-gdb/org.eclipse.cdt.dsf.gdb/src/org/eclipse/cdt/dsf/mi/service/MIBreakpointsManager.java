@@ -61,7 +61,6 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMData;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -129,7 +128,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 	}
 
 	// Note: Find a way to import this (careful of circular dependencies)
-    public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
+    public static final String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
     // Extra breakpoint attributes
     private static final String ATTR_DEBUGGER_PATH = GdbPlugin.PLUGIN_ID + ".debuggerPath";   //$NON-NLS-1$
@@ -137,13 +136,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     private static final String ATTR_THREAD_ID     = GdbPlugin.PLUGIN_ID + ".threadID";       //$NON-NLS-1$
 
     // Services
-    ICommandControlService fConnection;
-    IRunControl        fRunControl;
-    ISourceLookup      fSourceLookup;
-    IProcesses         fProcesses;
-    IBreakpoints       fBreakpoints;
-    IBreakpointManager fBreakpointManager;  // Platform breakpoint manager (not this!)
-    BreakpointActionManager fBreakpointActionManager;
+    private ICommandControlService fConnection;
+    private ISourceLookup      fSourceLookup;
+    private IProcesses         fProcesses;
+    private IBreakpoints       fBreakpoints;
+    private IBreakpointManager fBreakpointManager;  // Platform breakpoint manager (not this!)
+    private BreakpointActionManager fBreakpointActionManager;
     
     ///////////////////////////////////////////////////////////////////////////
     // Breakpoints tracking
@@ -303,7 +301,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         
         // Get the required services references from central repository
         fConnection     = getServicesTracker().getService(ICommandControlService.class);
-        fRunControl     = getServicesTracker().getService(IRunControl.class);
         fSourceLookup   = getServicesTracker().getService(ISourceLookup.class);
         fBreakpoints    = getServicesTracker().getService(IBreakpoints.class);
         fProcesses      = getServicesTracker().getService(IProcesses.class);
@@ -627,7 +624,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         	&& !(breakpoint instanceof ICAddressBreakpoint)
         	&& !(breakpoint instanceof ICFunctionBreakpoint)) {
             String debuggerPath = (String) attributes.get(ATTR_DEBUGGER_PATH);
-            if (debuggerPath == null || debuggerPath == NULL_STRING) {
+            if (debuggerPath == null || debuggerPath.equals(NULL_STRING)) {
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, NO_DEBUGGER_PATH, null));
                 rm.done();
                 return;
@@ -656,7 +653,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     protected void handleSuccess() {
                         // Add the new back-end breakpoint to the map
                         Vector<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
-                        if (list == null) list = new Vector<>();
+                        if (list == null) {
+                        	list = new Vector<>();
+                        }
                         
                         IBreakpointDMContext targetBP = getData();
                         list.add(targetBP);
@@ -667,7 +666,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                         // And update the corresponding thread list
                         Set<String> thrds = threadsIDs.get(breakpoint);
-                        if (thrds == null) thrds = new HashSet<>();
+                        if (thrds == null) {
+                        	thrds = new HashSet<>();
+                        }
                         
                         thrds.add(thread);
                         threadsIDs.put(breakpoint, thrds);
@@ -748,22 +749,23 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     ICLineBreakpoint lineBreakpoint = (ICLineBreakpoint) breakpoint;
                     try {
                         // Locate the workspace resource via the breakpoint marker
-                        IMarker breakpoint_marker = lineBreakpoint.getMarker();
-                        IResource resource = breakpoint_marker.getResource();
+                        IMarker breakpointMarker = lineBreakpoint.getMarker();
+                        IResource resource = breakpointMarker.getResource();
 
                         // Add a problem marker to the resource
-                        IMarker problem_marker = resource.createMarker(BreakpointProblems.BREAKPOINT_PROBLEM_MARKER_ID);
-                        int line_number = lineBreakpoint.getLineNumber();
+                        IMarker problemMarker = resource.createMarker(BreakpointProblems.BREAKPOINT_PROBLEM_MARKER_ID);
+                        int lineNumber = lineBreakpoint.getLineNumber();
                         String sourceHandle = lineBreakpoint.getSourceHandle();
-                        problem_marker.setAttribute(IMarker.LOCATION,    String.valueOf(line_number));
-                        problem_marker.setAttribute(IMarker.MESSAGE,     description);
-                        problem_marker.setAttribute(IMarker.SEVERITY,    severity);
-                        problem_marker.setAttribute(IMarker.LINE_NUMBER, line_number);
-                        if (sourceHandle != null)
-                            problem_marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, sourceHandle);
+                        problemMarker.setAttribute(IMarker.LOCATION,    String.valueOf(lineNumber));
+                        problemMarker.setAttribute(IMarker.MESSAGE,     description);
+                        problemMarker.setAttribute(IMarker.SEVERITY,    severity);
+                        problemMarker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+                        if (sourceHandle != null) {
+                            problemMarker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, sourceHandle);
+                        }
 
                         // And save the baby
-                        fBreakpointMarkerProblems.put(breakpoint, problem_marker);
+                        fBreakpointMarkerProblems.put(breakpoint, problemMarker);
                     } catch (CoreException e) {
                     }
                 }
@@ -962,15 +964,15 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
 
         // Get the original breakpoint attributes
-        final Map<String,Object> original_attributes = platformBPs.get(breakpoint);
-        if (original_attributes == null) {
+        final Map<String,Object> originalAttributes = platformBPs.get(breakpoint);
+        if (originalAttributes == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, INVALID_BREAKPOINT, null));
             rm.done();
             return;
         }
 
         // Determine the attributes delta
-        final Map<String,Object> oldAttributes = new HashMap<>(original_attributes);
+        final Map<String,Object> oldAttributes = new HashMap<>(originalAttributes);
         oldAttributes.put(ATTR_THREAD_FILTER, threadsIDs.get(breakpoint));
 
         final Set<String> newThreads = extractThreads(dmc, breakpoint);
@@ -1059,8 +1061,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 protected void handleSuccess() {
                     // Get the list of new back-end breakpoints contexts
                     newTargetBPs.addAll(getData());
-                    for (IBreakpointDMContext newRef : newTargetBPs)
+                    for (IBreakpointDMContext newRef : newTargetBPs) {
                     	targetBPs.put(newRef, breakpoint);
+                    }
                     threadsIDs.put(breakpoint, newThreads);
                     for (final IBreakpointDMContext ref : oldTargetBPs) {
                     	targetBPs.remove(ref);
@@ -1333,10 +1336,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                             @Override
                             protected void handleCompleted() {
 
-                                if (!isSuccess()) {
-                                    if (getStatus().getSeverity() == IStatus.ERROR) {
+                                if (!isSuccess() &&
+                                	getStatus().getSeverity() == IStatus.ERROR) {
                                         GdbPlugin.getDefault().getLog().log(getStatus());
-                                    }
                                 }
 
                                 // Indicate that the pending request has completed
@@ -1521,8 +1523,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         	IBreakpointsTargetDMContext targetCtx = DMContexts.getAncestorOfType(bpContext, IBreakpointsTargetDMContext.class);
         	if (targetCtx != null) {
                 Map<IBreakpointDMContext, ICBreakpoint> bps = fBPToPlatformMaps.get(targetCtx);
-                if (bps != null)
+                if (bps != null) {
                 	return bps.get(bpContext);
+                }
         	}
         }
         return null;
@@ -1795,8 +1798,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         // Add the modified attributes
         for (String key : commonKeys) {
-            if (!(oldAttributes.get(key).equals(newAttributes.get(key))))
+            if (!(oldAttributes.get(key).equals(newAttributes.get(key)))) {
                 delta.put(key, newAttributes.get(key));
+            }
         }
 
         // Add the new attributes
@@ -1815,63 +1819,78 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     /**
      * Converts ICBreakpoint attributes to IBreakpoints attributes.
      * 
-     * @param cdt_attributes
+     * @param cdtAttributes
      * @return
      */
-    private Map<String, Object> convertedAttributes(Map<String, Object> cdt_attributes) {
+    private Map<String, Object> convertedAttributes(Map<String, Object> cdtAttributes) {
 
         Map<String,Object> result = new HashMap<String,Object>();
 
         // IBreakpoint attributes
-        if (cdt_attributes.containsKey(ATTR_DEBUGGER_PATH))
-            result.put(MIBreakpoints.FILE_NAME, cdt_attributes.get(ATTR_DEBUGGER_PATH));
+        if (cdtAttributes.containsKey(ATTR_DEBUGGER_PATH)) {
+            result.put(MIBreakpoints.FILE_NAME, cdtAttributes.get(ATTR_DEBUGGER_PATH));
+        }
             
-        if (cdt_attributes.containsKey(IMarker.LINE_NUMBER))
-            result.put(MIBreakpoints.LINE_NUMBER, cdt_attributes.get(IMarker.LINE_NUMBER));
+        if (cdtAttributes.containsKey(IMarker.LINE_NUMBER)) {
+            result.put(MIBreakpoints.LINE_NUMBER, cdtAttributes.get(IMarker.LINE_NUMBER));
+        }
             
-        if (cdt_attributes.containsKey(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE))
-            result.put(MIBreakpoints.COMMANDS, cdt_attributes.get(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE));
+        if (cdtAttributes.containsKey(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE)) {
+            result.put(MIBreakpoints.COMMANDS, cdtAttributes.get(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE));
+        }
 
         // ICLineBreakpoint attributes
-        if (cdt_attributes.containsKey(ICLineBreakpoint.FUNCTION))
-            result.put(MIBreakpoints.FUNCTION, cdt_attributes.get(ICLineBreakpoint.FUNCTION));
+        if (cdtAttributes.containsKey(ICLineBreakpoint.FUNCTION)) {
+            result.put(MIBreakpoints.FUNCTION, cdtAttributes.get(ICLineBreakpoint.FUNCTION));
+        }
             
-        if (cdt_attributes.containsKey(ICLineBreakpoint.ADDRESS))
-            result.put(MIBreakpoints.ADDRESS, cdt_attributes.get(ICLineBreakpoint.ADDRESS));
+        if (cdtAttributes.containsKey(ICLineBreakpoint.ADDRESS)) {
+            result.put(MIBreakpoints.ADDRESS, cdtAttributes.get(ICLineBreakpoint.ADDRESS));
+        }
             
         // ICBreakpoint attributes
-        if (cdt_attributes.containsKey(ICBreakpoint.CONDITION))
-            result.put(MIBreakpoints.CONDITION, cdt_attributes.get(ICBreakpoint.CONDITION));
+        if (cdtAttributes.containsKey(ICBreakpoint.CONDITION)) {
+            result.put(MIBreakpoints.CONDITION, cdtAttributes.get(ICBreakpoint.CONDITION));
+        }
             
-        if (cdt_attributes.containsKey(ICBreakpoint.IGNORE_COUNT))
-            result.put(MIBreakpoints.IGNORE_COUNT, cdt_attributes.get(ICBreakpoint.IGNORE_COUNT));
+        if (cdtAttributes.containsKey(ICBreakpoint.IGNORE_COUNT)) {
+            result.put(MIBreakpoints.IGNORE_COUNT, cdtAttributes.get(ICBreakpoint.IGNORE_COUNT));
+        }
 
-        if (cdt_attributes.containsKey(ICTracepoint.PASS_COUNT))
-            result.put(MIBreakpoints.PASS_COUNT, cdt_attributes.get(ICTracepoint.PASS_COUNT));
+        if (cdtAttributes.containsKey(ICTracepoint.PASS_COUNT)) {
+            result.put(MIBreakpoints.PASS_COUNT, cdtAttributes.get(ICTracepoint.PASS_COUNT));
+        }
 
-        if (cdt_attributes.containsKey(ICBreakpoint.ENABLED))
-            result.put(MIBreakpoints.IS_ENABLED, cdt_attributes.get(ICBreakpoint.ENABLED));
+        if (cdtAttributes.containsKey(ICBreakpoint.ENABLED)) {
+            result.put(MIBreakpoints.IS_ENABLED, cdtAttributes.get(ICBreakpoint.ENABLED));
+        }
 
-        if (cdt_attributes.containsKey(ICBreakpointType.TYPE))
-            result.put(MIBreakpoints.BREAKPOINT_TYPE, cdt_attributes.get(ICBreakpointType.TYPE));
+        if (cdtAttributes.containsKey(ICBreakpointType.TYPE)) {
+            result.put(MIBreakpoints.BREAKPOINT_TYPE, cdtAttributes.get(ICBreakpointType.TYPE));
+        }
 
         // ICWatchpoint attributes
-        if (cdt_attributes.containsKey(ICWatchpoint.EXPRESSION))
-            result.put(MIBreakpoints.EXPRESSION, cdt_attributes.get(ICWatchpoint.EXPRESSION));
+        if (cdtAttributes.containsKey(ICWatchpoint.EXPRESSION)) {
+            result.put(MIBreakpoints.EXPRESSION, cdtAttributes.get(ICWatchpoint.EXPRESSION));
+        }
 
-        if (cdt_attributes.containsKey(ICWatchpoint.READ))
-            result.put(MIBreakpoints.READ, cdt_attributes.get(ICWatchpoint.READ));
+        if (cdtAttributes.containsKey(ICWatchpoint.READ)) {
+            result.put(MIBreakpoints.READ, cdtAttributes.get(ICWatchpoint.READ));
+        }
         
-        if (cdt_attributes.containsKey(ICWatchpoint.WRITE))
-            result.put(MIBreakpoints.WRITE, cdt_attributes.get(ICWatchpoint.WRITE));
+        if (cdtAttributes.containsKey(ICWatchpoint.WRITE)) {
+            result.put(MIBreakpoints.WRITE, cdtAttributes.get(ICWatchpoint.WRITE));
+        }
 
         // Threads
-        if (cdt_attributes.containsKey(ATTR_THREAD_FILTER))
-            result.put(ATTR_THREAD_FILTER, cdt_attributes.get(ATTR_THREAD_FILTER));
+        if (cdtAttributes.containsKey(ATTR_THREAD_FILTER)) {
+            result.put(ATTR_THREAD_FILTER, cdtAttributes.get(ATTR_THREAD_FILTER));
+        }
         
         // For IDynamicPrintf
-        if (cdt_attributes.containsKey(ICDynamicPrintf.PRINTF_STRING))
-        	result.put(MIBreakpoints.PRINTF_STRING, cdt_attributes.get(ICDynamicPrintf.PRINTF_STRING));
+        if (cdtAttributes.containsKey(ICDynamicPrintf.PRINTF_STRING)) {
+        	result.put(MIBreakpoints.PRINTF_STRING, cdtAttributes.get(ICDynamicPrintf.PRINTF_STRING));
+        }
 
         return result;
     }
@@ -2047,13 +2066,11 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         // checks for the breakpoint type, and adds the hardware/temporary flags 
         Object breakpointType = attributes.get(ICBreakpointType.TYPE);
-        if(breakpointType != null) {
-        	if(breakpointType instanceof Integer) {
-	            boolean isHardware = ((Integer) breakpointType & ICBreakpointType.HARDWARE) == ICBreakpointType.HARDWARE;
-	            boolean isTemporary = ((Integer) breakpointType & ICBreakpointType.TEMPORARY) == ICBreakpointType.TEMPORARY;
-	            properties.put(MIBreakpointDMData.IS_HARDWARE, isHardware);
-	            properties.put(MIBreakpointDMData.IS_TEMPORARY, isTemporary);
-        	}
+       	if (breakpointType instanceof Integer) {
+            boolean isHardware = ((Integer) breakpointType & ICBreakpointType.HARDWARE) == ICBreakpointType.HARDWARE;
+            boolean isTemporary = ((Integer) breakpointType & ICBreakpointType.TEMPORARY) == ICBreakpointType.TEMPORARY;
+            properties.put(MIBreakpointDMData.IS_HARDWARE, isHardware);
+            properties.put(MIBreakpointDMData.IS_TEMPORARY, isTemporary);
         }
 
         // Adjust for "skip-all"
@@ -2076,8 +2093,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     protected boolean needsResinstallation(Map<String,Object> delta) {
         
         // Check if there is any modified attribute
-        if (delta == null)
+        if (delta == null) {
             return false;
+        }
 
         // Check the "critical" attributes
         if (delta.containsKey(ATTR_DEBUGGER_PATH)            // File name
@@ -2103,12 +2121,13 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     protected void rollbackAttributes(ICBreakpoint breakpoint, IMarkerDelta oldValues) {
 
         try {
-            String new_condition = breakpoint.getCondition();
-            if (new_condition == null)
-                new_condition = NULL_STRING;
-            String old_condition = (oldValues != null) ? oldValues.getAttribute(ICBreakpoint.CONDITION, NULL_STRING) : NULL_STRING;
-            if (!old_condition.equals(new_condition)) {
-                breakpoint.setCondition(old_condition);
+            String newCondition = breakpoint.getCondition();
+            if (newCondition == null) {
+                newCondition = NULL_STRING;
+            }
+            String oldCondition = (oldValues != null) ? oldValues.getAttribute(ICBreakpoint.CONDITION, NULL_STRING) : NULL_STRING;
+            if (!oldCondition.equals(newCondition)) {
+                breakpoint.setCondition(oldCondition);
             }
             else {
                 breakpoint.setCondition(NULL_STRING);

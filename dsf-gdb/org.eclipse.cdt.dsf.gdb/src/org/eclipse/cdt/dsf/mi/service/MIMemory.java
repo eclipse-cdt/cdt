@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Wind River Systems and others.
+ * Copyright (c) 2007, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -76,8 +77,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     public class MemoryChangedEvent extends AbstractDMEvent<IMemoryDMContext> 
         implements IMemoryChangedEvent 
     {
-        IAddress[] fAddresses;
-        IDMContext fContext;
+        private IAddress[] fAddresses;
         
         public MemoryChangedEvent(IMemoryDMContext context, IAddress[] addresses) {
             super(context);
@@ -193,7 +193,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      */
 	@Override
     public void getMemory(IMemoryDMContext memoryDMC, IAddress address, long offset,
-    		int word_size, int word_count, DataRequestMonitor<MemoryByte[]> drm)
+    		int wordSize, int wordCount, DataRequestMonitor<MemoryByte[]> drm)
 	{
         if (memoryDMC == null) {
             drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$);
@@ -201,19 +201,19 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
             return;
         }
 
-    	if (word_size < 1) {
+    	if (wordSize < 1) {
     		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Word size not supported (< 1)", null)); //$NON-NLS-1$
     		drm.done();
     		return;
     	}
 
-    	if (word_count < 0) {
+    	if (wordCount < 0) {
     		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid word count (< 0)", null)); //$NON-NLS-1$
     		drm.done();
     		return;
     	}
 
-    	getMemoryCache(memoryDMC).getMemory(memoryDMC, address.add(offset), word_size, word_count, drm);
+    	getMemoryCache(memoryDMC).getMemory(memoryDMC, address.add(offset), wordSize, wordCount, drm);
 	}
 
     /* (non-Javadoc)
@@ -221,7 +221,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      */
 	@Override
     public void setMemory(IMemoryDMContext memoryDMC, IAddress address, long offset,
-    		int word_size, int word_count, byte[] buffer, RequestMonitor rm)
+    		int wordSize, int wordCount, byte[] buffer, RequestMonitor rm)
     {
         if (memoryDMC == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$);
@@ -229,25 +229,25 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
             return;
         }
 
-    	if (word_size < 1) {
+    	if (wordSize < 1) {
     		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Word size not supported (< 1)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
-    	if (word_count < 0) {
+    	if (wordCount < 0) {
     		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid word count (< 0)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
-    	if (buffer.length < word_count * word_size) {
+    	if (buffer.length < wordCount * wordSize) {
     		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Buffer too short", null)); //$NON-NLS-1$
     		rm.done();
     		return;
     	}
 
-    	getMemoryCache(memoryDMC).setMemory(memoryDMC, address, offset, word_size, word_count, buffer, rm);
+    	getMemoryCache(memoryDMC).setMemory(memoryDMC, address, offset, wordSize, wordCount, buffer, rm);
     }
 
     /* (non-Javadoc)
@@ -255,7 +255,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      */
 	@Override
     public void fillMemory(IMemoryDMContext memoryDMC, IAddress address, long offset,
-    		int word_size, int count, byte[] pattern, RequestMonitor rm)
+    		int wordSize, int count, byte[] pattern, RequestMonitor rm)
     {
         if (memoryDMC == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Unknown context type", null)); //$NON-NLS-1$);
@@ -263,7 +263,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
             return;
         }
 
-    	if (word_size < 1) {
+    	if (wordSize < 1) {
     		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Word size not supported (< 1)", null)); //$NON-NLS-1$
     		rm.done();
     		return;
@@ -288,13 +288,13 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     		System.arraycopy(pattern, 0, buffer, i * length, length);
     	}
 
-    	int word_count = buffer.length / word_size;
-    	if (buffer.length % word_size != 0) {
+    	int word_count = buffer.length / wordSize;
+    	if (buffer.length % wordSize != 0) {
     		word_count ++;
     	}
     	
     	// All is clear: go for it
-    	getMemoryCache(memoryDMC).setMemory(memoryDMC, address, offset, word_size, word_count, buffer, rm);
+    	getMemoryCache(memoryDMC).setMemory(memoryDMC, address, offset, wordSize, word_count, buffer, rm);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -305,18 +305,18 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      * @param memoryDMC
      * @param address
      * @param offset
-     * @param word_size
-     * @param word_count in addressable units
+     * @param wordSize
+     * @param wordCount in addressable units
      * @param drm
      * 
      * @since 1.1
      */
     protected void readMemoryBlock(IDMContext dmc, IAddress address, final long offset,
-    		final int word_size, final int word_count, final DataRequestMonitor<MemoryByte[]> drm)
+    		final int wordSize, final int wordCount, final DataRequestMonitor<MemoryByte[]> drm)
     {
     	if (fDataReadMemoryBytes) {
     		fCommandCache.execute(
-    			fCommandFactory.createMIDataReadMemoryBytes(dmc, address.toString(), offset, word_count, word_size),
+    			fCommandFactory.createMIDataReadMemoryBytes(dmc, address.toString(), offset, wordCount, wordSize),
     			new DataRequestMonitor<MIDataReadMemoryBytesInfo>(getExecutor(), drm) {
     				@Override
     				protected void handleSuccess() {
@@ -326,12 +326,12 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     				}
     				@Override
     				protected void handleFailure() {
-    					drm.setData(createInvalidBlock(word_size * word_count));
+    					drm.setData(createInvalidBlock(wordSize * wordCount));
     					drm.done();
     				}    					
     			});
     	} else {
-    		if (word_size != 1) {
+    		if (wordSize != 1) {
     			//The word-size is specified within the resulting command data-read-memory
     			//The word-size is defined in bytes although in the MI interface it's not clear if the meaning is 
     			//octets or system dependent bytes (minimum addressable memory). 
@@ -345,12 +345,12 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     		 * be on 1 row of [count] columns, no char interpretation.
     		 */
     		int mode = MIFormat.HEXADECIMAL;
-    		int nb_rows = 1;
-    		int nb_cols = word_count;
+    		int nbRows = 1;
+    		int nbCols = wordCount;
     		Character asChar = null;
 
     		fCommandCache.execute(
-    			fCommandFactory.createMIDataReadMemory(dmc, offset, address.toString(), mode, word_size, nb_rows, nb_cols, asChar),
+    			fCommandFactory.createMIDataReadMemory(dmc, offset, address.toString(), mode, wordSize, nbRows, nbCols, asChar),
     			new DataRequestMonitor<MIDataReadMemoryInfo>(getExecutor(), drm) {
     				@Override
     				protected void handleSuccess() {
@@ -360,7 +360,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     				}
     				@Override
     				protected void handleFailure() {
-    					drm.setData(createInvalidBlock(word_size * word_count));
+    					drm.setData(createInvalidBlock(wordSize * wordCount));
     					drm.done();
     				}
     			}
@@ -371,8 +371,9 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	private MemoryByte[] createInvalidBlock(int size) {
 		// Bug234289: If memory read fails, return a block marked as invalid
 		MemoryByte[] block = new MemoryByte[size];
-		for (int i = 0; i < block.length; i++)
+		for (int i = 0; i < block.length; i++) {
 			block[i] = new MemoryByte((byte) 0, (byte) 0);
+		}
 		return block;
 	}
 
@@ -380,25 +381,25 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      * @param memoryDMC
      * @param address
      * @param offset
-     * @param word_size
-     * @param word_count in addressable units
+     * @param wordSize
+     * @param wordCount in addressable units
      * @param buffer
      * @param rm
      * 
      * @since 1.1
      */
     protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset,
-    		final int word_size, final int word_count, final byte[] buffer, final RequestMonitor rm)
+    		final int wordSize, final int wordCount, final byte[] buffer, final RequestMonitor rm)
     {
     	if (fDataReadMemoryBytes) {
     		// Use -data-write-memory-bytes for performance, 
     		fCommandCache.execute(
     				fCommandFactory.createMIDataWriteMemoryBytes(dmc, address.add(offset).toString(),
-    						(buffer.length == word_count*word_size) ? buffer : Arrays.copyOf(buffer, word_count*word_size)),
+    						(buffer.length == wordCount*wordSize) ? buffer : Arrays.copyOf(buffer, wordCount*wordSize)),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm)
     		);
     	} else {
-    		if (word_size != 1) {
+    		if (wordSize != 1) {
     			//The word-size is specified within the resulting command data-write-memory
     			//The word-size is defined in bytes although in the MI interface it's not clear if the meaning is 
     			//octets or system dependent bytes (minimum addressable memory). 
@@ -411,17 +412,17 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     		// Each byte is written individually (GDB power...)
     		// so we need to keep track of the count
     		final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
-    		countingRM.setDoneCount(word_count);
+    		countingRM.setDoneCount(wordCount);
 
     		// We will format the individual bytes in decimal
     		int format = MIFormat.DECIMAL;
     		String baseAddress = address.toString();
 
     		// Issue an MI request for each byte to write
-    		for (int i = 0; i < word_count; i++) {
-    			String value = new Byte(buffer[i]).toString();
+    		for (int i = 0; i < wordCount; i++) {
+    			String value = Byte.toString(buffer[i]);
     			fCommandCache.execute(
-    					fCommandFactory.createMIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
+    					fCommandFactory.createMIDataWriteMemory(dmc, offset + i, baseAddress, format, wordSize, value),
     					new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
     			);
     		}
@@ -497,10 +498,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						if (expAddress != IExpressions.IExpressionDMLocation.INVALID_ADDRESS) {
 							final int count = expression.getSize();
 							final Addr64 address;
-							if (expAddress instanceof Addr64)
+							if (expAddress instanceof Addr64) {
 								address = (Addr64) expAddress;
-							else
+							} else {
 								address = new Addr64(expAddress.getValue());
+							}
 
 							final IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
 							getMemoryCache(memoryDMC).refreshMemory(memoryDMC, address, 0, getAddressableSize(memoryDMC), count, true,
@@ -525,7 +527,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 	// This class is really the equivalent of a C struct (old habits die hard...)
    	// For simplicity, everything is public.
-   	private class MemoryBlock {
+   	private static class MemoryBlock {
 		public IAddress fAddress;
 		public long fLengthInAddressableUnits;
 		public long fLengthInOctets;
@@ -544,7 +546,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
    	// Address-ordered data structure to cache the memory blocks.
    	// Contiguous blocks are merged if possible.
 	@SuppressWarnings("serial")
-	private class SortedMemoryBlockList extends LinkedList<MemoryBlock> {
+	private static class SortedMemoryBlockList extends LinkedList<MemoryBlock> {
 
 		public SortedMemoryBlockList() {
 			super();
@@ -702,8 +704,8 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	     * @return A list of the sub-blocks to fetch in order to fill enough gaps in the memory cache
 	     * to service the request
 	     */
-	    private LinkedList<MemoryBlock> getListOfMissingBlocks(IAddress reqBlockStart, int word_count, int word_size) {
-	    	int octetCount = word_count * word_size;
+	    private List<MemoryBlock> getListOfMissingBlocks(IAddress reqBlockStart, int wordCount, int wordSize) {
+	    	int octetCount = wordCount * wordSize;
 
 			LinkedList<MemoryBlock> list = new LinkedList<MemoryBlock>();
 			ListIterator<MemoryBlock> it = fMemoryBlockList.listIterator();
@@ -716,10 +718,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 				// Case where we miss a block before the cached block
 				if (reqBlockStart.distanceTo(cachedBlockStart).longValue() >= 0) {
-					int lengthInOctets = (int) Math.min(reqBlockStart.distanceTo(cachedBlockStart).longValue()*word_size, octetCount);
+					int lengthInOctets = (int) Math.min(reqBlockStart.distanceTo(cachedBlockStart).longValue()*wordSize, octetCount);
 					// If both blocks start at the same location, no need to create a new cached block
 					if (lengthInOctets > 0) {
-						int lengthInAddressableUnits = lengthInOctets / word_size;
+						int lengthInAddressableUnits = lengthInOctets / wordSize;
 						MemoryBlock newBlock = new MemoryBlock(reqBlockStart, lengthInOctets, lengthInAddressableUnits, new MemoryByte[0]);
 						list.add(newBlock);
 					}
@@ -734,14 +736,14 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				{
 					// Start of the requested block already in cache
 					// Adjust request block start and length for the next iteration
-					octetCount -= reqBlockStart.distanceTo(cachedBlockEnd).longValue()*word_size;
+					octetCount -= reqBlockStart.distanceTo(cachedBlockEnd).longValue()*wordSize;
 					reqBlockStart = cachedBlockEnd;
 				}
 			}
 
 			// Case where we miss a block at the end of the cache
 			if (octetCount > 0) {
-				int addressesLength = octetCount / word_size;
+				int addressesLength = octetCount / wordSize;
 				MemoryBlock newBlock = new MemoryBlock(reqBlockStart, octetCount, addressesLength, new MemoryByte[0]);
 				list.add(newBlock);
 			}
@@ -775,10 +777,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	     * @param count Its length
 	     * @return The cached memory content
 	     */
-	    private MemoryByte[] getMemoryBlockFromCache(IAddress reqBlockStart, int word_count, int word_size) {
-	    	int count = word_count * word_size;
+	    private MemoryByte[] getMemoryBlockFromCache(IAddress reqBlockStart, int wordCount, int wordSize) {
+	    	int count = wordCount * wordSize;
 	    	
-			IAddress reqBlockEnd = reqBlockStart.add(word_count);
+			IAddress reqBlockEnd = reqBlockStart.add(wordCount);
 			MemoryByte[] resultBlock = new MemoryByte[count];
 			ListIterator<MemoryBlock> iter = fMemoryBlockList.listIterator();
 
@@ -791,7 +793,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				if (cachedBlockStart.distanceTo(reqBlockStart).longValue() >= 0
 					&& reqBlockEnd.distanceTo(cachedBlockEnd).longValue() >= 0)
 				{
-					int pos = (int) cachedBlockStart.distanceTo(reqBlockStart).longValue() * word_size;
+					int pos = (int) cachedBlockStart.distanceTo(reqBlockStart).longValue() * wordSize;
 					System.arraycopy(cachedBlock.fBlock, pos, resultBlock, 0, count);
 				}
 				
@@ -799,7 +801,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				else if (reqBlockStart.distanceTo(cachedBlockStart).longValue() >= 0
 					&& cachedBlockStart.distanceTo(reqBlockEnd).longValue() > 0)
 				{
-					int pos = (int) reqBlockStart.distanceTo(cachedBlockStart).longValue() * word_size;
+					int pos = (int) reqBlockStart.distanceTo(cachedBlockStart).longValue() * wordSize;
 					int length = (int) Math.min(cachedBlock.fLengthInOctets, count - pos);
 					System.arraycopy(cachedBlock.fBlock, 0, resultBlock, pos, length);
 				}
@@ -808,7 +810,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				else if (cachedBlockStart.distanceTo(reqBlockStart).longValue() >= 0
 					&& reqBlockStart.distanceTo(cachedBlockEnd).longValue() > 0)
 				{
-					int pos = (int) cachedBlockStart.distanceTo(reqBlockStart).longValue() * word_size;
+					int pos = (int) cachedBlockStart.distanceTo(reqBlockStart).longValue() * wordSize;
 					int length = (int) Math.min(cachedBlock.fLengthInOctets - pos, count);
 					System.arraycopy(cachedBlock.fBlock, pos, resultBlock, 0, length);
 				}
@@ -821,14 +823,14 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	     *  the content with the actual memory just read from the target.
 	     * 
 		 * @param modBlockStart
-		 * @param word_count - Number of addressable units
+		 * @param wordCount - Number of addressable units
 		 * @param modBlock
-		 * @param word_size - Number of octets per addressable unit
+		 * @param wordSize - Number of octets per addressable unit
 		 */
-		private void updateMemoryCache(IAddress modBlockStart, int word_count, MemoryByte[] modBlock, int word_size) {
-			IAddress modBlockEnd = modBlockStart.add(word_count);
+		private void updateMemoryCache(IAddress modBlockStart, int wordCount, MemoryByte[] modBlock, int wordSize) {
+			IAddress modBlockEnd = modBlockStart.add(wordCount);
 			ListIterator<MemoryBlock> iter = fMemoryBlockList.listIterator();
-			int count = word_count * word_size;
+			int count = wordCount * wordSize;
 
 			while (iter.hasNext()) {
 				MemoryBlock cachedBlock = iter.next();
@@ -845,7 +847,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				if (cachedBlockStart.distanceTo(modBlockStart).longValue() >= 0
 					&& modBlockEnd.distanceTo(cachedBlockEnd).longValue() >= 0)
 				{
-					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue() * word_size;
+					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue() * wordSize;
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, count);
 				}
 				
@@ -853,7 +855,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				else if (modBlockStart.distanceTo(cachedBlockStart).longValue() >= 0
 					&& cachedBlockEnd.distanceTo(modBlockEnd).longValue() >= 0)
 				{
-					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue() * word_size;
+					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue() * wordSize;
 					System.arraycopy(modBlock, pos, cachedBlock.fBlock, 0, (int) cachedBlock.fLengthInOctets);
 				}
 
@@ -861,8 +863,8 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				else if (cachedBlockStart.distanceTo(modBlockStart).longValue() >= 0
 					&& modBlockStart.distanceTo(cachedBlockEnd).longValue() > 0)
 				{
-					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue() * word_size;
-					int length = (int) modBlockStart.distanceTo(cachedBlockEnd).longValue() * word_size;
+					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue() * wordSize;
+					int length = (int) modBlockStart.distanceTo(cachedBlockEnd).longValue() * wordSize;
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, length);
 				}
 				
@@ -870,8 +872,8 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				else if (cachedBlockStart.distanceTo(modBlockEnd).longValue() > 0
 					&& modBlockEnd.distanceTo(cachedBlockEnd).longValue() >= 0)
 				{
-					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue() * word_size;
-					int length = (int) cachedBlockStart.distanceTo(modBlockEnd).longValue() * word_size;
+					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue() * wordSize;
+					int length = (int) cachedBlockStart.distanceTo(modBlockEnd).longValue() * wordSize;
 					System.arraycopy(modBlock, pos, cachedBlock.fBlock, 0, length);
 				}
  			}
@@ -881,15 +883,15 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	    /**
 		 * @param memoryDMC
 	     * @param address	the memory block address (on the target)
-	     * @param word_size	the size, in bytes, of an addressable item
-	     * @param word_count the number of addressable units to read
+	     * @param wordSize	the size, in bytes, of an addressable item
+	     * @param wordCount the number of addressable units to read
 	     * @param drm		the asynchronous data request monitor
 	     */
-	    public void getMemory(IMemoryDMContext memoryDMC, final IAddress address, final int word_size, 
-	    		final int word_count, final DataRequestMonitor<MemoryByte[]> drm)
+	    public void getMemory(IMemoryDMContext memoryDMC, final IAddress address, final int wordSize, 
+	    		final int wordCount, final DataRequestMonitor<MemoryByte[]> drm)
 	    {
 	    	// Determine the number of read requests to issue 
-	    	LinkedList<MemoryBlock> missingBlocks = getListOfMissingBlocks(address, word_count, word_size);
+	    	List<MemoryBlock> missingBlocks = getListOfMissingBlocks(address, wordCount, wordSize);
 	    	int numberOfRequests = missingBlocks.size();
 
 	    	// A read request will be issued for each block needed
@@ -899,7 +901,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	                @Override
 	                protected void handleSuccess() {
 	                	// We received everything so read the result from the memory cache
-	                	drm.setData(getMemoryBlockFromCache(address, word_count, word_size));
+	                	drm.setData(getMemoryBlockFromCache(address, wordCount, wordSize));
 	                    drm.done();
 	                }
 	            };
@@ -910,12 +912,12 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	        	MemoryBlock block = missingBlocks.get(i);
 	        	final IAddress startAddress = block.fAddress;
 	        	final int length = (int) block.fLengthInAddressableUnits;
-		        readMemoryBlock(memoryDMC, startAddress, 0, word_size, length,
+		        readMemoryBlock(memoryDMC, startAddress, 0, wordSize, length,
 					    new DataRequestMonitor<MemoryByte[]>(getSession().getExecutor(), drm) {
 					    	@Override
 					    	protected void handleSuccess() {
 					    		MemoryByte[] block = getData();
-					    		int lenghtInaddressableUnits = block.length / word_size;
+					    		int lenghtInaddressableUnits = block.length / wordSize;
 					    		MemoryBlock memoryBlock = new MemoryBlock(startAddress, block.length, lenghtInaddressableUnits, block);
 					    		fMemoryBlockList.add(memoryBlock);
 					    		countingRM.done();
@@ -928,17 +930,17 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		 * @param memoryDMC
 	     * @param address	the memory block address (on the target)
 	     * @param offset	the offset from the start address
-	     * @param word_size	the size, in bytes, of an addressable item
-	     * @param word_count the number of addressable units to write
+	     * @param wordSize	the size, in bytes, of an addressable item
+	     * @param wordCount the number of addressable units to write
 	     * @param buffer	the source buffer
 	     * @param rm		the asynchronous request monitor
 	     */
 	   public void setMemory(final IMemoryDMContext memoryDMC, final IAddress address,
-			   final long offset, final int word_size, final int word_count, final byte[] buffer,
+			   final long offset, final int wordSize, final int wordCount, final byte[] buffer,
 			   final RequestMonitor rm)
 	   {
 	       	writeMemoryBlock(
-	       	    memoryDMC, address, offset, word_size, word_count, buffer,
+	       	    memoryDMC, address, offset, wordSize, wordCount, buffer,
 				new RequestMonitor(getSession().getExecutor(), rm) {
 					@Override
 				    protected void handleSuccess() {
@@ -947,14 +949,14 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						fCommandCache.reset();
 
 				    	// Re-read the modified memory block to asynchronously update of the memory cache
-				        readMemoryBlock(memoryDMC, address, offset, word_size, word_count,
+				        readMemoryBlock(memoryDMC, address, offset, wordSize, wordCount,
 					        new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) { 
 					        	@Override
 	                            protected void handleSuccess() {
-									updateMemoryCache(address.add(offset), word_count, getData(), word_size);
+									updateMemoryCache(address.add(offset), wordCount, getData(), wordSize);
 									// Send the MemoryChangedEvent
-									IAddress[] addresses = new IAddress[word_count];
-									for (int i = 0; i < word_count; i++) {
+									IAddress[] addresses = new IAddress[wordCount];
+									for (int i = 0; i < wordCount; i++) {
 										addresses[i] = address.add(offset + i);
 									}
 									getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());
@@ -969,36 +971,36 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
  	    * @param memoryDMC
  	    * @param address
  	    * @param offset
- 	    * @param word_size
- 	    * @param word_count
+ 	    * @param wordSize
+ 	    * @param wordCount
  	    * @param sendMemoryEvent Indicates if a IMemoryChangedEvent should be sent if the memory cache has changed.
  	    * @param rm
  	    */
 	   public void refreshMemory(final IMemoryDMContext memoryDMC, final IAddress address,
- 			   final long offset, final int word_size, final int word_count, final boolean sendMemoryEvent, 
+ 			   final long offset, final int wordSize, final int wordCount, final boolean sendMemoryEvent, 
  			   final RequestMonitor rm)
 	   {
 		   // Check if we already cache part of this memory area (which means it
 		   // is used by a memory service client that will have to be updated)
-		   LinkedList<MemoryBlock> list = getListOfMissingBlocks(address, word_count, word_size);
+		   List<MemoryBlock> list = getListOfMissingBlocks(address, wordCount, wordSize);
 		   int sizeToRead = 0;
 		   for (MemoryBlock block : list) {
 			   sizeToRead += block.fLengthInAddressableUnits;
 		   }
 
 		   // If none of the requested memory is in cache, just get out
-		   if (sizeToRead == word_count) {
+		   if (sizeToRead == wordCount) {
 			   rm.done();
 			   return;
 		   }
 
 		   // Read the corresponding memory block
 		   fCommandCache.reset();
-		   readMemoryBlock(memoryDMC, address, offset, word_size, word_count,
+		   readMemoryBlock(memoryDMC, address, offset, wordSize, wordCount,
 				   new DataRequestMonitor<MemoryByte[]>(getExecutor(), rm) {
 					   @Override
 					   protected void handleSuccess() {
-						   MemoryByte[] oldBlock = getMemoryBlockFromCache(address, word_count, word_size);
+						   MemoryByte[] oldBlock = getMemoryBlockFromCache(address, wordCount, wordSize);
 						   MemoryByte[] newBlock = getData();
 						   boolean blocksDiffer = false;
 						   for (int i = 0; i < oldBlock.length; i++) {
@@ -1008,11 +1010,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						       }
 						   }
 						   if (blocksDiffer) {
-							   updateMemoryCache(address.add(offset), word_count, newBlock, word_size);
+							   updateMemoryCache(address.add(offset), wordCount, newBlock, wordSize);
 							   if (sendMemoryEvent) {
 								   // Send the MemoryChangedEvent
-								   final IAddress[] addresses = new IAddress[word_count];
-								   for (int i = 0; i < word_count; i++) {
+								   final IAddress[] addresses = new IAddress[wordCount];
+								   for (int i = 0; i < wordCount; i++) {
 									   addresses[i] = address.add(offset + i);
 								   }
 								   getSession().dispatchEvent(new MemoryChangedEvent(memoryDMC, addresses), getProperties());

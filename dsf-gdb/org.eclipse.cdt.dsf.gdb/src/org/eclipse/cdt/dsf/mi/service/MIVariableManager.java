@@ -338,38 +338,38 @@ public class MIVariableManager implements ICommandControl {
 		// This is the lock used when we must run multiple
 		// operations at once.  This lock should be independent of the
 		// UPDATING state, which is why we don't make it part of the state
-		private boolean locked = false;
+		private boolean fLocked = false;
 		
 	    // This id is the one used to search for this object in our hash-map
-	    private final VariableObjectId internalId;
+	    private final VariableObjectId fInternalId;
 
 	    /** The raw MI value for this variable object
 		 * @since 4.6
 		 */
-	    private MITuple raw;
+	    private MITuple fRaw;
 
 	    // This is the name of the variable object, as given by GDB (e.g., var1 or var1.public.x)
-		private String gdbName = null;
+		private String fGdbName = null;
 		// The current format of this variable object, within GDB
-		private String format = IFormattedValues.NATURAL_FORMAT;
+		private String fFormat = IFormattedValues.NATURAL_FORMAT;
 
 		// The full expression that can be used to characterize this object
 		// plus some other information that shall live longer than the
 		// MIVariableObject.
-		private ExpressionInfo exprInfo;
-		private String type = null;
-		private GDBType gdbType;
+		private ExpressionInfo fExprInfo;
+		private String fType = null;
+		private GDBType fGdbType;
 		// A hint at the number of children.  This value is obtained
 		// from -var-create or -var-list-children.  It may not be right in the case
 		// of C++ structures, where GDB has a level of children for private/public/protected.
-		private int numChildrenHint = 0;
-		private Boolean editable = null;
+		private int fNumChildrenHint = 0;
+		private Boolean fEditable = null;
 
 		// The current values of the expression for each format. (null if not known yet)
-		private Map<String, String> valueMap = null;
+		private Map<String, String> fValueMap = null;
 		
 		// A queue of request monitors waiting for this object to be ready
-		private LinkedList<RequestMonitor> operationsPending;
+		private LinkedList<RequestMonitor> fOperationsPending;
 		
 		// A queue of request monitors that requested an update
 		protected LinkedList<DataRequestMonitor<Boolean>> updatesPending;
@@ -379,23 +379,22 @@ public class MIVariableManager implements ICommandControl {
 
 		// The children of this variable, if any.  
 		// Null means we didn't fetch them yet, while an empty array means no children
-        private ExpressionInfo[] children = null; 
+        private ExpressionInfo[] fChildren = null; 
         // we need to keep track of fake children because they are in the LRU and need to be removed in some cases.
-        private List<ExpressionInfo> fakeChildren = new ArrayList<ExpressionInfo>(3);
-		private boolean hasMore = false;
-		private MIDisplayHint displayHint = MIDisplayHint.NONE;
+        private List<ExpressionInfo> fFakeChildren = new ArrayList<>(3);
+		private boolean fHasMore = false;
+		private MIDisplayHint fDisplayHint = MIDisplayHint.NONE;
 		
         // The parent of this variable object within GDB.  Null if this object has no parent
-        private MIVariableObject parent = null;
+        private MIVariableObject fParent = null;
         
         // The root parent that must be used to issue -var-update.
         // If this object is a root, then the rootToUpdate is itself
-        private MIRootVariableObject rootToUpdate = null;
+        private MIRootVariableObject fRootToUpdate = null;
                 
 		protected boolean outOfScope = false;
 		
-		private boolean fetchingChildren = false;
-		
+		private boolean fFetchingChildren = false;
 		
 		/** 
 		 * In case of base class variables that are accessed in a derived class 
@@ -403,7 +402,7 @@ public class MIVariableManager implements ICommandControl {
 		 * We have to use a workaround and apply it to the complete hierarchy of this varObject.
 		 * Bug 320277
 		 */
-		private boolean hasCastToBaseClassWorkaround = false;
+		private boolean fHasCastToBaseClassWorkaround = false;
 
 		public MIVariableObject(VariableObjectId id, MIVariableObject parentObj) {
 			this(id, parentObj, false);
@@ -414,15 +413,15 @@ public class MIVariableManager implements ICommandControl {
 				boolean needsCreation) {
 			currentState = needsCreation ? STATE_NOT_CREATED : STATE_READY; 
 			
-			operationsPending = new LinkedList<RequestMonitor>();
-			updatesPending = new LinkedList<DataRequestMonitor<Boolean>>();
-			fetchChildrenPending = new LinkedList<DataRequestMonitor<ChildrenInfo>>();
+			fOperationsPending = new LinkedList<>();
+			updatesPending = new LinkedList<>();
+			fetchChildrenPending = new LinkedList<>();
 			
-			internalId = id;
+			fInternalId = id;
 			setParent(parentObj);
 			
 			// No values are available yet
-			valueMap = new HashMap<String, String>();
+			fValueMap = new HashMap<>();
 			resetValues();
 		}
 		
@@ -433,21 +432,21 @@ public class MIVariableManager implements ICommandControl {
 		 * be represented as fields or methods in this class.
 		 * @since 4.7
 		 */
-		public MITuple getRawFields() { return raw; }
+		public MITuple getRawFields() { return fRaw; }
 
-		public VariableObjectId getInternalId() { return internalId; }
-		public String getGdbName() { return gdbName; }
-		public String getCurrentFormat() {	return format; }
-		public MIVariableObject getParent() { return parent; }
-		public MIRootVariableObject getRootToUpdate() { return rootToUpdate; }
+		public VariableObjectId getInternalId() { return fInternalId; }
+		public String getGdbName() { return fGdbName; }
+		public String getCurrentFormat() {	return fFormat; }
+		public MIVariableObject getParent() { return fParent; }
+		public MIRootVariableObject getRootToUpdate() { return fRootToUpdate; }
 		
-		public String getExpression() { return exprInfo.getFullExpr(); }
-		public String getType() { return type; }
+		public String getExpression() { return fExprInfo.getFullExpr(); }
+		public String getType() { return fType; }
 		
 		/**
 		 * @since 4.0
 		 */
-		public ExpressionInfo getExpressionInfo() { return exprInfo; }
+		public ExpressionInfo getExpressionInfo() { return fExprInfo; }
 
 		/**
 		 * @return <code>true</code> if value and children of this varobj are
@@ -455,7 +454,7 @@ public class MIVariableManager implements ICommandControl {
 		 *         
 		 * @since 4.0
 		 */
-		public boolean isDynamic() { return exprInfo.isDynamic(); }
+		public boolean isDynamic() { return fExprInfo.isDynamic(); }
 		
 		/**
 		 * @return For dynamic varobjs ({@link #isDynamic() returns true}) this
@@ -465,18 +464,18 @@ public class MIVariableManager implements ICommandControl {
 		 *         
 		 * @since 4.0
 		 */
-		public boolean hasMore() { return hasMore; }
+		public boolean hasMore() { return fHasMore; }
 
 		/**
 		 * @since 4.0
 		 */
-		public MIDisplayHint getDisplayHint() { return displayHint; };
+		public MIDisplayHint getDisplayHint() { return fDisplayHint; };
 		
 		/**
 		 * @since 4.3
 		 */
 		public void setDisplayHint(MIDisplayHint displayHint) {
-			this.displayHint = displayHint;
+			this.fDisplayHint = displayHint;
 		};
 		
 		/**
@@ -485,7 +484,7 @@ public class MIVariableManager implements ICommandControl {
 		public boolean hasChildren() { return (getNumChildrenHint() != 0 || hasMore()); }
 
 		/** @since 3.0 */
-		public GDBType getGDBType() { return gdbType; }
+		public GDBType getGDBType() { return fGdbType; }
 		/** 
 		 * Returns a hint to the number of children.  This hint is often correct,
 		 * except when we are dealing with C++ complex structures where
@@ -495,10 +494,10 @@ public class MIVariableManager implements ICommandControl {
 		 * hint can be trusted.
 		 * 
 		 * Note that a hint of 0 children can always be trusted, except for
-		 * <code>{@link #hasMore} == true</code>.
+		 * <code>{@link #fHasMore} == true</code>.
 		 * 
 		 * @since 3.0 */
-		public int getNumChildrenHint() { return numChildrenHint; }
+		public int getNumChildrenHint() { return fNumChildrenHint; }
 		/** 
 		 * Returns whether the number of children hint can be 
 		 * trusted for this variable object.
@@ -519,11 +518,10 @@ public class MIVariableManager implements ICommandControl {
 			return ((getNumChildrenHint() == 0 && ! hasMore()) || isArray());
 		}
  
-		public String getValue(String format) { return valueMap.get(format); }
+		public String getValue(String format) { return fValueMap.get(format); }
 		
-        public ExpressionInfo[] getChildren() { return children; }
+        public ExpressionInfo[] getChildren() { return fChildren; }
 
-        
 		public boolean isArray() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.ARRAY; }
 		public boolean isPointer() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.POINTER; }
 		public boolean isMethod() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION; }
@@ -567,8 +565,8 @@ public class MIVariableManager implements ICommandControl {
 			return !isDynamic() || isDynamicButSafe;
 		}
 		
-		public void setGdbName(String n) { gdbName = n; }
-		public void setCurrentFormat(String f) { format = f; }
+		public void setGdbName(String n) { fGdbName = n; }
+		public void setCurrentFormat(String f) { fFormat = f; }
 
 		/**
 		 * @param fullExpression
@@ -596,21 +594,21 @@ public class MIVariableManager implements ICommandControl {
 		 * @since 4.0
 		 */
 		public void setExpressionData(ExpressionInfo info, String typeName, int num, boolean hasMore) {
-			exprInfo = info;
+			fExprInfo = info;
 			setType(typeName);
-			numChildrenHint = num;
-			this.hasMore = hasMore;
+			fNumChildrenHint = num;
+			this.fHasMore = hasMore;
 		}
 		
 		/**
 		 * @since 4.1
 		 */
 		public void setType(String newTypeName) {
-			type = newTypeName;
-			gdbType = getGDBTypeParser().parse(newTypeName);
+			fType = newTypeName;
+			fGdbType = getGDBTypeParser().parse(newTypeName);
 		}
 
-		public void setValue(String format, String val) { valueMap.put(format, val); }
+		public void setValue(String format, String val) { fValueMap.put(format, val); }
 		
 		public void resetValues(String valueInCurrentFormat) {
 			resetValues();
@@ -618,11 +616,11 @@ public class MIVariableManager implements ICommandControl {
 		}
 		
 		public void resetValues() {
-			valueMap.put(IFormattedValues.NATURAL_FORMAT, null);
-			valueMap.put(IFormattedValues.BINARY_FORMAT, null);
-			valueMap.put(IFormattedValues.HEX_FORMAT, null);
-			valueMap.put(IFormattedValues.OCTAL_FORMAT, null);
-			valueMap.put(IFormattedValues.DECIMAL_FORMAT, null);
+			fValueMap.put(IFormattedValues.NATURAL_FORMAT, null);
+			fValueMap.put(IFormattedValues.BINARY_FORMAT, null);
+			fValueMap.put(IFormattedValues.HEX_FORMAT, null);
+			fValueMap.put(IFormattedValues.OCTAL_FORMAT, null);
+			fValueMap.put(IFormattedValues.DECIMAL_FORMAT, null);
 		}
 		
 		/**
@@ -631,13 +629,13 @@ public class MIVariableManager implements ICommandControl {
 		 *            children anew.
 		 */
         public void setChildren(ExpressionInfo[] c) { 
-        	children = c;
-        	if (children != null) {
-        		numChildrenHint = children.length;
+        	fChildren = c;
+        	if (fChildren != null) {
+        		fNumChildrenHint = fChildren.length;
         	}
 
-        	if (children != null) {
-        		for (ExpressionInfo child : children) {
+        	if (fChildren != null) {
+        		for (ExpressionInfo child : fChildren) {
         			assert (child != null);
         		}
         	}
@@ -649,21 +647,21 @@ public class MIVariableManager implements ICommandControl {
          * @since 4.0
          */
         public void addChildren(ExpressionInfo[] newChildren) {
-        	if (children == null) {
-        		children = new ExpressionInfo[newChildren.length]; 
-        		System.arraycopy(newChildren, 0, children, 0, newChildren.length);
+        	if (fChildren == null) {
+        		fChildren = new ExpressionInfo[newChildren.length]; 
+        		System.arraycopy(newChildren, 0, fChildren, 0, newChildren.length);
         	} else {
-        		ExpressionInfo[] oldChildren = children;
+        		ExpressionInfo[] oldChildren = fChildren;
         		
-        		children = new ExpressionInfo[children.length + newChildren.length];
+        		fChildren = new ExpressionInfo[fChildren.length + newChildren.length];
 
-        		System.arraycopy(oldChildren, 0, children, 0, oldChildren.length);
-        		System.arraycopy(newChildren, 0, children, oldChildren.length, newChildren.length);
+        		System.arraycopy(oldChildren, 0, fChildren, 0, oldChildren.length);
+        		System.arraycopy(newChildren, 0, fChildren, oldChildren.length, newChildren.length);
         	}
         	
-        	numChildrenHint = children.length;
+        	fNumChildrenHint = fChildren.length;
 
-			for (ExpressionInfo child : children) {
+			for (ExpressionInfo child : fChildren) {
 				assert (child != null);
 			}
         }
@@ -697,10 +695,10 @@ public class MIVariableManager implements ICommandControl {
          * @since 4.0
          */
         public void shrinkChildrenTo(int newNumChildren) {
-        	if (children != null) {
-        		ExpressionInfo[] oldChildren = children;
+        	if (fChildren != null) {
+        		ExpressionInfo[] oldChildren = fChildren;
         		for (int i = oldChildren.length - 1; i >= newNumChildren; --i) {
-        			String childFullExpression = children[i].getFullExpr();
+        			String childFullExpression = fChildren[i].getFullExpr();
 
         			VariableObjectId childId = new VariableObjectId();
         			childId.generateId(childFullExpression, getInternalId());
@@ -708,11 +706,11 @@ public class MIVariableManager implements ICommandControl {
         		}
 
 
-        		children = new ExpressionInfo[newNumChildren];
-        		System.arraycopy(oldChildren, 0, children, 0, newNumChildren);
+        		fChildren = new ExpressionInfo[newNumChildren];
+        		System.arraycopy(oldChildren, 0, fChildren, 0, newNumChildren);
         	}
         	
-        	numChildrenHint = newNumChildren;
+        	fNumChildrenHint = newNumChildren;
         }
 
         /**
@@ -742,27 +740,27 @@ public class MIVariableManager implements ICommandControl {
 		 * @since 4.1
 		 */
         public void cleanupChildren() {
-        	hasMore = false;
-        	if (children != null) {
-        		for (ExpressionInfo child : children) {
+        	fHasMore = false;
+        	if (fChildren != null) {
+        		for (ExpressionInfo child : fChildren) {
         			cleanupChild(child);
         		}
-        		children = null;
-            	numChildrenHint = 0;
+        		fChildren = null;
+            	fNumChildrenHint = 0;
         	}
-        	for (ExpressionInfo fakeChild : fakeChildren) {
+        	for (ExpressionInfo fakeChild : fFakeChildren) {
     			cleanupChild(fakeChild);
         	}
-        	fakeChildren.clear();
+        	fFakeChildren.clear();
         }
         
         public void setParent(MIVariableObject p) { 
-        	parent = p; 
+        	fParent = p; 
         	if (p == null) {
-				rootToUpdate = (this instanceof MIRootVariableObject) ? (MIRootVariableObject) this
+				fRootToUpdate = (this instanceof MIRootVariableObject) ? (MIRootVariableObject) this
 						: null;
         	} else {
-        		rootToUpdate = p.getRootToUpdate();
+        		fRootToUpdate = p.getRootToUpdate();
         	}
         }
         
@@ -771,14 +769,14 @@ public class MIVariableManager implements ICommandControl {
 		}
 
 		private void lock() {
-			locked = true;
+			fLocked = true;
 		}
 		
 		private void unlock() {
-			locked = false;
+			fLocked = false;
 
-			while (!operationsPending.isEmpty()) {
-				operationsPending.poll().done();
+			while (!fOperationsPending.isEmpty()) {
+				fOperationsPending.poll().done();
 			}
 		}
 
@@ -878,20 +876,20 @@ public class MIVariableManager implements ICommandControl {
 			if (update.isChanged()) {
 				setType(update.getNewType());
 				cleanupChildren();
-				editable = null;
+				fEditable = null;
 				updateLimit(IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED);
 			}
 			
 			// These properties of the variable will probably not change, 
 			// but if they are - we should handle it properly.  
 			setDisplayHint(update.getDisplayHint());
-			exprInfo.setDynamic(update.isDynamic());
+			fExprInfo.setDynamic(update.isDynamic());
 			
 			MIVar[] newChildren = update.getNewChildren();
 
 			// children == null means fetchChildren will happen later, so
 			// don't try to create a sparsely filled children array here.
-			final boolean addNewChildren = (children != null);
+			final boolean addNewChildren = (fChildren != null);
 
 			final ExpressionInfo[] addedChildren = (addNewChildren && (newChildren != null)) ? new ExpressionInfo[newChildren.length]
 					: null;
@@ -905,14 +903,14 @@ public class MIVariableManager implements ICommandControl {
 						rm.setStatus(getStatus());
 					} else {
 						if (update.numChildrenChanged()) {
-							if (children != null) {
+							if (fChildren != null) {
 								// Remove those children that don't exist any longer.
-								if (children.length > update.getNewNumChildren()) {
+								if (fChildren.length > update.getNewNumChildren()) {
 									shrinkChildrenTo(update.getNewNumChildren());
 								}
 							} else {
 								// Just update the child count.
-								numChildrenHint = update.getNewNumChildren();
+								fNumChildrenHint = update.getNewNumChildren();
 							}
 
 							// Add the new children.
@@ -921,15 +919,15 @@ public class MIVariableManager implements ICommandControl {
 							}
 						}
 						
-						assert((children == null) || (children.length == numChildrenHint));
+						assert((fChildren == null) || (fChildren.length == fNumChildrenHint));
 
-						hasMore = update.hasMore();
+						fHasMore = update.hasMore();
 
 						// If there was no -var-list-children yet for a varobj,
 						// the new children will not be reported by -var-update.
 						// Set the children to null such that the next time children
 						// are requested, they will be fetched.
-						if (hasMore() && (numChildrenHint == 0)) {
+						if (hasMore() && (fNumChildrenHint == 0)) {
 							setChildren(null);
 						}	
 
@@ -988,7 +986,7 @@ public class MIVariableManager implements ICommandControl {
 								protected void handleCompleted() {
 									if (isSuccess()) {
 										if (addNewChildren && addedChildren != null) {
-											addedChildren[insertPosition] = monitoredVar.exprInfo;
+											addedChildren[insertPosition] = monitoredVar.fExprInfo;
 										}
 									} else {
 										// Create a fresh MIVariableObject for this child, using
@@ -996,7 +994,7 @@ public class MIVariableManager implements ICommandControl {
 										MIVariableObject newVar = createChild(childId, childFullExpression,
 												indexInParent, newChild);
 										if (addNewChildren && addedChildren != null) {
-											addedChildren[insertPosition] = newVar.exprInfo;
+											addedChildren[insertPosition] = newVar.fExprInfo;
 										}
 									}
 									
@@ -1029,7 +1027,7 @@ public class MIVariableManager implements ICommandControl {
 						// the new varobj provided by -var-update.
 						childVar = createChild(childId, childFullExpression, i, newChild);
 						if (addNewChildren && addedChildren != null) {
-							addedChildren[arrayPosition] = childVar.exprInfo;
+							addedChildren[arrayPosition] = childVar.fExprInfo;
 						}
 					}
 					
@@ -1056,12 +1054,12 @@ public class MIVariableManager implements ICommandControl {
 		 *            The data request monitor that will hold the value returned
 		 */
         private void getAttributes(final DataRequestMonitor<Boolean> rm) {
-            if (editable != null) { 
-                rm.setData(editable);
+            if (fEditable != null) { 
+                rm.setData(fEditable);
                 rm.done();
             } else if (isComplex()) {
-                editable = false;
-                rm.setData(editable);
+                fEditable = false;
+                rm.setData(fEditable);
                 rm.done();
             } else {
                 fCommandControl.queueCommand(
@@ -1069,9 +1067,9 @@ public class MIVariableManager implements ICommandControl {
                         new DataRequestMonitor<MIVarShowAttributesInfo>(fSession.getExecutor(), rm) {
                             @Override
                             protected void handleSuccess() {
-                            	editable = getData().isEditable();
+                            	fEditable = getData().isEditable();
 
-                            	rm.setData(editable);
+                            	rm.setData(fEditable);
                             	rm.done();
                             }
                         });
@@ -1128,8 +1126,8 @@ public class MIVariableManager implements ICommandControl {
 				return;
 			}
 
-			if (locked) {
-				operationsPending.add(new RequestMonitor(fSession.getExecutor(), rm) {
+			if (fLocked) {
+				fOperationsPending.add(new RequestMonitor(fSession.getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {
 						getValue(dmc, rm);
@@ -1249,7 +1247,7 @@ public class MIVariableManager implements ICommandControl {
 		private void getChildren(final IExpressionDMContext exprDmc,
 				final int clientNumChildrenLimit, final DataRequestMonitor<ChildrenInfo> rm) {
 			
-			if (fetchingChildren) {
+			if (fFetchingChildren) {
 				// Only one request monitor can fetch children at a time.
 				fetchChildrenPending.add(new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), rm) {
 
@@ -1270,13 +1268,13 @@ public class MIVariableManager implements ICommandControl {
 				});
 			} else {
 			
-				fetchingChildren = true;
+				fFetchingChildren = true;
 				
 				fetchChildren(exprDmc, clientNumChildrenLimit, new DataRequestMonitor<ChildrenInfo>(fSession.getExecutor(), rm) {
 
 					@Override
 					protected void handleCompleted() {
-						fetchingChildren = false;
+						fFetchingChildren = false;
 
 						if (isSuccess()) {
 							rm.setData(getData());
@@ -1326,7 +1324,7 @@ public class MIVariableManager implements ICommandControl {
 	        // If we already know the children, no need to go to the back-end
 			ExpressionInfo[] childrenArray = getChildren();
 	        if (childrenArray != null && ! addChildren) {
-	            rm.setData(new ChildrenInfo(childrenArray, hasMore));
+	            rm.setData(new ChildrenInfo(childrenArray, fHasMore));
 	            rm.done();
 	            return;
 	        }
@@ -1335,7 +1333,7 @@ public class MIVariableManager implements ICommandControl {
 			if (! hasChildren()) {
 	        	// First store the empty list, for the next time
 				setChildren(new ExpressionInfo[0]);
-				rm.setData(new ChildrenInfo(getChildren(), hasMore));
+				rm.setData(new ChildrenInfo(getChildren(), fHasMore));
 				rm.done();
 				return;
 			}
@@ -1369,13 +1367,13 @@ public class MIVariableManager implements ICommandControl {
 	        		relExpr = relExpr + "[" + (castingIndex + i) + "]";//$NON-NLS-1$//$NON-NLS-2$
 	        		
 
-	        		childrenOfArray[i] = new ExpressionInfo(fullExpr, relExpr, false, exprInfo, i);
+	        		childrenOfArray[i] = new ExpressionInfo(fullExpr, relExpr, false, fExprInfo, i);
 	        	}
 
 	        	// First store these children, for the next time
 				setChildren(childrenOfArray);
-				hasMore = false;
-				rm.setData(new ChildrenInfo(getChildren(), hasMore));
+				fHasMore = false;
+				rm.setData(new ChildrenInfo(getChildren(), fHasMore));
 	        	rm.done();
 	        	return;
 	        }
@@ -1385,8 +1383,8 @@ public class MIVariableManager implements ICommandControl {
 	        // be called here with a fully created object.
 	        // Also no need to lock the object, since getting the children won't affect other operations
 
-	        final int from = (addChildren && (children != null)) ? getNumChildrenHint() : 0;
-	        final int to = Math.max(newNumChildrenLimit, exprInfo.getChildCountLimit());
+	        final int from = (addChildren && (fChildren != null)) ? getNumChildrenHint() : 0;
+	        final int to = Math.max(newNumChildrenLimit, fExprInfo.getChildCountLimit());
 	        
 	        ICommand<MIVarListChildrenInfo> varListChildren = isSafeToAskForAllChildren() ?
 	        		fCommandFactory.createMIVarListChildren(getRootToUpdate().getControlDMContext(), getGdbName())
@@ -1412,8 +1410,8 @@ public class MIVariableManager implements ICommandControl {
 	        					protected void handleSuccess() {
 	        						// Store the children in our variable object cache
 	        						addChildren(realChildren);
-	        						hasMore = localHasMore; 
-	        						rm.setData(new ChildrenInfo(getChildren(), hasMore));
+	        						fHasMore = localHasMore; 
+	        						rm.setData(new ChildrenInfo(getChildren(), fHasMore));
 	        						
 	        						int updateLimit = updateLimit(to);
 	        						
@@ -1472,7 +1470,7 @@ public class MIVariableManager implements ICommandControl {
 	        						
 	        						public String getChildPath() { return childFullExpression; }
 	        						public boolean getChildHasCastToBaseClassWorkaround() { return childHasCastToBaseClassWorkaround; }
-	        					};
+	        					}
 	        					
 	        					final DataRequestMonitor<ChildFullExpressionInfo> childPathRm =
 	        						new DataRequestMonitor<ChildFullExpressionInfo>(fSession.getExecutor(), countingRm) {
@@ -1484,7 +1482,7 @@ public class MIVariableManager implements ICommandControl {
 	        							// 1- if its parent was set (which is the current varObj)
 	        							// 2- if the workaround was used for the child itself, which is part of ChildFullExpressionInfo
 	        							final boolean childHasCastToBaseClassWorkaround = 
-	        									hasCastToBaseClassWorkaround || getData().getChildHasCastToBaseClassWorkaround();
+	        									fHasCastToBaseClassWorkaround || getData().getChildHasCastToBaseClassWorkaround();
 	        							
 	        							// For children that do not map to a real expression (such as f.public)
 	        							// GDB returns an empty string.  In this case, we can use another unique
@@ -1525,17 +1523,17 @@ public class MIVariableManager implements ICommandControl {
 															var = createChild(childId, childFullExpression, indexInParent, child);
 														}
 														
-														var.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
+														var.fHasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 														
 														if (fakeChild) {
 															if (! isSuccess()) {
-																fakeChildren.add(var.exprInfo);
+																fFakeChildren.add(var.fExprInfo);
 															}
 															addRealChildrenOfFake(var,	exprDmc, realChildren,
 																	arrayPosition, countingRm);
 														} else {
 															// This is a real child
-															realChildren[arrayPosition] = new ExpressionInfo[] { var.exprInfo };
+															realChildren[arrayPosition] = new ExpressionInfo[] { var.fExprInfo };
 															countingRm.done();
 														}														
 													}
@@ -1554,7 +1552,7 @@ public class MIVariableManager implements ICommandControl {
 												childVar = null;
 											} else {
 												// The child already exists so we can re-use it.
-												childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
+												childVar.fHasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 												if (fakeChild) {
 													// I don't think this should happen, but we put it just in case
 													addRealChildrenOfFake(childVar,	exprDmc, realChildren,
@@ -1579,15 +1577,15 @@ public class MIVariableManager implements ICommandControl {
 	        							if (childVar == null) {
 	        								childVar = createChild(childId, childFullExpression, indexInParent, child);
 											
-											childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
+											childVar.fHasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 
 											if (fakeChild) {
-												fakeChildren.add(childVar.exprInfo);
+												fFakeChildren.add(childVar.fExprInfo);
 												addRealChildrenOfFake(childVar,	exprDmc, realChildren,
 														arrayPosition, countingRm);
 											} else {
 												// This is a real child
-												realChildren[arrayPosition] = new ExpressionInfo[] { childVar.exprInfo };
+												realChildren[arrayPosition] = new ExpressionInfo[] { childVar.fExprInfo };
 												countingRm.done();
 											}
 	        							}
@@ -1600,13 +1598,13 @@ public class MIVariableManager implements ICommandControl {
 	        						// to call -var-info-path-expression for real, but just pretend we did.
 	        						childPathRm.setData(new ChildFullExpressionInfo(""));  //$NON-NLS-1$
 	        						childPathRm.done();
-	        					} else if (isDynamic() || exprInfo.hasDynamicAncestor()) {
+	        					} else if (isDynamic() || fExprInfo.hasDynamicAncestor()) {
 	        						// Equivalent to (which can't be implemented): child.hasDynamicAncestor
 	        						// The new child has a dynamic ancestor. Such children don't support
 	        						// var-info-path-expression. Build the expression ourselves.
     	    						childPathRm.setData(new ChildFullExpressionInfo(buildChildExpression(exprDmc.getExpression(), child.getExp())));
 	        						childPathRm.done();
-	        					} else if (hasCastToBaseClassWorkaround) {
+	        					} else if (fHasCastToBaseClassWorkaround) {
 	        						// We had to use the "CastToBaseClass" workaround in the hierarchy, so we
 	        						// know -var-info-path-expression won't work in this case.  We have to
 	        						// build the expression ourselves again to keep the workaround as part 
@@ -1700,7 +1698,7 @@ public class MIVariableManager implements ICommandControl {
 			
 			MIVariableObject var = createVariableObject(childId, this);
 			ExpressionInfo childInfo = new ExpressionInfo(childFullExpression,
-					childData.getExp(), childData.isDynamic(), exprInfo,
+					childData.getExp(), childData.isDynamic(), fExprInfo,
 					indexInParent);
 
 			var.initFrom(childData, childInfo);
@@ -1716,7 +1714,7 @@ public class MIVariableManager implements ICommandControl {
 		 */
 		protected boolean requiresAdditionalChildren(int clientLimit) {
 			return !isSafeToAskForAllChildren()
-					&& (exprInfo.getChildCountLimit() < calculateNewLimit(clientLimit));
+					&& (fExprInfo.getChildCountLimit() < calculateNewLimit(clientLimit));
 		}
 
 		/**
@@ -1728,12 +1726,12 @@ public class MIVariableManager implements ICommandControl {
 		 * @since 4.0
 		 */
 		protected int updateLimit(int newLimit) {
-			exprInfo.setChildCountLimit(calculateNewLimit(newLimit));
-			return exprInfo.getChildCountLimit();
+			fExprInfo.setChildCountLimit(calculateNewLimit(newLimit));
+			return fExprInfo.getChildCountLimit();
 		}
 		
 		private int calculateNewLimit(int clientLimit) {
-			int limit = exprInfo.getChildCountLimit();
+			int limit = fExprInfo.getChildCountLimit();
 			
 			if (!isSafeToAskForAllChildren() && clientLimit != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED) {
 				if (limit == IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED) {
@@ -1762,7 +1760,7 @@ public class MIVariableManager implements ICommandControl {
 				final RequestMonitor rm) {
 
 			MIExpressionDMC fakeExprCtx = createExpressionCtx(frameCtxProvider,
-					fakeChild.exprInfo);
+					fakeChild.fExprInfo);
 
 			// This is just a qualifier level of C++, and we must get the
 			// children of this child to get the real children
@@ -1826,14 +1824,14 @@ public class MIVariableManager implements ICommandControl {
 
 			// If the current varObj is a fake object, we obtain the proper parent
 			// expression from the parent of the varObj.
-			if (isAccessQualifier(exprInfo.getRelExpr())) {
+			if (isAccessQualifier(fExprInfo.getRelExpr())) {
 				parentExp = getParent().getExpression();
 			}
 			
 			// For pointers, the child expression is already contained in the parent,
 			// so we must simply prefix with *
 		    //  See Bug219179 for more information.
-			if (!isDynamic() && !exprInfo.hasDynamicAncestor() && isPointer()) {
+			if (!isDynamic() && !fExprInfo.hasDynamicAncestor() && isPointer()) {
 				childFullExpression =  "*("+parentExp+")"; //$NON-NLS-1$//$NON-NLS-2$
 			} else {
 				// We must surround the parentExp with parentheses because it
@@ -1916,14 +1914,20 @@ public class MIVariableManager implements ICommandControl {
 			// we need to know the type of the variable, which we don't have yet.
 			
 			if (formatId.equals(IFormattedValues.HEX_FORMAT)) {
-				if (!value.startsWith("0x")) value = "0x" + value;  //$NON-NLS-1$  //$NON-NLS-2$
+				if (!value.startsWith("0x")) {  //$NON-NLS-1$
+					value = "0x" + value;  //$NON-NLS-1$
+				}
 			}
 			else if (formatId.equals(IFormattedValues.OCTAL_FORMAT)) {
-				if (!value.startsWith("0")) value = "0" + value;  //$NON-NLS-1$  //$NON-NLS-2$
+				if (!value.startsWith("0")) {  //$NON-NLS-1$
+					value = "0" + value;  //$NON-NLS-1$
+				}
 			}
 			else if (formatId.equals(IFormattedValues.BINARY_FORMAT)) {
 				// convert from binary to decimal
-				if (value.startsWith("0b")) value = value.substring(2, value.length());  //$NON-NLS-1$
+				if (value.startsWith("0b")) {  //$NON-NLS-1$
+					value = value.substring(2, value.length());
+				}
 				try {
 	    			value = new BigInteger(value, 2).toString();
 				} catch (NumberFormatException e) {
@@ -1992,7 +1996,9 @@ public class MIVariableManager implements ICommandControl {
 		 *         a -var-update MI command.
 		 */
 		public boolean isModifiable() {
-			if (!isComplex() || isDynamic()) return true;
+			if (!isComplex() || isDynamic()) {
+				return true;
+			}
 			return false;
 		}
 
@@ -2027,12 +2033,12 @@ public class MIVariableManager implements ICommandControl {
 									
 									initFrom(miVar, localExprInfo);
 
-									if (exprInfo.isDynamic()
-											&& (exprInfo.getChildCountLimit() != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED)) {
+									if (fExprInfo.isDynamic()
+											&& (fExprInfo.getChildCountLimit() != IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED)) {
 										// Restore the original update range.
 										fCommandControl.queueCommand(fCommandFactory.createMIVarSetUpdateRange(
 												getRootToUpdate().getControlDMContext(),
-												getGdbName(), 0, exprInfo.getChildCountLimit()),
+												getGdbName(), 0, fExprInfo.getChildCountLimit()),
 												new DataRequestMonitor<MIInfo>(fSession.getExecutor(), rm));
 									} else {
 										rm.done();
@@ -2057,7 +2063,7 @@ public class MIVariableManager implements ICommandControl {
 					|| (miVar.isDynamic() && (miVar.getNumChild() == 0));
 			
 			assert miVar.getRawFields() != null;
-			raw = miVar.getRawFields();
+			fRaw = miVar.getRawFields();
 
 			setGdbName(miVar.getVarName());
 			setDisplayHint(miVar.getDisplayHint());
@@ -2247,7 +2253,7 @@ public class MIVariableManager implements ICommandControl {
 				// Object is not fully created or is being updated
 				// so add RequestMonitor to pending queue
 				updatesPending.add(rm);
-			} else if (getOutOfDate() == false) {
+			} else if (!getOutOfDate()) {
 				rm.setData(false);
 				rm.done();
 			} else {
@@ -2278,7 +2284,7 @@ public class MIVariableManager implements ICommandControl {
 									setOutOfDate(false);
 									
 									MIVarChange[] changes = getData().getMIVarChanges();
-									if (changes.length > 0 && changes[0].isInScope() == false) {
+									if (changes.length > 0 && !changes[0].isInScope()) {
 										// Object is out-of-scope
 										currentState = STATE_READY;
 
@@ -2403,11 +2409,11 @@ public class MIVariableManager implements ICommandControl {
 	public class VariableObjectId {
 		// We don't use the expression context because it is not safe to compare them
 		// See bug 187718.  So we store the expression itself, and it's parent execution context.
-		String fExpression = null;
-		IExecutionDMContext fExecContext = null;
+		private String fExpression = null;
+		private IExecutionDMContext fExecContext = null;
 		// We need the depth of the frame.  The frame level is not sufficient because 
         // the same frame will have a different level based on the current depth of the stack 
-		Integer fFrameId = null;
+		private Integer fFrameId = null;
 		
 		public VariableObjectId() {
 		}
@@ -2453,7 +2459,7 @@ public class MIVariableManager implements ICommandControl {
 					new DataRequestMonitor<Integer>(fSession.getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							fFrameId = new Integer(getData() - frameCtx.getLevel());
+							fFrameId = Integer.valueOf(getData() - frameCtx.getLevel());
 							rm.done();
 						}
 					});
@@ -2491,7 +2497,7 @@ public class MIVariableManager implements ICommandControl {
 	 * always be delete before their parents.
 	 * 
 	 */
-	private class LRUVariableCache extends LinkedHashMap<VariableObjectId, MIVariableObject> {
+	private static class LRUVariableCache extends LinkedHashMap<VariableObjectId, MIVariableObject> {
 		public static final long serialVersionUID = 0;
 
 		// Maximum allowed concurrent variables
@@ -2519,10 +2525,9 @@ public class MIVariableManager implements ICommandControl {
 		    if (size() > MAX_VARIABLE_LIST) {
 		    	Map.Entry<VariableObjectId, MIVariableObject> eldest = entrySet().iterator().next();
 		    	// First make sure we are not deleting ourselves!
-		    	if (!eldest.getValue().equals(varObj)) {
-		    		if (eldest.getValue().currentState == MIVariableObject.STATE_READY) {
+		    	if (!eldest.getValue().equals(varObj) &&
+		    		eldest.getValue().currentState == MIVariableObject.STATE_READY) {
 		    			remove(eldest.getKey());
-		    		}
 		    	}
 		    }
 		    return varObj;
@@ -2532,7 +2537,9 @@ public class MIVariableManager implements ICommandControl {
 			while (varObj != null) {
 				varObj = varObj.getParent();
 				// If there is a parent, touch it
-				if (varObj != null) super.get(varObj.getInternalId());
+				if (varObj != null) {
+					super.get(varObj.getInternalId());
+				}
 			}
 		}
 

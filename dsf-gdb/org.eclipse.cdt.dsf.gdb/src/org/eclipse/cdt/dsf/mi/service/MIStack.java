@@ -82,6 +82,10 @@ implements IStack, ICachingService {
 
 		@Override
 		public boolean equals(Object other) {
+			if (!(other instanceof MIFrameDMC)) {
+				return false;
+			}
+				
 			return super.baseEquals(other) && ((MIFrameDMC)other).fLevel == fLevel;
 		}
 
@@ -100,8 +104,8 @@ implements IStack, ICachingService {
 	implements IVariableDMContext
 	{
 		public enum Type { ARGUMENT, LOCAL, /** @since 4.4 */RETURN_VALUES }
-		final private Type fType;
-		final private int fIndex;
+		private final Type fType;
+		private final int fIndex;
 
 		public MIVariableDMC(MIStack service, IFrameDMContext frame, Type type, int index) {
 			super(service, new IDMContext[] { frame });
@@ -114,6 +118,10 @@ implements IStack, ICachingService {
 
 		@Override
 		public boolean equals(Object other) {
+			if (!(other instanceof MIVariableDMC)) {
+				return false;
+			}
+			
 			return super.baseEquals(other) &&
 					((MIVariableDMC)other).fType == fType &&
 					((MIVariableDMC)other).fIndex == fIndex;
@@ -141,7 +149,7 @@ implements IStack, ICachingService {
 	 * Same as with frame objects, this is a base class for the IVariableDMData object that uses an MIArg object to
 	 * provide the data.  Sub-classes must supply the MIArg object.
 	 */
-	private class VariableData implements IVariableDMData {
+	private static class VariableData implements IVariableDMData {
 		private MIArg fMIArg;
 
 		public VariableData(MIArg arg){
@@ -170,13 +178,13 @@ implements IStack, ICachingService {
 	/**
 	 * Class to track stack depth and debug frames for our internal cache
 	 */
-	private class FramesCacheInfo {
+	private static class FramesCacheInfo {
 		// If this set to true our knowledge of stack depths is limited to current depth, i.e
 		// we only know that stack depth is at least "stackDepth" but it could be more
 		private boolean limited = true;
 		// The actual depth we received
 		private int stackDepth = -1;
-		private final ArrayList<FrameData> frames = new ArrayList<FrameData>();
+		private final List<FrameData> frames = new ArrayList<FrameData>();
 
 		/**
 		 * Return currently cached stack depth if cache value if valid, otherwise return -1.
@@ -187,16 +195,19 @@ implements IStack, ICachingService {
 		 * @return
 		 */
 		public int getStackDepth(int maxDepth) {
-			if (!limited)
+			if (!limited) {
 				return stackDepth;
-			if (maxDepth > 0 && stackDepth >= maxDepth)
+			}
+			if (maxDepth > 0 && stackDepth >= maxDepth) {
 				return stackDepth;
+			}
 			return -1;
 		}
 
 		public void setStackDepth(int returned, int requested) {
-			if (returned <= 0)
+			if (returned <= 0) {
 				return; // no valid depths, not updating
+			}
 			if (returned < requested) {
 				// since we did not reach the limit, cache is valid for unlimited range
 				limited = false;
@@ -216,8 +227,9 @@ implements IStack, ICachingService {
 		 * @return
 		 */
 		public int getValidStackDepth() {
-			if (stackDepth <= 0)
+			if (stackDepth <= 0) {
 				return DEFAULT_STACK_DEPTH;
+			}
 			return stackDepth;
 		}
 
@@ -239,8 +251,9 @@ implements IStack, ICachingService {
 
 		public FrameData getFrameData(int level) {
 			try {
-				if (level < 0 || level >= frames.size())
+				if (level < 0 || level >= frames.size()) {
 					return null;
+				}
 				return frames.get(level);
 			} catch (Exception e) {
 				// cannot afford throwing runtime exceptions
@@ -336,20 +349,22 @@ implements IStack, ICachingService {
 	 */
 	private abstract class FrameData implements IFrameDMData
 	{
-		abstract protected MIFrame getMIFrame();
+		protected abstract MIFrame getMIFrame();
 
 		@Override
 		public IAddress getAddress() {
 			String addr = getMIFrame().getAddress();
-			if (addr == null || addr.length() == 0)
+			if (addr == null || addr.length() == 0) {
 				return new Addr32(0);
+			}
 			if (addr.startsWith("0x")) { //$NON-NLS-1$
 				addr = addr.substring(2);
 			}
-			if (addr.length() <= 8)
+			if (addr.length() <= 8) {
 				return new Addr32(getMIFrame().getAddress());
-			else
+			} else {
 				return new Addr64(getMIFrame().getAddress());
+			}
 		}
 
 		@Override
@@ -520,8 +535,9 @@ implements IStack, ICachingService {
 		if (endIndex > stackDepth - 1 || endIndex < 0) {
 			endIndex = stackDepth - 1;
 		}
-		if (startIndex > endIndex)
+		if (startIndex > endIndex) {
 			return new IFrameDMContext[] {};
+		}
 		int length = endIndex - startIndex + 1;
 		IFrameDMContext[] frameDMCs = new MIFrameDMC[length];
 		for (int i = 0; i < length; i++) {
@@ -776,7 +792,7 @@ implements IStack, ICachingService {
 		}
 
 		// Check if the stopped event can be used to extract the variable value.
-		if (execDmc != null && miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT &&
+		if (miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT &&
 				frameDmc.fLevel == 0 && fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null &&
 				execDmc.equals(fCachedStoppedEvent.getDMContext()) &&
 				fCachedStoppedEvent.getFrame().getArgs() != null)

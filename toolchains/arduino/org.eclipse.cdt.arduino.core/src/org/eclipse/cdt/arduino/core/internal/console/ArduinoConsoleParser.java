@@ -1,8 +1,16 @@
 package org.eclipse.cdt.arduino.core.internal.console;
 
-import java.nio.file.Path;
+public abstract class ArduinoConsoleParser {
 
-public interface ConsoleParser {
+	private final String pattern;
+	private final int flags;
+	private final String lineQualifier;
+
+	protected ArduinoConsoleParser(String pattern, int flags, String lineQualifier) {
+		this.pattern = pattern;
+		this.flags = flags;
+		this.lineQualifier = lineQualifier;
+	}
 
 	/**
 	 * Returns the pattern to be used for matching. The pattern is a string
@@ -10,7 +18,9 @@ public interface ConsoleParser {
 	 * 
 	 * @return the regular expression to be used for matching
 	 */
-	public String getPattern();
+	public String getPattern() {
+		return pattern;
+	}
 
 	/**
 	 * Returns the flags to use when compiling this pattern match listener's
@@ -21,7 +31,9 @@ public interface ConsoleParser {
 	 *         regular expression
 	 * @see java.util.regex.Pattern#compile(java.lang.String, int)
 	 */
-	public int getCompilerFlags();
+	public int getCompilerFlags() {
+		return flags;
+	}
 
 	/**
 	 * Returns a simple regular expression used to identify lines that may match
@@ -34,15 +46,8 @@ public interface ConsoleParser {
 	 * @return a simple regular expression used to identify lines that may match
 	 *         this pattern matcher's complete pattern, or <code>null</code>
 	 */
-	public String getLineQualifier();
-
-	/**
-	 * The pattern has been matched. Perform any necessary actions. Generally
-	 * this would include creating markers for the errors.
-	 * 
-	 * @param text text that matched the pattern
-	 * @param directory calculated current directory
-	 */
-	public void patternMatched(String text, Path directory);
+	public String getLineQualifier() {
+		return lineQualifier;
+	}
 
 }

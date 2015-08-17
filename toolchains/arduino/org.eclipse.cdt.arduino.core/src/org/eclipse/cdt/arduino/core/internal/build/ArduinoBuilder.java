@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -36,6 +37,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		try {
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+
 			ArduinoConsoleService consoleService = Activator.getConsoleService();
 			consoleService.writeOutput(String.format("\nBuilding %s\n", project.getName()));
 
@@ -47,7 +50,7 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, null);
+			consoleService.monitor(process, config.getBuildConsoleParsers(), config.getBuildFolder());
 
 			if (process.exitValue() == 0) {
 				showSizes(config, consoleService);
@@ -66,6 +69,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		try {
 			IProject project = getProject();
+			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+
 			ArduinoConsoleService consoleService = Activator.getConsoleService();
 			consoleService.writeOutput(String.format("\nCleaning %s\n", project.getName()));
 
@@ -76,7 +81,7 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, null);
+			consoleService.monitor(process, config.getBuildConsoleParsers(), config.getBuildFolder());
 
 			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

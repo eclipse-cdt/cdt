@@ -26,6 +26,8 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
 import org.eclipse.cdt.arduino.core.internal.board.ToolDependency;
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleParser;
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoErrorParser;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -491,6 +494,42 @@ public class ArduinoBuildConfiguration {
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Compiler built-ins", e));
 		}
+	}
+
+	public ArduinoConsoleParser[] getBuildConsoleParsers() {
+		// ../src/Test.cpp:4:1: error: 'x' was not declared in this scope
+
+		return new ArduinoConsoleParser[] { new ArduinoErrorParser("(.*?):(\\d+):(\\d+:)? error: (.*)") { //$NON-NLS-1$
+			@Override
+			protected int getSeverity(Matcher matcher) {
+				return IMarker.SEVERITY_ERROR;
+			}
+
+			@Override
+			protected String getMessage(Matcher matcher) {
+				return matcher.group(4);
+			}
+
+			@Override
+			protected int getLineNumber(Matcher matcher) {
+				return Integer.parseInt(matcher.group(2));
+			}
+
+			@Override
+			protected String getFileName(Matcher matcher) {
+				return matcher.group(1);
+			}
+
+			@Override
+			protected int getLinkOffset(Matcher matcher) {
+				return 0;
+			}
+
+			@Override
+			protected int getLinkLength(Matcher matcher) {
+				return matcher.group(1).length() + 1 + matcher.group(2).length() + 1 + matcher.group(3).length();
+			}
+		} };
 	}
 
 }

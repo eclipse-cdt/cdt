@@ -48,13 +48,16 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
 			throws CoreException {
 		IRemoteConnection target = getTarget(configuration);
-		ArduinoRemoteConnection arduinoTarget = target.getService(ArduinoRemoteConnection.class);
-		ArduinoBoard targetBoard = arduinoTarget.getBoard();
+		if (target != null) {
+			ArduinoRemoteConnection arduinoTarget = target.getService(ArduinoRemoteConnection.class);
+			ArduinoBoard targetBoard = arduinoTarget.getBoard();
 
-		// 1. make sure proper build config is set active
-		IProject project = configuration.getMappedResources()[0].getProject();
-		ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, targetBoard, monitor);
-		arduinoConfig.setActive(monitor);
+			// 1. make sure proper build config is set active
+			IProject project = configuration.getMappedResources()[0].getProject();
+			ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, targetBoard,
+					monitor);
+			arduinoConfig.setActive(monitor);
+		}
 
 		// 2. Run the build
 		return super.buildForLaunch(configuration, mode, monitor);
@@ -102,7 +105,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 					arduinoConfig.setEnvironment(processBuilder.environment());
 					Process process = processBuilder.start();
 
-					consoleService.monitor(process, null);
+					consoleService.monitor(process, null, null);
 					try {
 						process.waitFor();
 					} catch (InterruptedException e) {

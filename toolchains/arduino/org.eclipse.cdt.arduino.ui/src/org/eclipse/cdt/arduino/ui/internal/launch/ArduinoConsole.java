@@ -13,12 +13,20 @@ package org.eclipse.cdt.arduino.ui.internal.launch;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleParser;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
-import org.eclipse.cdt.arduino.core.internal.console.ConsoleParser;
+import org.eclipse.cdt.arduino.core.internal.console.ArduinoErrorParser;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -26,11 +34,14 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-public class ArduinoConsole implements ArduinoConsoleService {
+public class ArduinoConsole implements ArduinoConsoleService, IResourceChangeListener {
 
 	private static MessageConsole console;
 	private static MessageConsoleStream out;
 	private static MessageConsoleStream err;
+
+	private IFolder buildDirectory;
+	List<ArduinoPatternMatchListener> listeners = new ArrayList<>();
 
 	public ArduinoConsole() {
 		if (console == null) {
@@ -48,12 +59,52 @@ public class ArduinoConsole implements ArduinoConsoleService {
 					err.setColor(display.getSystemColor(SWT.COLOR_RED));
 				}
 			});
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_BUILD);
 		}
 	}
 
 	@Override
-	public void monitor(final Process process, ConsoleParser[] consoleParsers) throws IOException {
-		// console.clearConsole();
+	public void resourceChanged(IResourceChangeEvent event) {
+		switch (event.getType()) {
+		case IResourceChangeEvent.PRE_BUILD:
+			if (event.getBuildKind() != IncrementalProjectBuilder.AUTO_BUILD) {
+				// TODO this really should be done from the core and only when
+				// our projects are being built
+				console.clearConsole();
+			}
+			break;
+		}
+	}
+
+	public IFolder getBuildDirectory() {
+		return buildDirectory;
+	}
+
+	@Override
+	public void monitor(final Process process, ArduinoConsoleParser[] consoleParsers, IFolder buildDirectory)
+			throws IOException {
+		this.buildDirectory = buildDirectory;
+
+		// Clear the old listeners
+		for (ArduinoPatternMatchListener listener : listeners) {
+			console.removePatternMatchListener(listener);
+		}
+		listeners.clear();
+
+		// Add in the new ones if any
+		if (consoleParsers != null) {
+			for (ArduinoConsoleParser parser : consoleParsers) {
+				ArduinoPatternMatchListener listener;
+				if (parser instanceof ArduinoErrorParser) {
+					listener = new ArduinoErrorMatchListener(this, (ArduinoErrorParser) parser);
+				} else {
+					continue;
+				}
+				listeners.add(listener);
+				console.addPatternMatchListener(listener);
+			}
+		}
+
 		console.activate();
 
 		final Semaphore sema = new Semaphore(-1);

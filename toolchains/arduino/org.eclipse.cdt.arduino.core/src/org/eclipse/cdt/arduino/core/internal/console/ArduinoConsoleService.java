@@ -12,14 +12,11 @@ package org.eclipse.cdt.arduino.core.internal.console;
 
 import java.io.IOException;
 
+import org.eclipse.core.resources.IFolder;
+
 public interface ArduinoConsoleService {
 
-	/**
-	 * Capture the output for the process and display on the console.
-	 * 
-	 * @param process
-	 */
-	void monitor(Process process, ConsoleParser[] consoleParsers) throws IOException;
+	void monitor(Process process, ArduinoConsoleParser[] consoleParsers, IFolder buildDirectory) throws IOException;
 
 	void writeOutput(String msg) throws IOException;
 

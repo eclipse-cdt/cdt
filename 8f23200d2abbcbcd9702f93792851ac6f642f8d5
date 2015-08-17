@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_42a2012c",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-17T13:50:22Z",
+      "side": 1,
+      "message": "Nice find of this over-ridable method.",
+      "revId": "8f23200d2abbcbcd9702f93792851ac6f642f8d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -257,8 +257,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(sshSettings.getTimeout()));
 				hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE, Integer.toString(sshSettings.getKeepalive()));
 				if (saveUser) {
-					String defaultUser = getDefaultUser();
-					if (defaultUser == null || !defaultUser.equals(sshSettings.getUser())) {
+					if (sshSettings.getUser() != null) {
 						hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_USER, sshSettings.getUser());
 					} else {
 						hostSettings.remove(ITerminalsConnectorConstants.PROP_SSH_USER);
@@ -292,8 +291,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(sshSettings.getTimeout()));
 				hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE, Integer.toString(sshSettings.getKeepalive()));
 				if (saveUser) {
-					String defaultUser = getDefaultUser();
-					if (defaultUser == null || !defaultUser.equals(sshSettings.getUser())) {
+					if (sshSettings.getUser() != null) {
 						hostSettings.put(ITerminalsConnectorConstants.PROP_SSH_USER, sshSettings.getUser());
 					}
 				}

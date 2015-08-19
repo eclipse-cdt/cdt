@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_814cec98",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-19T20:00:23Z",
+      "side": 1,
+      "message": "The purpose of the lock is to protect the index-based AST from becoming invalid due to index changes. The lock has to be held during the whole lifetime of the AST. Once the index is released, the objects contained in the AST may become invalid. Acquiring the index again doesn\u0027t make them valid.\n\nThe safest approach is to wrap guessParameters() call in ParameterGuessingProposal.apply(IDocument, char, int) into ASTRunnable and call it similarly to the code in LinkedNamesAssistProposal.apply(ITextViewer, char, int, int). The ast would then be passed to ParameterGuessingProposal.guessParameters(IAstTranslationUnit ast) method and then to the constructor of ParameterGuesser.",
+      "range": {
+        "startLine": 221,
+        "startChar": 3,
+        "endLine": 221,
+        "endChar": 17
+      },
+      "revId": "1940eaf125438e56f115387a8872c044bf986033",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

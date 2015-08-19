@@ -391,8 +391,9 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		
 		// Skip over the file mapping because we want to know what mapping the file
 		// mapping overrides.
-		if (inheritedMapping.inheritedFrom == LanguageMappingResolver.FILE_MAPPING ) {
-			inheritedMapping = mappings[1];
+		int index = 1;
+		while (inheritedMapping.inheritedFrom == LanguageMappingResolver.FILE_MAPPING) {
+			inheritedMapping = mappings[index++];
 		}
 		
 		return inheritedMapping;

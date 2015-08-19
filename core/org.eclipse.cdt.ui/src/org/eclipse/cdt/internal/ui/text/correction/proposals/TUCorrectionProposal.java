@@ -63,7 +63,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.LinkedProposalModelPresenter;
  * applied to the document when the proposal is evaluated.
  * <p>
  * The proposal takes care of the preview of the changes as proposal information.
- * </p>
+ *
  * @since 5.1
  */
 public class TUCorrectionProposal extends ChangeCorrectionProposal  {
@@ -75,11 +75,11 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	 *
 	 * @param name the name that is displayed in the proposal selection dialog.
 	 * @param tu the compilation unit on that the change works.
-	 * @param change the change that is executed when the proposal is applied or <code>null</code>
-	 * if implementors override {@link #addEdits(IDocument, TextEdit)} to provide
-	 * the text edits or {@link #createTextChange()} to provide a text change.
+	 * @param change the change that is executed when the proposal is applied or {@code null}
+	 *     if implementors override {@link #addEdits(IDocument, TextEdit)} to provide
+	 *     the text edits or {@link #createTextChange()} to provide a text change.
 	 * @param relevance the relevance of this proposal.
-	 * @param image the image that is displayed for this proposal or <code>null</code> if no
+	 * @param image the image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
 	public TUCorrectionProposal(String name, ITranslationUnit tu, TextChange change, int relevance, Image image) {
@@ -92,14 +92,14 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 
 	/**
 	 * Constructs a correction proposal working on a compilation unit.
-	 * <p>Users have to override {@link #addEdits(IDocument, TextEdit)} to provide
+	 * <p>
+	 * Users have to override {@link #addEdits(IDocument, TextEdit)} to provide
 	 * the text edits or {@link #createTextChange()} to provide a text change.
-	 * </p>
-	 *
+	 * 
 	 * @param name The name that is displayed in the proposal selection dialog.
 	 * @param tu The compilation unit on that the change works.
 	 * @param relevance The relevance of this proposal.
-	 * @param image The image that is displayed for this proposal or <code>null</code> if no
+	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
 	protected TUCorrectionProposal(String name, ITranslationUnit tu, int relevance, Image image) {
@@ -380,7 +380,7 @@ public class TUCorrectionProposal extends ChangeCorrectionProposal  {
 	}
 
 	/**
-	 * Gets the text change that is invoked when the change is applied.
+	 * Returns the text change that is invoked when the change is applied.
 	 *
 	 * @return returns the text change that is invoked when the change is applied.
 	 * @throws CoreException throws an exception if accessing the change failed

@@ -12,31 +12,26 @@
 
 package org.eclipse.cdt.internal.ui.text.correction.proposals;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.jface.viewers.StyledString;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.LinkedModeModel;
-
-import org.eclipse.ui.IEditorPart;
-
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.IEditorPart;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
@@ -65,10 +60,10 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	 * Constructs a change correction proposal.
 	 * 
 	 * @param name The name that is displayed in the proposal selection dialog.
-	 * @param change The change that is executed when the proposal is applied or <code>null</code>
+	 * @param change The change that is executed when the proposal is applied or {@code null}
 	 * if the change will be created by implementors of {@link #createChange()}.
 	 * @param relevance The relevance of this proposal.
-	 * @param image The image that is displayed for this proposal or <code>null</code> if no
+	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
 	public ChangeCorrectionProposal(String name, Change change, int relevance, Image image) {
@@ -97,10 +92,10 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/**
 	 * Performs the change associated with this proposal.
 	 * 
-	 * @param activeEditor The editor currently active or <code>null</code> if no
-	 * editor is active.
-	 * @param document The document of the editor currently active or <code>null</code> if
-	 * no editor is visible.
+	 * @param activeEditor The editor currently active or {@code null} if no
+	 *     editor is active.
+	 * @param document The document of the editor currently active or {@code null} if
+	 *     no editor is visible.
 	 * @throws CoreException Thrown when the invocation of the change failed.
 	 */
 	protected void performChange(IEditorPart activeEditor, IDocument document) throws CoreException {
@@ -147,9 +142,6 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		}
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
 		StringBuffer buf= new StringBuffer();
@@ -174,17 +166,11 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		return buf.toString();
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
 	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
 	@Override
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
@@ -194,9 +180,6 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		return getName();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension6#getStyledDisplayString()
-	 */
 	@Override
 	public StyledString getStyledDisplayString() {
 		StyledString str= new StyledString(getName());
@@ -218,24 +201,18 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		return fName;
 	}
 	
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
 
 	/**
-	 * Sets the proposal's image or <code>null</code> if no image is desired.
+	 * Sets the proposal's image or {@code null} if no image is desired.
 	 * 
 	 * @param image the desired image.
 	 */
@@ -280,9 +257,6 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		fName= name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.text.c.ICCompletionProposal#getRelevance()
-	 */
 	@Override
 	public int getRelevance() {
 		return fRelevance;
@@ -290,25 +264,23 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 
 	/**
 	 * Sets the relevance.
+	 *
 	 * @param relevance the relevance to set
 	 */
 	public void setRelevance(int relevance) {
 		fRelevance= relevance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.text.correction.IShortcutProposal#getProposalId()
-	 */
 	@Override
 	public String getCommandId() {
 		return fCommandId;
 	}
 	
 	/**
-	 * Set the proposal id to allow assigning a shortcut to the correction proposal.
+	 * Sets the proposal id to allow assigning a shortcut to the correction proposal.
 	 * 
-	 * @param commandId The proposal id for this proposal or <code>null</code> if no command
-	 * should be assigned to this proposal.
+	 * @param commandId The proposal id for this proposal or {@code null} if no command
+	 *     should be assigned to this proposal.
 	 */
 	public void setCommandId(String commandId) {
 		fCommandId= commandId;

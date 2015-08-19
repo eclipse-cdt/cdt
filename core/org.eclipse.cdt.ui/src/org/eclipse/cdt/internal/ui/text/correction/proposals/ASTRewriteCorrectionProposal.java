@@ -42,9 +42,9 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 	 * @param name the display name of the proposal.
 	 * @param tu the translation unit that is modified.
 	 * @param rewrite the AST rewrite that is invoked when the proposal is applied or
-	 *  <code>null</code> if {@link #getRewrite()} is overridden.
+	 *     {@code null} if {@link #getRewrite()} is overridden.
 	 * @param relevance The relevance of this proposal.
-	 * @param image The image that is displayed for this proposal or <code>null</code> if no
+	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
 	public ASTRewriteCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite, int relevance, Image image) {
@@ -52,9 +52,6 @@ public class ASTRewriteCorrectionProposal extends TUCorrectionProposal {
 		fRewrite= rewrite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.text.correction.TUCorrectionProposal#addEdits(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
 		super.addEdits(document, editRoot);

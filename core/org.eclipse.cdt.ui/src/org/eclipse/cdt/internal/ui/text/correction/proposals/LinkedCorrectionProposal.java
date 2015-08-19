@@ -26,15 +26,14 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * @since 5.1
  */
 public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
-
 	/**
 	 * Constructs a linked correction proposal.
 	 * @param name The display name of the proposal.
 	 * @param tu The translation unit that is modified.
 	 * @param rewrite The AST rewrite that is invoked when the proposal is applied
-	 *  <code>null</code> can be passed if {@link #getRewrite()} is overridden.
+	 *     {@code null} can be passed if {@link #getRewrite()} is overridden.
 	 * @param relevance The relevance of this proposal.
-	 * @param image The image that is displayed for this proposal or <code>null</code> if no
+	 * @param image The image that is displayed for this proposal or {@code null} if no
 	 * image is desired.
 	 */
 	public LinkedCorrectionProposal(String name, ITranslationUnit tu, ASTRewrite rewrite,
@@ -45,10 +44,11 @@ public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
 	/**
 	 * Adds a linked position to be shown when the proposal is applied. All position with the
 	 * same group id are linked.
+	 *
 	 * @param position The position to add.
 	 * @param isFirst If set, the proposal is jumped to first.
 	 * @param groupID The id of the group the proposal belongs to. All proposals in the same group
-	 * are linked.
+	 *     are linked.
 	 */
 	public void addLinkedPosition(ITrackedNodePosition position, boolean isFirst, String groupID) {
 		getLinkedProposalModel().getPositionGroup(groupID, true).addPosition(position, isFirst);
@@ -56,6 +56,7 @@ public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
 
 	/**
 	 * Sets the end position of the linked mode to the end of the passed range.
+	 *
 	 * @param position The position that describes the end position of the linked mode.
 	 */
 	public void setEndPosition(ITrackedNodePosition position) {
@@ -64,10 +65,11 @@ public class LinkedCorrectionProposal extends ASTRewriteCorrectionProposal {
 
 	/**
 	 * Adds a linked position proposal to the group with the given id.
+	 *
 	 * @param groupID The id of the group that should present the proposal
 	 * @param proposal The string to propose.
-	 * @param image The image to show for the position proposal or <code>null</code> if
-	 * no image is desired.
+	 * @param image The image to show for the position proposal or {@code null} if
+	 *     no image is desired.
 	 */
 	public void addLinkedPositionProposal(String groupID, String proposal, Image image) {
 		getLinkedProposalModel().getPositionGroup(groupID, true).addProposal(proposal, image, 10);

@@ -45,9 +45,6 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 		fRelevance= 8;
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
-	 */
 	@Override
 	public void apply(IDocument document) {
 		CRenameAction action= new CRenameAction();
@@ -55,25 +52,16 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 		action.run();
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
 		return CorrectionMessages.RenameRefactoringProposal_additionalInfo;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
 	@Override
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
@@ -84,9 +72,6 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 		return fLabel;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension6#getStyledDisplayString()
-	 */
 	@Override
 	public StyledString getStyledDisplayString() {
 		StyledString str= new StyledString(fLabel);
@@ -100,41 +85,26 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 		return str;
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_LINKED_RENAME);
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
 	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
-	/*
-	 * @see ICCompletionProposal#getRelevance()
-	 */
 	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
 
-	/*
-	 * @see ICCompletionProposal#getIdString()
-	 */
 	@Override
 	public String getIdString() {
 		return getCommandId();
 	}
 
-	/*
-	 * @see ICommandAccess#getCommandId()
-	 */
 	@Override
 	public String getCommandId() {
 		return ICEditorActionDefinitionIds.RENAME_ELEMENT;

@@ -62,11 +62,10 @@ import org.eclipse.cdt.internal.ui.text.correction.ICommandAccess;
 import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
- * A proposal.allowing user to edit in place all occurrences of a name.
+ * A proposal allowing user to edit in place all occurrences of a name.
  */
 public class LinkedNamesAssistProposal implements ICCompletionProposal, ICompletionProposalExtension2,
 		ICompletionProposalExtension6, ICommandAccess {
-
 	/**
 	 * An exit policy that skips Backspace and Delete at the beginning and at the end
 	 * of a linked position, respectively.
@@ -125,9 +124,6 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 		fRelevance= 8;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
-	 */
 	@Override
 	public void apply(final ITextViewer viewer, char trigger, int stateMask, final int offset) {
 		try {
@@ -138,7 +134,6 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 
 			ASTProvider.getASTProvider().runOnAST(fTranslationUnit, ASTProvider.WAIT_ACTIVE_ONLY,
 					new NullProgressMonitor(), new ASTRunnable() {
-
 				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 					if (astRoot == null)
@@ -159,14 +154,13 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 
 			// Sort the locations starting with the one @ offset.
 			Arrays.sort(fLocations, new Comparator<IRegion>() {
-
 				@Override
 				public int compare(IRegion n1, IRegion n2) {
 					return rank(n1) - rank(n2);
 				}
 
 				/**
-				 * Returns the absolute rank of a location. Location preceding <code>offset</code>
+				 * Returns the absolute rank of a location. Location preceding {@code offset}
 				 * are ranked last.
 				 *
 				 * @param location the location to compute the rank for
@@ -174,10 +168,11 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 				 */
 				private int rank(IRegion location) {
 					int relativeRank= location.getOffset() + location.getLength() - offset;
-					if (relativeRank < 0)
+					if (relativeRank < 0) {
 						return Integer.MAX_VALUE + relativeRank;
-					else
+					} else {
 						return relativeRank;
+					}
 				}
 			});
 			
@@ -214,46 +209,34 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	}
 
 	/**
-	 * Returns the currently active C editor, or <code>null</code> if it
-	 * cannot be determined.
+	 * Returns the currently active C editor, or {@code null} if it cannot be determined.
 	 *
-	 * @return  the currently active C editor, or <code>null</code>
+	 * @return  the currently active C editor, or {@code null}
 	 */
 	private CEditor getCEditor() {
 		IEditorPart part= CUIPlugin.getActivePage().getActiveEditor();
-		if (part instanceof CEditor)
+		if (part instanceof CEditor) {
 			return (CEditor) part;
-		else
+		} else {
 			return null;
+		}
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
-	 */
 	@Override
 	public void apply(IDocument document) {
 		// can't do anything
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
 		return CorrectionMessages.LinkedNamesAssistProposal_proposalinfo;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
 	@Override
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
@@ -264,9 +247,6 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 		return fLabel;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension6#getStyledDisplayString()
-	 */
 	@Override
 	public StyledString getStyledDisplayString() {
 		StyledString str= new StyledString(fLabel);
@@ -280,55 +260,34 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 		return str;
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_LINKED_RENAME);
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
 	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
-	/*
-	 * @see ICCompletionProposal#getRelevance()
-	 */
 	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(org.eclipse.jface.text.ITextViewer, boolean)
-	 */
 	@Override
 	public void selected(ITextViewer textViewer, boolean smartToggle) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(org.eclipse.jface.text.ITextViewer)
-	 */
 	@Override
 	public void unselected(ITextViewer textViewer) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.text.correction.ICommandAccess#getCommandId()
-	 */
 	@Override
 	public String getCommandId() {
 		return ASSIST_ID;

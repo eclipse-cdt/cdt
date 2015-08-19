@@ -387,15 +387,16 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	
 	private LanguageMapping computeInheritedMapping(IProject project, IFile file, ICConfigurationDescription configuration) throws CoreException {
 		LanguageMapping mappings[] = LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), configuration, fContentType.getId(), true);
-		LanguageMapping inheritedMapping = mappings[0];
 		
 		// Skip over the file mapping because we want to know what mapping the file
 		// mapping overrides.
-		if (inheritedMapping.inheritedFrom == LanguageMappingResolver.FILE_MAPPING ) {
-			inheritedMapping = mappings[1];
+		for (int i = 0; i < mappings.length; i++) {
+			if (mappings[i].inheritedFrom != LanguageMappingResolver.FILE_MAPPING) {
+				return mappings[i];
+			}
 		}
 		
-		return inheritedMapping;
+		return null;
 	}
 	
 	private String[][] getLanguages(IProject project, IFile file, ICConfigurationDescription configuration) throws CoreException {

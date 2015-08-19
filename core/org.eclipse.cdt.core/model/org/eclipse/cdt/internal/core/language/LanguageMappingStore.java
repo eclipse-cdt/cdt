@@ -270,15 +270,17 @@ public class LanguageMappingStore {
 
 	private void addFileMappings(Map<String, Map<String, String>> mappings, ICStorageElement rootElement) {
 		for (Map.Entry<String, Map<String, String>> entry : mappings.entrySet()) {
-			ICStorageElement mapping = rootElement.createChild(FILE_MAPPING);
-			String path = entry.getKey();
-			for (Entry<String, String> configurationEntry : entry.getValue().entrySet()) {
-				String configuration = configurationEntry.getKey();
-				String language = configurationEntry.getValue();
-
-				mapping.setAttribute(ATTRIBUTE_PATH, path);
-				mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
-				mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
+			if (!entry.getValue().isEmpty()) {
+				ICStorageElement mapping = rootElement.createChild(FILE_MAPPING);
+				String path = entry.getKey();
+				for (Entry<String, String> configurationEntry : entry.getValue().entrySet()) {
+					String configuration = configurationEntry.getKey();
+					String language = configurationEntry.getValue();
+	
+					mapping.setAttribute(ATTRIBUTE_PATH, path);
+					mapping.setAttribute(ATTRIBUTE_CONFIGURATION, configuration);
+					mapping.setAttribute(ATTRIBUTE_LANGUAGE, language);
+				}
 			}
 		}
 	}

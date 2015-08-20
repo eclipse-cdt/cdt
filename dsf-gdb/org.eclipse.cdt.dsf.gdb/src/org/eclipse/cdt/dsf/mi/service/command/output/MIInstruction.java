@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson - Adapted for DSF
@@ -50,7 +50,7 @@ public class MIInstruction extends AbstractInstruction {
 
 	@Override
     public String getInstruction() {
-        return opcode + " " + args; //$NON-NLS-1$;
+        return opcode + "\t" + args; //$NON-NLS-1$;
     }
 
 	@Override

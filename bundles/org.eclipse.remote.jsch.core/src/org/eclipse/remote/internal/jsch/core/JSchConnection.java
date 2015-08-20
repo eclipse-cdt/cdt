@@ -69,6 +69,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	public static final String PASSPHRASE_ATTR = "JSCH_PASSPHRASE_ATTR"; //$NON-NLS-1$
 	public static final String TIMEOUT_ATTR = "JSCH_TIMEOUT_ATTR"; //$NON-NLS-1$
 	public static final String USE_LOGIN_SHELL_ATTR = "JSCH_USE_LOGIN_SHELL_ATTR"; //$NON-NLS-1$
+	public static final String LOGIN_SHELL_COMMAND_ATTR = "JSCH_LOGIN_SHELL_COMMAND_ATTR"; //$NON-NLS-1$
 
 	/**
 	 * Class to supply credentials from connection attributes without user interaction.
@@ -243,6 +244,7 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	public static final int DEFAULT_TIMEOUT = 0;
 	public static final boolean DEFAULT_IS_PASSWORD = false;
 	public static final boolean DEFAULT_USE_LOGIN_SHELL = true;
+	public static final String DEFAULT_LOGIN_SHELL_COMMAND = "/bin/bash -l -c '{0}'"; //$NON-NLS-1$
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private String fWorkingDir;
@@ -630,6 +632,16 @@ public class JSchConnection implements IRemoteConnectionControlService, IRemoteC
 	@Override
 	public String getProperty(String key) {
 		return fProperties.get(key);
+	}
+
+	/**
+	 * Get the login shell command if useLoginShell is true
+	 * 
+	 * @return login shell command
+	 */
+	public String getLoginShellCommand() {
+		String loginShell = fRemoteConnection.getAttribute(LOGIN_SHELL_COMMAND_ATTR);
+		return loginShell.isEmpty() ? DEFAULT_LOGIN_SHELL_COMMAND : loginShell;
 	}
 
 	/**

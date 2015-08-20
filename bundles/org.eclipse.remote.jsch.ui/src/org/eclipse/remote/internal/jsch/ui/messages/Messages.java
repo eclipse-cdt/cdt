@@ -21,6 +21,9 @@ public class Messages extends NLS {
 		NLS.initializeMessages(BUNDLE_ID, Messages.class);
 	}
 
+	public static String JSchConnectionPage_0;
+	public static String JSchConnectionPage_1;
+	public static String JSchConnectionPage_2;
 	public static String JSchConnectionPage_A_connection_with_that_name_already_exists;
 	public static String JSchConnectionPage_Edit_Connection;
 	public static String JSchConnectionPage_Edit_properties_of_an_existing_connection;

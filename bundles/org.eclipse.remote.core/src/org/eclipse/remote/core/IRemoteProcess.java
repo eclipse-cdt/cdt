@@ -45,6 +45,9 @@ public interface IRemoteProcess {
 	/**
 	 * Gets the error output stream of the process
 	 * 
+	 * Note: some implementations (e.g. JSch) will not work correctly if the remote process generates stdout or stderr but the
+	 * calling thread does not read the corresponding output or error streams.
+	 * 
 	 * @return the output stream connected to the standard
 	 *         error of the process
 	 */
@@ -52,6 +55,9 @@ public interface IRemoteProcess {
 
 	/**
 	 * Gets an InputStream which can be used to read the standard output stream of the process
+	 * 
+	 * Note: some implementations (e.g. JSch) will not work correctly if the remote process generates stdout or stderr but the
+	 * calling thread does not read the corresponding input or error streams.
 	 * 
 	 * @return the input stream connected to the standard
 	 *         output of the process
@@ -89,6 +95,9 @@ public interface IRemoteProcess {
 	/**
 	 * Wait until the process has terminated
 	 * 
+	 * Note: some implementations (e.g. JSch) will not work correctly if the remote process generates stdout or stderr but the
+	 * calling thread does not read the corresponding input or error streams.
+	 * 
 	 * @return the exit value of the process
 	 * @throws InterruptedException
 	 *             if the current thread is
@@ -97,7 +106,10 @@ public interface IRemoteProcess {
 	int waitFor() throws InterruptedException;
 
 	/**
-	 * Check if the remote process has completed
+	 * Check if the remote process has completed.
+	 * 
+	 * Note: some implementations (e.g. JSch) will not work correctly if the remote process generates stdout or stderr but the
+	 * calling thread does not read the corresponding input or error streams.
 	 * 
 	 * @return true if remote process has completed
 	 */

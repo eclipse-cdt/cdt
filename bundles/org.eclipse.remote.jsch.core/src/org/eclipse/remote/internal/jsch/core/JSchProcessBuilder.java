@@ -218,8 +218,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 		sb.append(cmd);
 		if (fPreamble && fConnection.useLoginShell()) {
-			sb.insert(0, "/bin/bash -l -c '"); //$NON-NLS-1$
-			sb.append("'"); //$NON-NLS-1$
+			return substitute(fConnection.getLoginShellCommand(), sb.toString());
 		}
 		return sb.toString();
 	}
@@ -242,6 +241,48 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		}
 		inputString = newString.toString();
 		return inputString;
+	}
+
+	private String substitute(String str, String... args) {
+		int length = str.length();
+		StringBuffer buffer = new StringBuffer(length + (args.length * 5));
+		for (int i = 0; i < length; i++) {
+			char c = str.charAt(i);
+			switch (c) {
+			case '{':
+				int index = str.indexOf('}', i);
+				// if we don't have a matching closing brace then...
+				if (index == -1) {
+					buffer.append(c);
+					break;
+				}
+				i++;
+				if (i >= length) {
+					buffer.append(c);
+					break;
+				}
+				// look for a substitution
+				int number = -1;
+				try {
+					number = Integer.parseInt(str.substring(i, index));
+				} catch (NumberFormatException e) {
+					buffer.append("<invalid argument>"); //$NON-NLS-1$
+					i = index;
+					break;
+				}
+				if (number >= args.length || number < 0) {
+					buffer.append("<missing argument>"); //$NON-NLS-1$
+					i = index;
+					break;
+				}
+				buffer.append(args[number]);
+				i = index;
+				break;
+			default:
+				buffer.append(c);
+			}
+		}
+		return buffer.toString();
 	}
 
 }

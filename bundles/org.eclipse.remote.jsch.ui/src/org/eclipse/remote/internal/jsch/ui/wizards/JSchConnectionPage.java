@@ -65,12 +65,14 @@ public class JSchConnectionPage extends WizardPage {
 	private Text fConnectionName;
 	private Button fPasswordButton;
 	private Button fPublicKeyButton;
+	private Button fUseLoginShellButton;
 	private Text fHostText;
 	private Text fUserText;
 	private Text fPasswordText;
 	private Text fPassphraseText;
 	private Text fPortText;
 	private Text fTimeoutText;
+	private Text fLoginShellText;
 
 	private String fInitialName = "Remote Host"; //$NON-NLS-1$
 	private Set<String> fInvalidConnectionNames;
@@ -144,6 +146,29 @@ public class JSchConnectionPage extends WizardPage {
 		fTimeoutText.setText(Integer.toString(JSchConnection.DEFAULT_TIMEOUT));
 		fTimeoutText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		setTextFieldWidthInChars(fTimeoutText, 5);
+
+		fUseLoginShellButton = new Button(settingsComp, SWT.CHECK);
+		fUseLoginShellButton.setText(Messages.JSchConnectionPage_0);
+		fUseLoginShellButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
+		fUseLoginShellButton.addSelectionListener(new SelectionAdapter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				validateFields();
+				updateEnablement();
+			}
+		});
+		Label loginShellLabel = new Label(settingsComp, SWT.NONE);
+		loginShellLabel.setText(Messages.JSchConnectionPage_1);
+		fLoginShellText = new Text(settingsComp, SWT.BORDER | SWT.SINGLE);
+		fLoginShellText.setText(JSchConnection.DEFAULT_LOGIN_SHELL_COMMAND);
+		fLoginShellText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fUseLoginShellButton.setSelection(JSchConnection.DEFAULT_USE_LOGIN_SHELL);
 
 		Group proxyComp = new Group(advancedComp, SWT.NONE);
 		proxyComp.setText(Messages.JSchConnectionPage_Proxy);
@@ -226,7 +251,8 @@ public class JSchConnectionPage extends WizardPage {
 
 		fPasswordButton.setSelection(JSchConnection.DEFAULT_IS_PASSWORD);
 		fPublicKeyButton.setSelection(!JSchConnection.DEFAULT_IS_PASSWORD);
-		controls.setTabList(new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton, fPasswordText });
+		controls.setTabList(
+				new Control[] { fHostText, fUserText, fPublicKeyButton, fPassphraseText, fPasswordButton, fPasswordText });
 	}
 
 	@Override
@@ -358,6 +384,12 @@ public class JSchConnectionPage extends WizardPage {
 			fPublicKeyButton.setSelection(!isPwd);
 			fPasswordText.setText(fConnection.getSecureAttribute(JSchConnection.PASSWORD_ATTR));
 			fPassphraseText.setText(fConnection.getSecureAttribute(JSchConnection.PASSPHRASE_ATTR));
+			String useLoginShellStr = fConnection.getAttribute(JSchConnection.USE_LOGIN_SHELL_ATTR);
+			boolean useLoginShell = useLoginShellStr.isEmpty() ? JSchConnection.DEFAULT_USE_LOGIN_SHELL
+					: Boolean.parseBoolean(useLoginShellStr);
+			fUseLoginShellButton.setSelection(useLoginShell);
+			String loginShellStr = fConnection.getAttribute(JSchConnection.LOGIN_SHELL_COMMAND_ATTR);
+			fLoginShellText.setText(loginShellStr.isEmpty() ? JSchConnection.DEFAULT_LOGIN_SHELL_COMMAND : loginShellStr);
 			fProxyCommandText.setText(fConnection.getAttribute(JSchConnection.PROXYCOMMAND_ATTR));
 			JSchConnection proxyConn = fConnection.getService(JSchConnection.class).getProxyConnection();
 			if (proxyConn == null) {
@@ -396,6 +428,14 @@ public class JSchConnectionPage extends WizardPage {
 			if (passphrase != null) {
 				fPassphraseText.setText(passphrase);
 			}
+			String useLoginShell = fInitialAttributes.get(JSchConnection.USE_LOGIN_SHELL_ATTR);
+			if (useLoginShell != null) {
+				fUseLoginShellButton.setSelection(Boolean.parseBoolean(useLoginShell));
+			}
+			String loginShell = fInitialAttributes.get(JSchConnection.LOGIN_SHELL_COMMAND_ATTR);
+			if (loginShell != null) {
+				fLoginShellText.setText(loginShell);
+			}
 			fProxyConnectionWidget.setConnection(manager.getLocalConnectionType().getConnections().get(0));
 		}
 	}
@@ -408,6 +448,7 @@ public class JSchConnectionPage extends WizardPage {
 		fPassphraseText.addModifyListener(fDataModifyListener);
 		fPortText.addModifyListener(fDataModifyListener);
 		fTimeoutText.addModifyListener(fDataModifyListener);
+		fLoginShellText.addModifyListener(fDataModifyListener);
 		fProxyCommandText.addModifyListener(fDataModifyListener);
 		fProxyConnectionWidget.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -484,6 +525,8 @@ public class JSchConnectionPage extends WizardPage {
 			fConnection.setAttribute(JSchConnection.TIMEOUT_ATTR, fTimeoutText.getText().trim());
 			fConnection.setAttribute(JSchConnection.PORT_ATTR, fPortText.getText().trim());
 			fConnection.setAttribute(JSchConnection.PROXYCOMMAND_ATTR, fProxyCommandText.getText().trim());
+			fConnection.setAttribute(JSchConnection.USE_LOGIN_SHELL_ATTR, Boolean.toString(fUseLoginShellButton.getSelection()));
+			fConnection.setAttribute(JSchConnection.LOGIN_SHELL_COMMAND_ATTR, fLoginShellText.getText().trim());
 			IRemoteConnection proxyConnection = fProxyConnectionWidget.getConnection();
 			IRemoteServicesManager manager = Activator.getService(IRemoteServicesManager.class);
 			String proxyConnectionName = ""; //$NON-NLS-1$
@@ -498,6 +541,7 @@ public class JSchConnectionPage extends WizardPage {
 		boolean isPasswordAuth = fPasswordButton.getSelection();
 		fPasswordText.setEnabled(isPasswordAuth);
 		fPassphraseText.setEnabled(!isPasswordAuth);
+		fLoginShellText.setEnabled(fUseLoginShellButton.getSelection());
 	}
 
 	private String validateAdvanced() {
@@ -511,9 +555,6 @@ public class JSchConnectionPage extends WizardPage {
 		} catch (NumberFormatException ne) {
 			return Messages.JSchNewConnectionPage_Timeout_is_not_valid;
 		}
-		// if (fCipherCombo.getSelectionIndex() == -1) {
-		// return "Invalid cipher type";
-		// }
 		return null;
 	}
 
@@ -527,8 +568,9 @@ public class JSchConnectionPage extends WizardPage {
 			message = Messages.JSchNewConnectionPage_Host_name_cannot_be_empty;
 		} else if (fUserText.getText().trim().length() == 0) {
 			message = Messages.JSchNewConnectionPage_User_name_cannot_be_empty;
-		}
-		if (message == null && fProxyConnectionWidget.getConnection() == null) {
+		} else if (fUseLoginShellButton.getSelection() && fLoginShellText.getText().trim().length() == 0) {
+			message = Messages.JSchConnectionPage_2;
+		} else if (fProxyConnectionWidget.getConnection() == null) {
 			message = Messages.JSchConnectionPage_selectProxyConnection;
 		}
 		if (message == null) {

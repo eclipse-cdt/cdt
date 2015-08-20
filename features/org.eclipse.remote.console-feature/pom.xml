@@ -12,7 +12,7 @@
 
   <groupId>org.eclipse.remote.features</groupId>
   <artifactId>org.eclipse.remote.console</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.1-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 
   <build>

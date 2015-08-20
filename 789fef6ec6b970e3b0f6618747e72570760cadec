@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_9340bf09",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "To avoid duplication of code, this method should call the closest one to itself (which is sometimes debatable, but in this case is the one that takes the containerDmc parameter). So it should call\n\naddBreakpoint(getContainerContext(), location)\n\nBy explicitly calling the method with the most parameter, there is more duplication; for example, if you decided that you didn\u0027t want to create temporary breakpoints by default, you would have to change the \u0027true\u0027 parameter to \u0027false\u0027 in both places.  By calling the closest method, you only have to change it once.",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f3c2dbfe",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "Should call\n\naddBreakpoint(containerDmc, location, DefaultTimeouts.get(ETimeout.addBreakpoint))",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_d3c51708",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "addBreapoint(getContainerContext(), location, temporary)",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_b345031c",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "First parameter passed should be containerDmc",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_73d6ebbf",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "Should use the passed in containerDmc instead",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_53d127c3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "Should call\n  resumeUntilStopped(getContainerContext());\nor\n  resumeUntilStopped(DefaultTimeouts.get(ETimeout.resumeUntilStopped));",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_b3e0638e",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "Should call\n  resume(getContainerContext());",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_93db9fe3",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "runToLocation(getContainerContext(), location);",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f3e93b79",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "you have to pass rm as a parameter, or you have to handle the failure in a handleComplete() method",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_d3ecf789",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 690,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "you can call getData() directly in the above line",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_33e4739d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "Maybe call \"isValidContainer()\"?",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_13e7afa2",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 708,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "You should call the getContainerContexts() instead and search it\u0027s result to avoid the same async call again.",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_53464728",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBProcessesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-08-20T02:26:40Z",
+      "side": 1,
+      "message": "No longer needed, but you can leave them protected.  Not a big deal since this isn\u0027t API",
+      "revId": "789fef6ec6b970e3b0f6618747e72570760cadec",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -50,7 +50,7 @@ public class MIInstruction extends AbstractInstruction {
 
 	@Override
     public String getInstruction() {
-        return opcode + " " + args; //$NON-NLS-1$;
+        return opcode + "\t" + args; //$NON-NLS-1$;
     }
 
 	@Override

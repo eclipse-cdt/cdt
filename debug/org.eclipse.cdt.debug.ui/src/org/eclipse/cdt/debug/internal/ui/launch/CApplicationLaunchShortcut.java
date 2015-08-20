@@ -95,10 +95,9 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin, String mode) {
 		ILaunchConfiguration configuration = null;
-		ILaunchConfigurationType configType = getCLaunchConfigType();
 		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
 		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
 			for (int i = 0; i < configs.length; i++) {
 				ILaunchConfiguration config = configs[i];

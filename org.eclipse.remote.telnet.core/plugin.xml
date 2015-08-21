@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.remote.core.remoteServices">
+      <connectionType
+            id="org.eclipse.remote.telnet.core.connectionType"
+            name="Telnet">
+      </connectionType>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.telnet.core.connectionType"
+            factory="org.eclipse.remote.telnet.core.TelnetConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionControlService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.telnet.core.connectionType"
+            factory="org.eclipse.remote.telnet.core.TelnetConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteConnectionHostService">
+      </connectionService>
+      <connectionService
+            connectionTypeId="org.eclipse.remote.telnet.core.connectionType"
+            factory="org.eclipse.remote.telnet.core.TelnetConnection$Factory"
+            service="org.eclipse.remote.core.IRemoteCommandShellService">
+      </connectionService>
+       <connectionService
+            connectionTypeId="org.eclipse.remote.telnet.core.connectionType"
+            factory="org.eclipse.remote.telnet.core.TelnetConnection$Factory"
+            service="org.eclipse.remote.telnet.core.TelnetConnection">
+      </connectionService>
+   </extension>
+
+</plugin>

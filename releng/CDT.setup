@@ -23,6 +23,14 @@
         name="org.eclipse.swtbot.ide.feature.group"/>
     <requirement
         name="org.eclipse.swtbot.generator.feature.feature.group"/>
+    <requirement
+        name="org.eclipse.platform.feature.group"/>
+    <requirement
+        name="org.eclipse.rcp.feature.group"/>
+    <requirement
+        name="org.eclipse.jdt.feature.group"/>
+    <requirement
+        name="org.eclipse.pde.feature.group"/>
     <repository
         url="http://download.eclipse.org/technology/swtbot/releases/latest"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
@@ -59,16 +67,16 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Luna"
+      defaultValue="Mars"
       storageURI="scope://Workspace"/>
-  <setupTask
-      xsi:type="pde:APIBaselineTask"
-      id="baseline"
-      name="CDT"
-      version="8.6"
-      location="${workspace.location/../api.baseline}"
-      remoteURI="http://download.eclipse.org/tools/cdt/releases/8.6/cdt-8.6.0.zip"/>
   <stream name="master">
+    <setupTask
+        xsi:type="pde:APIBaselineTask"
+        id="baseline"
+        name="CDT"
+        version="8.7"
+        location="${workspace.location/../api.baseline}"
+        remoteURI="http://download.eclipse.org/tools/cdt/releases/8.7/cdt-8.7.0.zip"/>
     <setupTask
         xsi:type="git:GitCloneTask"
         id="git.clone.cdt"
@@ -130,6 +138,18 @@
             name="org.eclipse.remote.feature.group"/>
         <requirement
             name="org.eclipse.license.feature.group"/>
+        <requirement
+            name="com.google.gson"/>
+        <requirement
+            name="org.eclipse.remote.serial.feature.group"/>
+        <requirement
+            name="org.eclipse.remote.console.feature.group"/>
+        <requirement
+            name="org.eclipse.tm.terminal.control"/>
+        <requirement
+            name="org.eclipse.launchbar.feature.group"/>
+        <requirement
+            name="org.eclipse.linuxtools.docker.feature.feature.group"/>
         <sourceLocator
             rootFolder="${git.clone.cdt.location}"
             locateNestedProjects="true"/>
@@ -147,6 +167,12 @@
               url="http://download.eclipse.org/tools/ptp/builds/remote/2.0.0"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
+          <repository
+              url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+          <repository
+              url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
         </repositoryList>
       </targlet>
     </setupTask>

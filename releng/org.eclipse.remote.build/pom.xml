@@ -57,6 +57,10 @@
 		<module>../../bundles/org.eclipse.remote.serial.core</module>
 		<module>../../bundles/org.eclipse.remote.serial.ui</module>
 		<module>../../features/org.eclipse.remote.serial-feature</module>
+		<!-- Telnet feature -->
+		<module>../../bundles/org.eclipse.remote.telnet.core</module>
+		<module>../../bundles/org.eclipse.remote.telnet.ui</module>
+		<module>../../features/org.eclipse.remote.telnet-feature</module>
 	</modules>
 
 	<repositories>

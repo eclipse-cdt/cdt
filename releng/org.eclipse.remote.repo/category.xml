@@ -18,4 +18,10 @@
    <feature url="features/org.eclipse.remote.console.source_0.0.0.jar" id="org.eclipse.remote.console.source" version="0.0.0">
       <category name="Remote Console SDK"/>
    </feature>
+   <feature url="features/org.eclipse.remote.telnet_0.0.0.jar" id="org.eclipse.remote.telnet" version="0.0.0">
+      <category name="Telnet Protocol Support"/>
+   </feature>
+   <feature url="features/org.eclipse.remote.telnet.source_0.0.0.jar" id="org.eclipse.remote.telnet.source" version="0.0.0">
+      <category name="Telnet Protocol Support SDK"/>
+   </feature>
 </site>

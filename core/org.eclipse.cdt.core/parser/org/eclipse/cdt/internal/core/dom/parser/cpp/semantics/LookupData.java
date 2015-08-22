@@ -16,7 +16,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getSimplifiedType;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -73,15 +76,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Context data for IASTName lookup
  */
 public class LookupData extends ScopeLookupData {
-	public ICPPTemplateArgument[] fTemplateArguments;
+	private static final ICPPTemplateArgument[] UNINITIALIZED_TEMPLATE_ARGUMENTS = {}; 
 	public Map<ICPPNamespaceScope, List<ICPPNamespaceScope>> usingDirectives= Collections.emptyMap();
 
 	/** Used to ensure we don't visit things more than once. */
@@ -114,26 +113,16 @@ public class LookupData extends ScopeLookupData {
 	private ICPPEvaluation[] functionArgs;
 	private IType[] functionArgTypes;
 	private ValueCategory[] functionArgValueCategories;
+	private ICPPTemplateArgument[] fTemplateArguments = UNINITIALIZED_TEMPLATE_ARGUMENTS;
 
 	public ICPPClassType skippedScope;
 	public Object foundItems;
 	public ProblemBinding problem;
 
-	public LookupData(IASTName n) {
-		super(n, true, false);
-		if (n == null)
-			throw new IllegalArgumentException();
-
-		ICPPTemplateArgument[] args = null;
-		if (n instanceof ICPPASTTemplateId) {
-			try {
-				args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
-		}
-		fTemplateArguments= args;
-		configureWith(n);
+	public LookupData(IASTName name) {
+		super(name, true, false);
+		fTemplateArguments = UNINITIALIZED_TEMPLATE_ARGUMENTS; // Lazy initialization to avoid DOMException.
+		configureWith(name);
 	}
 
 	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode lookupPoint) {
@@ -561,6 +550,22 @@ public class LookupData extends ScopeLookupData {
 			}
 		}
 		return functionArgValueCategories;
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException {
+		if (fTemplateArguments == UNINITIALIZED_TEMPLATE_ARGUMENTS) {
+			IASTName name = getLookupName();
+			if (name instanceof ICPPASTTemplateId) {
+				fTemplateArguments = CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) name);
+			} else {
+				fTemplateArguments = null;
+			}
+		}
+		return fTemplateArguments;
+	}
+
+	void setTemplateArguments(ICPPTemplateArgument[] fTemplateArguments) {
+		this.fTemplateArguments = fTemplateArguments;
 	}
 
 	public int getFunctionArgumentCount() {

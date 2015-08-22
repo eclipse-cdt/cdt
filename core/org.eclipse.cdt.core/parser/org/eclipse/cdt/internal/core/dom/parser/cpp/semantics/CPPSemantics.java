@@ -463,7 +463,7 @@ public class CPPSemantics {
 					} else {
 						// Do not interpret template arguments to a template class as being
 						// explicit template arguments to its templated constructor.
-						data.fTemplateArguments = null;
+						data.setTemplateArguments(null);
 						binding= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
 					}
 				} catch (DOMException e) {
@@ -1162,7 +1162,7 @@ public class CPPSemantics {
 		char[] tchars= new char[typeDtorChars.length - 1];
 		System.arraycopy(typeDtorChars, 1, tchars, 0, tchars.length);
 
-		LookupData ld2= new LookupData(tchars, data.fTemplateArguments, data.getLookupPoint());
+		LookupData ld2= new LookupData(tchars, data.getTemplateArguments(), data.getLookupPoint());
 		ld2.setIgnorePointOfDeclaration(data.isIgnorePointOfDeclaration());
 		ld2.contentAssist= data.contentAssist;
 		ld2.fNoNarrowing= data.fNoNarrowing;
@@ -2469,7 +2469,7 @@ public class CPPSemantics {
 		// No arguments to resolve function
 		final IASTNode lookupPoint = data.getLookupPoint();
 		if (!data.hasFunctionArguments()) {
-			return createFunctionSet(fns, data.fTemplateArguments, lookupPoint, lookupName);
+			return createFunctionSet(fns, data.getTemplateArguments(), lookupPoint, lookupName);
 		}
 
 		// Reduce our set of candidate functions to only those who have the right number of parameters
@@ -2477,7 +2477,7 @@ public class CPPSemantics {
 		ICPPFunction[] tmp= selectByArgumentCount(data, fns);
 	    if (tmp.length == 0 || tmp[0] == null)
 			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
-	    tmp= CPPTemplates.instantiateForFunctionCall(tmp, data.fTemplateArguments,
+	    tmp= CPPTemplates.instantiateForFunctionCall(tmp, data.getTemplateArguments(),
 	    		Arrays.asList(argTypes),
 	    		Arrays.asList(data.getFunctionArgumentValueCategories()),
 	    		data.argsContainImpliedObject, lookupPoint);

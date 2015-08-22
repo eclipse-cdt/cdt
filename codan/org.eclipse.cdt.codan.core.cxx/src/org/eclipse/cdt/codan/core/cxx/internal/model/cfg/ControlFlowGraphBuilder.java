@@ -397,17 +397,7 @@ public class ControlFlowGraphBuilder {
 		addOutgoing(decision, loopStart);
 		// Set break/continue
 		IConnectorNode nContinue = factory.createConnectorNode();
-		IConnectorNode savedContinue = outerContinue;
-		IConnectorNode savedBreak = outerBreak;
-		outerContinue = nContinue;
-		outerBreak = nBreak;
-		IBasicBlock endBody = decision;
-		try {
-			endBody = createSubGraph(loopStart, forNode.getBody());
-		} finally {
-			outerContinue = savedContinue;
-			outerBreak = savedBreak;
-		}
+		IBasicBlock endBody = createSubGraph(loopStart, forNode.getBody());
 		// inc
 		IPlainNode inc = factory.createPlainNode(forNode.getIterationExpression());
 		addOutgoing(endBody, nContinue);
@@ -505,14 +495,8 @@ public class ControlFlowGraphBuilder {
 		// continue/break
 		IConnectorNode nContinue = factory.createConnectorNode();
 		IConnectorNode nBreak = factory.createConnectorNode();
-		IConnectorNode savedContinue = outerContinue;
-		IConnectorNode savedBreak = outerBreak;
-		outerContinue = nContinue;
-		outerBreak = nBreak;
 		IBasicBlock endBody = createSubGraph(loopStart, body.getBody());
 		// Restore
-		outerContinue = savedContinue;
-		outerBreak = savedBreak;
 		// Add continue connector
 		addOutgoing(endBody, nContinue);
 		// Decision node
@@ -560,10 +544,10 @@ public class ControlFlowGraphBuilder {
 		if (prev instanceof IDecisionNode) {
 			if (node instanceof IBranchNode) {
 				IDecisionNode decisionNode = (IDecisionNode) prev;
-				if (isConstant(decisionNode, 1) && ((IBranchNode) node).getLabel().equals(IBranchNode.ELSE)) {
+				if (isConstant(decisionNode, true) && ((IBranchNode) node).getLabel().equals(IBranchNode.ELSE)) {
 					dead.add(node);
 					return;
-				} else if (isConstant(decisionNode, 0) && ((IBranchNode) node).getLabel().equals(IBranchNode.THEN)) {
+				} else if (isConstant(decisionNode, false) && ((IBranchNode) node).getLabel().equals(IBranchNode.THEN)) {
 					dead.add(node);
 					return;
 				}
@@ -577,7 +561,7 @@ public class ControlFlowGraphBuilder {
 			((AbstractBasicBlock) node).addIncoming(prev);
 	}
 
-	private boolean isConstant(IDecisionNode node, long testvalue) {
+	private boolean isConstant(IDecisionNode node, boolean testvalue) {
 		if (node instanceof ICfgData) {
 			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
 			if (ast instanceof IASTExpression) {
@@ -585,7 +569,12 @@ public class ControlFlowGraphBuilder {
 				Long numericalValue = dvalue.numericalValue();
 				if (numericalValue == null)
 					return false;
-				return numericalValue == testvalue;
+				return (numericalValue != 0) == testvalue;
+			}
+			else if (ast == null) {
+				// Empty decision nodes are regarded as true. This gives the correct
+				// interpretation of the empty condition in for(;;){...}
+				return testvalue;
 			}
 		}
 		return false;

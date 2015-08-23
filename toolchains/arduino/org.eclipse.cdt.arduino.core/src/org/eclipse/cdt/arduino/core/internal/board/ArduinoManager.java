@@ -16,12 +16,14 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,19 +38,26 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.Messages;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
+import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-// Closeable isn't API yet but it's recommended.
-public class ArduinoBoardManager {
+public class ArduinoManager {
 
-	public static final ArduinoBoardManager instance = new ArduinoBoardManager();
+	public static final ArduinoManager instance = new ArduinoManager();
 
 	// Build tool ids
 	public static final String BOARD_OPTION_ID = "org.eclipse.cdt.arduino.option.board"; //$NON-NLS-1$
@@ -59,13 +68,25 @@ public class ArduinoBoardManager {
 	private Path packageIndexPath = ArduinoPreferences.getArduinoHome().resolve("package_index.json"); //$NON-NLS-1$
 	private PackageIndex packageIndex;
 
-	public ArduinoBoardManager() {
+	private Path libraryIndexPath = ArduinoPreferences.getArduinoHome().resolve("library_index.json"); //$NON-NLS-1$
+	private LibraryIndex libraryIndex;
+
+	public ArduinoManager() {
 		new Job(Messages.ArduinoBoardManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					URL url = new URL("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
+					// library index has the same parent right now
 					Files.createDirectories(packageIndexPath.getParent());
-					Files.copy(url.openStream(), packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
+
+					URL packageUrl = new URL("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
+					try (InputStream in = packageUrl.openStream()) {
+						Files.copy(in, packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
+					}
+
+					URL libraryUrl = new URL("http://downloads.arduino.cc/libraries/library_index.json"); //$NON-NLS-1$
+					try (InputStream in = libraryUrl.openStream()) {
+						Files.copy(in, libraryIndexPath, StandardCopyOption.REPLACE_EXISTING);
+					}
 				} catch (IOException e) {
 					return new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e);
 				}
@@ -84,6 +105,18 @@ public class ArduinoBoardManager {
 			}
 		}
 		return packageIndex;
+	}
+
+	public LibraryIndex getLibraryIndex() throws CoreException {
+		if (libraryIndex == null) {
+			try (FileReader reader = new FileReader(libraryIndexPath.toFile())) {
+				libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+				libraryIndex.resolve();
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Reading library index", e));
+			}
+		}
+		return libraryIndex;
 	}
 
 	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {
@@ -113,6 +146,63 @@ public class ArduinoBoardManager {
 	public ArduinoTool getTool(String packageName, String toolName, String version) {
 		ArduinoPackage pkg = packageIndex.getPackage(packageName);
 		return pkg != null ? pkg.getTool(toolName, version) : null;
+	}
+
+	private static final String LIBRARIES = "libraries"; //$NON-NLS-1$
+
+	private IEclipsePreferences getSettings(IProject project) {
+		return (IEclipsePreferences) new ProjectScope(project).getNode(Activator.getId());
+	}
+
+	public Collection<ArduinoLibrary> getLibraries(IProject project) throws CoreException {
+		IEclipsePreferences settings = getSettings(project);
+		String librarySetting = settings.get(LIBRARIES, "[]"); //$NON-NLS-1$
+		Type stringSet = new TypeToken<Set<String>>() {
+		}.getType();
+		Set<String> libraryNames = new Gson().fromJson(librarySetting, stringSet);
+		LibraryIndex index = ArduinoManager.instance.getLibraryIndex();
+		List<ArduinoLibrary> libraries = new ArrayList<>(libraryNames.size());
+		for (String name : libraryNames) {
+			libraries.add(index.getLibrary(name));
+		}
+		return libraries;
+	}
+
+	public void setLibraries(final IProject project, final Collection<ArduinoLibrary> libraries) throws CoreException {
+		List<String> libraryNames = new ArrayList<>(libraries.size());
+		for (ArduinoLibrary library : libraries) {
+			libraryNames.add(library.getName());
+		}
+		IEclipsePreferences settings = getSettings(project);
+		settings.put(LIBRARIES, new Gson().toJson(libraryNames));
+		try {
+			settings.flush();
+		} catch (BackingStoreException e) {
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e));
+		}
+
+		new Job("Install libraries") {
+			protected IStatus run(IProgressMonitor monitor) {
+				MultiStatus mstatus = new MultiStatus(Activator.getId(), 0, "Installing libraries", null);
+				for (ArduinoLibrary library : libraries) {
+					IStatus status = library.install(monitor);
+					if (!status.isOK()) {
+						mstatus.add(status);
+					}
+				}
+
+				// Clear the scanner info caches to pick up new includes
+				try {
+					for (IBuildConfiguration config : project.getBuildConfigs()) {
+						ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
+						arduinoConfig.clearScannerInfoCache();
+					}
+				} catch (CoreException e) {
+					mstatus.add(e.getStatus());
+				}
+				return mstatus;
+			}
+		}.schedule();
 	}
 
 	public static IStatus downloadAndInstall(String url, String archiveFileName, Path installPath,

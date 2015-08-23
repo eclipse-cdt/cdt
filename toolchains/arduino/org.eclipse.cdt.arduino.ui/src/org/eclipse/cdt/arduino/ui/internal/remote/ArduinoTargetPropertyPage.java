@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
@@ -76,7 +76,7 @@ public class ArduinoTargetPropertyPage extends PropertyPage implements IWorkbenc
 
 		try {
 			ArduinoBoard currentBoard = arduinoRemote.getBoard();
-			Collection<ArduinoBoard> boardList = ArduinoBoardManager.instance.getBoards();
+			Collection<ArduinoBoard> boardList = ArduinoManager.instance.getBoards();
 			boards = new ArduinoBoard[boardList.size()];
 			i = 0;
 			int boardSel = 0;

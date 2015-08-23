@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.remote.core.IRemoteCommandShellService;
@@ -95,7 +95,7 @@ public class ArduinoRemoteConnection
 	}
 
 	public ArduinoBoard getBoard() throws CoreException {
-		return ArduinoBoardManager.instance.getBoard(remoteConnection.getAttribute(BOARD_NAME),
+		return ArduinoManager.instance.getBoard(remoteConnection.getAttribute(BOARD_NAME),
 				remoteConnection.getAttribute(PLATFORM_NAME), remoteConnection.getAttribute(PACKAGE_NAME));
 	}
 

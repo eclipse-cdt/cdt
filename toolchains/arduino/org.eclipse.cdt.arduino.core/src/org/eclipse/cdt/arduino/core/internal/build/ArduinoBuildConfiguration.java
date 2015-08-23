@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,8 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.ArduinoTemplateGenerator;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
@@ -170,7 +172,7 @@ public class ArduinoBuildConfiguration {
 			String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
 			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-			board = ArduinoBoardManager.instance.getBoard(boardName, platformName, packageName);
+			board = ArduinoManager.instance.getBoard(boardName, platformName, packageName);
 		}
 		return board;
 	}
@@ -442,6 +444,11 @@ public class ArduinoBuildConfiguration {
 		}
 	}
 
+	public void clearScannerInfoCache() {
+		cppScannerInfo = null;
+		cScannerInfo = null;
+	}
+
 	private IScannerInfo calculateScannerInfo(String recipe, IResource resource) throws CoreException {
 		try {
 			ArduinoPlatform platform = getBoard().getPlatform();
@@ -455,6 +462,12 @@ public class ArduinoBuildConfiguration {
 			String includes = "-E -P -v -dD"; //$NON-NLS-1$
 			for (Path include : platform.getIncludePath()) {
 				includes += " -I\"" + include.toString() + '"'; //$NON-NLS-1$
+			}
+			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(config.getProject());
+			for (ArduinoLibrary lib : libs) {
+				for (Path path : lib.getIncludePath()) {
+					includes += " -I\"" + path.toString() + '"'; //$NON-NLS-1$
+				}
 			}
 			properties.put("includes", includes); //$NON-NLS-1$
 

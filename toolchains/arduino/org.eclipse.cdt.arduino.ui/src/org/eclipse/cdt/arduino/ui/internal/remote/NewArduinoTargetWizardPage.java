@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.cdt.serial.SerialPort;
@@ -93,7 +93,7 @@ public class NewArduinoTargetWizardPage extends WizardPage {
 		boardCombo = new Combo(comp, SWT.READ_ONLY);
 		boardCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		try {
-			List<ArduinoBoard> boardList = ArduinoBoardManager.instance.getInstalledBoards();
+			List<ArduinoBoard> boardList = ArduinoManager.instance.getInstalledBoards();
 			Collections.sort(boardList, new Comparator<ArduinoBoard>() {
 				@Override
 				public int compare(ArduinoBoard o1, ArduinoBoard o2) {

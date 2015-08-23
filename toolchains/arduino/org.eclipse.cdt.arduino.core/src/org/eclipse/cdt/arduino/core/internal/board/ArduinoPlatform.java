@@ -179,7 +179,7 @@ public class ArduinoPlatform {
 		}
 
 		// Download platform archive
-		IStatus status = ArduinoBoardManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
+		IStatus status = ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
 		if (!status.isOK()) {
 			return status;
 		}

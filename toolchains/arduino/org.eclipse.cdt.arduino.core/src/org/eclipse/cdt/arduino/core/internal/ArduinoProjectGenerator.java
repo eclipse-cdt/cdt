@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuilder;
 import org.eclipse.cdt.core.CCProjectNature;
@@ -64,7 +64,7 @@ public class ArduinoProjectGenerator {
 
 		IBuildConfiguration config = project.getBuildConfig("uno"); //$NON-NLS-1$
 		ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-		ArduinoBoard board = ArduinoBoardManager.instance.getBoard("Arduino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ArduinoBoard board = ArduinoManager.instance.getBoard("Arduino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arduinoConfig.setBoard(board);
 
 		// Generate files

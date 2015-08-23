@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,8 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.ArduinoTemplateGenerator;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
@@ -170,7 +172,7 @@ public class ArduinoBuildConfiguration {
 			String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
 			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-			board = ArduinoBoardManager.instance.getBoard(boardName, platformName, packageName);
+			board = ArduinoManager.instance.getBoard(boardName, platformName, packageName);
 		}
 		return board;
 	}
@@ -184,7 +186,7 @@ public class ArduinoBuildConfiguration {
 			for (ToolDependency toolDep : platform.getToolsDependencies()) {
 				properties.putAll(toolDep.getTool().getToolProperties());
 			}
-			properties.put("runtime.ide.version", "1.6.7"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
 			properties.put("build.path", config.getName()); //$NON-NLS-1$
 		}
@@ -252,6 +254,16 @@ public class ArduinoBuildConfiguration {
 		}
 		buildModel.put("project_srcs", sourceFiles); //$NON-NLS-1$
 
+		// The list of library sources
+		List<String> librarySources = new ArrayList<>();
+		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
+			for (Path path : lib.getSources(project)) {
+				librarySources.add(path.toString());
+			}
+		}
+		buildModel.put("libraries_srcs", librarySources); //$NON-NLS-1$
+		buildModel.put("libraries_path", ArduinoPreferences.getArduinoHome().resolve("libraries")); //$NON-NLS-1$ //$NON-NLS-2$
+
 		// the recipes
 		Properties properties = new Properties();
 		properties.putAll(getProperties());
@@ -266,6 +278,11 @@ public class ArduinoBuildConfiguration {
 				includes += " -I"; //$NON-NLS-1$
 			}
 			includes += '"' + include.toString() + '"';
+		}
+		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
+			for (Path include : lib.getIncludePath()) {
+				includes += " -I\"" + include.toString() + '"'; //$NON-NLS-1$
+			}
 		}
 		properties.put("includes", includes); //$NON-NLS-1$
 
@@ -290,8 +307,8 @@ public class ArduinoBuildConfiguration {
 
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("archive_file", "libc.a"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("object_files", "$(PROJECT_OBJS)"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("archive_file", "core.a"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("object_files", "$(PROJECT_OBJS) $(LIBRARIES_OBJS)"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		buildModel.put("recipe_cpp_o_pattern", resolveProperty("recipe.cpp.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("recipe_c_o_pattern", resolveProperty("recipe.c.o.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -442,6 +459,11 @@ public class ArduinoBuildConfiguration {
 		}
 	}
 
+	public void clearScannerInfoCache() {
+		cppScannerInfo = null;
+		cScannerInfo = null;
+	}
+
 	private IScannerInfo calculateScannerInfo(String recipe, IResource resource) throws CoreException {
 		try {
 			ArduinoPlatform platform = getBoard().getPlatform();
@@ -455,6 +477,12 @@ public class ArduinoBuildConfiguration {
 			String includes = "-E -P -v -dD"; //$NON-NLS-1$
 			for (Path include : platform.getIncludePath()) {
 				includes += " -I\"" + include.toString() + '"'; //$NON-NLS-1$
+			}
+			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(config.getProject());
+			for (ArduinoLibrary lib : libs) {
+				for (Path path : lib.getIncludePath()) {
+					includes += " -I\"" + path.toString() + '"'; //$NON-NLS-1$
+				}
 			}
 			properties.put("includes", includes); //$NON-NLS-1$
 
@@ -499,7 +527,7 @@ public class ArduinoBuildConfiguration {
 	public ArduinoConsoleParser[] getBuildConsoleParsers() {
 		// ../src/Test.cpp:4:1: error: 'x' was not declared in this scope
 
-		return new ArduinoConsoleParser[] { new ArduinoErrorParser("(.*?):(\\d+):(\\d+:)? error: (.*)") { //$NON-NLS-1$
+		return new ArduinoConsoleParser[] { new ArduinoErrorParser("(.*?):(\\d+):(\\d+:)? (fatal )?error: (.*)") { //$NON-NLS-1$
 			@Override
 			protected int getSeverity(Matcher matcher) {
 				return IMarker.SEVERITY_ERROR;
@@ -507,7 +535,7 @@ public class ArduinoBuildConfiguration {
 
 			@Override
 			protected String getMessage(Matcher matcher) {
-				return matcher.group(4);
+				return matcher.group(5);
 			}
 
 			@Override

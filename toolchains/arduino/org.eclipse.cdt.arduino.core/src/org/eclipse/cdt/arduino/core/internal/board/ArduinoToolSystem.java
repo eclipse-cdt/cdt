@@ -72,7 +72,7 @@ public class ArduinoToolSystem {
 	}
 
 	public IStatus install(IProgressMonitor monitor) {
-		return ArduinoBoardManager.downloadAndInstall(url, archiveFileName, tool.getInstallPath(), monitor);
+		return ArduinoManager.downloadAndInstall(url, archiveFileName, tool.getInstallPath(), monitor);
 	}
 
 }

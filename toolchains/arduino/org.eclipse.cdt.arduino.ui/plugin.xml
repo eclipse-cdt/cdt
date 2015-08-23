@@ -49,6 +49,22 @@
             </adapt>
          </enabledWhen>
       </page>
+      <page
+            class="org.eclipse.cdt.arduino.ui.internal.project.LibrariesPropertyPage"
+            id="org.eclipse.cdt.arduino.ui.librariesPropertyPage"
+            name="Libraries">
+         <enabledWhen>
+            <and>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.eclipse.cdt.arduino.core.arduinoNature">
+               </test>
+            </and>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          point="org.eclipse.launchbar.ui.launchBarUIContributions">

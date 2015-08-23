@@ -21,7 +21,7 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.ArduinoTemplateGenerator;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
@@ -170,7 +170,7 @@ public class ArduinoBuildConfiguration {
 			String packageName = settings.get(PACKAGE_NAME, ""); //$NON-NLS-1$
 			String platformName = settings.get(PLATFORM_NAME, ""); //$NON-NLS-1$
 			String boardName = settings.get(BOARD_NAME, ""); //$NON-NLS-1$
-			board = ArduinoBoardManager.instance.getBoard(boardName, platformName, packageName);
+			board = ArduinoManager.instance.getBoard(boardName, platformName, packageName);
 		}
 		return board;
 	}

@@ -26,7 +26,7 @@ public class PackageIndex {
 		return null;
 	}
 
-	void setOwners(ArduinoBoardManager manager) {
+	void setOwners(ArduinoManager manager) {
 		for (ArduinoPackage pkg : packages) {
 			pkg.setOwner(manager);
 		}

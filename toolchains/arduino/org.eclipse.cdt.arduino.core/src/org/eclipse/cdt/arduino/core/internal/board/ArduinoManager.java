@@ -45,10 +45,9 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.google.gson.Gson;
 
-// Closeable isn't API yet but it's recommended.
-public class ArduinoBoardManager {
+public class ArduinoManager {
 
-	public static final ArduinoBoardManager instance = new ArduinoBoardManager();
+	public static final ArduinoManager instance = new ArduinoManager();
 
 	// Build tool ids
 	public static final String BOARD_OPTION_ID = "org.eclipse.cdt.arduino.option.board"; //$NON-NLS-1$
@@ -59,13 +58,20 @@ public class ArduinoBoardManager {
 	private Path packageIndexPath = ArduinoPreferences.getArduinoHome().resolve("package_index.json"); //$NON-NLS-1$
 	private PackageIndex packageIndex;
 
-	public ArduinoBoardManager() {
+	private Path libraryIndexPath = ArduinoPreferences.getArduinoHome().resolve("library_index.json"); //$NON-NLS-1$
+	private LibraryIndex libraryIndex;
+
+	public ArduinoManager() {
 		new Job(Messages.ArduinoBoardManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					URL url = new URL("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
+					URL packageUrl = new URL("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
 					Files.createDirectories(packageIndexPath.getParent());
-					Files.copy(url.openStream(), packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(packageUrl.openStream(), packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
+
+					URL libraryUrl = new URL("http://downloads.arduino.cc/libraries/library_index.json"); //$NON-NLS-1$
+					Files.createDirectories(libraryIndexPath.getParent());
+					Files.copy(libraryUrl.openStream(), libraryIndexPath, StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException e) {
 					return new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e);
 				}
@@ -84,6 +90,18 @@ public class ArduinoBoardManager {
 			}
 		}
 		return packageIndex;
+	}
+
+	public LibraryIndex getLibraryIndex() throws CoreException {
+		if (libraryIndex == null) {
+			try (FileReader reader = new FileReader(libraryIndexPath.toFile())) {
+				libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+				libraryIndex.resolve();
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Reading library index", e));
+			}
+		}
+		return libraryIndex;
 	}
 
 	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {

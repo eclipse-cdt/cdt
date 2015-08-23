@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoardManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.PackageIndex;
@@ -121,7 +121,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 		table.removeAll();
 
 		try {
-			PackageIndex packageIndex = ArduinoBoardManager.instance.getPackageIndex();
+			PackageIndex packageIndex = ArduinoManager.instance.getPackageIndex();
 			List<ArduinoBoard> boards = new ArrayList<>();
 			for (ArduinoPackage pkg : packageIndex.getPackages()) {
 				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {

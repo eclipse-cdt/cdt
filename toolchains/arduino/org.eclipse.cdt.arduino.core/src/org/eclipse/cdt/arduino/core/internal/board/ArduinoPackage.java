@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 public class ArduinoPackage {
 
 	private String name;
@@ -25,9 +23,9 @@ public class ArduinoPackage {
 	private List<ArduinoPlatform> platforms;
 	private List<ArduinoTool> tools;
 
-	private transient ArduinoBoardManager manager;
+	private transient ArduinoManager manager;
 
-	void setOwner(ArduinoBoardManager manager) {
+	void setOwner(ArduinoManager manager) {
 		this.manager = manager;
 		for (ArduinoPlatform platform : platforms) {
 			platform.setOwner(this);
@@ -37,7 +35,7 @@ public class ArduinoPackage {
 		}
 	}
 
-	ArduinoBoardManager getManager() {
+	ArduinoManager getManager() {
 		return manager;
 	}
 
@@ -94,7 +92,8 @@ public class ArduinoPackage {
 		return Collections.unmodifiableCollection(platformMap.values());
 	}
 
-	private int compareVersions(String version1, String version2) {
+	// TODO move somewhere.
+	public static int compareVersions(String version1, String version2) {
 		if (version1 == null) {
 			return version2 == null ? 0 : -1;
 		}
@@ -167,10 +166,6 @@ public class ArduinoPackage {
 			}
 		}
 		return null;
-	}
-
-	public void install(IProgressMonitor monitor) {
-
 	}
 
 	@Override

@@ -9,7 +9,6 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ResourceBundle;
@@ -34,7 +33,6 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * @since 4.0
  */
 public class ToggleSourceAndHeaderAction extends TextEditorAction {
-
 	private static ITranslationUnit fgLastPartnerUnit;
 	private static ITranslationUnit fgLastSourceUnit;
 
@@ -50,9 +48,6 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		IWorkingCopy currentUnit= getWorkingCopy();
@@ -83,9 +78,6 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 		return manager.getWorkingCopy(input);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
-	 */
 	@Override
 	public void update() {
 		setEnabled(getWorkingCopy() != null);
@@ -98,7 +90,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 	 * @return the partner translation unit
 	 */
 	private ITranslationUnit computePartnerFile(ITranslationUnit tUnit) {
-		// try shortcut for fast toggling
+		// Try shortcut for fast toggling.
 		if (fgLastPartnerUnit != null) {
 			final ITranslationUnit originalUnit;
 			if (tUnit instanceof IWorkingCopy) {
@@ -114,7 +106,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 			}
 		}
 
-		// search partner file based on filename/extension
+		// Search partner file based on filename/extension.
 		return SourceHeaderPartnerFinder.getPartnerTranslationUnit(tUnit);
 	}
 }

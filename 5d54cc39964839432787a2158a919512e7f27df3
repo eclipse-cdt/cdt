@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_a4b6546e",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-24T14:31:26Z",
+      "side": 0,
+      "message": "Why you removed that?",
+      "revId": "5d54cc39964839432787a2158a919512e7f27df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_44a7983f",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-24T14:31:26Z",
+      "side": 0,
+      "message": "And that?",
+      "revId": "5d54cc39964839432787a2158a919512e7f27df3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

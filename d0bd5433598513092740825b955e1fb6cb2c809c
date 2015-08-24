@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_c4a2682a",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-24T14:31:26Z",
+      "side": 1,
+      "message": "I don\u0027t want to change signature of this function. I want it to evaluate expression and compare to constants not just boolean",
+      "revId": "d0bd5433598513092740825b955e1fb6cb2c809c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

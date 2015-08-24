@@ -438,4 +438,40 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testDoubleSemicolonInSwitchCase_455828() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//  int foo(bool p) { // no error
+	//  for (;;) {
+	//      if (p) {
+	//        return 0;
+	//      }
+	//    }
+	//  }
+	public void testNonTerminatingForLoop() throws Exception {
+		checkSampleAbove();
+	}
+
+	//  int foo(bool p) { // error
+	//  for (int x=0; x < 10; x++) {
+	//      if (p) {
+	//        return 0;
+	//      }
+	//    }
+	//  }
+	public void testTerminatingForLoop() throws Exception {
+		checkSampleAbove();
+	}
+
+	//  int foo(bool p) { // no error
+	//  const int y = 5;
+	//  for (int x=0; y < 10; x++) {
+	//      if (p) {
+	//        return 0;
+	//      }
+	//    }
+	//  }
+	public void testForLoopWithConstantCondition() throws Exception {
+		// In this case, the condition can be inferred to be true because
+		// the variable has constant type.
+		checkSampleAbove();
+	}
 }

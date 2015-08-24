@@ -5730,7 +5730,7 @@ public class AST2Tests extends AST2TestBase {
 		assertNull(syntax);
 	}
 
-	// int a= 1+2-3*4+10/2; // -4
+	// const int a= 1+2-3*4+10/2; // -4
 	// int b= a+4;
 	// int* c= &b;
 	// enum X {e0, e4=4, e5, e2=2, e3};

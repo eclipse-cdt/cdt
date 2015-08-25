@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_b86af309",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/model/cfg/ControlFlowGraphBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-25T13:41:51Z",
+      "side": 1,
+      "message": "I still don\u0027t like you changing this function, how about you create another one with boolean signature and there you can call this one and you can add test for null there",
+      "revId": "5ad54c7b478acf6fa2f738ccd8349b66c64dce13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_18621f32",
+        "filename": "codan/org.eclipse.cdt.codan.core.test/src/org/eclipse/cdt/codan/core/cfg/ControlFlowGraphTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-25T13:41:51Z",
+      "side": 1,
+      "message": "why did you add const here? It should work without const, if it does not its a problem",
+      "revId": "5ad54c7b478acf6fa2f738ccd8349b66c64dce13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f8646b3e",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5733,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-25T13:41:51Z",
+      "side": 1,
+      "message": "test is testing this not being const",
+      "revId": "5ad54c7b478acf6fa2f738ccd8349b66c64dce13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_33e8e4ee",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/Value.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-08-25T13:41:51Z",
+      "side": 1,
+      "message": "This should not be changed. Evaluating code can figure out when this is applicable or not. For example in the initiazer this is the value const or not. Otherwise all our data-flow will fail.",
+      "revId": "5ad54c7b478acf6fa2f738ccd8349b66c64dce13",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

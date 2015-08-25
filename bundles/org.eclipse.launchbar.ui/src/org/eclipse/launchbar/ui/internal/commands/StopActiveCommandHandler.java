@@ -50,17 +50,24 @@ public class StopActiveCommandHandler extends AbstractHandler {
 		final ILaunch[] activeLaunches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		if (activeLaunches != null && activeLaunches.length > 0) {
 			new Job(Messages.StopActiveCommandHandler_0) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						ILaunchConfiguration activeConfig = launchBarManager.getActiveLaunchConfiguration();
+						if (activeConfig == null) {
+							return Status.OK_STATUS;
+						}
 						for (ILaunch launch : activeLaunches) {
 							ILaunchConfiguration launchConfig = launch.getLaunchConfiguration();
-							if (launchConfig != null && launchConfig.equals(activeConfig)) {
+							if (activeConfig.equals(launchConfig)) {
 								launch.terminate();
-							} else if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
+								continue;
+							}
+							if (launchConfig instanceof ILaunchConfigurationWorkingCopy) {
 								// There are evil delegates that use a working copy for scratch storage
-								if (((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal().equals(activeConfig)) {
+								if (activeConfig.equals(((ILaunchConfigurationWorkingCopy) launchConfig).getOriginal())) {
 									launch.terminate();
+									continue;
 								}
 							}
 						}

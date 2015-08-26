@@ -20,9 +20,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIProcesses2;
 
-public interface IGDBProcesses extends IMIProcesses {
+public interface IGDBProcesses extends IMIProcesses2 {
 	
     /**
      * This interface extends the DSF ThreadDMData to provide

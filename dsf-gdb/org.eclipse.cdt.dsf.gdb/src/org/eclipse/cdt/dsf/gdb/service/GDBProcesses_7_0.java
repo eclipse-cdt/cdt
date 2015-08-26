@@ -134,9 +134,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
 	/**
 	 * Context representing a thread in GDB/MI
+	 * @since 4.8
 	 */
 	@Immutable
-	private static class MIExecutionDMC extends AbstractDMContext 
+	public static class MIExecutionDMC extends AbstractDMContext 
 	implements IMIExecutionDMContext, IDisassemblyDMContext
 	{
 		/**
@@ -312,11 +313,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     	 * <p/>
     	 * 
     	 * @param sessionId Session that this context belongs to.
-         * @param controlDmc The control context parent of this process.
+         * @param dmc The parent of this process.
     	 * @param id process identifier.
     	 */
-    	public MIProcessDMC(String sessionId, ICommandControlDMContext controlDmc, String id) {
-			super(sessionId, controlDmc == null ? new IDMContext[0] : new IDMContext[] { controlDmc });
+    	public MIProcessDMC(String sessionId, IDMContext dmc, String id) {
+			super(sessionId, dmc == null ? new IDMContext[0] : new IDMContext[] { dmc });
     		fId = id;
     	}
     	
@@ -830,9 +831,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	@Override
     public IProcessDMContext createProcessContext(ICommandControlDMContext controlDmc, String pid) {
-        return new MIProcessDMC(getSession().getId(), controlDmc, pid);
+		return createProcessContext((IDMContext)controlDmc, pid);
     }
  
+	@Override
+    public IProcessDMContext createProcessContext(IDMContext dmc, String pid) {
+        return new MIProcessDMC(getSession().getId(), dmc, pid);
+    }
+
 	/**
 	 * Create a special context describing a process that has exited.
 	 * @param controlDmc Its parent context.
@@ -865,6 +871,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	@Override
     public IMIContainerDMContext createContainerContextFromThreadId(ICommandControlDMContext controlDmc, String threadId) {
+		return createContainerContextFromThreadId((IDMContext)controlDmc, threadId);
+	}
+	
+	@Override
+    public IMIContainerDMContext createContainerContextFromThreadId(IDMContext dmc, String threadId) {
     	String groupId = getThreadToGroupMap().get(threadId);
     	if (groupId == null) {
     		// this can happen if the threadId was 'all'
@@ -882,12 +893,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		}
     	}
     	
-    	return createContainerContextFromGroupId(controlDmc, groupId);
+    	return createContainerContextFromGroupId(dmc, groupId);
     }
 
     /** @since 4.0 */
 	@Override
     public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+		return createContainerContextFromGroupId((IDMContext)controlDmc, groupId);
+	}
+
+    /** @since 4.8 */
+	@Override
+    public IMIContainerDMContext createContainerContextFromGroupId(IDMContext dmc, String groupId) {
     	if (groupId == null || groupId.length() == 0) {
     		// This happens when we are doing non-attach, so for GDB < 7.2, we know that in that case
     		// we are single process, so lets see if we have the group in our map.
@@ -905,7 +922,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		// For GDB 7.0 and 7.1, the groupId is the pid, so we can use it directly
     		pid = groupId;
     	}
-    	IProcessDMContext processDmc = createProcessContext(controlDmc, pid);
+    	IProcessDMContext processDmc = createProcessContext(dmc, pid);
     	return createContainerContext(processDmc, groupId);
     }
     

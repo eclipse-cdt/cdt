@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_198e9eb8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/IScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T12:04:33Z",
+      "side": 1,
+      "message": "Document that the option conflicts with supportAtSignInIdentifiers, and state that it is undefined which option takes precedence (the defensive approach)",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_195cdec4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T12:04:33Z",
+      "side": 1,
+      "message": "Although 53 is not used, by convention the constant should be 51101",
+      "range": {
+        "startLine": 97,
+        "startChar": 11,
+        "endLine": 97,
+        "endChar": 13
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_795b5acd",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T12:04:33Z",
+      "side": 1,
+      "message": "No need to change the GNUCSourceParser at this point.",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_595656a4",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T12:04:33Z",
+      "side": 1,
+      "message": "One of the options fSupportAtSignInIdentifiers or fSupportAtSignOperator needs to win. Make a choice and enforce it. The constructor of the Lexer is probably the best place for that.",
+      "range": {
+        "startLine": 299,
+        "startChar": 20,
+        "endLine": 299,
+        "endChar": 42
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_f9c2aacc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T12:04:33Z",
+      "side": 1,
+      "message": "The previous formatting gave a better understanding of which characters are omitted.",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_99a28e29",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1146,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T12:04:33Z",
+      "side": 1,
+      "message": "The previous formatting was better",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -8,11 +8,9 @@
 package org.eclipse.cdt.internal.qt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.internal.qt.core.index.IQObject.IMember;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQmlRegistration;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQmlUncreatable;
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQObject.IMember;
-import org.eclipse.cdt.qt.core.index.IQmlRegistration;
 import org.eclipse.core.runtime.CoreException;
 
 public class QmlRegistration implements IQmlRegistration {

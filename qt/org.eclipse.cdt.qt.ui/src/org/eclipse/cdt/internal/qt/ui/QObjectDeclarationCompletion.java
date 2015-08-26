@@ -15,7 +15,6 @@ import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine.CTemplateProposal;
-import org.eclipse.cdt.qt.ui.QtUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;

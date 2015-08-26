@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.qt.core.QtKeywords;
 
 /**
  * Utility for managing interaction with QObject::connect and QObject::disconnect function

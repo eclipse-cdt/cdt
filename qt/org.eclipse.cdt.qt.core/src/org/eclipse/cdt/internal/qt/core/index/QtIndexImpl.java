@@ -18,13 +18,9 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.qt.core.ASTUtil;
+import org.eclipse.cdt.internal.qt.core.QtKeywords;
 import org.eclipse.cdt.internal.qt.core.pdom.AbstractQtPDOMClass;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQObject;
-import org.eclipse.cdt.qt.core.QtKeywords;
-import org.eclipse.cdt.qt.core.index.IQGadget;
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQmlRegistration;
-import org.eclipse.cdt.qt.core.index.QtIndex;
 import org.eclipse.core.runtime.CoreException;
 
 public class QtIndexImpl extends QtIndex {

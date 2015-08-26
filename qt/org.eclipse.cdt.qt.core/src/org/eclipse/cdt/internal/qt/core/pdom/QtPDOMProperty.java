@@ -10,8 +10,8 @@ package org.eclipse.cdt.internal.qt.core.pdom;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.qt.core.QtPlugin;
-import org.eclipse.cdt.qt.core.index.IQProperty;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.index.IQProperty;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")

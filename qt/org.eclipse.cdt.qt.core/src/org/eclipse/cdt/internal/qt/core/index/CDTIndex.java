@@ -8,7 +8,7 @@
 package org.eclipse.cdt.internal.qt.core.index;
 
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 /**

@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.qt.core;singleton:=true
-Bundle-Version: 1.1.0.qualifier
-Bundle-Activator: org.eclipse.cdt.qt.core.QtPlugin
+Bundle-Version: 2.0.0.qualifier
+Bundle-Activator: org.eclipse.cdt.internal.qt.core.QtPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -16,7 +16,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.internal.qt.core;x-friends:="org.eclipse.cdt.qt.ui,org.eclipse.cdt.qt.tests",
+ org.eclipse.cdt.internal.qt.core.build;x-friends:="org.eclipse.cdt.qt.ui",
  org.eclipse.cdt.internal.qt.core.index;x-friends:="org.eclipse.cdt.qt.tests",
  org.eclipse.cdt.internal.qt.core.parser;x-friends:="org.eclipse.cdt.qt.ui",
- org.eclipse.cdt.qt.core,
- org.eclipse.cdt.qt.core.index
+ org.eclipse.cdt.internal.qt.core.project;x-friends:="org.eclipse.cdt.qt.ui"
+Bundle-ClassPath: libs/freemarker-2.3.22.jar,
+ .

@@ -41,9 +41,12 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.cdt.qt.core.QtNature">
+               class="org.eclipse.cdt.internal.qt.core.QtNature">
          </run>
       </runtime>
+      <builder
+            id="org.eclipse.cdt.qt.core.qtBuilder">
+      </builder>
    </extension>
     <extension
         point="org.eclipse.cdt.core.PDOMASTProcessor"
@@ -111,5 +114,17 @@
         name="Qt C/C++ Problem">
         <super type="org.eclipse.cdt.codan.core.codanProblem"/> 
         <persistent value="true"/>
+    </extension>
+    <extension
+          id="qtBuilder"
+          point="org.eclipse.core.resources.builders">
+       <builder
+             callOnEmptyDelta="true"
+             hasNature="true"
+             isConfigurable="true"
+             supportsConfigurations="true">
+          <run
+                class="org.eclipse.cdt.internal.qt.core.build.QtBuilder">
+          </run></builder>
     </extension>
 </plugin>

@@ -7,7 +7,7 @@
  */
 package org.eclipse.cdt.internal.qt.ui.assist;
 
-import org.eclipse.cdt.qt.ui.QtUIPlugin;
+import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.templates.Template;

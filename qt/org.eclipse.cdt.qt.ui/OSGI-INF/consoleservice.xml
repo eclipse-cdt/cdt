@@ -1,0 +1,6 @@
+<component name="QtConsoleService">
+    <implementation class="org.eclipse.cdt.internal.qt.ui.QtConsoleService"/>
+    <service>
+        <provide interface="org.eclipse.cdt.internal.qt.core.build.IConsoleService"/>
+    </service>
+</component>

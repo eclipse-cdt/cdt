@@ -13,8 +13,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.qt.core.index.IQObject;
-
 public class QObjectMembers<T extends IQObject.IMember> implements IQObject.IMembers<T>  {
 
 	private final List<T> all;

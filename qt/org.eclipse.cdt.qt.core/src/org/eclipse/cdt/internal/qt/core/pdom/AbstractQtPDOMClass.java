@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 /**

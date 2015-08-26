@@ -9,9 +9,9 @@ package org.eclipse.cdt.qt.tests;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.qt.core.index.IQEnum;
-import org.eclipse.cdt.qt.core.index.IQGadget;
-import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.cdt.internal.qt.core.index.IQEnum;
+import org.eclipse.cdt.internal.qt.core.index.IQGadget;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 
 public class QGadgetTests extends BaseQtTestCase {
 

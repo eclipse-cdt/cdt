@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.qt.core.QtKeywords;
 
 /**
  * Extracts required information from FunctionCallExpressions that call

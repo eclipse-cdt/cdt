@@ -12,7 +12,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.qt.core.QtKeywords;
+import org.eclipse.cdt.internal.qt.core.QtKeywords;
 import org.eclipse.cdt.ui.text.ISemanticHighlighter;
 import org.eclipse.cdt.ui.text.ISemanticToken;
 

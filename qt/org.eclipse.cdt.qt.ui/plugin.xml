@@ -35,4 +35,16 @@
             <partition type="__c_preprocessor"/>
         </completionProposalComputer>
     </extension>
+    <extension
+          point="org.eclipse.ui.newWizards">
+       <wizard
+             category="org.eclipse.cdt.ui.newCWizards"
+             class="org.eclipse.cdt.internal.qt.ui.NewQtProjectWizard"
+             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+             icon="icons/newcc_app.gif"
+             id="org.eclipse.cdt.qt.ui.newProject"
+             name="%newProject.name"
+             project="true">
+       </wizard>
+    </extension>
 </plugin>

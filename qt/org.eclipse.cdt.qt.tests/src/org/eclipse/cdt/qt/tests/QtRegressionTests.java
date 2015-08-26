@@ -16,12 +16,12 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.internal.core.model.ext.SourceRange;
+import org.eclipse.cdt.internal.qt.core.index.IQMethod;
+import org.eclipse.cdt.internal.qt.core.index.IQObject;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
-import org.eclipse.cdt.qt.core.index.IQMethod;
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.QtIndex;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;

@@ -9,6 +9,7 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Alexander Nyßen (itemis AG) - Support for @ operator token (bug #475777)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -90,6 +91,10 @@ public interface IToken {
 	int tDOT = 50;
 	int tDIVASSIGN = 51;
 	int tDIV = 52;
+	/**
+	 * @since 5.11
+	 */
+	int tAT = 53;
 	/**
 	 * @see IScanner#setSplitShiftROperator(boolean)
 	 * @since 5.2

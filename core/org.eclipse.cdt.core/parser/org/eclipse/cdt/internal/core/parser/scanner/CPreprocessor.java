@@ -296,6 +296,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLog = AbstractParserLogService.convert(log);
         fAdditionalNumericLiteralSuffixes= nonNull(configuration.supportAdditionalNumericLiteralSuffixes());
         fLexOptions.fSupportDollarInIdentifiers= configuration.support$InIdentifiers();
+        fLexOptions.fSupportAtSignOperator = configuration.supportAtSignOperator();
         fLexOptions.fSupportAtSignInIdentifiers= configuration.supportAtSignInIdentifiers();
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
         fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();

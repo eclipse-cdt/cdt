@@ -96,6 +96,16 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		return null;
 	}
 
+	/**
+	 * IAR specific language extension, not supported by default.
+	 * 
+	 * @since 5.11
+	 */
+	@Override
+	public boolean supportAtSignOperator() {
+		return false;
+	}
+	
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#supportMinAndMaxOperators()
 	 */

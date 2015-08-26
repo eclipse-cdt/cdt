@@ -13,6 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Anders Dahlberg (Ericsson) - bug 84144
+ *     Alexander Nyßen (itemis AG) - Support for @ operator token (bug #475777)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 

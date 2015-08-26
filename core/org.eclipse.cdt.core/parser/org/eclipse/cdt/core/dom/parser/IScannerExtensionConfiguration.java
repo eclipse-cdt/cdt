@@ -19,16 +19,18 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 /**
  * Scanner extension configuration interface.
  *
- * @noimplement This interface is not intended to be implemented by clients. Clients can subclass
- * {@link AbstractScannerExtensionConfiguration}, instead.
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients can subclass
+ *              {@link AbstractScannerExtensionConfiguration}, instead.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IScannerExtensionConfiguration {
 
 	/**
 	 * @return <code>true</code>, if macros should be initialized to 1
-	 * @deprecated empty macros are taken as they are. It is the task of configuration to provide the correct values.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=215789
+	 * @deprecated empty macros are taken as they are. It is the task of
+	 *             configuration to provide the correct values. See
+	 *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=215789
 	 */
 	@Deprecated
 	public boolean initializeMacroValuesTo1();
@@ -42,28 +44,39 @@ public interface IScannerExtensionConfiguration {
 	public boolean support$InIdentifiers();
 
 	/**
-	 * Support for extension "At Signs in Identifier Names". If enabled, the '@' sign is treated as part of
-	 * identifiers.
+	 * Support for extension "At Signs in Identifier Names". If enabled, the '@'
+	 * sign is treated as part of identifiers.
+	 * 
 	 * @return <code>true</code>, if @ should be supported in identifiers
 	 * @since 5.1
 	 */
 	public boolean supportAtSignInIdentifiers();
 
-	/** 
+	/**
+	 * Support for @ operator (to specify memory location), as supported by IAR
+	 * C/C++ Compiler for RL78 in relaxed mode.
+	 * 
+	 * @return <code>true</code>, if @ operator should be supported, i.e. not
+	 *         treated as a bad character sequence
+	 * @since 5.11
+	 */
+	public boolean supportAtSignOperator();
+
+	/**
 	 * Support for block-comments comments using /% %/.
-	 * @return <code>true</code>, if /% should be interpreted as the start of a block-comment which is
-	 * ended by %/
+	 * 
+	 * @return <code>true</code>, if /% should be interpreted as the start of a
+	 *         block-comment which is ended by %/
 	 * @since 5.1
 	 */
 	public boolean supportSlashPercentComments();
 
 	/**
-	 * Support for (deprecated) GNU minimum and maximum operators (<code>&lt;?</code>
-	 * and <code>&gt;?</code>).
+	 * Support for (deprecated) GNU minimum and maximum operators (
+	 * <code>&lt;?</code> and <code>&gt;?</code>).
 	 * 
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Deprecated-Features.html"
-	 * @return <code>true</code> if support for the extension should be
-	 *         enabled
+	 * @return <code>true</code> if support for the extension should be enabled
 	 */
 	public boolean supportMinAndMaxOperators();
 
@@ -72,8 +85,8 @@ public interface IScannerExtensionConfiguration {
 	 * and 'j' for GNU Complex number literals.
 	 * 
 	 * @see "http://gcc.gnu.org/onlinedocs/gcc/Complex.html"
-	 * @return an array of chars or <code>null</code>, if no additional
-	 *         suffixes should be allowed
+	 * @return an array of chars or <code>null</code>, if no additional suffixes
+	 *         should be allowed
 	 */
 	public char[] supportAdditionalNumericLiteralSuffixes();
 
@@ -87,6 +100,7 @@ public interface IScannerExtensionConfiguration {
 
 	/**
 	 * Support for additional macros.
+	 * 
 	 * @return an array of macros or <code>null</code> for no additional macros.
 	 */
 	public IMacro[] getAdditionalMacros();
@@ -96,28 +110,30 @@ public interface IScannerExtensionConfiguration {
 	 * 
 	 * @return a mapping of preprocessor directive keyword to one of the
 	 *         constants defined in
-	 *         {@link org.eclipse.cdt.core.parser.IPreprocessorDirective IPreprocessorDirective}
-	 *         or <code>null</code> for no additional keywords.
+	 *         {@link org.eclipse.cdt.core.parser.IPreprocessorDirective
+	 *         IPreprocessorDirective} or <code>null</code> for no additional
+	 *         keywords.
 	 */
 	public CharArrayIntMap getAdditionalPreprocessorKeywords();
-	
-	
+
 	/**
-     * Support for UTF string literals.
-     *
+	 * Support for UTF string literals.
+	 *
 	 * @since 5.1
-     * @see "http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.xlcpp101.aix.doc/language_ref/unicode_standard.html"
+	 * @see "http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.xlcpp101.aix.doc/language_ref/unicode_standard.html"
 	 */
 	public boolean supportUTFLiterals();
-	
+
 	/**
-     * Support for C++ raw string literals.
+	 * Support for C++ raw string literals.
+	 * 
 	 * @since 5.5
 	 */
 	public boolean supportRawStringLiterals();
-		
+
 	/**
 	 * Support for User Defined Literals such as 123_suffix
+	 * 
 	 * @since 5.11
 	 */
 	public boolean supportUserDefinedLiterals();

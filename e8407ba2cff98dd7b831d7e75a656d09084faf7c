@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_b4faf780",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/IScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T13:46:06Z",
+      "side": 1,
+      "message": "Independent of the implementation it must be documented what happens when one chooses both options. I think the best choice is to say that one of the options will win without saying which one.",
+      "parentUuid": "2721e7e2_79ccface",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_195cdec4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
         "patchSetId": 1
@@ -72,6 +90,30 @@
       "side": 1,
       "message": "I didn\u0027t quite get the conventions. Easy to do so...",
       "parentUuid": "2721e7e2_195cdec4",
+      "range": {
+        "startLine": 97,
+        "startChar": 11,
+        "endLine": 97,
+        "endChar": 13
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_d407ab23",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T13:46:06Z",
+      "side": 1,
+      "message": "Added in version 5.11 \u003d\u003d \u003e 511xx",
+      "parentUuid": "2721e7e2_39a9e2dc",
       "range": {
         "startLine": 97,
         "startChar": 11,
@@ -166,6 +208,30 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_942413b8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T13:46:06Z",
+      "side": 1,
+      "message": "With your implementation, the identifier would not be split in case both options are chosen. Independent of that, it is best to ensure that only one of the Lexer does not have to work with conflicting settings. This can be done silently (in the constructor of the Lexer) with one option taking precedence over the other.",
+      "parentUuid": "2721e7e2_b9803250",
+      "range": {
+        "startLine": 299,
+        "startChar": 20,
+        "endLine": 299,
+        "endChar": 42
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_f9c2aacc",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
         "patchSetId": 1
@@ -195,6 +261,24 @@
       "side": 1,
       "message": "I used auto formatting on the file. Do you have a specific formatter or was it manually formatted?",
       "parentUuid": "2721e7e2_f9c2aacc",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_143023eb",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-26T13:46:06Z",
+      "side": 1,
+      "message": "Isn\u0027t that obvious?",
+      "parentUuid": "2721e7e2_d98d2687",
       "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

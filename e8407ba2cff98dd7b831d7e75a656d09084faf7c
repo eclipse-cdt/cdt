@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_79ccface",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/parser/IScannerExtensionConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-26T12:52:03Z",
+      "side": 1,
+      "message": "As the at sign operator is handled first, I think the precedence is defined. I assume as its currently implemented, whenever the operator option is enabled, identifiers would be split at @ characters, not?",
+      "parentUuid": "2721e7e2_198e9eb8",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_195cdec4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2015-08-26T12:04:33Z",
       "side": 1,
       "message": "Although 53 is not used, by convention the constant should be 51101",
+      "range": {
+        "startLine": 97,
+        "startChar": 11,
+        "endLine": 97,
+        "endChar": 13
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_39a9e2dc",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-26T12:52:03Z",
+      "side": 1,
+      "message": "I didn\u0027t quite get the conventions. Easy to do so...",
+      "parentUuid": "2721e7e2_195cdec4",
       "range": {
         "startLine": 97,
         "startChar": 11,
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_599e56b5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-26T12:52:03Z",
+      "side": 1,
+      "message": "Indeed, it seems it was just touched, so the formatting was affected.",
+      "parentUuid": "2721e7e2_795b5acd",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_595656a4",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
         "patchSetId": 1
@@ -82,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_b9803250",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-26T12:52:03Z",
+      "side": 1,
+      "message": "I think from the current implementation, fSupportAtSignOperator will always win, because the operator case is handled first, no matter which value the at sign in identifiers has. Would I have to throw an exception if both are set to true or should we live with this precedence?",
+      "parentUuid": "2721e7e2_595656a4",
+      "range": {
+        "startLine": 299,
+        "startChar": 20,
+        "endLine": 299,
+        "endChar": 42
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_f9c2aacc",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
         "patchSetId": 1
@@ -93,6 +177,24 @@
       "writtenOn": "2015-08-26T12:04:33Z",
       "side": 1,
       "message": "The previous formatting gave a better understanding of which characters are omitted.",
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_d98d2687",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-26T12:52:03Z",
+      "side": 1,
+      "message": "I used auto formatting on the file. Do you have a specific formatter or was it manually formatted?",
+      "parentUuid": "2721e7e2_f9c2aacc",
       "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

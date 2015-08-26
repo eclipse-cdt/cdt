@@ -20,8 +20,13 @@ import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.LaunchBarUIManager;
@@ -45,6 +50,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 public class TargetSelector extends CSelector {
 
@@ -94,13 +100,37 @@ public class TargetSelector extends CSelector {
 
 	@Override
 	public boolean isEditable(Object element) {
-		// TODO
-		return false;
+
+		return true;
 	}
 
+	private ISelectionProvider getSelectionProvider(){
+		return new ISelectionProvider() {
+			@Override
+			public void setSelection(ISelection selection) {
+				// ignore
+			}
+
+			@Override
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+				// ignore
+			}
+
+			@Override
+			public ISelection getSelection() {
+				return new StructuredSelection(TargetSelector.this.getSelection());
+			}
+
+			@Override
+			public void addSelectionChangedListener(ISelectionChangedListener listener) {
+				// ignore
+			}
+		};
+	}
 	@Override
 	public void handleEdit(Object element) {
-		// TODO
+		// opens property dialog on a selected target
+		new PropertyDialogAction(new SameShellProvider(getShell()),	getSelectionProvider()).run();
 	}
 
 	@Override
@@ -138,6 +168,7 @@ public class TargetSelector extends CSelector {
 		createLabel.setBackground(backgroundColor);
 
 		MouseListener mouseListener = new MouseAdapter() {
+			@Override
 			public void mouseUp(org.eclipse.swt.events.MouseEvent event) {
 				try {
 					ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);

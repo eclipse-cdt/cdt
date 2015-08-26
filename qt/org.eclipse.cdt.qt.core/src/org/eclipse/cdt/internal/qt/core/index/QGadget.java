@@ -13,8 +13,6 @@ import java.util.List;
 
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQEnum;
 import org.eclipse.cdt.internal.qt.core.pdom.AbstractQtPDOMClass;
-import org.eclipse.cdt.qt.core.index.IQEnum;
-import org.eclipse.cdt.qt.core.index.IQGadget;
 import org.eclipse.core.runtime.CoreException;
 
 public class QGadget implements IQGadget {

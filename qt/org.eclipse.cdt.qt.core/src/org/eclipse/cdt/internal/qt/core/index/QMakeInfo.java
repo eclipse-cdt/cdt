@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.qt.core.QtPlugin;
-import org.eclipse.cdt.qt.core.index.IQtVersion;
-import org.eclipse.cdt.qt.core.index.IQMakeInfo;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 /**

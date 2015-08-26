@@ -10,8 +10,7 @@ package org.eclipse.cdt.internal.qt.core.index;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.qt.core.QtPlugin;
-import org.eclipse.cdt.qt.core.index.IQtVersion;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 
 /**
  * A container class to interpret and store value of the the qmake version.

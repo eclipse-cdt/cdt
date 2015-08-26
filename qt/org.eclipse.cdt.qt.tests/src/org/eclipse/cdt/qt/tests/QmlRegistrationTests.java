@@ -9,9 +9,9 @@ package org.eclipse.cdt.qt.tests;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQmlRegistration;
-import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.cdt.internal.qt.core.index.IQObject;
+import org.eclipse.cdt.internal.qt.core.index.IQmlRegistration;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 
 public class QmlRegistrationTests extends BaseQtTestCase {
 

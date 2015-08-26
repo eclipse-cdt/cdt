@@ -18,8 +18,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.internal.qt.core.ASTUtil;
-import org.eclipse.cdt.qt.core.QtKeywords;
-import org.eclipse.cdt.qt.core.index.IQmlRegistration;
+import org.eclipse.cdt.internal.qt.core.QtKeywords;
+import org.eclipse.cdt.internal.qt.core.index.IQmlRegistration;
 import org.eclipse.core.runtime.CoreException;
 
 public class QmlTypeRegistration extends ASTDelegatedName implements IQtASTName {

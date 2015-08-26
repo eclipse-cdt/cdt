@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.qt.core.index.IQEnum;
 
 public class QEnum implements IQEnum {
 

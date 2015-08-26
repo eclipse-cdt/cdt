@@ -13,7 +13,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.qt.core.index.IQProperty;
+import org.eclipse.cdt.internal.qt.core.index.IQProperty;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")

@@ -12,10 +12,8 @@ import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.qt.core.QtMethodUtil;
+import org.eclipse.cdt.internal.qt.core.index.IQObject.IMember;
 import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQMethod;
-import org.eclipse.cdt.qt.core.index.IQMethod;
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQObject.IMember;
 import org.eclipse.core.runtime.CoreException;
 
 public class QMethod implements IQMethod {

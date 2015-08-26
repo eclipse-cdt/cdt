@@ -18,8 +18,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.qt.core.QtPlugin;
-import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 

@@ -7,8 +7,8 @@
  */
 package org.eclipse.cdt.qt.tests;
 
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.cdt.internal.qt.core.index.IQObject;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 
 public class QtIndexTests extends BaseQtTestCase {
 

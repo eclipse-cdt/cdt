@@ -11,10 +11,8 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.qt.core.QtPlugin;
-import org.eclipse.cdt.qt.core.index.IQMakeEnv;
-import org.eclipse.cdt.qt.core.index.IQMakeEnvProvider;
-import org.eclipse.cdt.qt.core.index.IQMakeEnvProvider.IController;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.index.IQMakeEnvProvider.IController;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;

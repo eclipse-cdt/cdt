@@ -21,13 +21,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.qt.core.index.IQMethod;
+import org.eclipse.cdt.internal.qt.core.index.IQObject;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
 import org.eclipse.cdt.internal.qt.core.pdom.ASTNameReference;
 import org.eclipse.cdt.internal.qt.core.pdom.QtASTImageLocation;
-import org.eclipse.cdt.qt.core.QtKeywords;
-import org.eclipse.cdt.qt.core.QtPlugin;
-import org.eclipse.cdt.qt.core.index.IQMethod;
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.QtIndex;
 import org.eclipse.core.resources.IProject;
 
 /**

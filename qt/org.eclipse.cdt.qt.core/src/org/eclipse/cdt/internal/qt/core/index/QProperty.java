@@ -7,9 +7,6 @@
  */
 package org.eclipse.cdt.internal.qt.core.index;
 
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQProperty;
-
 public class QProperty extends AbstractQField implements IQProperty {
 
 	private String type;

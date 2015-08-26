@@ -7,8 +7,7 @@
  */
 package org.eclipse.cdt.internal.qt.core.index;
 
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQObject.IMember;
+import org.eclipse.cdt.internal.qt.core.index.IQObject.IMember;
 
 public abstract class AbstractQField implements IQObject.IMember {
 

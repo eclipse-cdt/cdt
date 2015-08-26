@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPGlobalScope;
-import org.eclipse.cdt.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 @SuppressWarnings("restriction")

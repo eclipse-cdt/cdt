@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.qt.core.QtPlugin;
+import org.eclipse.cdt.internal.qt.core.QtPlugin;
 
 /**
  * Provides a parser for QMake output.

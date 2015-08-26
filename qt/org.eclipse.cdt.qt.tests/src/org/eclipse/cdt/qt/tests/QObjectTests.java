@@ -18,12 +18,12 @@ import java.util.Set;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.qt.core.index.IQEnum;
-import org.eclipse.cdt.qt.core.index.IQMethod;
-import org.eclipse.cdt.qt.core.index.IQObject;
-import org.eclipse.cdt.qt.core.index.IQProperty;
-import org.eclipse.cdt.qt.core.index.IQProperty.Attribute;
-import org.eclipse.cdt.qt.core.index.QtIndex;
+import org.eclipse.cdt.internal.qt.core.index.IQEnum;
+import org.eclipse.cdt.internal.qt.core.index.IQMethod;
+import org.eclipse.cdt.internal.qt.core.index.IQObject;
+import org.eclipse.cdt.internal.qt.core.index.IQProperty;
+import org.eclipse.cdt.internal.qt.core.index.QtIndex;
+import org.eclipse.cdt.internal.qt.core.index.IQProperty.Attribute;
 
 public class QObjectTests extends BaseQtTestCase {
 

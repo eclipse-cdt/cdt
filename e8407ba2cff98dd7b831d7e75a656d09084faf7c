@@ -126,6 +126,30 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_1e0cbd46",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/parser/IToken.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-27T06:06:44Z",
+      "side": 1,
+      "message": "Yeah, I got it...",
+      "parentUuid": "2721e7e2_d407ab23",
+      "range": {
+        "startLine": 97,
+        "startChar": 11,
+        "endLine": 97,
+        "endChar": 13
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_795b5acd",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
         "patchSetId": 1
@@ -220,6 +244,30 @@
       "side": 1,
       "message": "With your implementation, the identifier would not be split in case both options are chosen. Independent of that, it is best to ensure that only one of the Lexer does not have to work with conflicting settings. This can be done silently (in the constructor of the Lexer) with one option taking precedence over the other.",
       "parentUuid": "2721e7e2_b9803250",
+      "range": {
+        "startLine": 299,
+        "startChar": 20,
+        "endLine": 299,
+        "endChar": 42
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_fe01e911",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 12934
+      },
+      "writtenOn": "2015-08-27T06:06:44Z",
+      "side": 1,
+      "message": "What is the actual use case behind the atSignInIdentifiers? Is it Objective-C or are there other usage scenarios? Could be important for the decision about which option should win.",
+      "parentUuid": "2721e7e2_942413b8",
       "range": {
         "startLine": 299,
         "startChar": 20,

@@ -280,6 +280,30 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_3e30a19c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 579
+      },
+      "writtenOn": "2015-08-27T07:38:33Z",
+      "side": 1,
+      "message": "I cannot remember what the extension was needed for, the commit that introduced it will point to a bug report. \nEither way will work though: When you configure both options, and the wrong option wins, well then just configure the one you need, rather than both.\n\nFor me the important things are:\n* document that the options conflict with each other\n* let one option win over the other in order to avoid strange behavior in case of a misconfiguration.",
+      "parentUuid": "2721e7e2_fe01e911",
+      "range": {
+        "startLine": 299,
+        "startChar": 20,
+        "endLine": 299,
+        "endChar": 42
+      },
+      "revId": "e8407ba2cff98dd7b831d7e75a656d09084faf7c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_f9c2aacc",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/Lexer.java",
         "patchSetId": 1

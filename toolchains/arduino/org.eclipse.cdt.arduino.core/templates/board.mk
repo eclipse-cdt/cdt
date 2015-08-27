@@ -1,6 +1,6 @@
 ifeq ($(OS),Windows_NT)
 RMDIR = rmdir /s /q
-mymkdir = if not exist "$(call fixpath,$1)" mkdir $(call fixpath,$1)
+mymkdir = if not exist "$1" mkdir "$1"
 else
 RMDIR = rm -fr
 mymkdir = mkdir -p $1

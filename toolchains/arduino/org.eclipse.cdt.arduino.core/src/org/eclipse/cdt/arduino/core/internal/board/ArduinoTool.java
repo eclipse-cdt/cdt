@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -74,7 +75,7 @@ public class ArduinoTool {
 
 	public Properties getToolProperties() {
 		Properties properties = new Properties();
-		properties.put("runtime.tools." + name + ".path", getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("runtime.tools." + name + ".path", ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$ //$NON-NLS-2$
 		return properties;
 	}
 

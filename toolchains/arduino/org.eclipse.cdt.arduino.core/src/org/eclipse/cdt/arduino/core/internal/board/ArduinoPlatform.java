@@ -12,6 +12,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -198,7 +200,19 @@ public class ArduinoPlatform {
 			}
 		}
 
-		// TODO on Windows install make from equations.org
+		// On Windows install make from equations.org
+		try {
+			Path makePath = ArduinoPreferences.getArduinoHome().resolve("tools/make/make.exe");
+			if (!makePath.toFile().exists()) {
+				Files.createDirectories(makePath.getParent());
+				URL makeUrl = new URL("ftp://ftp.equation.com/make/32/make.exe");
+				Files.copy(makeUrl.openStream(), makePath);
+				makePath.toFile().setExecutable(true, false);
+			}
+
+		} catch (IOException e) {
+			mstatus.add(new Status(IStatus.ERROR, Activator.getId(), "downloading make.exe", e));
+		}
 
 		return mstatus != null ? mstatus : Status.OK_STATUS;
 	}

@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
@@ -70,6 +71,8 @@ public class ArduinoBuildConfiguration {
 	// Cache for scanner info
 	private IScannerInfo cScannerInfo;
 	private IScannerInfo cppScannerInfo;
+
+	private final static boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
 
 	private ArduinoBuildConfiguration(IBuildConfiguration config) {
 		this.config = config;
@@ -245,7 +248,7 @@ public class ArduinoBuildConfiguration {
 					if (proxy.getType() == IResource.FILE) {
 						if (CoreModel.isValidSourceUnitName(project, proxy.getName())) {
 							Path sourcePath = new File(proxy.requestResource().getLocationURI()).toPath();
-							sourceFiles.add(projectPath.relativize(sourcePath).toString());
+							sourceFiles.add(pathString(projectPath.relativize(sourcePath)));
 						}
 					}
 					return true;
@@ -258,7 +261,7 @@ public class ArduinoBuildConfiguration {
 		List<String> librarySources = new ArrayList<>();
 		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
 			for (Path path : lib.getSources(project)) {
-				librarySources.add(path.toString());
+				librarySources.add(pathString(path));
 			}
 		}
 		buildModel.put("libraries_srcs", librarySources); //$NON-NLS-1$
@@ -277,17 +280,17 @@ public class ArduinoBuildConfiguration {
 			} else {
 				includes += " -I"; //$NON-NLS-1$
 			}
-			includes += '"' + include.toString() + '"';
+			includes += '"' + pathString(include) + '"';
 		}
 		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
 			for (Path include : lib.getIncludePath()) {
-				includes += " -I\"" + include.toString() + '"'; //$NON-NLS-1$
+				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
 		}
 		properties.put("includes", includes); //$NON-NLS-1$
 
 		Path platformPath = platform.getInstallPath();
-		buildModel.put("platform_path", platformPath.toString()); //$NON-NLS-1$
+		buildModel.put("platform_path", pathString(platformPath)); //$NON-NLS-1$
 
 		Path corePath = platformPath.resolve("cores").resolve((String) properties.get("build.core")); //$NON-NLS-1$ //$NON-NLS-2$
 		File[] platformFiles = corePath.toFile().listFiles(new FilenameFilter() {
@@ -298,10 +301,8 @@ public class ArduinoBuildConfiguration {
 		});
 
 		String[] platformSource = new String[platformFiles.length];
-		for (int i = 0; i < platformSource.length; ++i)
-
-		{
-			platformSource[i] = platformFiles[i].getAbsolutePath();
+		for (int i = 0; i < platformSource.length; ++i) {
+			platformSource[i] = pathString(platformFiles[i].toPath());
 		}
 		buildModel.put("platform_srcs", platformSource); //$NON-NLS-1$
 
@@ -351,7 +352,7 @@ public class ArduinoBuildConfiguration {
 
 	public void setEnvironment(Map<String, String> env) throws CoreException {
 		// Arduino home to find platforms and libraries
-		env.put("ARDUINO_HOME", ArduinoPreferences.getArduinoHome().toString()); //$NON-NLS-1$
+		env.put("ARDUINO_HOME", pathString(ArduinoPreferences.getArduinoHome())); //$NON-NLS-1$
 
 		// Add tools to the path
 		String pathKey = null;
@@ -364,7 +365,11 @@ public class ArduinoBuildConfiguration {
 			}
 		}
 
-		List<String> toolPaths = new ArrayList<>();
+		List<Path> toolPaths = new ArrayList<>();
+		if (isWindows) {
+			// Add in the tools/make directory to pick up make
+			toolPaths.add(ArduinoPreferences.getArduinoHome().resolve("tools/make"));
+		}
 		ArduinoBoard board = getBoard();
 		ArduinoPlatform platform = board.getPlatform();
 		for (ToolDependency dep : platform.getToolsDependencies()) {
@@ -372,17 +377,17 @@ public class ArduinoBuildConfiguration {
 			Path installPath = tool.getInstallPath();
 			Path binPath = installPath.resolve("bin"); //$NON-NLS-1$
 			if (binPath.toFile().exists()) {
-				toolPaths.add(binPath.toString());
+				toolPaths.add(binPath);
 			} else {
 				// use the install dir by default
-				toolPaths.add(installPath.toString());
+				toolPaths.add(installPath);
 			}
 		}
-		for (String toolPath : toolPaths) {
+		for (Path toolPath : toolPaths) {
 			if (path != null) {
-				path = toolPath + File.pathSeparatorChar + path;
+				path = pathString(toolPath) + File.pathSeparatorChar + path;
 			} else {
-				path = toolPath;
+				path = pathString(toolPath);
 			}
 		}
 		if (pathKey == null) {
@@ -428,7 +433,7 @@ public class ArduinoBuildConfiguration {
 		ArduinoTool tool = board.getPlatform().getTool(toolName);
 
 		Properties properties = getProperties();
-		properties.put("runtime.tools." + toolName + ".path", tool.getInstallPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("runtime.tools." + toolName + ".path", pathString(tool.getInstallPath())); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("serial.port", serialPort); //$NON-NLS-1$
 		// to make up for some cheating in the platform.txt file
 		properties.put("path", "{tools." + toolName + ".path}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -438,8 +443,11 @@ public class ArduinoBuildConfiguration {
 		properties.put("upload.verbose", "{tools." + toolName + ".upload.params.quiet}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		String command = resolveProperty("tools." + toolName + ".upload.pattern", properties); //$NON-NLS-1$ //$NON-NLS-2$
-		// TODO Windows
-		return new String[] { "sh", "-c", command }; //$NON-NLS-1$ //$NON-NLS-2$
+		if (isWindows) {
+			return new String[] { "cmd", "/c", command }; //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			return new String[] { "sh", "-c", command }; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
@@ -464,6 +472,14 @@ public class ArduinoBuildConfiguration {
 		cScannerInfo = null;
 	}
 
+	public static String pathString(Path path) {
+		String str = path.toString();
+		if (isWindows) {
+			str = str.replaceAll("\\\\", "/");
+		}
+		return str;
+	}
+
 	private IScannerInfo calculateScannerInfo(String recipe, IResource resource) throws CoreException {
 		try {
 			ArduinoPlatform platform = getBoard().getPlatform();
@@ -471,23 +487,27 @@ public class ArduinoBuildConfiguration {
 			properties.putAll(getProperties());
 
 			Path tmpFile = Files.createTempFile("cdt", ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("source_file", tmpFile.toString()); //$NON-NLS-1$
+			properties.put("source_file", pathString(tmpFile)); //$NON-NLS-1$
 			properties.put("object_file", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			String includes = "-E -P -v -dD"; //$NON-NLS-1$
 			for (Path include : platform.getIncludePath()) {
-				includes += " -I\"" + include.toString() + '"'; //$NON-NLS-1$
+				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
 			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(config.getProject());
 			for (ArduinoLibrary lib : libs) {
 				for (Path path : lib.getIncludePath()) {
-					includes += " -I\"" + path.toString() + '"'; //$NON-NLS-1$
+					includes += " -I\"" + pathString(path) + '"'; //$NON-NLS-1$
 				}
 			}
 			properties.put("includes", includes); //$NON-NLS-1$
 
-			// TODO Windows
-			String[] command = new String[] { "sh", "-c", resolveProperty(recipe, properties) }; //$NON-NLS-1$ //$NON-NLS-2$
+			String[] command;
+			if (isWindows) {
+				command = new String[] { "cmd", "/c", resolveProperty(recipe, properties) }; //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				command = new String[] { "sh", "-c", resolveProperty(recipe, properties) }; //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(tmpFile.getParent().toFile())
 					.redirectErrorStream(true);
 			setEnvironment(processBuilder.environment());

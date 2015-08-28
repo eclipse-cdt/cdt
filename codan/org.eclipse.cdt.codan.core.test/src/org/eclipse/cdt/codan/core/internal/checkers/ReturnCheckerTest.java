@@ -448,4 +448,15 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testDoubleSemicolonInSwitchCase_455828() throws Exception {
 		checkSampleAboveCpp();
 	}
+
+	//  int foo(bool p) { // no error
+	//  for (;;) {
+	//      if (p) {
+	//        return 0;
+	//      }
+	//    }
+	//  }
+	public void testNonTerminatingForLoop() throws Exception {
+		checkSampleAbove();
+	}
 }

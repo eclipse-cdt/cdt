@@ -560,10 +560,10 @@ public class ControlFlowGraphBuilder {
 		if (prev instanceof IDecisionNode) {
 			if (node instanceof IBranchNode) {
 				IDecisionNode decisionNode = (IDecisionNode) prev;
-				if (isConstant(decisionNode, 1) && ((IBranchNode) node).getLabel().equals(IBranchNode.ELSE)) {
+				if (isConstant(decisionNode, true) && ((IBranchNode) node).getLabel().equals(IBranchNode.ELSE)) {
 					dead.add(node);
 					return;
-				} else if (isConstant(decisionNode, 0) && ((IBranchNode) node).getLabel().equals(IBranchNode.THEN)) {
+				} else if (isConstant(decisionNode, false) && ((IBranchNode) node).getLabel().equals(IBranchNode.THEN)) {
 					dead.add(node);
 					return;
 				}
@@ -586,6 +586,25 @@ public class ControlFlowGraphBuilder {
 				if (numericalValue == null)
 					return false;
 				return numericalValue == testvalue;
+			}
+		}
+		return false;
+	}
+
+	private boolean isConstant(IDecisionNode node, boolean testvalue) {
+		if (node instanceof ICfgData) {
+			IASTNode ast = (IASTNode) ((ICfgData) node).getData();
+			if (ast instanceof IASTExpression) {
+				IValue dvalue = Value.create((IASTExpression) ast);
+				Long numericalValue = dvalue.numericalValue();
+				if (numericalValue == null)
+					return false;
+				return (numericalValue != 0) == testvalue;
+			}
+			else if (ast == null) {
+				// Empty decision nodes are regarded as true. This gives the correct
+				// interpretation of the empty condition in for(;;){...}
+				return testvalue;
 			}
 		}
 		return false;

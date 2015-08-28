@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_353397fa",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-08-28T15:10:31Z",
+      "side": 1,
+      "message": "Please eliminate all whitespace changes not related to the actual change in code.",
+      "range": {
+        "startLine": 84,
+        "startChar": 25,
+        "endLine": 84,
+        "endChar": 33
+      },
+      "revId": "ed536af3cff3cfab103135a566c05768373b7d3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

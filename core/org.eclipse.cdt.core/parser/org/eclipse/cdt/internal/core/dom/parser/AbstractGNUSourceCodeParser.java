@@ -14,6 +14,7 @@
  *     Thomas Corbat (IFS)
  *     Anders Dahlberg (Ericsson) - bug 84144
  *     Justin You (Synopsys) - bug 84144
+ *     Alexander Nyßen (itemis AG) - bug 475908
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -254,6 +255,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         ++backtrackCount;
         backtrack.initialize(offset, (length < 0) ? 0 : length);
         throw backtrack;
+    }
+    
+    protected INodeFactory getNodeFactory(){
+    	return nodeFactory;
     }
 
     @Override

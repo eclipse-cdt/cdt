@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
-import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
+import org.eclipse.cdt.core.build.IConsoleService;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -39,8 +39,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 
-			ArduinoConsoleService consoleService = Activator.getConsoleService();
-			consoleService.writeOutput(String.format("\nBuilding %s\n", project.getName()));
+			IConsoleService consoleService = Activator.getService(IConsoleService.class);
+			consoleService.writeOutput(String.format("Building %s\n", project.getName()));
 
 			ArduinoBuildConfiguration config = getBuildConfig().getAdapter(ArduinoBuildConfiguration.class);
 			config.generateMakeFile(monitor);
@@ -50,15 +50,16 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, config.getBuildConsoleParsers(), config.getBuildFolder());
+			consoleService.monitor(process, config.getConsoleParsers(), config.getBuildFolder());
 
 			if (process.exitValue() == 0) {
 				showSizes(config, consoleService);
 			}
 
 			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			consoleService.writeOutput("\n"); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e)); //$NON-NLS-1$
 		}
 
 		// TODO if there are references we want to watch, return them here
@@ -71,8 +72,8 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			IProject project = getProject();
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 
-			ArduinoConsoleService consoleService = Activator.getConsoleService();
-			consoleService.writeOutput(String.format("\nCleaning %s\n", project.getName()));
+			IConsoleService consoleService = Activator.getService(IConsoleService.class);
+			consoleService.writeOutput(String.format("Cleaning %s\n", project.getName()));
 
 			ArduinoBuildConfiguration config = getBuildConfig().getAdapter(ArduinoBuildConfiguration.class);
 
@@ -81,15 +82,16 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			config.setEnvironment(processBuilder.environment());
 			Process process = processBuilder.start();
 
-			consoleService.monitor(process, config.getBuildConsoleParsers(), config.getBuildFolder());
+			consoleService.monitor(process, config.getConsoleParsers(), config.getBuildFolder());
 
 			config.getBuildFolder().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			consoleService.writeOutput("\n"); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Build error", e)); //$NON-NLS-1$
 		}
 	}
 
-	private void showSizes(ArduinoBuildConfiguration config, ArduinoConsoleService console) throws CoreException {
+	private void showSizes(ArduinoBuildConfiguration config, IConsoleService console) throws CoreException {
 		try {
 			int codeSize = -1;
 			int dataSize = -1;

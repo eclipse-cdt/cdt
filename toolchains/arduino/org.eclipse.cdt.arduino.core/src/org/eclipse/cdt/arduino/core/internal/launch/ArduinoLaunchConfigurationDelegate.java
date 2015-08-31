@@ -16,8 +16,8 @@ import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.Messages;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
-import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
+import org.eclipse.cdt.core.build.IConsoleService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -76,7 +76,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		new Job(Messages.ArduinoLaunchConfigurationDelegate_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					ArduinoConsoleService consoleService = Activator.getConsoleService();
+					IConsoleService consoleService = Activator.getService(IConsoleService.class);
 					IRemoteConnection target = getTarget(configuration);
 					if (target == null) {
 						return new Status(IStatus.ERROR, Activator.getId(),

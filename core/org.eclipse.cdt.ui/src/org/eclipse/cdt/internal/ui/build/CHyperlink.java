@@ -1,6 +1,5 @@
-package org.eclipse.cdt.arduino.ui.internal.launch;
+package org.eclipse.cdt.internal.ui.build;
 
-import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -8,11 +7,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.ide.IDE;
 
-public class ArduinoHyperlink implements IHyperlink {
+import org.eclipse.cdt.ui.CUIPlugin;
+
+public class CHyperlink implements IHyperlink {
 
 	private final IMarker marker;
 
-	public ArduinoHyperlink(IMarker marker) {
+	public CHyperlink(IMarker marker) {
 		this.marker = marker;
 	}
 
@@ -30,7 +31,7 @@ public class ArduinoHyperlink implements IHyperlink {
 		try {
 			IDE.openEditor(page, marker);
 		} catch (PartInitException e) {
-			Activator.log(e);
+			CUIPlugin.log(e);
 		}
 	}
 

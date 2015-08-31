@@ -1,11 +1,7 @@
 package org.eclipse.cdt.arduino.core.internal.build;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
@@ -28,26 +22,24 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
 import org.eclipse.cdt.arduino.core.internal.board.ToolDependency;
-import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleParser;
-import org.eclipse.cdt.arduino.core.internal.console.ArduinoErrorParser;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.build.CBuildConfiguration;
+import org.eclipse.cdt.core.build.CToolChain;
+import org.eclipse.cdt.core.build.GCCToolChain;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,25 +49,29 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class ArduinoBuildConfiguration {
+public class ArduinoBuildConfiguration extends CBuildConfiguration {
 
 	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 	private static final String PLATFORM_NAME = "platformName"; //$NON-NLS-1$
 	private static final String BOARD_NAME = "boardName"; //$NON-NLS-1$
 
-	private final IBuildConfiguration config;
-
 	private ArduinoBoard board;
 	private Properties properties;
-
-	// Cache for scanner info
-	private IScannerInfo cScannerInfo;
-	private IScannerInfo cppScannerInfo;
 
 	private final static boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
 
 	private ArduinoBuildConfiguration(IBuildConfiguration config) {
-		this.config = config;
+		super(config);
+
+		try {
+			if (getToolChain() == null) {
+				// For now, assume GCC is the toolchain,
+				// not sure it's ever not.
+				setToolChain(GCCToolChain.ID);
+			}
+		} catch (CoreException e) {
+			Activator.log(e);
+		}
 	}
 
 	private static Map<IBuildConfiguration, ArduinoBuildConfiguration> cache = new HashMap<>();
@@ -135,23 +131,6 @@ public class ArduinoBuildConfiguration {
 		return arduinoConfig;
 	}
 
-	public void setActive(IProgressMonitor monitor) throws CoreException {
-		IProject project = config.getProject();
-		if (config.equals(project.getActiveBuildConfig())) {
-			// already set
-			return;
-		}
-
-		IProjectDescription projectDesc = project.getDescription();
-		projectDesc.setActiveBuildConfig(config.getName());
-		project.setDescription(projectDesc, monitor);
-	}
-
-	public IEclipsePreferences getSettings() {
-		return (IEclipsePreferences) new ProjectScope(config.getProject()).getNode(Activator.getId()).node("config") //$NON-NLS-1$
-				.node(config.getName());
-	}
-
 	public void setBoard(ArduinoBoard board) throws CoreException {
 		this.board = board;
 
@@ -165,7 +144,7 @@ public class ArduinoBuildConfiguration {
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e));
+			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -191,15 +170,15 @@ public class ArduinoBuildConfiguration {
 			}
 			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
-			properties.put("build.path", config.getName()); //$NON-NLS-1$
+			properties.put("build.path", getName()); //$NON-NLS-1$
 		}
 		// always do this in case the project changes names
-		properties.put("build.project_name", config.getProject().getName()); //$NON-NLS-1$
+		properties.put("build.project_name", getProject().getName()); //$NON-NLS-1$
 		return properties;
 	}
 
 	public IFolder getBuildFolder() throws CoreException {
-		IProject project = config.getProject();
+		IProject project = getProject();
 		return project.getFolder("build"); //$NON-NLS-1$
 	}
 
@@ -215,7 +194,7 @@ public class ArduinoBuildConfiguration {
 	}
 
 	public IFile generateMakeFile(IProgressMonitor monitor) throws CoreException {
-		final IProject project = config.getProject();
+		final IProject project = getProject();
 
 		IFolder buildFolder = getBuildFolder();
 		if (!buildFolder.exists()) {
@@ -368,7 +347,7 @@ public class ArduinoBuildConfiguration {
 		List<Path> toolPaths = new ArrayList<>();
 		if (isWindows) {
 			// Add in the tools/make directory to pick up make
-			toolPaths.add(ArduinoPreferences.getArduinoHome().resolve("tools/make"));
+			toolPaths.add(ArduinoPreferences.getArduinoHome().resolve("tools/make")); //$NON-NLS-1$
 		}
 		ArduinoBoard board = getBoard();
 		ArduinoPlatform platform = board.getPlatform();
@@ -444,57 +423,40 @@ public class ArduinoBuildConfiguration {
 
 		String command = resolveProperty("tools." + toolName + ".upload.pattern", properties); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isWindows) {
-			return splitCommand(command);
+			return CToolChain.splitCommand(command);
 		} else {
 			return new String[] { "sh", "-c", command }; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
-		// what language is this resource and pick the right path;
-		switch (CCorePlugin.getContentType(resource.getProject(), resource.getName()).getId()) {
-		case CCorePlugin.CONTENT_TYPE_CXXSOURCE:
-		case CCorePlugin.CONTENT_TYPE_CXXHEADER:
-			if (cppScannerInfo == null) {
-				cppScannerInfo = calculateScannerInfo("recipe.cpp.o.pattern", resource); //$NON-NLS-1$
+		IScannerInfo info = super.getScannerInfo(resource);
+		if (info == null) {
+			// what language is this resource and pick the right recipe
+			String recipe;
+			switch (CCorePlugin.getContentType(resource.getProject(), resource.getName()).getId()) {
+			case CCorePlugin.CONTENT_TYPE_CXXSOURCE:
+			case CCorePlugin.CONTENT_TYPE_CXXHEADER:
+				recipe = "recipe.cpp.o.pattern"; //$NON-NLS-1$
+				break;
+			default:
+				recipe = "recipe.c.o.pattern"; //$NON-NLS-1$
 			}
-			return cppScannerInfo;
-		default:
-			if (cScannerInfo == null) {
-				cScannerInfo = calculateScannerInfo("recipe.c.o.pattern", resource); //$NON-NLS-1$
-			}
-			return cScannerInfo;
-		}
-	}
 
-	public void clearScannerInfoCache() {
-		cppScannerInfo = null;
-		cScannerInfo = null;
-	}
-
-	public static String pathString(Path path) {
-		String str = path.toString();
-		if (isWindows) {
-			str = str.replaceAll("\\\\", "/");
-		}
-		return str;
-	}
-
-	private IScannerInfo calculateScannerInfo(String recipe, IResource resource) throws CoreException {
-		try {
 			ArduinoPlatform platform = getBoard().getPlatform();
 			Properties properties = new Properties();
 			properties.putAll(getProperties());
 
-			Path tmpFile = Files.createTempFile("cdt", ".cpp"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("source_file", pathString(tmpFile)); //$NON-NLS-1$
+			Path resourcePath = new File(resource.getLocationURI()).toPath();
+			Path sourcePath = getBuildDirectory().toPath().relativize(resourcePath);
+			properties.put("source_file", pathString(sourcePath)); //$NON-NLS-1$
 			properties.put("object_file", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			String includes = "-E -P -v -dD"; //$NON-NLS-1$
+			String includes = ""; //$NON-NLS-1$
 			for (Path include : platform.getIncludePath()) {
 				includes += " -I\"" + pathString(include) + '"'; //$NON-NLS-1$
 			}
-			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(config.getProject());
+			Collection<ArduinoLibrary> libs = ArduinoManager.instance.getLibraries(getProject());
 			for (ArduinoLibrary lib : libs) {
 				for (Path path : lib.getIncludePath()) {
 					includes += " -I\"" + pathString(path) + '"'; //$NON-NLS-1$
@@ -502,87 +464,18 @@ public class ArduinoBuildConfiguration {
 			}
 			properties.put("includes", includes); //$NON-NLS-1$
 
-			String[] command;
-			if (isWindows) {
-				command = splitCommand(resolveProperty(recipe, properties));
-			} else {
-				command = new String[] { "sh", "-c", resolveProperty(recipe, properties) }; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			ProcessBuilder processBuilder = new ProcessBuilder(command).directory(tmpFile.getParent().toFile())
-					.redirectErrorStream(true);
-			setEnvironment(processBuilder.environment());
-			Process process = processBuilder.start();
-
-			Map<String, String> symbols = new HashMap<>();
-			List<String> includePath = new ArrayList<>();
-			Pattern definePattern = Pattern.compile("#define (.*)\\s(.*)"); //$NON-NLS-1$
-			boolean inIncludePaths = false;
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-					if (inIncludePaths) {
-						if (line.equals("End of search list.")) { //$NON-NLS-1$
-							inIncludePaths = false;
-						} else {
-							includePath.add(line.trim());
-						}
-					} else if (line.startsWith("#define ")) { //$NON-NLS-1$
-						Matcher matcher = definePattern.matcher(line);
-						if (matcher.matches()) {
-							symbols.put(matcher.group(1), matcher.group(2));
-						}
-					} else if (line.equals("#include <...> search starts here:")) { //$NON-NLS-1$
-						inIncludePaths = true;
-					}
-				}
-			}
-			Files.delete(tmpFile);
-			ExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(symbols,
-					includePath.toArray(new String[includePath.size()]));
-			return scannerInfo;
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Compiler built-ins", e));
+			getToolChain().scanBuildOutput(getBuildFolder(), resolveProperty(recipe, properties), true);
+			info = super.getScannerInfo(resource);
 		}
+		return info;
 	}
 
-	private String[] splitCommand(String command) {
-		// TODO deal with quotes properly, for now just strip
-		return command.replaceAll("\"", "").split("\\s+");
-	}
-
-	public ArduinoConsoleParser[] getBuildConsoleParsers() {
-		// ../src/Test.cpp:4:1: error: 'x' was not declared in this scope
-
-		return new ArduinoConsoleParser[] { new ArduinoErrorParser("(.*?):(\\d+):(\\d+:)? (fatal )?error: (.*)") { //$NON-NLS-1$
-			@Override
-			protected int getSeverity(Matcher matcher) {
-				return IMarker.SEVERITY_ERROR;
-			}
-
-			@Override
-			protected String getMessage(Matcher matcher) {
-				return matcher.group(5);
-			}
-
-			@Override
-			protected int getLineNumber(Matcher matcher) {
-				return Integer.parseInt(matcher.group(2));
-			}
-
-			@Override
-			protected String getFileName(Matcher matcher) {
-				return matcher.group(1);
-			}
-
-			@Override
-			protected int getLinkOffset(Matcher matcher) {
-				return 0;
-			}
-
-			@Override
-			protected int getLinkLength(Matcher matcher) {
-				return matcher.group(1).length() + 1 + matcher.group(2).length() + 1 + matcher.group(3).length();
-			}
-		} };
+	public static String pathString(Path path) {
+		String str = path.toString();
+		if (isWindows) {
+			str = str.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return str;
 	}
 
 }

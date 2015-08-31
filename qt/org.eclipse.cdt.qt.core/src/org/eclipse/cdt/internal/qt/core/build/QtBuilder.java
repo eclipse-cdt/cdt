@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.cdt.core.build.IConsoleService;
 import org.eclipse.cdt.internal.qt.core.QtPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -43,12 +44,12 @@ public class QtBuilder extends IncrementalProjectBuilder {
 				}
 				msg.append('\n');
 				console.writeOutput(msg.toString());
-				console.monitor(process);
+				console.monitor(process, null, buildFolder);
 			}
 
 			// run make
 			Process process = new ProcessBuilder("make").directory(new File(buildFolder.getLocationURI())).start(); //$NON-NLS-1$
-			console.monitor(process);
+			console.monitor(process, null, buildFolder);
 
 			buildFolder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return new IProject[] { project };

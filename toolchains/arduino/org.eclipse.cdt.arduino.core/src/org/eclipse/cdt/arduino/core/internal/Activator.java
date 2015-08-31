@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.core.internal;
 
-import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -57,12 +53,6 @@ public class Activator extends Plugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
-	}
-
-	public static ArduinoConsoleService getConsoleService() throws CoreException {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(Activator.getId(), "consoleService"); //$NON-NLS-1$
-		IExtension extension = point.getExtensions()[0]; // should only be one
-		return (ArduinoConsoleService) extension.getConfigurationElements()[0].createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
 }

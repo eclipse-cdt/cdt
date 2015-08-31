@@ -195,7 +195,7 @@ public class ArduinoManager {
 				try {
 					for (IBuildConfiguration config : project.getBuildConfigs()) {
 						ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-						arduinoConfig.clearScannerInfoCache();
+						arduinoConfig.clearScannerInfo();
 					}
 				} catch (CoreException e) {
 					mstatus.add(e.getStatus());

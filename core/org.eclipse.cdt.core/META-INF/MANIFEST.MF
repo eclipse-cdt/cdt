@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.core; singleton:=true
-Bundle-Version: 5.11.0.qualifier
+Bundle-Version: 5.12.0.qualifier
 Bundle-Activator: org.eclipse.cdt.core.CCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.browser,
+ org.eclipse.cdt.core.build,
  org.eclipse.cdt.core.cdtvariables,
  org.eclipse.cdt.core.dom,
  org.eclipse.cdt.core.dom.ast,
@@ -73,7 +74,11 @@ Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.internal.core.indexer;x-internal:=true,
  org.eclipse.cdt.internal.core.language;x-friends:="org.eclipse.cdt.ui",
  org.eclipse.cdt.internal.core.language.settings.providers;x-internal:=true,
- org.eclipse.cdt.internal.core.model;x-friends:="org.eclipse.cdt.ui,org.eclipse.cdt.debug.core,org.eclipse.cdt.debug.ui,org.eclipse.cdt.codan.ui",
+ org.eclipse.cdt.internal.core.model;
+  x-friends:="org.eclipse.cdt.ui,
+   org.eclipse.cdt.debug.core,
+   org.eclipse.cdt.debug.ui,
+   org.eclipse.cdt.codan.ui",
  org.eclipse.cdt.internal.core.model.ext;x-friends:="org.eclipse.cdt.ui",
  org.eclipse.cdt.internal.core.parser;x-internal:=true,
  org.eclipse.cdt.internal.core.parser.problem;x-internal:=true,
@@ -122,6 +127,7 @@ Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[5.7.0,6.0.0)";visib
  org.eclipse.core.variables;bundle-version="[3.1.100,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="3.4.0",
  org.eclipse.text;bundle-version="[3.2.0,4.0.0)",
- com.ibm.icu;bundle-version="4.4.2"
+ com.ibm.icu;bundle-version="4.4.2",
+ com.google.gson;bundle-version="2.2.4"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

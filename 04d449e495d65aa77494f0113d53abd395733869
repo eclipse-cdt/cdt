@@ -22,6 +22,30 @@
       "revId": "04d449e495d65aa77494f0113d53abd395733869",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_6af6c9ca",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/GCCToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-08-31T15:33:38Z",
+      "side": 1,
+      "message": "Agreed. I\u0027ll add a TODO. I\u0027m sure there will be more stuff to go here, like error parsers. BTW, have the error parsers in the Arduino build config. What little I have, I\u0027ll move there to get it started.",
+      "parentUuid": "2721e7e2_8aee9dfb",
+      "range": {
+        "startLine": 32,
+        "startChar": 22,
+        "endLine": 32,
+        "endChar": 75
+      },
+      "revId": "04d449e495d65aa77494f0113d53abd395733869",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

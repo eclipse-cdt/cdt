@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_8aee9dfb",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/GCCToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-08-31T15:30:07Z",
+      "side": 1,
+      "message": "I think it should be in its own plugin because it serves as an example of how to integrate a toolchain outside cdt.core",
+      "range": {
+        "startLine": 32,
+        "startChar": 22,
+        "endLine": 32,
+        "endChar": 75
+      },
+      "revId": "04d449e495d65aa77494f0113d53abd395733869",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

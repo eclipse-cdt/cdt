@@ -20,6 +20,7 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.PackageIndex;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -55,8 +57,21 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 
 	@Override
 	protected Control createContents(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false));
+		Composite control = new Composite(parent, SWT.NONE);
+		control.setLayout(new GridLayout());
+
+		Text desc = new Text(control, SWT.READ_ONLY | SWT.WRAP);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		layoutData.widthHint = 500;
+		desc.setLayoutData(layoutData);
+		desc.setBackground(parent.getBackground());
+		desc.setText(Messages.ArduinoBoardsPreferencePage_desc);
+
+		Composite comp = new Composite(control, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Composite tableComp = new Composite(comp, SWT.NONE);
 		tableComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -110,7 +125,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 		updateTable();
 		updateButtons();
 
-		return comp;
+		return control;
 	}
 
 	private void updateTable() {

@@ -15,6 +15,7 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.LibraryIndex;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.BaseLabelProvider;
@@ -28,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -122,6 +124,13 @@ public class LibrariesPropertyPage extends PropertyPage {
 		Composite comp = new Composite(parent, SWT.NULL);
 		comp.setLayout(new GridLayout());
 
+		Text desc = new Text(comp, SWT.READ_ONLY | SWT.WRAP);
+		GridData layoutData = new GridData(SWT.LEFT, SWT.FILL, true, false);
+		layoutData.widthHint = 500;
+		desc.setLayoutData(layoutData);
+		desc.setBackground(parent.getBackground());
+		desc.setText(Messages.LibrariesPropertyPage_desc);
+
 		filteredTree = new FilteredTree(comp, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL,
 				new PatternFilter() {
 					@Override
@@ -142,7 +151,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 				return new ContainerCheckedTreeViewer(parent, style);
 			}
 		};
-		filteredTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		filteredTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ContainerCheckedTreeViewer viewer = (ContainerCheckedTreeViewer) filteredTree.getViewer();
 

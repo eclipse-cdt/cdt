@@ -40,7 +40,7 @@ public class ToolDependency {
 	public ArduinoTool getTool() throws CoreException {
 		ArduinoPackage pkg = platform.getPackage();
 		if (!pkg.getName().equals(packager)) {
-			pkg = pkg.getManager().getPackageIndex().getPackage(packager);
+			pkg = pkg.getManager().getPackage(packager);
 		}
 
 		return pkg.getTool(name, version);

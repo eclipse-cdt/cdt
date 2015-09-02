@@ -11,37 +11,58 @@
 package org.eclipse.cdt.arduino.ui.internal.preferences;
 
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
-import org.eclipse.cdt.arduino.ui.internal.Activator;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class ArduinoPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class ArduinoPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public ArduinoPreferencePage() {
-		super(GRID);
-	}
-
-	@Override
-	public IPreferenceStore getPreferenceStore() {
-		// TODO Auto-generated method stub
-		return super.getPreferenceStore();
-	}
-
-	@Override
-	protected void createFieldEditors() {
-		addField(new DirectoryFieldEditor(ArduinoPreferences.ARDUINO_HOME, Messages.ArduinoPreferencePage_0,
-				getFieldEditorParent()));
-	}
+	private Text urlsText;
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setDescription(Messages.ArduinoPreferencePage_1);
-		// Preferences are stored in core
-		setPreferenceStore(Activator.getDefault().getCorePreferenceStore());
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		Composite control = new Composite(parent, SWT.NONE);
+		control.setLayout(new GridLayout());
+
+		Text desc = new Text(control, SWT.READ_ONLY | SWT.WRAP);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		layoutData.widthHint = 500;
+		desc.setLayoutData(layoutData);
+		desc.setBackground(parent.getBackground());
+		desc.setText(Messages.ArduinoPreferencePage_desc);
+
+		urlsText = new Text(control, SWT.BORDER);
+		urlsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		urlsText.setText(ArduinoPreferences.getBoardUrls());
+
+		return control;
+	}
+
+	@Override
+	public boolean performOk() {
+		ArduinoPreferences.setBoardUrls(urlsText.getText());
+		ArduinoManager.instance.loadIndices();
+		return true;
+	}
+
+	@Override
+	protected void performDefaults() {
+		String defaultBoardUrl = ArduinoPreferences.getDefaultBoardUrls();
+		urlsText.setText(defaultBoardUrl);
+		ArduinoPreferences.setBoardUrls(defaultBoardUrl);
+		super.performDefaults();
 	}
 
 }

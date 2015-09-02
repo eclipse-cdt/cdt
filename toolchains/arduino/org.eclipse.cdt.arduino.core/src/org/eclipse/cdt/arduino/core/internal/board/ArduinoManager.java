@@ -16,10 +16,12 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
@@ -65,69 +67,107 @@ public class ArduinoManager {
 	public static final String PACKAGE_OPTION_ID = "org.eclipse.cdt.arduino.option.package"; //$NON-NLS-1$
 	public static final String AVR_TOOLCHAIN_ID = "org.eclipse.cdt.arduino.toolChain.avr"; //$NON-NLS-1$
 
-	private Path packageIndexPath = ArduinoPreferences.getArduinoHome().resolve("package_index.json"); //$NON-NLS-1$
-	private PackageIndex packageIndex;
-
-	private Path libraryIndexPath = ArduinoPreferences.getArduinoHome().resolve("library_index.json"); //$NON-NLS-1$
+	public static final String LIBRARIES_URL = "http://downloads.arduino.cc/libraries/library_index.json"; //$NON-NLS-1$
+	private List<PackageIndex> packageIndices;
 	private LibraryIndex libraryIndex;
 
-	public ArduinoManager() {
+	public void loadIndices() {
 		new Job(Messages.ArduinoBoardManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					// library index has the same parent right now
-					Files.createDirectories(packageIndexPath.getParent());
-
-					URL packageUrl = new URL("http://downloads.arduino.cc/packages/package_index.json"); //$NON-NLS-1$
-					try (InputStream in = packageUrl.openStream()) {
-						Files.copy(in, packageIndexPath, StandardCopyOption.REPLACE_EXISTING);
-					}
-
-					URL libraryUrl = new URL("http://downloads.arduino.cc/libraries/library_index.json"); //$NON-NLS-1$
-					try (InputStream in = libraryUrl.openStream()) {
-						Files.copy(in, libraryIndexPath, StandardCopyOption.REPLACE_EXISTING);
-					}
-				} catch (IOException e) {
-					return new Status(IStatus.ERROR, Activator.getId(), e.getLocalizedMessage(), e);
+				String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
+				packageIndices = new ArrayList<>(boardUrls.length);
+				for (String boardUrl : boardUrls) {
+					loadPackageIndex(boardUrl, true);
 				}
+
+				loadLibraryIndex(true);
 				return Status.OK_STATUS;
 			}
 		}.schedule();
 	}
 
-	public PackageIndex getPackageIndex() throws CoreException {
-		if (packageIndex == null) {
-			try (FileReader reader = new FileReader(packageIndexPath.toFile())) {
-				packageIndex = new Gson().fromJson(reader, PackageIndex.class);
-				packageIndex.setOwners(this);
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Reading package index", e));
+	private void loadPackageIndex(String url, boolean download) {
+		try {
+			URL packageUrl = new URL(url.trim());
+			Path packagePath = ArduinoPreferences.getArduinoHome()
+					.resolve(Paths.get(packageUrl.getPath()).getFileName());
+			File packageFile = packagePath.toFile();
+			if (download) {
+				Files.copy(packageUrl.openStream(), packagePath, StandardCopyOption.REPLACE_EXISTING);
+			}
+			if (packageFile.exists()) {
+				try (Reader reader = new FileReader(packageFile)) {
+					PackageIndex index = new Gson().fromJson(reader, PackageIndex.class);
+					index.setOwners(ArduinoManager.this);
+					packageIndices.add(index);
+				}
+			}
+		} catch (IOException e) {
+			Activator.log(e);
+		}
+	}
+
+	public List<PackageIndex> getPackageIndices() throws CoreException {
+		if (packageIndices == null) {
+			String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
+			packageIndices = new ArrayList<>(boardUrls.length);
+			for (String boardUrl : boardUrls) {
+				loadPackageIndex(boardUrl, false);
 			}
 		}
-		return packageIndex;
+		return packageIndices;
+	}
+
+	private void loadLibraryIndex(boolean download) {
+		try {
+			URL librariesUrl = new URL(LIBRARIES_URL);
+			Path librariesPath = ArduinoPreferences.getArduinoHome()
+					.resolve(Paths.get(librariesUrl.getPath()).getFileName());
+			File librariesFile = librariesPath.toFile();
+			if (download) {
+				Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
+			}
+			if (librariesFile.exists()) {
+				try (Reader reader = new FileReader(librariesFile)) {
+					libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+				}
+			}
+		} catch (IOException e) {
+			Activator.log(e);
+		}
+
 	}
 
 	public LibraryIndex getLibraryIndex() throws CoreException {
 		if (libraryIndex == null) {
-			try (FileReader reader = new FileReader(libraryIndexPath.toFile())) {
-				libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
-				libraryIndex.resolve();
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Reading library index", e));
-			}
+			loadLibraryIndex(false);
 		}
 		return libraryIndex;
 	}
 
 	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {
-		return getPackageIndex().getPackage(packageName).getPlatform(platformName).getBoard(boardName);
+		for (PackageIndex index : packageIndices) {
+			ArduinoPackage pkg = index.getPackage(packageName);
+			if (pkg != null) {
+				ArduinoPlatform platform = pkg.getPlatform(platformName);
+				if (platform != null) {
+					ArduinoBoard board = platform.getBoard(boardName);
+					if (board != null) {
+						return board;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public List<ArduinoBoard> getBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
-		for (ArduinoPackage pkg : getPackageIndex().getPackages()) {
-			for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
-				boards.addAll(platform.getBoards());
+		for (PackageIndex index : packageIndices) {
+			for (ArduinoPackage pkg : index.getPackages()) {
+				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
+					boards.addAll(platform.getBoards());
+				}
 			}
 		}
 		return boards;
@@ -135,17 +175,37 @@ public class ArduinoManager {
 
 	public List<ArduinoBoard> getInstalledBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
-		for (ArduinoPackage pkg : getPackageIndex().getPackages()) {
-			for (ArduinoPlatform platform : pkg.getInstalledPlatforms()) {
-				boards.addAll(platform.getBoards());
+		for (PackageIndex index : packageIndices) {
+			for (ArduinoPackage pkg : index.getPackages()) {
+				for (ArduinoPlatform platform : pkg.getInstalledPlatforms()) {
+					boards.addAll(platform.getBoards());
+				}
 			}
 		}
 		return boards;
 	}
 
+	public ArduinoPackage getPackage(String packageName) {
+		for (PackageIndex index : packageIndices) {
+			ArduinoPackage pkg = index.getPackage(packageName);
+			if (pkg != null) {
+				return pkg;
+			}
+		}
+		return null;
+	}
+
 	public ArduinoTool getTool(String packageName, String toolName, String version) {
-		ArduinoPackage pkg = packageIndex.getPackage(packageName);
-		return pkg != null ? pkg.getTool(toolName, version) : null;
+		for (PackageIndex index : packageIndices) {
+			ArduinoPackage pkg = index.getPackage(packageName);
+			if (pkg != null) {
+				ArduinoTool tool = pkg.getTool(toolName, version);
+				if (tool != null) {
+					return tool;
+				}
+			}
+		}
+		return null;
 	}
 
 	private static final String LIBRARIES = "libraries"; //$NON-NLS-1$
@@ -178,7 +238,7 @@ public class ArduinoManager {
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Saving preferences", e));
+			Activator.log(e);
 		}
 
 		new Job("Install libraries") {
@@ -209,7 +269,7 @@ public class ArduinoManager {
 			IProgressMonitor monitor) {
 		try {
 			URL dl = new URL(url);
-			Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads");
+			Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads"); //$NON-NLS-1$
 			Files.createDirectories(dlDir);
 			Path archivePath = dlDir.resolve(archiveFileName);
 			Files.copy(dl.openStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);

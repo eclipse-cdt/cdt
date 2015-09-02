@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal;
 
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -25,8 +23,6 @@ import org.osgi.framework.ServiceReference;
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
-
-	private IPreferenceStore corePreferenceStore;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.arduino.ui"; //$NON-NLS-1$
@@ -40,6 +36,8 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		// Load up the Arduino indices
+		ArduinoManager.instance.loadIndices();
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -84,13 +82,6 @@ public class Activator extends AbstractUIPlugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
-	}
-
-	public IPreferenceStore getCorePreferenceStore() {
-		if (corePreferenceStore == null) {
-			corePreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, "org.eclipse.cdt.qrduino.core"); //$NON-NLS-1$
-		}
-		return corePreferenceStore;
 	}
 
 }

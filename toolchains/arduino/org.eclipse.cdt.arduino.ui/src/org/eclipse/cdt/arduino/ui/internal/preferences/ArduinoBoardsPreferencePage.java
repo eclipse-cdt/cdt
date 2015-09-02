@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.preferences;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -16,9 +15,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
-import org.eclipse.cdt.arduino.core.internal.board.PackageIndex;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +49,6 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(Activator.getDefault().getCorePreferenceStore());
 	}
 
 	@Override
@@ -136,20 +132,7 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 		table.removeAll();
 
 		try {
-			PackageIndex packageIndex = ArduinoManager.instance.getPackageIndex();
-			List<ArduinoBoard> boards = new ArrayList<>();
-			for (ArduinoPackage pkg : packageIndex.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
-					try {
-						for (ArduinoBoard board : platform.getBoards()) {
-							boards.add(board);
-						}
-					} catch (CoreException e) {
-						Activator.log(e);
-					}
-				}
-			}
-
+			List<ArduinoBoard> boards = ArduinoManager.instance.getBoards();
 			Collections.sort(boards, new Comparator<ArduinoBoard>() {
 				public int compare(ArduinoBoard o1, ArduinoBoard o2) {
 					return o1.getName().compareTo(o2.getName());

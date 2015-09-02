@@ -52,7 +52,7 @@ public class ArduinoToolSystem {
 		case Platform.OS_MACOSX:
 			switch (host) {
 			case "i386-apple-darwin11": //$NON-NLS-1$
-			case "x86_64-apple-darwin:": //$NON-NLS-1$
+			case "x86_64-apple-darwin": //$NON-NLS-1$
 				return true;
 			default:
 				return false;

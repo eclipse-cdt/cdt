@@ -136,10 +136,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 
 	protected MIBreakpointsManager createBreakpointManagerService(DsfSession session) {
-		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 			return new GDBBreakpointsManager_7_2(session, CDebugCorePlugin.PLUGIN_ID);
 		}
-		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBBreakpointsManager_7_0(session, CDebugCorePlugin.PLUGIN_ID);
 		}
 		return new MIBreakpointsManager(session, CDebugCorePlugin.PLUGIN_ID);
@@ -147,40 +147,40 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IBreakpoints createBreakpointService(DsfSession session) {
-		if (GDB_7_7_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBBreakpoints_7_7(session);
 		}
-		if (GDB_7_6_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_6_VERSION) >= 0) {
 			return new GDBBreakpoints_7_6(session);
 		}
-		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBBreakpoints_7_4(session);
 		}
 		// This service is available for GDB 7.2 but there is a pre-release of GDB that
 		// supports the same features and has version of 6.8.50.20090414
-		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$
+		if (compareVersionWith(GDB_7_2_VERSION) >= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$
 			return new GDBBreakpoints_7_2(session);
 		}
-		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBBreakpoints_7_0(session);
 		}
 		return new MIBreakpoints(session);
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
-		if (GDB_7_7_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBControl_7_7(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBControl_7_4(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 			return new GDBControl_7_2(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBControl_7_0(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_6_8_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_6_8_VERSION) >= 0) {
 			return new GDBControl(session, config, new CommandFactory_6_8());
 		}
 		return new GDBControl(session, config, new CommandFactory());
@@ -192,7 +192,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IDisassembly createDisassemblyService(DsfSession session) {
-		if (GDB_7_3_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_3_VERSION) >= 0) {
 			return new GDBDisassembly_7_3(session);
 		}
 		return new MIDisassembly(session);
@@ -210,11 +210,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IMemory createMemoryService(DsfSession session) {
-		if (GDB_7_6_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_6_VERSION) >= 0) {
 			return new GDBMemory_7_6(session);
 		}
 
-		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBMemory_7_0(session);
 		}
 
@@ -228,22 +228,22 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
-		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBProcesses_7_4(session);
 		}
-		if (GDB_7_3_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_3_VERSION) >= 0) {
 			return new GDBProcesses_7_3(session);
 		}
-		if (GDB_7_2_1_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_2_1_VERSION) >= 0) {
 			return new GDBProcesses_7_2_1(session);
 		}
-		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 			return new GDBProcesses_7_2(session);
 		}
-		if (GDB_7_1_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_1_VERSION) >= 0) {
 			return new GDBProcesses_7_1(session);
 		}
-		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBProcesses_7_0(session);
 		}
 		return new GDBProcesses(session);
@@ -256,10 +256,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
-		if (GDB_7_6_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_6_VERSION) >= 0) {
 			return new GDBRunControl_7_6(session);
 		}
-		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBRunControl_7_0(session);
 		}
 		return new GDBRunControl(session);
@@ -277,12 +277,12 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	/** @since 3.0 */
 	protected IGDBTraceControl createTraceControlService(DsfSession session, ILaunchConfiguration config) {
-		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBTraceControl_7_4(session, config);
 		}
 		// This service is available for GDB 7.2 but there is a pre-release of GDB that
 		// supports the same features and has version of 6.8.50.20090414
-		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$
+		if (compareVersionWith(GDB_7_2_VERSION) >= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$
 			return new GDBTraceControl_7_2(session, config);
 		}
 		// There is currently no implementation of the TraceControl service before GDB 7.2
@@ -294,10 +294,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	/** @since 4.1 */
 	protected IGDBHardwareAndOS createHardwareAndOSService(DsfSession session, ILaunchConfiguration config) {
-		if (GDB_7_10_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
 			return new GDBHardwareAndOS_7_10(session);
 		}
-		if (GDB_7_5_VERSION.compareTo(fVersion) <= 0) {
+		if (compareVersionWith(GDB_7_5_VERSION) >= 0) {
 			return new GDBHardwareAndOS_7_5(session);
 		}
 		return new GDBHardwareAndOS(session);
@@ -310,6 +310,65 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return new MIBreakpointsSynchronizer(session);
 	}
 	
+	/**
+	 * Compares the GDB version of the current debug session with the one specified 
+	 * parameter 'version'.
+	 * Returns -1, 0, or 1 if the current version is less than, equal to, or greater than parameter version respectively
+	 * @param version The version to compare with
+	 * @return -1, 0, or 1 if the current version is less than, equal to, or greater than parameter version respectively
+	 */
+	public int compareVersionWith(String version) {
+		return compareVersions(getVersion(), version);
+	}
+	
+	/**
+	 * Compares two version numbers.
+	 * Returns -1, 0, or 1 if v1 is less than, equal to, or greater than v2 respectively
+	 * @param v1 The first version
+	 * @param v2 The second version
+	 * @return -1, 0, or 1 if v1 is less than, equal to, or greater than v2 respectively
+	 */
+	public static int compareVersions(String v1, String v2) {
+		if (v1 == null || v2 == null) throw new NullPointerException();
+		
+		String[] v1Parts = v1.split("\\."); //$NON-NLS-1$
+		String[] v2Parts = v2.split("\\."); //$NON-NLS-1$
+		for (int i = 0; i < v1Parts.length && i < v2Parts.length; i++) {			
+			int v1PartValue = Integer.parseInt(v1Parts[i]);
+			int v2PartValue = Integer.parseInt(v2Parts[i]);
+			
+			if (v1PartValue > v2PartValue) {
+				return 1;
+			} else if (v1PartValue < v2PartValue) {
+				return -1;
+			}
+		}
+		
+		// If we get here is means the versions are still equal
+		// but there could be extra parts to examine
+		
+		if (v1Parts.length < v2Parts.length) {
+			// v2 has extra parts, which implies v1 is a lower version (e.g., v1 = 7.9 v2 = 7.9.1)
+			// unless each extra part is 0, in which case the two versions are equal (e.g., v1 = 7.9 v2 = 7.9.0)
+			for (int i = v1Parts.length; i < v2Parts.length; i++) {
+				if (Integer.parseInt(v2Parts[i]) != 0) {
+					return -1;
+				}
+			}
+		}
+		if (v1Parts.length > v2Parts.length) {
+			// v1 has extra parts, which implies v1 is a higher version (e.g., v1 = 7.9.1 v2 = 7.9)
+			// unless each extra part is 0, in which case the two versions are equal (e.g., v1 = 7.9.0 v2 = 7.9)
+			for (int i = v2Parts.length; i < v1Parts.length; i++) {
+				if (Integer.parseInt(v1Parts[i]) != 0) {
+					return 1;
+				}
+			}
+		}
+
+		return 0;
+	}
+
 	/**
 	 * A static method that will compare the version of GDB for the specified session and
 	 * the minimum GDB version required by the caller.  A warning will be logged if the
@@ -327,7 +386,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			IDsfDebugServicesFactory servicesFactory = ((GdbLaunch)launch).getServiceFactory();
 			if (servicesFactory instanceof GdbDebugServicesFactory) {
 				String version = ((GdbDebugServicesFactory)servicesFactory).getVersion();
-				if (minVersion.compareTo(version) > 0) {
+				if (compareVersions(minVersion, version) > 0) {
 					assert false;
 					
 					GdbPlugin.log(

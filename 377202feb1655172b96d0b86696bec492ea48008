@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_87c4cb87",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-09-02T18:28:38Z",
+      "side": 1,
+      "message": "As we mentioned, we could use a more generic place for this utility methods e.g. DSF/GDB LaunchUtils.java \n  This can then be accessed by the test plugins, or other classes.",
+      "range": {
+        "startLine": 324,
+        "startChar": 0,
+        "endLine": 324,
+        "endChar": 1
+      },
+      "revId": "377202feb1655172b96d0b86696bec492ea48008",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

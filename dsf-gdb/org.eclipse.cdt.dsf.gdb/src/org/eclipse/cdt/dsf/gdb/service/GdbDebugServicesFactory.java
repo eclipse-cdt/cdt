@@ -311,13 +311,14 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	/**
-	 * Compares the GDB version of the current debug session with the one specified 
+	 * Compares the GDB version of the current debug session with the one specified by 
 	 * parameter 'version'.
-	 * Returns -1, 0, or 1 if the current version is less than, equal to, or greater than parameter version respectively
+	 * Returns -1, 0, or 1 if the current version is less than, equal to, or greater than parameter version respectively.
 	 * @param version The version to compare with
-	 * @return -1, 0, or 1 if the current version is less than, equal to, or greater than parameter version respectively
+	 * @return -1, 0, or 1 if the current version is less than, equal to, or greater than parameter version respectively.
+	 * @since 4.8
 	 */
-	private int compareVersionWith(String version) {
+	protected int compareVersionWith(String version) {
 		return compareVersions(getVersion(), version);
 	}
 	
@@ -334,13 +335,18 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		String[] v1Parts = v1.split("\\."); //$NON-NLS-1$
 		String[] v2Parts = v2.split("\\."); //$NON-NLS-1$
 		for (int i = 0; i < v1Parts.length && i < v2Parts.length; i++) {			
-			int v1PartValue = Integer.parseInt(v1Parts[i]);
-			int v2PartValue = Integer.parseInt(v2Parts[i]);
-			
-			if (v1PartValue > v2PartValue) {
-				return 1;
-			} else if (v1PartValue < v2PartValue) {
-				return -1;
+			try {
+				int v1PartValue = Integer.parseInt(v1Parts[i]);
+				int v2PartValue = Integer.parseInt(v2Parts[i]);
+
+				if (v1PartValue > v2PartValue) {
+					return 1;
+				} else if (v1PartValue < v2PartValue) {
+					return -1;
+				}
+			} catch (NumberFormatException e) {
+				// Non-integer part, ignore it
+				continue;
 			}
 		}
 		
@@ -351,8 +357,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			// v2 has extra parts, which implies v1 is a lower version (e.g., v1 = 7.9 v2 = 7.9.1)
 			// unless each extra part is 0, in which case the two versions are equal (e.g., v1 = 7.9 v2 = 7.9.0)
 			for (int i = v1Parts.length; i < v2Parts.length; i++) {
-				if (Integer.parseInt(v2Parts[i]) != 0) {
-					return -1;
+				try {
+					if (Integer.parseInt(v2Parts[i]) != 0) {
+						return -1;
+					}
+				} catch (NumberFormatException e) {
+					// Non-integer part, ignore it
+					continue;
 				}
 			}
 		}
@@ -360,8 +371,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			// v1 has extra parts, which implies v1 is a higher version (e.g., v1 = 7.9.1 v2 = 7.9)
 			// unless each extra part is 0, in which case the two versions are equal (e.g., v1 = 7.9.0 v2 = 7.9)
 			for (int i = v2Parts.length; i < v1Parts.length; i++) {
-				if (Integer.parseInt(v1Parts[i]) != 0) {
-					return 1;
+				try {
+					if (Integer.parseInt(v1Parts[i]) != 0) {
+						return 1;
+					}
+				} catch (NumberFormatException e) {
+					// Non-integer part, ignore it
+					continue;
 				}
 			}
 		}

@@ -96,10 +96,4 @@
             name="Boards">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.eclipse.cdt.arduino.ui.internal.preferences.ArduinoPreferenceInitializer">
-      </initializer>
-   </extension>
 </plugin>

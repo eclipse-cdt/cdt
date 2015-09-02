@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,7 +252,7 @@ int main() {
 		return -1;;
 	}
 
-#ifdef DEBUG_MONITOR
+#ifdef DEBUG_MONITOR_DETAILS
 	wchar_t * lpvEnv = GetEnvironmentStringsW();
 
 	// If the returned pointer is NULL, exit.
@@ -277,10 +277,31 @@ int main() {
 #endif
 	// Create job object
 	HANDLE hJob = CreateJobObject(NULL, NULL);
-	
+	if (hJob != NULL) {
+	    // Configure job to 
+	    // - terminate all associated processes when the last handle to it is closed
+	    // - allow child processes to break away from the job.
+	    JOBOBJECT_EXTENDED_LIMIT_INFORMATION  jobInfo;
+	    ZeroMemory(&jobInfo, sizeof(jobInfo));
+	    jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK;
+	    if (!SetInformationJobObject(hJob, JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo))) {
+#ifdef DEBUG_MONITOR
+	        OutputDebugStringW(_T("Cannot set job information\n"));
+	        DisplayErrorMessage();
+#endif
+	    }
+	} else {
+#ifdef DEBUG_MONITOR
+	    OutputDebugStringW(_T("Cannot create job object\n"));
+	    DisplayErrorMessage();
+#endif
+	}
 	// Spawn the other processes as part of this Process Group
+	// If this process is already part of a job, the flag CREATE_BREAKAWAY_FROM_JOB
+	// makes the child process detach from the job, such that we can assign it
+	// to our own job object.
 	BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE,
-			0, NULL, NULL, &si, &pi);
+	        CREATE_BREAKAWAY_FROM_JOB, NULL, NULL, &si, &pi);
 
 	// We don't need them any more
 	CloseHandle(stdHandles[0]);
@@ -292,7 +313,7 @@ int main() {
 		swprintf(buffer, _T("Process %i started\n"), pi.dwProcessId);
 		OutputDebugStringW(buffer);
 #endif
-		SetEvent(waitEvent); // Means thar process has been spawned
+		SetEvent(waitEvent); // Means that process has been spawned
 		CloseHandle(pi.hThread);
 		h[1] = pi.hProcess;
 

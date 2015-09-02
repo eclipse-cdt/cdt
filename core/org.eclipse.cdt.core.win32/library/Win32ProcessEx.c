@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@
 #define PIPE_NAME_LENGTH 100	// Size of pipe name buffer
 #define PIPE_TIMEOUT 10000		// Default time-out value, in milliseconds.
 
-#define MAX_PROCS (100)			// Maximum number of simultaneiously runnig processes
+#define MAX_PROCS (100)			// Maximum number of simultaneously running processes
 
 
 // Process description block. Should be created for each launched process
@@ -53,7 +53,7 @@ static int procCounter = 0; // Number of running processes
 // This is a VM helper
 void ThrowByName(JNIEnv *env, const char *name, const char *msg);
 
-// Creates _procInfo block for every launched procss
+// Creates _procInfo block for every launched process
 pProcInfo_t createProcInfo(); 
 
 // Find process description for this pid
@@ -62,7 +62,7 @@ pProcInfo_t findProcInfo(int pid);
 // We launch separate thread for each project to trap it termination
 void _cdecl waitProcTermination(void* pv) ;
 
-// This is a helper function to prevent losing of quotatin marks
+// This is a helper function to prevent losing of quotation marks
 static int copyTo(wchar_t * target, const wchar_t  * source, int cpyLenght, int availSpace);
 
 // Use this function to clean project descriptor and return it to the pool of available blocks.
@@ -89,7 +89,7 @@ static HMODULE hVM = NULL;   // VM handler
 
 static pProcInfo_t pInfo = NULL;
 
-static int nCounter = 0; // We use it to build unique synchronisation object names
+static int nCounter = 0; // We use it to build unique synchronization object names
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Launcher; launchess process and traps its termination
@@ -148,7 +148,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	pProcInfo_t pCurProcInfo;
 
 	// This needs to be big enough to contain the name of the event used when calling CreateEventW bellow. 
-	// It is made of a prefix (7 characters max) plus the value of a pointer that gets outputed in characters.
+	// It is made of a prefix (7 characters max) plus the value of a pointer that gets output in characters.
 	// This will be bigger in the case of 64 bit.
 	static const int MAX_EVENT_NAME_LENGTH = 50;
 	wchar_t eventBreakName[MAX_EVENT_NAME_LENGTH];
@@ -224,13 +224,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		}
 
 	// Construct starter's command line
-	swprintf(eventBreakName, L"SABreak%p", pCurProcInfo);
-	swprintf(eventWaitName, L"SAWait%p", pCurProcInfo);
-	swprintf(eventTerminateName, L"SATerm%p", pCurProcInfo);
-	swprintf(eventKillName, L"SAKill%p", pCurProcInfo);
-	swprintf(eventCtrlcName, L"SACtrlc%p", pCurProcInfo);
+	swprintf(eventBreakName, L"SABreak%010i", nLocalCounter);
+	swprintf(eventWaitName, L"SAWait%010i", nLocalCounter);
+	swprintf(eventTerminateName, L"SATerm%010i", nLocalCounter);
+	swprintf(eventKillName, L"SAKill%010i", nLocalCounter);
+	swprintf(eventCtrlcName, L"SACtrlc%010i", nLocalCounter);
 
 	pCurProcInfo->eventBreak     = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
+    if(NULL == pCurProcInfo->eventBreak || GetLastError() == ERROR_ALREADY_EXISTS)
+        {
+        ThrowByName(env, "java/io/IOException", "Cannot create event");
+        return 0;
+        }
 	pCurProcInfo->eventWait      = CreateEventW(NULL, TRUE,  FALSE, eventWaitName);
 	pCurProcInfo->eventTerminate = CreateEventW(NULL, FALSE, FALSE, eventTerminateName);
 	pCurProcInfo->eventKill      = CreateEventW(NULL, FALSE, FALSE, eventKillName);
@@ -273,7 +278,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	szCmdLine[nPos] = _T('\0');
 
 #ifdef DEBUG_MONITOR
-	swprintf(buffer, _T("There are  %i environment variables \n"), nEnvVars);
+	swprintf(buffer, _T("There are %i environment variables \n"), nEnvVars);
 	OutputDebugStringW(buffer);
 #endif
 	// Prepare environment block
@@ -687,7 +692,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 #endif
 		    SetEvent(pCurProcInfo -> eventTerminate);
 #ifdef DEBUG_MONITOR
-			OutputDebugStringW(_T("Spawner signalled TERM event\n"));
+			OutputDebugStringW(_T("Spawner signaled TERM event\n"));
 #endif
 			ret = 0;
 			break;
@@ -700,7 +705,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 #endif
 		    SetEvent(pCurProcInfo -> eventKill);
 #ifdef DEBUG_MONITOR
-			OutputDebugStringW(_T("Spawner signalled KILL event\n"));
+			OutputDebugStringW(_T("Spawner signaled KILL event\n"));
 #endif
 			ret = 0;
 			break;
@@ -886,10 +891,10 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-// Running in separae thread and waiting for the process termination
+// Running in separate thread and waiting for the process termination
 // Arguments:  
-//			pv - (int)pv is a pid
-// Return : always 0
+//			pv - pointer to PROCESS_INFORMATION struct
+// Return : no
 /////////////////////////////////////////////////////////////////////////////////////
 void _cdecl waitProcTermination(void* pv) 
 {
@@ -909,8 +914,7 @@ void _cdecl waitProcTermination(void* pv)
 			cleanUpProcBlock(pInfo + i);
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, _T("waitProcTermination: set PID %i to 0\n"), 
-					pInfo[i].pid, 
-					GetLastError());
+				    pi->dwProcessId);
 				OutputDebugStringW(buffer);
 #endif
 		}
@@ -953,12 +957,12 @@ int copyTo(wchar_t * target, const wchar_t * source, int cpyLength, int availSpa
 	else
 	if(wcschr(source, _T(' ')) == NULL)
 		{
-		// No reason to quotate term becase it doesn't have embedded spaces
+		// No reason to quote term because it doesn't have embedded spaces
 		nQuotationMode = QUOTATION_NONE;
 		}
 	else
 		{
-		// Needs to be quotated
+		// Needs to be quoted
 		nQuotationMode = QUOTATION_DO;
 		*target = _T('\"');
 		++j;

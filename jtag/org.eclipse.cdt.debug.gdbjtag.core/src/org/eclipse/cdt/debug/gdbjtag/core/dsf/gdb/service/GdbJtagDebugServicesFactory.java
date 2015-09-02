@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011,2014 Ericsson and others.
+ * Copyright (c) 2011,2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,19 +30,19 @@ public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
-		if (GDB_7_7_VERSION.compareTo(getVersion()) <= 0) {
+		if (compareVersionWith(GDB_7_7_VERSION) >= 0) {
 			return new GDBJtagControl_7_7(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_7_4_VERSION.compareTo(getVersion()) <= 0) {
+		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBJtagControl_7_4(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_7_2_VERSION.compareTo(getVersion()) <= 0) {
+		if (compareVersionWith(GDB_7_2_VERSION) >= 0) {
 			return new GDBJtagControl_7_2(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_7_0_VERSION.compareTo(getVersion()) <= 0) {
+		if (compareVersionWith(GDB_7_0_VERSION) >= 0) {
 			return new GDBJtagControl_7_0(session, config, new CommandFactory_6_8());
 		}
-		if (GDB_6_8_VERSION.compareTo(getVersion()) <= 0) {
+		if (compareVersionWith(GDB_6_8_VERSION) >= 0) {
 			return new GDBJtagControl(session, config, new CommandFactory_6_8());
 		}
 		return new GDBJtagControl(session, config, new CommandFactory());

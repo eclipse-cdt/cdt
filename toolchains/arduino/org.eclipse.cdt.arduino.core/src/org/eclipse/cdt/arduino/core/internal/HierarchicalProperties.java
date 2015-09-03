@@ -8,10 +8,12 @@
 package org.eclipse.cdt.arduino.core.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.eclipse.core.runtime.Platform;
 
 public class HierarchicalProperties {
 
@@ -52,7 +54,7 @@ public class HierarchicalProperties {
 
 	public void putProperty(String qualifiedKey, String value) {
 		if (children == null) {
-			children = new HashMap<>();
+			children = new LinkedHashMap<>();
 		}
 
 		int i = qualifiedKey.indexOf('.');
@@ -61,8 +63,8 @@ public class HierarchicalProperties {
 			if (child == null) {
 				child = new HierarchicalProperties();
 				children.put(qualifiedKey, child);
-				child.setValue(value);
 			}
+			child.setValue(value);
 		} else {
 			String key = qualifiedKey.substring(0, i);
 			HierarchicalProperties child = children.get(key);
@@ -76,6 +78,27 @@ public class HierarchicalProperties {
 	}
 
 	public String getValue() {
+		if (value == null) {
+			// Try a platform child
+			String platName = null;
+			switch (Platform.getOS()) {
+			case Platform.OS_WIN32:
+				platName = "windows"; //$NON-NLS-1$
+				break;
+			case Platform.OS_MACOSX:
+				platName = "macosx"; //$NON-NLS-1$
+				break;
+			case Platform.OS_LINUX:
+				platName = "linux"; //$NON-NLS-1$
+				break;
+			}
+			if (platName != null) {
+				HierarchicalProperties platChild = getChild(platName);
+				if (platChild != null) {
+					return platChild.getValue();
+				}
+			}
+		}
 		return value;
 	}
 
@@ -93,7 +116,7 @@ public class HierarchicalProperties {
 
 	public void putChild(String key, HierarchicalProperties node) {
 		if (children == null) {
-			children = new HashMap<>();
+			children = new LinkedHashMap<>();
 		}
 		children.put(key, node);
 	}

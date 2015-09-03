@@ -31,10 +31,10 @@ public class ArduinoRemoteConnection
 		implements IRemoteConnectionPropertyService, IRemoteCommandShellService, IRemoteConnectionChangeListener {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.arduino.core.connectionType"; //$NON-NLS-1$
-	public static final String PORT_NAME = "ardiuno.portname"; //$NON-NLS-1$
-	public static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
-	public static final String PLATFORM_NAME = "platformName"; //$NON-NLS-1$
-	public static final String BOARD_NAME = "boardName"; //$NON-NLS-1$
+	public static final String PORT_NAME = "arduinoPortName"; //$NON-NLS-1$
+	public static final String PACKAGE_NAME = "arduinoPackageName"; //$NON-NLS-1$
+	public static final String PLATFORM_NAME = "arduinoPlatformName"; //$NON-NLS-1$
+	public static final String BOARD_NAME = "arduinoBoardName"; //$NON-NLS-1$
 
 	private final IRemoteConnection remoteConnection;
 	private SerialPort serialPort;

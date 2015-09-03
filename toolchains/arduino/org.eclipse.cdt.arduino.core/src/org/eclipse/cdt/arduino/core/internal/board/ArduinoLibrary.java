@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -178,7 +178,7 @@ public class ArduinoLibrary {
 					getSources(project, sources, file.toPath(), recurse);
 				}
 			} else {
-				if (CoreModel.isValidSourceUnitName(project, file.getName())) {
+				if (ArduinoBuildConfiguration.isSource(file.getName())) {
 					sources.add(file.toPath());
 				}
 			}

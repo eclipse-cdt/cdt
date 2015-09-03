@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class ArduinoPlatform {
@@ -44,8 +46,9 @@ public class ArduinoPlatform {
 	private List<ToolDependency> toolsDependencies;
 
 	private ArduinoPackage pkg;
-	private HierarchicalProperties boardsFile;
+	private HierarchicalProperties boardsProperties;
 	private Properties platformProperties;
+	private Map<String, String> menus = new HashMap<>();
 
 	void setOwner(ArduinoPackage pkg) {
 		this.pkg = pkg;
@@ -94,26 +97,38 @@ public class ArduinoPlatform {
 	}
 
 	public List<ArduinoBoard> getBoards() throws CoreException {
-		if (isInstalled() && boardsFile == null) {
+		if (isInstalled() && boardsProperties == null) {
 			Properties boardProps = new Properties();
 			try (Reader reader = new FileReader(getInstallPath().resolve("boards.txt").toFile())) { //$NON-NLS-1$
 				boardProps.load(reader);
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading boards.txt", e));
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading boards.txt", e)); //$NON-NLS-1$
 			}
 
-			boardsFile = new HierarchicalProperties(boardProps);
+			boardsProperties = new HierarchicalProperties(boardProps);
 
 			// Replace the boards with a real ones
 			boards = new ArrayList<>();
-			for (Map.Entry<String, HierarchicalProperties> entry : boardsFile.getChildren().entrySet()) {
+			for (Map.Entry<String, HierarchicalProperties> entry : boardsProperties.getChildren().entrySet()) {
 				if (entry.getValue().getChild("name") != null) { //$NON-NLS-1$
 					// assume things with names are boards
 					boards.add(new ArduinoBoard(entry.getKey(), entry.getValue()).setOwners(this));
 				}
 			}
+
+			// Build the menu
+			HierarchicalProperties menuProp = boardsProperties.getChild("menu"); //$NON-NLS-1$
+			if (menuProp != null) {
+				for (Map.Entry<String, HierarchicalProperties> entry : menuProp.getChildren().entrySet()) {
+					menus.put(entry.getKey(), entry.getValue().getValue());
+				}
+			}
 		}
 		return boards;
+	}
+
+	public HierarchicalProperties getBoardsProperties() {
+		return boardsProperties;
 	}
 
 	public ArduinoBoard getBoard(String name) throws CoreException {
@@ -123,6 +138,10 @@ public class ArduinoPlatform {
 			}
 		}
 		return null;
+	}
+
+	public String getMenuText(String id) {
+		return menus.get(id);
 	}
 
 	public List<ToolDependency> getToolsDependencies() {
@@ -153,7 +172,7 @@ public class ArduinoPlatform {
 					platformProperties.load(reader1);
 				}
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading platform.txt", e));
+				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading platform.txt", e)); //$NON-NLS-1$
 			}
 		}
 		return platformProperties;
@@ -201,17 +220,18 @@ public class ArduinoPlatform {
 		}
 
 		// On Windows install make from equations.org
-		try {
-			Path makePath = ArduinoPreferences.getArduinoHome().resolve("tools/make/make.exe");
-			if (!makePath.toFile().exists()) {
-				Files.createDirectories(makePath.getParent());
-				URL makeUrl = new URL("ftp://ftp.equation.com/make/32/make.exe");
-				Files.copy(makeUrl.openStream(), makePath);
-				makePath.toFile().setExecutable(true, false);
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			try {
+				Path makePath = ArduinoPreferences.getArduinoHome().resolve("tools/make/make.exe"); //$NON-NLS-1$
+				if (!makePath.toFile().exists()) {
+					Files.createDirectories(makePath.getParent());
+					URL makeUrl = new URL("ftp://ftp.equation.com/make/32/make.exe"); //$NON-NLS-1$
+					Files.copy(makeUrl.openStream(), makePath);
+					makePath.toFile().setExecutable(true, false);
+				}
+			} catch (IOException e) {
+				mstatus.add(new Status(IStatus.ERROR, Activator.getId(), "downloading make.exe", e)); //$NON-NLS-1$
 			}
-
-		} catch (IOException e) {
-			mstatus.add(new Status(IStatus.ERROR, Activator.getId(), "downloading make.exe", e));
 		}
 
 		return mstatus != null ? mstatus : Status.OK_STATUS;

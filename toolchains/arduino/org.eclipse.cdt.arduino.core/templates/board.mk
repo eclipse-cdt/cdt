@@ -24,6 +24,10 @@ PLATFORM_OBJS = \
 <#if c>
 	${build_path}/platform/${c?groups[1]}.o \
 </#if>
+<#assign S = file?matches("${platform_path}/(.*)\\.S")>
+<#if S>
+	${build_path}/platform/${S?groups[1]}.S.o \
+</#if>
 </#list>
 
 LIBRARIES_OBJS = \
@@ -81,6 +85,14 @@ ${build_path}/platform/${cpp?groups[1]}.o: ${file}
 ${build_path}/platform/${c?groups[1]}.o: ${file}
 	@$(call mymkdir,$(dir $@))
 	${recipe_c_o_pattern}
+	${recipe_ar_pattern}
+
+</#if>
+<#assign S = file?matches("${platform_path}/(.*)\\.S")>
+<#if S>
+${build_path}/platform/${S?groups[1]}.S.o: ${file}
+	@$(call mymkdir,$(dir $@))
+	${recipe_S_o_pattern}
 	${recipe_ar_pattern}
 
 </#if>

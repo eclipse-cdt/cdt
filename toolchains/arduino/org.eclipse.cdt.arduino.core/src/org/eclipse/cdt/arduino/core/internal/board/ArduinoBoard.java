@@ -13,6 +13,8 @@ import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
 
 public class ArduinoBoard {
 
+	public static final String MENU_QUALIFIER = "menu_"; //$NON-NLS-1$
+
 	private String name;
 
 	private String id;
@@ -50,8 +52,16 @@ public class ArduinoBoard {
 		return properties.getProperty(key);
 	}
 
+	public HierarchicalProperties getMenus() {
+		return properties.getChild("menu"); //$NON-NLS-1$
+	}
+
 	public Properties getBoardProperties() {
 		return properties.flatten();
+	}
+
+	public Properties getMenuProperties(String id, String value) {
+		return getMenus().getChild(id).getChild(value).flatten();
 	}
 
 	@Override

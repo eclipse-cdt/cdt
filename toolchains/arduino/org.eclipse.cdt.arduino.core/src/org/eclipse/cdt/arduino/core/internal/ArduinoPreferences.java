@@ -20,8 +20,7 @@ public class ArduinoPreferences {
 	private static final String BOARD_URLS = "boardUrls"; //$NON-NLS-1$
 
 	private static final String defaultHome = Paths.get(System.getProperty("user.home"), ".arduinocdt").toString(); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String defaultBoardUrls = "http://downloads.arduino.cc/packages/package_index.json" //$NON-NLS-1$
-			+ "\nhttp://arduino.esp8266.com/stable/package_esp8266com_index.json"; //$NON-NLS-1$
+	private static final String defaultBoardUrls = "http://downloads.arduino.cc/packages/package_index.json"; //$NON-NLS-1$
 
 	private static IEclipsePreferences getPrefs() {
 		return InstanceScope.INSTANCE.getNode(Activator.getId());

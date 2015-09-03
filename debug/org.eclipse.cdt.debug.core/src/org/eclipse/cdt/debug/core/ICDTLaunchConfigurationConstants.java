@@ -279,9 +279,11 @@ public interface ICDTLaunchConfigurationConstants {
 
 	/**         
 	 * Launch configuration attribute key. The value is a String specifying the type of post mortem launch.
+	 * Note that we use the prefix "org.eclipse.cdt.dsf.gdb" for backwards-compatibility.
+	 * See bug 476589.
 	 * @since 7.7
 	 */     
-	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = CDT_LAUNCH_ID + ".POST_MORTEM_TYPE"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = "org.eclipse.cdt.dsf.gdb" + ".POST_MORTEM_TYPE"; //$NON-NLS-1$  //$NON-NLS-2$
 
 	/**
 	 * Launch configuration attribute value. The key is

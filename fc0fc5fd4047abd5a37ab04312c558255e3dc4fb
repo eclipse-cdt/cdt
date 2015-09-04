@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_4853fbb8",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-09-04T23:56:35Z",
+      "side": 1,
+      "message": "Please add a space after the cast.",
+      "range": {
+        "startLine": 141,
+        "startChar": 26,
+        "endLine": 141,
+        "endChar": 31
+      },
+      "revId": "fc0fc5fd4047abd5a37ab04312c558255e3dc4fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -19,17 +19,7 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-friends:="org.eclip
  org.eclipse.tm.internal.terminal.emulator;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.model;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.preferences,
- org.eclipse.tm.internal.terminal.provisional.api;
-  x-friends:="org.eclipse.tm.terminal.connector.serial,
-   org.eclipse.tm.terminal.connector.ssh,
-   org.eclipse.tm.terminal.connector.telnet,
-   org.eclipse.tm.terminal.connector.local,
-   org.eclipse.tm.terminal.test",
- org.eclipse.tm.internal.terminal.provisional.api.provider;
-  x-friends:="org.eclipse.tm.terminal.connector.serial,
-   org.eclipse.tm.terminal.connector.ssh,
-   org.eclipse.tm.terminal.connector.telnet,
-   org.eclipse.tm.terminal.connector.local,
-   org.eclipse.tm.terminal.test",
+ org.eclipse.tm.internal.terminal.provisional.api,
+ org.eclipse.tm.internal.terminal.provisional.api.provider,
  org.eclipse.tm.internal.terminal.textcanvas;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.terminal.model

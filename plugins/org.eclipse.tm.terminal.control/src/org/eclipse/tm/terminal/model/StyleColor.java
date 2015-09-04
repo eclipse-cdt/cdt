@@ -19,7 +19,7 @@ import java.util.Map;
  * Threadsafe.
  */
 public class StyleColor {
-	private final static Map fgStyleColors=new HashMap();
+	private final static Map<String, StyleColor> fgStyleColors=new HashMap<String, StyleColor>();
 	final String fName;
 	
 	/**
@@ -30,7 +30,7 @@ public class StyleColor {
 	public static StyleColor getStyleColor(String name) {
 		StyleColor result;
 		synchronized (fgStyleColors) {
-			result=(StyleColor) fgStyleColors.get(name);
+			result=fgStyleColors.get(name);
 			if(result==null) {
 				result=new StyleColor(name);
 				fgStyleColors.put(name, result);

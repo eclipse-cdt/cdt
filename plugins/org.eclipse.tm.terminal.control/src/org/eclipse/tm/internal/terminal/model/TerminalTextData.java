@@ -187,20 +187,20 @@ public class TerminalTextData implements ITerminalTextData {
 	 */
 	protected void removeSnapshot(TerminalTextDataSnapshot snapshot) {
 		// poor mans approach to modify the array
-		List list=new ArrayList();
+		List<TerminalTextDataSnapshot> list=new ArrayList<TerminalTextDataSnapshot>();
 		list.addAll(Arrays.asList(fSnapshots));
 		list.remove(snapshot);
-		fSnapshots=(TerminalTextDataSnapshot[]) list.toArray(new TerminalTextDataSnapshot[list.size()]);
+		fSnapshots=list.toArray(new TerminalTextDataSnapshot[list.size()]);
 	}
 
 	public ITerminalTextDataSnapshot makeSnapshot() {
 		// poor mans approach to modify the array
 		TerminalTextDataSnapshot snapshot=new TerminalTextDataSnapshot(this);
 		snapshot.markDimensionsChanged();
-		List list=new ArrayList();
+		List<TerminalTextDataSnapshot> list=new ArrayList<TerminalTextDataSnapshot>();
 		list.addAll(Arrays.asList(fSnapshots));
 		list.add(snapshot);
-		fSnapshots=(TerminalTextDataSnapshot[]) list.toArray(new TerminalTextDataSnapshot[list.size()]);
+		fSnapshots=list.toArray(new TerminalTextDataSnapshot[list.size()]);
 		return snapshot;
 	}
 	public void addLine() {

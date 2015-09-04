@@ -241,17 +241,17 @@ class TerminalTextDataSnapshot implements ITerminalTextDataSnapshot {
 	}
 
 	synchronized public void addListener(SnapshotOutOfDateListener listener) {
-		List list=new ArrayList();
+		List<SnapshotOutOfDateListener> list=new ArrayList<SnapshotOutOfDateListener>();
 		list.addAll(Arrays.asList(fListener));
 		list.add(listener);
-		fListener=(SnapshotOutOfDateListener[]) list.toArray(new SnapshotOutOfDateListener[list.size()]);
+		fListener=list.toArray(new SnapshotOutOfDateListener[list.size()]);
 	}
 
 	synchronized public void removeListener(SnapshotOutOfDateListener listener) {
-		List list=new ArrayList();
+		List<SnapshotOutOfDateListener> list=new ArrayList<SnapshotOutOfDateListener>();
 		list.addAll(Arrays.asList(fListener));
 		list.remove(listener);
-		fListener=(SnapshotOutOfDateListener[]) list.toArray(new SnapshotOutOfDateListener[list.size()]);
+		fListener=list.toArray(new SnapshotOutOfDateListener[list.size()]);
 	}
 	public String toString() {
 		return fSnapshot.toString();

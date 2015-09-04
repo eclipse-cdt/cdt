@@ -28,7 +28,7 @@ public class Style {
 	private final boolean fBlink;
 	private final boolean fUnderline;
 	private final boolean fReverse;
-	private final static Map fgStyles=new HashMap();
+	private final static Map<Style, Style> fgStyles=new HashMap<Style, Style>();
 	private Style(StyleColor forground, StyleColor background, boolean bold, boolean blink, boolean underline, boolean reverse) {
 		fForground = forground;
 		fBackground = background;
@@ -41,7 +41,7 @@ public class Style {
 		Style style = new Style(forground,background, bold, blink,underline,reverse);
 		Style cached;
 		synchronized (fgStyles) {
-			cached=(Style) fgStyles.get(style);
+			cached=fgStyles.get(style);
 			if(cached==null) {
 				cached=style;
 				fgStyles.put(cached, cached);

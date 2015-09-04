@@ -88,11 +88,11 @@ public class TerminalConnectorExtension {
 	 */
 	public static ITerminalConnector[] makeTerminalConnectors() {
 		IConfigurationElement[] config = RegistryFactory.getRegistry().getConfigurationElementsFor("org.eclipse.tm.terminal.control.connectors"); //$NON-NLS-1$
-		List result=new ArrayList();
+		List<ITerminalConnector> result=new ArrayList<ITerminalConnector>();
 		for (int i = 0; i < config.length; i++) {
 			result.add(makeConnector(config[i]));
 		}
-		return (ITerminalConnector[]) result.toArray(new ITerminalConnector[result.size()]);
+		return result.toArray(new ITerminalConnector[result.size()]);
 	}
 
 }

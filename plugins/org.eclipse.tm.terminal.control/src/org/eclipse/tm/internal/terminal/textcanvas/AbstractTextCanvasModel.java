@@ -21,7 +21,7 @@ import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 
 abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
-	protected List fListeners = new ArrayList();
+	protected List<ITextCanvasModelListener> fListeners = new ArrayList<ITextCanvasModelListener>();
 	private int fCursorLine;
 	private int fCursorColumn;
 	private boolean fShowCursor;
@@ -56,21 +56,21 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	}
 
 	protected void fireCellRangeChanged(int x, int y, int width, int height) {
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			ITextCanvasModelListener listener = (ITextCanvasModelListener) iter.next();
+		for (Iterator<ITextCanvasModelListener> iter = fListeners.iterator(); iter.hasNext();) {
+			ITextCanvasModelListener listener = iter.next();
 			listener.rangeChanged(x, y, width, height);
 		}
 	}
 	protected void fireDimensionsChanged( int width,int height) {
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			ITextCanvasModelListener listener = (ITextCanvasModelListener) iter.next();
+		for (Iterator<ITextCanvasModelListener> iter = fListeners.iterator(); iter.hasNext();) {
+			ITextCanvasModelListener listener = iter.next();
 			listener.dimensionsChanged(width,height);
 		}
 
 	}
 	protected void fireTerminalDataChanged() {
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			ITextCanvasModelListener listener = (ITextCanvasModelListener) iter.next();
+		for (Iterator<ITextCanvasModelListener> iter = fListeners.iterator(); iter.hasNext();) {
+			ITextCanvasModelListener listener = iter.next();
 			listener.terminalDataChanged();
 		}
 

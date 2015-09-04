@@ -13,7 +13,6 @@ package org.eclipse.tm.internal.terminal.provisional.api.provider;
 
 import java.io.OutputStream;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;

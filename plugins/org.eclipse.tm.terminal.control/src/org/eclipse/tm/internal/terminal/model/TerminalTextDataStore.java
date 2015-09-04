@@ -98,7 +98,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		int oldSize = Array.getLength(origArray);
 		if(oldSize==newSize)
 			return origArray;
-		Class elementType = origArray.getClass().getComponentType();
+		Class<?> elementType = origArray.getClass().getComponentType();
 		Object newArray = Array.newInstance(elementType, newSize);
 		int preserveLength = Math.min(oldSize, newSize);
 		if (preserveLength > 0)
@@ -130,7 +130,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 	
 		// and create the line segments
 		Style style=styles[column];
-		List segments=new ArrayList();
+		List<LineSegment> segments=new ArrayList<LineSegment>();
 		for (int i = column; i < n; i++) {
 			if(styles[i]!=style) {
 				segments.add(new LineSegment(col,new String(chars,col,i-col),style));
@@ -141,7 +141,7 @@ public class TerminalTextDataStore implements ITerminalTextData {
 		if(col < n) {
 			segments.add(new LineSegment(col,new String(chars,col,n-col),style));
 		}
-		return (LineSegment[]) segments.toArray(new LineSegment[segments.size()]);
+		return segments.toArray(new LineSegment[segments.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.text.ITerminalTextData#getChar(int, int)

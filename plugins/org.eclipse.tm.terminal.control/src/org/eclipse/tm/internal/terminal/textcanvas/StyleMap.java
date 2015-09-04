@@ -45,10 +45,9 @@ public class StyleMap {
 	
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	String fFontName=ITerminalConstants.FONT_DEFINITION;
-	Map fColorMapForeground=new HashMap();
-	Map fColorMapBackground=new HashMap();
-	Map fColorMapIntense=new HashMap();
-	Map fFontMap=new HashMap();
+	Map<StyleColor, Color> fColorMapForeground=new HashMap<StyleColor, Color>();
+	Map<StyleColor, Color> fColorMapBackground=new HashMap<StyleColor, Color>();
+	Map<StyleColor, Color> fColorMapIntense=new HashMap<StyleColor, Color>();
 	private Point fCharSize;
 	private final Style fDefaultStyle;
 	private boolean fInvertColors;
@@ -121,7 +120,7 @@ public class StyleMap {
 		setColor(fColorMapIntense, GRAY, 255, 255, 255);
 	}
 	
-	private void setColor(Map colorMap, String name, int r, int g, int b) {
+	private void setColor(Map<StyleColor, Color> colorMap, String name, int r, int g, int b) {
 		String colorName=PREFIX+r+"-"+g+"-"+b;  //$NON-NLS-1$//$NON-NLS-2$
 		Color color=JFaceResources.getColorRegistry().get(colorName);
 		if(color==null) {
@@ -134,7 +133,7 @@ public class StyleMap {
 
 	public Color getForegrondColor(Style style) {
 		style = defaultIfNull(style);
-		Map map = style.isBold() ? fColorMapIntense : fColorMapForeground;
+		Map<StyleColor, Color> map = style.isBold() ? fColorMapIntense : fColorMapForeground;
 		//Map map = fColorMapForeground;
 		if(style.isReverse())
 			return getColor(map ,style.getBackground());
@@ -148,8 +147,8 @@ public class StyleMap {
 		else
 			return getColor(fColorMapBackground,style.getBackground());
 	}
-	Color getColor(Map map,StyleColor color) {
-		Color c=(Color) map.get(color);
+	Color getColor(Map<StyleColor, Color> map,StyleColor color) {
+		Color c=map.get(color);
 		if(c==null) {
 			c=Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		}

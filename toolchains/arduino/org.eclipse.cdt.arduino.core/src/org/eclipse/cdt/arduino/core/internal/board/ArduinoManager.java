@@ -107,7 +107,7 @@ public class ArduinoManager {
 		}
 	}
 
-	public List<PackageIndex> getPackageIndices() throws CoreException {
+	public synchronized List<PackageIndex> getPackageIndices() throws CoreException {
 		if (packageIndices == null) {
 			String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
 			packageIndices = new ArrayList<>(boardUrls.length);
@@ -146,7 +146,7 @@ public class ArduinoManager {
 	}
 
 	public ArduinoBoard getBoard(String boardName, String platformName, String packageName) throws CoreException {
-		for (PackageIndex index : packageIndices) {
+		for (PackageIndex index : getPackageIndices()) {
 			ArduinoPackage pkg = index.getPackage(packageName);
 			if (pkg != null) {
 				ArduinoPlatform platform = pkg.getPlatform(platformName);
@@ -163,7 +163,7 @@ public class ArduinoManager {
 
 	public List<ArduinoBoard> getBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
-		for (PackageIndex index : packageIndices) {
+		for (PackageIndex index : getPackageIndices()) {
 			for (ArduinoPackage pkg : index.getPackages()) {
 				for (ArduinoPlatform platform : pkg.getLatestPlatforms()) {
 					boards.addAll(platform.getBoards());
@@ -175,7 +175,7 @@ public class ArduinoManager {
 
 	public List<ArduinoBoard> getInstalledBoards() throws CoreException {
 		List<ArduinoBoard> boards = new ArrayList<>();
-		for (PackageIndex index : packageIndices) {
+		for (PackageIndex index : getPackageIndices()) {
 			for (ArduinoPackage pkg : index.getPackages()) {
 				for (ArduinoPlatform platform : pkg.getInstalledPlatforms()) {
 					boards.addAll(platform.getBoards());
@@ -185,8 +185,8 @@ public class ArduinoManager {
 		return boards;
 	}
 
-	public ArduinoPackage getPackage(String packageName) {
-		for (PackageIndex index : packageIndices) {
+	public ArduinoPackage getPackage(String packageName) throws CoreException {
+		for (PackageIndex index : getPackageIndices()) {
 			ArduinoPackage pkg = index.getPackage(packageName);
 			if (pkg != null) {
 				return pkg;
@@ -195,8 +195,8 @@ public class ArduinoManager {
 		return null;
 	}
 
-	public ArduinoTool getTool(String packageName, String toolName, String version) {
-		for (PackageIndex index : packageIndices) {
+	public ArduinoTool getTool(String packageName, String toolName, String version) throws CoreException {
+		for (PackageIndex index : getPackageIndices()) {
 			ArduinoPackage pkg = index.getPackage(packageName);
 			if (pkg != null) {
 				ArduinoTool tool = pkg.getTool(toolName, version);

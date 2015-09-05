@@ -64,7 +64,7 @@ public class ArduinoProjectGenerator {
 
 		IBuildConfiguration config = project.getBuildConfig("uno"); //$NON-NLS-1$
 		ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
-		ArduinoBoard board = ArduinoManager.instance.getBoard("Arduino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ArduinoBoard board = ArduinoManager.instance.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arduinoConfig.setBoard(board);
 
 		// Generate files

@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.Messages;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleService;
 import org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection;
@@ -50,11 +49,10 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 		IRemoteConnection target = getTarget(configuration);
 		if (target != null) {
 			ArduinoRemoteConnection arduinoTarget = target.getService(ArduinoRemoteConnection.class);
-			ArduinoBoard targetBoard = arduinoTarget.getBoard();
 
 			// 1. make sure proper build config is set active
 			IProject project = configuration.getMappedResources()[0].getProject();
-			ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, targetBoard,
+			ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project, arduinoTarget,
 					monitor);
 			arduinoConfig.setActive(monitor);
 		}
@@ -89,7 +87,7 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 
 					// The build config
 					ArduinoBuildConfiguration arduinoConfig = ArduinoBuildConfiguration.getConfig(project,
-							arduinoTarget.getBoard(), monitor);
+							arduinoTarget, monitor);
 					String[] uploadCmd = arduinoConfig.getUploadCommand(arduinoTarget.getPortName());
 
 					// If opened, temporarily close the connection so we can use
@@ -98,6 +96,14 @@ public class ArduinoLaunchConfigurationDelegate extends LaunchConfigurationDeleg
 					if (wasOpened) {
 						arduinoTarget.pause();
 					}
+
+					StringBuffer cmdStr = new StringBuffer(uploadCmd[0]);
+					for (int i = 1; i < uploadCmd.length; ++i) {
+						cmdStr.append(' ');
+						cmdStr.append(uploadCmd[i]);
+					}
+					cmdStr.append('\n');
+					consoleService.writeOutput(cmdStr.toString());
 
 					// Run the process and capture the results in the console
 					ProcessBuilder processBuilder = new ProcessBuilder(uploadCmd)

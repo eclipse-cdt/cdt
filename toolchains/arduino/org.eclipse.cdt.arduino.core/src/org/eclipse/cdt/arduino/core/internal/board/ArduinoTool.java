@@ -70,12 +70,12 @@ public class ArduinoTool {
 		}
 
 		// No valid system
-		return new Status(IStatus.ERROR, Activator.getId(), "No valid system found for " + name);
+		return new Status(IStatus.ERROR, Activator.getId(), "No valid system found for " + name); //$NON-NLS-1$
 	}
 
 	public Properties getToolProperties() {
 		Properties properties = new Properties();
-		properties.put("runtime.tools." + name + ".path", ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$ //$NON-NLS-2$
+		properties.put("runtime.tools." + name + ".path", ArduinoBuildConfiguration.pathString(getInstallPath())); // $NON-NLS-1$ //$NON-NLS-1$//$NON-NLS-2$
 		return properties;
 	}
 

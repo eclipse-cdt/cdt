@@ -44,9 +44,10 @@
             name="Arduino"
             selectionFilter="single">
          <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.arduino.core.internal.remote.ArduinoRemoteConnection">
-            </adapt>
+            <test
+                  forcePluginActivation="false"
+                  property="org.eclipse.cdt.arduino.ui.isArduinoRemote">
+            </test>
          </enabledWhen>
       </page>
       <page
@@ -95,5 +96,28 @@
             id="org.eclipse.cdt.arduino.preference.page.boards"
             name="Boards">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <view
+               id="org.eclipse.remote.ui.view.connections"
+               minimized="false"
+               ratio="0.75"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.arduino.ui.internal.project.ArduinoPropertyTester"
+            id="temporaryRemoteTester"
+            namespace="org.eclipse.cdt.arduino.ui"
+            properties="isArduinoRemote"
+            type="org.eclipse.remote.core.IRemoteConnection">
+      </propertyTester>
    </extension>
 </plugin>

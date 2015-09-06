@@ -8,6 +8,7 @@
 package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ import java.util.Properties;
 import org.eclipse.cdt.arduino.core.internal.Activator;
 import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.HierarchicalProperties;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -193,6 +196,29 @@ public class ArduinoPlatform {
 				installPath.resolve("variants/{build.variant}")); //$NON-NLS-1$
 	}
 
+	private void getSources(Collection<String> sources, Path dir, boolean recurse) {
+		for (File file : dir.toFile().listFiles()) {
+			if (file.isDirectory()) {
+				if (recurse) {
+					getSources(sources, file.toPath(), recurse);
+				}
+			} else {
+				if (ArduinoBuildConfiguration.isSource(file.getName())) {
+					sources.add(file.getAbsolutePath());
+				}
+			}
+		}
+	}
+
+	public Collection<String> getSources(String core) {
+		List<String> sources = new ArrayList<>();
+		Path srcPath = getInstallPath().resolve("cores").resolve(core); //$NON-NLS-1$
+		if (srcPath.toFile().isDirectory()) {
+			getSources(sources, srcPath, true);
+		}
+		return sources;
+	}
+
 	public IStatus install(IProgressMonitor monitor) {
 		// Check if we're installed already
 		if (isInstalled()) {
@@ -233,6 +259,9 @@ public class ArduinoPlatform {
 				mstatus.add(new Status(IStatus.ERROR, Activator.getId(), "downloading make.exe", e)); //$NON-NLS-1$
 			}
 		}
+
+		// Reload the library index to pick up platform libraries
+		ArduinoManager.instance.loadLibraryIndex(false);
 
 		return mstatus != null ? mstatus : Status.OK_STATUS;
 	}

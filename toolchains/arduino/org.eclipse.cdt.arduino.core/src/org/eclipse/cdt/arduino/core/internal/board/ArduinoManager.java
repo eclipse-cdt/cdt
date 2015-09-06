@@ -107,7 +107,7 @@ public class ArduinoManager {
 		}
 	}
 
-	public synchronized List<PackageIndex> getPackageIndices() throws CoreException {
+	public synchronized List<PackageIndex> getPackageIndices() {
 		if (packageIndices == null) {
 			String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
 			packageIndices = new ArrayList<>(boardUrls.length);
@@ -118,7 +118,7 @@ public class ArduinoManager {
 		return packageIndices;
 	}
 
-	private void loadLibraryIndex(boolean download) {
+	public void loadLibraryIndex(boolean download) {
 		try {
 			URL librariesUrl = new URL(LIBRARIES_URL);
 			Path librariesPath = ArduinoPreferences.getArduinoHome()
@@ -130,6 +130,7 @@ public class ArduinoManager {
 			if (librariesFile.exists()) {
 				try (Reader reader = new FileReader(librariesFile)) {
 					libraryIndex = new Gson().fromJson(reader, LibraryIndex.class);
+					libraryIndex.resolve();
 				}
 			}
 		} catch (IOException e) {

@@ -2,7 +2,6 @@ package org.eclipse.cdt.arduino.core.internal.build;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -332,9 +331,7 @@ public class ArduinoBuildConfiguration {
 		// The list of library sources
 		List<String> librarySources = new ArrayList<>();
 		for (ArduinoLibrary lib : ArduinoManager.instance.getLibraries(project)) {
-			for (Path path : lib.getSources(project)) {
-				librarySources.add(pathString(path));
-			}
+			librarySources.addAll(lib.getSources());
 		}
 		buildModel.put("libraries_srcs", librarySources); //$NON-NLS-1$
 		buildModel.put("libraries_path", pathString(ArduinoPreferences.getArduinoHome().resolve("libraries"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -363,20 +360,7 @@ public class ArduinoBuildConfiguration {
 
 		Path platformPath = platform.getInstallPath();
 		buildModel.put("platform_path", pathString(platformPath)); //$NON-NLS-1$
-
-		Path corePath = platformPath.resolve("cores").resolve((String) properties.get("build.core")); //$NON-NLS-1$ //$NON-NLS-2$
-		File[] platformFiles = corePath.toFile().listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return isSource(name);
-			}
-		});
-
-		String[] platformSource = new String[platformFiles.length];
-		for (int i = 0; i < platformSource.length; ++i) {
-			platformSource[i] = pathString(platformFiles[i].toPath());
-		}
-		buildModel.put("platform_srcs", platformSource); //$NON-NLS-1$
+		buildModel.put("platform_srcs", platform.getSources(properties.getProperty("build.core"))); //$NON-NLS-1$ //$NON-NLS-2$
 
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$

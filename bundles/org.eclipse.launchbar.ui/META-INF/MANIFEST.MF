@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: LaunchBar UI
 Bundle-SymbolicName: org.eclipse.launchbar.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.eclipse.launchbar.ui.internal.Activator
 Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.ui,

@@ -13,7 +13,7 @@
 
 	<groupId>org.eclipse.launchbar.features</groupId>
 	<artifactId>org.eclipse.launchbar</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<packaging>eclipse-feature</packaging>
 </project>

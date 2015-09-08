@@ -139,11 +139,19 @@ public class ProcessClosure {
 		InputStream stdin = fProcess.getInputStream();
 		InputStream stderr = fProcess.getErrorStream();
 
-		fOutputReader = new ReaderThread(group, "OutputReader", stdin, fOutput); //$NON-NLS-1$
-		fErrorReader = new ReaderThread(group, "ErrorReader", stderr, fError); //$NON-NLS-1$
+		if (fOutput != null) {
+			fOutputReader = new ReaderThread(group, "OutputReader", stdin, fOutput); //$NON-NLS-1$
+		}
+		if (fError != null) {
+			fErrorReader = new ReaderThread(group, "ErrorReader", stderr, fError); //$NON-NLS-1$
+		}
 
-		fOutputReader.start();
-		fErrorReader.start();
+		if (fOutput != null) {
+			fOutputReader.start();
+		}
+		if (fError != null) {
+			fErrorReader.start();
+		}
 	}
 
 	public void runBlocking() {
@@ -165,16 +173,15 @@ public class ProcessClosure {
 		}
 
 		// @@@FIXME: Windows 2000 is screwed; double-check using output threads
-		if (!fOutputReader.finished()) {
+		if (fOutputReader != null && !fOutputReader.finished()) {
 			fOutputReader.waitFor();
 		}
 
-		if (!fErrorReader.finished()) {
+		if (fErrorReader != null && !fErrorReader.finished()) {
 			fErrorReader.waitFor();
 		}
 
-		fOutputReader.close();
-		fErrorReader.close();
+		closeReaders();
 		// it seems that thread termination and stream closing is working
 		// without
 		// any help
@@ -185,16 +192,24 @@ public class ProcessClosure {
 
 	public boolean isAlive() {
 		if (fProcess != null) {
-			if (fOutputReader.isAlive() || fErrorReader.isAlive()) {
+			if ((fOutputReader != null && fOutputReader.isAlive()) || (fErrorReader != null && fErrorReader.isAlive())) {
 				return true;
 			}
 			fProcess = null;
-			fOutputReader.close();
-			fErrorReader.close();
+			closeReaders();
 			fOutputReader = null;
 			fErrorReader = null;
 		}
 		return false;
+	}
+
+	private void closeReaders() {
+		if (fOutputReader != null) {
+			fOutputReader.close();
+		}
+		if (fErrorReader != null) {
+			fErrorReader.close();
+		}
 	}
 
 	/**
@@ -204,7 +219,7 @@ public class ProcessClosure {
 	 */
 	public boolean isRunning() {
 		if (fProcess != null) {
-			if (fOutputReader.isAlive() || fErrorReader.isAlive()) {
+			if ((fOutputReader != null && fOutputReader.isAlive()) || (fErrorReader != null && fErrorReader.isAlive())) {
 				return true;
 			}
 			fProcess = null;
@@ -219,14 +234,13 @@ public class ProcessClosure {
 			fProcess.destroy();
 			fProcess = null;
 		}
-		if (!fOutputReader.finished()) {
+		if (fOutputReader != null && !fOutputReader.finished()) {
 			fOutputReader.waitFor();
 		}
-		if (!fErrorReader.finished()) {
+		if (fErrorReader != null && !fErrorReader.finished()) {
 			fErrorReader.waitFor();
 		}
-		fOutputReader.close();
-		fErrorReader.close();
+		closeReaders();
 		fOutputReader = null;
 		fErrorReader = null;
 	}

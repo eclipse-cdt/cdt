@@ -55,6 +55,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -148,6 +149,9 @@ public class ArduinoBuildConfiguration {
 		IProjectDescription projectDesc = project.getDescription();
 		projectDesc.setActiveBuildConfig(config.getName());
 		project.setDescription(projectDesc, monitor);
+
+		// Reindex - assuming for now each config has different compiler settings
+		CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(project));
 	}
 
 	public IEclipsePreferences getSettings() {
@@ -534,20 +538,25 @@ public class ArduinoBuildConfiguration {
 	}
 
 	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
-		// what language is this resource and pick the right path;
-		switch (CCorePlugin.getContentType(resource.getProject(), resource.getName()).getId()) {
-		case CCorePlugin.CONTENT_TYPE_CXXSOURCE:
-		case CCorePlugin.CONTENT_TYPE_CXXHEADER:
-			if (cppScannerInfo == null) {
-				cppScannerInfo = calculateScannerInfo("recipe.cpp.o.pattern", resource); //$NON-NLS-1$
+		IContentType contentType = CCorePlugin.getContentType(resource.getProject(), resource.getName());
+		if (contentType != null) {
+			// what language is this resource and pick the right path;
+			switch (contentType.getId()) {
+			case CCorePlugin.CONTENT_TYPE_CXXSOURCE:
+			case CCorePlugin.CONTENT_TYPE_CXXHEADER:
+				if (cppScannerInfo == null) {
+					cppScannerInfo = calculateScannerInfo("recipe.cpp.o.pattern", resource); //$NON-NLS-1$
+				}
+				return cppScannerInfo;
+			default:
+				if (cScannerInfo == null) {
+					cScannerInfo = calculateScannerInfo("recipe.c.o.pattern", resource); //$NON-NLS-1$
+				}
+				return cScannerInfo;
 			}
-			return cppScannerInfo;
-		default:
-			if (cScannerInfo == null) {
-				cScannerInfo = calculateScannerInfo("recipe.c.o.pattern", resource); //$NON-NLS-1$
-			}
-			return cScannerInfo;
 		}
+		// use the cpp scanner info if all else fails
+		return cppScannerInfo;
 	}
 
 	public void clearScannerInfoCache() {
@@ -643,7 +652,7 @@ public class ArduinoBuildConfiguration {
 
 			@Override
 			protected String getMessage(Matcher matcher) {
-				return matcher.group(5);
+				return matcher.group(matcher.groupCount());
 			}
 
 			@Override

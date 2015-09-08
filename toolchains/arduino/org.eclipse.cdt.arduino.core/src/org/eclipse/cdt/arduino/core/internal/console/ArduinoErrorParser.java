@@ -8,6 +8,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class ArduinoErrorParser extends ArduinoConsoleParser {
@@ -38,13 +39,21 @@ public abstract class ArduinoErrorParser extends ArduinoConsoleParser {
 
 	protected abstract int getLinkLength(Matcher matcher);
 
-	public IMarker generateMarker(IFolder buildDirectory, String text) {
+	public IMarker generateMarker(IFolder buildDirectory, String text) throws CoreException {
 		Matcher matcher = errorPattern.matcher(text);
 		if (matcher.matches()) {
 			String fileName = getFileName(matcher);
 
 			IFile file = buildDirectory.getFile(fileName);
 			if (file.exists()) {
+				for (IMarker marker : file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,
+						IResource.DEPTH_ZERO)) {
+					if (marker.getAttribute(IMarker.SEVERITY, -1) == getSeverity(matcher)
+							&& marker.getAttribute(IMarker.LINE_NUMBER, -1) == getLineNumber(matcher)
+							&& marker.getAttribute(IMarker.MESSAGE, "").equals(getMessage(matcher))) { //$NON-NLS-1$
+						return marker;
+					}
+				}
 				try {
 					IMarker marker = file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
 					marker.setAttribute(IMarker.MESSAGE, getMessage(matcher));

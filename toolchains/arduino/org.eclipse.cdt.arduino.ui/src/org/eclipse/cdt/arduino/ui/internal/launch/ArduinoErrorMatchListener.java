@@ -3,6 +3,7 @@ package org.eclipse.cdt.arduino.ui.internal.launch;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoErrorParser;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.console.PatternMatchEvent;
 
@@ -22,7 +23,7 @@ public class ArduinoErrorMatchListener extends ArduinoPatternMatchListener {
 						event.getOffset() + marker.getAttribute(ArduinoErrorParser.LINK_OFFSET, 0),
 						marker.getAttribute(ArduinoErrorParser.LINK_LENGTH, event.getLength()));
 			}
-		} catch (BadLocationException e) {
+		} catch (BadLocationException | CoreException e) {
 			Activator.log(e);
 		}
 	}

@@ -17,9 +17,13 @@
  * Anton Leherbauer (Wind River) - [324608] Terminal has strange scrolling behaviour
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  * Anton Leherbauer (Wind River) - [434749] UnhandledEventLoopException when copying to clipboard while the selection is empty
+ * Davy Landman (CWI) - [475267][api] Allow custom mouse listeners
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -35,6 +39,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
 
 /**
  * A cell oriented Canvas. Maintains a list of "cells".
@@ -50,6 +55,7 @@ public class TextCanvas extends GridCanvas {
 	private Point fDraggingEnd;
 	private boolean fHasSelection;
 	private ResizeListener fResizeListener;
+	private final List<ITerminalMouseListener> fMouseListeners;
 
 	// The minSize is meant to determine the minimum size of the backing store
 	// (grid) into which remote data is rendered. If the viewport is smaller
@@ -116,8 +122,17 @@ public class TextCanvas extends GridCanvas {
 			public void focusLost(FocusEvent e) {
 				fCellCanvasModel.setCursorEnabled(false);
 			}});
+		fMouseListeners = new ArrayList<ITerminalMouseListener>();
 		addMouseListener(new MouseListener(){
 			public void mouseDoubleClick(MouseEvent e) {
+				if (fMouseListeners.size() > 0) {
+					Point pt = screenPointToCell(e.x, e.y);
+					if (pt != null) {
+						for (ITerminalMouseListener l : fMouseListeners) {
+							l.mouseDoubleClick(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+						}
+					}
+				}
 			}
 			public void mouseDown(MouseEvent e) {
 				if(e.button==1) { // left button
@@ -132,6 +147,14 @@ public class TextCanvas extends GridCanvas {
 					}
 					fDraggingEnd=null;
 				}
+				if (fMouseListeners.size() > 0) {
+					Point pt = screenPointToCell(e.x, e.y);
+					if (pt != null) {
+						for (ITerminalMouseListener l : fMouseListeners) {
+							l.mouseDown(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+						}
+					}
+				}
 			}
 			public void mouseUp(MouseEvent e) {
 				if(e.button==1) { // left button
@@ -141,6 +164,14 @@ public class TextCanvas extends GridCanvas {
 					else
 						fCellCanvasModel.setSelection(-1,-1,-1,-1);
 					fDraggingStart=null;
+				}
+				if (fMouseListeners.size() > 0) {
+					Point pt = screenPointToCell(e.x, e.y);
+					if (pt != null) {
+						for (ITerminalMouseListener l : fMouseListeners) {
+							l.mouseUp(fCellCanvasModel.getTerminalText(), pt.y, pt.x, e.button);
+						}
+					}
 				}
 			}
 		});
@@ -428,5 +459,12 @@ public class TextCanvas extends GridCanvas {
 
 	}
 
+	public void addTerminalMouseListener(final ITerminalMouseListener listener) {
+		fMouseListeners.add(listener);
+	}
+
+	public void removeTerminalMouseListener(ITerminalMouseListener listener) {
+		fMouseListeners.remove(listener);
+	}
 }
 

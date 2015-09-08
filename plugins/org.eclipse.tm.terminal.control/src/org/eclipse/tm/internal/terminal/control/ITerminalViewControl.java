@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
+ * Davy Landman (CWI) - [475267][api] Allow custom mouse listeners
  ******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 
@@ -118,4 +119,7 @@ public interface ITerminalViewControl {
 	public void setBufferLineLimit(int bufferLineLimit);
 	boolean isScrollLock();
 	void setScrollLock(boolean on);
+	
+	void addMouseListener(ITerminalMouseListener listener);
+	void removeMouseListener(ITerminalMouseListener listener);
 }

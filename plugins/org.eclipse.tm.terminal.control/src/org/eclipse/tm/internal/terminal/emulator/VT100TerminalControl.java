@@ -39,6 +39,7 @@
  * Martin Oberhuber (Wind River) - [436612] Restore Eclipse 3.4 compatibility by using Reflection
  * Anton Leherbauer (Wind River) - [458398] Add support for normal/application cursor keys mode
  * Anton Leherbauer (Wind River) - [420928] Terminal widget leaks memory
+ * Davy Landman (CWI) - [475267][api] Allow custom mouse listeners
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -90,6 +91,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener2;
+import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
@@ -1406,6 +1408,16 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	@Override
     public void enableApplicationCursorKeys(boolean enable) {
 		fApplicationCursorKeys = enable;
+	}
+	
+	@Override
+	public void addMouseListener(ITerminalMouseListener listener) {
+	    getCtlText().addTerminalMouseListener(listener);
+	}
+	
+	@Override
+	public void removeMouseListener(ITerminalMouseListener listener) {
+	    getCtlText().removeTerminalMouseListener(listener);
 	}
 
 }

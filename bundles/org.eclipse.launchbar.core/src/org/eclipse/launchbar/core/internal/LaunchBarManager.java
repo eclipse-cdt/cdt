@@ -598,7 +598,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 
 	/**
 	 * Sets the preferred mode for the given descriptor
-	 * 
+	 *
 	 * @param desc
 	 * @param mode
 	 * @throws CoreException
@@ -643,7 +643,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 
 	public List<IRemoteConnection> getLaunchTargets(ILaunchDescriptor descriptor) throws CoreException {
 		if (descriptor == null)
-			return Collections.emptyList();
+			return remoteServicesManager.getAllRemoteConnections();
 
 		List<IRemoteConnection> targets = new ArrayList<>();
 		for (IRemoteConnection target : remoteServicesManager.getAllRemoteConnections()) {
@@ -677,7 +677,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 
 	/**
 	 * Sets preferred target for launch descriptor
-	 * 
+	 *
 	 * @param desc
 	 * @param target
 	 * @throws CoreException
@@ -816,7 +816,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 	@Override
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		// we have to ignore notifications from working copies, otherwise
-		// we will get thousand of events and we don't track working copies 
+		// we will get thousand of events and we don't track working copies
 		// (add/remove events are not sent for WCs)
 		if (configuration.isWorkingCopy())
 			return;
@@ -889,7 +889,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 			return;
 		fireLaunchTargetsChanged();
 		// if we added new target we probably want to use it
-		if (activeLaunchDesc != null && supportsTarget(activeLaunchDesc, target)) {
+		if (activeLaunchDesc == null || supportsTarget(activeLaunchDesc, target)) {
 			setActiveLaunchTarget(target);
 		}
 	}

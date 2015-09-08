@@ -93,6 +93,7 @@ public class ArduinoManager {
 					.resolve(Paths.get(packageUrl.getPath()).getFileName());
 			File packageFile = packagePath.toFile();
 			if (download) {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
 				Files.copy(packageUrl.openStream(), packagePath, StandardCopyOption.REPLACE_EXISTING);
 			}
 			if (packageFile.exists()) {
@@ -125,6 +126,7 @@ public class ArduinoManager {
 					.resolve(Paths.get(librariesUrl.getPath()).getFileName());
 			File librariesFile = librariesPath.toFile();
 			if (download) {
+				Files.createDirectories(ArduinoPreferences.getArduinoHome());
 				Files.copy(librariesUrl.openStream(), librariesPath, StandardCopyOption.REPLACE_EXISTING);
 			}
 			if (librariesFile.exists()) {

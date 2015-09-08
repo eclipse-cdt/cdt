@@ -206,7 +206,7 @@ public class ArduinoLibrary {
 				}
 			} else {
 				if (ArduinoBuildConfiguration.isSource(file.getName())) {
-					sources.add(file.getAbsolutePath());
+					sources.add(ArduinoBuildConfiguration.pathString(file.toPath()));
 				}
 			}
 		}

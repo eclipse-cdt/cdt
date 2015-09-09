@@ -179,13 +179,14 @@ public class Env {
 					if (func > 0) {
 						key = line.substring(0, func);
 						// scan until we find the closing '}' with no following chars
-						value = line.substring(func + 1);
+						value = "'" + line.substring(func + 1); //$NON-NLS-1$
 						while (line != null && !line.equals("}")) { //$NON-NLS-1$
 							line = reader.readLine();
 							if (line != null) {
-								value += line;
+								value += " " + line; //$NON-NLS-1$
 							}
 						}
+						value += "'"; //$NON-NLS-1$
 						line = reader.readLine();
 					} else {
 						int separator = line.indexOf('=');

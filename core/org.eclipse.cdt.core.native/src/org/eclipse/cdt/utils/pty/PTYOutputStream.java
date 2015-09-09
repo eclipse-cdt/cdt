@@ -18,6 +18,8 @@ import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
 public class PTYOutputStream extends OutputStream {
 
+	private static final byte EOT = '\4';
+
 	MasterFD master;
 
 	/**
@@ -69,6 +71,7 @@ public class PTYOutputStream extends OutputStream {
 	public void close() throws IOException {
 		if (master.getFD() == -1)
 			return;
+		write(EOT);
 		int status = close0(master.getFD());
 		if (status == -1)
 			throw new IOException("close error"); //$NON-NLS-1$

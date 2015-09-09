@@ -18,6 +18,9 @@ import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
 public class PTYOutputStream extends OutputStream {
 
+	private static final byte EOT = '\4';
+	private boolean sendEotBeforeClose = false;
+
 	MasterFD master;
 
 	/**
@@ -25,7 +28,19 @@ public class PTYOutputStream extends OutputStream {
 	 * @param fd file descriptor.
 	 */
 	public PTYOutputStream(MasterFD fd) {
+		this(fd, false);
+	}
+
+	/**
+	 * From a Unix valid file descriptor set a Reader.
+	 * @param fd file descriptor.
+	 * @param sendEotBeforeClose flags the stream to send an EOT character
+	 * before closing the stream to signalize end of stream.
+	 * @since 5.9
+	 */
+	public PTYOutputStream(MasterFD fd, boolean sendEotBeforeClose) {
 		master = fd;
+		this.sendEotBeforeClose = sendEotBeforeClose;
 	}
 
 	/**
@@ -69,6 +84,9 @@ public class PTYOutputStream extends OutputStream {
 	public void close() throws IOException {
 		if (master.getFD() == -1)
 			return;
+		if (sendEotBeforeClose) {
+			write(EOT);
+		}
 		int status = close0(master.getFD());
 		if (status == -1)
 			throw new IOException("close error"); //$NON-NLS-1$

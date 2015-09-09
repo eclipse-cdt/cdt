@@ -150,7 +150,7 @@ public class PTY {
 		}
 
 		in = new PTYInputStream(new MasterFD());
-		out = new PTYOutputStream(new MasterFD());
+		out = new PTYOutputStream(new MasterFD(), !isWinPTY);
 	}
 
 	/**

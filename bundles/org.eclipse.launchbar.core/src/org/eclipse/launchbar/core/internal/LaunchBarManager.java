@@ -868,6 +868,7 @@ public class LaunchBarManager implements ILaunchBarManager, IRemoteConnectionCha
 			fireLaunchTargetsChanged();
 			break;
 		default:
+			fireLaunchTargetsChanged();
 			break;
 		}
 	}

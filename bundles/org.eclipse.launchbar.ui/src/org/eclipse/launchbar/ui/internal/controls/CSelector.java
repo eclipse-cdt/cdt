@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class CSelector extends Composite {
 	private IStructuredContentProvider contentProvider;
@@ -557,7 +558,15 @@ public abstract class CSelector extends Composite {
 	}
 
 	public void refresh() {
-		// TODO add any new ones to the popup if it's open
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				update(selection); // update current selection - name or icon may have changed
+				if (popup != null && !popup.isDisposed()) {
+					listViewer.refresh(true); // update all labels in the popup
+				}
+			}
+		});
 	}
 
 	public void update(Object element) {

@@ -108,6 +108,7 @@ public class LaunchBarControl implements Listener {
 		button.setImage(srcImage);
 		button.setToolTipText(toolTipText);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				Activator.runCommand(command);
 			};
@@ -146,8 +147,7 @@ public class LaunchBarControl implements Listener {
 
 	@Override
 	public void launchTargetsChanged() {
-		// TODO Auto-generated method stub
-
+		targetSelector.refresh();
 	}
 
 	public ConfigSelector getConfigSelector() {

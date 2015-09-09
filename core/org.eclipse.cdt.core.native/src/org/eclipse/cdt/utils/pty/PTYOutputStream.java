@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
+import org.eclipse.core.runtime.Platform;
 
 public class PTYOutputStream extends OutputStream {
+
+	private static final byte EOT = '\4';
+	private boolean sendEotBeforeClose = false;
 
 	MasterFD master;
 
@@ -25,7 +29,19 @@ public class PTYOutputStream extends OutputStream {
 	 * @param fd file descriptor.
 	 */
 	public PTYOutputStream(MasterFD fd) {
+		this(fd, !Platform.OS_WIN32.equals(Platform.getOS()));
+	}
+
+	/**
+	 * From a Unix valid file descriptor set a Reader.
+	 * @param fd file descriptor.
+	 * @param sendEotBeforeClose flags the stream to send an EOT character
+	 * before closing the stream to signalize end of stream.
+	 * @since 5.9
+	 */
+	private PTYOutputStream(MasterFD fd, boolean sendEotBeforeClose) {
 		master = fd;
+		this.sendEotBeforeClose = sendEotBeforeClose;
 	}
 
 	/**
@@ -69,6 +85,9 @@ public class PTYOutputStream extends OutputStream {
 	public void close() throws IOException {
 		if (master.getFD() == -1)
 			return;
+		if (sendEotBeforeClose) {
+			write(EOT);
+		}
 		int status = close0(master.getFD());
 		if (status == -1)
 			throw new IOException("close error"); //$NON-NLS-1$

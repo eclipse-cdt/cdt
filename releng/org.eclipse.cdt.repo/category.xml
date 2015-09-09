@@ -2,6 +2,7 @@
 <site>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
+   <category-def name="preview" label="CDT Preview Features"/>
    <feature url="features/org.eclipse.cdt_0.0.0.qualifier.jar" id="org.eclipse.cdt" version="0.0.0">
       <category name="main"/>
    </feature>
@@ -93,5 +94,6 @@
       <category name="extra"/>
    </feature>
    <feature id="org.eclipse.cdt.arduino">
+      <category name="preview"/>
    </feature>
 </site>

@@ -60,8 +60,8 @@
   </setupTask>
   <setupTask
       xsi:type="jdt:JRETask"
-      version="JavaSE-1.7"
-      location="${jre.location-1.7}">
+      version="JavaSE-1.8"
+      location="${jre.location-1.8}">
     <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -160,11 +160,32 @@
           <repository
               url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
           <repository
-              url="http://download.eclipse.org/tm/updates/3.6milestones"/>
+              url="http://download.eclipse.org/tm/updates/4.0/"/>
           <repository
               url="http://download.eclipse.org/eclipse/updates/4.5milestones/"/>
           <repository
               url="http://download.eclipse.org/tools/ptp/builds/remote/2.0.0"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/tm/terminal/builds/development/nightly/"/>
+          <repository
+              url="https://hudson.eclipse.org/cdt/job/launchbar-master/lastSuccessfulBuild/artifact/repo/target/repository/"/>
+          <repository
+              url="http://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
+          <repository
+              url="http://download.eclipse.org/technology/swtbot/releases/latest/"/>
+          <repository
+              url="http://download.eclipse.org/tm/updates/4.0/"/>
+          <repository
+              url="http://download.eclipse.org/eclipse/updates/4.6milestones/"/>
+          <repository
+              url="http://download.eclipse.org/tools/ptp/builds/remote/neon/milestones"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
           <repository

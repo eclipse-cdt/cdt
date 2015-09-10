@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPage;
@@ -214,21 +213,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		} 
 		return null;
 	}
-	
-	/**
-	 * Returns this event handler's viewer as a table tree
-	 * viewer or <code>null</code> if none.
-	 * 
-	 * @return this event handler's viewer as a table tree
-	 * viewer or <code>null</code> if none
-	 */
-	protected TableTreeViewer getTableTreeViewer() {
-		if (getViewer() instanceof TableTreeViewer) {
-			return (TableTreeViewer)getViewer();
-		} 
-		return null;
-	}
-	
+
 	/**
 	 * Returns this event handler's viewer as a structured
 	 * viewer or <code>null</code> if none.

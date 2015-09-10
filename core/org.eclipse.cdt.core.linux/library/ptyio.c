@@ -13,6 +13,7 @@
 #include <PTYInputStream.h>
 #include <PTYOutputStream.h>
 #include <unistd.h>
+#include <termios.h>
 
 /* Header for class _org_eclipse_cdt_utils_pty_PTYInputStream */
 /* Header for class _org_eclipse_cdt_utils_pty_PTYOutputStream */
@@ -113,5 +114,11 @@ Java_org_eclipse_cdt_utils_pty_PTYOutputStream_close0(JNIEnv * env,
                                                             jobject jobj,
                                                             jint fd)
 {
+    /* Send EOF */
+    struct termios stermios;
+    if (tcgetattr(fd, &stermios) == 0) {
+        write(fd, &stermios.c_cc[VEOF], 1);
+    }
+
     return close(fd);
 }

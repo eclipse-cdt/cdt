@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Karsten Thoms (itemis) - Bug#471103
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,6 +18,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -69,6 +71,37 @@ public class ASTTypeUtil {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SPACE = " "; //$NON-NLS-1$
 	private static final int DEAULT_ITYPE_SIZE = 2;
+
+	private static class ResultCache {
+		// Keep two separate maps for normalized and unnormalized type representations.
+		private WeakHashMap<IType, String> normalizedTypes = new WeakHashMap<>();
+		private WeakHashMap<IType, String> unnormalizedTypes = new WeakHashMap<>();
+
+		/**
+		 * Returns the cached string representation for a type. Returns {@code null}
+		 * if the value was not cached or was garbage collected.
+		 */
+		public String get(IType type, boolean normalize) {
+			if (normalize) {
+				return normalizedTypes.get(type);
+			} else {
+				return unnormalizedTypes.get(type);
+			}
+		}
+
+		/**
+		 * Stores a string representation of the given type name in the cache.
+		 */
+		public String put(IType type, boolean normalize, String result) {
+			if (normalize) {
+				return normalizedTypes.put(type, result);
+			} else {
+				return unnormalizedTypes.put(type, result);
+			}
+		}
+	}
+
+	private static final ThreadLocal<ResultCache> resultCache = new ThreadLocal<>();
 
 	private ASTTypeUtil() {}
 
@@ -537,6 +570,20 @@ public class ASTTypeUtil {
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
+		// performance: check if type was appended before
+		ResultCache cache = resultCache.get();
+		if (cache != null) {
+			String cachedResult = cache.get(type, normalize);
+			if (cachedResult != null) {
+				result.append(cachedResult);
+				return;
+			}
+		}
+
+		// Remember type argument for caching, argument is not final and might be changed.
+		IType originalType = type;
+		// Remember the start offset of the appended string.
+		int startOffset = result.length();
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		int numTypes = 0;
 
@@ -658,6 +705,11 @@ public class ASTTypeUtil {
 				IType tj = postfix.get(j);
 				appendTypeString(tj, normalize, result);
 			}
+		}
+
+		if (cache != null) {
+			// Store result in the cache.
+			cache.put(originalType, normalize, result.substring(startOffset));
 		}
 	}
 
@@ -797,7 +849,7 @@ public class ASTTypeUtil {
 								CCorePlugin.log(e);
 							}
 						} else {
-							IASTNode node = ASTInternal.getDefinitionOfBinding(binding);
+							IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(binding);
 							if (node != null) {
 								IPath filePath = new Path(node.getTranslationUnit().getFilePath());
 								URI uri = UNCPathConverter.getInstance().toURI(filePath);
@@ -905,9 +957,29 @@ public class ASTTypeUtil {
 			switch (fname[i]) {
 			case '/':
 			case '\\':
-				return i + 1;
+				return i+1;
 			}
 		}
 		return 0;
+	}
+	
+	/**
+	 * Marks start of processing a translation unit during indexing.
+	 * Enables caching of string representations of types.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void startTranslationUnit() {
+		resultCache.set(new ResultCache());
+	}
+
+	/**
+	 * Marks the end of processing a translation unit during indexing.
+	 * Disables caching of string representations of types and clears the previously cached results.
+	 *
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void finishTranslationUnit() {
+		resultCache.set(null);
 	}
 }

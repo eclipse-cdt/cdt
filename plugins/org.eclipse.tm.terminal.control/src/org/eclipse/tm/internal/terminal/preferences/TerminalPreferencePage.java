@@ -26,6 +26,13 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+/**
+ * Terminal Preference Page.
+ *  
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ */
 public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
     protected BooleanFieldEditor fInvertColors;

@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.preferences;
 
+/**
+ * Constants for Terminal Preferences.
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ITerminalConstants {
 
 	public static final String  PREF_HAS_MIGRATED      = "TerminalPref.migrated"; //$NON-NLS-1$

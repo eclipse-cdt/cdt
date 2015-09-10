@@ -11,6 +11,9 @@ package org.eclipse.tm.terminal.view.ui.interfaces.tracing;
 
 /**
  * Core plug-in trace slot identifiers.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITraceIds {
 

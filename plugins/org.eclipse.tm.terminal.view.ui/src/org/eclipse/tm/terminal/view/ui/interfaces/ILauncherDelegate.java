@@ -16,9 +16,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
+import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 
 /**
  * Terminal launcher delegate.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * Clients should extend {@link AbstractLauncherDelegate} instead.
  */
 public interface ILauncherDelegate extends IExecutableExtension, IAdaptable {
 

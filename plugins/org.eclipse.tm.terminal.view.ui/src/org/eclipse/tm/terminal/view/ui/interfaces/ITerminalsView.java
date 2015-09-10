@@ -14,6 +14,9 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * Terminal view public interface.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITerminalsView extends IViewPart {
 

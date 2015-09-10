@@ -14,6 +14,9 @@ import org.eclipse.tm.terminal.view.ui.activator.UIPlugin;
 
 /**
  * UI Context help id definitions.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContextHelpIds {
 

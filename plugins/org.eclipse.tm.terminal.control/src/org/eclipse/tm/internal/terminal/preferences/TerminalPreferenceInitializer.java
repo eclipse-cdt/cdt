@@ -18,15 +18,21 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
+/**
+ * Terminal Preference Initializer.
+ *  
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ */
 public class TerminalPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	public TerminalPreferenceInitializer() {
 	}
 
 	public void initializeDefaultPreferences() {
-		//DefaultScope.INSTANCE was only added in Eclipse 3.7 - we want to be compatible further back
-		//IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);
-		IEclipsePreferences defaultPrefs = new DefaultScope().getNode(TerminalPlugin.PLUGIN_ID);
+		//DefaultScope.INSTANCE was added in Eclipse 3.7
+		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);
 		defaultPrefs.putBoolean(ITerminalConstants.PREF_INVERT_COLORS, ITerminalConstants.DEFAULT_INVERT_COLORS);
 		defaultPrefs.putInt(ITerminalConstants.PREF_BUFFERLINES, ITerminalConstants.DEFAULT_BUFFERLINES);
 	}

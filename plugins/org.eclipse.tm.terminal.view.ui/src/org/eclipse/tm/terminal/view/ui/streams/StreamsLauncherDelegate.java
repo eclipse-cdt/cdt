@@ -29,7 +29,6 @@ import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 /**
  * Streams launcher delegate implementation.
  */
-@SuppressWarnings("restriction")
 public class StreamsLauncherDelegate extends AbstractLauncherDelegate {
 
 	/* (non-Javadoc)

@@ -25,7 +25,6 @@ import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 /**
  * Terminal control select encoding action implementation.
  */
-@SuppressWarnings("restriction")
 public class SelectEncodingAction extends AbstractTerminalAction {
 	// Reference to the parent tab folder manager
 	private final TabFolderManager tabFolderManager;

@@ -20,7 +20,6 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
 /**
  * Terminal console tab scroll lock action.
  */
-@SuppressWarnings("restriction")
 public class TabScrollLockAction extends AbstractTerminalAction {
 
 	/**

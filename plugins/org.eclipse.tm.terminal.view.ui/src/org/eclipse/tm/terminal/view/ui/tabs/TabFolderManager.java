@@ -59,7 +59,6 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Terminal tab folder manager.
  */
-@SuppressWarnings({ "restriction" })
 public class TabFolderManager extends PlatformObject implements ISelectionProvider {
 	// Reference to the parent terminal consoles view
 	private final ITerminalsView parentView;

@@ -20,6 +20,8 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
 
 /**
  * Opens a new terminal view with a new secondary view ID.
+ *
+ * @since 4.1
  */
 public class NewTerminalViewAction extends AbstractTerminalAction {
 

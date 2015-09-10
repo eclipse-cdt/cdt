@@ -20,7 +20,6 @@ import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
 /**
  * Terminal launcher delegate.
  */
-@SuppressWarnings("restriction")
 public interface ILauncherDelegate extends IExecutableExtension, IAdaptable {
 
 	/**

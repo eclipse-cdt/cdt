@@ -42,7 +42,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		StringBuffer b=new StringBuffer();
 		// String[] lines=s.split("\n");
 		// <J2ME CDC-1.1 Foundation-1.1 variant>
-		ArrayList l = new ArrayList();
+		ArrayList<String> l = new ArrayList<String>();
 		int j = 0;
 		for (int k = 0; k < s.length(); k++) {
 			if (s.charAt(k) == '\n') {
@@ -56,7 +56,7 @@ public class TerminalTextDataWindowTest extends AbstractITerminalTextDataTest {
 		}
 		String[] lines = new String[j + 1];
 		while (j >= 0) {
-			lines[j] = (String) l.get(j);
+			lines[j] = l.get(j);
 			j--;
 		}
 		// </J2ME CDC-1.1 Foundation-1.1 variant>

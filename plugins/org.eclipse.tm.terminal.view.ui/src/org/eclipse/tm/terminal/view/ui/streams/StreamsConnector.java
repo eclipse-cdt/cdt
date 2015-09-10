@@ -19,7 +19,6 @@ import org.eclipse.ui.services.IDisposable;
 /**
  * Streams connector implementation.
  */
-@SuppressWarnings("restriction")
 public class StreamsConnector extends AbstractStreamsConnector implements IDisposable {
 	// Reference to the streams settings
 	private final StreamsSettings settings;

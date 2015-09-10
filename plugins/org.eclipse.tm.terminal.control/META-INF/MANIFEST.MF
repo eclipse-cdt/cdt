@@ -12,14 +12,14 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
-Export-Package: org.eclipse.tm.internal.terminal.connector;x-friends:="org.eclipse.tm.terminal.test",
+Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.control,
  org.eclipse.tm.internal.terminal.control.actions,
- org.eclipse.tm.internal.terminal.control.impl;x-friends:="org.eclipse.tm.terminal.test",
- org.eclipse.tm.internal.terminal.emulator;x-friends:="org.eclipse.tm.terminal.test",
- org.eclipse.tm.internal.terminal.model;x-friends:="org.eclipse.tm.terminal.test",
+ org.eclipse.tm.internal.terminal.control.impl;x-internal:=true,
+ org.eclipse.tm.internal.terminal.emulator;x-internal:=true,
+ org.eclipse.tm.internal.terminal.model;x-internal:=true,
  org.eclipse.tm.internal.terminal.preferences,
  org.eclipse.tm.internal.terminal.provisional.api,
  org.eclipse.tm.internal.terminal.provisional.api.provider,
- org.eclipse.tm.internal.terminal.textcanvas;x-friends:="org.eclipse.tm.terminal.test",
+ org.eclipse.tm.internal.terminal.textcanvas;x-internal:=true,
  org.eclipse.tm.terminal.model

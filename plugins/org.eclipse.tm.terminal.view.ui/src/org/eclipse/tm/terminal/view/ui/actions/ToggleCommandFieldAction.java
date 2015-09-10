@@ -24,7 +24,6 @@ import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 /**
  * Toggle command input field.
  */
-@SuppressWarnings("restriction")
 public class ToggleCommandFieldAction extends AbstractTerminalAction {
 	private ITerminalsView view = null;
 

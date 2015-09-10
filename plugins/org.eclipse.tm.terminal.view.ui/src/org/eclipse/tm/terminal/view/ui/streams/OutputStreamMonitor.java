@@ -35,7 +35,6 @@ import org.eclipse.ui.services.IDisposable;
  * stream monitor is attached to the stdout and/or stderr stream of the monitored
  * (remote) process.
  */
-@SuppressWarnings("restriction")
 public class OutputStreamMonitor implements IDisposable {
 	// The default buffer size to use
     private static final int BUFFER_SIZE = 8192;

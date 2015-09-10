@@ -22,7 +22,6 @@ import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 /**
  * Terminal property tester implementation.
  */
-@SuppressWarnings("restriction")
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 
 	/* (non-Javadoc)

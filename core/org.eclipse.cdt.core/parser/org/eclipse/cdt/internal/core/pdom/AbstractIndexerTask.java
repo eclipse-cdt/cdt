@@ -11,6 +11,7 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Marc-Andre Laperle (Ericsson)
+ *     Karsten Thoms (itemis) - Bug#471103
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 

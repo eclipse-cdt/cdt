@@ -539,7 +539,7 @@ public class ASTTypeUtil {
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
-		// performance: check if type was appended before
+		// performance: check if type was appended before during processing one TranslationUnit
 		Cache cache = tlCache.get();
 		String cachedResult = cache != null ? cache.appendType_get(type, normalize) : null;
 		if (cachedResult != null) {

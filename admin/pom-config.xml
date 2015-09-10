@@ -55,14 +55,14 @@
         <terminal-stream>development</terminal-stream>
         <terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
         <terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
-        <sdk-version>4.5</sdk-version>
+        <sdk-version>4.6milestones</sdk-version>
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
         <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
-        <platform-release-site>http://download.eclipse.org/releases/mars</platform-release-site>
+        <platform-release-site>http://download.eclipse.org/releases/neon</platform-release-site>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository</orbit-site>
-        <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.7</cdt-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/builds/neon/milestones</cdt-site>
         <rse-site>http://download.eclipse.org/tm/updates/4.0</rse-site>
         <remote-site>http://download.eclipse.org/tools/ptp/builds/remote/2.0.0</remote-site>
         <swtbot-site>http://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-site>
@@ -173,6 +173,18 @@
                 <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
                 <platform-release-site>http://download.eclipse.org/releases/${terminal-stream}</platform-release-site>
                 <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.5</cdt-site>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Eclipse 4.5.x (Mars) -->
+            <id>luna</id>
+            
+            <properties>
+                <terminal-stream>mars</terminal-stream>
+                <sdk-version>4.5</sdk-version>
+                <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+                <platform-release-site>http://download.eclipse.org/releases/${terminal-stream}</platform-release-site>
+                <cdt-site>http://download.eclipse.org/tools/cdt/releases/8.7</cdt-site>
             </properties>
         </profile>
     </profiles>

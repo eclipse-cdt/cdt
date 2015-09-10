@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Karsten Thoms (itemis) - Bug#471103
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,6 +18,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -537,6 +539,17 @@ public class ASTTypeUtil {
 	 * @since 5.3
 	 */
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
+		// performance: check if type was appended before
+		Cache cache = tlCache.get();
+		String cachedResult = cache != null ? cache.appendType_get(type, normalize) : null;
+		if (cachedResult != null) {
+			result.append(cachedResult);
+			return;
+		}
+		// remember type argument for caching, argument is not final and might be changed
+		IType _type = type;
+		// remember the start offset of the appended string
+		int startOffset = result.length();
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		int numTypes = 0;
 
@@ -658,6 +671,10 @@ public class ASTTypeUtil {
 				IType tj = postfix.get(j);
 				appendTypeString(tj, normalize, result);
 			}
+		}
+		// store result in the cache
+		if (cache != null) {
+			cache.appendType_put(_type, normalize, result.substring(startOffset));
 		}
 	}
 
@@ -797,7 +814,7 @@ public class ASTTypeUtil {
 								CCorePlugin.log(e);
 							}
 						} else {
-							IASTNode node = ASTInternal.getDefinitionOfBinding(binding);
+							IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(binding);
 							if (node != null) {
 								IPath filePath = new Path(node.getTranslationUnit().getFilePath());
 								URI uri = UNCPathConverter.getInstance().toURI(filePath);
@@ -905,9 +922,58 @@ public class ASTTypeUtil {
 			switch (fname[i]) {
 			case '/':
 			case '\\':
-				return i + 1;
+				return i+1;
 			}
 		}
 		return 0;
+	}
+	
+	/**
+	 * Mark start of processing a TranslationUnit during the indexing process. Enables caching of type based results.
+	 * @since 5.12
+	 */
+	public static void startTranslationUnit() {
+		tlCache.set(new Cache());
+	}
+
+	/**
+	 * Mark end of processing a TranslationUnit during the indexing process. Disables caching of type based results.
+	 * @since 5.12
+	 */
+	public static void finishTranslationUnit() {
+		tlCache.set(null);
+	}
+
+	private static final ThreadLocal<Cache> tlCache = new ThreadLocal<>();
+
+	private static class Cache {
+		// keep two separate maps for normalized and unnormalized type names
+		// maps must be weak since the Cache instance and the entries must be removable by GC
+		private WeakHashMap<IType, String> resultMap_appendType_normalized = new WeakHashMap<>();
+		private WeakHashMap<IType, String> resultMap_appendType_unnormalized = new WeakHashMap<>();
+
+		/**
+		 * Get the cached name for a type. Returns <code>null</code> when the
+		 * value was not cached. May return <code>null</code> also if the cached
+		 * value was GC'ed.
+		 */
+		public String appendType_get(IType type, boolean normalize) {
+			if (normalize) {
+				return resultMap_appendType_normalized.get(type);
+			} else {
+				return resultMap_appendType_unnormalized.get(type);
+			}
+		}
+
+		/**
+		 * Store a computed type name in the cache.
+		 */
+		public String appendType_put(IType type, boolean normalize, String result) {
+			if (normalize) {
+				return resultMap_appendType_normalized.put(type, result);
+			} else {
+				return resultMap_appendType_unnormalized.put(type, result);
+			}
+		}
 	}
 }

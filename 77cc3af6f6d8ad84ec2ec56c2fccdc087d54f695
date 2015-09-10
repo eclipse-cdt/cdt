@@ -16,6 +16,24 @@
       "revId": "77cc3af6f6d8ad84ec2ec56c2fccdc087d54f695",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_6c71a5ce",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/ProcessClosure.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-09-10T14:54:35Z",
+      "side": 1,
+      "message": "I\u0027m thinking we could just update the javadoc to remove the mention of being able to pass null for outputStream, errorStream. It turns out I won\u0027t be needing this specifically and everywhere we pass non-null streams. What do you think?",
+      "parentUuid": "2721e7e2_a00563cc",
+      "revId": "77cc3af6f6d8ad84ec2ec56c2fccdc087d54f695",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

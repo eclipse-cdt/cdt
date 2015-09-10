@@ -21,7 +21,6 @@ import org.eclipse.ui.services.IDisposable;
 /**
  * Streams connector implementation.
  */
-@SuppressWarnings("restriction")
 public abstract class AbstractStreamsConnector extends TerminalConnectorImpl {
 	// Reference to the stdin monitor
     private InputStreamMonitor stdInMonitor;

@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * Terminal tab folder toolbar handler.
  */
-@SuppressWarnings("restriction")
 public class TabFolderToolbarHandler extends PlatformObject {
 	// Reference to the parent terminals console view
 	private final ITerminalsView parentView;

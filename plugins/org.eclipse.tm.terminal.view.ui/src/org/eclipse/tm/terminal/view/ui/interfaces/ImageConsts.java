@@ -12,6 +12,9 @@ package org.eclipse.tm.terminal.view.ui.interfaces;
 
 /**
  * Image registry constants.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ImageConsts {
 	/**
@@ -66,16 +69,19 @@ public interface ImageConsts {
 
     /**
      * The key to access the new terminal view action image (enabled).
+     * @since 4.1
      */
     public static final String  ACTION_NewTerminalView_Enabled = "NewTerminalViewAction_enabled"; //$NON-NLS-1$
 
     /**
      * The key to access the new terminal view action image (disabled).
+     * @since 4.1
      */
     public static final String  ACTION_NewTerminalView_Disabled = "NewTerminalViewAction_disabled"; //$NON-NLS-1$
 
     /**
      * The key to access the new terminal view action image (hover).
+     * @since 4.1
      */
     public static final String  ACTION_NewTerminalView_Hover = "NewTerminalViewAction_hover"; //$NON-NLS-1$
 

@@ -32,7 +32,6 @@ import org.eclipse.ui.services.IDisposable;
  * <b>Note:</b> The input is coming <i>from</i> the terminal. Therefore, the input
  * stream monitor is attached to the stdin stream of the monitored (remote) process.
  */
-@SuppressWarnings("restriction")
 public class InputStreamMonitor extends OutputStream implements IDisposable {
     // Reference to the parent terminal control
 	private final ITerminalControl terminalControl;

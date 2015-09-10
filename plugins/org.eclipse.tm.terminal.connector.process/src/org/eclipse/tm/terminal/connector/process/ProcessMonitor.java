@@ -87,7 +87,6 @@ public class ProcessMonitor {
      * Monitors the associated system process, waiting for it to terminate,
      * and notifies the associated process monitor's.
      */
-    @SuppressWarnings("restriction")
 	public void monitorProcess() {
     	// If already disposed -> return immediately
     	if (disposed) return;

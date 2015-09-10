@@ -41,7 +41,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * Terminal tab folder menu handler.
  */
-@SuppressWarnings("restriction")
 public class TabFolderMenuHandler extends PlatformObject {
 	// Reference to the parent terminals console view
 	private final ITerminalsView parentView;

@@ -49,7 +49,6 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Terminal console manager.
  */
-@SuppressWarnings("restriction")
 public class ConsoleManager {
 
 	// Constant to indicate any secondary id is acceptable
@@ -283,6 +282,7 @@ public class ConsoleManager {
 	 *
 	 * @param id The terminals console view id. Must not be <code>null</code>.
 	 * @return The next secondary id, or <code>null</code> if it is the first one
+	 * @since 4.1
 	 */
 	public String getNextTerminalSecondaryId(String id) {
 		Assert.isNotNull(id);

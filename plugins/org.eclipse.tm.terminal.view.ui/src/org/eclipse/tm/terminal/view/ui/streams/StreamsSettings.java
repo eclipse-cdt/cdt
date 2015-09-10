@@ -20,7 +20,6 @@ import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
 /**
  * Streams connector settings implementation.
  */
-@SuppressWarnings("restriction")
 public class StreamsSettings {
 	// Reference to the stdin stream
 	private OutputStream stdin;

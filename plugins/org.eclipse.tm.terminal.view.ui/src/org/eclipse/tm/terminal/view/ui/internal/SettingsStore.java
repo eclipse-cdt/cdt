@@ -19,7 +19,6 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
  * Simple default Terminal settings store implementation keeping the settings
  * within memory.
  */
-@SuppressWarnings("restriction")
 public class SettingsStore implements ISettingsStore {
 	private final Map<String, Object> settings = new HashMap<String, Object>();
 

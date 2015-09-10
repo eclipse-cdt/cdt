@@ -55,11 +55,11 @@
         <terminal-stream>development</terminal-stream>
         <terminal-zipfile>${project.artifactId}.zip</terminal-zipfile>
         <terminal-install>/home/data/httpd/download.eclipse.org/tm/terminal/builds/${terminal-stream}/nightly</terminal-install>
-        <sdk-version>4.6milestones</sdk-version>
+        <sdk-version>4.6</sdk-version>
         
         <!-- Set up the default target platform to build against -->
         <license-site>http://download.eclipse.org/cbi/updates/license</license-site>
-        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}</platform-site>
+        <platform-site>http://download.eclipse.org/eclipse/updates/${sdk-version}milestones</platform-site>
         <platform-release-site>http://download.eclipse.org/releases/neon</platform-release-site>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository</orbit-site>
         <cdt-site>http://download.eclipse.org/tools/cdt/builds/neon/milestones</cdt-site>

@@ -177,7 +177,7 @@
         </profile>
         <profile>
             <!-- Eclipse 4.5.x (Mars) -->
-            <id>luna</id>
+            <id>mars</id>
             
             <properties>
                 <terminal-stream>mars</terminal-stream>

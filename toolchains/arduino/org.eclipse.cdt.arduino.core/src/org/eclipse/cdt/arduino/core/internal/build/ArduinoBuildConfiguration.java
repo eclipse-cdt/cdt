@@ -26,7 +26,6 @@ import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPackage;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
-import org.eclipse.cdt.arduino.core.internal.board.ArduinoTool;
 import org.eclipse.cdt.arduino.core.internal.board.ToolDependency;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoConsoleParser;
 import org.eclipse.cdt.arduino.core.internal.console.ArduinoErrorParser;
@@ -150,7 +149,8 @@ public class ArduinoBuildConfiguration {
 		projectDesc.setActiveBuildConfig(config.getName());
 		project.setDescription(projectDesc, monitor);
 
-		// Reindex - assuming for now each config has different compiler settings
+		// Reindex - assuming for now each config has different compiler
+		// settings
 		CCorePlugin.getIndexManager().reindex(CoreModel.getDefault().create(project));
 	}
 
@@ -425,63 +425,26 @@ public class ArduinoBuildConfiguration {
 	}
 
 	public void setEnvironment(Map<String, String> env) throws CoreException {
-		// Arduino home to find platforms and libraries
-		env.put("ARDUINO_HOME", pathString(ArduinoPreferences.getArduinoHome())); //$NON-NLS-1$
+		// Everything is specified with full path, do not need to add anything
+		// to the environment.
+	}
 
-		// Add tools to the path
-		String pathKey = null;
-		String path = null;
-		for (Map.Entry<String, String> entry : env.entrySet()) {
-			if (entry.getKey().equalsIgnoreCase("PATH")) { //$NON-NLS-1$
-				pathKey = entry.getKey();
-				path = entry.getValue();
-				break;
-			}
-		}
-
-		List<Path> toolPaths = new ArrayList<>();
-		if (isWindows) {
-			// Add in the tools/make directory to pick up make
-			toolPaths.add(ArduinoPreferences.getArduinoHome().resolve("tools/make")); //$NON-NLS-1$
-		}
-		ArduinoBoard board = getBoard();
-		ArduinoPlatform platform = board.getPlatform();
-		for (ToolDependency dep : platform.getToolsDependencies()) {
-			ArduinoTool tool = dep.getTool();
-			Path installPath = tool.getInstallPath();
-			Path binPath = installPath.resolve("bin"); //$NON-NLS-1$
-			if (binPath.toFile().exists()) {
-				toolPaths.add(binPath);
-			} else {
-				// use the install dir by default
-				toolPaths.add(installPath);
-			}
-		}
-		for (Path toolPath : toolPaths) {
-			if (path != null) {
-				path = pathString(toolPath) + File.pathSeparatorChar + path;
-			} else {
-				path = pathString(toolPath);
-			}
-		}
-		if (pathKey == null) {
-			pathKey = "PATH"; //$NON-NLS-1$
-		}
-		env.put(pathKey, path);
+	public String getMakeCommand() {
+		return isWindows ? ArduinoPreferences.getArduinoHome().resolve("tools/make/make").toString() : "make"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String[] getBuildCommand() throws CoreException {
-		return new String[] { "make", "-f", getMakeFile().getName() }; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] { getMakeCommand(), "-f", getMakeFile().getName() }; //$NON-NLS-1$
 	}
 
 	public String[] getCleanCommand() throws CoreException {
-		return new String[] { "make", "-f", getMakeFile().getName(), "clean" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new String[] { getMakeCommand(), "-f", getMakeFile().getName(), "clean" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String[] getSizeCommand() throws CoreException {
 		// TODO this shouldn't be in the makefile
 		// should be like the upload command
-		return new String[] { "make", "-f", getMakeFile().getName(), "size" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new String[] { getMakeCommand(), "-f", getMakeFile().getName(), "size" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getCodeSizeRegex() throws CoreException {
@@ -504,7 +467,6 @@ public class ArduinoBuildConfiguration {
 
 	public String[] getUploadCommand(String serialPort) throws CoreException {
 		String toolName = getProperties().getProperty("upload.tool"); //$NON-NLS-1$
-		ArduinoTool tool = board.getPlatform().getTool(toolName);
 
 		Properties properties = getProperties();
 

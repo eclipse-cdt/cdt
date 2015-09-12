@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_d0fadbe7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/language/FileLanguageMappingPropertyPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-09-12T20:04:39Z",
+      "side": 1,
+      "message": "Where is the index guard? Would be much cleaner if you do standard for loop\n\nfor (int i\u003d0; i\u003cmappinsg.length;i++) {\n   if (mappings[i].inheritedFrom!\u003dLanguageMappingResolver.FILE_MAPPING)\n    return mappinsg[i];\n}\n// not sure what we do here",
+      "revId": "83b0f31d63f5e8300604dd341dff5737bed1aee1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

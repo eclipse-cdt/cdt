@@ -245,13 +245,13 @@ public class ArduinoPlatform {
 			}
 		}
 
-		// On Windows install make from equations.org
+		// On Windows install make from bintray
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			try {
 				Path makePath = ArduinoPreferences.getArduinoHome().resolve("tools/make/make.exe"); //$NON-NLS-1$
 				if (!makePath.toFile().exists()) {
 					Files.createDirectories(makePath.getParent());
-					URL makeUrl = new URL("ftp://ftp.equation.com/make/32/make.exe"); //$NON-NLS-1$
+					URL makeUrl = new URL("https://bintray.com/artifact/download/cdtdoug/tools/make.exe"); //$NON-NLS-1$
 					Files.copy(makeUrl.openStream(), makePath);
 					makePath.toFile().setExecutable(true, false);
 				}

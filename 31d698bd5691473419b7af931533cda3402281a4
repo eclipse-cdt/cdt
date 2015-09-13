@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_83a01f24",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-09-13T23:48:54Z",
+      "side": 1,
+      "message": "Lets reset the sequence number to 1 for this new target",
+      "range": {
+        "startLine": 2,
+        "startChar": 61,
+        "endLine": 2,
+        "endChar": 63
+      },
+      "revId": "31d698bd5691473419b7af931533cda3402281a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_63a52b32",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-09-13T23:48:54Z",
+      "side": 1,
+      "message": "I guess it\u0027s time to switch to the Intermediary Orbit builds e.g. I20150820184356",
+      "revId": "31d698bd5691473419b7af931533cda3402281a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_c39697cf",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-09-13T23:48:54Z",
+      "side": 1,
+      "message": "I think this will be moved soon to Java 1.8, no rush on my side but something to consider.",
+      "revId": "31d698bd5691473419b7af931533cda3402281a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

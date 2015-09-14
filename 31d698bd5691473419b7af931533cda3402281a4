@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_c328570c",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-09-14T00:35:02Z",
+      "side": 1,
+      "message": "It make sense !",
+      "parentUuid": "2721e7e2_c31177e0",
+      "revId": "31d698bd5691473419b7af931533cda3402281a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_c39697cf",
         "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
         "patchSetId": 1
@@ -149,6 +167,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "2721e7e2_2387b39a",
+      "revId": "31d698bd5691473419b7af931533cda3402281a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_6337eb69",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 482
+      },
+      "writtenOn": "2015-09-14T00:35:02Z",
+      "side": 1,
+      "message": "Good, although we\u0027ll need to cascade this to CDT.setup for Oomph",
+      "parentUuid": "2721e7e2_2322132d",
       "revId": "31d698bd5691473419b7af931533cda3402281a4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

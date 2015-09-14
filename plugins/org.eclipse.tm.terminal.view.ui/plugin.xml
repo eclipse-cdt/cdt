@@ -239,6 +239,12 @@
             id="org.eclipse.tm.terminal.view.ui.command.disconnect"
             name="%command.disconnect.name">
       </command>
+      <command
+            categoryId="org.eclipse.tm.terminal.view.ui.commands.category"
+            helpContextId="org.eclipse.tm.terminal.view.ui.command_NewView"
+            id="org.eclipse.tm.terminal.view.ui.command.newview"
+            name="%command.newview.name">
+      </command>
    </extension>
 
 <!-- Key bindings -->
@@ -291,6 +297,15 @@
             </activeWhen>
       </handler>
 
+      <handler
+            class="org.eclipse.tm.terminal.view.ui.internal.handler.NewTerminalViewHandler"
+            commandId="org.eclipse.tm.terminal.view.ui.command.newview">
+            <activeWhen>
+               <with variable="activePartId">
+                  <equals value="org.eclipse.tm.terminal.view.ui.TerminalsView"/>
+               </with>
+            </activeWhen>
+      </handler>
    </extension>
 
 <!-- Help Context contributions -->

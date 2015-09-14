@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_c31177e0",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-09-14T00:18:16Z",
+      "side": 1,
+      "message": "OK so I verified that there\u0027s no update for those plugins in the new update site so it\u0027s safe. But... then there\u0027s no point in using the new update site, we actually lose more than we gain because I20150820184356 will go away since it\u0027s just an integration build. At least we know R20150519210750 will be around for a very long time and we can change it when necessary. So I\u0027d leave it as is.",
+      "parentUuid": "2721e7e2_830bffb3",
+      "revId": "31d698bd5691473419b7af931533cda3402281a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_c39697cf",
         "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
         "patchSetId": 1

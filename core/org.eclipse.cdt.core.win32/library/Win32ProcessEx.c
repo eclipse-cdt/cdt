@@ -224,11 +224,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		}
 
 	// Construct starter's command line
-	swprintf(eventBreakName, L"SABreak%010i", nLocalCounter);
-	swprintf(eventWaitName, L"SAWait%010i", nLocalCounter);
-	swprintf(eventTerminateName, L"SATerm%010i", nLocalCounter);
-	swprintf(eventKillName, L"SAKill%010i", nLocalCounter);
-	swprintf(eventCtrlcName, L"SACtrlc%010i", nLocalCounter);
+	swprintf(eventBreakName, L"SABreak%04x%08x", pid, nLocalCounter);
+	swprintf(eventWaitName, L"SAWait%004x%08x", pid, nLocalCounter);
+	swprintf(eventTerminateName, L"SATerm%004x%08x", pid, nLocalCounter);
+	swprintf(eventKillName, L"SAKill%04x%08x", pid, nLocalCounter);
+	swprintf(eventCtrlcName, L"SACtrlc%04x%08x", pid, nLocalCounter);
 
 	pCurProcInfo->eventBreak     = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
     if(NULL == pCurProcInfo->eventBreak || GetLastError() == ERROR_ALREADY_EXISTS)

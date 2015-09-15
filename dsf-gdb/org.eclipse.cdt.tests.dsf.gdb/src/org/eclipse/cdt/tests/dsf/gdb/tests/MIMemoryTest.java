@@ -239,6 +239,7 @@ public class MIMemoryTest extends BaseTestCase {
 			return null;
 		}
 	}
+
 	 /* ------------------------------------------------------------------------
 	 * evaluateExpression
 	 * ------------------------------------------------------------------------
@@ -1177,8 +1178,7 @@ public class MIMemoryTest extends BaseTestCase {
 				fSession, IMemoryChangedEvent.class);
 		MemoryWriteQuery writeQueries[] = new MemoryWriteQuery[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
-			byte[] block = new byte[1];
-			block[0] = (byte) offset;
+			byte[] block = valueToBytes(offset);
 
 			writeQueries[offset] = new MemoryWriteQuery(fMemoryService,
 					fMemoryDmc, fBaseAddress, offset, fWordSize, 1, block);
@@ -1206,8 +1206,9 @@ public class MIMemoryTest extends BaseTestCase {
 		// Wait for all the queries to finish
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			MemoryByte[] data = readQueries[offset].get();
-			assertThat(data.length, is(1));
-			assertThat(data[0].getValue(), is((byte) offset));
+			assertThat(data.length, is(fWordSize));
+			MemoryByteBuffer mbb = new MemoryByteBuffer(data, fByteOrder, fWordSize);
+			assertThat(mbb.getNextWord(), is((long) offset));
 		}
 	}
 

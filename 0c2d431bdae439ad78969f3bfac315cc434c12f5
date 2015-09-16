@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_3acea92a",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/MappingSourceContainer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-16T20:33:20Z",
+      "side": 1,
+      "message": "This is confusing to me.  A create method in the class itself and calling its own constructor seems weird.\n\nCan we use the Cloneable interface to better implement this copy() method?",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_ba229952",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-16T20:33:20Z",
+      "side": 1,
+      "message": "Not used it seems",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_1a692570",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-16T20:33:20Z",
+      "side": 1,
+      "message": "Not used it seems",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_3a7ce95a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1127,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-16T20:33:20Z",
+      "side": 1,
+      "message": "These methods are in alphabetical order.  Not sure it is that valuable, but might as well keep that going.  Please move higher up.",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 #*******************************************************************************
-# Copyright (c) 2002, 2009 QNX Software Systems and others.
+# Copyright (c) 2002, 2015 QNX Software Systems and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -8,12 +8,13 @@
 # Contributors:
 #     QNX Software Systems - initial API and implementation
 #     Alex Blewitt - MacOSX with a 64-bit vm 
+# Martin Oberhuber (Wind River) - Bug 476709 - Fix change_window_size()
 #*******************************************************************************/
 
 # makefile for libspawner.so
 # See http://developer.apple.com/documentation/Java/Conceptual/Java141Development/Core_APIs/chapter_6_section_4.html
 
-JAVA_HOME = $(shell echo /Library/Java/JavaVirtualMachines/jdk1.8.0_*.jdk/Contents/Home)
+JAVA_HOME = $(shell echo /Library/Java/JavaVirtualMachines/jdk1.[78].0_*.jdk/Contents/Home)
 
 # Defaults which can be overridden.
 OS = macosx

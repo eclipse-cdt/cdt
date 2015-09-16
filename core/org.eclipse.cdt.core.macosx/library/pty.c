@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 QNX Software Systems and others.
+ * Copyright (c) 2002, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ * Martin Oberhuber (Wind River) - Bug 476709 - Fix change_window_size()
  *******************************************************************************/
 #include "PTY.h"
 #include "openpty.h"
+
+#include <sys/ioctl.h>
 
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTY
@@ -52,7 +55,7 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj, jboole
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size
   (JNIEnv *env, jobject jobj, jint fdm, jint width, jint height)
 {
-#ifdef	TIOCGWINSZ
+#ifdef	TIOCSWINSZ
 	struct winsize win;
 
 	win.ws_col = width;
@@ -62,6 +65,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size
 
 	return ioctl(fdm, TIOCSWINSZ, &win);
 #else
+#error no TIOCSWINSZ
 	return 0;
 #endif
 }

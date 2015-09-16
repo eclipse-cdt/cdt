@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems and others.
+ * Copyright (c) 2007, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,15 +34,15 @@ public class DisassemblyImageRegistry extends AbstractImageRegistry {
     private static final String ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID = "org.eclipse.debug.ui"; //$NON-NLS-1$
     private static final String ORG_ECLIPSE_UI_PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
 	
-    public static final String ICON_ToggleBreakpoint = add(ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID, new String[] { "full/obj16"}, "brkp_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Refresh_enabled  = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Refresh_disabled = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Copy_enabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/etool16"}, "copy_edit.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Copy_disabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dtool16"}, "copy_edit.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Home_enabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "home_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Home_disabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "home_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Sync_enabled 	 = add(ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "synced.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Sync_disabled	 = add(ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "synced.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_ToggleBreakpoint = add(ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID, new String[] { "full/obj16"}, "brkp_obj.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Refresh_enabled  = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "refresh_nav.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Refresh_disabled = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "refresh_nav.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Copy_enabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/etool16"}, "copy_edit.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Copy_disabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dtool16"}, "copy_edit.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Home_enabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "home_nav.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Home_disabled 	 = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "home_nav.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Sync_enabled 	 = add(ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "synced.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Sync_disabled	 = add(ORG_ECLIPSE_DEBUG_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "synced.png"); //$NON-NLS-1$ //$NON-NLS-2$
 
     private static DisassemblyImageRegistry INSTANCE= new DisassemblyImageRegistry(DsfUIPlugin.getDefault());
     

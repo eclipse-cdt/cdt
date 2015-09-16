@@ -174,7 +174,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
         try {
             Bundle bundle= Platform.getBundle("org.eclipse.ui"); //$NON-NLS-1$
             URL url = bundle.getEntry("/"); //$NON-NLS-1$
-            url = new URL(url, "icons/full/elcl16/refresh_nav.gif"); //$NON-NLS-1$
+            url = new URL(url, "icons/full/elcl16/refresh_nav.png"); //$NON-NLS-1$
             ImageDescriptor candidate = ImageDescriptor.createFromURL(url);
             if (candidate != null && candidate.getImageData() != null) {
                 fRefreshAction.setImageDescriptor(candidate);

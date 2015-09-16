@@ -34,8 +34,8 @@ public class TracepointImageRegistry extends AbstractImageRegistry {
     private static final String ORG_ECLIPSE_UI_PLUGIN_ID = "org.eclipse.ui"; //$NON-NLS-1$
     private static final String ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID = "org.eclipse.cdt.dsf.gdb.ui"; //$NON-NLS-1$
 	
-    public static final String ICON_Refresh_enabled      = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String ICON_Refresh_disabled     = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Refresh_enabled      = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/elcl16"}, "refresh_nav.png"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Refresh_disabled     = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "refresh_nav.png"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String ICON_Refresh_Auto         = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "refresh_auto.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String ICON_Disconnected_Tracing = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "disconnected_tracing.png"); //$NON-NLS-1$ //$NON-NLS-2$    
     public static final String ICON_Circular_Buffer      = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "circular_buffer.png"); //$NON-NLS-1$ //$NON-NLS-2$

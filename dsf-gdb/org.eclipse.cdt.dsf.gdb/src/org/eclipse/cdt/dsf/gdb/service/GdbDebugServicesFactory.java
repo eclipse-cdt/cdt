@@ -320,7 +320,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	 * 		   the specified version, respectively.
 	 * @since 4.8
 	 */
-	public int compareVersionWith(String version) {
+	protected int compareVersionWith(String version) {
 		return LaunchUtils.compareVersions(getVersion(), version);
 	}
 

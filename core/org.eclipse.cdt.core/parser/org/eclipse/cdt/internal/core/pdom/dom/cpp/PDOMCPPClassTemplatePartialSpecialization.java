@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -34,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  * Partial specialization of a class template for the index.
  */
 class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate 
-		implements IPDOMPartialSpecialization, IPDOMOverloader {
+		implements IPDOMPartialSpecialization, IPDOMOverloader, ICPPClassTemplatePartialSpecialization {
 	private static final int ARGUMENTS = PDOMCPPClassTemplate.RECORD_SIZE + 0;
 	private static final int SIGNATURE_HASH = PDOMCPPClassTemplate.RECORD_SIZE + 4;
 	private static final int PRIMARY = PDOMCPPClassTemplate.RECORD_SIZE + 8;
@@ -102,7 +103,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	}
 	
 	@Override
-	public void setArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
+	public void setTemplateArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
 		long oldRec = db.getRecPtr(record + ARGUMENTS);
 		long rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
@@ -169,5 +170,10 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 
 		final ICPPClassTemplatePartialSpecialization rhs = (ICPPClassTemplatePartialSpecialization) type;
 		return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this, rhs);
+	}
+
+	@Override
+	public ICPPTemplateDefinition getPrimaryTemplate() {
+		return getPrimaryClassTemplate();
 	}
 }

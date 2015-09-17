@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -65,8 +66,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -75,6 +78,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
@@ -210,10 +216,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	class ConfigurePartialSpecialization implements Runnable {
 		IPDOMPartialSpecialization partial;
-		ICPPClassTemplatePartialSpecialization binding;
+		ICPPPartialSpecialization binding;
 
 		public ConfigurePartialSpecialization(IPDOMPartialSpecialization partial,
-				ICPPClassTemplatePartialSpecialization binding) {
+				ICPPPartialSpecialization binding) {
 			this.partial = partial;
 			this.binding = binding;
 			postProcesses.add(this);
@@ -223,7 +229,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		public void run() {
 			try {
 				ICPPTemplateArgument[] args = binding.getTemplateArguments();
-				partial.setArguments(args);
+				partial.setTemplateArguments(args);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			} finally {
@@ -354,6 +360,31 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		@Override
 		public void run() {
 			fClassInstance.storeTemplateArguments();
+		}
+	}
+
+	class ConfigureVariableTemplate implements Runnable {
+		private final PDOMCPPVariable fTemplate;
+		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
+		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
+		private final IType fOriginalType;
+
+		public ConfigureVariableTemplate(ICPPVariableTemplate original, PDOMCPPVariable template) throws DOMException {
+			fTemplate = template;
+			fTemplateParameters= (IPDOMCPPTemplateParameter[]) ((ICPPVariableTemplate)template).getTemplateParameters();
+			fOriginalTemplateParameters= original.getTemplateParameters();
+			fOriginalType= original.getType();
+			postProcesses.add(this);
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < fOriginalTemplateParameters.length; i++) {
+				final IPDOMCPPTemplateParameter tp = fTemplateParameters[i];
+				if (tp != null)
+					tp.configure(fOriginalTemplateParameters[i]);
+			}
+			PDOMCPPVariableTemplate.initData(fTemplate, fOriginalType);
 		}
 	}
 
@@ -499,16 +530,26 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return null;
 
 			pdomBinding = createSpecialization(parent, pdomSpecialized, binding);
-		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-			ICPPClassTemplate primary = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
+		} else if (binding instanceof ICPPPartialSpecialization) {
+			ICPPTemplateDefinition primary = ((ICPPPartialSpecialization) binding).getPrimaryTemplate();
 			PDOMBinding pdomPrimary = addBinding(primary, null);
 			if (pdomPrimary instanceof PDOMCPPClassTemplate) {
 				pdomBinding = new PDOMCPPClassTemplatePartialSpecialization(
 						this, parent, (ICPPClassTemplatePartialSpecialization) binding, (PDOMCPPClassTemplate) pdomPrimary);
+			} else if (pdomPrimary instanceof PDOMCPPFieldTemplate) {
+				pdomBinding = new PDOMCPPFieldTemplatePartialSpecialization(
+						this, parent, (ICPPVariableTemplatePartialSpecialization) binding, (PDOMCPPFieldTemplate) pdomPrimary);
+			} else if (pdomPrimary instanceof PDOMCPPVariableTemplate) {
+				pdomBinding = new PDOMCPPVariableTemplatePartialSpecialization(
+						this, parent, (ICPPVariableTemplatePartialSpecialization) binding, (PDOMCPPVariableTemplate) pdomPrimary);
 			}
 		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
-				pdomBinding = new PDOMCPPField(this, parent, (ICPPField) binding);
+				if(binding instanceof ICPPFieldTemplate) {
+					pdomBinding = new PDOMCPPFieldTemplate(this, parent, (ICPPFieldTemplate) binding);
+				} else {
+					pdomBinding = new PDOMCPPField(this, parent, (ICPPField) binding, true);
+				}
 				// If the field is inside an anonymous struct or union, add it to the parent node as well.
 				if (((ICompositeType) parent).isAnonymous()) {
 					parent2 = parent.getParentNode();
@@ -521,9 +562,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
 		} else if (binding instanceof ICPPClassType) {
 			pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
+		} else if (binding instanceof ICPPVariableTemplate) {
+			pdomBinding = new PDOMCPPVariableTemplate(this, parent, (ICPPVariableTemplate) binding);
 		} else if (binding instanceof ICPPVariable) {
 			ICPPVariable var= (ICPPVariable) binding;
-			pdomBinding = new PDOMCPPVariable(this, parent, var);
+			pdomBinding = new PDOMCPPVariable(this, parent, var, true);
 		} else if (binding instanceof ICPPFunctionTemplate) {
 			if (binding instanceof ICPPConstructor) {
 				pdomBinding= new PDOMCPPConstructorTemplate(this, parent, (ICPPConstructor) binding);
@@ -587,9 +630,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
         while (binding instanceof ICPPSpecialization) {
             binding = ((ICPPSpecialization) binding).getSpecializedBinding();
         }
-        if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-        	// A class template partial specialization inherits the visibility of its primary class template.
-        	binding = ((ICPPClassTemplatePartialSpecialization) binding).getPrimaryClassTemplate();
+        if (binding instanceof ICPPPartialSpecialization) {
+        	// A template partial specialization inherits the visibility of its primary template. 
+        	binding = ((ICPPPartialSpecialization) binding).getPrimaryTemplate();
         }
         if (binding instanceof ICPPAliasTemplateInstance) {
         	binding = ((ICPPAliasTemplateInstance) binding).getTemplateDefinition();
@@ -649,6 +692,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				result= new PDOMCPPFunctionInstance(this, parent, (ICPPFunction) special, orig);
 			} else if (special instanceof ICPPClassType && orig instanceof ICPPClassType) {
 				result= new PDOMCPPClassInstance(this, parent, (ICPPClassType) special, orig);
+			} else if (special instanceof ICPPField && orig instanceof ICPPField) {
+				result = new PDOMCPPFieldInstance(this, parent, (ICPPVariableInstance) special, orig);
+			} else if (special instanceof ICPPVariable && orig instanceof ICPPVariable) {
+				result= new PDOMCPPVariableInstance(this, parent, (ICPPVariableInstance) special, orig);
 			}
 		} else if (special instanceof ICPPField) {
 			result= new PDOMCPPFieldSpecialization(this, parent, (ICPPField) special, orig);
@@ -741,6 +788,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					return CPP_FUNCTION_INSTANCE;
 				} else if (binding instanceof ICPPClassType) {
 					return CPP_CLASS_INSTANCE;
+				} else if (binding instanceof ICPPField) {
+					return CPP_FIELD_INSTANCE;
+				} else if (binding instanceof ICPPVariable) {
+					return CPP_VARIABLE_INSTANCE;
 				}
 			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 				return CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC;
@@ -769,6 +820,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 			return CPP_CLASS_TEMPLATE_PARTIAL_SPEC;
+		} else if (binding instanceof ICPPVariableTemplatePartialSpecialization) {
+			if(binding instanceof ICPPField) {
+				return CPP_FIELD_TEMPLATE_PARTIAL_SPECIALIZATION;
+			} else {
+				return CPP_VARIABLE_TEMPLATE_PARTIAL_SPECIALIZATION;
+			}
 		} else if (binding instanceof ICPPTemplateParameter) {
 			if (binding instanceof ICPPTemplateTypeParameter) {
 				return CPP_TEMPLATE_TYPE_PARAMETER;
@@ -776,9 +833,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return CPP_TEMPLATE_TEMPLATE_PARAMETER;
 			else if (binding instanceof ICPPTemplateNonTypeParameter)
 				return CPP_TEMPLATE_NON_TYPE_PARAMETER;
+		} else if (binding instanceof ICPPFieldTemplate) {
+			return CPP_FIELD_TEMPLATE;
 		} else if (binding instanceof ICPPField) {
 			// this must be before variables
 			return CPPFIELD;
+		} else if (binding instanceof ICPPVariableTemplate) {
+			return CPP_VARIABLE_TEMPLATE;
 		} else if (binding instanceof ICPPVariable) {
 			return CPPVARIABLE;
 		} else if (binding instanceof ICPPFunctionTemplate) {
@@ -1044,6 +1105,18 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPEnumerationSpecialization(this, record);
 		case CPP_ENUMERATOR_SPECIALIZATION:
 			return new PDOMCPPEnumeratorSpecialization(this, record);
+		case CPP_VARIABLE_TEMPLATE:
+			return new PDOMCPPVariableTemplate(this, record);
+		case CPP_FIELD_TEMPLATE:
+			return new PDOMCPPFieldTemplate(this, record);
+		case CPP_VARIABLE_INSTANCE:
+			return new PDOMCPPVariableInstance(this, record);
+		case CPP_FIELD_INSTANCE:
+			return new PDOMCPPFieldInstance(this, record);
+		case CPP_VARIABLE_TEMPLATE_PARTIAL_SPECIALIZATION:
+			return new PDOMCPPVariableTemplatePartialSpecialization(this, record);
+		case CPP_FIELD_TEMPLATE_PARTIAL_SPECIALIZATION:
+			return new PDOMCPPFieldTemplatePartialSpecialization(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;

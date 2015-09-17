@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.debug.internal.provisional.service;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
@@ -50,10 +51,10 @@ public interface IExecutionContextTranslator extends IDsfService {
     /**
      * Groups the specified execution contexts. 
      * 
-     * @param context
-     * @param requestMonitor
+     * @param contexts The list of contexts to group
+     * @param requestMonitor Returns the container created by the grouping action
      */
-    void group(IExecutionDMContext[] contexts, RequestMonitor requestMonitor);
+    void group(IExecutionDMContext[] contexts, DataRequestMonitor<IContainerDMContext> requestMonitor);
     
     /**
      * Ungroups the specified execution contexts.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Ericsson and others.
+ * Copyright (c) 2011, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,16 +19,12 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -71,14 +67,9 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-		register(new String[]{ IRunControl.class.getName(), 
-				IRunControl2.class.getName(),
-				IMIRunControl.class.getName(),
-				IMultiRunControl.class.getName(),
-				GDBRunControl_7_0_NS.class.getName(),
-				GDBRunControl_7_2_NS.class.getName(),
-		}, 
-		new Hashtable<String,String>());
+		register(new String[]{ GDBRunControl_7_2_NS.class.getName() }, 
+				 new Hashtable<String,String>());
+		
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 		getSession().addServiceEventListener(this, null);

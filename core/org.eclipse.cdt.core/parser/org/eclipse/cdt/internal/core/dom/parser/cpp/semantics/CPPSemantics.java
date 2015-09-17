@@ -161,6 +161,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -2060,6 +2061,16 @@ public class CPPSemantics {
 	        		!(temp instanceof IEnumerator)) {
                 continue;
 	        }
+
+	        // Specializations are selected during instantiation.
+        	if (temp instanceof ICPPPartialSpecialization)
+	        	continue;
+        	if (temp instanceof ICPPTemplateInstance && lookupName instanceof ICPPASTTemplateId) {
+        		temp= ((ICPPTemplateInstance) temp).getSpecializedBinding();
+        		if (!(temp instanceof IType))
+        			continue;
+        	}
+
 	        if (temp instanceof ICPPUsingDeclaration) {
 	        	IBinding[] bindings = ((ICPPUsingDeclaration) temp).getDelegates();
 	        	mergeResults(data, bindings, false);
@@ -2080,15 +2091,6 @@ public class CPPSemantics {
 	        		fns = new ObjectSet<>(2);
 	        	fns.put((ICPPFunction) temp);
 	        } else if (temp instanceof IType) {
-		        // Specializations are selected during instantiation.
-	        	if (temp instanceof ICPPClassTemplatePartialSpecialization)
-		        	continue;
-	        	if (temp instanceof ICPPTemplateInstance && lookupName instanceof ICPPASTTemplateId) {
-	        		temp= ((ICPPTemplateInstance) temp).getSpecializedBinding();
-	        		if (!(temp instanceof IType))
-	        			continue;
-	        	}
-
 	        	if (type == null) {
 	                type = temp;
         			ambiguous = false;

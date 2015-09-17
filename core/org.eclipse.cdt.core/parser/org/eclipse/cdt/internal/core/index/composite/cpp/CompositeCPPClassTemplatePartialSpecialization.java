@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
@@ -45,5 +46,10 @@ public class CompositeCPPClassTemplatePartialSpecialization extends CompositeCPP
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);
+	}
+
+	@Override
+	public ICPPTemplateDefinition getPrimaryTemplate() {
+		return getPrimaryClassTemplate();
 	}
 }

@@ -1,30 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2015 Institute for Software, HSR Hochschule fuer Technik
+ * Rapperswil, University of applied sciences.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Niefer (IBM) - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *     Lukas Wegmann (IFS) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
+ * Represents an instantiation or an explicit specialization of a variable template.
+ *
+ * @since 5.12
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPClassTemplate extends ICPPClassType, ICPPPartiallySpecializable {
-	/**
-	 * Returns the partial specializations of this class template.
-	 */
-	@Override
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations();
-
-	/**
-	 * Returns a deferred instance that allows lookups within this class template.
-	 * @since 5.1
-	 */
-	public ICPPTemplateInstance asDeferredInstance();
+public interface ICPPVariableInstance extends ICPPTemplateInstance, ICPPVariable {
 }

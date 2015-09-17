@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,13 +20,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
 /**
  * A partial class template specialization.
  */
-public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate 
+public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 		implements ICPPClassTemplatePartialSpecialization {
 	private final ICPPTemplateArgument[] arguments;
 
@@ -83,10 +84,15 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate
 	public String toString() {
 		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
 	}
-	
+
 	@Override
 	@Deprecated
 	public IType[] getArguments() throws DOMException {
 		return CPPTemplates.getArguments(getTemplateArguments());
+	}
+
+	@Override
+	public ICPPTemplateDefinition getPrimaryTemplate() {
+		return getPrimaryClassTemplate();
 	}
 }

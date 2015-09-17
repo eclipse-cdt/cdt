@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -58,6 +59,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
@@ -555,6 +559,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 							return new CompositeCPPMethodInstance(this, (ICPPMethod) binding);
 						} else if (binding instanceof ICPPFunction) {
 							return new CompositeCPPFunctionInstance(this, (ICPPFunction) binding);
+						} else if (binding instanceof ICPPField) {
+							return new CompositeCPPFieldInstance(this, (ICPPVariableInstance) binding);
+						} else if (binding instanceof ICPPVariable) {
+							return new CompositeCPPVariableInstance(this, (ICPPVariableInstance) binding);
 						} else {
 							throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -600,6 +608,12 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				}
 			} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 				return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) findOneBinding(binding));
+			} else if (binding instanceof ICPPVariableTemplatePartialSpecialization) {
+				if (binding instanceof ICPPField) {
+					return new CompositeCPPFieldTemplatePartialSpecialization(this, (ICPPVariableTemplatePartialSpecialization) binding);
+				} else {
+					return new CompositeCPPVariableTemplatePartialSpecialization(this, (ICPPVariableTemplatePartialSpecialization) binding);
+				}
 			} else if (binding instanceof ICPPTemplateParameter) {
 				if (binding instanceof ICPPTemplateTypeParameter) {
 					result = new CompositeCPPTemplateTypeParameter(this, (ICPPTemplateTypeParameter) binding);
@@ -622,6 +636,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
 				} else if (binding instanceof ICPPAliasTemplate) {
 					return new CompositeCPPAliasTemplate(this, (ICPPBinding) binding);
+				} else if (binding instanceof ICPPFieldTemplate) {
+					return new CompositeCPPFieldTemplate(this, (ICPPField) binding);
+				} else if (binding instanceof ICPPVariableTemplate) {
+					return new CompositeCPPVariableTemplate(this, (ICPPVariable) binding);
 				} else {
 					throw new CompositingNotImplementedError("Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 				}

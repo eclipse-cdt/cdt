@@ -32,3 +32,36 @@ template<typename... Args> struct S
 {
     static const int size = sizeof...(Args);
 };
+
+//!Variable Template
+//%CPP
+template<typename T> constexpr T c = T{100};
+
+int f()
+{
+    return c<int>;
+}
+
+//!Field Template
+//%CPP
+struct S
+{
+    template<typename T> static constexpr T c = T{100};
+};
+
+int f()
+{
+    return S::c<int>;
+}
+
+//!Field Template in Template
+//%CPP
+template<typename T> struct S
+{
+    template<int I> static constexpr T c = T{I};
+};
+
+int f()
+{
+    return S<int>::template c<100>;
+}

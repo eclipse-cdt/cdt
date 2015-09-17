@@ -41,6 +41,7 @@ public class IndexTests extends TestSuite {
 		IndexCPPTemplateResolutionTest.addTests(suite);
 		IndexCBindingResolutionBugs.addTests(suite);
 		IndexCBindingResolutionTest.addTests(suite);
+		IndexCPPVariableTemplateResolutionTest.addTests(suite);
 		
 		return suite;
 	}	

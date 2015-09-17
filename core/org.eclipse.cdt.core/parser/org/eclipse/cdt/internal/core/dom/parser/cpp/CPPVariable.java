@@ -19,13 +19,8 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -33,16 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
-public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding {
+public class CPPVariable extends PlatformObject implements ICPPInternalVariable {
 	private IASTName fDefinition;
 	private IASTName fDeclarations[];
 	private IType fType;
@@ -77,22 +70,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    } else {
 	    	assert this instanceof CPPBuiltinVariable;
 	    }
-	}
-	
-	private IASTDeclarator findDeclarator(IASTName name) {
-	    IASTNode node = name.getParent();
-	    if (node instanceof ICPPASTQualifiedName)
-	        node = node.getParent();
-	    
-	    if (!(node instanceof IASTDeclarator))
-	        return null;
-	    
-	    IASTDeclarator dtor = (IASTDeclarator) node;
-	    while (dtor.getParent() instanceof IASTDeclarator)
-	        dtor = (IASTDeclarator) dtor.getParent();
-	    
-	    return dtor;
-	}		
+	}	
 	
 	@Override
 	public void addDeclaration(IASTNode node) {
@@ -134,63 +112,11 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 			return fType;
 		}
 
-		boolean doneWithDefinition = false;
-		IArrayType firstCandidate= null;
-		final int length = fDeclarations == null ? 0 : fDeclarations.length;
-		for (int i = 0; i <= length; i++) {
-			IASTName n;
-			// Process the definition according to its relative position among the declarations.
-			// See http://bugs.eclipse.org/434150
-			if (fDefinition != null && !doneWithDefinition &&
-					(i == length || ((ASTNode) fDefinition).getOffset() < ((ASTNode) fDeclarations[i]).getOffset())) {
-				n = fDefinition;
-				doneWithDefinition = true;
-				--i;  // We still have to come back to the declaration at position i.
-			} else if (i < length) {
-				n = fDeclarations[i];
-			} else {
-				break;
-			}
-			if (n != null) {
-				while (n.getParent() instanceof IASTName)
-					n = (IASTName) n.getParent();
-
-				IASTNode node = n.getParent();
-				if (node instanceof IASTDeclarator) {
-					IType t= CPPVisitor.createType((IASTDeclarator) node);
-					if (t instanceof IArrayType && !((IArrayType) t).hasSize()) {
-						if (firstCandidate == null) {
-							firstCandidate= (IArrayType) t;
-						}
-					} else {
-						return fType= t;
-					}
-				}
-			}
-		}
-		fType= firstCandidate;
-		if (!fAllResolved) {
-			resolveAllDeclarations();
-			return getType();
-		}
+		boolean allResolved = fAllResolved;
+		fAllResolved = true;
+		fType = VariableHelpers.createType(this, fDefinition, fDeclarations, allResolved);
+		
 		return fType;
-	}
-
-	private void resolveAllDeclarations() {
-		if (fAllResolved)
-			return;
-		fAllResolved= true;
-		final int length = fDeclarations == null ? 0 : fDeclarations.length;
-		for (int i = -1; i < length; i++) {
-			IASTName n = i == -1 ? fDefinition : fDeclarations[i];
-			if (n != null) {
-			    IASTTranslationUnit tu = n.getTranslationUnit();
-		        if (tu != null) {
-		            CPPVisitor.getDeclarations(tu, this);
-		            return;
-		        }
-		    }
-		}
 	}
 
 	@Override
@@ -241,27 +167,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
         
-        int i = -1;
-        do {
-            if (name != null) {
-                IASTNode parent = name.getParent();
-	            while (!(parent instanceof IASTDeclaration))
-	                parent = parent.getParent();
-	            
-	            if (parent instanceof IASTSimpleDeclaration) {
-	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-	                if (declSpec.getStorageClass() == storage) {
-	                	return true;
-	                }
-	            }
-            }
-            if (ns != null && ++i < ns.length) {
-                name = (IASTName) ns[i];
-            } else {
-                break;
-            }
-        } while (name != null);
-        return false;
+        return VariableHelpers.hasStorageClass(name, ns, storage);
 	}
 	
     @Override
@@ -282,18 +188,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 
     @Override
 	public boolean isExternC() {
-	    if (CPPVisitor.isExternC(getDefinition())) {
-	    	return true;
-	    }
-        IASTNode[] ds= getDeclarations();
-        if (ds != null) {
-        	for (IASTNode element : ds) {
-        		if (CPPVisitor.isExternC(element)) {
-        			return true;
-        		}
-			}
-        }
-        return false;
+	    return CPPVisitor.isExternC(getDefinition(), getDeclarations());
     }
 
     @Override
@@ -324,35 +219,10 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 			return Value.UNKNOWN;
 		}
 		try {
-			if (fDefinition != null) {
-				final IValue val= getInitialValue(fDefinition);
-				if (val != null)
-					return val;
-			}
-			if (fDeclarations != null) {
-				for (IASTName decl : fDeclarations) {
-					if (decl == null)
-						break;
-					final IValue val= getInitialValue(decl);
-					if (val != null)
-						return val;
-				}
-			}		
+			return VariableHelpers.getInitialValue(fDefinition, fDeclarations, getType());
 		} finally {
 			recursionProtectionSet.remove(this);
 		}
-		return null;
-	}
-	
-	private IValue getInitialValue(IASTName name) {
-		IASTDeclarator dtor= findDeclarator(name);
-		if (dtor != null) {
-			IASTInitializer init= dtor.getInitializer();
-			if (init != null) {
-				return SemanticUtil.getValueOfInitializer(init, getType());
-			}
-		}
-		return null;
 	}
 
 	@Override

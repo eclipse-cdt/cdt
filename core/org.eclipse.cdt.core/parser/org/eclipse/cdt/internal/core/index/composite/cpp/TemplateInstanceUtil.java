@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -63,7 +64,7 @@ public class TemplateInstanceUtil {
 		return convert(cf, rbinding.getTemplateArguments());
 	}
 
-	public static ICPPTemplateArgument[] getTemplateArguments(ICompositesFactory cf, ICPPClassTemplatePartialSpecialization rbinding) {
+	public static ICPPTemplateArgument[] getTemplateArguments(ICompositesFactory cf, ICPPPartialSpecialization rbinding) {
 		return convert(cf, rbinding.getTemplateArguments());
 	}
 

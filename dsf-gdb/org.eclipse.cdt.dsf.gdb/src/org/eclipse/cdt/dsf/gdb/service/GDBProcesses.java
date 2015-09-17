@@ -160,12 +160,12 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	
     /** @since 4.0 */
 	@Override
-    public IMIContainerDMContext createContainerContextFromGroupId(ICommandControlDMContext controlDmc, String groupId) {
+    public IMIContainerDMContext createContainerContextFromGroupId(IDMContext dmc, String groupId) {
     	IProcessDMContext processDmc;
 		if (fProcId != null) {
-			processDmc = createProcessContext(controlDmc, fProcId);
+			processDmc = createProcessContext(dmc, fProcId);
 		} else {
-			processDmc = createProcessContext(controlDmc, MIProcesses.UNKNOWN_PROCESS_ID);
+			processDmc = createProcessContext(dmc, MIProcesses.UNKNOWN_PROCESS_ID);
 		}
     	return createContainerContext(processDmc, groupId);
     }

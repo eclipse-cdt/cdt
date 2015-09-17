@@ -15,9 +15,11 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -30,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.FullStackRefreshEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
@@ -39,6 +42,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -236,24 +240,36 @@ public class ThreadVMNode extends AbstractThreadVMNode
 
 	@Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        IProcesses procService = getServicesTracker().getService(IProcesses.class);
+		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+		
+		// Get the parent of the treads, which can be a process or a group.  IContainer allows us to get either one.
         final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
-        if (procService == null || contDmc == null) {
+        if (runControl == null || contDmc == null) {
         	handleFailedUpdate(update);
         	return;
         }
         
-		procService.getProcessesBeingDebugged(
+        runControl.getExecutionContexts(
 				contDmc,
-				new ViewerDataRequestMonitor<IDMContext[]>(getSession().getExecutor(), update){
+				new ViewerDataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), update){
 					@Override
 					public void handleCompleted() {
-						if (!isSuccess() || !(getData() instanceof IExecutionDMContext[])) {
+						if (!isSuccess()) {
 							handleFailedUpdate(update);
 							return;
 						}
 						
-						IExecutionDMContext[] execDmcs = (IExecutionDMContext[])getData();
+						IExecutionDMContext[] execDmcs = getData();
+						
+						// Extract the threads by removing any container
+						Vector<IExecutionDMContext> threadDmcs = new Vector<>();
+						for (IExecutionDMContext exec : execDmcs) {
+							if (!(exec instanceof IContainerDMContext)) {
+								threadDmcs.add(exec);
+							}
+						}
+						execDmcs = threadDmcs.toArray(new IExecutionDMContext[threadDmcs.size()]);
+
 						if (fHideRunningThreadsProperty) {
 							// Remove running threads from the list
 					    	IRunControl runControl = getServicesTracker().getService(IRunControl.class);
@@ -453,5 +469,32 @@ public class ThreadVMNode extends AbstractThreadVMNode
             request.done();
         }
     }
+    
+    @Override
+    public void getContextsForEvent(VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
+    	if (getContextsForRecursiveVMNode( parentDelta, e, rm)) {
+    		return;
+    	}
 
+    	super.getContextsForEvent(parentDelta, e, rm);
+    }
+
+    /**
+     * user groups support.
+     *  
+     * If a FullStackRefreshEvent is fired with a container DM context we need to 
+     * let the default implementation handle the case. 
+     * This will happen is stop mode GDB.
+     * 
+     * In that case all thread will be requested for their content.
+     *      
+     */
+    @Override
+    protected IExecutionDMContext getLeafContextForLeafEvent( Object event) {
+    	if (event instanceof FullStackRefreshEvent &&
+    			((FullStackRefreshEvent)event).getDMContext() instanceof IContainerDMContext) {
+    		return null;
+    	}
+    	return super.getLeafContextForLeafEvent( event);
+    }
 }

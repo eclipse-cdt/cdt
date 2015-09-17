@@ -196,6 +196,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -217,6 +218,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -736,7 +738,7 @@ public class CPPVisitor extends ASTQueries {
 			        binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 			    }
 			}
-			return binding;	
+			return binding;
 		}
 		return null;
 	}
@@ -882,6 +884,12 @@ public class CPPVisitor extends ASTQueries {
         	    		}
         	    	} else if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
         	    		binding = new CPPField(name);
+        	    	} else if (template) {
+        	    		if (simpleDecl.getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+        	    			binding = new CPPFieldTemplate(name);
+        	    		} else {
+        	    			binding = new CPPVariableTemplate(name);
+        	    		}
         	    	} else {
         	    		binding = new CPPVariable(name);
         	    	}
@@ -1030,7 +1038,7 @@ public class CPPVisitor extends ASTQueries {
 
 	    return false;
 	}
-	
+
 	public static boolean isLastNameInUsingDeclaration(IASTName name) {
 		IASTNode parent = name.getParent();
 		return parent instanceof ICPPASTQualifiedName
@@ -1367,9 +1375,9 @@ public class CPPVisitor extends ASTQueries {
 			scope = getContainingScope((IASTStatement) parent);
 		} else if (parent instanceof IASTFunctionDefinition) {
 			final IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
-			if (statement instanceof ICPPASTCatchHandler) 
+			if (statement instanceof ICPPASTCatchHandler)
 				return fdef.getScope();
-			
+
 			IASTFunctionDeclarator fnDeclarator = fdef.getDeclarator();
 		    IASTName name = findInnermostDeclarator(fnDeclarator).getName().getLastName();
 		    return getContainingScope(name);
@@ -2058,7 +2066,7 @@ public class CPPVisitor extends ASTQueries {
 		IType type = createType(declSpec);
 		type = makeConstIfConstexpr(type, declSpec, declarator);
 		type = createType(type, declarator);
-		
+
 		// C++ specification 8.3.4.3 and 8.5.1.4
 		IASTNode initClause= declarator.getInitializer();
 		if (initClause instanceof IASTEqualsInitializer) {
@@ -2276,7 +2284,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		return type;
 	}
-	
+
 	private static IType qualifyType(IType type, IASTDeclSpecifier declSpec) {
 		return SemanticUtil.addQualifiers(type, declSpec.isConst(), declSpec.isVolatile(), declSpec.isRestrict());
 	}
@@ -2529,6 +2537,19 @@ public class CPPVisitor extends ASTQueries {
 				if ("\"C\"".equals(((ICPPASTLinkageSpecification) node).getLiteral())) { //$NON-NLS-1$
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean isExternC(IASTNode definition, IASTNode[] declarations) {
+		if (isExternC(definition))
+			return true;
+
+		if (declarations != null) {
+			for (IASTNode element : declarations) {
+				if (isExternC(element))
+					return true;
 			}
 		}
 		return false;

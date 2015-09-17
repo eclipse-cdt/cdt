@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2015 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,4 +65,10 @@ public interface IIndexCPPBindingConstants {
 	int CPP_TEMPLATE_ALIAS = IIndexBindingConstants.LAST_CONSTANT + 51;
 	int CPP_ENUMERATION_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 52;
 	int CPP_ENUMERATOR_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 53;
+	int CPP_VARIABLE_TEMPLATE = IIndexBindingConstants.LAST_CONSTANT + 54;
+	int CPP_FIELD_TEMPLATE = IIndexBindingConstants.LAST_CONSTANT + 55;
+	int CPP_VARIABLE_INSTANCE = IIndexBindingConstants.LAST_CONSTANT + 56;
+	int CPP_FIELD_INSTANCE = IIndexBindingConstants.LAST_CONSTANT + 57;
+	int CPP_VARIABLE_TEMPLATE_PARTIAL_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 58;
+	int CPP_FIELD_TEMPLATE_PARTIAL_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 59;
 }

@@ -40,14 +40,16 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
 
-	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
+	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable, boolean setTypeAndValue) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
 
 		// Find the type record
 		Database db = getDB();
-		setType(parent.getLinkage(), variable.getType());
 		db.putByte(record + ANNOTATIONS, encodeFlags(variable));
-		setValue(db, variable);
+		if (setTypeAndValue) {
+			setType(parent.getLinkage(), variable.getType());
+			setValue(db, variable);
+		}
 	}
 
 	private void setValue(Database db, IVariable variable) throws CoreException {
@@ -67,8 +69,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		}
 	}
 
-
-	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException {
+	protected void setType(final PDOMLinkage linkage, IType newType) throws CoreException {
 		linkage.storeType(record+TYPE_OFFSET, newType);
 	}
 

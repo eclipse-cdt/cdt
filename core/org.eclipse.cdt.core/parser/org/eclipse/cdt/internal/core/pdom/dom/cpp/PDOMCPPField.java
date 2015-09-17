@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 
-	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field)
+	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field, boolean setTypeAndValue)
 			throws CoreException {
-		super(linkage, parent, field);
+		super(linkage, parent, field, setTypeAndValue);
 	}
 
 	public PDOMCPPField(PDOMLinkage linkage, long bindingRecord) {

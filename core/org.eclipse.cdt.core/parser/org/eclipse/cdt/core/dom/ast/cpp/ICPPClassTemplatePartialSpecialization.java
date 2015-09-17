@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate {
+public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplate, ICPPPartialSpecialization {
 	/** @since 5.12 */
 	public static final ICPPClassTemplatePartialSpecialization[] EMPTY_ARRAY = {};
 	/** @deprecated Use {@link #EMPTY_ARRAY} */
@@ -41,8 +41,9 @@ public interface ICPPClassTemplatePartialSpecialization extends ICPPClassTemplat
 	 * Returns the arguments of this partial specialization.
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments();
-	
+
 	/**
 	 * @deprecated use {@link #getTemplateArguments()}, instead.
 	 */

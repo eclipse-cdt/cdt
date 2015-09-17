@@ -407,6 +407,13 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			if (ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)))
 				return true; 
 		}
+		if (mode.equals(ILaunchManager.RUN_MODE)) {
+			// We plan on splitting the Run delegate from the Debug one.
+			// For now, to keep backwards-compatibility, we need to keep the same delegate (to keep its id)
+			// However, we can just call the new delegate class
+			new LocalRunLaunchDelegate().preLaunchCheck(config, mode, monitor);
+		}
+
 		return super.preLaunchCheck(config, mode, monitor);
 	}
 

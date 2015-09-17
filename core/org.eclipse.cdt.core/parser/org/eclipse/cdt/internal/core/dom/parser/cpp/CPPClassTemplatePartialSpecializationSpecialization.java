@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -82,7 +83,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
 	}
-	
+
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
@@ -109,7 +110,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_ARRAY;
 	}
-	
+
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
@@ -127,22 +128,27 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public String toString() {
 		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
 	}
-	
+
 	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
 	}
-	
+
 	@Override
 	@Deprecated
 	public IType[] getArguments() throws DOMException {
 		return CPPTemplates.getArguments(getTemplateArguments());
 	}
-	
+
 	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
 		// No default arguments for partial specializations
 		return null;
+	}
+
+	@Override
+	public ICPPTemplateDefinition getPrimaryTemplate() {
+		return getPrimaryClassTemplate();
 	}
 }

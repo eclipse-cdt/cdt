@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Interface for partial specializations in the PDOM.
  */
-interface IPDOMPartialSpecialization extends ICPPClassTemplatePartialSpecialization, IPDOMBinding {
+interface IPDOMPartialSpecialization extends ICPPPartialSpecialization, IPDOMBinding {
 	/**
 	 * Allows for setting the arguments after the binding has been added to the PDOM.
 	 */
-	void setArguments(ICPPTemplateArgument[] args) throws CoreException;
+	void setTemplateArguments(ICPPTemplateArgument[] args) throws CoreException;
 }

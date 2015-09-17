@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -59,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
@@ -83,6 +85,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -90,6 +93,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartiallySpecializable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -104,6 +109,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
@@ -131,7 +138,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplateSpecia
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerationSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplatePartialSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplateSpecialization;
@@ -158,6 +168,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclarationSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -216,7 +229,7 @@ public class CPPTemplates {
 	/**
 	 * Instantiates a class template with the given arguments. May return {@code null}.
 	 */
-	private static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args,
+	private static IBinding instantiate(ICPPPartiallySpecializable template, ICPPTemplateArgument[] args,
 			boolean isDefinition, boolean isExplicitSpecialization, IASTNode point) {
 		try {
 			ICPPTemplateArgument[] arguments= SemanticUtil.getSimplifiedArguments(args);
@@ -257,7 +270,7 @@ public class CPPTemplates {
 		}
 	}
 
-	private static IBinding createProblem(ICPPClassTemplate template, int id, IASTNode point) {
+	private static IBinding createProblem(ICPPPartiallySpecializable template, int id, IASTNode point) {
 		return new ProblemBinding(point, id, template.getNameCharArray());
 	}
 
@@ -348,7 +361,7 @@ public class CPPTemplates {
 	 * Instantiates a partial class template specialization.
 	 */
 	private static IBinding instantiatePartialSpecialization(
-			ICPPClassTemplatePartialSpecialization partialSpec, ICPPTemplateArgument[] args, boolean isDef,
+			ICPPPartialSpecialization partialSpec, ICPPTemplateArgument[] args, boolean isDef,
 			CPPTemplateParameterMap tpMap, IASTNode point) throws DOMException {
 		ICPPTemplateInstance instance= getInstance(partialSpec, args, isDef);
 		if (instance != null)
@@ -370,7 +383,7 @@ public class CPPTemplates {
 	 * Instantiates the selected template, without looking for specializations.
 	 * May return {@code null}.
 	 */
-	private static IBinding instantiatePrimaryTemplate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments,
+	private static IBinding instantiatePrimaryTemplate(ICPPPartiallySpecializable template, ICPPTemplateArgument[] arguments,
 			CPPTemplateParameterMap map, boolean isDef, IASTNode point) throws DOMException {
 		assert !(template instanceof ICPPClassTemplatePartialSpecialization);
 		ICPPTemplateInstance instance= getInstance(template, arguments, isDef);
@@ -418,13 +431,15 @@ public class CPPTemplates {
 		}
 	}
 
-	private static IBinding deferredInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
+	private static IBinding deferredInstance(ICPPPartiallySpecializable template, ICPPTemplateArgument[] arguments) throws DOMException {
 		ICPPTemplateInstance instance= getInstance(template, arguments, false);
 		if (instance != null)
 			return instance;
 
-		instance = new CPPDeferredClassInstance(template, arguments);
-		addInstance(template, arguments, instance);
+		if (template instanceof ICPPClassTemplate) {
+			instance = new CPPDeferredClassInstance((ICPPClassTemplate) template, arguments);
+			addInstance(template, arguments, instance);
+		}
 		return instance;
 	}
 
@@ -639,7 +654,8 @@ public class CPPTemplates {
 			// Functions are instantiated as part of the resolution process.
 			IBinding result= CPPVisitor.createBinding(id);
 			IASTName templateName = id.getTemplateName();
-			if (result instanceof ICPPClassTemplate || result instanceof ICPPAliasTemplate) {
+			if (result instanceof ICPPClassTemplate || result instanceof ICPPAliasTemplate
+					|| result instanceof ICPPVariableTemplate) {
 				templateName.setBinding(result);
 				id.setBinding(null);
 			} else {
@@ -669,6 +685,8 @@ public class CPPTemplates {
 					isDeclaration= true;
 				} else if (parentOfName instanceof ICPPASTCompositeTypeSpecifier) {
 					isDefinition= true;
+				} else if (parentOfName instanceof ICPPASTDeclarator) {
+					isDeclaration= true;
 				}
 				if (isDeclaration || isDefinition) {
 					IASTNode parentOfDeclaration = declaration.getParent();
@@ -724,7 +742,7 @@ public class CPPTemplates {
 				return createAliasTemplaceInstance(aliasTemplate, args, parameterMap, aliasedType, owner, id);
 			}
 
-			// Class template.
+			// Class or variable template.
 			if (template instanceof ICPPConstructor) {
 				template= template.getOwner();
 			}
@@ -736,10 +754,10 @@ public class CPPTemplates {
 				return new CPPUnknownClassInstance(owner, id.getSimpleID(), args);
 			}
 
-			if (!(template instanceof ICPPClassTemplate) || template instanceof ICPPClassTemplatePartialSpecialization)
+			if (!(template instanceof ICPPPartiallySpecializable) || template instanceof ICPPClassTemplatePartialSpecialization)
 				return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE, templateName.toCharArray());
 
-			final ICPPClassTemplate classTemplate = (ICPPClassTemplate) template;
+			final ICPPPartiallySpecializable classTemplate = (ICPPPartiallySpecializable) template;
 			ICPPTemplateArgument[] args= createTemplateArgumentArray(id);
 			if (hasDependentArgument(args)) {
 				ICPPASTTemplateDeclaration tdecl= getTemplateDeclaration(id);
@@ -751,12 +769,24 @@ public class CPPTemplates {
 						if (args == null) {
 							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
 						}
-						ICPPClassTemplatePartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
+						ICPPPartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
 						if (isDeclaration || isDefinition) {
 							if (partialSpec == null) {
-								partialSpec = new CPPClassTemplatePartialSpecialization(id, args);
-								if (template instanceof ICPPInternalClassTemplate)
-									((ICPPInternalClassTemplate) template).addPartialSpecialization(partialSpec);
+								if (template instanceof ICPPClassTemplate) {
+									partialSpec = new CPPClassTemplatePartialSpecialization(id, args);
+									if (template instanceof ICPPInternalClassTemplate) {
+										((ICPPInternalClassTemplate) template).addPartialSpecialization(
+												(ICPPClassTemplatePartialSpecialization) partialSpec);
+									}
+								} else if (template instanceof ICPPVariableTemplate) {
+									if (template instanceof ICPPFieldTemplate) {
+										partialSpec = new CPPFieldTemplatePartialSpecialization(id, args);
+									} else {
+										partialSpec = new CPPVariableTemplatePartialSpecialization(id, args);
+									}
+									if (template instanceof CPPVariableTemplate)
+										((CPPVariableTemplate) template).addPartialSpecialization(partialSpec);
+								}
 								return partialSpec;
 							}
 						}
@@ -846,6 +876,25 @@ public class CPPTemplates {
 			}
 			spec.setParameters(specializeParameters(func.getParameters(), spec, tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point));
 			instance = (ICPPTemplateInstance) spec;
+		} else if (template instanceof ICPPVariable) {
+			ICPPVariable var = (ICPPVariable) template;
+			ICPPClassSpecialization within = getSpecializationContext(owner);
+			IType type = instantiateType(var.getType(), tpMap, -1, within, point);
+
+			IValue value;
+			ICPPASTDeclarator decl = CPPVisitor.findAncestorWithType(point, ICPPASTDeclarator.class);
+			if (((IASTName) point).getRoleOfName(false) == IASTNameOwner.r_definition && decl != null && decl.getInitializer() != null) {
+				// Explicit specialization.
+				value = SemanticUtil.getValueOfInitializer(decl.getInitializer(), type);
+			} else {
+				value = instantiateValue(var.getInitialValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
+			}
+
+			if (template instanceof ICPPField) {
+				instance = new CPPFieldInstance(template, owner, tpMap, args, type, value);
+			} else {
+				instance = new CPPVariableInstance(template, owner, tpMap, args, type, value);
+			}
 		}
 		return instance;
 	}
@@ -916,7 +965,17 @@ public class CPPTemplates {
 				ICPPField field= (ICPPField) decl;
 				IType type= instantiateType(field.getType(), tpMap, -1, within, point);
 				IValue value= instantiateValue(field.getInitialValue(), tpMap, -1, within, Value.MAX_RECURSION_DEPTH, point);
-				spec = new CPPFieldSpecialization(decl, owner, tpMap, type, value);
+				if (decl instanceof ICPPFieldTemplate) {
+					CPPFieldTemplateSpecialization fieldTempSpec = new CPPFieldTemplateSpecialization(decl,
+							owner, tpMap, type, value);
+					ICPPTemplateParameter[] params = CPPTemplates.specializeTemplateParameters(fieldTempSpec,
+							(ICPPScope) fieldTempSpec.getScope(),
+							((ICPPFieldTemplate) decl).getTemplateParameters(), owner, point);
+					fieldTempSpec.setTemplateParameters(params);
+					spec = fieldTempSpec;
+				} else {
+					spec = new CPPFieldSpecialization(decl, owner, tpMap, type, value);
+				}
 			} else if (decl instanceof ICPPFunction) {
 				ICPPFunction func= (ICPPFunction) decl;
 				ICPPClassSpecialization within = getSpecializationContext(owner);
@@ -2319,12 +2378,12 @@ public class CPPTemplates {
 		return result;
 	}
 
-	private static ICPPClassTemplatePartialSpecialization findPartialSpecialization(ICPPClassTemplate ct,
+	private static ICPPPartialSpecialization findPartialSpecialization(ICPPPartiallySpecializable ct,
 			ICPPTemplateArgument[] args) throws DOMException {
-		ICPPClassTemplatePartialSpecialization[] pspecs = ct.getPartialSpecializations();
+		ICPPPartialSpecialization[] pspecs = ct.getPartialSpecializations();
 		if (pspecs != null && pspecs.length > 0) {
 			final String argStr= ASTTypeUtil.getArgumentListString(args, true);
-			for (ICPPClassTemplatePartialSpecialization pspec : pspecs) {
+			for (ICPPPartialSpecialization pspec : pspecs) {
 				if (argStr.equals(ASTTypeUtil.getArgumentListString(pspec.getTemplateArguments(), true)))
 					return pspec;
 			}
@@ -2332,20 +2391,20 @@ public class CPPTemplates {
 		return null;
 	}
 
-	private static IBinding selectSpecialization(ICPPClassTemplate template, ICPPTemplateArgument[] args,
+	private static IBinding selectSpecialization(ICPPPartiallySpecializable template, ICPPTemplateArgument[] args,
 			boolean isDef, IASTNode point) throws DOMException {
 		if (template == null) {
 			return null;
 		}
-		ICPPClassTemplatePartialSpecialization[] specializations = template.getPartialSpecializations();
+		ICPPPartialSpecialization[] specializations = template.getPartialSpecializations();
 		if (specializations == null || specializations.length == 0) {
 			return null;
 		}
 
-		ICPPClassTemplatePartialSpecialization bestMatch = null;
+		ICPPPartialSpecialization bestMatch = null;
 		CPPTemplateParameterMap bestMap= null;
 		boolean bestMatchIsBest = true;
-		for (ICPPClassTemplatePartialSpecialization specialization : specializations) {
+		for (ICPPPartialSpecialization specialization : specializations) {
 			final CPPTemplateParameterMap map = new CPPTemplateParameterMap(args.length);
 			ICPPTemplateArgument[] specializationArguments = specialization.getTemplateArguments();
 			if (TemplateArgumentDeduction.fromTemplateArguments(specialization.getTemplateParameters(),
@@ -2390,7 +2449,7 @@ public class CPPTemplates {
 	 * @return
 	 * @throws DOMException
 	 */
-	static private int orderSpecializations(ICPPClassTemplatePartialSpecialization spec1, ICPPClassTemplatePartialSpecialization spec2, IASTNode point) throws DOMException {
+	static private int orderSpecializations(ICPPPartialSpecialization spec1, ICPPPartialSpecialization spec2, IASTNode point) throws DOMException {
 		if (spec1 == null) {
 			return -1;
 		}
@@ -2413,7 +2472,7 @@ public class CPPTemplates {
 		return -1;
 	}
 
-	private static boolean isAtLeastAsSpecializedAs(ICPPClassTemplatePartialSpecialization f1, ICPPClassTemplatePartialSpecialization f2, IASTNode point) throws DOMException {
+	private static boolean isAtLeastAsSpecializedAs(ICPPPartialSpecialization f1, ICPPPartialSpecialization f2, IASTNode point) throws DOMException {
 		// 14.5.5.2
 		// Using the transformed parameter list, perform argument deduction against the other
 		// function template

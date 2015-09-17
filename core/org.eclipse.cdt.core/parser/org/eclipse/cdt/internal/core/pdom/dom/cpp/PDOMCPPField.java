@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 
-	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field)
+	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field, boolean setTypeAndValue)
 			throws CoreException {
-		super(linkage, parent, field);
+		super(linkage, parent, field, setTypeAndValue);
 	}
 
 	public PDOMCPPField(PDOMLinkage linkage, long bindingRecord) {

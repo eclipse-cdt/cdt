@@ -10,7 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Interface for partial specializations in the pdom.
  */
-interface IPDOMPartialSpecialization extends ICPPClassTemplatePartialSpecialization, IPDOMBinding {
+interface IPDOMPartialSpecialization extends ICPPPartialSpecialization, IPDOMBinding {
 
 	/**
 	 * Allows for setting the arguments after the binding has been added to the pdom.
 	 */
-	void setArguments(ICPPTemplateArgument[] args) throws CoreException;
+	void setTemplateArguments(ICPPTemplateArgument[] args) throws CoreException;
 }

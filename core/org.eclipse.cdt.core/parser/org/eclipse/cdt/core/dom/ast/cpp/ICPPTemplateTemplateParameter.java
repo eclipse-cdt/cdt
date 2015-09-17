@@ -38,4 +38,7 @@ public interface ICPPTemplateTemplateParameter extends ICPPTemplateParameter, IC
 	 */
 	@Override
 	public boolean isSameType(IType type);
+	
+	@Override
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations();
 }

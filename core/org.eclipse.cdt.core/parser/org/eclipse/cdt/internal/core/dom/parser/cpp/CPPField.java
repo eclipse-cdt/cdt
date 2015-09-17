@@ -11,22 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -61,75 +53,9 @@ public class CPPField extends CPPVariable implements ICPPField {
 		super(name);
 	}
 
-	public IASTDeclaration getPrimaryDeclaration() {
-		// First check if we already know it
-		IASTDeclaration decl= findDeclaration(getDefinition());
-		if (decl != null) {
-			return decl;
-		}
-		
-	    IASTName[] declarations = (IASTName[]) getDeclarations();
-		if (declarations != null) {
-			for (IASTName name : declarations) {
-				decl= findDeclaration(name);
-				if (decl != null) {
-					return decl;
-				}
-			}
-		}
-		
-		char[] myName = getNameCharArray();
-		
-		ICPPClassScope scope = (ICPPClassScope) getScope();
-		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(scope);
-		IASTDeclaration[] members = compSpec.getMembers();
-		for (IASTDeclaration member : members) {
-			if (member instanceof IASTSimpleDeclaration) {
-				IASTDeclarator[] dtors = ((IASTSimpleDeclaration) member).getDeclarators();
-				for (IASTDeclarator dtor : dtors) {
-					IASTName name = dtor.getName();
-					if (CharArrayUtils.equals(name.getLookupKey(), myName) && name.resolveBinding() == this) {
-						return member;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	private IASTDeclaration findDeclaration(IASTNode node) {
-		while (node != null && !(node instanceof IASTDeclaration)) {
-			node = node.getParent();
-		}
-		if (node != null && node.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
-			return (IASTDeclaration) node;
-    	}
-		return null;
-	}
-
 	@Override
 	public int getVisibility() {
-		ICPPASTVisibilityLabel vis = null;
-		IASTDeclaration decl = getPrimaryDeclaration();
-		if (decl != null) {
-			IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
-			IASTDeclaration[] members = cls.getMembers();
-
-			for (IASTDeclaration member : members) {
-				if (member instanceof ICPPASTVisibilityLabel) {
-					vis = (ICPPASTVisibilityLabel) member;
-				} else if (member == decl) {
-					break;
-				}
-			}
-		
-			if (vis != null) {
-				return vis.getVisibility();
-			} else if (cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class) {
-				return ICPPASTVisibilityLabel.v_private;
-			}
-		}
-		return ICPPASTVisibilityLabel.v_public;
+		return VariableHelpers.getVisibility(this);
 	}
 	
 	@Override

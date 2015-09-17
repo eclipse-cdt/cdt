@@ -59,6 +59,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(AccessControlTests.suite());
 		suite.addTest(VariableReadWriteFlagsTest.suite());
 		suite.addTest(AST2CPPAttributeTests.suite());
+		suite.addTest(AST2VariableTemplateTests.suite());
 		return suite;
 	}
 }

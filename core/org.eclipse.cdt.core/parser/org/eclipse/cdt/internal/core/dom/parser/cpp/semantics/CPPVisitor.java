@@ -196,6 +196,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -217,6 +218,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariableTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -882,6 +884,12 @@ public class CPPVisitor extends ASTQueries {
         	    		}
         	    	} else if (simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
         	    		binding = new CPPField(name);
+        	    	} else if (template) {
+        	    		if (simpleDecl.getParent().getParent() instanceof ICPPASTCompositeTypeSpecifier) {
+        	    			binding = new CPPFieldTemplate(name);
+        	    		} else {
+        	    			binding = new CPPVariableTemplate(name);
+        	    		}
         	    	} else {
         	    		binding = new CPPVariable(name);
         	    	}
@@ -2525,6 +2533,20 @@ public class CPPVisitor extends ASTQueries {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean isExternC(IASTNode definition, IASTNode[] declarations) {
+	    if (isExternC(definition)) {
+	    	return true;
+	    }
+        if (declarations != null) {
+        	for (IASTNode element : declarations) {
+        		if (isExternC(element)) {
+        			return true;
+        		}
+			}
+        }
+        return false;
 	}
 
 	@Deprecated

@@ -27,6 +27,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -63,18 +64,24 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     private IDebugContextService fContextService = null;
 
     public ReverseToggleCommandHandler() {
-       IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+       final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
        if (window != null) {
-    	   fContextService = DebugUITools.getDebugContextManager().getContextService(window);
-    	   if (fContextService != null) {
-    		   fContextService.addPostDebugContextListener(this);
+			Display.getDefault().asyncExec(new Runnable() {
 
-    		   // This constructor might be called after the launch, so we must refresh here too.
-    		   // This can happen if we activate the action set after the launch.
-    		   refresh(fContextService.getActiveContext());
-    	   }
-       }
-    }
+				@Override
+				public void run() {
+					fContextService = DebugUITools.getDebugContextManager().getContextService(window);
+					if (fContextService != null) {
+						fContextService.addPostDebugContextListener(ReverseToggleCommandHandler.this);
+
+						// This constructor might be called after the launch, so we must refresh here too.
+						// This can happen if we activate the action set after the launch.
+						refresh(fContextService.getActiveContext());
+					}
+				}
+			});
+		}
+	}
 
     @Override
     public void dispose() {

@@ -47,4 +47,22 @@
              project="true">
        </wizard>
     </extension>
+    <extension
+          point="org.eclipse.ui.editors">
+       <editor
+             class="org.eclipse.cdt.internal.qt.ui.editor.QMLEditor"
+             default="true"
+             extensions="qml"
+             id="org.eclipse.cdt.qt.ui.QMLEditor"
+             name="%qmlEditor.name">
+       </editor>
+    </extension>
+    <extension
+          point="org.eclipse.core.filebuffers.documentSetup">
+       <participant
+             class="org.eclipse.cdt.internal.qt.ui.editor.QMLDocumentSetupParticipant"
+             contentTypeId="qmlFile"
+             extensions="qml">
+       </participant>
+    </extension>
 </plugin>

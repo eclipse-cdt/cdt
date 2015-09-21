@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Ericsson and others.
+ * Copyright (c) 2010, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,18 +63,24 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     private IDebugContextService fContextService = null;
 
     public ReverseToggleCommandHandler() {
-       IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+       final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
        if (window != null) {
-    	   fContextService = DebugUITools.getDebugContextManager().getContextService(window);
-    	   if (fContextService != null) {
-    		   fContextService.addPostDebugContextListener(this);
+			window.getShell().getDisplay().asyncExec(new Runnable() {
 
-    		   // This constructor might be called after the launch, so we must refresh here too.
-    		   // This can happen if we activate the action set after the launch.
-    		   refresh(fContextService.getActiveContext());
-    	   }
-       }
-    }
+				@Override
+				public void run() {
+					fContextService = DebugUITools.getDebugContextManager().getContextService(window);
+					if (fContextService != null) {
+						fContextService.addPostDebugContextListener(ReverseToggleCommandHandler.this);
+
+						// This constructor might be called after the launch, so we must refresh here too.
+						// This can happen if we activate the action set after the launch.
+						refresh(fContextService.getActiveContext());
+					}
+				}
+			});
+		}
+	}
 
     @Override
     public void dispose() {

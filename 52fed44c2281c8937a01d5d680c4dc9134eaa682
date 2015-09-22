@@ -16,6 +16,24 @@
       "revId": "52fed44c2281c8937a01d5d680c4dc9134eaa682",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_a7eef27d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 32961
+      },
+      "writtenOn": "2015-09-22T14:12:44Z",
+      "side": 1,
+      "message": "The issue I have seen is that it is not the refresh() which causes the Stackoverflow but the code for getting the context service if the context service is not initialized yet.",
+      "parentUuid": "2721e7e2_e752aae1",
+      "revId": "52fed44c2281c8937a01d5d680c4dc9134eaa682",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

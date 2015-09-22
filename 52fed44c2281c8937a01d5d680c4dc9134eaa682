@@ -123,6 +123,24 @@
       "revId": "52fed44c2281c8937a01d5d680c4dc9134eaa682",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_27cde2db",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 595
+      },
+      "writtenOn": "2015-09-22T14:57:05Z",
+      "side": 1,
+      "message": "In theory the asyncExec() could be executed after the dispose(), but I think this is just an academic possibility.\n\nI was actually more worried about the fact that a DebugCommandHandler can be associated with multiple windows and how we could leverage the DebugCommandHandler base class for triggering the refresh. But that would be a separate issue.",
+      "parentUuid": "2721e7e2_87100e08",
+      "revId": "52fed44c2281c8937a01d5d680c4dc9134eaa682",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

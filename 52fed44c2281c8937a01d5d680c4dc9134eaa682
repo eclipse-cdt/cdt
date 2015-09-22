@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_07e53e51",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-22T14:55:49Z",
+      "side": 1,
+      "message": "I\u0027ve spoken to Marc-Andre and he says there is a setting missing in our pom.xml to tell Hudson/Tycho to use project settings for compilation.  I\u0027ve opened Bug 478074 about it.",
+      "parentUuid": "2721e7e2_47ae161e",
+      "revId": "52fed44c2281c8937a01d5d680c4dc9134eaa682",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_e752aae1",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
         "patchSetId": 2

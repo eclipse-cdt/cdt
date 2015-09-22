@@ -68,6 +68,30 @@
       "revId": "7a9eeebd94a9095b55076fa13ee3b80ecd0798e9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_e7158acb",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-09-22T14:45:16Z",
+      "side": 1,
+      "message": "Scratch that. The retention policy for the M-builds is \"Builds removed after about a month old\". So this is fine.",
+      "parentUuid": "2721e7e2_c73de67b",
+      "range": {
+        "startLine": 40,
+        "startChar": 66,
+        "endLine": 40,
+        "endChar": 69
+      },
+      "revId": "7a9eeebd94a9095b55076fa13ee3b80ecd0798e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

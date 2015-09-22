@@ -162,7 +162,7 @@
           <repository
               url="http://download.eclipse.org/tm/updates/3.6milestones"/>
           <repository
-              url="http://download.eclipse.org/eclipse/updates/4.5milestones/"/>
+              url="http://download.eclipse.org/eclipse/updates/4.6milestones/"/>
           <repository
               url="http://download.eclipse.org/tools/ptp/builds/remote/2.0.0"/>
           <repository

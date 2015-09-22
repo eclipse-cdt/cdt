@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2721e7e2_470a96dd",
+        "filename": "releng/CDT.setup",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-09-22T14:17:35Z",
+      "side": 1,
+      "message": "this is not Mars, this is Neon :)",
+      "range": {
+        "startLine": 165,
+        "startChar": 65,
+        "endLine": 165,
+        "endChar": 76
+      },
+      "revId": "7a9eeebd94a9095b55076fa13ee3b80ecd0798e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_a740b2ee",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-09-22T14:17:35Z",
+      "side": 1,
+      "message": "It looks like all the line endings were changed. (From Windows to Unix?). Bug 453954.",
+      "range": {
+        "startLine": 1,
+        "startChar": 18,
+        "endLine": 1,
+        "endChar": 19
+      },
+      "revId": "7a9eeebd94a9095b55076fa13ee3b80ecd0798e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2721e7e2_c73de67b",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.5.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-09-22T14:17:35Z",
+      "side": 1,
+      "message": "We actually want to pick up builds towards 4.5.1 and 4.5.2 so this should be http://download.eclipse.org/eclipse/updates/4.5-M-builds\nI think",
+      "range": {
+        "startLine": 40,
+        "startChar": 66,
+        "endLine": 40,
+        "endChar": 69
+      },
+      "revId": "7a9eeebd94a9095b55076fa13ee3b80ecd0798e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

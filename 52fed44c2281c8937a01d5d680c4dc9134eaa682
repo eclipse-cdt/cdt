@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2721e7e2_87592ed6",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 595
+      },
+      "writtenOn": "2015-09-22T14:26:51Z",
+      "side": 1,
+      "message": "My bad. That\u0027s the drawback of inline editing...",
+      "parentUuid": "2721e7e2_27fa0236",
+      "revId": "52fed44c2281c8937a01d5d680c4dc9134eaa682",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_e752aae1",
         "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
         "patchSetId": 2

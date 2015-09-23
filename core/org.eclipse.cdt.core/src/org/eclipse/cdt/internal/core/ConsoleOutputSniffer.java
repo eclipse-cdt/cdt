@@ -15,6 +15,7 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.IConsoleParser2;
 
 
 /**
@@ -29,9 +30,11 @@ public class ConsoleOutputSniffer {
 		// Stream's private buffer for the stream's read contents.
 		private StringBuffer currentLine = new StringBuffer();
 		private OutputStream outputStream = null;
+		private final boolean isErrorStream;
 
-		public ConsoleOutputStream(OutputStream outputStream) {
+		public ConsoleOutputStream(OutputStream outputStream, boolean isErrorStream) {
 			this.outputStream = outputStream;
+			this.isErrorStream = isErrorStream;
 		}
 
 		@Override
@@ -96,14 +99,14 @@ public class ConsoleOutputSniffer {
 					eol = i - 1;
 				}
 				String line = buffer.substring(0, eol);
-				processLine(line);
+				processLine(line, isErrorStream);
 
 				buffer = buffer.substring(i + 1); // skip the \n and advance
 			}
 			currentLine.setLength(0);
 			if (flush) {
 				if (buffer.length() > 0) {
-					processLine(buffer);
+					processLine(buffer, isErrorStream);
 				}
 			} else {
 				currentLine.append(buffer);
@@ -134,7 +137,7 @@ public class ConsoleOutputSniffer {
 	 */
 	public OutputStream getOutputStream() {
 		incNOpens();
-		return new ConsoleOutputStream(consoleOutputStream);
+		return new ConsoleOutputStream(consoleOutputStream, false);
 	}
 
 	/**
@@ -144,7 +147,7 @@ public class ConsoleOutputSniffer {
 	 */
 	public OutputStream getErrorStream() {
 		incNOpens();
-		return new ConsoleOutputStream(consoleErrorStream);
+		return new ConsoleOutputStream(consoleErrorStream, true);
 	}
 
 	private synchronized void incNOpens() {
@@ -171,11 +174,15 @@ public class ConsoleOutputSniffer {
 	 *
 	 * @param line
 	 */
-	private synchronized void processLine(String line) {
+	private synchronized void processLine(String line, boolean isErrorStream) {
 		for (IConsoleParser parser : parsers) {
 			try {
 				// Report exception if any but let all the parsers a chance to process the line.
-				parser.processLine(line);
+				if (parser instanceof IConsoleParser2) {
+					((IConsoleParser2) parser).processLine(line, isErrorStream);
+				} else {
+					parser.processLine(line);
+				}
 			} catch (Throwable e) {
 				CCorePlugin.log(e);
 			}

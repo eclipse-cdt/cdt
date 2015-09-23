@@ -54,7 +54,7 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ErrorParserManager extends OutputStream implements IConsoleParser, IWorkingDirectoryTracker {
+public class ErrorParserManager extends OutputStream implements IConsoleParser2, IWorkingDirectoryTracker {
 	/**
 	 * The list of error parsers stored in .project for 3.X projects
 	 * as key/value pair with key="org.eclipse.cdt.core.errorOutputParser"
@@ -317,6 +317,19 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	@Override
 	public boolean processLine(String line) {
+		return processLine(line, false, false);
+	}
+
+	/**
+	 * Parses one line of output and generates error or warning markers.
+	 * @since 5.12
+	 */
+	@Override
+	public boolean processLine(String line, boolean isErrorStream) {
+		return processLine(line, true, isErrorStream);
+	}
+
+	private boolean processLine(String line, boolean checkStreamType, boolean isErrorStream) {
 		String lineTrimmed = line.trim();
 		lineCounter++;
 
@@ -329,6 +342,16 @@ outer:
 				if (parser instanceof ErrorParserNamedWrapper) {
 					curr = ((ErrorParserNamedWrapper)parser).getErrorParser();
 				}
+				if (checkStreamType && curr instanceof IErrorParser4) {
+					int streamType = ((IErrorParser4) curr).getStreamType();
+					if (isErrorStream && (streamType & IErrorParser4.PARSE_STDERR) == 0) {
+						continue;
+					}
+					if (!isErrorStream && (streamType & IErrorParser4.PARSE_STDOUT) == 0) {
+						continue;
+					}
+				}
+
 				int types = IErrorParser2.NONE;
 				if (curr instanceof IErrorParser2) {
 					types = ((IErrorParser2) curr).getProcessLineBehaviour();

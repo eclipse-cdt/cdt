@@ -67,6 +67,126 @@
       "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_760d9e76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1127,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "I fixed this since I needed to modify the @since version anyway",
+      "parentUuid": "2721e7e2_3a7ce95a",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_9b403bbc",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "Nice",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_fb3df745",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "We should rm BUILDDIR also",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_1ba3ab30",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupSuite.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "Do you want to keep this class?  It was surely useful when you were testing, but we don\u0027t usually have suites for every type of tests.  It would be more flexible to have a suite for each, but the maintenance is probably not worth it.  For example, this class is now missing SourceLookupTest_7_10.class",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_7b98e7fc",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupSuiteRemote.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "Do you want to keep?  See SourceLookupSuite.java comment",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_9b8e7bb7",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_6_6/SourceLookupTest_6_6.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "Please replace with\n\n@Ignore(\"Only works starting with GDB 7.6\")",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_1b0e0bc5",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-23T19:15:52Z",
+      "side": 1,
+      "message": "Please replace with\n@Ignore(\"Not supported.... as you put in the javadoc",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

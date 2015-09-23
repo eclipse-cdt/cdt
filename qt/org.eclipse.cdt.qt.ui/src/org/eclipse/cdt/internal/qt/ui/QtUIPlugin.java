@@ -11,8 +11,11 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -25,6 +28,8 @@ public class QtUIPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static QtUIPlugin plugin;
+
+	private IPreferenceStore preferenceStore;
 
 	/**
 	 * The constructor
@@ -59,6 +64,19 @@ public class QtUIPlugin extends AbstractUIPlugin {
 	 */
 	public static QtUIPlugin getDefault() {
 		return plugin;
+	}
+
+	/**
+	 * Returns a preference store for org.eclipse.cdt.qt.ui preferences
+	 *
+	 * @return the preference store
+	 */
+	@Override
+	public IPreferenceStore getPreferenceStore() {
+		if (preferenceStore == null) {
+			preferenceStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, QtUIPlugin.PLUGIN_ID);
+		}
+		return preferenceStore;
 	}
 
 	public static CoreException coreException(String msg) {

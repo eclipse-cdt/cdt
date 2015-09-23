@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.qt.ui.editor;
 
-import org.eclipse.cdt.internal.qt.ui.QtUIPlugin;
-import org.eclipse.cdt.internal.qt.ui.text.QMLSourceViewerConfiguration;
+import org.eclipse.cdt.internal.qt.ui.text.QtProjectFileSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
@@ -19,21 +18,16 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
-/**
- * Basic editor for QML.  Thus far has only syntax highlighting capabilities.
- */
-public class QMLEditor extends TextEditor {
-	public static final String EDITOR_ID = "org.eclipse.cdt.qt.ui.QMLEditor"; //$NON-NLS-1$
+public class QtProjectFileEditor extends TextEditor {
+	public static final String EDITOR_ID = "org.eclipse.cdt.qt.ui.QtProjectFileEditor"; //$NON-NLS-1$
 
-	public static final String BRACKET_MATCHING_COLOR_PREFERENCE = "org.eclipse.cdt.qt.ui.qmlMatchingBracketsColor"; //$NON-NLS-1$
-	private static final String BRACKET_MATCHING_PREFERENCE = "org.eclipse.cdt.qt.ui.qmlMatchingBrackets"; //$NON-NLS-1$
+	public static final String BRACKET_MATCHING_COLOR_PREFERENCE = "org.eclipse.cdt.qt.ui.qtproMatchingBracketsColor"; //$NON-NLS-1$
+	private static final String BRACKET_MATCHING_PREFERENCE = "org.eclipse.cdt.qt.ui.qtproMatchingBrackets"; //$NON-NLS-1$
 
 	private static final char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
 
-	@Override
-	protected void initializeEditor() {
-		setPreferenceStore(QtUIPlugin.getDefault().getPreferenceStore());
-		setSourceViewerConfiguration(new QMLSourceViewerConfiguration());
+	public QtProjectFileEditor() {
+		setSourceViewerConfiguration(new QtProjectFileSourceViewerConfiguration());
 	}
 
 	@Override

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_d6fd6aa5",
+        "filename": "qt/org.eclipse.cdt.qt.ui/src/org/eclipse/cdt/internal/qt/ui/QtUIPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-09-23T19:19:58Z",
+      "side": 1,
+      "message": "What was wrong with the AbstractUIPlugin version of this. Seems to do the same thing.",
+      "revId": "446c2b6696075a6588c8415c98c678c7e621d31d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

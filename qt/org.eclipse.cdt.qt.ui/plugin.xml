@@ -56,6 +56,13 @@
              id="org.eclipse.cdt.qt.ui.QMLEditor"
              name="%qmlEditor.name">
        </editor>
+       <editor
+             class="org.eclipse.cdt.internal.qt.ui.editor.QtProjectFileEditor"
+             default="true"
+             extensions="pro"
+             id="org.eclipse.cdt.qt.ui.QtProjectFileEditor"
+             name="%qtProjectFileEditor.name">
+       </editor>
     </extension>
     <extension
           point="org.eclipse.core.filebuffers.documentSetup">

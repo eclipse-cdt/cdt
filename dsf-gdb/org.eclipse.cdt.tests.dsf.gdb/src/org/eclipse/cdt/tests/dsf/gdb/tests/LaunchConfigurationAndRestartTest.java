@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Ericsson and others.
+ * Copyright (c) 2011, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -44,8 +45,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchManager;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -119,17 +118,6 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
         if (fServicesTracker != null) fServicesTracker.dispose();
     }
 
-
-    // HACK to get the full path of the program, which we need in other
-    // tests.  There must be a proper eclipse way to do this!
-    private static String fFullProgramPath;
-	@Test
-    public void getFullPath() throws Throwable {
-		doLaunch();
-		MIStoppedEvent stopped = getInitialStoppedEvent();
-		fFullProgramPath = stopped.getFrame().getFullname();
-	}
-
     // *********************************************************************
     // Below are the tests for the launch configuration.
     // *********************************************************************
@@ -141,10 +129,9 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
      */
     @Test
     public void testSettingWorkingDirectory() throws Throwable {
-		IPath path = new Path(fFullProgramPath);
-		String dir = path.removeLastSegments(4).toPortableString() + "/" + EXEC_PATH;
+		String dir = new File(EXEC_PATH).getAbsolutePath();
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, dir);
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, dir + EXEC_NAME);
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, dir + "/" + EXEC_NAME);
 
        	doLaunch();
         

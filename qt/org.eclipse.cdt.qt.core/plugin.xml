@@ -35,6 +35,13 @@
             name="%qmlFile.name"
             priority="normal">
       </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="qrc"
+            id="qrcFile"
+            name="%qrcFile.name"
+            priority="normal">
+      </content-type>
    </extension>
    <extension
          id="qtNature"

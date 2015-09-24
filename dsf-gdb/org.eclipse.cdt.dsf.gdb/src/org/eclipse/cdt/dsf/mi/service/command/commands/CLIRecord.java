@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
@@ -19,7 +20,56 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * @since 3.0
  */
 public class CLIRecord extends CLICommand<MIInfo> {
+
+	/**
+	 * @since 4.8
+	 */
+	public static final String FULL_TRACE="FullTrace"; //$NON-NLS-1$
+	/**
+	 * @since 4.8
+	 */
+	public static final String BRANCH_TRACE="BranchTrace"; //$NON-NLS-1$
+	/**
+	 * @since 4.8
+	 */
+	public static final String PROCESSOR_TRACE="ProcessorTrace"; //$NON-NLS-1$
+	/**
+	 * @since 4.8
+	 */
+	public static final String STOP_TRACE="StopTrace"; //$NON-NLS-1$
+	/**
+	 * @since 4.8
+	 */
+	public static final String GDB_TRACE="GDBTrace"; //$NON-NLS-1$
+
 	public CLIRecord(ICommandControlDMContext ctx, boolean enable) {
 		super(ctx, enable ? "record" : "record stop"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
+	/**
+     * @since 4.8
+     */
+    public CLIRecord(ICommandControlDMContext ctx, String traceMethod) {
+        super(ctx, "record" + createRecordParams(traceMethod));  //$NON-NLS-1$
+    }
+
+    private static String createRecordParams(String traceMethod)
+    {
+        String recordParam;
+
+            if (traceMethod == STOP_TRACE)
+                recordParam = " stop"; //$NON-NLS-1$
+            else if (traceMethod == FULL_TRACE) // full trace
+                recordParam = " full"; //$NON-NLS-1$
+            else if (traceMethod == BRANCH_TRACE) // branch trace
+                recordParam = " btrace bts"; //$NON-NLS-1$
+            else if (traceMethod == PROCESSOR_TRACE) // processor trace
+                recordParam = " btrace pt"; //$NON-NLS-1$
+            else if (traceMethod == GDB_TRACE) // gdb selected trace
+                recordParam = " btrace"; //$NON-NLS-1$
+            else // no trace method defined
+                recordParam = ""; //$NON-NLS-1$
+
+        return recordParam;
+    }
 }

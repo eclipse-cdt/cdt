@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -45,7 +45,7 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
     	boolean result = false;
 		ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(context.getDMContext(), ICommandControlDMContext.class);
 		if (controlDmc != null) {
-			IReverseToggleHandler toggle = (controlDmc.getAdapter(IReverseToggleHandler.class));
+			IChangeReverseMethodHandler toggle = (controlDmc.getAdapter(IChangeReverseMethodHandler.class));
 			if (toggle != null) {
 				result = toggle.isReverseToggled(controlDmc);
 			}

@@ -10,6 +10,7 @@
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -450,7 +451,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	    }
 	}
 	
-	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
+	/** @since 5.0 */
+	protected void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
 		ILaunch launch = procCtx.getAdapter(ILaunch.class);
 		assert launch != null;
 		if (launch != null) {

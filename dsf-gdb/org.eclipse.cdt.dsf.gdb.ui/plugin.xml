@@ -460,6 +460,12 @@
              id="org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage"
              name="%tracepointActionsPrefPage.name">
       </page> 
+      <page   
+            category="org.eclipse.cdt.dsf.gdb.ui.preferences"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.ReverseDebugPreferencePage"
+            id="org.eclipse.cdt.dsf.gdb.ui.preferences.reversedebugpreferences"
+            name="%reverseDebugPreferences.name">
+      </page> 
    </extension>
     <extension
          point="org.eclipse.ui.console.consolePageParticipants">

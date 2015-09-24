@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Mikhail Khodjaiants (Mentor Graphics) - initial API and implementation
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
@@ -312,7 +313,7 @@ public class GdbSessionAdapters {
 		if (IRefreshAllTarget.class.equals(adapterType)) { 
 			return (T)new DefaultRefreshAllTarget();
 		}
-		if (IReverseToggleHandler.class.equals(adapterType)) { 
+		if (IReverseToggleHandler.class.equals(adapterType)) {
 			return (T)new GdbReverseToggleCommand(session);
 		}
 		if (IStartTracingHandler.class.equals(adapterType)) { 

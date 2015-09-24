@@ -1911,6 +1911,21 @@
           description="%ReverseToggle.description"
           id="org.eclipse.cdt.debug.ui.command.reverseToggle"
           name="%ReverseToggle.name">
+          <commandParameter
+                id="org.eclipse.ui.commands.radioStateParameter"
+                name="%ReverseToggle.commandparam"
+                optional="false">
+          </commandParameter>
+          <state
+                id="org.eclipse.ui.commands.radioState">
+                <class
+                    class="org.eclipse.ui.handlers.RadioState">
+                    <parameter
+                        name="persisted"
+                        value="false">
+                    </parameter>
+                </class>
+            </state>
     </command>
     <command
           categoryId="org.eclipse.cdt.debug.ui.category.reverseDebugging"
@@ -2371,7 +2386,7 @@
                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
-               style="toggle">
+               style="pulldown">
             <visibleWhen checkEnabled="false">
                <and>
                   <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
@@ -2444,15 +2459,15 @@
   <!-- Reverse debugging contributions to Run menu -->           
       <menuContribution
             locationURI="menu:org.eclipse.ui.run?before=stepGroup">
-         <command
+            <menu
                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
-               style="toggle">
+               style="pulldown">
             <visibleWhen checkEnabled="false">
                <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
             </visibleWhen>
-         </command>
+         </menu>
       </menuContribution>      
       <menuContribution
             locationURI="menu:org.eclipse.ui.run?after=stepGroup">
@@ -2506,15 +2521,35 @@
   <!-- Reverse debugging contributions to Debug view popup -->           
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?before=stepGroup">
-         <command
+         <menu
                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
-               style="toggle">
+               style="pulldown">
             <visibleWhen checkEnabled="false">
                <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
             </visibleWhen>
-         </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%SoftwareTrace.label"
+                tooltip="%SoftwareTrace.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="UseSoftTrace">
+                </parameter>
+            </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%HardwareTrace.label"
+                tooltip="%HardwareTrace.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="UseHardTrace">
+                </parameter>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?after=threadGroup">
@@ -2595,12 +2630,55 @@
                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
-               style="toggle">
+               style="pulldown">
             <visibleWhen checkEnabled="false">
                <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
             </visibleWhen>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%SoftwareTrace.label"
+                tooltip="%SoftwareTrace.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="UseSoftTrace">
+                </parameter>
+            </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%HardwareTrace.label"
+                tooltip="%HardwareTrace.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="UseHardTrace">
+                </parameter>
+            </command>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.cdt.debug.ui.command.reverseToggle">
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%SoftwareTrace.label"
+                tooltip="%SoftwareTrace.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="UseSoftTrace">
+                </parameter>
+            </command>
+            <command
+                commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+                label="%HardwareTrace.label"
+                tooltip="%HardwareTrace.description"
+                style="radio">
+                <parameter
+                    name="org.eclipse.ui.commands.radioStateParameter"
+                    value="UseHardTrace">
+                </parameter>
+            </command>
+        </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=threadGroup">
          <command

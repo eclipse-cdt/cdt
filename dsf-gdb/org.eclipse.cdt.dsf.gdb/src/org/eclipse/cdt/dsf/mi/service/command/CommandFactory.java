@@ -26,6 +26,7 @@
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *     Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400638)
  *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -314,6 +315,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx, boolean enable) {
 		return new CLIRecord(ctx, enable);
+	}
+
+	/** @since 4.8*/
+	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx, int traceMethod) {
+		return new CLIRecord(ctx, traceMethod);
 	}
 
 	/** @since 4.1 */

@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Anton Gorenkov - Need to use a process factory (Bug 210366)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -108,6 +109,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		return fUserBreakpointIsOnMain;
 	}
 	    
+	/** @since 5.0 */
+	protected boolean getReverseEnabled() {
+		return fReverseEnabled;
+	}
+	
 	public StartOrRestartProcessSequence_7_0(DsfExecutor executor, IContainerDMContext containerDmc,
 			Map<String, Object> attributes, boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
 		super(executor, rm);

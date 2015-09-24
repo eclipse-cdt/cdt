@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Ericsson           - Added IReverseControl support
  *     Marc Khouzam (Ericsson) - Added IReverseModeChangedDMEvent (Bug 399163)
  *     Marc Khouzam (Ericsson) - Started inheriting from GDBRunControl (Bug 405123)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -81,6 +82,14 @@ public class GDBRunControl_7_0 extends GDBRunControl implements IReverseRunContr
 	 */
 	private boolean fRunControlOperationsEnabled = true;
 
+	/** 
+	 * Indicates if reverse debugging is supported for the currend debug session.
+	 * @since 5.0 
+	 */
+	public boolean getReverseSupported() {
+		return fReverseSupported;
+	}
+	
     public GDBRunControl_7_0(DsfSession session) {
         super(session);
     }

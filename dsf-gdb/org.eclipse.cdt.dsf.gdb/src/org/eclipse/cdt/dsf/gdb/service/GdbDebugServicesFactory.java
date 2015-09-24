@@ -19,6 +19,7 @@
  *     Marc Khouzam (Ericsson) - Support dynamic printf in bp service 7.5 (Bug 400628)
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
  *     Marc Dumais (Ericsson) - Update GDBHardwareAndOS service to take advantage of GDB providing CPU/core info (bug 464184)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -229,6 +230,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		
 	@Override
 	protected IProcesses createProcessesService(DsfSession session) {
+		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
+			return new GDBProcesses_7_10(session);
+		}
 		if (compareVersionWith(GDB_7_4_VERSION) >= 0) {
 			return new GDBProcesses_7_4(session);
 		}
@@ -257,6 +261,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
+		if (compareVersionWith(GDB_7_10_VERSION) >= 0) {
+			return new GDBRunControl_7_10(session);
+		}
 		if (compareVersionWith(GDB_7_6_VERSION) >= 0) {
 			return new GDBRunControl_7_6(session);
 		}

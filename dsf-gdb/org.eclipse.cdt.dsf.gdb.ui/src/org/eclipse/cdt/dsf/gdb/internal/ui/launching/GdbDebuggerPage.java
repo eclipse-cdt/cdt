@@ -10,6 +10,7 @@
  *     Ericsson             - Modified for DSF
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - Support for fast tracepoints (Bug 346320)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -56,7 +57,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected Button fReverseCheckBox;
 	protected Button fUpdateThreadlistOnSuspend;
 	protected Button fDebugOnFork;
-	
+	protected Combo fReverseDebugMode;
+
 	/**
 	 * A combo box to let the user choose if fast tracepoints should be used or not.
 	 */
@@ -91,6 +93,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP));
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
@@ -144,6 +148,9 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				preferenceStore.getBoolean(IGdbDebugPreferenceConstants.PREF_DEFAULT_NON_STOP));
 		boolean reverseEnabled = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT);
+
+		updateRevereDebugModeFromConfig(configuration);
+
 		boolean updateThreadsOnSuspend = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
 				IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 		boolean debugOnFork = getBooleanAttr(configuration, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_DEBUG_ON_FORK,
@@ -186,6 +193,19 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		}
 	}
 
+	protected void updateRevereDebugModeFromConfig(ILaunchConfiguration config){
+		if (fReverseDebugMode != null){
+			String debugMode = getStringAttr(config, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
+					IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT);
+
+			if(debugMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARD)) {
+				fReverseDebugMode.setText(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard")); //$NON-NLS-1$
+			} else {
+				fReverseDebugMode.setText(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft")); //$NON-NLS-1$
+			}
+		}
+	}
+
 	protected String getSelectedTracepointMode() {
 		if (fTracepointModeCombo != null) {
 			int selectedIndex = fTracepointModeCombo.getSelectionIndex();
@@ -200,6 +220,20 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			}
 		}
 		return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT;
+	}
+
+	protected String getSelectedReverseDebugMode() {
+		if (fReverseDebugMode != null) {
+			int selectedIndex = fReverseDebugMode.getSelectionIndex();
+			if (fReverseDebugMode.getItem(selectedIndex).equals(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard"))) { //$NON-NLS-1$
+				return IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_HARD;
+			} else if (fReverseDebugMode.getItem(selectedIndex).equals(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft"))) { //$NON-NLS-1$
+				return IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_SOFT;
+			} else {
+				assert false : "Unknown Reverse Debug mode: " + fReverseDebugMode.getItem(selectedIndex); //$NON-NLS-1$
+			}
+		}
+		return IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_MODE_DEFAULT;
 	}
 
     @Override
@@ -221,7 +255,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 									   getSelectedTracepointMode());
 		}
-		
+
+		if (fReverseDebugMode != null) {
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE_MODE,
+                                       getSelectedReverseDebugMode());
+		}
+
 		if (fSolibBlock != null)
 			fSolibBlock.performApply(configuration);
 	}
@@ -368,6 +407,8 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		// TODO: Find a way to determine if reverse is supported (i.e. find the GDB version) then grey out the check box if necessary
 		fReverseCheckBox = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debugging")); //$NON-NLS-1$
 
+		createReverseDebugModeCombo(subComp);
+
 		fUpdateThreadlistOnSuspend = addCheckbox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.update_thread_list_on_suspend")); //$NON-NLS-1$
 		// This checkbox needs an explanation. Attach context help to it.
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, GdbUIPlugin.PLUGIN_ID + ".update_threadlist_button_context"); //$NON-NLS-1$
@@ -401,6 +442,25 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fTracepointModeCombo.select(0);
 	}
 
+	protected void createReverseDebugModeCombo(Composite parent){
+		fReverseDebugMode = new Combo(parent,SWT.READ_ONLY | SWT.DROP_DOWN );
+
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		gd.verticalSpan = 1;
+		gd.horizontalIndent = 3;
+		fReverseDebugMode.setLayoutData(gd);
+		fReverseDebugMode.add(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodesoft")); //$NON-NLS-1$
+		fReverseDebugMode.add(LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debuggingmodehard")); //$NON-NLS-1$
+		fReverseDebugMode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		fReverseDebugMode.select(0);
+	}
+
 	public void createSolibTab(TabFolder tabFolder) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.shared_libraries")); //$NON-NLS-1$
@@ -428,6 +488,20 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		return button;
 	}
 
+	private Button addRadioButton(Composite parent, String label, String value){
+		Button button = ControlFactory.createRadioButton(parent,label,value,new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		GridData gd = new GridData();
+		gd.horizontalSpan = 1;
+		gd.horizontalIndent = 3;
+		button.setLayoutData(gd);
+
+		return button;
+	}
 	/*
 	 * (non-Javadoc)
 	 *

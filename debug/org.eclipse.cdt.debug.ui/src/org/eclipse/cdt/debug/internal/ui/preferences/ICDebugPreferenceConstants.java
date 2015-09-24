@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
@@ -50,4 +51,29 @@ public interface ICDebugPreferenceConstants {
      * Boolean preference controlling whether the disassembly editor is be activated if the source file can't be found.
      */
     public static final String PREF_DISASM_OPEN_SOURCE_NOT_FOUND = ICDebugUIConstants.PLUGIN_ID + ".disassembly.openSourceNotFound"; //$NON-NLS-1$
+
+    /**
+     * Boolean preference controlling whether to display error dialog box when trace method is not available.
+     */
+    public static final String PREF_SHOW_ERROR_REVERSE_TRACE_METHOD_NOT_AVAILABLE = ICDebugUIConstants.PLUGIN_ID + ".reversedebugpref.tracemethodNotAvailable"; //$NON-NLS-1$
+
+    /**
+     * String preference controlling trace method used for hardware tracing.
+     */
+    public static final String PREF_REVERSE_TRACE_METHOD_HARDWARE = ICDebugUIConstants.PLUGIN_ID + ".reversedebugpref.tracemethodHardware"; //$NON-NLS-1$
+
+    /**
+     * String preference controlling trace method used for hardware tracing.
+     */
+    public static final String PREF_REVERSE_TRACE_METHOD_GDB_TRACE = "UseGdbTrace"; //$NON-NLS-1$
+
+    /**
+     * String preference controlling trace method used for hardware tracing.
+     */
+    public static final String PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE = "UseBranchTrace"; //$NON-NLS-1$
+
+    /**
+     * String preference controlling trace method used for hardware tracing.
+     */
+    public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
 }

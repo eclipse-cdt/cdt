@@ -1,0 +1,8 @@
+Verified+1: Hudson CI
+Code-Review+2: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Verified+1: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Submitted-by: Thomas Corbat <tcorbat@hsr.ch>
+Submitted-at: Thu, 24 Sep 2015 01:36:48 -0400
+Reviewed-on: https://git.eclipse.org/r/55511
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

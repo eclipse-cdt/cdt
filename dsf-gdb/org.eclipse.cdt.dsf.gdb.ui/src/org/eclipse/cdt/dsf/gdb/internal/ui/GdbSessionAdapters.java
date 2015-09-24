@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Mikhail Khodjaiants (Mentor Graphics) - initial API and implementation
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
@@ -20,13 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepOverHandler;
-import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
 import org.eclipse.cdt.debug.core.model.ISaveTraceDataHandler;
 import org.eclipse.cdt.debug.core.model.IStartTracingHandler;
 import org.eclipse.cdt.debug.core.model.IStepIntoSelectionHandler;
@@ -204,7 +205,7 @@ public class GdbSessionAdapters {
 			IDisconnectHandler.class,
 			IModelSelectionPolicyFactory.class,
 			IRefreshAllTarget.class,
-			IReverseToggleHandler.class,
+			IChangeReverseMethodHandler.class,
 			IStartTracingHandler.class,
 			IStopTracingHandler.class,
 			ISaveTraceDataHandler.class,
@@ -312,7 +313,7 @@ public class GdbSessionAdapters {
 		if (IRefreshAllTarget.class.equals(adapterType)) { 
 			return (T)new DefaultRefreshAllTarget();
 		}
-		if (IReverseToggleHandler.class.equals(adapterType)) { 
+		if (IChangeReverseMethodHandler.class.equals(adapterType)) {
 			return (T)new GdbReverseToggleCommand(session);
 		}
 		if (IStartTracingHandler.class.equals(adapterType)) { 

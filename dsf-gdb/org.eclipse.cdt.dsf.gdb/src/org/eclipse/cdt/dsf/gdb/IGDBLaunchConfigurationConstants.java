@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Support for fast tracepoints (Bug 346320)
  *     Anton Gorenkov - Need to use a process factory (Bug 210366)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -85,6 +86,12 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_REVERSE = GdbPlugin.PLUGIN_ID + ".REVERSE"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. String value to select reverse debugging method at launch time.
+	 * @since 5.0
+	 */
+	public static final String ATTR_DEBUGGER_REVERSE_MODE = GdbPlugin.PLUGIN_ID + ".REVERSE_MODE"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. Boolean value. See
 	 * IGDBBackend.getUpdateThreadListOnSuspend()
 	 * 
@@ -153,6 +160,24 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 2.0
 	 */
 	public static final boolean DEBUGGER_REVERSE_DEFAULT = false;
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_REVERSE_MODE.
+	 * @since 5.0
+	 */
+	public static final String DEBUGGER_REVERSE_MODE_DEFAULT = "UseSoftTrace"; //$NON-NLS-1$
+
+	/**
+	 * Possible attribute value for the key is ATTR_DEBUGGER_REVERSE_MODE.
+	 * @since 5.0
+	 */
+	public static final String DEBUGGER_REVERSE_MODE_SOFT = "UseSoftTrace"; //$NON-NLS-1$
+
+	/**
+	 * Possible attribute value for the key is ATTR_DEBUGGER_REVERSE_MODE.
+	 * @since 5.0
+	 */
+	public static final String DEBUGGER_REVERSE_MODE_HARD = "UseHardTrace"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute value. The key is

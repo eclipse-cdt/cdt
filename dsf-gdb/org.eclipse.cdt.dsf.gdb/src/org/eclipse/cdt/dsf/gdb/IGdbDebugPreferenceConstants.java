@@ -11,6 +11,7 @@
  *     Sergey Prigogin (Google)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Marc Khouzam (Ericsson) - Add preference for aggressive breakpoint filtering (Bug 360735)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -146,5 +147,26 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 4.2
 	 */
 	public static final String PREF_AGGRESSIVE_BP_FILTER = PREFIX + "aggressiveBpFilter"; //$NON-NLS-1$
+
+	/**
+	 * String preference controlling trace method used for hardware tracing.
+	 */
+	public static final String PREF_REVERSE_TRACE_METHOD_HARDWARE = PREFIX + ".reversedebugpref.tracemethodHardware"; //$NON-NLS-1$
+
+	/**
+	 * String preference controlling trace method used for hardware tracing.
+	 */
+	public static final String PREF_REVERSE_TRACE_METHOD_GDB_TRACE = "UseGdbTrace"; //$NON-NLS-1$
+
+	 /**
+	 * String preference controlling trace method used for hardware tracing.
+	 */
+	public static final String PREF_REVERSE_TRACE_METHOD_BRANCH_TRACE = "UseBranchTrace"; //$NON-NLS-1$
+
+	 /**
+	 * String preference controlling trace method used for hardware tracing.
+	 */
+	public static final String PREF_REVERSE_TRACE_METHOD_PROCESSOR_TRACE = "UseProcessorTrace"; //$NON-NLS-1$
+
 }
 

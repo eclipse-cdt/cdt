@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 TUBITAK BILGEM-ITI and others.
+ * Copyright (c) 2010, 2015 TUBITAK BILGEM-ITI and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -135,9 +136,18 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
      */
     protected static final String TRACE_VISUALIZATION_THREAD_ID = "1"; //$NON-NLS-1$
 
-    private CommandFactory fCommandFactory;
-    private IGDBControl fCommandControl;
-    private IGDBBackend fBackend;
+	/**
+	 * @since 4.8
+	 */
+	protected CommandFactory fCommandFactory;
+	/**
+	 * @since 4.8
+	 */
+	protected IGDBControl fCommandControl;
+	/**
+	 * @since 4.8
+	 */
+	protected IGDBBackend fBackend;
 
 	private final static String INVALID = "invalid";   //$NON-NLS-1$
 	
@@ -145,8 +155,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 * Keep track if we need to reconnect to the target
 	 * due to a workaround because of a GDB 7.2 bug.
 	 * Bug 352998
+	 * @since 4.8
 	 */
-	private boolean fNeedToReconnect;
+	protected boolean fNeedToReconnect;
 	
     /**
      * Set of processes that are currently being restarted.
@@ -450,7 +461,10 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	    }
 	}
 	
-	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
+	/**
+	 * @since 4.8
+	 */
+	protected void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
 		ILaunch launch = procCtx.getAdapter(ILaunch.class);
 		assert launch != null;
 		if (launch != null) {

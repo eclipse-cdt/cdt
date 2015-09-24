@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Anton Gorenkov - Need to use a process factory (Bug 210366)
+ *     Intel Corporation - Added Reverse Debugging BTrace support
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -62,19 +63,39 @@ import org.eclipse.debug.core.model.IProcess;
  * @since 4.0
  */
 public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
-	private IGDBControl fCommandControl;
-	private CommandFactory fCommandFactory;
-	private IGDBProcesses fProcService;
+	/**
+	 * @since 4.8
+	 */
+	protected IGDBControl fCommandControl;
+	/**
+	 * @since 4.8
+	 */
+	protected CommandFactory fCommandFactory;
+	/**
+	 * @since 4.8
+	 */
+	protected IGDBProcesses fProcService;
+	/**
+	 * @since 4.8
+	 */
 	private IReverseRunControl fReverseService;
-	private IGDBBackend fBackend;
-	
-	private DsfServicesTracker fTracker;
+	/**
+	 * @since 4.8
+	 */
+	protected IGDBBackend fBackend;
+	/**
+	 * @since 4.8
+	 */
+	protected DsfServicesTracker fTracker;
 
 	// This variable will be used to store the original container context,
 	// but once the new process is started (restarted), it will contain the new
 	// container context.  This new container context has for parent the process
 	// context, which holds the new pid.
-	private IContainerDMContext fContainerDmc;
+	/**
+	 * @since 4.8
+	 */
+	protected IContainerDMContext fContainerDmc;
 	
 	// If the user requested a stop_on_main, this variable will hold the breakpoint
 	private MIBreakpoint fUserBreakpoint;
@@ -82,9 +103,14 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	// symbol, we use this variable to know if the stop_on_main breakpoint was really
 	// on the main() method.
 	private boolean fUserBreakpointIsOnMain;
-	
-	private boolean fReverseEnabled;
-	private final Map<String, Object> fAttributes;
+	/**
+	 * @since 4.8
+	 */
+	protected boolean fReverseEnabled;
+	/**
+	 * @since 4.8
+	 */
+	protected final Map<String, Object> fAttributes;
 	
 	// Indicates if the sequence is being used for a restart or a start
 	private final boolean fRestart;

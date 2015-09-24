@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_5665fa37",
+        "filename": "releng/org.eclipse.cdt.target/cdt-e4.6.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-09-24T00:39:35Z",
+      "side": 1,
+      "message": "For anyone who sees this review after, this is only temporary to get us going. We shouldn\u0027t be adding neon directly but we need to find out where the XML editor dependencies go. It\u0027s not just webtools.",
+      "revId": "cc38167b242d70df383e62f32a0991337a29af71",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

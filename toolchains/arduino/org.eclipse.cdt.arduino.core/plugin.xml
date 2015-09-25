@@ -108,4 +108,11 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.ToolChainFactory">
+      <factory
+            class="org.eclipse.cdt.arduino.core.internal.build.ArduinoGCCToolChain$ArduinoFactory"
+            family="Arduino GCC">
+      </factory>
+   </extension>
 </plugin>

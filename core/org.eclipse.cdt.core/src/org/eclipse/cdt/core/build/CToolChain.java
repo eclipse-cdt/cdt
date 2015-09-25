@@ -10,14 +10,12 @@ package org.eclipse.cdt.core.build;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.internal.core.build.ScannerInfoData;
-import org.eclipse.cdt.internal.core.build.ToolChainScannerInfo;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * Root class for CDT toolchains.
@@ -26,12 +24,38 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public abstract class CToolChain extends PlatformObject {
 
-	private final CBuildConfiguration config;
+	public static final String FAMILY = "family"; //$NON-NLS-1$
+	private static final String NAME = "name"; //$NON-NLS-1$
 
-	private ScannerInfoData scannerInfo;
+	private String id;
+	private String name;
 
-	protected CToolChain(CBuildConfiguration config) {
-		this.config = config;
+	protected CToolChain(String id, Preferences settings) {
+		this.id = id;
+		this.name = settings.get(NAME, "<Unknown>"); //$NON-NLS-1$
+	}
+
+	protected CToolChain(String name) {
+		this.name = name;
+	}
+
+	public abstract String getFamily();
+
+	public String getId() {
+		return id;
+	}
+
+	void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void save(Preferences settings) {
+		settings.put(FAMILY, getFamily());
+		settings.put(NAME, name);
 	}
 
 	public static String[] splitCommand(String command) {
@@ -39,8 +63,13 @@ public abstract class CToolChain extends PlatformObject {
 		return command.replace("\"", "").split("\\s+"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	public CBuildConfiguration getBuildConfiguration() {
-		return config;
+	public static String[] fixPaths(String[] command) {
+		for (int i = 0; i < command.length; ++i) {
+			if (command[i].indexOf('\\') >= 0) {
+				command[i] = command[i].replace('\\', '/');
+			}
+		}
+		return command;
 	}
 
 	/**
@@ -53,71 +82,40 @@ public abstract class CToolChain extends PlatformObject {
 	}
 
 	/**
-	 * Scan the commandLine and save the scanner info for the resource being
-	 * built, or if perProject is true, for all resources in the project. The
-	 * buildFolder to help find the resource is where the command ran.
+	 * Find the file mentioned in the command line.
 	 * 
 	 * @param buildFolder
 	 * @param commandLine
-	 * @throws CoreException
+	 * @return the file in the command line or null if can't be found.
 	 */
-	public void scanBuildOutput(IFolder buildFolder, String commandLine, boolean perProject)
-			throws CoreException {
-		// default, nothing
+	public IFile getResource(IFolder buildFolder, String[] commandLine) {
+		// default, not found
+		return null;
 	}
 
-	protected void putScannerInfo(IResource resource, Map<String, String> definedSymbols,
-			List<String> includePaths, List<String> macroFiles, List<String> includeFiles,
-			List<String> localIncludePath) throws CoreException {
-		if (scannerInfo == null) {
-			loadScannerInfo();
-		}
-		scannerInfo.putScannerInfo(resource, new ToolChainScannerInfo(definedSymbols, includePaths,
-				macroFiles, includeFiles, localIncludePath));
-	}
-
-	protected void putScannerInfo(ILanguage language, Map<String, String> definedSymbols,
-			List<String> includePaths, List<String> macroFiles, List<String> includeFiles,
-			List<String> localIncludePath) throws CoreException {
-		if (scannerInfo == null) {
-			loadScannerInfo();
-		}
-		scannerInfo.putScannerInfo(language, new ToolChainScannerInfo(definedSymbols, includePaths,
-				macroFiles, includeFiles, localIncludePath));
-	}
-
-	private void loadScannerInfo() {
-		if (scannerInfo == null) {
-			scannerInfo = ScannerInfoData.load(this);
-		}
+	public IFile getResource(IFolder buildFolder, String commandLine) {
+		return getResource(buildFolder, splitCommand(commandLine));
 	}
 
 	/**
-	 * Return the scanner info for the given resource.
+	 * Calculate the scanner info from the given command line
 	 * 
-	 * @param resource
-	 * @return scanner info for the resource
+	 * @param buildFolder
+	 * @param commandLine
+	 * @return scanner info, or null if can't be calculated
 	 * @throws CoreException
 	 */
-	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
-		loadScannerInfo();
-		return scannerInfo.getScannerInfo(resource);
-	}
-
-	public void clearScannerInfo() throws CoreException {
-		if (scannerInfo == null) {
-			scannerInfo = new ScannerInfoData();
-			scannerInfo.queueSave();
-		} else {
-			scannerInfo.clear();
-		}
+	public ExtendedScannerInfo getScannerInfo(IFolder buildFolder, List<String> commandLine)
+			throws CoreException {
+		// default, null
+		return null;
 	}
 
 	/**
 	 * Return the console parsers to be used when this toolchain is being used
 	 * for a build.
 	 * 
-	 * @return console parsers
+	 * @return console parsers, or null if there aren't any
 	 */
 	public CConsoleParser[] getConsoleParsers() {
 		return null;

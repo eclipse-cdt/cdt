@@ -21,9 +21,9 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
-import org.eclipse.cdt.core.build.CToolChain;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -33,6 +33,10 @@ import org.eclipse.core.runtime.content.IContentType;
 
 import com.google.gson.Gson;
 
+/**
+ * Class representing scanner info data for a project as stored in the metadata
+ * area.
+ */
 public class ScannerInfoData {
 
 	private Set<ToolChainScannerInfo> perResourceInfo;
@@ -117,17 +121,16 @@ public class ScannerInfoData {
 		queueSave();
 	}
 
-	public void putScannerInfo(ILanguage language, ToolChainScannerInfo info) {
+	public void putScannerInfo(ILanguage language, ExtendedScannerInfo info) {
 		if (perLanguageInfo == null) {
 			perLanguageInfo = new HashMap<>();
 		}
-		perLanguageInfo.put(language.getId(), info);
+		perLanguageInfo.put(language.getId(), new ToolChainScannerInfo(info));
 		queueSave();
 	}
 
-	public static ScannerInfoData load(CToolChain toolChain) {
+	public static ScannerInfoData load(CBuildConfiguration config) {
 		IPath stateLoc = Platform.getStateLocation(CCorePlugin.getDefault().getBundle());
-		CBuildConfiguration config = toolChain.getBuildConfiguration();
 		IPath scannerInfoPath = stateLoc.append(config.getProject().getName())
 				.append(config.getName() + ".scInfo"); //$NON-NLS-1$
 		File scannerInfoFile = scannerInfoPath.toFile();

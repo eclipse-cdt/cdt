@@ -8,7 +8,11 @@
 package org.eclipse.cdt.core.build;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.internal.core.build.ScannerInfoData;
+import org.eclipse.cdt.internal.core.build.ToolChainScannerInfo;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -39,6 +43,7 @@ public abstract class CBuildConfiguration extends PlatformObject {
 
 	private final IBuildConfiguration config;
 	private CToolChain toolChain;
+	private ScannerInfoData scannerInfoData;
 
 	protected CBuildConfiguration(IBuildConfiguration config) {
 		this.config = config;
@@ -97,23 +102,17 @@ public abstract class CBuildConfiguration extends PlatformObject {
 		return null;
 	}
 
-	public synchronized void setToolChain(String id) throws CoreException {
-		CToolChain newtc = getToolChain(id);
-		if (newtc == null) {
-			throw new CoreException(
-					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "unknown toolchain: " + id)); //$NON-NLS-1$
-		}
+	public synchronized void setToolChain(CToolChain toolChain) throws CoreException {
+		this.toolChain = toolChain;
 
 		IEclipsePreferences settings = getSettings();
-		settings.put(TOOLCHAIN, id);
+		settings.put(TOOLCHAIN, toolChain.getId());
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
 			throw new CoreException(
 					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "saving toolchain id", e)); //$NON-NLS-1$
 		}
-
-		toolChain = newtc;
 	}
 
 	public CToolChain getToolChain() throws CoreException {
@@ -130,12 +129,26 @@ public abstract class CBuildConfiguration extends PlatformObject {
 	}
 
 	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
-		// By default, get it from the toolchain.
-		CToolChain toolChain = getToolChain();
-		return toolChain != null ? toolChain.getScannerInfo(resource) : null;
+		return getScannerInfoData().getScannerInfo(resource);
+	}
+
+	public void putScannerInfo(ILanguage language, ExtendedScannerInfo info) {
+		getScannerInfoData().putScannerInfo(language, info);
+	}
+
+	public void putScannerInfo(IResource resource, ToolChainScannerInfo info) {
+		getScannerInfoData().putScannerInfo(resource, info);
+	}
+
+	private ScannerInfoData getScannerInfoData() {
+		if (scannerInfoData == null) {
+			scannerInfoData = ScannerInfoData.load(this);
+		}
+		return scannerInfoData;
 	}
 
 	public void clearScannerInfo() throws CoreException {
+		scannerInfoData = null;
 	}
 
 	public CConsoleParser[] getConsoleParsers() throws CoreException {

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.cdt.core.build;
+package org.eclipse.cdt.core.build.gcc;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,19 +22,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.build.CConsoleParser;
+import org.eclipse.cdt.core.build.CToolChain;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentType;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * The GCC toolchain. Placing it in cdt.core for now.
@@ -45,68 +43,60 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public class GCCToolChain extends CToolChain {
 
-	public static final String ID = "org.eclipse.cdt.core.gcc"; //$NON-NLS-1$
-
-	public GCCToolChain(CBuildConfiguration config) {
-		super(config);
+	public GCCToolChain(String id, Preferences settings) {
+		super(id, settings);
 	}
 
-	private static Map<CBuildConfiguration, GCCToolChain> cache = new HashMap<>();
-
-	public static class Factory implements IAdapterFactory {
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-			if (adapterType.equals(GCCToolChain.class) && adaptableObject instanceof CBuildConfiguration) {
-				CBuildConfiguration config = (CBuildConfiguration) adaptableObject;
-				GCCToolChain toolChain = cache.get(config);
-				if (toolChain == null) {
-					toolChain = new GCCToolChain(config);
-					cache.put(config, toolChain);
-				}
-				return (T) toolChain;
-			}
-			return null;
-		}
-
-		@Override
-		public Class<?>[] getAdapterList() {
-			return new Class<?>[] { GCCToolChain.class };
-		}
+	public GCCToolChain(String name) {
+		super(name);
 	}
 
 	@Override
-	public void scanBuildOutput(IFolder buildFolder, String commandLine, boolean perProject)
-			throws CoreException {
-		try {
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				// Need to flip over the slashes on Windows
-				commandLine = commandLine.replace('\\', '/');
+	public String getFamily() {
+		return "GCC"; //$NON-NLS-1$
+	}
+
+	@Override
+	public IFile getResource(IFolder buildFolder, String[] commandLine) {
+		for (String arg : commandLine) {
+			if (!arg.startsWith("-")) { //$NON-NLS-1$
+				// TODO optimize by dealing with multi arg options like -o
+				IFile file = buildFolder.getFile(arg);
+				if (file.exists() && CoreModel.isTranslationUnit(file)) {
+					return file;
+				}
 			}
-			String[] command = splitCommand(commandLine);
+		}
+
+		return null;
+	}
+
+	@Override
+	public ExtendedScannerInfo getScannerInfo(IFolder buildFolder, List<String> cmd) throws CoreException {
+		try {
+			String[] commandLine = cmd.toArray(new String[cmd.size()]);
 
 			// Change output to stdout
-			for (int i = 0; i < command.length - 1; ++i) {
-				if (command[i].equals("-o")) { //$NON-NLS-1$
-					command[i + 1] = "-"; //$NON-NLS-1$
+			for (int i = 0; i < commandLine.length - 1; ++i) {
+				if (commandLine[i].equals("-o")) { //$NON-NLS-1$
+					commandLine[i + 1] = "-"; //$NON-NLS-1$
 					break;
 				}
 			}
 
 			// Change source file to a tmp file (needs to be empty)
 			Path tmpFile = null;
-			IFile file = null;
-			for (int i = 1; i < command.length; ++i) {
-				if (!command[i].startsWith("-")) { //$NON-NLS-1$
+			for (int i = 1; i < commandLine.length; ++i) {
+				if (!commandLine[i].startsWith("-")) { //$NON-NLS-1$
 					// TODO optimize by dealing with multi arg options like -o
-					IFile f = buildFolder.getFile(command[i]);
-					if (f.exists() && CoreModel.isTranslationUnit(f)) {
+					IFile file = buildFolder.getFile(commandLine[i]);
+					if (file.exists() && CoreModel.isTranslationUnit(file)) {
 						// replace it with a temp file
-						Path parentPath = new File(((IFolder) f.getParent()).getLocationURI()).toPath();
+						Path parentPath = new File(((IFolder) file.getParent()).getLocationURI()).toPath();
 						int n = 0;
 						while (true) {
-							tmpFile = parentPath.resolve(".sc" + n + "." + f.getFileExtension()); //$NON-NLS-1$ //$NON-NLS-2$
-							command[i] = tmpFile.toString();
+							tmpFile = parentPath.resolve(".sc" + n + "." + file.getFileExtension()); //$NON-NLS-1$ //$NON-NLS-2$
+							commandLine[i] = tmpFile.toString();
 							try {
 								Files.createFile(tmpFile);
 								break;
@@ -115,26 +105,20 @@ public class GCCToolChain extends CToolChain {
 								++n;
 							}
 						}
-						file = f;
 						break;
 					}
 				}
 			}
 
-			if (file == null) {
-				// can't do much without the source file
-				CCorePlugin.log("No source file for scanner discovery"); //$NON-NLS-1$
-				return;
-			}
-
 			// Add in the magic potion: -E -P -v -dD
-			String[] fullCmd = new String[command.length + 4];
-			fullCmd[0] = command[0];
+			String[] fullCmd = new String[commandLine.length + 4];
+			fullCmd[0] = commandLine[0];
 			fullCmd[1] = "-E"; //$NON-NLS-1$
 			fullCmd[2] = "-P"; //$NON-NLS-1$
 			fullCmd[3] = "-v"; //$NON-NLS-1$
 			fullCmd[4] = "-dD"; //$NON-NLS-1$
-			System.arraycopy(command, 1, fullCmd, 5, command.length - 1);
+			System.arraycopy(commandLine, 1, fullCmd, 5, commandLine.length - 1);
+			fixPaths(fullCmd);
 
 			File buildDir = new File(buildFolder.getLocationURI());
 			Files.createDirectories(buildDir.toPath());
@@ -170,23 +154,9 @@ public class GCCToolChain extends CToolChain {
 				}
 			}
 
-			if (perProject) {
-				IProject project = buildFolder.getProject();
-				IContentType contentType = CCorePlugin.getContentType(project, file.getName());
-				if (contentType != null) {
-					ILanguage language = LanguageManager.getInstance().getLanguage(contentType, project);
-					putScannerInfo(language, symbols, includePath, null, null, null);
-				}
-			} else {
-				putScannerInfo(file, symbols, includePath, null, null, null);
-			}
-
-			if (tmpFile != null) {
-				Files.delete(tmpFile);
-			}
+			return new ExtendedScannerInfo(symbols, includePath.toArray(new String[includePath.size()]));
 		} catch (IOException e) {
-			throw new CoreException(
-					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Scanning build output", e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "scanner info", e)); //$NON-NLS-1$
 		}
 	}
 

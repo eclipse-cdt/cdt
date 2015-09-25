@@ -10,7 +10,9 @@ package org.eclipse.cdt.arduino.core.internal.build;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,7 +34,7 @@ import org.eclipse.cdt.arduino.core.internal.board.ToolDependency;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.CToolChain;
-import org.eclipse.cdt.core.build.GCCToolChain;
+import org.eclipse.cdt.core.build.CToolChainManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOutputEntry;
@@ -69,16 +71,6 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 
 	private ArduinoBuildConfiguration(IBuildConfiguration config) {
 		super(config);
-
-		try {
-			if (getToolChain() == null) {
-				// For now, assume GCC is the toolchain,
-				// not sure it's ever not.
-				setToolChain(GCCToolChain.ID);
-			}
-		} catch (CoreException e) {
-			Activator.log(e);
-		}
 	}
 
 	private static Map<IBuildConfiguration, ArduinoBuildConfiguration> cache = new HashMap<>();
@@ -438,6 +430,41 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	@Override
+	public CToolChain getToolChain() throws CoreException {
+		CToolChain toolChain = super.getToolChain();
+		if (toolChain == null) {
+			// figure out which one it is
+			ArduinoPlatform platform = board.getPlatform();
+			String compilerPath = resolveProperty("compiler.path", platform.getPlatformProperties()); //$NON-NLS-1$
+			if (compilerPath != null) {
+				// TODO what if it is null?
+				Path path = Paths.get(compilerPath);
+				for (ToolDependency toolDep : platform.getToolsDependencies()) {
+					ArduinoTool tool = toolDep.getTool();
+					if (path.startsWith(tool.getInstallPath())) {
+						// this is it, find the matching
+						for (CToolChain tc : CToolChainManager.instance.getToolChains()) {
+							if (tc instanceof ArduinoGCCToolChain) {
+								if (((ArduinoGCCToolChain) tc).getTool().equals(tool)) {
+									setToolChain(tc);
+									toolChain = tc;
+									break;
+								}
+							}
+						}
+						// not found, create
+						toolChain = new ArduinoGCCToolChain(tool);
+						CToolChainManager.instance.addToolChain(toolChain);
+						setToolChain(toolChain);
+						break;
+					}
+				}
+			}
+		}
+		return toolChain;
+	}
+
 	public IScannerInfo getScannerInfo(IResource resource) throws CoreException {
 		IScannerInfo info = super.getScannerInfo(resource);
 		if (info == null) {
@@ -473,8 +500,8 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration {
 			}
 			properties.put("includes", includes); //$NON-NLS-1$
 
-			getToolChain().scanBuildOutput(getBuildFolder(), resolveProperty(recipe, properties), true);
-			info = super.getScannerInfo(resource);
+			List<String> cmd = Arrays.asList(resolveProperty(recipe, properties).split(" ")); //$NON-NLS-1$
+			info = getToolChain().getScannerInfo(getBuildFolder(), cmd);
 		}
 		return info;
 	}

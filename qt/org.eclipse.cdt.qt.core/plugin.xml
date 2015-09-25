@@ -127,4 +127,54 @@
                 class="org.eclipse.cdt.internal.qt.core.build.QtBuilder">
           </run></builder>
     </extension>
+    <extension
+          point="org.eclipse.launchbar.core.launchBarContributions">
+       <descriptorType
+             class="org.eclipse.cdt.internal.qt.core.launch.QtLaunchDescriptorType"
+             id="org.eclipse.cdt.qt.core.launchDescriptorType"
+             priority="10">
+          <enablement>
+             <instanceof
+                   value="org.eclipse.core.resources.IProject">
+             </instanceof>
+             <test
+                   forcePluginActivation="true"
+                   property="org.eclipse.core.resources.projectNature"
+                   value="org.eclipse.cdt.qt.core.qtNature">
+             </test>
+          </enablement>
+       </descriptorType>
+       <configProvider
+             class="org.eclipse.cdt.internal.qt.core.launch.QtLocalLaunchConfigProvider"
+             descriptorType="org.eclipse.cdt.qt.core.launchDescriptorType"
+             priority="10">
+       </configProvider>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.core.ScannerInfoProvider2">
+       <provider
+             builder="org.eclipse.cdt.qt.core.qtBuilder"
+             class="org.eclipse.cdt.internal.qt.core.build.QtScannerInfoProvider">
+       </provider>
+    </extension>
+    <extension
+          point="org.eclipse.debug.core.launchConfigurationTypes">
+       <launchConfigurationType
+             delegate="org.eclipse.cdt.internal.qt.core.launch.QtLocalRunLaunchConfigDelegate"
+             id="org.eclipse.cdt.qt.core.launchConfigurationType"
+             modes="run"
+             name="Qt Local Application"
+             public="true">
+       </launchConfigurationType>
+    </extension>
+    <extension
+          point="org.eclipse.core.runtime.adapters">
+       <factory
+             adaptableType="org.eclipse.core.resources.IBuildConfiguration"
+             class="org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration$Factory">
+          <adapter
+                type="org.eclipse.cdt.internal.qt.core.build.QtBuildConfiguration">
+          </adapter>
+       </factory>
+    </extension>
 </plugin>

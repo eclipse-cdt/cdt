@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="ToolChain" name="ToolChain"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="ToolChainFactory" name="Tool Chain Factory"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="toolChain"/>
+            <element ref="factory"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,27 +47,22 @@
       </complexType>
    </element>
 
-   <element name="toolChain">
-      <annotation>
-         <documentation>
-            A toolchain that implements the CToolChain interface and identified with the id attribute.
-         </documentation>
-      </annotation>
+   <element name="factory">
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="family" type="string" use="required">
             <annotation>
                <documentation>
-                  id for the toolchain.
+                  
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="adaptor" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The adaptor class for the toolchain. This is passed to getAdaptor on the CBuildConfiguration object.
+                  
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.build.CToolChain:"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.build.IToolChainFactory"/>
                </appInfo>
             </annotation>
          </attribute>

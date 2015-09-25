@@ -10,7 +10,6 @@ package org.eclipse.cdt.internal.core.build;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,31 +19,27 @@ import org.eclipse.core.resources.IResource;
 
 public class ToolChainScannerInfo {
 	private Map<String, String> definedSymbols;
-	private List<String> includePaths;
-	private List<String> macroFiles;
-	private List<String> includeFiles;
-	private List<String> localIncludePath;
+	private String[] includePaths;
+	private String[] macroFiles;
+	private String[] includeFiles;
+	private String[] localIncludePath;
 	private Set<String> resourcePaths;
 
 	private transient IScannerInfo scannerInfo;
 
-	public ToolChainScannerInfo(Map<String, String> definedSymbols, List<String> includePaths,
-			List<String> macroFiles, List<String> includeFiles, List<String> localIncludePath) {
-		this.definedSymbols = definedSymbols;
-		this.includePaths = includePaths;
-		this.macroFiles = macroFiles;
-		this.includeFiles = includeFiles;
-		this.localIncludePath = localIncludePath;
+	public ToolChainScannerInfo(ExtendedScannerInfo scannerInfo) {
+		this.scannerInfo = scannerInfo;
+		this.definedSymbols = scannerInfo.getDefinedSymbols();
+		this.includePaths = scannerInfo.getIncludePaths();
+		this.macroFiles = scannerInfo.getMacroFiles();
+		this.includeFiles = scannerInfo.getIncludeFiles();
+		this.localIncludePath = scannerInfo.getLocalIncludePath();
 	}
 
 	public IScannerInfo getScannerInfo() {
 		if (scannerInfo == null) {
-			scannerInfo = new ExtendedScannerInfo(definedSymbols,
-					includePaths != null ? includePaths.toArray(new String[includePaths.size()]) : null,
-					macroFiles != null ? macroFiles.toArray(new String[includePaths.size()]) : null,
-					includeFiles != null ? includeFiles.toArray(new String[includePaths.size()]) : null,
-					localIncludePath != null ? localIncludePath.toArray(new String[includePaths.size()])
-							: null);
+			scannerInfo = new ExtendedScannerInfo(definedSymbols, includePaths, macroFiles, includeFiles,
+					localIncludePath);
 		}
 		return scannerInfo;
 	}

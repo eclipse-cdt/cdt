@@ -72,7 +72,7 @@ public class ArduinoPackage {
 		Map<String, ArduinoPlatform> platformMap = new HashMap<>();
 		for (ArduinoPlatform platform : platforms) {
 			ArduinoPlatform p = platformMap.get(platform.getName());
-			if (p == null || compareVersions(platform.getVersion(), p.getVersion()) > 0) {
+			if (p == null || ArduinoManager.compareVersions(platform.getVersion(), p.getVersion()) > 0) {
 				platformMap.put(platform.getName(), platform);
 			}
 		}
@@ -84,58 +84,12 @@ public class ArduinoPackage {
 		for (ArduinoPlatform platform : platforms) {
 			if (platform.isInstalled()) {
 				ArduinoPlatform p = platformMap.get(platform.getName());
-				if (p == null || compareVersions(platform.getVersion(), p.getVersion()) > 0) {
+				if (p == null || ArduinoManager.compareVersions(platform.getVersion(), p.getVersion()) > 0) {
 					platformMap.put(platform.getName(), platform);
 				}
 			}
 		}
 		return Collections.unmodifiableCollection(platformMap.values());
-	}
-
-	// TODO move somewhere.
-	public static int compareVersions(String version1, String version2) {
-		if (version1 == null) {
-			return version2 == null ? 0 : -1;
-		}
-
-		if (version2 == null) {
-			return 1;
-		}
-
-		String[] v1 = version1.split("\\."); //$NON-NLS-1$
-		String[] v2 = version2.split("\\."); //$NON-NLS-1$
-		for (int i = 0; i < Math.max(v1.length, v2.length); ++i) {
-			if (v1.length <= i) {
-				return v2.length < i ? 0 : -1;
-			}
-
-			if (v2.length <= i) {
-				return 1;
-			}
-
-			try {
-				int vi1 = Integer.parseInt(v1[i]);
-				int vi2 = Integer.parseInt(v2[i]);
-				if (vi1 < vi2) {
-					return -1;
-				}
-
-				if (vi1 > vi2) {
-					return 1;
-				}
-			} catch (NumberFormatException e) {
-				// not numbers, do string compares
-				int c = v1[i].compareTo(v2[i]);
-				if (c < 0) {
-					return -1;
-				}
-				if (c > 0) {
-					return 1;
-				}
-			}
-		}
-
-		return 0;
 	}
 
 	public ArduinoPlatform getPlatform(String name) {
@@ -146,7 +100,7 @@ public class ArduinoPackage {
 					foundPlatform = platform;
 				} else {
 					if (platform.isInstalled()
-							&& compareVersions(platform.getVersion(), foundPlatform.getVersion()) > 0) {
+							&& ArduinoManager.compareVersions(platform.getVersion(), foundPlatform.getVersion()) > 0) {
 						foundPlatform = platform;
 					}
 				}
@@ -166,6 +120,19 @@ public class ArduinoPackage {
 			}
 		}
 		return null;
+	}
+
+	public ArduinoTool getLatestTool(String toolName) {
+		ArduinoTool latestTool = null;
+		for (ArduinoTool tool : tools) {
+			if (tool.getName().equals(toolName)) {
+				if (latestTool == null
+						|| ArduinoManager.compareVersions(tool.getVersion(), latestTool.getVersion()) > 0) {
+					latestTool = tool;
+				}
+			}
+		}
+		return latestTool;
 	}
 
 	@Override

@@ -2597,7 +2597,7 @@ public class CPPTemplates {
 	    	p = new CPPPointerType(((IArrayType) paramType).getType());
 		} else {
 			p= paramType;
-			if (p.isSameType(a))
+			if (p != null && p.isSameType(a))
 				return arg;
 		}
 

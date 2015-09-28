@@ -236,8 +236,8 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	private void addConnection() {
 		if (fIsDirty) {
 			MessageDialog dialog = new MessageDialog(getShell(), Messages.ConnectionsPreferencePage_Confirm_Actions, null,
-					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION, new String[] {
-							IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+					Messages.ConnectionsPreferencePage_There_are_unsaved_changes, MessageDialog.QUESTION,
+					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
 			if (dialog.open() == 1) {
 				return;
 			}
@@ -250,7 +250,9 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			IRemoteConnectionWorkingCopy conn = wizard.open();
 			if (conn != null) {
 				fWorkingCopies.put(conn.getName(), conn);
-				fConnectionViewer.refresh();
+				if (!fConnectionViewer.getTable().isDisposed()) {
+					fConnectionViewer.refresh();
+				}
 				fIsDirty = true;
 			}
 		}
@@ -595,17 +597,14 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			IRemoteConnection conn = getOriginalIfClean(fSelectedConnection);
 			if (conn.hasService(IRemoteConnectionControlService.class)) {
 				if (!conn.isOpen()) {
-					fEditButton
-							.setEnabled(conn.getConnectionType().canEdit());
-					fRemoveButton
-							.setEnabled(conn.getConnectionType().canRemove());
+					fEditButton.setEnabled(conn.getConnectionType().canEdit());
+					fRemoveButton.setEnabled(conn.getConnectionType().canRemove());
 					fOpenButton.setEnabled(true);
 				} else {
 					fCloseButton.setEnabled(true);
 				}
 			} else {
-				fEditButton
-						.setEnabled(conn.getConnectionType().canEdit());
+				fEditButton.setEnabled(conn.getConnectionType().canEdit());
 			}
 		}
 	}

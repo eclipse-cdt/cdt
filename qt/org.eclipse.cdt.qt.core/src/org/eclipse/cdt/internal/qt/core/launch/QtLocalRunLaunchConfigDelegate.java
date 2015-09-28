@@ -44,29 +44,51 @@ public class QtLocalRunLaunchConfigDelegate extends LaunchConfigurationDelegate 
 
 					// get the executable
 					IFolder buildFolder = qtBuildConfig.getBuildFolder();
-					// TODO this is mac local specific and really should be in the config
-					// TODO also need to pull the app name out of the pro file name
-					IFolder appFolder = buildFolder.getFolder("main.app");
-					IFolder contentsFolder = appFolder.getFolder("Contents");
-					IFolder macosFolder = contentsFolder.getFolder("MacOS");
-					IFile exeFile = macosFolder.getFile("main");
+					IFile exeFile;
+					switch (Platform.getOS()) {
+					case Platform.OS_MACOSX:
+						// TODO this is mac local specific and really should be in the config
+						// TODO also need to pull the app name out of the pro file name
+						IFolder appFolder = buildFolder.getFolder("main.app");
+						IFolder contentsFolder = appFolder.getFolder("Contents");
+						IFolder macosFolder = contentsFolder.getFolder("MacOS");
+						exeFile = macosFolder.getFile("main");
+						break;
+					case Platform.OS_WIN32:
+						IFolder releaseFolder = buildFolder.getFolder("release");
+						exeFile = releaseFolder.getFile("main.exe");
+						break;
+					default:
+						return new Status(IStatus.ERROR, QtPlugin.ID, "platform not supported: " + Platform.getOS());
+					}
 
 					ProcessBuilder builder = new ProcessBuilder(exeFile.getLocation().toFile().getAbsolutePath())
 							.directory(qtBuildConfig.getProject().getLocation().toFile());
 
 					// need to add the Qt libraries to the env
 					Map<String, String> env = builder.environment();
-					String libPathEnv = env.get("DYLD_LIBRARY_PATH");
 					Path libPath = qtBuildConfig.getQtInstall().getLibPath();
-					if (libPathEnv == null) {
-						libPathEnv = libPath.toString();
-					} else {
-						libPathEnv = libPath.toString() + File.pathSeparator + libPathEnv;
+					switch (Platform.getOS()) {
+					case Platform.OS_MACOSX:
+						String libPathEnv = env.get("DYLD_LIBRARY_PATH");
+						if (libPathEnv == null) {
+							libPathEnv = libPath.toString();
+						} else {
+							libPathEnv = libPath.toString() + File.pathSeparator + libPathEnv;
+						}
+						env.put("DYLD_LIBRARY_PATH", libPathEnv);
+						break;
+					case Platform.OS_WIN32:
+						String path = env.get("PATH");
+						// TODO really need a bin path
+						// and resolve doesn't work properly on Windows
+						path = "C:/Qt/5.5/mingw492_32/bin;" + path;
+						env.put("PATH", path);
+						break;
 					}
-					env.put("DYLD_LIBRARY_PATH", libPathEnv);
 
 					Process process = builder.start();
-					DebugPlugin.newProcess(launch, process, "main.app");
+					DebugPlugin.newProcess(launch, process, "main");
 				} catch (IOException e) {
 					return new Status(IStatus.ERROR, QtPlugin.ID, "running", e);
 				} catch (CoreException e) {

@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class QtBuilder extends IncrementalProjectBuilder {
@@ -65,7 +66,18 @@ public class QtBuilder extends IncrementalProjectBuilder {
 			}
 
 			// run make
-			Process process = new ProcessBuilder("make").directory(new File(buildFolder.getLocationURI())).start(); //$NON-NLS-1$
+			// TODO obviously hardcoding here
+			boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
+			String make = isWin ? "C:/Qt/Tools/mingw492_32/bin/mingw32-make" : "make";
+			ProcessBuilder procBuilder = new ProcessBuilder(make).directory(new File(buildFolder.getLocationURI())); //$NON-NLS-1$
+			if (isWin) {
+				// Need to put the toolchain into env
+				Map<String, String> env = procBuilder.environment();
+				String path = env.get("PATH");
+				path = "C:/Qt/Tools/mingw492_32/bin;" + path;
+				env.put("PATH", path);
+			}
+			Process process = procBuilder.start();
 			console.writeOutput("make\n"); //$NON-NLS-1$
 			console.monitor(process, null, buildFolder);
 

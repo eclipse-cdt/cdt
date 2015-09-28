@@ -36,6 +36,8 @@ public class QtInstall {
 		switch (getSpec()) {
 		case "macx-clang": //$NON-NLS-1$
 			return Platform.OS_MACOSX.equals(os) && Platform.ARCH_X86_64.equals(arch);
+		case "win32-g++": //$NON-NLS-1$
+			return Platform.OS_WIN32.equals(os);
 		}
 		return false;
 	}

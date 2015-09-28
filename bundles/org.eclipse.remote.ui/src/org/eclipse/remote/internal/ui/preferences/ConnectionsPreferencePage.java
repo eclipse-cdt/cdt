@@ -243,17 +243,19 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 			}
 			performOk();
 		}
-		IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
-		if (wizard != null) {
-			wizard.setConnectionName(initialConnectionName());
-			wizard.setInvalidConnectionNames(invalidConnectionNames());
-			IRemoteConnectionWorkingCopy conn = wizard.open();
-			if (conn != null) {
-				fWorkingCopies.put(conn.getName(), conn);
-				if (!fConnectionViewer.getTable().isDisposed()) {
-					fConnectionViewer.refresh();
+		if (fUIConnectionManager != null) {
+			IRemoteUIConnectionWizard wizard = fUIConnectionManager.getConnectionWizard(getShell());
+			if (wizard != null) {
+				wizard.setConnectionName(initialConnectionName());
+				wizard.setInvalidConnectionNames(invalidConnectionNames());
+				IRemoteConnectionWorkingCopy conn = wizard.open();
+				if (conn != null) {
+					fWorkingCopies.put(conn.getName(), conn);
+					if (!fConnectionViewer.getTable().isDisposed()) {
+						fConnectionViewer.refresh();
+					}
+					fIsDirty = true;
 				}
-				fIsDirty = true;
 			}
 		}
 	}

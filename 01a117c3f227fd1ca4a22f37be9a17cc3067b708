@@ -1,0 +1,327 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_6c6bf810",
+        "filename": "debug/org.eclipse.cdt.debug.core/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Do we need this entry?  I don\u0027t see one for mapEntry.  I also don\u0027t see it appearing anywhere I could think of...",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_8e93c9ae",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/ISourceSubstitutePathContainer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "TypO \u0027ystem\u0027",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_ae8e8d89",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/ISourceSubstitutePathContainer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "We should not mention GDB here.  This file should be generic and support whatever debugger is integrated.  Just say something like:\n\n\"A source container that requests the backend debugger to do the mapping from some file system locations to other file system locations\"",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_aefccde5",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Not used?",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_4e071190",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Not used?",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_071e9797",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/sourcelookup/SourceSubstitutePathEntrySourceContainer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Do we want to return an empty list or do we want to return the file corresponding to an unchanged \u0027name\u0027?\n\nAn empty array implies we didn\u0027t find any source which would allow other source containers to trigger.  Maybe that is good?  \n\nBut since the mapping has been done by the debugger, do we want to continue or do we want to return the file?\n\nI\u0027m leaning towards an empty list like you did, but I wanted to discuss with you.",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_e7c1c377",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1561,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Typo in class name",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_e7f383d7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1563,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Why have the xcf file for this icon?",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_87d8c767",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "typo in id",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_27fe3ba1",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1567,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Why have the xcf file for this icon?",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_47cfefa3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1568,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "typo in id",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_87b1e72f",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/NewSourceSubstiturePathSourceContainerBrowser.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "TypO in class name",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a7c06b75",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/NewSourceSubstiturePathSourceContainerBrowser.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Must be made translatable in a messages.properties file",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_cecb01c7",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/sourcelookup/SourceLookupUIMessages.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "To be consistent, we should use something like \"Debugger Path Substitution: \"",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_c7cbdf19",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/CSourceSubstitutePath.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Rename to MISourceSubstitutePath since it uses MI commands to do its work",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_36a7a6c6",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/framework/SyncUtil.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 707,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Isn\u0027t this effectively the same as getStackFrame() above except that it takes a thread index?  If you want to have that signature, then call getStackFrame() from here once you got the IMIExecutionDMC.\n\nYour implementation is more efficient by specifying the level to the IStack service, so you could update getStackFrame() to do what you do, if you want.",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_16938262",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "Can you put some javadoc above each test to explain what the test is meant to verify?",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_eeaa4508",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "This is somewhat upsetting.  I was not aware that path mappings didn\u0027t work for GDB \u003c 7.6, which is not that old.  I wonder if something broke or if this was always the case.  Did you find anything out about this while investigating the behaviour?",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_4ea3912f",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-09-30T23:44:12Z",
+      "side": 1,
+      "message": "This is a bit upsetting also, but maybe we can fix it. If after doing the source \nmapping we don\u0027t find any results, what if we then tried again using the file name only, \ninstead of the full path?  This would allow the Directory mapping to work for newer GDBs, \nif there is no alternative.  Do you agree?  This would be done in another bug, but I\u0027d \nlike your opinion.",
+      "revId": "01a117c3f227fd1ca4a22f37be9a17cc3067b708",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

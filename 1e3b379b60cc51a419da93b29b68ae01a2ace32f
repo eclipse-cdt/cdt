@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "0724e3f1_499261db",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-01T17:11:46Z",
+      "side": 1,
+      "message": "The above tests are good.\nI think we need to also have one using the ISourceLookup DSF service, which is what will be used by other services.  So a test using ISourceLookup.getSource(...) should be added here.\n\nIf we add tests for setting breakpoints, then ISourceLookup.getDebuggerPath(...) can be tested also, later on.",
+      "revId": "1e3b379b60cc51a419da93b29b68ae01a2ace32f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_c665a095",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_6_6/SourceLookupTest_6_6.java",
         "patchSetId": 2
@@ -13,6 +30,40 @@
       "writtenOn": "2015-10-01T13:23:26Z",
       "side": 1,
       "message": "To test the behaviour of path mappings with version \u003c 7.6, remove this @Ignore.",
+      "revId": "1e3b379b60cc51a419da93b29b68ae01a2ace32f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a95afd53",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-01T17:11:46Z",
+      "side": 1,
+      "message": "Can you mention DSF does that because GDB provides the full path in the \u0027fullname\u0027 field of the frame starting with 7,6",
+      "revId": "1e3b379b60cc51a419da93b29b68ae01a2ace32f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_69476572",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-01T17:11:46Z",
+      "side": 1,
+      "message": "Similar clarification as suggested above",
       "revId": "1e3b379b60cc51a419da93b29b68ae01a2ace32f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

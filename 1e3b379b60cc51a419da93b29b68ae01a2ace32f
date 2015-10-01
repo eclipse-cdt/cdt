@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_c665a095",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_6_6/SourceLookupTest_6_6.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:23:26Z",
+      "side": 1,
+      "message": "To test the behaviour of path mappings with version \u003c 7.6, remove this @Ignore.",
+      "revId": "1e3b379b60cc51a419da93b29b68ae01a2ace32f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a66a2c62",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:23:26Z",
+      "side": 1,
+      "message": "To test the support of directory container types at \u003e\u003d 7.6 remove this @Ignore",
+      "revId": "1e3b379b60cc51a419da93b29b68ae01a2ace32f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

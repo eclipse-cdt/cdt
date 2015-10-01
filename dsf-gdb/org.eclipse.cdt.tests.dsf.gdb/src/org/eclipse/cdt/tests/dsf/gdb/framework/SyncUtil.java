@@ -11,6 +11,7 @@
  *     Simon Marchi (Ericsson) - Make canRestart and restart throw Exception instead of Throwable.
  *     Simon Marchi (Ericsson) - Add getThreadData.
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -53,6 +54,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
@@ -96,6 +99,8 @@ public class SyncUtil {
 	private static CommandFactory fCommandFactory;
 	private static IGDBProcesses fProcessesService;
 
+	private static ISourceLookup fSourceLookup;
+
 	// Initialize some common things, once the session has been established
 	public static void initialize(DsfSession session) throws Exception {
 		fSession = session;
@@ -113,6 +118,7 @@ public class SyncUtil {
 				fProcessesService = tracker.getService(IGDBProcesses.class);
 				fMemory = tracker.getService(IMemory.class);
 				fCommandFactory = fGdbControl.getCommandFactory();
+				fSourceLookup = tracker.getService(ISourceLookup.class);
 
 				tracker.dispose();
 			}
@@ -385,26 +391,33 @@ public class SyncUtil {
 	}
 	
     public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
-    	Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
-            @Override
-            protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
-                fStack.getFrames(execCtx, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        if (getData().length > level) {
-                            rm.setData(getData()[level]);
-                        } else {
-                            rm.setStatus(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Frame not available"));
-                        }
-                        rm.done();
-                    }
-                });
-            }
-        };
+		Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
+				fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
+					@Override
+					protected void handleSuccess() {
+						IFrameDMContext[] frameDmcs = getData();
+						assert frameDmcs != null;
+						assert frameDmcs.length == 1;
+						rm.setData(frameDmcs[0]);
+						rm.done();
+					}
+				});
+			}
+		};
 
-        fSession.getExecutor().execute(query);
-        return query.get(500, TimeUnit.MILLISECONDS);
+		fSession.getExecutor().execute(query);
+		return query.get(500, TimeUnit.MILLISECONDS);
     }
+	
+    /**
+	 * Utility method to return a specific frame DM context.
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IFrameDMContext getStackFrame(int threadIndex, final int level) throws Exception {
+		return getStackFrame(getExecutionContext(threadIndex), level);
+	}    
 
     public static Integer getStackDepth(final IExecutionDMContext execCtx) throws Throwable {
     	return getStackDepth(execCtx, 0);
@@ -441,6 +454,10 @@ public class SyncUtil {
     	fSession.getExecutor().execute(query);
     	return query.get(500, TimeUnit.MILLISECONDS);
     }
+    
+    public static IFrameDMData getFrameData(final int threadId, final int level) throws Throwable {
+    	return getFrameData(getExecutionContext(threadId), level);
+    }    
 
 	public static IThreadDMData getThreadData(final int threadId)
 			throws InterruptedException, ExecutionException, TimeoutException {
@@ -923,5 +940,26 @@ public class SyncUtil {
 
 		return memoryService.isBigEndian(dmc) ? ByteOrder.BIG_ENDIAN
 				: ByteOrder.LITTLE_ENDIAN;
+	}
+
+	/**
+	 * Get the source using the {@link ISourceLookup} service.
+	 * 
+	 * Wrapper around
+	 * {@link ISourceLookup#getSource(ISourceLookupDMContext, String, DataRequestMonitor)}
+	 */
+	public static Object getSource(final String debuggerPath) throws Exception {
+		Query<Object> query = new Query<Object>() {
+			@Override
+			protected void execute(DataRequestMonitor<Object> rm) {
+				final ISourceLookupDMContext ctx = DMContexts.getAncestorOfType(fGdbControl.getContext(),
+						ISourceLookupDMContext.class);
+				fSourceLookup.getSource(ctx, debuggerPath, rm);
+			}
+		};
+
+		fSourceLookup.getExecutor().execute(query);
+
+		return query.get();
 	}
 }

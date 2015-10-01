@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial implementation of Test cases
  *     Jonah Graham (Kichwa Coders) - Bug 469007 - Add MIExpressionsNonStopTest_7_9 to suite
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_9;
 
@@ -52,6 +53,7 @@ import org.junit.runners.Suite;
 	GDBConsoleSynchronizingTest_7_9.class,
 	StepIntoSelectionTest_7_9.class,
 	StepIntoSelectionNonStopTest_7_9.class,
+	SourceLookupTest_7_9.class,
 	/* Add your test class here */
 })
 

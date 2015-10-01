@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_e608a437",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/MappingSourceContainer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Two sides to this:\n1) I am ditching this because I have concluded that I can\u0027t actually extend MappingSourceContainer. See https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d472765#c2 TODO item 3. \n\n2) But to address your question, yes copy() could be replaced by clone()+Cloneable, but that does not deal with the implementation of the clone as what I was trying to do was save 4 lines of code in the child type. i.e. what I could have done was not modify copy() in this type and written something like the following in SourceSubstitutePathSourceContainer.\n\n@Overide\npublic SourceSubstitutePathSourceContainer copy() {\n\t\tSourceSubstitutePathSourceContainer copy \u003d new SourceSubstitutePathSourceContainer(fName);\n\t\tSourceSubstitutePathEntrySourceContainer[] entries \u003d new SourceSubstitutePathEntrySourceContainer[fContainers.size()];\n\t\tfor (int i \u003d 0; i \u003c entries.length; ++i) {\n\t\t\tcopy.addMapEntry(fContainers.get(i).copy());\n\t\t}\n\t\treturn copy;\n\t}\n\nIn this case I have written 4 lines of code to save copying 4 lines of code. Probably not the right trade off. So because of (1) above, (2) becomes irrelevant.",
+      "parentUuid": "2721e7e2_3acea92a",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_ba229952",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.java",
         "patchSetId": 6
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_460d3044",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_ba229952",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2721e7e2_1a692570",
         "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.properties",
         "patchSetId": 6
@@ -47,6 +83,24 @@
       "writtenOn": "2015-09-16T20:33:20Z",
       "side": 1,
       "message": "Not used it seems",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_260abc2c",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/sourcelookup/SourceLookupMessages.properties",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2721e7e2_1a692570",
       "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -88,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_86172850",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1127,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Thanks.",
+      "parentUuid": "0724e3f1_760d9e76",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_9b403bbc",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
         "patchSetId": 6
@@ -122,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_6614b44b",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/data/launch/src/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_fb3df745",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_1ba3ab30",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupSuite.java",
         "patchSetId": 6
@@ -133,6 +223,24 @@
       "writtenOn": "2015-09-23T19:15:52Z",
       "side": 1,
       "message": "Do you want to keep this class?  It was surely useful when you were testing, but we don\u0027t usually have suites for every type of tests.  It would be more flexible to have a suite for each, but the maintenance is probably not worth it.  For example, this class is now missing SourceLookupTest_7_10.class",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_66ddd4ff",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupSuite.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Removed. I\u0027ll just keep this local.",
+      "parentUuid": "0724e3f1_1ba3ab30",
       "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -156,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_c69da048",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/SourceLookupSuiteRemote.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Removed. I\u0027ll just keep this local.",
+      "parentUuid": "0724e3f1_7b98e7fc",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_9b8e7bb7",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_6_6/SourceLookupTest_6_6.java",
         "patchSetId": 6
@@ -173,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_06a85861",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_6_6/SourceLookupTest_6_6.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_9b8e7bb7",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_1b0e0bc5",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
         "patchSetId": 6
@@ -184,6 +328,24 @@
       "writtenOn": "2015-09-23T19:15:52Z",
       "side": 1,
       "message": "Please replace with\n@Ignore(\"Not supported.... as you put in the javadoc",
+      "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_e6ac2478",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/SourceLookupTest_7_6.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2015-10-01T13:01:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_1b0e0bc5",
       "revId": "0c2d431bdae439ad78969f3bfac315cc434c12f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

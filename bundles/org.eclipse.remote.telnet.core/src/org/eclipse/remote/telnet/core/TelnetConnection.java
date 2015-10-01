@@ -84,7 +84,8 @@ public class TelnetConnection implements IRemoteConnectionControlService, IRemot
 	@Override
 	public int getPort() {
 		try {
-			return Integer.parseInt(remoteConnection.getAttribute(PORT_ATTR));
+			String portStr = remoteConnection.getAttribute(PORT_ATTR);
+			return !portStr.isEmpty() ? Integer.parseInt(portStr) : DEFAULT_PORT;
 		} catch (NumberFormatException e) {
 			return -1;
 		}
@@ -93,7 +94,8 @@ public class TelnetConnection implements IRemoteConnectionControlService, IRemot
 	@Override
 	public int getTimeout() {
 		try {
-			return Integer.parseInt(remoteConnection.getAttribute(TIMEOUT_ATTR));
+			String timeoutStr = remoteConnection.getAttribute(TIMEOUT_ATTR);
+			return !timeoutStr.isEmpty() ? Integer.parseInt(timeoutStr) : DEFAULT_TIMEOUT;
 		} catch (NumberFormatException e) {
 			return -1;
 		}

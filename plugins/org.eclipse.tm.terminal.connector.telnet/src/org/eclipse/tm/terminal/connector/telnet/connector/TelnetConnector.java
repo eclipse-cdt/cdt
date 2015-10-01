@@ -20,6 +20,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.telnet.connector;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -110,7 +111,29 @@ public class TelnetConnector extends TerminalConnectorImpl {
 		fInputStream = inputStream;
 	}
 	private void setOutputStream(OutputStream outputStream) {
-		fOutputStream = outputStream;
+		if (outputStream == null) {
+			fOutputStream = null;
+			return;
+		}
+		// send LF after CR (telnet end-of-line sequence - RFC 854)
+		fOutputStream = new FilterOutputStream(outputStream) {
+			final byte CR = 13;
+			final byte LF = 10;
+			final byte[] CRLF = { CR, LF };
+			int last = -1;
+			@Override
+			public void write(int b) throws IOException {
+				if (b == LF && last == CR) {
+					last = b;
+					return;
+				}
+				last = b;
+				if (b == CR)
+					out.write(CRLF);
+				else
+					out.write(b);
+			}
+		};
 	}
 	Socket getSocket() {
 		return fSocket;

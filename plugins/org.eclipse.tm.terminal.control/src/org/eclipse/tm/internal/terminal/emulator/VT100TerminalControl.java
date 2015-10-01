@@ -562,6 +562,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	protected void sendString(String string) {
+		Logger.log(string);
 		try {
 			// Send the string after converting it to an array of bytes using the
 			// platform's default character encoding.
@@ -1181,16 +1182,6 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			//This is undesired. Fixing this here might make the special Ctrl+Shift+C
 			//handling unnecessary further up.
 			sendChar(character, altKeyPressed);
-
-			// Special case: When we are in a TCP connection and echoing characters
-			// locally, send a LF after sending a CR.
-			// ISSUE: Is this absolutely required?
-
-			if (character == '\r' && getTerminalConnector() != null
-					&& isConnected()
-					&& getTerminalConnector().isLocalEcho()) {
-				sendChar('\n', false);
-			}
 
 			// Now decide if we should locally echo the character we just sent.  We do
 			// _not_ locally echo the character if any of these conditions are true:

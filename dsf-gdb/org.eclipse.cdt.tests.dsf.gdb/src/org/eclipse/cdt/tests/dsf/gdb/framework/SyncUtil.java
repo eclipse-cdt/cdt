@@ -11,6 +11,7 @@
  *     Simon Marchi (Ericsson) - Make canRestart and restart throw Exception instead of Throwable.
  *     Simon Marchi (Ericsson) - Add getThreadData.
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Make tests run with different values of addressable size (Bug 460241)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
@@ -385,26 +386,33 @@ public class SyncUtil {
 	}
 	
     public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Exception {
-    	Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
-            @Override
-            protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
-                fStack.getFrames(execCtx, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
-                    @Override
-                    protected void handleSuccess() {
-                        if (getData().length > level) {
-                            rm.setData(getData()[level]);
-                        } else {
-                            rm.setStatus(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Frame not available"));
-                        }
-                        rm.done();
-                    }
-                });
-            }
-        };
+		Query<IFrameDMContext> query = new Query<IFrameDMContext>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
+				fStack.getFrames(execCtx, level, level, new ImmediateDataRequestMonitor<IFrameDMContext[]>(rm) {
+					@Override
+					protected void handleSuccess() {
+						IFrameDMContext[] frameDmcs = getData();
+						assert frameDmcs != null;
+						assert frameDmcs.length == 1;
+						rm.setData(frameDmcs[0]);
+						rm.done();
+					}
+				});
+			}
+		};
 
-        fSession.getExecutor().execute(query);
-        return query.get(500, TimeUnit.MILLISECONDS);
+		fSession.getExecutor().execute(query);
+		return query.get(500, TimeUnit.MILLISECONDS);
     }
+	
+    /**
+	 * Utility method to return a specific frame DM context.
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IFrameDMContext getStackFrame(int threadIndex, final int level) throws Exception {
+		return getStackFrame(getExecutionContext(threadIndex), level);
+	}    
 
     public static Integer getStackDepth(final IExecutionDMContext execCtx) throws Throwable {
     	return getStackDepth(execCtx, 0);
@@ -441,6 +449,10 @@ public class SyncUtil {
     	fSession.getExecutor().execute(query);
     	return query.get(500, TimeUnit.MILLISECONDS);
     }
+    
+    public static IFrameDMData getFrameData(final int threadId, final int level) throws Throwable {
+    	return getFrameData(getExecutionContext(threadId), level);
+    }    
 
 	public static IThreadDMData getThreadData(final int threadId)
 			throws InterruptedException, ExecutionException, TimeoutException {

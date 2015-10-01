@@ -16,6 +16,7 @@
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
  *     Marc Khouzam (Ericsson) - Output the version of GDB at startup (Bug 455408)
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -36,6 +37,8 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.cdt.dsf.debug.service.ISourceSubstitutePath;
+import org.eclipse.cdt.dsf.debug.service.ISourceSubstitutePath.ISourceSubstituteDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
@@ -56,6 +59,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 
 public class FinalLaunchSequence extends ReflectionSequence {
 	// The launchConfiguration attributes
@@ -112,6 +116,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
 					
+					"stepSetSourceSubstitutePath",   //$NON-NLS-1$
 					// -environment-directory with a lot of paths could
 					// make setting breakpoint incredibly slow, which makes
 					// the debug session un-workable.  We simply stop
@@ -483,7 +488,28 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		sourceLookup.setSourceLookupPath(sourceLookupDmc, locator.getSourceContainers(), requestMonitor);
 	}
 
-	private static final String INVALID = "invalid";   //$NON-NLS-1$
+	/**
+	 * Setup the source substitute paths.
+	 * 
+	 * This step tells GDB to to handle all the path re-writing using "set substitute-path"
+	 * 
+	 * @since 4.9
+	 */
+	@Execute
+	public void stepSetSourceSubstitutePath(RequestMonitor requestMonitor) {
+		ISourceSubstitutePath sourceSubPath = fTracker.getService(ISourceSubstitutePath.class);
+		if (sourceSubPath == null || !(fCommandControl.getContext() instanceof ISourceSubstituteDMContext)) {
+			requestMonitor.done();
+		} else {
+			ISourceSubstituteDMContext sourceSubPathDmc = (ISourceSubstituteDMContext)fCommandControl.getContext();
+			ILaunch launch = (ILaunch)fSession.getModelAdapter(ILaunch.class);
+			CSourceLookupDirector locator = (CSourceLookupDirector)launch.getSourceLocator();
+			ISourceContainer[] containers = locator.getSourceContainers(); 
+			sourceSubPath.setSourceSubstitutePath(sourceSubPathDmc, containers, requestMonitor);
+		}
+	}
+
+    private static final String INVALID = "invalid";   //$NON-NLS-1$
 	/** 
 	 * If we are dealing with a remote-attach debugging session, connect to the target.
 	 * @since 4.0

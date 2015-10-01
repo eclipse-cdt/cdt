@@ -9,6 +9,7 @@
  *     Marc Khouzam (Ericsson) - Initial implementation of Test cases
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
  *     Jonah Graham (Kichwa Coders) - Bug 469007 - Add MIExpressionsNonStopTest_7_4 to suite
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4;
 
@@ -51,6 +52,7 @@ import org.junit.runners.Suite;
 	GDBConsoleBreakpointsTest_7_4.class,
 	StepIntoSelectionTest_7_4.class,
 	StepIntoSelectionNonStopTest_7_4.class,
+	SourceLookupTest_7_4.class,
 	/* Add your test class here */
 })
 

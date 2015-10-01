@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Ericsson and others.
+ * Copyright (c) 2009, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
+ *     Jonah Graham (Kichwa Coders) - Add support for gdb's "set substitute-path" (Bug 472765)
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
 
@@ -43,6 +44,7 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_6_8.class,
 	CommandTimeoutTest_6_8.class,
 	StepIntoSelectionTest_6_8.class,
+	SourceLookupTest_6_8.class,
 	/* Add your test class here */
 })
 

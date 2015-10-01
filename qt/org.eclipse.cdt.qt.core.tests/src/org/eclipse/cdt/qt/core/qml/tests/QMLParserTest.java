@@ -21,11 +21,10 @@ import org.junit.Test;
 
 public class QMLParserTest extends AbstractParserTest {
 
-	public void runParser(String code, QMLListener listener) throws Exception {
-		ANTLRInputStream input = new ANTLRInputStream(code);
+	public void runParser(CharSequence code, QMLListener listener) throws Exception {
+		ANTLRInputStream input = new ANTLRInputStream(code.toString());
 		QMLLexer lexer = new QMLLexer(input);
 		lexer.addErrorListener(new ANTLRErrorListener() {
-
 			@Override
 			public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
 					int charPositionInLine, String msg, RecognitionException e) {
@@ -35,22 +34,16 @@ public class QMLParserTest extends AbstractParserTest {
 			@Override
 			public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
 					int prediction, ATNConfigSet configs) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
 					BitSet conflictingAlts, ATNConfigSet configs) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact,
 					BitSet ambigAlts, ATNConfigSet configs) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -81,15 +74,13 @@ public class QMLParserTest extends AbstractParserTest {
 		parser.qmlProgram();
 	}
 
-	// testCode
+	// testCode;
 	@Test
-	@Ignore
+	@Ignore // the test doesn't pass yet.
 	public void testCodeExtract() throws Exception {
-		// see if you can use TestSourceReader out of the cdt.core.tests plugin
-		runParser(extract(), new AbstractQMLListener() {
+		runParser(getComment(), new AbstractQMLListener() {
 			@Override
 			public void exitQmlProgram(QmlProgramContext ctx) {
-
 			}
 		});
 	}

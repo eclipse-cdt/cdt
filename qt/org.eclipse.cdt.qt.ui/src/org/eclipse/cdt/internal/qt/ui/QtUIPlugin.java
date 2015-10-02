@@ -8,6 +8,11 @@
 package org.eclipse.cdt.internal.qt.ui;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.internal.qt.ui.resources.QtResourceChangeListener;
+import org.eclipse.cdt.internal.qt.ui.resources.QtWorkspaceSaveParticipant;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ISavedState;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -44,6 +49,15 @@ public class QtUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+
+		// Use a save participant to grab any changed resources while this plugin was inactive
+		QtResourceChangeListener resourceManager = new QtResourceChangeListener();
+		ISaveParticipant saveParticipant = new QtWorkspaceSaveParticipant();
+		ISavedState lastState = ResourcesPlugin.getWorkspace().addSaveParticipant(QtUIPlugin.PLUGIN_ID, saveParticipant);
+		if (lastState != null) {
+			lastState.processResourceChangeEvents(resourceManager);
+		}
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceManager);
 	}
 
 	@Override

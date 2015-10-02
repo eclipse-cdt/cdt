@@ -14,6 +14,9 @@ import org.eclipse.cdt.internal.qt.ui.editor.QtProjectFileKeyword;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -89,4 +92,12 @@ public class QtProjectFileSourceViewerConfiguration extends TextSourceViewerConf
 		return scanner;
 	}
 
+	@Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+	    ContentAssistant contentAssistant = new ContentAssistant();
+	    IContentAssistProcessor processor = new ContentAssistProcessor();
+	    contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+	    contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+	    return contentAssistant;
+	}
 }

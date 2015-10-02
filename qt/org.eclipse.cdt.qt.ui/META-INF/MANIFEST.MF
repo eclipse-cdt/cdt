@@ -19,4 +19,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.qt.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.cdt.internal.qt.ui.assist;x-friends:="org.eclipse.cdt.qt.ui.tests"
+Export-Package: org.eclipse.cdt.internal.qt.ui.assist;x-friends:="org.eclipse.cdt.qt.ui.tests",
+ org.eclipse.cdt.internal.qt.ui.pro.parser;x-friends:="org.eclipse.cdt.qt.ui.tests"

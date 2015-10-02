@@ -48,7 +48,7 @@
 <unit id="org.eclipse.cdt.gnu.dsf.source.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.util.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.cdt.autotools.source.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/tools/cdt/releases/8.7/"/>
+<repository location="http://download.eclipse.org/tools/cdt/releases/8.8/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <repository location="http://download.eclipse.org/releases/mars"/>

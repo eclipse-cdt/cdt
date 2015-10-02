@@ -1,0 +1,9 @@
+Verified+1: Hudson CI
+Code-Review+1: Martin Schreiber <martin.schreiber@bachmann.info>
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-by: Marc Khouzam <marc.khouzam@ericsson.com>
+Submitted-at: Fri, 02 Oct 2015 12:52:43 -0400
+Reviewed-on: https://git.eclipse.org/r/56464
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/cdt_8_8

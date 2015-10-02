@@ -59,7 +59,7 @@
        <editor
              class="org.eclipse.cdt.internal.qt.ui.editor.QtProjectFileEditor"
              default="true"
-             extensions="pro"
+             extensions="pro,pri"
              id="org.eclipse.cdt.qt.ui.QtProjectFileEditor"
              name="%qtProjectFileEditor.name">
        </editor>

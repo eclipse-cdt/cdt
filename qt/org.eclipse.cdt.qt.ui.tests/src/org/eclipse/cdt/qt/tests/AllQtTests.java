@@ -7,6 +7,9 @@
  */
 package org.eclipse.cdt.qt.tests;
 
+import org.eclipse.cdt.qt.pro.parser.tests.QtProjectFileModifierTest;
+import org.eclipse.cdt.qt.pro.parser.tests.QtProjectFileParserTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -22,6 +25,8 @@ public class AllQtTests extends TestSuite {
 				QtContentAssistantTests.class,
 				QtIndexTests.class,
 				QtRegressionTests.class,
-				QmlRegistrationTests.class);
+				QmlRegistrationTests.class,
+				QtProjectFileModifierTest.class,
+				QtProjectFileParserTest.class);
 	}
 }

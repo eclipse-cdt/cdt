@@ -16,6 +16,23 @@
       "revId": "1456889fda70882b3575c0b091668840b42e129e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_6c73eed8",
+        "filename": "qt/org.eclipse.cdt.qt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-10-03T16:37:25Z",
+      "side": 1,
+      "message": "OK, just checked and it does bring in SWT. All this needs to move to the UI plug-in. Sorry about that.",
+      "revId": "1456889fda70882b3575c0b091668840b42e129e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

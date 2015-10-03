@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_2c69f6ec",
+        "filename": "qt/org.eclipse.cdt.qt.core.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 432
+      },
+      "writtenOn": "2015-10-03T16:28:13Z",
+      "side": 1,
+      "message": "Does this bring in SWT? We need to make sure it doesn\u0027t so that this plug-in can run headless.",
+      "revId": "1456889fda70882b3575c0b091668840b42e129e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -398,5 +398,21 @@
             name="%problem.name.ClassMembersInitialization">
          </problem>
       </checker>
+      
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.InitializationInCaseChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.InitializationInCaseChecker"
+            name="%checker.name.InitializationInCaseChecker">
+         <problem
+            category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+            defaultEnabled="true"
+            defaultSeverity="Error"
+            description="%problem.description.InitializationInCaseChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.InitializationInCaseChecker"
+            markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
+            messagePattern="%problem.messagePattern.InitializationInCaseChecker"
+            name="%problem.name.InitializationInCaseChecker">
+         </problem>
+     </checker>
    </extension>
 </plugin>

@@ -1,6 +1,6 @@
 
 /*******************************************************************************
- * Copyright (c) 2014 Ericsson
+ * Copyright (c) 2014, 2015 Ericsson
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,10 @@
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial API and implementation
  *     Marc Khouzam (Ericsson) - Move to o.e.cdt.dsf.gdb.tests (bug 455237)
+ *     Marc Dumais (Ericsson) - Move VisualizerVirtualBoundsGraphicObjectTest 
+ *                              to o.e.cdt.dsf.gdb.multicoreVisualizer.ui.tests
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.tests;
+package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
 
 
 import org.eclipse.swt.graphics.Rectangle;

@@ -21,6 +21,7 @@ import org.junit.runners.Suite.SuiteClasses;
 // Add additional test case classes below
 @SuiteClasses({
     PersistentSettingsManagerTest.class,
+    VisualizerVirtualBoundsGraphicObjectTest.class,
 })	
 public class AllTests {
 	// Often overriding BeforeClass method here

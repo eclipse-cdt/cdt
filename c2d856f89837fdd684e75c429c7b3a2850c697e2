@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_60b2cf7c",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-05T18:20:49Z",
+      "side": 1,
+      "message": "Yes. Done. This shouldn\u0027t affect the final product but I think it does affect launching the product from Eclipse (and it would affect the bundled JRE if we did bundle a JRE).",
+      "parentUuid": "0724e3f1_60c64f3f",
+      "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_e0acff77",
         "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_205d77c2",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 2
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-05T18:20:49Z",
+      "side": 1,
+      "message": "There is only a java7 fragment AFAIK. I think it\u0027s a fallback to the native fragments, if I remember correctly and it uses nio2 and I\u0027m not aware of other things being taken advantage of in java 8.I also double checked here:\nhttp://download.eclipse.org/eclipse/updates/4.6-I-builds/",
+      "parentUuid": "0724e3f1_e0acff77",
+      "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_c0f29b91",
         "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2015-10-05T17:47:54Z",
       "side": 1,
       "message": "So, we just don\u0027t need the compatibility fragment?",
+      "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a05167b2",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-05T18:20:49Z",
+      "side": 1,
+      "message": "I think so. This is based on https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d394739",
+      "parentUuid": "0724e3f1_c0f29b91",
       "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

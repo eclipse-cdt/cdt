@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_8011c30d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIRecord.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-05T18:23:32Z",
+      "side": 1,
+      "message": "Instead of using an integer to control the parameter, how about creating a public set of String ids (or even int ids) that can be used by the caller? Something like what is done in MIGDBSetDPrintfStyle.\n\nThe way it is done now, the ints used are magic numbers that are hard to trace back to something",
+      "revId": "97d36c4d1f91d18e2afca52a3a6b3fcc4e1c45bf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

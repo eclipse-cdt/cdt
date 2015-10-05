@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_05bcc5b0",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTYOutputStream.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2015-10-05T16:01:48Z",
+      "side": 1,
+      "message": "From a software engineering perspective I\u0027d say we should avoid to have behavior directly depend on globals like this. But I\u0027d agree to have this as fix only on this branch to provide proper console functionality for the CDT 8.8.1 release on non-Windows systems.",
+      "revId": "d5ed194e88b734a9dc00390cbff1a7255d6d6b2e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

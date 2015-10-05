@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_80a543b8",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/ISourceSubstitutePath.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-05T17:27:17Z",
+      "side": 1,
+      "message": "Move this to DSF-GDB and call it something like IGDBSourceLookup.\n\nI also suggest making it extend ISourceLookup and creating a new version of CSourceLookup called GDBSourceLookup which would simply extend CSourceLookup and implement the new method below.\n\nThat will mean not needing to create a new service, but just making the existing one richer for DSF-GDB",
+      "revId": "dea5a1691af5acaba65be3be62b1ff9f2df761a2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

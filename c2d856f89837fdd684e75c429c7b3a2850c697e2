@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_60c64f3f",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-05T17:47:54Z",
+      "side": 1,
+      "message": "Should the above also use java 8?",
+      "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_e0acff77",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 2
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-05T17:47:54Z",
+      "side": 1,
+      "message": "Should this be java 8?  I didn\u0027t check if there was such a frament",
+      "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_c0f29b91",
+        "filename": "debug/org.eclipse.cdt.debug.application.product/debug.product",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-05T17:47:54Z",
+      "side": 1,
+      "message": "So, we just don\u0027t need the compatibility fragment?",
+      "revId": "c2d856f89837fdd684e75c429c7b3a2850c697e2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

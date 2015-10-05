@@ -31,6 +31,10 @@
 						<configuration>
 							<artifacts>
 								<artifact>
+									<file>cdt-e4.6.target</file>
+									<type>target</type>
+									<classifier>cdt-e4.6</classifier>
+								<artifact>
 									<file>cdt-e4.5.target</file>
 									<type>target</type>
 									<classifier>cdt-e4.5</classifier>
@@ -58,5 +62,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

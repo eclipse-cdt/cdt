@@ -1,0 +1,7 @@
+Code-Review+2: Marc Khouzam <marc.khouzam@ericsson.com>
+Verified+1: Hudson CI
+Submitted-by: Marc-Andre Laperle <marc-andre.laperle@ericsson.com>
+Submitted-at: Mon, 05 Oct 2015 15:17:35 -0400
+Reviewed-on: https://git.eclipse.org/r/57425
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

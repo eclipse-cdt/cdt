@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_02315bf0",
+        "filename": "core/org.eclipse.cdt.core.native/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-05T14:19:12Z",
+      "side": 1,
+      "message": "I don\u0027t think this can go in cdt_8_8, it would make it CDT 8.9",
+      "range": {
+        "startLine": 5,
+        "startChar": 18,
+        "endLine": 5,
+        "endChar": 19
+      },
+      "revId": "c1d0d4d5e44b1060d865660ce84fff046f38830f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

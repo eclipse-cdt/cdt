@@ -18,13 +18,13 @@
       </programArgs>
       <programArgsLin>--launcher.GTK_version 2
       </programArgsLin>
-      <vmArgsLin>-Xms100m -Xmx512m  -Dosgi.requiredJavaVersion=1.7
+      <vmArgsLin>-Xms100m -Xmx512m  -Dosgi.requiredJavaVersion=1.8
       </vmArgsLin>
-      <vmArgsMac>-Xms100m -Xmx512m  -XstartOnFirstThread -Dosgi.requiredJavaVersion=1.7 -Dorg.eclipse.swt.internal.carbon.smallFonts
+      <vmArgsMac>-Xms100m -Xmx512m  -XstartOnFirstThread -Dosgi.requiredJavaVersion=1.8 -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
-      <vmArgsSol>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=1.7
+      <vmArgsSol>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=1.8
       </vmArgsSol>
-      <vmArgsWin>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=1.7
+      <vmArgsWin>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=1.8
       </vmArgsWin>
    </launcherArgs>
 
@@ -41,10 +41,10 @@
    </launcher>
 
    <vm>
-      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
-      <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
-      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
+      <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</solaris>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
 
    <license>
@@ -246,7 +246,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.core.variables"/>
       <plugin id="org.eclipse.debug.core"/>
       <plugin id="org.eclipse.debug.ui"/>

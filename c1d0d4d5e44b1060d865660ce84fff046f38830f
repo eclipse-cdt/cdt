@@ -22,6 +22,30 @@
       "revId": "c1d0d4d5e44b1060d865660ce84fff046f38830f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_22073fd6",
+        "filename": "core/org.eclipse.cdt.core.native/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 661
+      },
+      "writtenOn": "2015-10-05T14:50:42Z",
+      "side": 1,
+      "message": "Oh, I missed that. Thanks!\nWill there be a CDT 8.9? According to https://projects.eclipse.org/projects/tools.cdt we\u0027ll have 8.8.1 and 9.0.",
+      "parentUuid": "0724e3f1_02315bf0",
+      "range": {
+        "startLine": 5,
+        "startChar": 18,
+        "endLine": 5,
+        "endChar": 19
+      },
+      "revId": "c1d0d4d5e44b1060d865660ce84fff046f38830f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

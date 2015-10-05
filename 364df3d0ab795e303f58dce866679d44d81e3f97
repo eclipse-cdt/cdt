@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_0ff34412",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-10-05T12:46:25Z",
+      "side": 1,
+      "message": "Curly brackets around declaration won\u0027t help, you need curly brackets around statements involved in this \"case\"",
+      "revId": "364df3d0ab795e303f58dce866679d44d81e3f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_2ff60803",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 407,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-10-05T12:46:25Z",
+      "side": 1,
+      "message": "Is this actually compiler error?",
+      "revId": "364df3d0ab795e303f58dce866679d44d81e3f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_cfeacc21",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/InitializationInCaseChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-10-05T12:46:25Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "364df3d0ab795e303f58dce866679d44d81e3f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_af02f87d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/InitializationInCaseChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-10-05T12:46:25Z",
+      "side": 1,
+      "message": "please provide a short example here of code",
+      "revId": "364df3d0ab795e303f58dce866679d44d81e3f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_cf012c7a",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/InitializationInCaseChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-10-05T12:46:25Z",
+      "side": 1,
+      "message": "please format all code using auto-format",
+      "revId": "364df3d0ab795e303f58dce866679d44d81e3f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_8fb2944f",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/InitializationInCaseChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2015-10-05T12:46:25Z",
+      "side": 1,
+      "message": "If you have compound statement and switch inside you won\u0027t process it\ncase 1: { switch (x)  { case 2: int a \u003d 0;  }}",
+      "revId": "364df3d0ab795e303f58dce866679d44d81e3f97",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

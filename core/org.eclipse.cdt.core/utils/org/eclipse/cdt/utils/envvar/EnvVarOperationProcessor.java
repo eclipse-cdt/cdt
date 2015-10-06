@@ -153,6 +153,8 @@ public class EnvVarOperationProcessor {
 	 * @param delimiter
 	 */
 	static public List<String> convertToList(String value, String delimiter){
+		if (value == null)
+			value = ""; //$NON-NLS-1$
 		List<String> list = new ArrayList<String>();
 		int delLength = delimiter.length();
 		int valLength = value.length();

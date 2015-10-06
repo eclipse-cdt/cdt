@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * An update strategy decorator specialized for delayed stack frame refresh. The
  * strategy flushes only the cached top stack frame in case of an normal {@link ISuspendedDMEvent},
- * while in in case of a special {@link FullStackRefreshEvent} everything is invalidated.
+ * while in case of a special {@link FullStackRefreshEvent} everything is invalidated.
  * 
  * <p>
  * The underlying base update policy is considered for container contexts only.

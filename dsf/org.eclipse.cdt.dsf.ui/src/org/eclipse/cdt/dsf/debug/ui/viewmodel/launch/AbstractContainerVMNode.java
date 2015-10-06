@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -397,7 +397,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
             if (refreshEvent.getTriggeringEvent() instanceof IContainerSuspendedDMEvent) {
             	// For a full container suspended event, issue a single change when we get
             	// a FullStackRefreshEvent.  This avoids refreshing all threads, even those
-            	// there are not visible
+            	// that are not visible
             	// bug 386175
                 IContainerSuspendedDMEvent containerTriggerEvent = 
                     (IContainerSuspendedDMEvent)refreshEvent.getTriggeringEvent();

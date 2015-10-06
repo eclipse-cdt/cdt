@@ -136,17 +136,17 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
     	}
 
     	runControl.getExecutionContexts(contDmc,
-    			new ViewerDataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), update){
-    				@Override
-    				public void handleCompleted() {
-    					if (!isSuccess()) {
-    						handleFailedUpdate(update);
-    						return;
-    					}
-    					fillUpdateWithVMCs(update, getData());
-    					update.done();
+    		new ViewerDataRequestMonitor<IExecutionDMContext[]>(getSession().getExecutor(), update){
+    			@Override
+    			public void handleCompleted() {
+    				if (!isSuccess()) {
+    					handleFailedUpdate(update);
+    					return;
     				}
-    			});
+    				fillUpdateWithVMCs(update, getData());
+    				update.done();
+    			}
+    		});
     }
 
 
@@ -242,13 +242,13 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
             }
         } else if (e instanceof SteppingTimedOutEvent && 
                 ((SteppingTimedOutEvent)e).getDMContext() instanceof IContainerDMContext) 
-     {
-          // The timed out event occurred on a container and not on a thread.  Do not
-          // return a context for this event, which will force the view model to generate
-          // a delta for all the threads.
-          rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
-          rm.done();
-          return;
+        {
+        	// The timed out event occurred on a container and not on a thread.  Do not
+        	// return a context for this event, which will force the view model to generate
+        	// a delta for all the threads.
+        	rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
+        	rm.done();
+        	return;
         } else if (e instanceof FullStackRefreshEvent &&
                 ((FullStackRefreshEvent)e).getDMContext() instanceof IContainerDMContext)
         {
@@ -424,5 +424,4 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
             rm.done();
         }
     }
-
 }

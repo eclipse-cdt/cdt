@@ -26,27 +26,26 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 public class NewLaunchConfigTypePage extends WizardPage {
-
 	private Table table;
-	
+
 	public NewLaunchConfigTypePage() {
 		super(Messages.NewLaunchConfigTypePage_0);
 		setTitle(Messages.NewLaunchConfigTypePage_1);
 		setDescription(Messages.NewLaunchConfigTypePage_2);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(1, false));
-		
+
 		table = new Table(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.heightHint = 500;
 		table.setLayoutData(data);
 
 		populateItems();
-		
+
 		setControl(comp);
 	}
 
@@ -70,7 +69,7 @@ public class NewLaunchConfigTypePage extends WizardPage {
 				item.setImage(imageDesc.createImage());
 			item.setData(type);
 		}
-		
+
 		if (haveItems) {
 			table.select(0);
 		}
@@ -84,10 +83,14 @@ public class NewLaunchConfigTypePage extends WizardPage {
 
 	@Override
 	public IWizardPage getNextPage() {
-		ILaunchConfigurationType type = (ILaunchConfigurationType)table.getSelection()[0].getData();
-		NewLaunchConfigEditPage editPage = ((NewLaunchConfigWizard)getWizard()).editPage;
+		ILaunchConfigurationType type = (ILaunchConfigurationType) table.getSelection()[0].getData();
+		NewLaunchConfigWizard wiz = (NewLaunchConfigWizard) getWizard();
+		NewLaunchConfigEditPage editPage = wiz.editPage;
+		// lazy page creation
+		if (wiz.getPage(editPage.getName()) == null) {
+			wiz.addPage(editPage);
+		}
 		editPage.changeLaunchConfigType(type);
 		return editPage;
 	}
-
 }

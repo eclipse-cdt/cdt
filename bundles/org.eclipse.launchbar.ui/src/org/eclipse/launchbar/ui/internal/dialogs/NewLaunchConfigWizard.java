@@ -28,28 +28,36 @@ public class NewLaunchConfigWizard extends Wizard implements ILaunchConfiguratio
 	NewLaunchConfigModePage modePage = new NewLaunchConfigModePage();
 	NewLaunchConfigTypePage typePage = new NewLaunchConfigTypePage();
 	NewLaunchConfigEditPage editPage = new NewLaunchConfigEditPage();
-	
+
 	private List<ILaunchConfiguration> configsToDelete = new ArrayList<>();
 
 	public NewLaunchConfigWizard() {
 		setWindowTitle(Messages.NewLaunchConfigWizard_0);
 		initListeners();
 	}
-	
+
 	@Override
 	public void addPages() {
 		addPage(modePage);
 		addPage(typePage);
-		addPage(editPage);
+		//addPage(editPage); // add dynamically on the types page
 	}
-	
+
+	@Override
+	public boolean canFinish() {
+		if (getPage(editPage.getName()) == null) {
+			return false;
+		}
+		return super.canFinish();
+	}
+
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() {
-		return editPage.workingCopy;
+		return editPage.getWorkingCopy();
 	}
 
 	public ILaunchMode getLaunchMode() {
 		String initMode = modePage.selectedGroup.getMode();
-		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(initMode);		
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(initMode);
 	}
 
 	@Override

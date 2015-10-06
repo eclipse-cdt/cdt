@@ -17,43 +17,28 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.ui.internal.Activator;
 import org.eclipse.launchbar.ui.internal.Messages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 @SuppressWarnings("restriction")
 public class NewLaunchConfigEditPage extends WizardPage {
-	ILaunchConfigurationWorkingCopy workingCopy;
-	ILaunchConfigurationTabGroup tabGroup;
-	private Text nameText;
-	private CTabFolder tabFolder;
-	private LaunchConfigurationDialog launchConfigurationDialog = new LaunchConfigurationDialogFake();
-	private LaunchConfigurationManager launchConfigurationMgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	private ILaunchConfigurationWorkingCopy workingCopy;
+	private LaunchConfigurationDialogExt launchConfigurationDialog = new LaunchConfigurationDialogExt();
+	private LaunchConfigurationTabGroupViewerExt tabViewer;
+	private ILaunchConfigurationType type;
 
 	public NewLaunchConfigEditPage() {
 		super(Messages.NewLaunchConfigEditPage_0);
@@ -64,111 +49,50 @@ public class NewLaunchConfigEditPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout(2, false));
-		Label label = new Label(comp, SWT.NONE);
-		label.setLayoutData(new GridData());
-		label.setText(Messages.NewLaunchConfigEditPage_3 + ":"); //$NON-NLS-1$
-		nameText = new Text(comp, SWT.BORDER);
-		nameText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		ColorRegistry reg = JFaceResources.getColorRegistry();
-		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
-		c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
-		tabFolder = new CTabFolder(comp, SWT.BORDER | SWT.NO_REDRAW_RESIZE | SWT.FLAT);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gridData.horizontalSpan = 2;
-		tabFolder.setLayoutData(gridData);
-		tabFolder.setSimple(false);
-		tabFolder.setSelectionBackground(new Color[] { c1, c2 }, new int[] { 100 }, true);
-		tabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
-
+		comp.setLayout(new GridLayout(1, false));
 		setControl(comp);
-		nameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String name = nameText.getText().trim();
-				workingCopy.rename(name);
-
-				String errMessage = checkName(name);
-				if (errMessage == null) {
-					validateFields();
-				} else {
-					setErrorMessage(errMessage);
-				}
-			}
-		});
+		// create tab viewer
+		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
+		tabViewer = new LaunchConfigurationTabGroupViewerExt(comp, launchConfigurationDialog);
+		launchConfigurationDialog.setTabViewer(tabViewer);
+		changeLaunchConfigType(type);
+		GridData data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		data.heightHint = 500;
+		tabViewer.getControl().setLayoutData(data);
+		parent.layout(true, true);
 		validateFields();
 	}
 
-	private String checkName(String name) {
-		try {
-			if (name.isEmpty()) {
-				return Messages.NewLaunchConfigEditPage_4;
-			}
-
-			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			if (manager.isExistingLaunchConfigurationName(name)) {
-				ILaunchConfiguration config = ((LaunchManager) manager).findLaunchConfiguration(name);
-				if (config != workingCopy.getOriginal()) {
-					return (Messages.NewLaunchConfigEditPage_5);
-				}
-			}
-		} catch (Exception e) {
-			Activator.log(e);
-			return (e.getLocalizedMessage());
-		}
-		return null;
+	/**
+	 * @return the workingCopy
+	 */
+	public ILaunchConfigurationWorkingCopy getWorkingCopy() {
+		return workingCopy;
 	}
-
 
 	void changeLaunchConfigType(ILaunchConfigurationType type) {
 		if (type == null)
 			return;
 		try {
-			String initialMode = ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();
-			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			String name = manager.generateLaunchConfigurationName("launchConfiguration"); //$NON-NLS-1$
-			workingCopy = type.newInstance(null, name);
-			tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(workingCopy, initialMode);
-			for (CTabItem item : tabFolder.getItems())
-				item.dispose();
+			this.type = type;
 			LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(launchConfigurationDialog);
-			tabGroup.createTabs(launchConfigurationDialog, initialMode);
-
-			for (ILaunchConfigurationTab tab : tabGroup.getTabs()) {
-				tab.setLaunchConfigurationDialog(launchConfigurationDialog);
-				tab.createControl(tabFolder);
-				tab.setDefaults(workingCopy);
+			if (tabViewer != null) {
+				String name = launchConfigurationDialog.generateName("launchConfiguration"); //$NON-NLS-1$
+				workingCopy = type.newInstance(null, name);
+				launchConfigurationDialog.doSetDefaults(workingCopy);
+				tabViewer.setInput(workingCopy);
 			}
-
-			// Do this after all the tabs have their controls created
-			for (ILaunchConfigurationTab tab : tabGroup.getTabs()) {
-				tab.initializeFrom(workingCopy);
-
-				CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
-				tabItem.setText(tab.getName());
-				tabItem.setImage(!tab.isValid(workingCopy) && tab.getErrorMessage() != null ?
-						launchConfigurationMgr.getErrorTabImage(tab) : tab.getImage());
-				tabItem.setControl(tab.getControl());
-			}
-
-			// Clean up any created configs before we set the name and trigger
-			// any validation
-			((NewLaunchConfigWizard) getWizard()).cleanUpConfigs();
-
-			tabFolder.setSelection(0);
-			nameText.setText(workingCopy.getName());
 		} catch (CoreException e) {
 			Activator.log(e);
 			return;
 		}
 	}
 
-
 	boolean performFinish() {
 		if (workingCopy == null)
 			return false;
-		for (ILaunchConfigurationTab tab : tabGroup.getTabs())
-			tab.performApply(workingCopy);
+		workingCopy.rename(tabViewer.getWorkingCopy().getName());
+		tabViewer.getTabGroup().performApply(workingCopy);
 		LaunchConfigurationsDialog.setCurrentlyVisibleLaunchConfigurationDialog(null);
 		return true;
 	}
@@ -183,38 +107,7 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		setPageComplete(false);
 		if (workingCopy == null)
 			return;
-		String message = null;
-		String old_msg = getErrorMessage();
-		setErrorMessage(null);
-		message = checkName(workingCopy.getName());
-		if (message == null) {
-			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-			int tLen = tabs.length;
-			int tfLen = tabFolder.getItems().length;
-			for (int i = 0; i < tLen; i++) {
-				ILaunchConfigurationTab tab = tabs[i];
-				try {
-					tab.isValid(workingCopy);
-					message = tab.getErrorMessage();
-				} catch (Exception e) {
-					// if createControl hasn't been called yet can throw exception..
-					// like the NPE issue in CTestingTab
-					message = e.getMessage();
-				}
-				// this is similar to what LaunchConfigurationTabGroupViewer.refresh() does, which is not available in this case
-				if (tLen == tfLen &&
-						(old_msg == null && message != null || old_msg != null && message == null)) {
-					CTabItem item = tabFolder.getItem(i);
-					if (item != null) {
-						item.setImage(message != null ? launchConfigurationMgr.getErrorTabImage(tab)
-								: tab.getImage());
-					}
-				}
-				if (message != null) {
-					break;
-				}
-			}
-		}
+		String message = tabViewer.getErrorMesssage();
 		setErrorMessage(message);
 		if (getErrorMessage() != null) {
 			setPageComplete(false);
@@ -223,8 +116,8 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 	}
 
-	private class LaunchConfigurationDialogFake extends LaunchConfigurationDialog {
-		public LaunchConfigurationDialogFake() {
+	private class LaunchConfigurationDialogExt extends LaunchConfigurationDialog {
+		public LaunchConfigurationDialogExt() {
 			super(NewLaunchConfigEditPage.this.getShell(), null, null);
 		}
 
@@ -251,23 +144,21 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 
 		@Override
-		public void run(boolean fork, boolean cancelable,
-				IRunnableWithProgress runnable)
-				throws InvocationTargetException, InterruptedException {
-			// ignore
-		}
-
-		@Override
-		public void updateButtons() {
-		}
-
-		@Override
 		public void updateMessage() {
 			validateFields();
 		}
 
 		@Override
-		public void setName(String name) {
+		public void updateButtons() {
+			// Launch button
+			getTabViewer().refresh();
+			//	getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
+		}
+
+		@Override
+		public void run(boolean fork, boolean cancelable,
+				IRunnableWithProgress runnable)
+						throws InvocationTargetException, InterruptedException {
 			// ignore
 		}
 
@@ -279,35 +170,26 @@ public class NewLaunchConfigEditPage extends WizardPage {
 		}
 
 		@Override
-		public ILaunchConfigurationTab[] getTabs() {
-			return tabGroup.getTabs();
+		public void doSetDefaults(ILaunchConfigurationWorkingCopy wc) {
+			super.doSetDefaults(wc);
 		}
 
 		@Override
-		public ILaunchConfigurationTab getActiveTab() {
-			int i = tabFolder.getSelectionIndex();
-			return tabGroup.getTabs()[i];
-		}
-
-
-		@Override
-		public void setActiveTab(ILaunchConfigurationTab tab) {
-			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-			int tLen = tabs.length;
-			for (int i = 0; i < tLen; i++) {
-				ILaunchConfigurationTab tabi = tabs[i];
-				if (tabi.equals(tab)) {
-					setActiveTab(i);
-					break;
-				}
-			}
-		}
-
-		@Override
-		public void setActiveTab(int index) {
-			tabFolder.setSelection(index);
+		public void setTabViewer(LaunchConfigurationTabGroupViewer viewer) {
+			super.setTabViewer(viewer);
 		}
 	}
+
+	private class LaunchConfigurationTabGroupViewerExt extends LaunchConfigurationTabGroupViewer {
+		public LaunchConfigurationTabGroupViewerExt(Composite parent, ILaunchConfigurationDialog dialog) {
+			super(parent, dialog);
+		}
+
+		@Override
+		public ILaunchConfigurationWorkingCopy getWorkingCopy() {
+			return super.getWorkingCopy();
+		}
+	};
 
 	public String getMode() {
 		return ((NewLaunchConfigWizard) getWizard()).modePage.selectedGroup.getMode();

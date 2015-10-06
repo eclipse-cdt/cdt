@@ -31,38 +31,38 @@ public class NewLaunchConfigModePage extends WizardPage {
 
 	private Table table;
 	ILaunchGroup selectedGroup;
-	
+
 	public NewLaunchConfigModePage() {
 		super(Messages.NewLaunchConfigModePage_0);
 		setTitle(Messages.NewLaunchConfigModePage_1);
 		setDescription(Messages.NewLaunchConfigModePage_2);
 	}
-	
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(1, false));
-		
+
 		table = new Table(comp, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		table.setLayoutData(data);
-		
+
 		Set<ILaunchGroup> done = new HashSet<>();
-		
+
 		for (ILaunchGroup group : DebugUITools.getLaunchGroups()) {
 			if (group.getMode().equals("run")) { //$NON-NLS-1$
 				createModeItem(group);
 				done.add(group);
 			}
 		}
-		
+
 		for (ILaunchGroup group : DebugUITools.getLaunchGroups()) {
 			if (group.getMode().equals("debug")) { //$NON-NLS-1$
 				createModeItem(group);
 				done.add(group);
 			}
 		}
-		
+
 		for (ILaunchGroup group : DebugUITools.getLaunchGroups()) {
 			if (!done.contains(group)) {
 				createModeItem(group);
@@ -87,7 +87,7 @@ public class NewLaunchConfigModePage extends WizardPage {
 			}
 			selectedGroup = (ILaunchGroup) table.getSelection()[0].getData();
 		}
-		
+
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -102,7 +102,7 @@ public class NewLaunchConfigModePage extends WizardPage {
 	private void createModeItem(ILaunchGroup group) {
 		if (group.getCategory() != null || !group.isPublic())
 			return;
-		
+
 		TableItem item = new TableItem(table, SWT.NONE);
 		item.setText(group.getLabel().replace("&", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		ImageDescriptor imageDesc = group.getImageDescriptor();

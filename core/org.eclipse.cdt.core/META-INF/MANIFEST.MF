@@ -129,6 +129,6 @@ Require-Bundle: org.eclipse.cdt.core.native;bundle-version="[5.7.0,6.0.0)";visib
  org.eclipse.ltk.core.refactoring;bundle-version="3.4.0",
  org.eclipse.text;bundle-version="[3.2.0,4.0.0)",
  com.ibm.icu;bundle-version="4.4.2",
- com.google.gson;bundle-version="2.2.4"
+ com.google.gson;bundle-version="2.2.4";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

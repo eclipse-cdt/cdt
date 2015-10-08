@@ -177,10 +177,12 @@ public class ProjectTools {
 		// initialize some things.  The performApply() call is only needed
 		// to check out referenced projects.  In our test scenario, this is
 		// not required.
+		@Override
 		public void applyOptions(IProject project, IProgressMonitor monitor) {
 			setCurrentProject(project);
 	    }
 		
+		@Override
 		public IConfiguration[] getSelectedConfigurations() {
 			IProjectType projectType = ManagedBuildManager.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
 			IConfiguration[] cfgs = projectType.getConfigurations();

@@ -11,12 +11,16 @@
 
 package org.eclipse.cdt.autotools.tests.autoconf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.cdt.autotools.ui.editors.AutoconfEditorMessages;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfIfElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfMacroArgumentElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfMacroElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfParser;
+import org.junit.Test;
 
 
 /**
@@ -26,10 +30,12 @@ import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfParser;
  */
 public class TestMacroParser extends BaseParserTest {
 
+	@Test
 	public void testEmpty() throws Exception {
 		parse("");
 	}
 	
+	@Test
 	public void testComments() throws Exception {
 		// 
 		String text = 
@@ -42,6 +48,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertTreeStructure(root, new String[] {});
 	}
 	
+	@Test
 	public void testMacroParsing1() throws Exception {
 		// 
 		String text =
@@ -69,6 +76,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertEqualSource("AC_REQUIRE([AM_SANITY_CHECK])", macro);
 	}
 	
+	@Test
 	public void testMacroParsing2() throws Exception {
 		// 
 		String text =
@@ -98,6 +106,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertEqualSource("AC_TWO_ARGS(first,second)", macro);
 	}
 	
+	@Test
 	public void testMacroParsing3() throws Exception {
 		// 
 		String text =
@@ -125,6 +134,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertEqualSource("AC_ONE_ARG( [quoted( arg ), second] )", macro);
 	}
 
+	@Test
 	public void testMacroParsing4() throws Exception {
 		// 
 		String text =
@@ -149,6 +159,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertEqualSource("[AM_AUTOMAKE_VERSION([1.4-p6])]", macro.getChildren()[1]);
 	}
 
+	@Test
 	public void testMacroParsing5() throws Exception {
 		// check that complex shell constructs don't throw off the
 		// parser, and also that we don't mistake shell tokens in a macro argument
@@ -193,6 +204,7 @@ public class TestMacroParser extends BaseParserTest {
 		
 	}
 
+	@Test
 	public void testMacroParsing6() throws Exception {
 		// empty arguments
 		String text =
@@ -215,6 +227,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertEqualSource("", macro.getChildren()[1]);
 	}
 
+	@Test
 	public void testWithErrorUnmatchedLeftParen() {
 		String text =
 			"AC_BAD_MACRO(\n";
@@ -224,6 +237,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertTrue(root.getChildren()[0] instanceof AutoconfMacroElement);
 		checkError(AutoconfEditorMessages.getString(AutoconfParser.UNMATCHED_LEFT_PARENTHESIS));
 	}
+	@Test
 	public void testWithErrorUnmatchedRightParen() {
 		String text =
 			"AC_BAD_MACRO())\n";
@@ -233,6 +247,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertTrue(root.getChildren()[0] instanceof AutoconfMacroElement);
 		checkError(AutoconfEditorMessages.getString(AutoconfParser.UNMATCHED_RIGHT_PARENTHESIS));
 	}
+	@Test
 	public void testNoFalseUnmatchedRightParen() {
 		String text =
 			"AC_BAD_MACRO()\n" +
@@ -248,6 +263,7 @@ public class TestMacroParser extends BaseParserTest {
 		assertTrue(root.getChildren()[1] instanceof AutoconfIfElement);
 	}
 
+	@Test
 	public void testNestedMacro() {
 		String text =
 			"AC_1(AC_2())\n";

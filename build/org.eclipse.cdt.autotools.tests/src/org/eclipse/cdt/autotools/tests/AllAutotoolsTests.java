@@ -12,28 +12,21 @@ package org.eclipse.cdt.autotools.tests;
 
 import org.eclipse.cdt.autotools.tests.autoconf.AutoconfTests;
 import org.eclipse.cdt.autotools.tests.editors.EditorTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /** On Windows requires either Cygwin or MinGW to be in PATH */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AutotoolsProjectTest0.class,
+	AutotoolsProjectNatureTest.class,
+	AutotoolsProjectTest1.class,
+	AutotoolsProjectTest2.class,
+	AutotoolsVirtualFolderTest.class,
+	AutotoolsEnvironmentVarTest.class,
+	UpdateConfigureTest.class,
+	AutoconfTests.class,
+	EditorTests.class
+})
 public class AllAutotoolsTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for org.eclipse.cdt.autotools.core.tests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(AutotoolsProjectTest0.class);
-		suite.addTestSuite(AutotoolsProjectNatureTest.class);
-		suite.addTestSuite(AutotoolsProjectTest1.class);
-		suite.addTestSuite(AutotoolsProjectTest2.class);
-		suite.addTestSuite(AutotoolsVirtualFolderTest.class);
-		suite.addTestSuite(AutotoolsEnvironmentVarTest.class);
-		suite.addTestSuite(UpdateConfigureTest.class);
-		suite.addTest(AutoconfTests.suite());
-		suite.addTest(EditorTests.suite());
-		//$JUnit-END$
-		return suite;
-	}
-
 }

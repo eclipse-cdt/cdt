@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests.autoconf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfMacroDetector;
@@ -27,27 +30,25 @@ import org.eclipse.cdt.autotools.ui.editors.parser.IAutoconfMacroValidator;
 import org.eclipse.cdt.autotools.ui.editors.parser.ParseException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.junit.Before;
 
-public abstract class BaseParserTest extends TestCase {
+public abstract class BaseParserTest {
 
 	private IAutoconfErrorHandler errorHandler;
-	protected List errors;
+	protected List<ParseException> errors;
 	private IAutoconfMacroValidator macroValidator;
-	private Set macroNames;
+	private Set<String> macroNames;
 	private AutoconfMacroDetector macroDetector;
 
 	public BaseParserTest() {
 		super();
 	}
 
-	public BaseParserTest(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		errors = new ArrayList();
+	@Before
+	public void setUp() throws Exception {
+		errors = new ArrayList<>();
 		this.errorHandler = new IAutoconfErrorHandler() {
-	
+			@Override
 			public void handleError(ParseException exception) {
 				assertNotNull(exception);
 				errors.add(exception);
@@ -57,9 +58,9 @@ public abstract class BaseParserTest extends TestCase {
 	
 		this.macroDetector = new AutoconfMacroDetector();
 		
-		macroNames = new HashSet/*<String>*/();
+		macroNames = new HashSet<>();
 		this.macroValidator = new IAutoconfMacroValidator() {
-	
+			@Override
 			public void validateMacroCall(AutoconfMacroElement element)
 					throws ParseException {
 				assertNotNull(element);
@@ -69,9 +70,6 @@ public abstract class BaseParserTest extends TestCase {
 			}
 			
 		};
-	}
-
-	protected void tearDown() throws Exception {
 	}
 
 	protected IDocument createDocument(String text) {
@@ -146,8 +144,8 @@ public abstract class BaseParserTest extends TestCase {
 	}
 
 	protected void checkError(String msgKey) {
-		for (Iterator iter = errors.iterator(); iter.hasNext(); ) {
-			ParseException exc = (ParseException) iter.next();
+		for (Iterator<ParseException> iter = errors.iterator(); iter.hasNext(); ) {
+			ParseException exc = iter.next();
 			if (exc.getMessage().contains(msgKey))
 				return;
 		}
@@ -160,8 +158,8 @@ public abstract class BaseParserTest extends TestCase {
 	protected void checkError(String msgKey, int line) {
 		ParseException possible = null;
 		int distance = 999;
-		for (Iterator iter = errors.iterator(); iter.hasNext(); ) {
-			ParseException exc = (ParseException) iter.next();
+		for (Iterator<ParseException> iter = errors.iterator(); iter.hasNext(); ) {
+			ParseException exc = iter.next();
 			if (exc.getMessage().contains(msgKey)) {
 				int curDistance = Math.abs(exc.getLineNumber() - line);
 				if (curDistance < distance) {

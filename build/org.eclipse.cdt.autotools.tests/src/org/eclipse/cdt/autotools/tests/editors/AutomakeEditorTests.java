@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests.editors;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.cdt.autotools.tests.AutotoolsTestsPlugin;
 import org.eclipse.cdt.autotools.tests.ProjectTools;
 import org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+
+import junit.framework.TestCase;
 
 
 public class AutomakeEditorTests extends TestCase {

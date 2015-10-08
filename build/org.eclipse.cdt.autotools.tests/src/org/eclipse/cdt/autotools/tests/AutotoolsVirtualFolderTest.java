@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
-import java.io.File;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.io.File;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.core.resources.IProject;
@@ -24,17 +26,17 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 // This test verifies using Autotools with a linked folder.
-public class AutotoolsVirtualFolderTest extends TestCase {
+public class AutotoolsVirtualFolderTest {
 
 	private IProject testProject;
 
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		if (!ProjectTools.setup())
 			fail("could not perform basic project workspace setup");
 		testProject = ProjectTools.createProject("testProjectVirtualFolder");
@@ -49,6 +51,7 @@ public class AutotoolsVirtualFolderTest extends TestCase {
 	 * Tests Bug 434275 - Autotools configuration in subfolder not found 
 	 * @throws Exception
 	 */
+	@Test
 	public void testAutotoolsVirtualFolder() throws Exception {
 		Path p = new Path("zip/project2.zip");
 		IWorkspaceRoot root = ProjectTools.getWorkspaceRoot();
@@ -83,14 +86,14 @@ public class AutotoolsVirtualFolderTest extends TestCase {
 		return testProject.exists(new Path(path));
 	}
 
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		testProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 		try {
 			testProject.delete(true, true, null);
 		} catch (Exception e) {
 			//FIXME: Why does a ResourceException occur when deleting the project??
 		}
-		super.tearDown();
 	}
 
 }

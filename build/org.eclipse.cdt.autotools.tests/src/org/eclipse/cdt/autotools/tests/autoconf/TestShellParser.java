@@ -11,11 +11,15 @@
 
 package org.eclipse.cdt.autotools.tests.autoconf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.cdt.autotools.ui.editors.AutoconfEditorMessages;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfCaseConditionElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfCaseElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfElement;
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfParser;
+import org.junit.Test;
 
 /**
  * @author eswartz
@@ -23,6 +27,7 @@ import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfParser;
  */
 public class TestShellParser extends BaseParserTest {
 
+	@Test
 	public void testHERE() {
 		String HERE_TEXT = 
 			"\n"+
@@ -38,7 +43,7 @@ public class TestShellParser extends BaseParserTest {
 		// only see a macro call, not a loop
 		assertTreeStructure(tree, new String[] { "AM_INIT_AUTOMAKE", "confusion", "$2", "EOF", null });
 	}
-
+	@Test
 	public void testHERE2() {
 		String HERE_TEXT = 
 			"\n"+
@@ -55,7 +60,7 @@ public class TestShellParser extends BaseParserTest {
 		assertTreeStructure(tree, new String[] { "AM_INIT_AUTOMAKE", "confusion", "$2", "EOF", null });
 	}
 	
-
+	@Test
 	public void testIf0() {
 		String text = "# comment\n"+
 		"\tif true; then\n" +
@@ -64,7 +69,7 @@ public class TestShellParser extends BaseParserTest {
 		AutoconfElement tree = parse(text);
 		assertTreeStructure(tree, new String[] { "if" });
 	}
-
+	@Test
 	public void testIf1() {
 		String text = "# comment\n"+
 		"\tif true; then\n" +
@@ -74,7 +79,7 @@ public class TestShellParser extends BaseParserTest {
 		assertTreeStructure(tree, new String[] { "if", "AC_SOMETHING", "", null, null });
 	}
 	
-
+	@Test
 	public void testIfElse0() {
 		String text = "# comment\n"+
 		"\tif true; then\n" +
@@ -85,7 +90,7 @@ public class TestShellParser extends BaseParserTest {
 		AutoconfElement tree = parse(text);
 		assertTreeStructure(tree, new String[] { "if", "else", null });
 	}
-
+	@Test
 	public void testIfElse1() {
 		String text = "# comment\n"+
 		"\tif true; then\n" +
@@ -114,6 +119,7 @@ public class TestShellParser extends BaseParserTest {
 		assertEqualSource("AC_ONE(...)", kids[0].getChildren()[0]);
 		assertEqualSource("AC_TWO(AC_THREE())", kids[0].getChildren()[1].getChildren()[0]);
 	}
+	@Test
 	public void testIf2() {
 		String text =
 		"if blah\n" +
@@ -121,7 +127,7 @@ public class TestShellParser extends BaseParserTest {
 		AutoconfElement tree = parse(text);
 		assertTreeStructure(tree, new String[] { "if" });
 	}
-	
+	@Test
 	public void testIfElif() {
 		String text = "# comment\n"+
 		"\tif true; then\n" +
@@ -142,7 +148,7 @@ public class TestShellParser extends BaseParserTest {
 					null, 
 				null });
 	}
-	
+	@Test
 	public void testIfErr1() {
 		String text =
 		"if then fi\n";
@@ -151,6 +157,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.INVALID_SPECIFIER, "then"));
 		assertTreeStructure(tree, new String[] { "if" });
 	}
+	@Test
 	public void testIfErr2() {
 		String text =
 		"if true; do fi\n";
@@ -159,6 +166,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getString(AutoconfParser.INVALID_DO));
 		assertTreeStructure(tree, new String[] { "if" });
 	}
+	@Test
 	public void testIfErr3() {
 		String text =
 		"if; else bar; fi\n";
@@ -167,6 +175,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.MISSING_SPECIFIER, "then"));
 		assertTreeStructure(tree, new String[] { "if", "else", null });
 	}
+	@Test
 	public void testIfErr4() {
 		String text =
 		"if true; then stmt fi\n";
@@ -175,6 +184,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.INVALID_TERMINATION, "fi"));
 		assertTreeStructure(tree, new String[] { "if" });
 	}
+	@Test
 	public void testIfErr5() {
 		String text =
 		"if true; then\n";
@@ -183,6 +193,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.UNTERMINATED_CONSTRUCT, "if"));
 		assertTreeStructure(tree, new String[] { "if" });
 	}
+	@Test
 	public void testIfErr6() {
 		String text =
 		"if true; then foo; else\n";
@@ -192,12 +203,14 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.UNTERMINATED_CONSTRUCT, "else"));
 		assertTreeStructure(tree, new String[] { "if", "else", null });
 	}
+	@Test
 	public void testWhile() {
 		String text =
 			"while true; do foo; done\n";
 		AutoconfElement tree = parse(text);
 		assertTreeStructure(tree, new String[] { "while" });
 	}
+	@Test
 	public void testWhile2() {
 		String text =
 			"while true\n" +
@@ -206,6 +219,7 @@ public class TestShellParser extends BaseParserTest {
 		AutoconfElement tree = parse(text);
 		assertTreeStructure(tree, new String[] { "while", "AC_SOMETHING", "...", null, null });
 	}
+	@Test
 	public void testWhileErr() {
 		String text =
 			"while; AC_SOMETHING(...) done\n";
@@ -215,6 +229,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.INVALID_TERMINATION, "done"));
 		assertTreeStructure(tree, new String[] { "while", "AC_SOMETHING", "...", null, null });
 	}
+	@Test
 	public void testWhileErr2() {
 		String text =
 			"while true; do AC_SOMETHING(...)\n";
@@ -223,7 +238,7 @@ public class TestShellParser extends BaseParserTest {
 		checkError(AutoconfEditorMessages.getFormattedString(AutoconfParser.UNTERMINATED_CONSTRUCT, "while"));
 		assertTreeStructure(tree, new String[] { "while", "AC_SOMETHING", "...", null, null });
 	}
-	
+	@Test
 	public void testCase() {
 		String text = 
 			"case $VAL in\n"+
@@ -271,7 +286,7 @@ public class TestShellParser extends BaseParserTest {
 		assertEquals(0, caseCond.getChildren().length);
 		
 	}
-	
+	@Test
 	public void testCaseErr() {
 		String text = 
 			"case $VAL; linux-*-*) AC_FIRST($VAL) ; true esac\n";
@@ -290,6 +305,7 @@ public class TestShellParser extends BaseParserTest {
 		assertEqualSource("AC_FIRST($VAL)", caseCond.getChildren()[0]);
 
 	}
+	@Test
 	public void testCaseErr2() {
 		String text = 
 			"case $VAL in\n";
@@ -300,7 +316,7 @@ public class TestShellParser extends BaseParserTest {
 		assertTreeStructure(tree, new String[] { "case" });
 
 	}
-
+	@Test
 	public void testForIn() {
 		// don't get upset by 'in'
 		String text = 
@@ -314,7 +330,7 @@ public class TestShellParser extends BaseParserTest {
 		assertEqualSource(text.substring(0, text.length()-1), forEl);
 		
 	}
-	
+	@Test
 	public void testForDo() {
 		// don't get upset by parentheses
 		String text = 
@@ -324,15 +340,14 @@ public class TestShellParser extends BaseParserTest {
 		assertTreeStructure(tree, new String[] { "for", "AC_1", "AC_2", "", null, "AC_3", "...", null, null });
 		
 	}
-	
+	@Test
 	public void testUntil() {
 		String text = 
 			"until false; do AC_SOMETHING(...); done\n";
 		AutoconfElement tree = parse(text, false);
 		assertTreeStructure(tree, new String[] { "until", "AC_SOMETHING", "...", null, null });
-
-		
 	}
+	@Test
 	public void testSelect() {
 		String text = 
 			"select VAR in 1 2 3; do AC_SOMETHING(...); done\n"+
@@ -350,7 +365,7 @@ public class TestShellParser extends BaseParserTest {
 				null
 		});
 	}
-	
+	@Test
 	public void testComplex1() {
 		String text =
 			"AM_INIT_AUTOMAKE([foo1], 1.96)\n" +
@@ -379,7 +394,7 @@ public class TestShellParser extends BaseParserTest {
 				null
 		});
 	}
-	
+	@Test
 	public void testComplex2() {
 		String text = 
 			"if true; then\n" + 
@@ -401,7 +416,7 @@ public class TestShellParser extends BaseParserTest {
 				null
 		});
 	}
-
+	@Test
 	public void testEarlyClose() {
 		String text = 
 			"if true; then foo ; fi\n"+
@@ -413,7 +428,7 @@ public class TestShellParser extends BaseParserTest {
 				"while"
 		});
 	}
-	
+	@Test
 	public void testOverlapping() {
 		String text =
 			"for foo\n"+
@@ -424,7 +439,7 @@ public class TestShellParser extends BaseParserTest {
 				"if"
 		});
 	}
-	
+	@Test
 	public void testDollar() {
 		// dollars guard keywords
 		String text =

@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests.editors;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AutomakeColourizationTests.class,
+	AutomakeTextHoverTest.class,
+	AutomakeEditorTests.class
+})
 public class EditorTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for org.eclipse.cdt.autotools.core.tests.editors");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(AutomakeColourizationTests.class);
-		suite.addTestSuite(AutomakeTextHoverTest.class);
-		suite.addTestSuite(AutomakeEditorTests.class);
-		//$JUnit-END$
-		return suite;
-	}
-
 }

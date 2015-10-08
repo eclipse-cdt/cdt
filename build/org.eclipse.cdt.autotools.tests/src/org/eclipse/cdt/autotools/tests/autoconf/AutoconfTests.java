@@ -10,20 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests.autoconf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestMacroParser.class,
+	TestTokenizer.class,
+	TestShellParser.class
+})
 public class AutoconfTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"Test for org.eclipse.cdt.autotools.core.tests.autoconf");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestMacroParser.class);
-		suite.addTestSuite(TestTokenizer.class);
-		suite.addTestSuite(TestShellParser.class);
-		//$JUnit-END$
-		return suite;
-	}
 
 }

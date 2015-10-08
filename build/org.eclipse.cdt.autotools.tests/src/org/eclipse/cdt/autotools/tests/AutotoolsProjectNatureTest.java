@@ -10,22 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
+import org.eclipse.core.resources.IProject;
+import org.junit.Before;
+import org.junit.Test;
 
-public class AutotoolsProjectNatureTest extends TestCase {
-    
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+public class AutotoolsProjectNatureTest {
+    @Before
+    public void setUp() throws Exception {
         if (!ProjectTools.setup())
         	fail("could not perform basic project workspace setup");
      }
-	
+	@Test
 	public void testAutotoolsProjectNature() throws Exception {
 		IProject testProject = ProjectTools.createProject("testProject");
 		if(testProject == null) {

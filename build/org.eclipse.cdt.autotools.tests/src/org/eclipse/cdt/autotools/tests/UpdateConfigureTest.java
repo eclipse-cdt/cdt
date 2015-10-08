@@ -11,6 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,8 +24,6 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
@@ -35,6 +38,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -44,15 +50,11 @@ import org.xml.sax.SAXException;
 
 // This test verifies an autogen.sh project that builds configure, but
 // does not run it.
-public class UpdateConfigureTest extends TestCase {
+public class UpdateConfigureTest {
     
 	private IProject testProject;
-	
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+	@Before
+	public void setUp() throws Exception {
         if (!ProjectTools.setup())
         	fail("could not perform basic project workspace setup");
 		testProject = ProjectTools.createProject("testProject2");
@@ -67,6 +69,7 @@ public class UpdateConfigureTest extends TestCase {
      * the configure script sets both the C and C++ flags.
      * @throws Exception
      */
+	@Test
 	public void testGprofGcovDebugFlagOptions() throws Exception {
 		Path p = new Path("zip/project2.zip");
 		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null);
@@ -162,6 +165,7 @@ public class UpdateConfigureTest extends TestCase {
      * contains autogen.sh which will build configure, but not run it.
      * @throws Exception
      */
+	@Test
 	public void testGetAndUpdateConfigureOptions() throws Exception {
 		Path p = new Path("zip/project2.zip");
 		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null);
@@ -566,14 +570,14 @@ public class UpdateConfigureTest extends TestCase {
 
 	}
 	
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		testProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 		try {
 			testProject.delete(true, true, null);
 		} catch (Exception e) {
 			//FIXME: Why does a ResourceException occur when deleting the project??
 		}
-		super.tearDown();
 	}
 
 }

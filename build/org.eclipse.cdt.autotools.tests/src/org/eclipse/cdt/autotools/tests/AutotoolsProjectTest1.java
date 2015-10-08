@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.core.resources.IProject;
@@ -19,16 +20,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class AutotoolsProjectTest1 extends TestCase {
+public class AutotoolsProjectTest1 {
     
 	private IProject testProject;
-	
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+	@Before
+    public void setUp() throws Exception {
         if (!ProjectTools.setup())
         	fail("could not perform basic project workspace setup");
 		testProject = ProjectTools.createProject("testProject1");
@@ -46,6 +46,7 @@ public class AutotoolsProjectTest1 extends TestCase {
      * Makefiles.
      * @throws Exception
      */
+	@Test
 	public void testAutotoolsProject1() throws Exception {
 		Path p = new Path("zip/project1.zip");
 		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null, true);
@@ -71,14 +72,13 @@ public class AutotoolsProjectTest1 extends TestCase {
 		x = new org.eclipse.core.runtime.Path("sample/Makefile");
 		assertTrue(testProject.exists(x));
 	}
-	
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		testProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 		try {
 			testProject.delete(true, true, null);
 		} catch (Exception e) {
 			//FIXME: Why does a ResourceException occur when deleting the project??
 		}
-		super.tearDown();
 	}
 }

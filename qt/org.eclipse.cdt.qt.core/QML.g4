@@ -19,16 +19,16 @@ qmlHeaderItem
 	;
 
 qmlImportDeclaration
-	: 'import' qmlQualifiedId DecimalLiteral ('as' Identifier)? ';'?
-	| 'import' StringLiteral DecimalLiteral? ('as' Identifier)? ';'?
+	: 'import' qmlQualifiedId DecimalLiteral ('as' Identifier)? semi
+	| 'import' StringLiteral DecimalLiteral? ('as' Identifier)? semi
 	;
 
 qmlQualifiedId
-	: Identifier ('.' Identifier)*
+	: qmlIdentifier ('.' qmlIdentifier)*
 	;
 
 qmlPragmaDeclaration
-	: 'pragma' Identifier ';'?
+	: 'pragma' Identifier semi
 	;
 
 qmlObjectRoot
@@ -44,14 +44,67 @@ qmlMembers
 	;
 
 qmlMember
-	: qmlQualifiedId ':' singleExpression
+	: qmlAttribute
 	| qmlObjectLiteral
-	| 'readonly'? 'property' qmlPropertyType Identifier (':' singleExpression)?
-	| functionDeclaration
+	| qmlPropertyDeclaration
+	| singleExpression semi
 	;
 
+qmlAttribute
+	: qmlQualifiedId ':' singleExpression semi
+	| qmlQualifiedId ':' qmlObjectLiteral
+	| qmlQualifiedId ':' qmlMembers
+	;
+
+qmlPropertyDeclaration
+	: READONLY? 'property' qmlPropertyType qmlIdentifier (':' singleExpression)? semi
+	;
 
 qmlPropertyType
-	: Identifier // TODO
-	| 'var'
-	;	
+	: BOOLEAN
+	| DOUBLE
+	| INT
+	| LIST
+	| COLOR
+	| REAL
+	| STRING
+	| URL
+	| VAR
+	;
+
+qmlIdentifier
+	: Identifier
+	// Allow a few keywords as identifiers
+	| LIST
+	| COLOR
+	| REAL
+	| STRING
+	| URL
+	;
+
+// QML reserved words
+READONLY : 'readonly' ;
+
+// QML future reserved words
+TRANSIENT :'transient';
+SYNCHRONIZED : 'synchronized' ;
+ABSTRACT : 'abstract' ;
+VOLATILE : 'volatile' ;
+NATIVE : 'native' ;
+GOTO : 'goto' ;
+BYTE : 'byte' ;
+LONG : 'long' ;
+CHAR : 'char' ;
+SHORT : 'short' ;
+FLOAT : 'float' ;
+
+// QML basic types
+BOOLEAN : 'boolean' ;
+DOUBLE : 'double' ;
+INT : 'int' ;
+LIST : 'list' ;
+COLOR : 'color' ;
+REAL : 'real' ;
+STRING : 'string' ;
+URL : 'url' ;
+VAR : 'var' ;

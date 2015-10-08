@@ -12,6 +12,14 @@ grammar ECMAScript;
 
 @lexer::members {
 	private boolean strictMode;
+	
+	public void setStrictMode(boolean mode) {
+		strictMode = mode;
+	}
+	
+	public boolean getStrictMode() {
+		return strictMode;
+	}
 
 	private boolean regexPermitted() {
 		return false;
@@ -19,17 +27,67 @@ grammar ECMAScript;
 }
 
 @parser::members {
+
+    private boolean lookAheadLineTerminator() {
+        int nextTokenIndex = getCurrentToken().getTokenIndex() - 1;
+	    Token nextToken = getTokenStream().get(nextTokenIndex);
+
+        // Move forward one more token if we encounter whitespace
+        if (nextToken.getType() == WhiteSpaceSequence
+        		&& nextToken.getChannel() == Lexer.HIDDEN) {
+        	nextTokenIndex--;
+        	nextToken = getTokenStream().get(nextTokenIndex);
+        }
+
+        // Line terminators only occur in the hidden channel
+	    if (nextToken.getChannel() != Lexer.HIDDEN) {
+	       	return false;
+	    }
+
+        // Found line terminator
+        if (nextToken.getType() == VerticalWhiteSpaceSequence) {
+        	return true;
+        }
+
+        // If the next token is a multi-line comment that has a
+        // line break, it also counts as a line terminator.
+        if (nextToken.getType() == MultiLineComment) {
+        	if (nextToken.getText().contains("\n")) {
+        		return true;
+        	}
+        }
+
+        return false;
+    }                                
+
 	private boolean insertSemi() {
 		if (getTokenStream().LT(1).getType() == RBRACE) {
 			return true;
 		}
 
-		// TODO - look for line terminator in hidden channel before
+		// look for line terminator in hidden channel before
 		// another token in the default channel
+		if (lookAheadLineTerminator()) {
+			return true;
+		}
 
 		return false;
 	}
 }
+
+ecmaScriptProgram
+	: sourceElements
+	;
+
+sourceElements
+	: sourceElement+
+	;
+
+sourceElement
+	: (singleExpression
+	| functionDeclaration)
+	semi
+	;
 
 semi
 	: SEMI
@@ -38,11 +96,26 @@ semi
 	;
 
 singleExpression
-	: Identifier
+	// TODO: implement proper expressions grammar
+	: functionCall
+	| Identifier
+	| DecimalLiteral
+	| BooleanLiteral
+	| StringLiteral
+	| HexIntegerLiteral
+	| NullLiteral
+	;
+
+functionCall
+	: qualifiedId LPAREN (singleExpression (COMMA singleExpression)*)? RPAREN
 	;
 
 functionDeclaration
 	: Identifier '('
+	;
+
+qualifiedId
+	: Identifier (DOT Identifier)*
 	;
 
 WhiteSpaceSequence
@@ -73,6 +146,10 @@ fragment LineTerminatorSequence
 	| '\u000D' '\u000A'?
 	| '\u2028'
 	| '\u2029'
+	;
+
+VerticalWhiteSpaceSequence
+	: (LineTerminator | LineTerminatorSequence)+ -> channel(HIDDEN)
 	;
 
 MultiLineComment

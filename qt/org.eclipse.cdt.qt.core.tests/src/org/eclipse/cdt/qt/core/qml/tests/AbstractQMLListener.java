@@ -1,11 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2015 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.qt.core.qml.tests;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLListener;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.EcmaScriptProgramContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.FunctionCallContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.FunctionDeclarationContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlAttributeContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlHeaderItemContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlIdentifierContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlImportDeclarationContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlMemberContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlMembersContext;
@@ -13,10 +27,14 @@ import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlObjectLiteralCon
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlObjectRootContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlPragmaDeclarationContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlProgramContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlPropertyDeclarationContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlPropertyTypeContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QmlQualifiedIdContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.QualifiedIdContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.SemiContext;
 import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.SingleExpressionContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.SourceElementContext;
+import org.eclipse.cdt.internal.qt.core.qml.parser.QMLParser.SourceElementsContext;
 
 public class AbstractQMLListener implements QMLListener {
 
@@ -200,6 +218,102 @@ public class AbstractQMLListener implements QMLListener {
 
 	@Override
 	public void exitFunctionDeclaration(FunctionDeclarationContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterEcmaScriptProgram(EcmaScriptProgramContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitEcmaScriptProgram(EcmaScriptProgramContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterSourceElements(SourceElementsContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitSourceElements(SourceElementsContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterSourceElement(SourceElementContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitSourceElement(SourceElementContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterQmlIdentifier(QmlIdentifierContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitQmlIdentifier(QmlIdentifierContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterQmlAttribute(QmlAttributeContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitQmlAttribute(QmlAttributeContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterQmlPropertyDeclaration(QmlPropertyDeclarationContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitQmlPropertyDeclaration(QmlPropertyDeclarationContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterFunctionCall(FunctionCallContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitFunctionCall(FunctionCallContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enterQualifiedId(QualifiedIdContext ctx) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exitQualifiedId(QualifiedIdContext ctx) {
 		// TODO Auto-generated method stub
 
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.alltests;
 
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -22,7 +23,7 @@ import junit.framework.TestSuite;
 public class AllTests extends TestSuite {
 	public static Test suite() throws Exception {
 		final AllTests suite = new AllTests();
-		suite.addTest(org.eclipse.cdt.autotools.tests.AllAutotoolsTests.suite());
+		suite.addTest(new JUnit4TestAdapter(org.eclipse.cdt.autotools.tests.AllAutotoolsTests.class));
 		//	// There are intermittent failures in these tests. No pattern to failures. Seems like indexer is interrupted  
 		if (System.getProperty("cdt.skip.known.test.failures") == null) { //$NON-NLS-1$
 			suite.addTest(org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite.suite());

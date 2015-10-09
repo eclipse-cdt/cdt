@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 QNX Software Systems and others.
+ * Copyright (c) 2008, 2016 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,9 +66,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 
     private static final String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
     
-    // Can be removed once we remove the deprecated newServiceFactory(String)
-	private boolean fIsNonStopSession = false;
-	
     private static final String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
 	
     private GdbLaunch fGdbLaunch;
@@ -146,9 +143,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         }
     	
         monitor.worked(1);
-
-        // Must set this here for users that call directly the deprecated newServiceFactory(String)
-        fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
 
         String gdbVersion = getGDBVersion(config);
         
@@ -478,28 +472,16 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	}
 
 	/**
-	 * @deprecated Replaced by newServiceFactory(ILaunchConfiguration, String)
-	 */
-	@Deprecated
-	protected IDsfDebugServicesFactory newServiceFactory(String version) {
-
-		if (fIsNonStopSession && isNonStopSupportedInGdbVersion(version)) {
-			return new GdbDebugServicesFactoryNS(version);
-		}
-		
-		return new GdbDebugServicesFactory(version);
-	}
-
-	/**
 	 * Method called to create the services factory for this debug session.
 	 * A subclass can override this method and provide its own ServiceFactory.
 	 * @since 4.1
 	 */
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
-		// Call the deprecated one for now to avoid code duplication.
-		// Once we get rid of the deprecated one, we can also get rid of fIsNonStopSession
-		fIsNonStopSession = LaunchUtils.getIsNonStopMode(config);
-		return newServiceFactory(version);
+		if (LaunchUtils.getIsNonStopMode(config) && isNonStopSupportedInGdbVersion(version)) {
+			return new GdbDebugServicesFactoryNS(version);
+		}
+		
+		return new GdbDebugServicesFactory(version);
 	}
 
 	@Override

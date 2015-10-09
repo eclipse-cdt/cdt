@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.eclipse.cdt.autotools.tests.AutotoolsTestsPlugin;
 import org.eclipse.cdt.autotools.tests.ProjectTools;
 import org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeDocumentProvider;
 import org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor;
@@ -33,6 +32,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import org.junit.Test;
 
 public class AutomakeColourizationTests {
 	
-	ProjectTools tools;
+	private ProjectTools tools;
 	private IProject project;
 	private IFile makefileAmFile;
 	
@@ -70,32 +70,27 @@ public class AutomakeColourizationTests {
         
         project.open(new NullProgressMonitor());
         
-        Display.getDefault().syncExec(new Runnable() {
+		Display.getDefault().syncExec(() -> {
+			try {
+				makefileAmFile = tools.createFile(project, "Makefile.am", makefileAmContents);
+				workbench = PlatformUI.getWorkbench();
 
-        	@Override
-			public void run() {
-        		try {
-        			makefileAmFile = tools.createFile(project, "Makefile.am", makefileAmContents);
-        			workbench = AutotoolsTestsPlugin.getDefault().getWorkbench();
+				IEditorPart openEditor = org.eclipse.ui.ide.IDE
+						.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), makefileAmFile, true);
 
-        			IEditorPart openEditor = org.eclipse.ui.ide.IDE.openEditor(workbench
-        					.getActiveWorkbenchWindow().getActivePage(), makefileAmFile,
-        					true);
+				AutomakeEditor automakeEditor = (AutomakeEditor) openEditor;
+				AutomakeDocumentProvider docProvider = automakeEditor.getAutomakefileDocumentProvider();
+				IDocument automakeDocument = docProvider.getDocument(openEditor.getEditorInput());
+				AutomakefileSourceConfiguration automakeSourceViewerConfig = automakeEditor
+						.getAutomakeSourceViewerConfiguration();
 
-        			AutomakeEditor automakeEditor = (AutomakeEditor) openEditor;
-        			AutomakeDocumentProvider docProvider = automakeEditor.getAutomakefileDocumentProvider();
-        			IDocument automakeDocument = docProvider.getDocument(openEditor.getEditorInput());
-        			AutomakefileSourceConfiguration automakeSourceViewerConfig = automakeEditor.getAutomakeSourceViewerConfiguration();
-
-        			ITypedRegion region = automakeDocument.getPartition(0);
-        			codeScanner = automakeSourceViewerConfig.getAutomakeCodeScanner();
-        			codeScanner.setRange(automakeDocument, region.getOffset(), region.getLength());
-        		} catch (Exception e) {
-        			fail();
-        		}
-        	}
-
-        });
+				ITypedRegion region = automakeDocument.getPartition(0);
+				codeScanner = automakeSourceViewerConfig.getAutomakeCodeScanner();
+				codeScanner.setRange(automakeDocument, region.getOffset(), region.getLength());
+			} catch (Exception e) {
+				fail(e.getMessage());
+			}
+		});
 
     }
     
@@ -103,7 +98,7 @@ public class AutomakeColourizationTests {
     	return codeScanner.nextToken();
     }
 	@Test
-	public void testAutomakeEditorColourization() throws Exception {
+	public void testAutomakeEditorColourization() {
 		// # This is a comment
 		IToken token0 = getNextToken();
 		assertTrue(token0 instanceof Token);

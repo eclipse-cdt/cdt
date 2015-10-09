@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests.editors;
 
-import org.eclipse.cdt.autotools.tests.AutotoolsTestsPlugin;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.cdt.autotools.tests.ProjectTools;
 import org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor;
 import org.eclipse.core.resources.IFile;
@@ -19,22 +21,24 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
-
-public class AutomakeEditorTests extends TestCase {
+public class AutomakeEditorTests {
 	
-	ProjectTools tools;
+	private ProjectTools tools;
 	private IProject project;
 	
-    protected void setUp() throws Exception {
-        super.setUp();
+	@Before
+    public void setUp() throws Exception {
         tools = new ProjectTools();
         if (!ProjectTools.setup())
         	fail("could not perform basic project workspace setup");
     }
 	  
+	@Test
 	public void testAutomakeEditorAssociation() throws Exception {
 		project = ProjectTools.createProject("testProjectAET");
 		
@@ -44,24 +48,19 @@ public class AutomakeEditorTests extends TestCase {
 		
 		project.open(new NullProgressMonitor());
 		
-		Display.getDefault().syncExec(new Runnable() {
+		Display.getDefault().syncExec(() -> {
+			try {
+				IFile makefileAmFile = tools.createFile(project, "Makefile.am", "");
+				assertTrue(makefileAmFile.exists());
 
-			public void run() {
-				try {
-					IFile makefileAmFile = tools.createFile(project, "Makefile.am", "");
-					assertTrue(makefileAmFile.exists());
+				IWorkbench workbench = PlatformUI.getWorkbench();
 
-					IWorkbench workbench = AutotoolsTestsPlugin.getDefault().getWorkbench();
-
-					IEditorPart openEditor = org.eclipse.ui.ide.IDE.openEditor(workbench
-							.getActiveWorkbenchWindow().getActivePage(), makefileAmFile,
-							true);
-					assertTrue(openEditor instanceof AutomakeEditor);
-				} catch (Exception e) {
-					fail();
-				}
+				IEditorPart openEditor = org.eclipse.ui.ide.IDE
+						.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), makefileAmFile, true);
+				assertTrue(openEditor instanceof AutomakeEditor);
+			} catch (Exception e) {
+				fail(e.getMessage());
 			}
-
 		});
 
 		project.delete(true, false, ProjectTools.getMonitor());

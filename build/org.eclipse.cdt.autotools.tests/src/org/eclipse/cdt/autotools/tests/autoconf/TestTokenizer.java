@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.autotools.ui.editors.parser.AutoconfTokenizer;
-import org.eclipse.cdt.autotools.ui.editors.parser.IAutoconfErrorHandler;
 import org.eclipse.cdt.autotools.ui.editors.parser.ITokenConstants;
 import org.eclipse.cdt.autotools.ui.editors.parser.ParseException;
 import org.eclipse.cdt.autotools.ui.editors.parser.Token;
@@ -43,23 +42,14 @@ public class TestTokenizer {
 		return new Document(text);
 	}
 
-	protected List<Token> tokenize(IDocument document) {
-		return tokenize(document, false);
-	}
-
 	protected List<Token> tokenize(IDocument document, boolean isM4Mode) {
 		tokenizerErrors = new ArrayList<>();
-		AutoconfTokenizer tokenizer = new AutoconfTokenizer(document, new IAutoconfErrorHandler() {
-			@Override
-			public void handleError(ParseException exception) {
-				tokenizerErrors.add(exception);
-			}
-			
+		AutoconfTokenizer tokenizer = new AutoconfTokenizer(document, (ParseException exception) -> {
+			tokenizerErrors.add(exception);
 		});
 		tokenizer.setM4Context(isM4Mode);
 		
-		List<Token> tokens = tokenize(tokenizer);
-		return tokens;
+		return tokenize(tokenizer);
 	}
 
 	protected List<Token> tokenize(AutoconfTokenizer tokenizer) {
@@ -444,12 +434,8 @@ public class TestTokenizer {
 	}
 
 	private AutoconfTokenizer createTokenizer(IDocument document) {
-		return new AutoconfTokenizer(document, new IAutoconfErrorHandler() {
-			@Override
-			public void handleError(ParseException exception) {
-				fail(exception.toString());
-			}
-			
+		return new AutoconfTokenizer(document, (ParseException exception) -> {
+			fail(exception.toString());
 		});
 	}
 	

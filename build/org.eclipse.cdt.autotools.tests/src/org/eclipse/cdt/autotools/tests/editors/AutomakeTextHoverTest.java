@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.autotools.tests.editors;
 
-import org.eclipse.cdt.autotools.tests.AutotoolsTestsPlugin;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.cdt.autotools.tests.ProjectTools;
 import org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeDocumentProvider;
 import org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor;
@@ -25,13 +27,15 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
+public class AutomakeTextHoverTest {
 
-public class AutomakeTextHoverTest extends TestCase {
-
-	ProjectTools tools;
+	private ProjectTools tools;
 	private IProject project;
 	private IFile makefileAmFile;
 	private AutomakeTextHover textHover;
@@ -67,8 +71,8 @@ public class AutomakeTextHoverTest extends TestCase {
 			"";
 	private IWorkbench workbench;
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		tools = new ProjectTools();
 		if (!ProjectTools.setup())
 			fail("could not perform basic project workspace setup");
@@ -81,170 +85,138 @@ public class AutomakeTextHoverTest extends TestCase {
 
 		project.open(new NullProgressMonitor());
 
-		Display.getDefault().syncExec(new Runnable() {
+		Display.getDefault().syncExec(() -> {
+			try {
+				makefileAmFile = tools.createFile(project, "Makefile.am", makefileAmContents);
+				workbench = PlatformUI.getWorkbench();
 
-			public void run() {
-				try {
-					makefileAmFile = tools.createFile(project, "Makefile.am", makefileAmContents);
-					workbench = AutotoolsTestsPlugin.getDefault().getWorkbench();
+				IEditorPart openEditor = org.eclipse.ui.ide.IDE
+						.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), makefileAmFile, true);
 
-					IEditorPart openEditor = org.eclipse.ui.ide.IDE.openEditor(workbench
-							.getActiveWorkbenchWindow().getActivePage(), makefileAmFile,
-							true);
-
-					automakeEditor = (AutomakeEditor) openEditor;
-					AutomakeDocumentProvider docProvider = automakeEditor.getAutomakefileDocumentProvider();
-					automakeDocument = docProvider.getDocument(openEditor.getEditorInput());
-					AutomakefileSourceConfiguration automakeSourceViewerConfig = automakeEditor.getAutomakeSourceViewerConfiguration();
-					textHover = (AutomakeTextHover) automakeSourceViewerConfig.getTextHover(null, "");
-				} catch (Exception e) {
-					fail();
-				}
+				automakeEditor = (AutomakeEditor) openEditor;
+				AutomakeDocumentProvider docProvider = automakeEditor.getAutomakefileDocumentProvider();
+				automakeDocument = docProvider.getDocument(openEditor.getEditorInput());
+				AutomakefileSourceConfiguration automakeSourceViewerConfig = automakeEditor
+						.getAutomakeSourceViewerConfiguration();
+				textHover = (AutomakeTextHover) automakeSourceViewerConfig.getTextHover(null, "");
+			} catch (Exception e) {
+				fail(e.getMessage());
 			}
-
 		});
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		project.delete(true, false, ProjectTools.getMonitor());
 	}
 
+	@Test
 	public void testGetHoverInfoTargetName1() {
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 45);
-				if (hoverRegion == null)
-					fail("Null hoverRegion");
-				// hover between the $ and the @ in target1
-				assertEquals(44, hoverRegion.getOffset());
-				assertEquals(2, hoverRegion.getLength());
-				try {
-					assertEquals("$@", automakeDocument.get(hoverRegion.getOffset(),
-							hoverRegion.getLength()));
-				} catch (BadLocationException e) {
-					fail("BadLocationException");
-					e.printStackTrace();
-				}
-				assertEquals("target1", textHover.getHoverInfo(
-						automakeEditor.getAutomakeSourceViewer(), hoverRegion));
+		Display.getDefault().syncExec(() -> {
+			IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 45);
+			if (hoverRegion == null)
+				fail("Null hoverRegion");
+			// hover between the $ and the @ in target1
+			assertEquals(44, hoverRegion.getOffset());
+			assertEquals(2, hoverRegion.getLength());
+			try {
+				assertEquals("$@", automakeDocument.get(hoverRegion.getOffset(), hoverRegion.getLength()));
+			} catch (BadLocationException e) {
+				fail("BadLocationException");
+				e.printStackTrace();
 			}
+			assertEquals("target1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
-
+	@Test
 	public void testGetHoverInfoTargetName2() {
 		// hover between the $ and the @ in target2
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 87);
-				if (hoverRegion == null)
-					fail("Null hoverRegion");
-				assertEquals(86, hoverRegion.getOffset());
-				assertEquals(2, hoverRegion.getLength());
-				try {
-					assertEquals("$@", automakeDocument.get(hoverRegion.getOffset(),
-							hoverRegion.getLength()));
-				} catch (BadLocationException e) {
-					fail("BadLocationException");
-					e.printStackTrace();
-				}
-				assertEquals("target2", textHover.getHoverInfo(
-						automakeEditor.getAutomakeSourceViewer(), hoverRegion));
+		Display.getDefault().syncExec(() -> {
+			IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 87);
+			if (hoverRegion == null)
+				fail("Null hoverRegion");
+			assertEquals(86, hoverRegion.getOffset());
+			assertEquals(2, hoverRegion.getLength());
+			try {
+				assertEquals("$@", automakeDocument.get(hoverRegion.getOffset(), hoverRegion.getLength()));
+			} catch (BadLocationException e) {
+				fail("BadLocationException");
+				e.printStackTrace();
 			}
+			assertEquals("target2", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
-
+	@Test
 	public void testGetHoverInfoForTargetDependency() {
 		// hover between the $ and the < in target2
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 96);
-				if (hoverRegion == null)
-					fail("Null hoverRegion");
-				assertEquals(95, hoverRegion.getOffset());
-				assertEquals(2, hoverRegion.getLength());
-				try {
-					assertEquals("$<", automakeDocument.get(hoverRegion.getOffset(),
-							hoverRegion.getLength()));
-				} catch (BadLocationException e) {
-					fail("BadLocationException");
-					e.printStackTrace();
-				}
-				assertEquals("target1", textHover.getHoverInfo(
-						automakeEditor.getAutomakeSourceViewer(), hoverRegion));
+		Display.getDefault().syncExec(() -> {
+			IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 96);
+			if (hoverRegion == null)
+				fail("Null hoverRegion");
+			assertEquals(95, hoverRegion.getOffset());
+			assertEquals(2, hoverRegion.getLength());
+			try {
+				assertEquals("$<", automakeDocument.get(hoverRegion.getOffset(), hoverRegion.getLength()));
+			} catch (BadLocationException e) {
+				fail("BadLocationException");
+				e.printStackTrace();
 			}
+			assertEquals("target1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
-
+	@Test
 	public void testGetHoverInfoForTargetDependencies() {
 		// hover between the $ and the ? in target3
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 131);
-				if (hoverRegion == null)
-					fail("Null hoverRegion");
-				assertEquals(130, hoverRegion.getOffset());
-				assertEquals(2, hoverRegion.getLength());
-				try {
-					assertEquals("$?", automakeDocument.get(hoverRegion.getOffset(),
-							hoverRegion.getLength()));
-				} catch (BadLocationException e) {
-					fail("BadLocationException");
-					e.printStackTrace();
-				}
-				assertEquals("target1 target2", textHover.getHoverInfo(
-						automakeEditor.getAutomakeSourceViewer(), hoverRegion));
+		Display.getDefault().syncExec(() -> {
+			IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 131);
+			if (hoverRegion == null)
+				fail("Null hoverRegion");
+			assertEquals(130, hoverRegion.getOffset());
+			assertEquals(2, hoverRegion.getLength());
+			try {
+				assertEquals("$?", automakeDocument.get(hoverRegion.getOffset(), hoverRegion.getLength()));
+			} catch (BadLocationException e) {
+				fail("BadLocationException");
+				e.printStackTrace();
 			}
+			assertEquals("target1 target2",
+					textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
-
+	@Test
 	public void testGetHoverForMacro1() {
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 32);
-				if (hoverRegion == null)
-					fail("Null hoverRegion");
-				// hover between the M and the A in the first $(MACRO) reference
-				assertEquals(31, hoverRegion.getOffset());
-				assertEquals(5, hoverRegion.getLength());
-				try {
-					assertEquals("MACRO", automakeDocument.get(hoverRegion.getOffset(),
-							hoverRegion.getLength()));
-				} catch (BadLocationException e) {
-					fail("BadLocationException");
-					e.printStackTrace();
-				}
-				assertEquals("case1", textHover.getHoverInfo(
-						automakeEditor.getAutomakeSourceViewer(), hoverRegion));
+		Display.getDefault().syncExec(() -> {
+			IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 32);
+			if (hoverRegion == null)
+				fail("Null hoverRegion");
+			// hover between the M and the A in the first $(MACRO) reference
+			assertEquals(31, hoverRegion.getOffset());
+			assertEquals(5, hoverRegion.getLength());
+			try {
+				assertEquals("MACRO", automakeDocument.get(hoverRegion.getOffset(), hoverRegion.getLength()));
+			} catch (BadLocationException e) {
+				fail("BadLocationException");
+				e.printStackTrace();
 			}
+			assertEquals("case1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
-
+	@Test
 	public void testGetHoverForMacro2() {
 		// hover between the M and the A in the ${MACRO} reference in target2
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 74);
-				if (hoverRegion == null)
-					fail("Null hoverRegion");
-				assertEquals(73, hoverRegion.getOffset());
-				assertEquals(5, hoverRegion.getLength());
-				try {
-					assertEquals("MACRO", automakeDocument.get(hoverRegion.getOffset(),
-							hoverRegion.getLength()));
-				} catch (BadLocationException e) {
-					fail("BadLocationException");
-					e.printStackTrace();
-				}
-				assertEquals("case1", textHover.getHoverInfo(
-						automakeEditor.getAutomakeSourceViewer(), hoverRegion));
+		Display.getDefault().syncExec(() -> {
+			IRegion hoverRegion = textHover.getHoverRegion(automakeEditor.getAutomakeSourceViewer(), 74);
+			if (hoverRegion == null)
+				fail("Null hoverRegion");
+			assertEquals(73, hoverRegion.getOffset());
+			assertEquals(5, hoverRegion.getLength());
+			try {
+				assertEquals("MACRO", automakeDocument.get(hoverRegion.getOffset(), hoverRegion.getLength()));
+			} catch (BadLocationException e) {
+				fail("BadLocationException");
+				e.printStackTrace();
 			}
+			assertEquals("case1", textHover.getHoverInfo(automakeEditor.getAutomakeSourceViewer(), hoverRegion));
 		});
 	}
 

@@ -72,7 +72,7 @@ public class UpdateConfigureTest {
 	@Test
 	public void testGprofGcovDebugFlagOptions() throws Exception {
 		Path p = new Path("zip/project2.zip");
-		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null);
+		ProjectTools.addSourceContainerWithImport(testProject, "src", p);
 		assertTrue(testProject.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
 		ProjectTools.setConfigDir(testProject, "src");
 		ProjectTools.markExecutable(testProject, "src/autogen.sh");
@@ -98,16 +98,12 @@ public class UpdateConfigureTest {
 		
 		File f = r.getLocation().toFile();
 		
-		FileReader fr = new FileReader(f);
-		
 		char[] cbuf = new char[2000];
-		fr.read(cbuf);
-		
-		String s = new String(cbuf);
-		
-		assertTrue(s.contains("testProject2/src/configure CFLAGS=-pg CXXFLAGS=-pg"));
-		
-		fr.close();
+		try (FileReader fr = new FileReader(f)) {
+			fr.read(cbuf);
+			String s = new String(cbuf);
+			assertTrue(s.contains("testProject2/src/configure CFLAGS=-pg CXXFLAGS=-pg"));
+		}
 		
 		// Reset gprof opt and set gcov opt
 		opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
@@ -125,14 +121,13 @@ public class UpdateConfigureTest {
 		
 		r = testProject.findMember(x);
 		f = r.getLocation().toFile();
-		fr = new FileReader(f);
-		fr.read(cbuf);
-		
-		s = new String(cbuf);
-		
-		assertTrue(s.contains("testProject2/src/configure CFLAGS=-fprofile-arcs -ftest-coverage CXXFLAGS=-fprofile-arcs -ftest-coverage"));
+		try (FileReader fr = new FileReader(f)) {
+			fr.read(cbuf);
+			String s = new String(cbuf);
+			assertTrue(s.contains(
+					"testProject2/src/configure CFLAGS=-fprofile-arcs -ftest-coverage CXXFLAGS=-fprofile-arcs -ftest-coverage"));
 
-		fr.close();
+		}
 		
 		// Reset gcov opt and set debug opt
 		opts = AutotoolsPlugin.getDefault().getAutotoolCfgOptions(testProject, cfg.getId());
@@ -150,14 +145,11 @@ public class UpdateConfigureTest {
 		
 		r = testProject.findMember(x);
 		f = r.getLocation().toFile();
-		fr = new FileReader(f);
-		fr.read(cbuf);
-		
-		s = new String(cbuf);
-		
-		assertTrue(s.contains("testProject2/src/configure CFLAGS=-g CXXFLAGS=-g"));
-		
-		fr.close();
+		try (FileReader fr = new FileReader(f)) {
+			fr.read(cbuf);
+			String s = new String(cbuf);
+			assertTrue(s.contains("testProject2/src/configure CFLAGS=-g CXXFLAGS=-g"));
+		}
 	}
 		
     /**
@@ -168,7 +160,7 @@ public class UpdateConfigureTest {
 	@Test
 	public void testGetAndUpdateConfigureOptions() throws Exception {
 		Path p = new Path("zip/project2.zip");
-		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null);
+		ProjectTools.addSourceContainerWithImport(testProject, "src", p);
 		assertTrue(testProject.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
 		ProjectTools.setConfigDir(testProject, "src");
 		ProjectTools.markExecutable(testProject, "src/autogen.sh");
@@ -557,14 +549,7 @@ public class UpdateConfigureTest {
 					}
 				}
 			}
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException|ParserConfigurationException|SAXException e) {
 			e.printStackTrace();
 		}
 

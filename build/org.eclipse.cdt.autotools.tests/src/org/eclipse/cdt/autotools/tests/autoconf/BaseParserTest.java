@@ -11,13 +11,12 @@
 package org.eclipse.cdt.autotools.tests.autoconf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -40,35 +39,22 @@ public abstract class BaseParserTest {
 	private Set<String> macroNames;
 	private AutoconfMacroDetector macroDetector;
 
-	public BaseParserTest() {
-		super();
-	}
-
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		errors = new ArrayList<>();
-		this.errorHandler = new IAutoconfErrorHandler() {
-			@Override
-			public void handleError(ParseException exception) {
-				assertNotNull(exception);
-				errors.add(exception);
-			}
-			
+		this.errorHandler = (ParseException exception) -> {
+			assertNotNull(exception);
+			errors.add(exception);
 		};
 	
 		this.macroDetector = new AutoconfMacroDetector();
 		
 		macroNames = new HashSet<>();
-		this.macroValidator = new IAutoconfMacroValidator() {
-			@Override
-			public void validateMacroCall(AutoconfMacroElement element)
-					throws ParseException {
-				assertNotNull(element);
-				assertNotNull(element.getName());
-				assertNotNull(element.getChildren());
-				macroNames.add(element.getName());
-			}
-			
+		this.macroValidator = (AutoconfMacroElement element) -> {
+			assertNotNull(element);
+			assertNotNull(element.getName());
+			assertNotNull(element.getChildren());
+			macroNames.add(element.getName());
 		};
 	}
 
@@ -134,23 +120,22 @@ public abstract class BaseParserTest {
 		assertEquals(string, document.get());
 	
 		if (!allowErrors) {
-			if (errors.size() > 0)
+			if (!errors.isEmpty())
 				fail("got errors" + errors.get(0));
 		}
 		else
-			assertTrue(errors.size() > 0);
+			assertFalse(errors.isEmpty());
 		
 		return root2;
 	}
 
 	protected void checkError(String msgKey) {
-		for (Iterator<ParseException> iter = errors.iterator(); iter.hasNext(); ) {
-			ParseException exc = iter.next();
+		for (ParseException exc: errors) {
 			if (exc.getMessage().contains(msgKey))
 				return;
 		}
 		String any = "";
-		if (errors.size() > 0)
+		if (!errors.isEmpty())
 			any = ", but saw " + errors.get(0).toString();
 		fail("did not find error: " + msgKey + any );
 	}
@@ -158,8 +143,7 @@ public abstract class BaseParserTest {
 	protected void checkError(String msgKey, int line) {
 		ParseException possible = null;
 		int distance = 999;
-		for (Iterator<ParseException> iter = errors.iterator(); iter.hasNext(); ) {
-			ParseException exc = iter.next();
+		for (ParseException exc : errors) {
 			if (exc.getMessage().contains(msgKey)) {
 				int curDistance = Math.abs(exc.getLineNumber() - line);
 				if (curDistance < distance) {

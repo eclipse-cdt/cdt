@@ -39,13 +39,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.osgi.framework.FrameworkUtil;
 
 
 @SuppressWarnings("restriction")
@@ -61,9 +62,9 @@ public class ProjectTools {
     /**
      * Setup routine for tests.
      * @return true if setup successful, false otherwise
-     * @throws Exception
+     * @throws CoreException 
      */
-	public static boolean setup() throws Exception {
+	public static boolean setup() throws CoreException  {
 		if (!setupComplete) {
 			IWorkspaceDescription desc;
 			workspace = ResourcesPlugin.getWorkspace();
@@ -151,8 +152,8 @@ public class ProjectTools {
 				} catch (IOException e) {
 				}
 
-				if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-						monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+				if (launcher.waitAndRead(stdout, stderr,
+						SubMonitor.convert(monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
 					return false;
 				}
 			} else
@@ -185,8 +186,7 @@ public class ProjectTools {
 		@Override
 		public IConfiguration[] getSelectedConfigurations() {
 			IProjectType projectType = ManagedBuildManager.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
-			IConfiguration[] cfgs = projectType.getConfigurations();
-			return cfgs;
+			return projectType.getConfigurations();
 		}
 	}
 	
@@ -204,10 +204,7 @@ public class ProjectTools {
 		try {
 			testProject.create(monitor);
 			testProject.open(monitor);
-//			IProjectDescription description = workspace.newProjectDescription(name);
-//			if(location != null)
-//				description.setLocationURI(location);
-			IProject newProject = CCorePlugin.getDefault().createCDTProject(description, testProject, new SubProgressMonitor(monitor,25));
+			IProject newProject = CCorePlugin.getDefault().createCDTProject(description, testProject, SubMonitor.convert(monitor,25));
 			ConvertToAutotoolsProjectWizardTest wizard = new ConvertToAutotoolsProjectWizardTest();
 			wizard.addPages();
 			ConvertToAutotoolsProjectWizardPage page = new ConvertToAutotoolsProjectWizardPage("test", wizard);
@@ -230,22 +227,6 @@ public class ProjectTools {
 		String id = cfgd.getId();
 		IAConfiguration cfg = AutotoolsConfigurationManager.getInstance().getConfiguration(project, id, true);
 		cfg.setConfigToolDirectory(dir);
-//		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-//		ITool tool = info.getToolFromOutputExtension("status"); //$NON-NLS-1$
-//		IOption[] options = tool.getOptions();
-//		try {
-//		for (int i = 0; i < options.length; ++i) {
-//			if (options[i].getValueType() == IOption.STRING) {
-//				String id = options[i].getId();
-//				if (id.indexOf("configdir") > 0) { //$NON-NLS-1$
-//					options[i].setValue(dir);
-//					break;
-//				}
-//			}
-//		}
-//		} catch (BuildException e) {
-//			// do nothing
-//		}
 	}
 	
 	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
@@ -282,7 +263,7 @@ public class ProjectTools {
 				} catch (IOException e) {
 				}
 
-				if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
+				if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(
 						monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
 					return false;
 				}
@@ -302,6 +283,7 @@ public class ProjectTools {
 	}
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	
@@ -313,33 +295,8 @@ public class ProjectTools {
 	 * @param containerName The name of the new source container
 	 * @return The handle to the new source container
 	 * @throws CoreException Creation failed
-	 */		
-	public static IContainer addSourceContainer(IProject jproject, String containerName) throws CoreException {
-		return addSourceContainer(jproject, containerName, new Path[0]);
-	}
-
-	/**
-	 * Adds a source container to a IProject.
-	 * @param jproject The parent project
-	 * @param containerName The name of the new source container
-	 * @param exclusionFilters Exclusion filters to set
-	 * @return The handle to the new source container
-	 * @throws CoreException Creation failed
-	 */		
-	public static IContainer addSourceContainer(IProject jproject, String containerName, IPath[] exclusionFilters) throws CoreException {
-		return addSourceContainer(jproject, containerName, new Path[0], exclusionFilters);
-	}
-	
-	/**
-	 * Adds a source container to a IProject.
-	 * @param jproject The parent project
-	 * @param containerName The name of the new source container
-	 * @param inclusionFilters Inclusion filters to set
-	 * @param exclusionFilters Exclusion filters to set
-	 * @return The handle to the new source container
-	 * @throws CoreException Creation failed
 	 */				
-	public static IContainer addSourceContainer(IProject jproject, String containerName, IPath[] inclusionFilters, IPath[] exclusionFilters) throws CoreException {
+	public static IContainer addSourceContainer(IProject jproject, String containerName) throws CoreException {
 		IProject project= jproject.getProject();
 		IContainer container= null;
 		if (containerName == null || containerName.length() == 0) {
@@ -347,7 +304,7 @@ public class ProjectTools {
 		} else {
 			IFolder folder= project.getFolder(containerName);
 			if (!folder.exists()) {
-				CoreUtility.createFolder(folder, false, true, null);
+				createFolder(folder, false, true, null);
 			}
 			container= folder;
 		}
@@ -361,7 +318,6 @@ public class ProjectTools {
 	 * @param project The parent project
 	 * @param containerName Name of the source container
 	 * @param zipFile Archive to import
-	 * @param containerEncoding encoding for the generated source container
 	 * @param generate true if configuration files need to be pre-generated
 	 * @param exclusionFilters Exclusion filters to set
 	 * @return The handle to the new source container
@@ -369,21 +325,14 @@ public class ProjectTools {
 	 * @throws CoreException Creation failed
 	 * @throws IOException Creation failed
 	 */		
-	public static IContainer addSourceContainerWithImport(IProject project, String containerName, File zipFile, String containerEncoding, boolean generate, IPath[] exclusionFilters) throws InvocationTargetException, CoreException, IOException {
-		ZipFile file= new ZipFile(zipFile);
-		try {
-//			IPackageFragmentRoot root= addSourceContainer(jproject, containerName, exclusionFilters);
-//			((IContainer) root.getCorrespondingResource()).setDefaultCharset(containerEncoding, null);
-			IContainer root= addSourceContainer(project, containerName, exclusionFilters);
+	public static IContainer addSourceContainerWithImport(IProject project, String containerName, File zipFile, boolean generate) throws InvocationTargetException, CoreException, IOException {
+		try (ZipFile file= new ZipFile(zipFile)){
+			IContainer root= addSourceContainer(project, containerName);
 			if (generate)
 				importFilesFromZipAndGenerate(file, root.getFullPath(), null);
 			else
 				importFilesFromZip(file, root.getFullPath(), null);
 			return root;
-		} finally {
-			if (file != null) {
-				file.close();
-			}
 		}
 	}
 
@@ -393,16 +342,15 @@ public class ProjectTools {
 	 * @param project The parent project
 	 * @param containerName Name of the source container
 	 * @param path path of zipFile Archive to import
-	 * @param containerEncoding encoding for the generated source container
 	 * @param generate true if configuration files need to be pre-generated
 	 * @return The handle to the new source container
 	 * @throws InvocationTargetException Creation failed
 	 * @throws CoreException Creation failed
 	 * @throws IOException Creation failed
 	 */		
-	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath, String containerEncoding, boolean generate) throws InvocationTargetException, CoreException, IOException {
-		File zipFile = new File(FileLocator.toFileURL(FileLocator.find(AutotoolsTestsPlugin.getDefault().getBundle(), zipFilePath, null)).getFile());
-		return addSourceContainerWithImport(project, containerName, zipFile, containerEncoding, generate, null);
+	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath, boolean generate) throws InvocationTargetException, CoreException, IOException {
+		File zipFile = new File(FileLocator.toFileURL(FileLocator.find(FrameworkUtil.getBundle(ProjectTools.class), zipFilePath, null)).getFile());
+		return addSourceContainerWithImport(project, containerName, zipFile, generate);
 	}
 	
 	/**
@@ -411,27 +359,13 @@ public class ProjectTools {
 	 * @param project The parent project
 	 * @param containerName Name of the source container
 	 * @param path path of zipFile Archive to import
-	 * @param containerEncoding encoding for the generated source container
 	 * @return The handle to the new source container
 	 * @throws InvocationTargetException Creation failed
 	 * @throws CoreException Creation failed
 	 * @throws IOException Creation failed
 	 */		
-	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath, String containerEncoding) throws InvocationTargetException, CoreException, IOException {
-		return addSourceContainerWithImport(project, containerName, zipFilePath, containerEncoding, false);
-	}
-
-	/**
-	 * Create an empty file for a project.
-	 * @param project The project to create the file for
-	 * @param filename The name of the new file
-	 * @return the created file
-	 * @throws CoreException
-	 */
-	public IFile createEmptyFile(IProject project, String filename) throws CoreException {
-		IFile emptyFile = project.getFile(filename);
-		emptyFile.create(null, false, null);
-		return emptyFile;
+	public static IContainer addSourceContainerWithImport(IProject project, String containerName, Path zipFilePath) throws InvocationTargetException, CoreException, IOException {
+		return addSourceContainerWithImport(project, containerName, zipFilePath, false);
 	}
 
 	/**
@@ -450,53 +384,6 @@ public class ProjectTools {
 	}
 	
 	/**
-	 * Create a virtual folder for a project
-	 * @param project The project
-	 * @param path Folder path
-	 * @return the virtual folder
-	 * @throws CoreException
-	 */
-	public static IContainer createVirtualFolder(IProject project, IPath path) throws CoreException {
-		int segmentCount = path.segmentCount();
-		IContainer currentFolder = project;
-
-		for (int i = 0; i < segmentCount; i++) {
-			currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
-			if (!currentFolder.exists()) {
-				((IFolder) currentFolder).create(IResource.VIRTUAL
-						| IResource.DERIVED, true, new NullProgressMonitor());
-			}
-		}
-		return currentFolder;
-	}
-	
-	/**
-	 * Create a linked resource for a project
-	 * @param project The project
-	 * @param folderName Name of the linked folder in the project
-	 * @param path The URI of the real file/folder
-	 * 
-	 * @return
-	 * @throws CoreException
-	 */
-	public static IContainer createLinkedFolder(IProject project, IPath projectPath, IPath realPath) throws CoreException {
-		int segmentCount = projectPath.segmentCount() - 1;
-		IContainer currentFolder = project;
-
-		for (int i = 0; i < segmentCount; i++) {
-			currentFolder = currentFolder.getFolder(new Path(projectPath.segment(i)));
-			if (!currentFolder.exists()) {
-				((IFolder) currentFolder).create(IResource.DERIVED | IResource.VIRTUAL, true, new NullProgressMonitor());
-			}
-		}
-		IFolder folder = currentFolder.getFolder(new Path(projectPath.lastSegment()));
-		if (!folder.isLinked()) {
-			((IFolder)folder).createLink(realPath, 0, null);
-		}
-		return folder;
-	}
-	
-	/**
 	 * Create a linked folder for a project
 	 * @param project The project
 	 * @param folderName Name of the linked folder in the project
@@ -509,17 +396,14 @@ public class ProjectTools {
 		final IFolder folderHandle = root.getFolder(project.getFullPath().append(folderName));
 
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(IProgressMonitor monitor) throws CoreException {
 				try {
-					monitor
-							.beginTask(
-									IDEWorkbenchMessages.NewFolderDialog_progress,
-									2000);
+					monitor.beginTask(IDEWorkbenchMessages.NewFolderDialog_progress, 2000);
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					folderHandle.createLink(linkTarget,
-							IResource.ALLOW_MISSING_LOCAL, monitor);
+					folderHandle.createLink(linkTarget, IResource.ALLOW_MISSING_LOCAL, monitor);
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
@@ -529,15 +413,27 @@ public class ProjectTools {
 			}
 		};
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-					operation);
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(operation);
 		} catch (InterruptedException exception) {
 			return null;
-		} catch (InvocationTargetException exception) {
-			throw exception;
 		}
 		return folderHandle;
 	}
 
+	/**
+	 * Creates a folder and all parent folders if not existing.
+	 * Project must exist.
+	 * <code> org.eclipse.ui.dialogs.ContainerGenerator</code> is too heavy
+	 * (creates a runnable)
+	 */
+	public static void createFolder(IFolder folder, boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
+		if (!folder.exists()) {
+			IContainer parent= folder.getParent();
+			if (parent instanceof IFolder) {
+				createFolder((IFolder)parent, force, local, null);
+			}
+			folder.create(force, local, monitor);
+		}
+	}
 	
 }

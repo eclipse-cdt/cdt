@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.cdt.autotools.tests;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Bundle-Activator: org.eclipse.cdt.autotools.tests.AutotoolsTestsPlugin
 Bundle-Vendor: %provider
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -23,7 +22,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.autotools.ui;bundle-version="1.0.0",
  org.eclipse.cdt.core.tests
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.cdt.autotools.tests,
  org.eclipse.cdt.autotools.tests.autoconf,
  org.eclipse.cdt.autotools.tests.editors

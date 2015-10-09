@@ -47,7 +47,7 @@ public class AutotoolsProjectTest0 {
 	@Test
 	public void testAutotoolsProject0() throws Exception {
 		Path p = new Path("zip/project1.zip");
-		ProjectTools.addSourceContainerWithImport(testProject, null, p, null, true);
+		ProjectTools.addSourceContainerWithImport(testProject, null, p, true);
 		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
 		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("ChangeLog");
 		assertTrue(testProject.exists(x));

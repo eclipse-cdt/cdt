@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.junit.After;
@@ -36,7 +37,7 @@ public class AutotoolsEnvironmentVarTest {
 	private IProject testProject;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws CoreException {
 		if (!ProjectTools.setup())
 			fail("could not perform basic project workspace setup");
 		testProject = ProjectTools.createProject("testProject0");
@@ -57,7 +58,7 @@ public class AutotoolsEnvironmentVarTest {
 	public void testAutotoolsEnvironmentVar() throws Exception {
 
 		Path p = new Path("zip/project1.zip");
-		ProjectTools.addSourceContainerWithImport(testProject, null, p, null, true);
+		ProjectTools.addSourceContainerWithImport(testProject, null, p, true);
 		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
 		ICConfigurationDescription cfgDes = CoreModel.getDefault().getProjectDescription(testProject)
 				.getActiveConfiguration();

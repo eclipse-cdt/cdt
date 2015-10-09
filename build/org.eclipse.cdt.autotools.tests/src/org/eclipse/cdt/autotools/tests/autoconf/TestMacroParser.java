@@ -31,12 +31,12 @@ import org.junit.Test;
 public class TestMacroParser extends BaseParserTest {
 
 	@Test
-	public void testEmpty() throws Exception {
+	public void testEmpty() {
 		parse("");
 	}
 	
 	@Test
-	public void testComments() throws Exception {
+	public void testComments() {
 		// 
 		String text = 
 			"dnl first line\n" +
@@ -49,7 +49,7 @@ public class TestMacroParser extends BaseParserTest {
 	}
 	
 	@Test
-	public void testMacroParsing1() throws Exception {
+	public void testMacroParsing1() {
 		// 
 		String text =
 			"AC_REQUIRE([AM_SANITY_CHECK])\n" + 
@@ -77,7 +77,7 @@ public class TestMacroParser extends BaseParserTest {
 	}
 	
 	@Test
-	public void testMacroParsing2() throws Exception {
+	public void testMacroParsing2() {
 		// 
 		String text =
 			"AC_TWO_ARGS(first,second)\n" + 
@@ -107,7 +107,7 @@ public class TestMacroParser extends BaseParserTest {
 	}
 	
 	@Test
-	public void testMacroParsing3() throws Exception {
+	public void testMacroParsing3() {
 		// 
 		String text =
 			"AC_ONE_ARG( [quoted( arg ), second] )\n" + 
@@ -135,7 +135,7 @@ public class TestMacroParser extends BaseParserTest {
 	}
 
 	@Test
-	public void testMacroParsing4() throws Exception {
+	public void testMacroParsing4() {
 		// 
 		String text =
 			"AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],\r\n" + 
@@ -160,7 +160,7 @@ public class TestMacroParser extends BaseParserTest {
 	}
 
 	@Test
-	public void testMacroParsing5() throws Exception {
+	public void testMacroParsing5() {
 		// check that complex shell constructs don't throw off the
 		// parser, and also that we don't mistake shell tokens in a macro argument
 		String arg2 =
@@ -205,7 +205,7 @@ public class TestMacroParser extends BaseParserTest {
 	}
 
 	@Test
-	public void testMacroParsing6() throws Exception {
+	public void testMacroParsing6() {
 		// empty arguments
 		String text =
 			"AC_DEFUN( ,\n" +

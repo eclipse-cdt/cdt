@@ -15,12 +15,13 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.junit.Before;
 import org.junit.Test;
 
 public class AutotoolsProjectNatureTest {
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws CoreException {
         if (!ProjectTools.setup())
         	fail("could not perform basic project workspace setup");
      }

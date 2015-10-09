@@ -61,7 +61,7 @@ public class AutotoolsVirtualFolderTest {
 		configDir.deleteOnExit();
 		assertTrue(configDir.mkdir());
 		ProjectTools.createLinkedFolder(testProject, "src", URIUtil.append(root.getLocationURI(), "config"));
-		ProjectTools.addSourceContainerWithImport(testProject, "src", p, null);
+		ProjectTools.addSourceContainerWithImport(testProject, "src", p);
 		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
 		assertTrue(exists("src/ChangeLog"));
 		ProjectTools.setConfigDir(testProject, "src");

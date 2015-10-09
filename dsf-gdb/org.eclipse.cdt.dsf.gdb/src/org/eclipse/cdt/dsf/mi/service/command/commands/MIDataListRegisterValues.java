@@ -17,7 +17,6 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
-import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIFormat;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
@@ -53,18 +52,6 @@ public class MIDataListRegisterValues extends MICommand<MIDataListRegisterValues
     	init(fmt, regnos);
     }
 
-    @Deprecated
-    public MIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt) {
-        this(ctx, fmt, null);
-    }
-    
-    @Deprecated
-    public MIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt, int [] regnos) {
-        super(ctx, "-data-list-register-values"); //$NON-NLS-1$
-        init(fmt, regnos);
-    }
-    
-    
     private void init(int fmt, int [] regnos) {
         regnums = regnos;
 
@@ -179,14 +166,6 @@ public class MIDataListRegisterValues extends MICommand<MIDataListRegisterValues
         /*
          *  Now construct a new one. The format we will use is this command.
          */
-        MIDataListRegisterValues dataValues;
-        if (context instanceof IFrameDMContext) {
-        	dataValues = new MIDataListRegisterValues((IFrameDMContext)context, fFmt, finalregnums);
-        } else {
-        	//Keeping for compatibility with potential users
-        	dataValues = new MIDataListRegisterValues((IMIExecutionDMContext)context, fFmt, finalregnums);        	
-        }
-        
-        return(dataValues);
+        return new MIDataListRegisterValues((IFrameDMContext)getContext(), fFmt, finalregnums);
     }
 }

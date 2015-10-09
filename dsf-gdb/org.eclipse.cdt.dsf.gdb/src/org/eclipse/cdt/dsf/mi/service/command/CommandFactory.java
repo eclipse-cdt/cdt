@@ -466,16 +466,6 @@ public class CommandFactory {
 		return new MIDataListRegisterNames(ctx, regnos);
 	}
 
-	@Deprecated
-	public ICommand<MIDataListRegisterValuesInfo> createMIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt) {
-		return new MIDataListRegisterValues(ctx, fmt);
-	}
-
-	@Deprecated
-	public ICommand<MIDataListRegisterValuesInfo> createMIDataListRegisterValues(IMIExecutionDMContext ctx, int fmt, int [] regnos) {
-		return new MIDataListRegisterValues(ctx, fmt, regnos);
-	}
-	
 	/**
 	 * @since 4.3
 	 */

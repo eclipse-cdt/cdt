@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,20 +69,23 @@ public class ArduinoManager {
 	public static final String AVR_TOOLCHAIN_ID = "org.eclipse.cdt.arduino.toolChain.avr"; //$NON-NLS-1$
 
 	public static final String LIBRARIES_URL = "http://downloads.arduino.cc/libraries/library_index.json"; //$NON-NLS-1$
+
 	private List<PackageIndex> packageIndices;
 	private LibraryIndex libraryIndex;
 
 	public void loadIndices() {
 		new Job(Messages.ArduinoBoardManager_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
-				packageIndices = new ArrayList<>(boardUrls.length);
-				for (String boardUrl : boardUrls) {
-					loadPackageIndex(boardUrl, true);
-				}
+				synchronized (ArduinoManager.this) {
+					String[] boardUrls = ArduinoPreferences.getBoardUrls().split("\n"); //$NON-NLS-1$
+					packageIndices = new ArrayList<>(boardUrls.length);
+					for (String boardUrl : boardUrls) {
+						loadPackageIndex(boardUrl, true);
+					}
 
-				loadLibraryIndex(true);
-				return Status.OK_STATUS;
+					loadLibraryIndex(true);
+					return Status.OK_STATUS;
+				}
 			}
 		}.schedule();
 	}
@@ -270,83 +274,93 @@ public class ArduinoManager {
 
 	public static IStatus downloadAndInstall(String url, String archiveFileName, Path installPath,
 			IProgressMonitor monitor) {
-		try {
-			URL dl = new URL(url);
-			Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads"); //$NON-NLS-1$
-			Files.createDirectories(dlDir);
-			Path archivePath = dlDir.resolve(archiveFileName);
-			Files.copy(dl.openStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);
-
-			boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
-
-			// extract
-			ArchiveInputStream archiveIn = null;
+		Exception error = null;
+		for (int retries = 3; retries > 0 && !monitor.isCanceled(); --retries) {
 			try {
-				String compressor = null;
-				String archiver = null;
-				if (archiveFileName.endsWith("tar.bz2")) { //$NON-NLS-1$
-					compressor = CompressorStreamFactory.BZIP2;
-					archiver = ArchiveStreamFactory.TAR;
-				} else if (archiveFileName.endsWith(".tar.gz") || archiveFileName.endsWith(".tgz")) { //$NON-NLS-1$ //$NON-NLS-2$
-					compressor = CompressorStreamFactory.GZIP;
-					archiver = ArchiveStreamFactory.TAR;
-				} else if (archiveFileName.endsWith(".tar.xz")) { //$NON-NLS-1$
-					compressor = CompressorStreamFactory.XZ;
-					archiver = ArchiveStreamFactory.TAR;
-				} else if (archiveFileName.endsWith(".zip")) { //$NON-NLS-1$
-					archiver = ArchiveStreamFactory.ZIP;
-				}
+				URL dl = new URL(url);
+				Path dlDir = ArduinoPreferences.getArduinoHome().resolve("downloads"); //$NON-NLS-1$
+				Files.createDirectories(dlDir);
+				Path archivePath = dlDir.resolve(archiveFileName);
+				URLConnection conn = dl.openConnection();
+				conn.setConnectTimeout(10000);
+				conn.setReadTimeout(10000);
+				Files.copy(conn.getInputStream(), archivePath, StandardCopyOption.REPLACE_EXISTING);
 
-				InputStream in = new BufferedInputStream(new FileInputStream(archivePath.toFile()));
-				if (compressor != null) {
-					in = new CompressorStreamFactory().createCompressorInputStream(compressor, in);
-				}
-				archiveIn = new ArchiveStreamFactory().createArchiveInputStream(archiver, in);
+				boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
 
-				for (ArchiveEntry entry = archiveIn.getNextEntry(); entry != null; entry = archiveIn.getNextEntry()) {
-					if (entry.isDirectory()) {
-						continue;
+				// extract
+				ArchiveInputStream archiveIn = null;
+				try {
+					String compressor = null;
+					String archiver = null;
+					if (archiveFileName.endsWith("tar.bz2")) { //$NON-NLS-1$
+						compressor = CompressorStreamFactory.BZIP2;
+						archiver = ArchiveStreamFactory.TAR;
+					} else if (archiveFileName.endsWith(".tar.gz") || archiveFileName.endsWith(".tgz")) { //$NON-NLS-1$ //$NON-NLS-2$
+						compressor = CompressorStreamFactory.GZIP;
+						archiver = ArchiveStreamFactory.TAR;
+					} else if (archiveFileName.endsWith(".tar.xz")) { //$NON-NLS-1$
+						compressor = CompressorStreamFactory.XZ;
+						archiver = ArchiveStreamFactory.TAR;
+					} else if (archiveFileName.endsWith(".zip")) { //$NON-NLS-1$
+						archiver = ArchiveStreamFactory.ZIP;
 					}
 
-					Path entryPath = installPath.resolve(entry.getName());
-					Files.createDirectories(entryPath.getParent());
+					InputStream in = new BufferedInputStream(new FileInputStream(archivePath.toFile()));
+					if (compressor != null) {
+						in = new CompressorStreamFactory().createCompressorInputStream(compressor, in);
+					}
+					archiveIn = new ArchiveStreamFactory().createArchiveInputStream(archiver, in);
 
-					if (entry instanceof TarArchiveEntry) {
-						TarArchiveEntry tarEntry = (TarArchiveEntry) entry;
-						if (tarEntry.isLink()) {
-							Path linkPath = installPath.resolve(tarEntry.getLinkName());
-							Files.createSymbolicLink(entryPath, entryPath.getParent().relativize(linkPath));
+					for (ArchiveEntry entry = archiveIn.getNextEntry(); entry != null; entry = archiveIn
+							.getNextEntry()) {
+						if (entry.isDirectory()) {
+							continue;
+						}
+
+						Path entryPath = installPath.resolve(entry.getName());
+						Files.createDirectories(entryPath.getParent());
+
+						if (entry instanceof TarArchiveEntry) {
+							TarArchiveEntry tarEntry = (TarArchiveEntry) entry;
+							if (tarEntry.isLink()) {
+								Path linkPath = installPath.resolve(tarEntry.getLinkName());
+								Files.createSymbolicLink(entryPath, entryPath.getParent().relativize(linkPath));
+							} else {
+								Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+							}
+							if (!isWin) {
+								int mode = tarEntry.getMode();
+								Files.setPosixFilePermissions(entryPath, toPerms(mode));
+							}
 						} else {
 							Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
 						}
-						if (!isWin) {
-							int mode = tarEntry.getMode();
-							Files.setPosixFilePermissions(entryPath, toPerms(mode));
-						}
-					} else {
-						Files.copy(archiveIn, entryPath, StandardCopyOption.REPLACE_EXISTING);
+					}
+				} finally {
+					if (archiveIn != null) {
+						archiveIn.close();
 					}
 				}
-			} finally {
-				if (archiveIn != null) {
-					archiveIn.close();
-				}
-			}
 
-			// Fix up directory
-			File[] children = installPath.toFile().listFiles();
-			if (children.length == 1 && children[0].isDirectory()) {
-				// make that directory the install path
-				Path childPath = children[0].toPath();
-				Path tmpPath = installPath.getParent().resolve("_t"); //$NON-NLS-1$
-				Files.move(childPath, tmpPath);
-				Files.delete(installPath);
-				Files.move(tmpPath, installPath);
+				// Fix up directory
+				File[] children = installPath.toFile().listFiles();
+				if (children.length == 1 && children[0].isDirectory()) {
+					// make that directory the install path
+					Path childPath = children[0].toPath();
+					Path tmpPath = installPath.getParent().resolve("_t"); //$NON-NLS-1$
+					Files.move(childPath, tmpPath);
+					Files.delete(installPath);
+					Files.move(tmpPath, installPath);
+				}
+				return Status.OK_STATUS;
+			} catch (IOException | CompressorException | ArchiveException e) {
+				error = e;
+				// retry
 			}
-			return Status.OK_STATUS;
-		} catch (IOException | CompressorException | ArchiveException e) {
-			return new Status(IStatus.ERROR, Activator.getId(), "Installing Platform", e);
 		}
+		// out of retries
+		return new Status(IStatus.ERROR, Activator.getId(), "Download failed, please try again.", error);
 	}
 
 	private static Set<PosixFilePermission> toPerms(int mode) {

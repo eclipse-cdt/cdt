@@ -31,7 +31,6 @@ import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -225,23 +224,11 @@ public class ArduinoPlatform {
 			return Status.OK_STATUS;
 		}
 
-		// Download platform archive
-		IStatus status = ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
-		if (!status.isOK()) {
-			return status;
-		}
-
 		// Install the tools
-		MultiStatus mstatus = null;
 		for (ToolDependency toolDep : toolsDependencies) {
-			status = toolDep.install(monitor);
+			IStatus status = toolDep.install(monitor);
 			if (!status.isOK()) {
-				if (mstatus == null) {
-					mstatus = new MultiStatus(status.getPlugin(), status.getCode(), status.getMessage(),
-							status.getException());
-				} else {
-					mstatus.add(status);
-				}
+				return status;
 			}
 		}
 
@@ -256,14 +243,20 @@ public class ArduinoPlatform {
 					makePath.toFile().setExecutable(true, false);
 				}
 			} catch (IOException e) {
-				mstatus.add(new Status(IStatus.ERROR, Activator.getId(), "downloading make.exe", e)); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, Activator.getId(), "Download failed, please try again.", e);
 			}
+		}
+
+		// Download platform archive
+		IStatus status = ArduinoManager.downloadAndInstall(url, archiveFileName, getInstallPath(), monitor);
+		if (!status.isOK()) {
+			return status;
 		}
 
 		// Reload the library index to pick up platform libraries
 		ArduinoManager.instance.loadLibraryIndex(false);
 
-		return mstatus != null ? mstatus : Status.OK_STATUS;
+		return Status.OK_STATUS;
 	}
 
 	@Override

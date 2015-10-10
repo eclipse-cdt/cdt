@@ -7,12 +7,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.arduino.ui.internal.preferences;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.arduino.core.internal.ArduinoPreferences;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
@@ -23,6 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -178,6 +182,24 @@ public class ArduinoBoardsPreferencePage extends PreferencePage implements IWork
 
 	@Override
 	public boolean performOk() {
+		File acceptedFile = ArduinoPreferences.getArduinoHome().resolve(".accepted").toFile(); //$NON-NLS-1$
+		if (!acceptedFile.exists()) {
+			String message = "Do you accept the licenses for the Arduino SDK and libraries? "
+					+ "Information on the licenses can be found at arduino.cc web site.";
+			MessageDialog dialog = new MessageDialog(getShell(), "Arduino License", null, message,
+					MessageDialog.QUESTION, new String[] { "Accept", "Decline" }, 0);
+			int rc = dialog.open();
+			if (rc == 0) {
+				try {
+					acceptedFile.createNewFile();
+				} catch (IOException e) {
+					Activator.log(e);
+				}
+			} else {
+				return false;
+			}
+		}
+
 		new Job("Installing Arduino Board Platforms") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

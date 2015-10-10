@@ -49,7 +49,7 @@ import org.w3c.dom.NodeList;
 public class SetConfigurationParameter extends AbstractTest {
 
 	@BeforeClass
-	public static void initClass() throws Exception {
+	public static void initClass() {
 		initConfigParm();
 	}
 

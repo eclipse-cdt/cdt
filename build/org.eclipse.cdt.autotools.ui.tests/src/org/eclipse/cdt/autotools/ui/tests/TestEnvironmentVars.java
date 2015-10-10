@@ -122,20 +122,20 @@ public class TestEnvironmentVars extends AbstractTest {
 		// Create a fake configure script which prints out the values of
 		// envvars some_var1, some_var2, and some_var3
 		File f = new File(path.append("fake_configure").toOSString());
-		BufferedWriter w = new BufferedWriter(new FileWriter(f));
-		w.append("echo VAR1 is ${some_var1}");
-		w.newLine();
-		w.append("echo VAR2 is ${some_var2}");
-		w.newLine();
-		w.append("echo VAR3 is ${some_var3}");
-		w.newLine();
-		w.append("echo VAR4 is ${some_var4}");
-		w.newLine();
-		w.append("echo VAR5 is ${some_var5}");
-		w.newLine();
-		w.append("echo VAR6 is ${some_var6}");
-		w.newLine();
-		w.close();
+		try (BufferedWriter w = new BufferedWriter(new FileWriter(f))) {
+			w.append("echo VAR1 is ${some_var1}");
+			w.newLine();
+			w.append("echo VAR2 is ${some_var2}");
+			w.newLine();
+			w.append("echo VAR3 is ${some_var3}");
+			w.newLine();
+			w.append("echo VAR4 is ${some_var4}");
+			w.newLine();
+			w.append("echo VAR5 is ${some_var5}");
+			w.newLine();
+			w.append("echo VAR6 is ${some_var6}");
+			w.newLine();
+		}
 		// Now change the configure script command to be the fake configure
 		// script
 		// and set the three envvars on the command itself

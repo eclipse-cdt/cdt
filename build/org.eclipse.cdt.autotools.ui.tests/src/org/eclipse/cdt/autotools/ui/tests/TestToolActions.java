@@ -309,7 +309,7 @@ public class TestToolActions extends AbstractTest {
 	}
 
 	@Test
-	public void t8canReconfigureProject() throws Exception {
+	public void t8canReconfigureProject() {
 		IPath path = checkProject().getLocation();
 		// Remove a number of generated files
 		File f = new File(path.append("src/Makefile.in").toOSString());

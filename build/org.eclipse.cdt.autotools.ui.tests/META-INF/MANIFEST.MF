@@ -16,6 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.autotools.core,
  org.eclipse.cdt.autotools.ui,
  org.eclipse.cdt.core,
+ org.eclipse.cdt.core.native,
  org.eclipse.cdt.launch,
  org.eclipse.cdt.make.core,
  org.eclipse.cdt.make.ui,
@@ -24,5 +25,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.managedbuilder.ui,
  org.eclipse.cdt.ui
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %provider

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_78aeedf2",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_3ab66026",
+      "range": {
+        "startLine": 72,
+        "startChar": 9,
+        "endLine": 72,
+        "endChar": 28
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_dac4648a",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2015-09-25T23:42:31Z",
       "side": 1,
       "message": "Please change the text in parentheses to \"LOCAL is preferred over FIELD, which is preferred over GLOBAL\"",
+      "range": {
+        "startLine": 79,
+        "startChar": 65,
+        "endLine": 79,
+        "endChar": 70
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_58b1694b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_dac4648a",
       "range": {
         "startLine": 79,
         "startChar": 65,
@@ -94,6 +142,54 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_63b5a218",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_7ac0d874",
+      "range": {
+        "startLine": 85,
+        "startChar": 44,
+        "endLine": 85,
+        "endChar": 54
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_03f826b5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "but variableScore is getting its value from the priority.",
+      "parentUuid": "0724e3f1_1ae6fc22",
+      "range": {
+        "startLine": 85,
+        "startChar": 9,
+        "endLine": 85,
+        "endChar": 10
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_fafde8a4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 11
@@ -105,6 +201,30 @@
       "writtenOn": "2015-09-25T23:42:31Z",
       "side": 1,
       "message": "Better to break after the equal sign.\n\nSame below.",
+      "range": {
+        "startLine": 244,
+        "startChar": 20,
+        "endLine": 244,
+        "endChar": 21
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_632e42ca",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_fafde8a4",
       "range": {
         "startLine": 244,
         "startChar": 20,
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_2313aa64",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_3a2f80c6",
+      "range": {
+        "startLine": 297,
+        "startChar": 3,
+        "endLine": 297,
+        "endChar": 12
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_3aaca0a7",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 11
@@ -151,6 +295,30 @@
       "writtenOn": "2015-09-25T23:42:31Z",
       "side": 1,
       "message": "When used in sorting the score and the getLongestCommonSubstring methods are called repeatedly for the same variable.",
+      "range": {
+        "startLine": 338,
+        "startChar": 10,
+        "endLine": 338,
+        "endChar": 15
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_43185e80",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "added a cash for the scores to make it faster.",
+      "parentUuid": "0724e3f1_3aaca0a7",
       "range": {
         "startLine": 338,
         "startChar": 10,
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_8321b6a9",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_da4f448c",
+      "range": {
+        "startLine": 343,
+        "startChar": 18,
+        "endLine": 343,
+        "endChar": 28
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_ba4c1099",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 11
@@ -197,6 +389,30 @@
       "writtenOn": "2015-09-25T23:42:31Z",
       "side": 1,
       "message": "Do we need to sort the whole array if we are interested only in the best match?",
+      "range": {
+        "startLine": 400,
+        "startChar": 3,
+        "endLine": 400,
+        "endChar": 14
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_c31bae77",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "We are interested in all the visible type matches at the replacement point, as we give a list of candidates for each variables.",
+      "parentUuid": "0724e3f1_ba4c1099",
       "range": {
         "startLine": 400,
         "startChar": 3,
@@ -232,6 +448,30 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_232a8a7e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 407,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_1a4a7c7b",
+      "range": {
+        "startLine": 407,
+        "startChar": 10,
+        "endLine": 407,
+        "endChar": 18
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_5aa7d4c4",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 11
@@ -243,6 +483,30 @@
       "writtenOn": "2015-09-25T23:42:31Z",
       "side": 1,
       "message": "Make static",
+      "range": {
+        "startLine": 412,
+        "startChar": 1,
+        "endLine": 412,
+        "endChar": 8
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_63cf6259",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_5aa7d4c4",
       "range": {
         "startLine": 412,
         "startChar": 1,
@@ -278,6 +542,30 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_a3d95a21",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_fa468874",
+      "range": {
+        "startLine": 413,
+        "startChar": 9,
+        "endLine": 413,
+        "endChar": 10
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_ff503a58",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
         "patchSetId": 11
@@ -301,6 +589,30 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_83f37695",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Right, added a return statement if the status is CANCEL.",
+      "parentUuid": "0724e3f1_ff503a58",
+      "range": {
+        "startLine": 195,
+        "startChar": 2,
+        "endLine": 195,
+        "endChar": 5
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_5ab1942c",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
         "patchSetId": 11
@@ -312,6 +624,30 @@
       "writtenOn": "2015-09-25T23:42:31Z",
       "side": 1,
       "message": "Redundant \"else\"",
+      "range": {
+        "startLine": 376,
+        "startChar": 4,
+        "endLine": 376,
+        "endChar": 8
+      },
+      "revId": "bef1961ac619b4ae1d48f41091420e6a599a8143",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a3f03a87",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1390
+      },
+      "writtenOn": "2015-10-12T14:16:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0724e3f1_5ab1942c",
       "range": {
         "startLine": 376,
         "startChar": 4,

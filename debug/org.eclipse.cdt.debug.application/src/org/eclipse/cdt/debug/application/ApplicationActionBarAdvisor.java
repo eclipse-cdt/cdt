@@ -60,6 +60,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
     private IWorkbenchAction undoAction;
     private IWorkbenchAction redoAction;
+    private IWorkbenchAction refreshAction;
 
 	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
 		super(configurer);
@@ -109,6 +110,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         redoAction = ActionFactory.REDO.create(window);
         register(redoAction);
 
+        refreshAction = ActionFactory.REFRESH.create(window);
+        register(refreshAction);
+
         aboutAction = ActionFactory.ABOUT.create(window);
         aboutAction
                 .setImageDescriptor(IDEInternalWorkbenchImages
@@ -149,6 +153,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 		menu.add(new Separator());
 
+		// This is to make sure "Open File" gets added before Exit
+		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
+
+		ActionContributionItem refreshExecutableItem = new ActionContributionItem(refreshAction);
+		menu.add(refreshExecutableItem);
+
+		// This is to make sure "Convert line delimiters" gets added before Exit
+		menu.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
+
 		// If we're on OS X we shouldn't show this command in the File menu. It
 		// should be invisible to the user. However, we should not remove it -
 		// the carbon UI code will do a search through our menu structure
@@ -156,6 +169,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		// application menu.
 		ActionContributionItem quitItem = new ActionContributionItem(quitAction);
 		quitItem.setVisible(!Util.isMac());
+		menu.add(new Separator());
 		menu.add(quitItem);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 		return menu;

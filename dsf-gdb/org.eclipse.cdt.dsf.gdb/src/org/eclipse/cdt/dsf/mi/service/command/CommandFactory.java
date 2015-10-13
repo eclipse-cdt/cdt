@@ -927,11 +927,6 @@ public class CommandFactory {
 		return new MIStackSelectFrame(ctx, frameNum);
 	}
 
-	@Deprecated
-	public ICommand<MIInfo> createMITargetAttach(ICommandControlDMContext ctx, String groupId) {
-		return new MITargetAttach(ctx, groupId);
-	}
-
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMITargetAttach(IMIContainerDMContext ctx, String groupId) {
 		return new MITargetAttach(ctx, groupId);

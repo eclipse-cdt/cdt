@@ -45,96 +45,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GDBControl_7_0 extends GDBControl {
 
-	/**
-	 * @deprecated use {@link GDBControl.InitializationShutdownStep}
-	 */
-	@Deprecated
-    public static class InitializationShutdownStep extends Sequence.Step {
-		
-		/**
-		 * @deprecated use {@link GDBControl.InitializationShutdownStep.Direction}
-		 */
-		@Deprecated
-        public enum Direction { INITIALIZING, SHUTTING_DOWN }
-        
-		private GDBControl.InitializationShutdownStep.Direction fDirection;
-		private GDBControl.InitializationShutdownStep fDelegate;
-		
-        public InitializationShutdownStep(Direction direction) {
-        	fDirection = (direction == Direction.INITIALIZING) ? 
-        			GDBControl.InitializationShutdownStep.Direction.INITIALIZING :
-        			GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN;
-
-        	fDelegate = new GDBControl.InitializationShutdownStep(fDirection);
-        }
-
-        private InitializationShutdownStep(
-        		GDBControl.InitializationShutdownStep.Direction direction, 
-        		GDBControl.InitializationShutdownStep delegate) {
-        	fDirection = direction;
-        	fDelegate = delegate;
-        }
-
-        @Override
-        final public void execute(RequestMonitor requestMonitor) {
-            if (fDirection == GDBControl.InitializationShutdownStep.Direction.INITIALIZING) {
-                initialize(requestMonitor);
-            } else {
-                shutdown(requestMonitor);
-            }
-        }
-        
-        @Override
-        final public void rollBack(RequestMonitor requestMonitor) {
-            if (fDirection == GDBControl.InitializationShutdownStep.Direction.INITIALIZING) {
-                shutdown(requestMonitor);
-            } else {
-                super.rollBack(requestMonitor);
-            }
-        }
-        
-        protected void initialize(RequestMonitor requestMonitor) {
-            fDelegate.initialize(requestMonitor);
-        }
-        
-        protected void shutdown(RequestMonitor requestMonitor) {
-            fDelegate.shutdown(requestMonitor);
-        }
-    }
-
-	/**
-	 * @deprecated use {@link GDBControl.CommandMonitoringStep}
-	 */
-	@Deprecated
-    protected class CommandMonitoringStep extends InitializationShutdownStep {
-		
-		CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction direction) {
-			super(direction, new GDBControl.CommandMonitoringStep(direction));
-		}
-    }
-
-	/**
-	 * @deprecated use {@link GDBControl.CommandProcessorsStep}.
-	 */
-	@Deprecated
-    protected class CommandProcessorsStep extends InitializationShutdownStep {
-
-		CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction direction) {
-			super(direction, new GDBControl.CommandProcessorsStep(direction));
-		}
-    }
-
-	/**
-	 * @deprecated use {@link GDBControl.RegisterStep}.
-	 */
-	@Deprecated
-    protected class RegisterStep extends InitializationShutdownStep {
-
-		RegisterStep(GDBControl.InitializationShutdownStep.Direction direction) {
-			super(direction, new GDBControl.RegisterStep(direction));
-		}
-    }
-
     /**
      * @since 3.0
      */
@@ -145,11 +55,11 @@ public class GDBControl_7_0 extends GDBControl {
 	@Override
 	protected Sequence getStartupSequence(RequestMonitor requestMonitor) {
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
-                new GDBControl.CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-                new GDBControl.CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+                new CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+                new CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
                 new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
-                new GDBControl.RegisterStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+                new RegisterStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
             };
 
         return new Sequence(getExecutor(), requestMonitor) {
@@ -160,11 +70,11 @@ public class GDBControl_7_0 extends GDBControl {
 	@Override
 	protected Sequence getShutdownSequence(RequestMonitor requestMonitor) {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
-                new GDBControl.RegisterStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new RegisterStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new GDBControl.CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new GDBControl.CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };
         return new Sequence(getExecutor(), requestMonitor) {
             @Override public Step[] getSteps() { return shutdownSteps; }
@@ -214,8 +124,8 @@ public class GDBControl_7_0 extends GDBControl {
     /** @since 4.0 */
     protected class ListFeaturesStep extends InitializationShutdownStep {
     	
-    	ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction direction) { 
-			super(direction, new GDBControl.InitializationShutdownStep(direction));
+    	ListFeaturesStep(Direction direction) { 
+			super(direction);
     	}
 
     	@Override

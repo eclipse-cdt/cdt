@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Ericsson and others.
+ * Copyright (c) 2011, 2016 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,6 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
     /**
 	 * @since 4.1
 	 */
-	@Override
     @DsfServiceEventHandler
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
     	setTraceVisualization(e.isVisualizationModeEnabled());

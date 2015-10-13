@@ -569,20 +569,6 @@ public class MIVariableManager implements ICommandControl {
 		public void setCurrentFormat(String f) { fFormat = f; }
 
 		/**
-		 * @param fullExpression
-		 * @param t
-		 * @param num
-		 * 
-		 * @deprecated Use
-		 *             {@link #setExpressionData(ExpressionInfo, String, int, boolean)}
-		 *             instead.
-		 */
-		@Deprecated
-		public void setExpressionData(String fullExpression, String t, int num) {
-			new ExpressionInfo(fullExpression, fullExpression);
-		}
-
-		/**
 		 * @param info
 		 * @param typeName
 		 * @param num

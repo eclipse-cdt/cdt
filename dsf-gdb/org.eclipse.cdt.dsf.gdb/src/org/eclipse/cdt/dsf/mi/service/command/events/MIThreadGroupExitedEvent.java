@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Ericsson and others.
+ * Copyright (c) 2008, 2015 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,16 +29,6 @@ public class MIThreadGroupExitedEvent extends MIEvent<IProcessDMContext> {
     private String fGroupId;
     private String fExitCode;
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public MIThreadGroupExitedEvent(IProcessDMContext ctx, int token, String groupId) {
-        super(ctx, token, null);
-        fGroupId = groupId;
-        fExitCode = null;
-    }
-    
     /** @since 4.2 */
     public MIThreadGroupExitedEvent(IProcessDMContext ctx, int token, MIResult[] results) {
         super(ctx, token, results);

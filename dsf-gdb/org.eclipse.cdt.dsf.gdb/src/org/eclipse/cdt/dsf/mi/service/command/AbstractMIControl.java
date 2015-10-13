@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
@@ -482,6 +483,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
 	@Override
     public void removeEventListener(IEventListener processor) { fEventProcessors.remove(processor); }
     
+	/** @deprecated Replaced with {@link ICommandControlService#getContext()} */
+	@Deprecated
     abstract public MIControlDMContext getControlDMContext();
     
     /**

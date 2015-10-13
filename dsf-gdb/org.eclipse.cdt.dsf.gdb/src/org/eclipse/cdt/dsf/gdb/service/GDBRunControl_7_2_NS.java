@@ -132,7 +132,6 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
     /**
 	 * @since 4.1
 	 */
-	@Override
     @DsfServiceEventHandler
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
     	setTraceVisualization(e.isVisualizationModeEnabled());

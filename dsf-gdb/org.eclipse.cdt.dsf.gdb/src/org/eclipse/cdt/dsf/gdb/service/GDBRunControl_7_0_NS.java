@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems and others.
+ * Copyright (c) 2006, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionActiveOperation;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionUtils;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIBreakpointPathAdjuster;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -2014,16 +2013,6 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     	fStepInToSelectionActiveOperation = null;
     }
 
-    /**
-     * @deprecated Tracing is only supported with GDB 7.2, so this logic
-     * was moved to the GDBRunControl_7_2_NS class.
-	 * @since 3.0
-	 */
-    @Deprecated
-    @DsfServiceEventHandler 
-    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    }
-    
 	@Override
 	public void flushCache(IDMContext context) {
 		refreshThreadStates();

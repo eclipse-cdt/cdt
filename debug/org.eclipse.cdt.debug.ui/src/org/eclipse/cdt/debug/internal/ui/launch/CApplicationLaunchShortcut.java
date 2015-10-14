@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
@@ -81,8 +80,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		}
 	}
 
-	public void launch(IBinary bin, String mode) {
-        ILaunchConfiguration config = findLaunchConfiguration(bin, mode);
+	public void launch(IBinary bin, String mode, IProject project) {
+        ILaunchConfiguration config = findLaunchConfiguration(bin, mode, project);
         if (config != null) {
             DebugUITools.launch(config, mode);
         }
@@ -91,28 +90,32 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	/**
 	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.
 	 * 
+	 * @param project the project to launch with
+	 *
 	 * @return a re-usable config or <code>null</code> if none
 	 */
-	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin, String mode) {
+	protected ILaunchConfiguration findLaunchConfiguration(IBinary bin, String mode, IProject project) {
 		ILaunchConfiguration configuration = null;
 		ILaunchConfigurationType configType = getCLaunchConfigType();
 		List<ILaunchConfiguration> candidateConfigs = Collections.emptyList();
-		try {
-			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
-			candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
-			for (int i = 0; i < configs.length; i++) {
-				ILaunchConfiguration config = configs[i];
-				IPath programPath = CDebugUtils.getProgramPath(config);
-				String projectName = CDebugUtils.getProjectName(config);
-				IPath name = bin.getResource().getProjectRelativePath();
-				if (programPath != null && programPath.equals(name)) {
-					if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
-						candidateConfigs.add(config);
+		if (bin != null) {
+			try {
+				ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(configType);
+				candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
+				for (int i = 0; i < configs.length; i++) {
+					ILaunchConfiguration config = configs[i];
+					IPath programPath = CDebugUtils.getProgramPath(config);
+					String projectName = CDebugUtils.getProjectName(config);
+					IPath name = bin.getResource().getProjectRelativePath();
+					if (programPath != null && programPath.equals(name)) {
+						if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
+							candidateConfigs.add(config);
+						}
 					}
 				}
+			} catch (CoreException e) {
+				CDebugUIPlugin.log(e);
 			}
-		} catch (CoreException e) {
-		    CDebugUIPlugin.log(e);
 		}
 
 		// If there are no existing configs associated with the IBinary, create one.
@@ -123,7 +126,6 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		if (candidateCount < 1) {
 			// Set the default debugger based on the active toolchain on the project (if possible)
 			ICDebugConfiguration debugConfig = null;
-			IProject project = bin.getResource().getProject();
            	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
            	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
            	String configId = configDesc.getId();
@@ -144,7 +146,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
 			if (debugConfig == null) {
 				// Prompt the user if more then 1 debugger.
-				String programCPU = bin.getCPU();
+				String programCPU = bin != null ? bin.getCPU() : "*"; //$NON-NLS-1$
 				String os = Platform.getOS();
 				debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
 				List<ICDebugConfiguration> debugList = new ArrayList<ICDebugConfiguration>(debugConfigs.length);
@@ -166,7 +168,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			}
 			
 			if (debugConfig != null) {
-				configuration = createConfiguration(bin, debugConfig, mode);
+				configuration = createConfiguration(bin, debugConfig, mode, project);
 			}
 		} else if (candidateCount == 1) {
 			configuration = candidateConfigs.get(0);
@@ -182,24 +184,26 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	/**
 	 * Method createConfiguration.
 	 * @param bin
+	 * @param project the project to launch with
 	 * @return ILaunchConfiguration
 	 */
-	private ILaunchConfiguration createConfiguration(IBinary bin, ICDebugConfiguration debugConfig, String mode) {
+	private ILaunchConfiguration createConfiguration(IBinary bin, ICDebugConfiguration debugConfig, String mode, IProject project) {
 		ILaunchConfiguration config = null;
 		try {
-			String projectName = bin.getResource().getProjectRelativePath().toString();
+			String binPath = bin != null ? bin.getResource().getProjectRelativePath().toString() : null;
+			String projectName = project.getName();
 			ILaunchConfigurationType configType = getCLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc =
-					configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(bin.getElementName()));
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
-			wc.setMappedResources(new IResource[] { bin.getResource().getProject() });
+					configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(projectName));
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, binPath);
+			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
+			wc.setMappedResources(new IResource[] { project });
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
-			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
+			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(project);
 			if (projDes != null) {
 				String buildConfigID = projDes.getActiveConfiguration().getId();
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);				
@@ -389,6 +393,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 * @param mode
 	 */
 	private void searchAndLaunch(final Object[] elements, String mode) {
+		final IProject project[] = new IProject[1];
 		if (elements != null && elements.length > 0) {
 			IBinary bin = null;
 			if (elements.length == 1 && elements[0] instanceof IBinary) {
@@ -407,19 +412,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 								if (elements[i] instanceof IAdaptable) {
 									IResource r = ((IAdaptable) elements[i]).getAdapter(IResource.class);
 									if (r != null) {
-										ICProject cproject = CoreModel.getDefault().create(r.getProject());
-										if (cproject != null) {
-											try {
-												IBinary[] bins = cproject.getBinaryContainer().getBinaries();
-
-												for (int j = 0; j < bins.length; j++) {
-													if (bins[j].isExecutable()) {
-														results.add(bins[j]);
-													}
-												}
-											} catch (CModelException e) {
-											}
-										}
+										project[0] = r.getProject();
+										results.addAll(CDebugUtils.getExecutables(project[0]));
 									}
 								}
 								if (pm.isCanceled()) {
@@ -441,17 +435,18 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 					return;
 				}
 				int count = results.size();
-				if (count == 0) {					
-					MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$ //$NON-NLS-2$
-				} else if (count > 1) {
-					bin = chooseBinary(results, mode);
-				} else {
-					bin = results.get(0);
+				if (count > 0) {
+					if (count > 1) {
+						bin = chooseBinary(results, mode);
+					} else {
+						bin = results.get(0);
+					}
 				}
 			}
 			if (bin != null) {
-				launch(bin, mode);
+				project[0] = bin.getResource().getProject();
 			}
+			launch(bin, mode, project[0]);
 		} else {
 			MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_project_selected")); //$NON-NLS-1$ //$NON-NLS-2$
 		}

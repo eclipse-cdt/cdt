@@ -36,11 +36,13 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.StringUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
@@ -63,6 +65,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 public class LaunchUtils {
 	
@@ -104,8 +107,22 @@ public class LaunchUtils {
 	public static IPath verifyProgramPath(ILaunchConfiguration configuration, ICProject cproject) throws CoreException {
 		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
 		if (programName == null) {
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-				  ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+			// Auto-detect executable
+			if (cproject != null) {
+				// Check if there is only one executable in the project. If so, use that as the program path.
+				List<IBinary> executables = CDebugUtils.getExecutables(cproject.getProject());
+				if (executables.size() == 1) {
+					ILaunchConfigurationWorkingCopy workingCopy = configuration.getWorkingCopy();
+					programName = executables.get(0).getResource().getProjectRelativePath().toString();
+					workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, programName);
+					configuration = workingCopy.doSave();
+				}
+			}
+
+			if (programName == null) {
+				abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
+					  ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+			}
 		}
         programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
 

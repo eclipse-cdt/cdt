@@ -31,6 +31,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -57,6 +60,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.service.prefs.BackingStoreException;
@@ -655,6 +659,21 @@ public class CDebugUtils {
 			cproject = verifyCProject(config);	// will throw exception if project setting not valid
 		}
 		IPath programPath = CDebugUtils.getProgramPath(config);
+
+		// Auto-detect executable
+		if (programPath == null || programPath.isEmpty()) {
+			if (cproject != null) {
+				// Check if there is only one executable in the project. If so, use that as the program path.
+				List<IBinary> executables = getExecutables(cproject.getProject());
+				if (executables.size() == 1) {
+					ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
+					workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, executables.get(0).getResource().getProjectRelativePath().toString());
+					config = workingCopy.doSave();
+				}
+			}
+		}
+
+		programPath = CDebugUtils.getProgramPath(config);
 		if (programPath == null || programPath.isEmpty()) {
 			throwCoreException(DebugCoreMessages.getString("CDebugUtils.Program_file_not_specified"), //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
@@ -793,5 +812,29 @@ public class CDebugUtils {
 	public static boolean isCustomToggleBreakpointFactory() {
 		String customModel = System.getProperty(ICDebugConstants.PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER, null);
 		return customModel != null && Boolean.valueOf(customModel);
+	}
+
+	/**
+	 * Get all executables of a given project
+	 *
+	 * @since 7.8
+	 */
+	public static List<IBinary> getExecutables(IProject project) {
+		final List<IBinary> results = new ArrayList<IBinary>();
+		ICProject cproject = CoreModel.getDefault().create(project);
+		if (cproject != null) {
+			try {
+				IBinary[] bins = cproject.getBinaryContainer().getBinaries();
+
+				for (int j = 0; j < bins.length; j++) {
+					if (bins[j].isExecutable()) {
+						results.add(bins[j]);
+					}
+				}
+			} catch (CModelException e) {
+			}
+		}
+
+		return results;
 	}
 }

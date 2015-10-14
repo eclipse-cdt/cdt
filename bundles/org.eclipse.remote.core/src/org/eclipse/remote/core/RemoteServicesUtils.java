@@ -40,19 +40,13 @@ public class RemoteServicesUtils {
 		try {
 			//Use the Mars implementation of Path, see bug 454959
 			return Path.forPosix(path);
-		} catch(NoSuchMethodError e) {
+		} catch (NoSuchMethodError e) {
 			//TODO For older Eclipse, use the fallback below. That code should be
 			//removed when support for Eclipse older than Mars is no longer needed.
-		}
-		/** Constant value indicating if the current platform is Windows */
-		boolean RUNNING_ON_WINDOWS = java.io.File.separatorChar == '\\';
-		if (! RUNNING_ON_WINDOWS) {
-			return new Path(path);
-		} else {
-			return new RemotePath(path);	
+			return RemotePath.forPosix(path);
 		}
 	}
-	
+
 	/**
 	 * Convert a UNC path to a URI
 	 * 

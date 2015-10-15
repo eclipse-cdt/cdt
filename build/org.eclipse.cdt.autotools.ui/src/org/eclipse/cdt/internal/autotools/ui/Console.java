@@ -34,6 +34,7 @@ public class Console implements IConsole {
 //	}
 //
 
+	@Override
 	public void start(IProject project ) {
 		this.project = project;
 		fConsoleManager.getConsole(project).start(project);
@@ -43,14 +44,17 @@ public class Console implements IConsole {
 	 * @throws CoreException
 	 * @see org.eclipse.cdt.core.resources.IConsole#getOutputStream()
 	 */
+	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
 		return fConsoleManager.getConsole(project).getOutputStream();
 	}
 
+	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
 		return fConsoleManager.getConsole(project).getInfoStream();
 	}
 
+	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return fConsoleManager.getConsole(project).getErrorStream();
 	}

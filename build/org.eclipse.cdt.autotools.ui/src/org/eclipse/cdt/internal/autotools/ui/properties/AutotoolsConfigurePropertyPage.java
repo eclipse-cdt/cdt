@@ -20,6 +20,7 @@ public class AutotoolsConfigurePropertyPage extends AbstractPage {
 
 	private ICConfigurationDescription cfgd;
 	
+	@Override
 	protected boolean isSingle() {
 		return true;
 	}
@@ -50,6 +51,7 @@ public class AutotoolsConfigurePropertyPage extends AbstractPage {
 		return acfg;
 	}
 	
+	@Override
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		cfgd = _cfgd;
 		// Let super update all pages

@@ -16,15 +16,18 @@ import org.eclipse.jface.viewers.Viewer;
 
 public class ConfigurationContentProvider implements IStructuredContentProvider {
 	// The contents of the parent of the table is a list of configurations
+	@Override
 	public Object[] getElements(Object parent) {
 		// The content is an array of configurations
 		Object array[] = (Object[])parent;
 		return (array == null || array.length == 0) ? new Object[0] : array;
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(
 		Viewer viewer,
 		Object oldInput,

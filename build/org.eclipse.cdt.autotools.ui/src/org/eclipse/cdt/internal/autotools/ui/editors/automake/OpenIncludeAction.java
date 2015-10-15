@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
@@ -77,6 +76,7 @@ public class OpenIncludeAction extends Action {
 		fSelectionProvider= provider;
 	}
 			
+	@Override
 	public void run() {
 		IInclude include= getIncludeStatement(fSelectionProvider.getSelection());
 		if (include == null) {
@@ -85,7 +85,7 @@ public class OpenIncludeAction extends Action {
 		
 		try {
 			IResource res = include.getUnderlyingResource();
-			ArrayList<Object> filesFound = new ArrayList<Object>(4);
+			ArrayList<Object> filesFound = new ArrayList<>(4);
 			String fullFileName= include.getFullFileName();
 			if (fullFileName != null) {
 				IPath fullPath= new Path(fullFileName);
@@ -150,8 +150,6 @@ public class OpenIncludeAction extends Action {
 			if (fileToOpen != null) {
 				EditorUtility.openInEditor(fileToOpen, include);
 			} 
-		} catch (CModelException e) {
-			CUIPlugin.log(e.getStatus());
 		} catch (CoreException e) {
 			CUIPlugin.log(e.getStatus());
 		}
@@ -196,8 +194,7 @@ public class OpenIncludeAction extends Action {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
-	private void findFile(String[] includePaths, String name, ArrayList<Object> list)
-			throws CoreException {
+	private void findFile(String[] includePaths, String name, ArrayList<Object> list) {
 		// in case it is an absolute path
 		IPath includeFile= new Path(name);		
 		if (includeFile.isAbsolute()) {
@@ -207,7 +204,7 @@ public class OpenIncludeAction extends Action {
 				return;
 			}
 		}
-		HashSet<IPath> foundSet = new HashSet<IPath>();
+		HashSet<IPath> foundSet = new HashSet<>();
 		for (int i = 0; i < includePaths.length; i++) {
 			IPath path = PathUtil.getCanonicalPath(new Path(includePaths[i]).append(includeFile));
 			File file = path.toFile();
@@ -233,7 +230,8 @@ public class OpenIncludeAction extends Action {
 	private void findFile(IContainer parent, final IPath name, final ArrayList<Object> list) throws CoreException {
 		parent.accept(new IResourceProxyVisitor() {
 
-			public boolean visit(IResourceProxy proxy) throws CoreException {
+			@Override
+			public boolean visit(IResourceProxy proxy) {
 				if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
 					IPath rPath = proxy.requestResource().getLocation();
 					int numSegToRemove = rPath.segmentCount() - name.segmentCount();
@@ -254,6 +252,7 @@ public class OpenIncludeAction extends Action {
 
 	private IPath chooseFile(ArrayList<Object> filesFound) {
 		ILabelProvider renderer= new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IPath) {
 					IPath file= (IPath)element;

@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-
-
 public class AutomakeIfElse extends Parent {
 	String condition;
 	String type;

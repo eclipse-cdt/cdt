@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -99,9 +98,7 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 
 		IRunnableWithProgress op = new WorkspaceModifyOperation() {
 			@Override
-			protected void execute(IProgressMonitor monitor)
-					throws CoreException, InvocationTargetException,
-					InterruptedException {
+			protected void execute(IProgressMonitor monitor) {
 				monitor.beginTask("Creating Autotools project", 10);
 
 				// Create Project
@@ -155,7 +152,7 @@ public class AutotoolsProjectImportWizard extends NewMakeProjFromExisting {
 					pdMgr.setProjectDescription(project, projDesc);
 
 					// Convert the created project to an Autotools project
-					((AutotoolsProjectImportWizardPage) page).convertProject(
+					page.convertProject(
 							project, monitor, projectName);
 				} catch (Throwable e) {
 				}

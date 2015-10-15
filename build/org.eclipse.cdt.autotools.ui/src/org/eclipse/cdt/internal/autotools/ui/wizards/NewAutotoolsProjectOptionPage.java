@@ -23,7 +23,6 @@ import org.eclipse.cdt.ui.newui.CDTHelpContextIds;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -50,7 +49,8 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 				super();
 			}
 			
-			public void performApply(IProgressMonitor monitor) throws CoreException {
+			@Override
+			public void performApply(IProgressMonitor monitor) {
 				try {
 					super.performApply(monitor);
 				} catch (RuntimeException e) {
@@ -62,9 +62,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 		public void updateProjectTypeProperties() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#addTabs()
-		 */
+		@Override
 		protected void addTabs() {
 			addTab(new AutotoolsReferenceBlock());
 			// Bug 406711 - Remove the IndexerBlock as this causes an exception to occur
@@ -76,7 +74,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 			
 			Iterator<ICOptionPage> iter = pages.iterator();
 			for( int i = 0; i < 3 && iter.hasNext(); i++ ) {
-				ICOptionPage page = (ICOptionPage) iter.next();
+				ICOptionPage page = iter.next();
 				
 				String id = null;
 				if (page instanceof ReferenceBlock) {
@@ -101,25 +99,19 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 		optionBlock = new ManagedWizardOptionBlock(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage#createOptionBlock()
-	 */
+	@Override
 	protected TabFolderOptionBlock createOptionBlock() {
 		return optionBlock;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
-	 */
+	@Override
 	public IProject getProject() {
 		if (getWizard() instanceof ConvertToAutotoolsProjectWizard)
 			return ((ConvertToAutotoolsProjectWizard)getWizard()).getProject();
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferenceStore()
-	 */
+	@Override
 	public Preferences getPreferences() {
 		return ManagedBuilderUIPlugin.getDefault().getPluginPreferences();
 	}
@@ -133,6 +125,7 @@ public class NewAutotoolsProjectOptionPage extends NewCProjectWizardOptionPage {
 		optionBlock.setupHelpContextIds();
 	}
 	
+	@Override
 	public IWizardPage getNextPage()
 	{
 		return MBSCustomPageManager.getNextPage(PAGE_ID); // get first custom page, if any

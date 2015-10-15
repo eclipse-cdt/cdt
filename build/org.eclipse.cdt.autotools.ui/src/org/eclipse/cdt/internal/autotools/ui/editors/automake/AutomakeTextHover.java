@@ -29,6 +29,7 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 		this.editor = editor;
 	}
 	
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		TargetRule target = null;
 		String[] preReqs = null;
@@ -98,20 +99,10 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 			}
 		}
 		
-//		IRule[] rules = makefile.getRules();
-//		for (int i = 0; i < rules.length; i++) {
-//			rule = rules[i];
-//			System.out.println("rule:  " + rule);
-//			System.out.println("target:  " + rule.getTarget());
-//			ICommand[] commands = rule.getCommands();
-//			for (int j = 0; j < commands.length; j++) {
-//				ICommand command = commands[j];
-//				System.out.println("command:  " + command);
-//			}
-//		}
 		return "";
 	}
 
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		
 		if (textViewer != null) {
@@ -177,6 +168,7 @@ public class AutomakeTextHover implements ITextHover, ITextHoverExtension {
 		return null;
 	}
 
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		// TODO Auto-generated method stub
 		return null;

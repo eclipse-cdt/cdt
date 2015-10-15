@@ -34,10 +34,12 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 		this.defaultToken = defaultToken;
 	}
 
+	@Override
 	public IToken getSuccessToken() {
 		return token;
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		buffer.setLength(0);
 		int c;
@@ -148,6 +150,7 @@ class AutomakeMacroDefinitionRule implements IPredicateRule {
 		return c;
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
 	}

@@ -34,9 +34,7 @@ public class AutoconfMacroDamagerRepairer extends DefaultDamagerRepairer {
 		super(scanner);
 	}
 
-	/*
-	 * @see IPresentationDamager#getDamageRegion(ITypedRegion, DocumentEvent, boolean)
-	 */
+	@Override
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
 		// In the case of a partition with multiline rules, we will punt to
 		// reparse the entire partition because we don't know if the line being
@@ -46,9 +44,7 @@ public class AutoconfMacroDamagerRepairer extends DefaultDamagerRepairer {
 		return partition;
 	}
 	
-	/*
-	 * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
-	 */
+	@Override
 	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
 
 //		int offset = region.getOffset();

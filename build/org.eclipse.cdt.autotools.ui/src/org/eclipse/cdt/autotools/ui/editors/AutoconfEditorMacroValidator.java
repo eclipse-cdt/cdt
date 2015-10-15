@@ -40,9 +40,7 @@ public class AutoconfEditorMacroValidator implements IAutoconfMacroValidator {
 		fEditor = autoconfEditor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.autotools.ui.editors.parser.IAutoconfMacroValidator#validateMacroCall(org.eclipse.cdt.autotools.core.ui.editors.parser.AutoconfMacroElement)
-	 */
+	@Override
 	public void validateMacroCall(AutoconfMacroElement macro)
 			throws ParseException, InvalidMacroException {
 		AutoconfPrototype p = AutoconfTextHover.getPrototype(macro.getName(), fEditor);

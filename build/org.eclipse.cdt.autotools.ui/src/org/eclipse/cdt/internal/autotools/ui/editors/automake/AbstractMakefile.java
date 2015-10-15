@@ -39,144 +39,157 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		super(parent);
 	}
 
+	@Override
 	public abstract IDirective[] getBuiltins();
 
+	@Override
 	public IRule[] getRules() {
 		IDirective[] stmts = getDirectives(true);
-		List<IRule> array = new ArrayList<IRule>(stmts.length);
+		List<IRule> array = new ArrayList<>(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IRule) {
 				array.add((IRule)stmts[i]);
 			}
 		}
-		return (IRule[]) array.toArray(new IRule[0]);
+		return array.toArray(new IRule[0]);
 	}
 
+	@Override
 	public IRule[] getRules(String target) {
 		IRule[] rules = getRules();
-		List<IRule> array = new ArrayList<IRule>(rules.length);
+		List<IRule> array = new ArrayList<>(rules.length);
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].getTarget().toString().equals(target)) {
 				array.add(rules[i]);
 			}
 		}
-		return (IRule[]) array.toArray(new IRule[0]);
+		return array.toArray(new IRule[0]);
 	}
 
+	@Override
 	public IInferenceRule[] getInferenceRules() {
 		IRule[] rules = getRules();
-		List<IInferenceRule> array = new ArrayList<IInferenceRule>(rules.length);
+		List<IInferenceRule> array = new ArrayList<>(rules.length);
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i] instanceof IInferenceRule) {
 				array.add((IInferenceRule)rules[i]);
 			}
 		}
-		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+		return array.toArray(new IInferenceRule[0]);
 	}
 
+	@Override
 	public IInferenceRule[] getInferenceRules(String target) {
 		IInferenceRule[] irules = getInferenceRules();
-		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
+		List<IInferenceRule> array = new ArrayList<>(irules.length);
 		for (int i = 0; i < irules.length; i++) {
 			if (irules[i].getTarget().toString().equals(target)) {
 				array.add(irules[i]);
 			}
 		}
-		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+		return array.toArray(new IInferenceRule[0]);
 	}
 
+	@Override
 	public ITargetRule[] getTargetRules() {
 		IRule[] trules = getRules();
-		List<ITargetRule> array = new ArrayList<ITargetRule>(trules.length);
+		List<ITargetRule> array = new ArrayList<>(trules.length);
 		for (int i = 0; i < trules.length; i++) {
 			if (trules[i] instanceof ITargetRule) {
 				array.add((ITargetRule)trules[i]);
 			}
 		}
-		return (ITargetRule[]) array.toArray(new ITargetRule[0]);
+		return array.toArray(new ITargetRule[0]);
 	}
 
+	@Override
 	public ITargetRule[] getTargetRules(String target) {
 		ITargetRule[] trules = getTargetRules();
-		List<ITargetRule> array = new ArrayList<ITargetRule>(trules.length);
+		List<ITargetRule> array = new ArrayList<>(trules.length);
 		for (int i = 0; i < trules.length; i++) {
 			if (trules[i].getTarget().toString().equals(target)) {
 				array.add(trules[i]);
 			}
 		}
-		return (ITargetRule[]) array.toArray(new ITargetRule[0]);
+		return array.toArray(new ITargetRule[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getMacroDefinitions() {
 		IDirective[] stmts = getDirectives(true);
-		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(stmts.length);
+		List<IMacroDefinition> array = new ArrayList<>(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IMacroDefinition) {
 				array.add((IMacroDefinition)stmts[i]);
 			}
 		}
-		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
+		return array.toArray(new IMacroDefinition[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getMacroDefinitions();
-		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
+		List<IMacroDefinition> array = new ArrayList<>(variables.length);
 		for (int i = 0; i < variables.length; i++) {
 			if (variables[i].getName().equals(name)) {
 				array.add(variables[i]);
 			}
 		}
-		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
+		return array.toArray(new IMacroDefinition[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getBuiltinMacroDefinitions() {
 		IDirective[] stmts = getBuiltins();
-		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(stmts.length);
+		List<IMacroDefinition> array = new ArrayList<>(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IMacroDefinition) {
 				array.add((IMacroDefinition)stmts[i]);
 			}
 		}
-		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
+		return array.toArray(new IMacroDefinition[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getBuiltinMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getBuiltinMacroDefinitions();
-		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
+		List<IMacroDefinition> array = new ArrayList<>(variables.length);
 		for (int i = 0; i < variables.length; i++) {
 			if (variables[i].getName().equals(name)) {
 				array.add(variables[i]);
 			}
 		}
-		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
+		return array.toArray(new IMacroDefinition[0]);
 	}
 
 	public IInferenceRule[] getBuiltinInferenceRules() {
 		IDirective[] stmts = getBuiltins();
-		List<IInferenceRule> array = new ArrayList<IInferenceRule>(stmts.length);
+		List<IInferenceRule> array = new ArrayList<>(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IInferenceRule) {
 				array.add((IInferenceRule)stmts[i]);
 			}
 		}
-		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+		return array.toArray(new IInferenceRule[0]);
 	}
 
 	public IInferenceRule[] getBuiltinInferenceRules(String target) {
 		IInferenceRule[] irules = getBuiltinInferenceRules();
-		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
+		List<IInferenceRule> array = new ArrayList<>(irules.length);
 		for (int i = 0; i < irules.length; i++) {
 			if (irules[i].getTarget().toString().equals(target)) {
 				array.add(irules[i]);
 			}
 		}
-		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+		return array.toArray(new IInferenceRule[0]);
 	}
 
+	@Override
 	public String expandString(String line) {
 		return expandString(line, false);
 	}
 
+	@Override
 	public String expandString(String line, boolean recursive) {
 		int len = line.length();
 		boolean foundDollar = false;
@@ -258,6 +271,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return buffer.toString();
 	}
 	
+	@Override
 	public URI getFileURI() {
 		return filename;
 	}
@@ -267,17 +281,17 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
     }
 	
 
+	@Override
 	public IMakefile getMakefile() {
 		return this;
 	}
 	
+	@Override
 	public IMakefileReaderProvider getMakefileReaderProvider() {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
-	 */
+	@Override
 	public void parse(URI fileURI,
 			IMakefileReaderProvider makefileReaderProvider) throws IOException {
 		// not used

@@ -105,7 +105,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	/* Mapping key to action */
 	private static IBindingService fBindingService;
 	{
-		fBindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		fBindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 	}
 
 	public static String getAutoconfMacrosDocName(String version) {
@@ -145,9 +145,9 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	protected static Document getACDoc(String acDocVer) {
 		Document ac_document = null;
 		if (acHoverDocs == null) {
-			acHoverDocs = new HashMap<String, Document>();
+			acHoverDocs = new HashMap<>();
 		}
-		ac_document = (Document)acHoverDocs.get(acDocVer);
+		ac_document = acHoverDocs.get(acDocVer);
 		if (ac_document == null) {
 			Document doc = null;
 			try {
@@ -206,9 +206,9 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	protected static Document getAMDoc(String amDocVer) {
 		Document am_document = null;
 		if (amHoverDocs == null) {
-			amHoverDocs = new HashMap<String, Document>();
+			amHoverDocs = new HashMap<>();
 		}
-		am_document = (Document)amHoverDocs.get(amDocVer);
+		am_document = amHoverDocs.get(amDocVer);
 		if (am_document == null) {
 			Document doc = null;
 			try {
@@ -374,16 +374,16 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	
 	private static AutoconfMacro[] getMacroList(AutotoolsHoverDoc hoverdoc) {
 		if (acHoverMacros == null) {
-			acHoverMacros = new HashMap<Document, ArrayList<AutoconfMacro>>();
+			acHoverMacros = new HashMap<>();
 		}
 
-		ArrayList<AutoconfMacro> masterList = new ArrayList<AutoconfMacro>();
+		ArrayList<AutoconfMacro> masterList = new ArrayList<>();
 		Document[] doc = hoverdoc.getDocuments();
 		for (int ix = 0; ix < doc.length; ++ix) {
 			Document macroDoc = doc[ix];
 			ArrayList<AutoconfMacro> list = acHoverMacros.get(macroDoc);
 			if (list == null && macroDoc != null) {
-				list = new ArrayList<AutoconfMacro>();
+				list = new ArrayList<>();
 				NodeList nl = macroDoc.getElementsByTagName("macro"); //$NON-NLS-1$
 				for (int i = 0; i < nl.getLength(); ++i) {
 					Node macro = nl.item(i);
@@ -489,6 +489,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		return p;
 	}
 
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 
 		String hoverInfo = null;
@@ -508,6 +509,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	/*
 	 * @see ITextHover#getHoverRegion(ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 
 		if (textViewer != null) {
@@ -531,8 +533,10 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	 * @see ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, getTooltipAffordanceString(),
 						new HTMLTextPresenter(false));
@@ -545,6 +549,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	 */
 	public static IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, getTooltipAffordanceString(),
 						new HTMLTextPresenter(false));
@@ -575,8 +580,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 			if (styleSheetURL != null) {
 				try {
 					styleSheetURL= FileLocator.toFileURL(styleSheetURL);
-					BufferedReader reader= new BufferedReader(new InputStreamReader(styleSheetURL.openStream()));
-					try {
+					try (BufferedReader reader= new BufferedReader(new InputStreamReader(styleSheetURL.openStream()))) {
 						StringBuffer buffer= new StringBuffer(200);
 						String line= reader.readLine();
 						while (line != null) {
@@ -585,8 +589,6 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 							line= reader.readLine();
 						}
 						fgStyleSheet= buffer.toString();
-					} finally {
-						reader.close();
 					}
 				} catch (IOException ex) {
 					AutotoolsUIPlugin.log(ex);

@@ -17,6 +17,7 @@ public class OverrideDefine extends DefineVariable {
 		super(parent, name, value);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.VARIABLE_OVERRIDE + " " + GNUMakefileConstants.VARIABLE_DEFINE); //$NON-NLS-1$
 		sb.append(getName()).append('\n');
@@ -25,6 +26,7 @@ public class OverrideDefine extends DefineVariable {
 		return sb.toString();
 	}
 
+	@Override
 	public boolean isOverride() {
 		return true;
 	}

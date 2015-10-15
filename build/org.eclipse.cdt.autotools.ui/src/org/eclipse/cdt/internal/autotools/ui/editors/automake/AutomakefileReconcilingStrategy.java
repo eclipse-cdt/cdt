@@ -39,23 +39,19 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 		fOutliner= editor.getAutomakeOutlinePage();
 		fLastRegionOffset = Integer.MAX_VALUE;
 		fEditor= editor;
-		input = (IEditorInput) fEditor.getEditorInput();
+		input = fEditor.getEditorInput();
 		fManager= AutomakeEditorFactory.getDefault().getWorkingCopyManager();
 		fDocumentProvider= AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider();
 		fErrorHandler= new AutomakeErrorHandler(input);
 		fMakefileReconcilingParticipant= (IReconcilingParticipant)fEditor;
 	}
 	
-	/**
-	 * @see IReconcilingStrategy#reconcile(document)
-	 */
+	@Override
 	public void setDocument(IDocument document) {
 	}	
 
 
-	/**
-	 * @see IReconcilingStrategy#reconcile(region)
-	 */
+	@Override
 	public void reconcile(IRegion region) {
 		// We use a trick to avoid running the reconciler multiple times
 		// on a file when it gets changed. This is because this gets called
@@ -67,9 +63,7 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 		fLastRegionOffset = region.getOffset();
 	}
 
-	/**
-	 * @see IReconcilingStrategy#reconcile(dirtyRegion, region)
-	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
 		// FIXME: This seems to generate too much flashing in
 		// the contentoutline viewer.

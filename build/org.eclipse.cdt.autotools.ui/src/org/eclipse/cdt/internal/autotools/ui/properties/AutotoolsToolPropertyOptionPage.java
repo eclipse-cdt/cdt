@@ -41,10 +41,12 @@ public class AutotoolsToolPropertyOptionPage extends
 			this.createControl( parent );
 		}
 
+		@Override
 		protected void adjustForNumColumns( int numColumns ) {
 			((GridData)fTitleLabel.getLayoutData()).horizontalSpan = 2;
 		}
 
+		@Override
 		protected void doFillIntoGrid( Composite parent, int numColumns ) {
 			fTitleLabel = new Label( parent, SWT.WRAP );
 			fTitleLabel.setText( fTitle );
@@ -55,12 +57,16 @@ public class AutotoolsToolPropertyOptionPage extends
 			fTitleLabel.setLayoutData( gd );
 		}
 
+		@Override
 		public int getNumberOfControls() {	return 1; }
 		/**
 		 * The label field editor is only used to present a text label on a preference page.
 		 */
+		@Override
 		protected void doLoad() {}
+		@Override
 		protected void doLoadDefault() {}
+		@Override
 		protected void doStore() {}
 	}
 	
@@ -71,6 +77,7 @@ public class AutotoolsToolPropertyOptionPage extends
  		this.cfg = cfg;
 	}
 
+	@Override
 	public String getName() {
 		return super.getName();
 	}
@@ -79,9 +86,7 @@ public class AutotoolsToolPropertyOptionPage extends
 		return element;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
+	@Override
 	protected void createFieldEditors() {
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
@@ -129,15 +134,18 @@ public class AutotoolsToolPropertyOptionPage extends
 	/**
 	 * Update the field editor that displays all the build options
 	 */
+	@Override
 	public void updateFields() {
 		allOptionFieldEditor.load();
 	}
 	
+	@Override
 	public void setValues(){
 		commandStringField.load();
 		updateFields();
 	}
 	
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);

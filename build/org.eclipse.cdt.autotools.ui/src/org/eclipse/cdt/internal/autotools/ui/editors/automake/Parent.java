@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 public abstract class Parent extends Directive implements IParent {
 
-	ArrayList<IDirective> children = new ArrayList<IDirective>();
+	ArrayList<IDirective> children = new ArrayList<>();
 
 	public Parent(Directive parent) {
 		super(parent);
@@ -29,9 +29,10 @@ public abstract class Parent extends Directive implements IParent {
 		return getDirectives();
 	}
 
+	@Override
 	public IDirective[] getDirectives() {
 		children.trimToSize();
-		return (IDirective[]) children.toArray(new IDirective[0]);
+		return children.toArray(new IDirective[0]);
 	}
 
 	public void addDirective(Directive directive) {
@@ -54,12 +55,10 @@ public abstract class Parent extends Directive implements IParent {
 
 	public Directive[] getStatements() {
 		children.trimToSize();
-		return (Directive[]) children.toArray(new Directive[0]);		
+		return children.toArray(new Directive[0]);		
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		IDirective[] directives = getDirectives();

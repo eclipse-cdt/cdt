@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.autotools.ui.actions;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 
 /**
  * @author Jeff Johnston
@@ -19,7 +18,8 @@ import org.eclipse.core.commands.ExecutionException;
  */
 public class AclocalHandler extends AbstractAutotoolsHandler {
 
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	@Override
+	public Object execute(ExecutionEvent event) {
 		return execute(event, new InvokeAclocalAction());
 	}
 

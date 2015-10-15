@@ -51,26 +51,30 @@ import org.osgi.service.prefs.BackingStoreException;
 public abstract class AbstractEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	OverlayPreferenceStore fOverlayStore;
 	
-	Map<Button, String> fCheckBoxes= new HashMap<Button, String>();
+	Map<Button, String> fCheckBoxes= new HashMap<>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
 	
-	Map<Text, String> fTextFields= new HashMap<Text, String>();
+	Map<Text, String> fTextFields= new HashMap<>();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
-			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
+			fOverlayStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 
-	private Map<Text, Object> fNumberFields= new HashMap<Text, Object>();
+	private Map<Text, Object> fNumberFields= new HashMap<>();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
@@ -87,6 +91,7 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -95,15 +100,15 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		Map<Text, String> textFields= getTextFields();
 		Iterator<Button> e= checkBoxes.keySet().iterator();
 		while (e.hasNext()) {
-			Button b= (Button) e.next();
-			String key= (String) checkBoxes.get(b);
+			Button b= e.next();
+			String key= checkBoxes.get(b);
 			b.setSelection(getOverlayStore().getBoolean(key));
 		}
 		
 		Iterator<Text> e2 = textFields.keySet().iterator();
 		while (e.hasNext()) {
-			Text t= (Text) e2.next();
-			String key= (String) textFields.get(t);
+			Text t= e2.next();
+			String key= textFields.get(t);
 			t.setText(getOverlayStore().getString(key));
 		}		
 	}
@@ -111,6 +116,7 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		getOverlayStore().propagate();
 		IScopeContext scope = InstanceScope.INSTANCE;
@@ -146,6 +152,7 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		getOverlayStore().loadDefaults();
 		initializeFields();
@@ -158,6 +165,7 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (getOverlayStore() != null) {
 			getOverlayStore().stop();
@@ -213,7 +221,7 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		String number= textControl.getText();
 		IStatus status= validatePositiveNumber(number, (String[])getNumberFields().get(textControl));
 		if (!status.matches(IStatus.ERROR)) {
-			getOverlayStore().setValue((String) getTextFields().get(textControl), number);
+			getOverlayStore().setValue(getTextFields().get(textControl), number);
 		}
 		updateStatus(status);
 	}
@@ -238,7 +246,7 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		if (!status.matches(IStatus.ERROR)) {
 			Set<Text> keys= getNumberFields().keySet();
 			for (Iterator<Text> iter = keys.iterator(); iter.hasNext();) {
-				Text text = (Text) iter.next();
+				Text text = iter.next();
 				IStatus s= validatePositiveNumber(text.getText(), (String[])getNumberFields().get(text));
 				status= s.getSeverity() > status.getSeverity() ? s : status;
 			}

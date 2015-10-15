@@ -34,11 +34,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		fPrefs = preferences;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 
 		if (useBuildInfo == true && fBuildInfo == null) {
@@ -51,11 +47,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		super.createControl(parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.ErrorParserBlock#getErrorParserIDs(org.eclipse.core.resources.IProject)
-	 */
+	@Override
 	protected String[] getErrorParserIDs(IProject project) {
 		if (getContainer().getProject() != null && fBuildInfo == null) {
 			try {
@@ -69,12 +61,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		return new String[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.ErrorParserBlock#saveErrorParsers(org.eclipse.core.resources.IProject,
-	 *      java.lang.String[])
-	 */
+	@Override
 	public void saveErrorParsers(IProject project, String[] parserIDs) throws CoreException {
 		if (getContainer().getProject() != null) {
 			try {
@@ -88,22 +75,19 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.AbstractErrorParserBlock#saveErrorParsers(java.lang.String[])
-	 */
+	@Override
 	protected void saveErrorParsers(String[] parserIDs) throws CoreException {
 		fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, MakeBuilder.BUILDER_ID, false);
 		fBuildInfo.setErrorParsers(parserIDs);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.AbstractErrorParserBlock#getErrorParserIDs(boolean)
-	 */
+	@Override
 	protected String[] getErrorParserIDs(boolean defaults) {
 		fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, MakeBuilder.BUILDER_ID, defaults);
 		return fBuildInfo.getErrorParsers();
 	}
 	
+	@Override
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 		if (getContainer().getProject() != null) {

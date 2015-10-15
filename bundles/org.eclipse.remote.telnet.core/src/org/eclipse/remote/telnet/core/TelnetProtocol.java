@@ -359,17 +359,23 @@ public class TelnetProtocol extends Thread implements TelnetCodes {
 			// Tell the command shell that we have terminated
 			shell.terminated();
 			try {
-				inputChannel.close();
+				if(inputChannel != null) {
+					inputChannel.close();
+				}
 			} catch (IOException ioe) {
 				/* ignore */
 			}
 			try {
-				serverOutputStream.close();
+				if(serverOutputStream != null) {
+					serverOutputStream.close();
+				}
 			} catch (IOException ioe) {
 				/* ignore */
 			}
 			try {
-				clientOutputStream.close();
+				if(clientOutputStream != null) {
+					clientOutputStream.close();
+				}
 			} catch (IOException ioe) {
 				/* ignore */
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2012, 2015 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -250,7 +250,7 @@ public class BuildRunnerHelper implements Closeable {
 			isCancelled = false;
 			String pathFromURI = null;
 			if (workingDirectoryURI != null) {
-				pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+				pathFromURI = UNCPathConverter.toPath(workingDirectoryURI).toString();
 			}
 			if (pathFromURI == null) {
 				// fallback to CWD

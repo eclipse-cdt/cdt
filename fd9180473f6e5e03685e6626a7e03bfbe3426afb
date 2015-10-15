@@ -71,6 +71,29 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_0275b73c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:34:25Z",
+      "side": 1,
+      "message": "It would be more straightforward to assign scores to the variables themselves and then sort them using the score values.",
+      "range": {
+        "startLine": 332,
+        "startChar": 2,
+        "endLine": 332,
+        "endChar": 68
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_e21ea320",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
         "patchSetId": 12

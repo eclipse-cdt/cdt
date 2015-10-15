@@ -17,7 +17,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 
 	private String value;
 	private ArrayList<String> children = 
-			new ArrayList<String>();
+ new ArrayList<>();
 	
 	public FlagConfigureOption(String name, AutotoolsConfiguration cfg) {
 		super(name, cfg);
@@ -37,6 +37,7 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 		this.children = (ArrayList<String>)children.clone();
 	}
 	
+	@Override
 	public String getParameter() {
 		StringBuffer parms = new StringBuffer();
 		// Multiple flags are designated by putting multiple flags together using "|" as delimiter
@@ -69,10 +70,12 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 		return parms.toString();
 	}
 
+	@Override
 	public String getParameterName() {
 		return getName();
 	}
 	
+	@Override
 	public boolean isParmSet() {
 		for (int i = 0; i < children.size(); ++i) {
 			String s = children.get(i);
@@ -83,23 +86,28 @@ public class FlagConfigureOption extends AbstractConfigurationOption {
 		return false;
 	}
 
+	@Override
 	public void setValue(String value) {
 		this.value = value;
 	}
 
+	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		FlagConfigureOption f = new FlagConfigureOption(name, config, value, children);
 		return f; 
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}
 
+	@Override
 	public int getType() {
 		return FLAG;
 	}
 	
+	@Override
 	public boolean isFlag() {
 		return true;
 	}

@@ -119,7 +119,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	private boolean isDirty;
 	private boolean isParmsDirty;
 	private Map<String, IConfigureOption> configOptions;
-	private ArrayList<String> configParms = new ArrayList<String>();
+	private ArrayList<String> configParms = new ArrayList<>();
 
 	public AutotoolsConfiguration(String name) {
 		this(name, true);
@@ -127,7 +127,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		
 	private AutotoolsConfiguration(String name, boolean initialize) {
 		this.id = name;
-		configOptions = new HashMap<String, IConfigureOption>();
+		configOptions = new HashMap<>();
 		if (initialize)
 			initConfigOptions();
 		isParmsDirty = true;
@@ -135,7 +135,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	
 	private void initConfigOptions() {
 		// Put configure options in hash map.  Ignore categories.
-		ArrayList<Option> tools = new ArrayList<Option>();
+		ArrayList<Option> tools = new ArrayList<>();
 		FlagConfigureOption lastFlag = null;
 		for (int i = 0; i < configOpts.length; ++i) {
 			Option opt = configOpts[i];
@@ -202,7 +202,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	}
 
 	public static Option[] getChildOptions(String name) {
-		ArrayList<Option> options = new ArrayList<Option>();
+		ArrayList<Option> options = new ArrayList<>();
 		for (int i = 0; i < configOpts.length; ++i) {
 			Option opt = configOpts[i];
 			if (opt.getName().equals(name)) {
@@ -235,14 +235,17 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		return toolList.clone();
 	}
 	
+	@Override
 	public IConfigureOption getOption(String name) {
 		return configOptions.get(name);
 	}
 
+	@Override
 	public IAConfiguration copy() {
 		return copy(id);
 	}
 	
+	@Override
 	public IAConfiguration copy(String newId) {
 		AutotoolsConfiguration cfg = new AutotoolsConfiguration(newId, false);
 		Collection<IConfigureOption> oldValues = configOptions.values();
@@ -257,24 +260,29 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		return cfg;
 	}
 	
+	@Override
 	public String getId() {
 		return id;
 	}
 	
+	@Override
 	public boolean isDirty() {
 		return isDirty;
 	}
 	
+	@Override
 	public void setDirty(boolean value) {
 		isDirty = value;
 		if (isDirty)
 			isParmsDirty = true;
 	}
 	
+	@Override
 	public Map<String, IConfigureOption> getOptions() {
 		return configOptions;
 	}
 	
+	@Override
 	public String getToolParameters(String name) {
 		StringBuffer buf = new StringBuffer();
 		Option[] options = getChildOptions(name);
@@ -297,9 +305,10 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		return buf.toString();
 	}
 
+	@Override
 	public ArrayList<String> getToolArgs(String name) {
 		if (isParmsDirty) {
-			configParms = new ArrayList<String>();
+			configParms = new ArrayList<>();
 			Option[] options = getChildOptions(name);
 			for (int i = 0; i < options.length; ++i) {
 				IConfigureOption option = getOption(options[i].getName());
@@ -319,6 +328,7 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		return configParms;
 	}
 
+	@Override
 	public void setOption(String name, String value) {
 		IConfigureOption option = configOptions.get(name);
 		if (option != null) {
@@ -329,15 +339,18 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		}
 	}
 	
+	@Override
 	public void setConfigToolDirectory(String configToolDirectory) {
 		setOption("configdir", configToolDirectory);
 	}
 
+	@Override
 	public String getConfigToolDirectory() {
 		IConfigureOption option = configOptions.get("configdir");
 		return option.getValue();
 	}
 
+	@Override
 	public void setDefaultOptions() {
 		initConfigOptions();
 	}

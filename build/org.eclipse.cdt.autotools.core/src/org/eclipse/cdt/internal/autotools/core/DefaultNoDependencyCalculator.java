@@ -25,24 +25,18 @@ import org.eclipse.core.resources.IResource;
 @SuppressWarnings("deprecation")
 public class DefaultNoDependencyCalculator implements IManagedDependencyGenerator {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IProject)
-	 */
+	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
 		// Never answers any dependencies
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getCalculatorType()
-	 */
+	@Override
 	public int getCalculatorType() {
 		return TYPE_NODEPS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getDependencyCommand(org.eclipse.core.resources.IResource)
-	 */
+	@Override
 	public String getDependencyCommand(IResource resource, IManagedBuildInfo info) {
 		// Never answers this call with an actual value
 		return null;

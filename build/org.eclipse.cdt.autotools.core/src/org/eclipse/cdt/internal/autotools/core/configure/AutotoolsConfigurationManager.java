@@ -28,7 +28,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
-import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -85,8 +84,8 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	private static Map<String, Map<String, IAConfiguration>> tmpConfigs;
 	
 	private AutotoolsConfigurationManager() {
-		configs = new HashMap<String, Map<String, IAConfiguration>>();
-		tmpConfigs = new HashMap<String, Map<String, IAConfiguration>>();
+		configs = new HashMap<>();
+		tmpConfigs = new HashMap<>();
 		AutotoolsPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 	
@@ -98,8 +97,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	}
 
 	public synchronized IAConfiguration createDefaultConfiguration(IProject project, String id) {
-		IAConfiguration cfg = new AutotoolsConfiguration(id);
-		return cfg;
+		return new AutotoolsConfiguration(id);
 	}
 	
 	public synchronized IAConfiguration findCfg(IProject p, String id) {
@@ -138,7 +136,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		String projectName = project.getName();
 		Map<String, IAConfiguration> cfgs = getSavedConfigs(project);
 		if (cfgs == null) {
-			cfgs = new HashMap<String, IAConfiguration>();
+			cfgs = new HashMap<>();
 			configs.put(projectName, cfgs);
 		}
 		cfgs.put(cfg.getId(), cfg);
@@ -167,7 +165,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		clearTmpConfigurations(project);
 		ICProjectDescription pd = CoreModel.getDefault().getProjectDescription(project);
 		ICConfigurationDescription[] cfgs = pd.getConfigurations();
-		Map <String, IAConfiguration> newCfgList = new HashMap<String, IAConfiguration>();
+		Map<String, IAConfiguration> newCfgList = new HashMap<>();
 		for (int i = 0; i < cfgs.length; ++i) {
 			cfgs[i].getConfigurationData();
 			IAConfiguration acfg = getTmpConfiguration(project, cfgs[i]);
@@ -197,7 +195,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 			try {
 				IPath fileLocation = project.getLocation().append(CFG_FILE_NAME);
 				File dirFile = fileLocation.toFile();
-				Map<String, IAConfiguration> cfgList = new HashMap<String, IAConfiguration>();
+				Map<String, IAConfiguration> cfgList = new HashMap<>();
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				if (dirFile.exists()) {
@@ -329,7 +327,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	private Map<String, IAConfiguration> getTmpConfigs(IProject p) {
 		Map <String, IAConfiguration> tmpList = tmpConfigs.get(p.getName());
 		if (tmpList == null) {
-			tmpList = new HashMap<String, IAConfiguration>();
+			tmpList = new HashMap<>();
 			tmpConfigs.put(p.getName(), tmpList);
 		}
 		return tmpList;
@@ -357,7 +355,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 				if (tool.getName().equals("configure")) { //$NON-NLS-1$
 					IOption option = 
 						tool.getOptionBySuperClassId("org.eclipse.linuxtools.cdt.autotools.core.option.configure.name"); // $NON-NLS-1$
-					IHoldsOptions h = (IHoldsOptions)tool;
+					IHoldsOptions h = tool;
 					try {
 						IOption optionToSet = h.getOptionToSet(option, false);
 						optionToSet.setValue(id);
@@ -441,7 +439,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	public synchronized void applyConfigs(String projectName, ICConfigurationDescription[] cfgds) {
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IResource res = (IProject)root.findMember(projectName, false);
+			IResource res = root.findMember(projectName, false);
 			if (res == null || res.getType() != IResource.PROJECT) {
 				AutotoolsPlugin.logErrorMessage(ConfigureMessages.getFormattedString(CFG_CANT_SAVE,
 						new String[]{projectName}));
@@ -461,7 +459,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 					p.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 					p.println("<configurations>"); // $NON-NLS-1$
 					Option[] optionList = AutotoolsConfiguration.getOptionList();
-					HashSet<String> savedIds = new HashSet<String>();
+					HashSet<String> savedIds = new HashSet<>();
 					setSyncing(true);
 					for (int x = 0; x < cfgds.length; ++x) {
 						ICConfigurationDescription cfgd = cfgds[x];
@@ -513,12 +511,13 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	public synchronized Map<String, IAConfiguration> getConfigurations(IProject project) {
 		Map<String, IAConfiguration> list = getSavedConfigs(project);
 		if (list == null) {
-			list = new HashMap<String, IAConfiguration>();
+			list = new HashMap<>();
 			configs.put(project.getName(), list);
 		}
 		return list;
 	}
 	
+	@Override
 	public synchronized void resourceChanged(IResourceChangeEvent event) {
 		IResource res = event.getResource();
 		if (!(res instanceof IProject))
@@ -628,13 +627,13 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		}
 
 		IAConfiguration cfg = getConfiguration(project, cfgId);
-		HashMap<String, IAutotoolsOption> options = new HashMap<String, IAutotoolsOption>();
+		HashMap<String, IAutotoolsOption> options = new HashMap<>();
 
 		// Get set of configuration options and convert to set of IAutotoolOptions
 		Map<String, IConfigureOption> cfgOptions = cfg.getOptions();
 		IAConfiguration dummyCfg = createDefaultConfiguration(project, createDummyId());
 		for (Iterator<Entry<String, IConfigureOption>> i = cfgOptions.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<String, IConfigureOption> entry = (Entry<String, IConfigureOption>) i.next();
+			Map.Entry<String, IConfigureOption> entry = i.next();
 			String name = entry.getKey();
 			IAutotoolsOption configOption = 
 					new AutotoolsOption(entry.getValue().copy((AutotoolsConfiguration)dummyCfg));
@@ -665,7 +664,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 
 		// Get set of configuration options and convert to set of IAutotoolOptions
 		for (Iterator<Entry<String, IAutotoolsOption>> i = options.entrySet().iterator(); i.hasNext();) {
-			Map.Entry<String, IAutotoolsOption> entry = (Entry<String, IAutotoolsOption>) i.next();
+			Map.Entry<String, IAutotoolsOption> entry = i.next();
 			String name = entry.getKey();
 			IAutotoolsOption option = entry.getValue();
 			IConfigureOption cfgOption = cfg.getOption(name);

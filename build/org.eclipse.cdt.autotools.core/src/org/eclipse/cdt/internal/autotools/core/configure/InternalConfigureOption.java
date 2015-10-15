@@ -30,10 +30,12 @@ public class InternalConfigureOption extends AbstractConfigurationOption {
 		this.value = value;
 	}
 	
+	@Override
 	public String getValue() {
 		return value;
 	}
 	
+	@Override
 	public void setValue(String newValue) {
 		if (!newValue.equals(value)) {
 			cfg.setDirty(true);
@@ -41,18 +43,22 @@ public class InternalConfigureOption extends AbstractConfigurationOption {
 		}
 	}
 
+	@Override
 	public boolean isParmSet() {
 		return false;
 	}
 	
+	@Override
 	public String getParameter() {
 		return "";
 	}
 	
+	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new InternalConfigureOption(name, config, value);
 	}
 
+	@Override
 	public int getType() {
 		return INTERNAL;
 	}

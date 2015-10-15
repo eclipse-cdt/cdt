@@ -48,7 +48,6 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.ITarget;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -65,7 +64,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
@@ -80,8 +78,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.IRemoteConnectionControlService;
-import org.eclipse.remote.core.IRemoteConnectionPropertyService;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteResource;
 import org.eclipse.remote.core.IRemoteServicesManager;
@@ -130,12 +126,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private IBuilder builder;
 	
 
-	public void generateDependencies() throws CoreException {
+	public void generateDependencies() {
 		// TODO Auto-generated method stub
 
 	}
 
-	public MultiStatus generateMakefiles(IResourceDelta delta)
+	public MultiStatus generateMakefiles()
 			throws CoreException {
 		return regenerateMakefiles(false);
 	}
@@ -175,12 +171,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return project;
 	}
 	
-	public boolean isGeneratedResource(IResource resource) {
+	public boolean isGeneratedResource() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public void regenerateDependencies(boolean force) throws CoreException {
+	public void regenerateDependencies() {
 		// TODO Auto-generated method stub
 
 	}
@@ -257,8 +253,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	}
 	
 	private void refresh() throws CoreException{
-		IRemoteResource remRes =
-				(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
+		IRemoteResource remRes = getProject().getAdapter(IRemoteResource.class);
 		if (remRes != null) {
 			remRes.refresh(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 		}
@@ -485,12 +480,12 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				}
 			}
 			
-			ArrayList<String> configureEnvs = new ArrayList<String>();
-			ArrayList<String> configureCmdParms = new ArrayList<String>();
+			ArrayList<String> configureEnvs = new ArrayList<>();
+			ArrayList<String> configureCmdParms = new ArrayList<>();
 			IPath configurePath = getConfigurePath(configureEnvs, configureCmdParms);
 			String[] configArgs = getConfigArgs(configureCmdParms);
-			ArrayList<String> autogenEnvs = new ArrayList<String>();
-			ArrayList<String> autogenCmdParms = new ArrayList<String>();
+			ArrayList<String> autogenEnvs = new ArrayList<>();
+			ArrayList<String> autogenCmdParms = new ArrayList<>();
 			IPath autogenPath = getAutogenPath(autogenEnvs, autogenCmdParms);
 			
 			// Check if we have a config.status (meaning configure has already run).
@@ -841,10 +836,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	}
 
 	// Run a command or executable (e.g. make).
-	private int runCommand(IPath commandPath, IPath runPath, String[] args,
-			String jobDescription, String errMsg, IConsole console, 
-			boolean consoleStart) throws BuildException, CoreException,
-			NullPointerException, IOException {
+	private int runCommand(IPath commandPath, IPath runPath, String[] args, String jobDescription, String errMsg,
+			IConsole console, boolean consoleStart) throws CoreException, NullPointerException, IOException {
 
 		int rc = IStatus.OK;
 		
@@ -876,7 +869,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		ConsoleOutputStream consoleOutStream = null;
 		ErrorParserManager epm = null;
 		StringBuffer buf = new StringBuffer();
 
@@ -884,8 +876,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (consoleStart)
 			console.start(project);
 		
-		try {
-			consoleOutStream = console.getOutputStream();
+		try (ConsoleOutputStream consoleOutStream = console.getOutputStream()) {
 			String[] consoleHeader = new String[3];
 
 			consoleHeader[0] = jobDescription;
@@ -906,7 +897,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			IEnvironmentVariable variables[] = 
 					CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
 			String[] env = null;
-			ArrayList<String> envList = new ArrayList<String>();
+			ArrayList<String> envList = new ArrayList<>();
 			if (variables != null) {
 				for (int i = 0; i < variables.length; i++) {
 					envList.add(variables[i].getName()
@@ -917,7 +908,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			// Hook up an error parser manager
 			URI uri = URIUtil.toURI(runPath);
-			epm = new ErrorParserManager(project, uri, this, new String[] {ErrorParser.ID});
+			epm = new ErrorParserManager(project, uri, this);
 			epm.setOutputStream(consoleOutStream);
 			epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
 
@@ -1018,8 +1009,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// epm.reportProblems();
 
 		} finally {
-			if (consoleOutStream != null)
-				consoleOutStream.close();
 			if (epm != null)
 				epm.close();
 		}
@@ -1044,7 +1033,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				IEnvironmentVariable variables[] = 
 						CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
 				String[] env = new String[0];
-				ArrayList<String> envList = new ArrayList<String>();
+				ArrayList<String> envList = new ArrayList<>();
 				if (variables != null) {
 					for (int i = 0; i < variables.length; i++) {
 							envList.add(variables[i].getName()
@@ -1070,8 +1059,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
     // Get OS name either remotely or locally, depending on the project
     private String getOSName() {
-    	IRemoteResource remRes =
-    			(IRemoteResource)getProject().getAdapter(IRemoteResource.class);
+		IRemoteResource remRes = getProject().getAdapter(IRemoteResource.class);
     	if (remRes != null) {
     		URI uri = remRes.getActiveLocationURI();
     		IRemoteServicesManager remoteServiceManager = AutotoolsPlugin.getService(IRemoteServicesManager.class);
@@ -1121,11 +1109,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     }
 
     // Run an autotools script (e.g. configure, autogen.sh, config.status).
-	private int runScript(IPath commandPath, IPath runPath, String[] args,
-			String jobDescription, String errMsg, IConsole console,
-			ArrayList<String> additionalEnvs, 
-			boolean consoleStart) throws BuildException, CoreException,
-			NullPointerException, IOException {
+	private int runScript(IPath commandPath, IPath runPath, String[] args, String jobDescription, String errMsg,
+			IConsole console, ArrayList<String> additionalEnvs, boolean consoleStart)
+					throws CoreException, NullPointerException, IOException {
 
 		int rc = IStatus.OK;
 		boolean removePWD = false;
@@ -1190,7 +1176,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				"MakeGenerator.make.message", msgs)); //$NON-NLS-1$
 
 
-		ConsoleOutputStream consoleOutStream = null;
 		ErrorParserManager epm = null;
 		StringBuffer buf = new StringBuffer();
 
@@ -1198,8 +1183,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		if (consoleStart)
 			console.start(project);
 		
-		try {
-			consoleOutStream = console.getOutputStream();
+		try (ConsoleOutputStream consoleOutStream = console.getOutputStream()) {
 			String[] consoleHeader = new String[3];
 
 			consoleHeader[0] = jobDescription;
@@ -1234,7 +1218,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			IEnvironmentVariable variables[] = 
 					CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cdesc, true);
 			String[] env = null;
-			ArrayList<String> envList = new ArrayList<String>();
+			ArrayList<String> envList = new ArrayList<>();
 			if (variables != null) {
 				for (int i = 0; i < variables.length; i++) {
 					// For Windows/Mac, check for PWD environment variable being passed.
@@ -1262,7 +1246,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			// Hook up an error parser manager
 			URI uri = URIUtil.toURI(runPath);
-			epm = new ErrorParserManager(project, uri, this, new String[] {ErrorParser.ID});
+			epm = new ErrorParserManager(project, uri, this);
 			epm.setOutputStream(consoleOutStream);
 			epm.addErrorParser(ErrorParser.ID, new ErrorParser(getSourcePath(), getBuildPath()));
 
@@ -1364,8 +1348,6 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			// .getResourceString(MARKERS));
 			// epm.reportProblems();
 		} finally {
-			if (consoleOutStream != null)
-				consoleOutStream.close();
 			if (epm != null)
 				epm.close();
 		}
@@ -1467,7 +1449,10 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		IMakefile makefile = MakeCorePlugin.createMakefile(makefileFile.toURI(), false, null);
 		ITargetRule[] targets = makefile.getTargetRules();
 		ITarget target = null;
-		Map<String, IMakeTarget> makeTargets = new HashMap<String, IMakeTarget>(); // use a HashMap so duplicate names are handled
+		Map<String, IMakeTarget> makeTargets = new HashMap<>(); // use a HashMap
+																// so duplicate
+																// names are
+																// handled
 		String[] id = makeTargetManager.getTargetBuilders(getProject());
 		if (id.length == 0) {
 			return;
@@ -1492,7 +1477,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		for (int i = 0; i < targets.length; i++) {
 			target = targets[i].getTarget();
 			String targetName = target.toString();
-			if (!isValidTarget(targetName, makeTargetManager))
+			if (!isValidTarget(targetName))
 				continue;
 			try {
 				// Bug #351660 - always create a new MakeTarget because an
@@ -1505,15 +1490,15 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				makeTarget.setStopOnError(isStopOnError);
 				makeTarget.setRunAllBuilders(false);
 				makeTarget.setUseDefaultBuildCmd(true);
-				makeTarget.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, buildArguments);
-				makeTarget.setBuildAttribute(IMakeTarget.BUILD_COMMAND, defaultBuildCommand);
+				makeTarget.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, buildArguments);
+				makeTarget.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, defaultBuildCommand);
 
 				makeTarget.setBuildAttribute(GENERATED_TARGET, "true"); //$NON-NLS-1$
 				makeTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET,
 						targetName);
 
 				//TODO: should this be raw build directory in macro form?
-				makeTarget.setBuildAttribute(IMakeTarget.BUILD_LOCATION,
+				makeTarget.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION,
 						buildDir);
 				makeTargets.put(makeTarget.getName(), makeTarget);
 			} catch (CoreException e) {
@@ -1523,7 +1508,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		
 		IMakeTarget[] makeTargetArray = new IMakeTarget[makeTargets.size()];
 		Collection<IMakeTarget> values = makeTargets.values();
-		ArrayList<IMakeTarget> valueList = new ArrayList<IMakeTarget>(values);
+		ArrayList<IMakeTarget> valueList = new ArrayList<>(values);
 		valueList.toArray(makeTargetArray);
 		MakeTargetComparator compareMakeTargets = new MakeTargetComparator();
 		Arrays.sort(makeTargetArray, compareMakeTargets);
@@ -1552,7 +1537,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			saveTargets(makeTargetArray);
 	}
 
-	private boolean isValidTarget(String targetName, IMakeTargetManager makeTargetManager) {
+	private boolean isValidTarget(String targetName) {
 		return !(targetName.endsWith("-am") //$NON-NLS-1$
 				|| targetName.endsWith("PROGRAMS") //$NON-NLS-1$
 				|| targetName.endsWith("-generic") //$NON-NLS-1$
@@ -1565,7 +1550,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private String[] makeArray(String string) {
 		string = string.trim();
 		char[] array = string.toCharArray();
-		ArrayList<String> aList = new ArrayList<String>();
+		ArrayList<String> aList = new ArrayList<>();
 		StringBuilder buffer = new StringBuilder();
 		boolean inComment = false;
 		for (int i = 0; i < array.length; i++) {

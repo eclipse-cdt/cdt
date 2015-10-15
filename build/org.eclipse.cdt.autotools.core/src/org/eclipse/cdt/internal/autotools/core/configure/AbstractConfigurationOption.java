@@ -28,10 +28,12 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 		this.cfg = cfg;
 	}
 	
+	@Override
 	public String getDescription() {
 		return ConfigureMessages.getConfigureDescription(msgName);
 	}
 
+	@Override
 	public String getToolTip() {
 		return ConfigureMessages.getConfigureTip(msgName);
 	}
@@ -40,6 +42,7 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 		return msgName;
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -48,8 +51,9 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 		return cfg;
 	}
 	
+	@Override
 	public ArrayList<String> getParameters() {
-		ArrayList<String> parameters = new ArrayList<String>();
+		ArrayList<String> parameters = new ArrayList<>();
 		if (isParmSet())
 			parameters.add(getParameter());
 		return parameters;
@@ -59,18 +63,22 @@ public abstract class AbstractConfigurationOption implements IConfigureOption {
 		return "--" + getName();
 	}
 
+	@Override
 	public boolean isCategory() {
 		return false;
 	}
 	
+	@Override
 	public boolean isFlag() {
 		return false;
 	}
 	
+	@Override
 	public boolean isFlagValue() {
 		return false;
 	}
 
+	@Override
 	public boolean isMultiArg() {
 		return false;
 	}

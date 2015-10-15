@@ -16,6 +16,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 
 public class MarkerResolutionGenerator implements IMarkerResolutionGenerator {
 
+	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 //		System.out.println("in marker resolution, library info is " + marker.getAttribute(IAutotoolsMarker.MARKER_LIBRARY_INFO, ""));
 //		String libraryInfo = marker.getAttribute(IAutotoolsMarker.MARKER_LIBRARY_INFO, null);

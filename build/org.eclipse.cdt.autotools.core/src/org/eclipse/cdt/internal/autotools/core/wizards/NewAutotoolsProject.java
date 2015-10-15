@@ -50,6 +50,7 @@ public class NewAutotoolsProject extends ProcessRunner {
 		pca = new ProjectCreatedActions();
 	}
 	
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String location = args[1].getSimpleValue();
@@ -76,7 +77,7 @@ public class NewAutotoolsProject extends ProcessRunner {
 
 				pca.setProject(project);
 				pca.setProjectLocation(locationPath);
-				pca.setConfigs((IConfiguration[]) configs.toArray(new IConfiguration[configs.size()]));
+				pca.setConfigs(configs.toArray(new IConfiguration[configs.size()]));
 				pca.setArtifactExtension(artifactExtension);
 				info = pca.createProject(monitor, CCorePlugin.DEFAULT_INDEXER, isCProject);
 

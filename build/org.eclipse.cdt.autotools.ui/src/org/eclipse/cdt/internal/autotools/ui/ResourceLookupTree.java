@@ -124,7 +124,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	
 	public ResourceLookupTree() {
 		fRootNode= new Node(null, CharArrayUtils.EMPTY, false, false) {};
-		fFileExtensions= new HashMap<String, Extensions>();
+		fFileExtensions= new HashMap<>();
 		fUnrefJob= new Job("Timer") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -152,6 +152,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	/**
 	 * Handle resource change notifications.
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
 		synchronized (fLock) {
@@ -182,7 +183,8 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	/**
 	 * Handles resource change notifications by visiting the delta.
 	 */
-	public boolean visit(IResourceDelta delta) throws CoreException {
+	@Override
+	public boolean visit(IResourceDelta delta) {
 		assert Thread.holdsLock(fLock);
 		
 		final IResource res= delta.getResource();
@@ -274,7 +276,8 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	/**
 	 * Add a resource tree by using a resource proxy visitor.
 	 */
-	public boolean visit(IResourceProxy proxy) throws CoreException {
+	@Override
+	public boolean visit(IResourceProxy proxy) {
 		if (proxy.getType() == IResource.FILE) {
 			if (fCurrentExtensions.isRelevant(proxy.getName())) {
 				if (proxy.isLinked()) {
@@ -300,7 +303,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	public void simulateNodeMapCollection() {
 		synchronized (fLock) {
 			fNodeMap= null;
-			fNodeMapRef= new SoftReference<Map<Integer, Object>>(null);
+			fNodeMapRef= new SoftReference<>(null);
 		}
 	}
 
@@ -317,8 +320,8 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 			if (fNodeMap == null) {
 				fFileExtensions.clear();
-				fNodeMap= new HashMap<Integer, Object>();
-				fNodeMapRef= new SoftReference<Map<Integer, Object>>(fNodeMap);
+				fNodeMap= new HashMap<>();
+				fNodeMapRef= new SoftReference<>(fNodeMap);
 			}
 		}
 		fUnrefJob.cancel();
@@ -349,13 +352,13 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private void initFileExtensions() {
 		
 		if (fDefaultExtensions == null) {
-			HashSet<String> cdtContentTypes= new HashSet<String>();
+			HashSet<String> cdtContentTypes= new HashSet<>();
 			String[] registeredContentTypes= CoreModel.getRegistedContentTypeIds();
 			cdtContentTypes.addAll(Arrays.asList(registeredContentTypes));
 
 			final IContentTypeManager ctm= Platform.getContentTypeManager();
 			final IContentType[] ctts= ctm.getAllContentTypes();
-			Set<String> result= new HashSet<String>();
+			Set<String> result= new HashSet<>();
 			outer: for (IContentType ctt : ctts) {
 				IContentType basedOn= ctt;
 				while (basedOn != null) {
@@ -368,7 +371,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 			fCDTProjectExtensions= new Extensions(result, true);
 
-			result= new HashSet<String>();
+			result= new HashSet<>();
 			for (IContentType ctt : ctts) {
 				IContentType basedOn= ctt;
 				while (basedOn != null) {
@@ -700,7 +703,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		while(suffix.startsWith("../")) { //$NON-NLS-1$
 			suffix= suffix.substring(3);
 		}
-		Set<String> prjset= new HashSet<String>();
+		Set<String> prjset= new HashSet<>();
 		for (IProject prj : projects) {
 			prjset.add(prj.getName());
 		}
@@ -829,7 +832,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 	@SuppressWarnings("nls")
 	public void dump() {
-		List<String> lines= new ArrayList<String>();
+		List<String> lines= new ArrayList<>();
 		synchronized (fLock) {
 			for (Iterator<Object> iterator = fNodeMap.values().iterator(); iterator.hasNext();) {
 				Node[] nodes= convert(iterator.next());	

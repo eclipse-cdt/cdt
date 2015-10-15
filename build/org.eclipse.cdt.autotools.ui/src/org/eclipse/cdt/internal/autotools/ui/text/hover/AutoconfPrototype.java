@@ -21,9 +21,9 @@ public class AutoconfPrototype {
 	
 	public AutoconfPrototype() {
 		numPrototypes = 0;
-		minParms = new ArrayList<Integer>();
-		maxParms = new ArrayList<Integer>();
-		parmList = new ArrayList<ArrayList<String>>();
+		minParms = new ArrayList<>();
+		maxParms = new ArrayList<>();
+		parmList = new ArrayList<>();
 	}
 	
 	public String getName() {
@@ -43,7 +43,7 @@ public class AutoconfPrototype {
 	}
 	
 	public int getMinParms(int prototypeNum) {
-		return ((Integer)minParms.get(prototypeNum)).intValue();
+		return minParms.get(prototypeNum).intValue();
 	}
 	
 	public void setMinParms(int prototypeNum, int value) {
@@ -51,7 +51,7 @@ public class AutoconfPrototype {
 	}
 	
 	public int getMaxParms(int prototypeNum) {
-		return ((Integer)maxParms.get(prototypeNum)).intValue();
+		return maxParms.get(prototypeNum).intValue();
 	}
 	
 	public void setMaxParms(int prototypeNum, int value) {
@@ -60,7 +60,7 @@ public class AutoconfPrototype {
 	
 	public String getParmName(int prototypeNum, int parmNum) {
 		ArrayList<String> parms = parmList.get(prototypeNum);
-		return (String)parms.get(parmNum);
+		return parms.get(parmNum);
 	}
 
 	// This function assumes that parms will be added in order starting
@@ -68,7 +68,7 @@ public class AutoconfPrototype {
 	public void setParmName(int prototypeNum, int parmNum, String value) {
 		ArrayList<String> parms;
 		if (parmList.size() == prototypeNum) {
-			parms = new ArrayList<String>();
+			parms = new ArrayList<>();
 			parmList.add(parms);
 		}
 		else

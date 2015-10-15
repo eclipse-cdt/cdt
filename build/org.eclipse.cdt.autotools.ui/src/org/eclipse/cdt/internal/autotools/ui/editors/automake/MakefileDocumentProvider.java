@@ -65,16 +65,12 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 		return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
-     */
-    protected IAnnotationModel createAnnotationModel(IFile file) {
+    @Override
+	protected IAnnotationModel createAnnotationModel(IFile file) {
     	return new MakefileAnnotationModel(file);
     }
 
-    /*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
-	 */
+	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		if (!(element instanceof IFileEditorInput))
 			return null;
@@ -101,10 +97,8 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 		return makefileInfo;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object, org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
-     */
-    protected void disposeFileInfo(Object element, FileInfo info) {
+    @Override
+	protected void disposeFileInfo(Object element, FileInfo info) {
 	    if (info instanceof MakefileFileInfo) {
 		    MakefileFileInfo makefileInfo= (MakefileFileInfo) info;
 		    if (makefileInfo.fCopy != null) {
@@ -114,16 +108,12 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	    super.disposeFileInfo(element, info);	
     }
     
-    /*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
-	 */
+	@Override
 	protected FileInfo createEmptyFileInfo() {
 		return new MakefileFileInfo();
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IMakefileDocumentProvider#getWorkingCopy(java.lang.Object)
-	 */
+	@Override
 	public IMakefile getWorkingCopy(Object element) {
 		FileInfo fileInfo= getFileInfo(element);		
 		if (fileInfo instanceof MakefileFileInfo) {
@@ -133,9 +123,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.MakefileDocumentProvider#shutdown()
-	 */
+	@Override
 	public void shutdown() {
 		@SuppressWarnings("rawtypes")
 		Iterator e= getConnectedElementsIterator();

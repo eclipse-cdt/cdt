@@ -55,9 +55,7 @@ public class AutoconfMacroProposalContextInformation implements IContextInformat
 		fInformationDisplayString= informationDisplayString;
 	}
 
-	/*
-	 * @see IContextInformation#equals(Object)
-	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
 			IContextInformation contextInformation= (IContextInformation) object;
@@ -69,36 +67,30 @@ public class AutoconfMacroProposalContextInformation implements IContextInformat
 		return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		String combined = fInformationDisplayString.toLowerCase().concat(fContextDisplayString.toLowerCase());
 		return combined.hashCode();
 	}
 	
-	/*
-	 * @see IContextInformation#getInformationDisplayString()
-	 */
+	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
 	
-	/*
-	 * @see IContextInformation#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 	
-	/*
-	 * @see IContextInformation#getContextDisplayString()
-	 */
+	@Override
 	public String getContextDisplayString() {
 		if (fContextDisplayString != null)
 			return fContextDisplayString;
 		return fInformationDisplayString;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContextInformationExtension#getContextInformationPosition()
-	 */
+
+	@Override
 	public int getContextInformationPosition() {
 		return fInformationPosition;
 	}

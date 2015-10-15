@@ -50,9 +50,7 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 		
 	}
 
-	/**
-	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(IEditorPart)
-	 */
+	@Override
 	public void setActiveEditor(IEditorPart targetEditor) {
 		super.setActiveEditor(targetEditor);
 		doSetActiveEditor(targetEditor);
@@ -76,17 +74,13 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 		fOpenDeclarationAction.update();
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#dispose()
-	 */
+	@Override
 	public void dispose() {
 		doSetActiveEditor(null);
 		super.dispose();
 	}
 
-	/**
-	 * @see org.eclipse.ui.part.EditorActionBarContributor#init(IActionBars)
-	 */
+	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
 		IMenuManager menuManager = bars.getMenuManager();

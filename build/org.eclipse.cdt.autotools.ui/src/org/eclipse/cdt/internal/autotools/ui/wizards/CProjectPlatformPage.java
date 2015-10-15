@@ -88,14 +88,12 @@ public class CProjectPlatformPage extends WizardPage {
 		super(pageName);
 		setPageComplete(false);
 		projectType = ManagedBuildManager.getExtensionProjectType("org.eclipse.linuxtools.cdt.autotools.core.projectType"); //$NON-NLS-1$
-		selectedConfigurations = new ArrayList<Object>(0);
+		selectedConfigurations = new ArrayList<>(0);
 		this.parentWizard = parentWizard;
 		showAllConfigsForced = false;
 	}
 
-	/**
-	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return validatePage() && getNextPage() != null;
 	}
@@ -128,6 +126,7 @@ public class CProjectPlatformPage extends WizardPage {
 		tableViewer.setLabelProvider(new ConfigurationLabelProvider());
 		tableViewer.setContentProvider(new ConfigurationContentProvider());
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				// will default to false until a selection is made
 				handleConfigurationSelectionChange();
@@ -139,6 +138,7 @@ public class CProjectPlatformPage extends WizardPage {
 	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		// Create the composite control for the tab
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -185,6 +185,7 @@ public class CProjectPlatformPage extends WizardPage {
 		platformSelection.setToolTipText(AutotoolsWizardMessages.getResourceString(TARGET_TIP));
 		platformSelection.setText("GNU Autotools"); //$NON-NLS-1$
 		platformSelection.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				platformSelection = null;
 			}
@@ -207,7 +208,7 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @return
 	 */
 	public IConfiguration[] getSelectedConfigurations() {
-		return (IConfiguration[]) selectedConfigurations.toArray(new IConfiguration[selectedConfigurations.size()]);
+		return selectedConfigurations.toArray(new IConfiguration[selectedConfigurations.size()]);
 	}
 
 	/**
@@ -229,7 +230,7 @@ public class CProjectPlatformPage extends WizardPage {
 		// pages will know which toolchains have been selected
 		
 		// get the toolchains from the selected configs and put them into a set
-		Set<IToolChain> toolchainSet = new LinkedHashSet<IToolChain>();
+		Set<IToolChain> toolchainSet = new LinkedHashSet<>();
 		for(int k = 0; k < selectedConfigurations.size(); k++)
 		{
 			IConfiguration config = (IConfiguration) selectedConfigurations.get(k);
@@ -280,7 +281,7 @@ public class CProjectPlatformPage extends WizardPage {
 	 * passed to this method
 	 */
 	IConfiguration[] filterSupportedConfigurations(IConfiguration cfgs[]){
-		ArrayList<IConfiguration> supported = new ArrayList<IConfiguration>();
+		ArrayList<IConfiguration> supported = new ArrayList<>();
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
 
@@ -299,7 +300,7 @@ public class CProjectPlatformPage extends WizardPage {
 				}		
 			}
 		}
-		return (IConfiguration[])supported.toArray(new IConfiguration[supported.size()]);
+		return supported.toArray(new IConfiguration[supported.size()]);
 	}
 	
 

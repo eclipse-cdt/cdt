@@ -43,11 +43,7 @@ public class OpenDeclarationAction extends TextEditorAction {
 		super(MakeUIMessages.getResourceBundle(), "OpenDeclarationAction.", editor); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();
 		if (editor == null) {

@@ -100,9 +100,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 
 	private class ReconcilerParticipant implements IReconcilingParticipant {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IReconcilingParticipant#reconciled()
-		 */
+		@Override
 		public void reconciled() {
 			processReconcile();
 		}
@@ -119,9 +117,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 	private boolean fCollapseConditional = false;
 	private boolean fCollapseLoop = false;
 
-	/*
-	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
-	 */
+	@Override
 	public void projectionEnabled() {
 		// http://home.ott.oti.com/teams/wswb/anon/out/vms/index.html
 		// projectionEnabled messages are not always paired with projectionDisabled
@@ -135,9 +131,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 		fEditor.addReconcilingParticipant(fParticipant);
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
-	 */
+	@Override
 	public void projectionDisabled() {
 		fCachedDocument= null;
 		if (fParticipant != null) {
@@ -187,7 +181,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 	}
 
 	private Map<AutoconfProjectionAnnotation, Position> computeAdditions(AutoconfElement root) {
-		Map<AutoconfProjectionAnnotation, Position> map= new HashMap<AutoconfProjectionAnnotation, Position>();
+		Map<AutoconfProjectionAnnotation, Position> map= new HashMap<>();
 		if (root instanceof AutoconfRootElement)
 			computeAdditions(root.getChildren(), map);
 		return map;
@@ -277,9 +271,9 @@ public class ProjectionFileUpdater implements IProjectionListener {
 			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
 			fAllowCollapsing= false;
 			
-			Map<AutoconfProjectionAnnotation, Position> additions= new HashMap<AutoconfProjectionAnnotation, Position>();
-			List<AutoconfProjectionAnnotation> deletions= new ArrayList<AutoconfProjectionAnnotation>();
-			List<AutoconfProjectionAnnotation> updates = new ArrayList<AutoconfProjectionAnnotation>();
+			Map<AutoconfProjectionAnnotation, Position> additions= new HashMap<>();
+			List<AutoconfProjectionAnnotation> deletions= new ArrayList<>();
+			List<AutoconfProjectionAnnotation> updates = new ArrayList<>();
 			
 			Map<AutoconfProjectionAnnotation, Position> updated= computeAdditions(fEditor.getRootElement());
 			
@@ -288,9 +282,9 @@ public class ProjectionFileUpdater implements IProjectionListener {
 			
 			Iterator<AutoconfProjectionAnnotation> e= updated.keySet().iterator();
 			while (e.hasNext()) {
-				AutoconfProjectionAnnotation annotation= (AutoconfProjectionAnnotation) e.next();
+				AutoconfProjectionAnnotation annotation= e.next();
 				AutoconfElement element= annotation.getElement();
-				Position position= (Position) updated.get(annotation);
+				Position position= updated.get(annotation);
 				
 				List<AutoconfProjectionAnnotation> annotations= previous.get(element);
 				if (annotations == null) {
@@ -298,7 +292,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 				} else {
 					Iterator<AutoconfProjectionAnnotation> x= annotations.iterator();
 					while (x.hasNext()) {
-						AutoconfProjectionAnnotation a= (AutoconfProjectionAnnotation) x.next();
+						AutoconfProjectionAnnotation a= x.next();
 						if (annotation.isComment() == a.isComment()) {
 							Position p= model.getPosition(a);
 							if (p != null && !position.equals(p)) {
@@ -342,19 +336,19 @@ public class ProjectionFileUpdater implements IProjectionListener {
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
 		
-		List<AutoconfProjectionAnnotation> newDeletions= new ArrayList<AutoconfProjectionAnnotation>();
-		List<AutoconfProjectionAnnotation> newChanges= new ArrayList<AutoconfProjectionAnnotation>();
+		List<AutoconfProjectionAnnotation> newDeletions= new ArrayList<>();
+		List<AutoconfProjectionAnnotation> newChanges= new ArrayList<>();
 		
 		Iterator<AutoconfProjectionAnnotation> deletionIterator= deletions.iterator();
 		outer: while (deletionIterator.hasNext()) {
-			AutoconfProjectionAnnotation deleted= (AutoconfProjectionAnnotation) deletionIterator.next();
+			AutoconfProjectionAnnotation deleted= deletionIterator.next();
 			Position deletedPosition= model.getPosition(deleted);
 			if (deletedPosition == null)
 				continue;
 			
 			Iterator<AutoconfProjectionAnnotation> changesIterator= changes.iterator();
 			while (changesIterator.hasNext()) {
-				AutoconfProjectionAnnotation changed= (AutoconfProjectionAnnotation) changesIterator.next();
+				AutoconfProjectionAnnotation changed= changesIterator.next();
 				if (deleted.isComment() == changed.isComment()) {
 					Position changedPosition= model.getPosition(changed);
 					if (changedPosition == null)
@@ -378,9 +372,9 @@ public class ProjectionFileUpdater implements IProjectionListener {
 			
 			Iterator<AutoconfProjectionAnnotation> additionsIterator= additions.keySet().iterator();
 			while (additionsIterator.hasNext()) {
-				AutoconfProjectionAnnotation added= (AutoconfProjectionAnnotation) additionsIterator.next();
+				AutoconfProjectionAnnotation added= additionsIterator.next();
 				if (deleted.isComment() == added.isComment()) {
-					Position addedPosition= (Position) additions.get(added);
+					Position addedPosition= additions.get(added);
 					
 					if (deletedPosition.getOffset() == addedPosition.getOffset()) {
 						
@@ -403,7 +397,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 	}
 
 	private Map<AutoconfElement, List<AutoconfProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
-		Map<AutoconfElement, List<AutoconfProjectionAnnotation>> map= new HashMap<AutoconfElement, List<AutoconfProjectionAnnotation>>();
+		Map<AutoconfElement, List<AutoconfProjectionAnnotation>> map= new HashMap<>();
 		@SuppressWarnings("rawtypes")
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
@@ -412,7 +406,7 @@ public class ProjectionFileUpdater implements IProjectionListener {
 				AutoconfProjectionAnnotation directive= (AutoconfProjectionAnnotation) annotation;
 				List<AutoconfProjectionAnnotation> list= map.get(directive.getElement());
 				if (list == null) {
-					list= new ArrayList<AutoconfProjectionAnnotation>(2);
+					list= new ArrayList<>(2);
 					map.put(directive.getElement(), list);
 				}
 				list.add(directive);

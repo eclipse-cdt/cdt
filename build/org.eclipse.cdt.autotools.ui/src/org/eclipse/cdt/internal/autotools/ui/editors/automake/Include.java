@@ -23,6 +23,7 @@ public class Include extends Parent implements IInclude {
 		dirs = directories.clone();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.DIRECTIVE_INCLUDE);
 		for (int i = 0; i < filenames.length; i++) {
@@ -31,10 +32,12 @@ public class Include extends Parent implements IInclude {
 		return sb.toString();
 	}
 
+	@Override
 	public String[] getFilenames() {
 		return filenames.clone();
 	}
 
+	@Override
 	public IDirective[] getDirectives() {
 		clearDirectives();
 		for (int i = 0; i < filenames.length; i++) {

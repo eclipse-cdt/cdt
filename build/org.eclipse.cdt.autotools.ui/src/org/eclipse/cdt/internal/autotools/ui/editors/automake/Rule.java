@@ -26,17 +26,19 @@ public abstract class Rule extends Parent implements IRule {
 		addDirectives(cmds);
 	}
 
+	@Override
 	public ICommand[] getCommands() {
 		IDirective[] directives = getDirectives();
-		ArrayList<IDirective> cmds = new ArrayList<IDirective>(directives.length);
+		ArrayList<IDirective> cmds = new ArrayList<>(directives.length);
 		for (int i = 0; i < directives.length; i++) {
 			if (directives[i] instanceof ICommand) {
 				cmds.add(directives[i]);
 			}
 		}
-		return (ICommand[])cmds.toArray(new ICommand[0]);
+		return cmds.toArray(new ICommand[0]);
 	}
 
+	@Override
 	public ITarget getTarget() {
 		return target;
 	}
@@ -45,12 +47,14 @@ public abstract class Rule extends Parent implements IRule {
 		target = tgt;
 	}
 
+	@Override
 	public boolean equals(Object r) {
 		if (r instanceof Rule)
 			return ((Rule)r).getTarget().equals(getTarget());
 		return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return getTarget().hashCode();
 	}

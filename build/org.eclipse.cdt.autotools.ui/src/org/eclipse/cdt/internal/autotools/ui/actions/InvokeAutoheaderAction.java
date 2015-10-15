@@ -25,6 +25,7 @@ public class InvokeAutoheaderAction extends InvokeAction {
 	private static final String DEFAULT_OPTION = ""; //$NON-NLS-1$
 	private static final String DEFAULT_COMMAND = "autoheader"; //$NON-NLS-1$
 
+	@Override
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
@@ -72,6 +73,7 @@ public class InvokeAutoheaderAction extends InvokeAction {
 
 	}
 
+	@Override
 	public void dispose() {
 
 	}

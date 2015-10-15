@@ -32,13 +32,12 @@ public class SingleInputDialog extends InputDialog {
 		this.firstMessage = firstMessage;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		super.buttonPressed(buttonId);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		// create composite

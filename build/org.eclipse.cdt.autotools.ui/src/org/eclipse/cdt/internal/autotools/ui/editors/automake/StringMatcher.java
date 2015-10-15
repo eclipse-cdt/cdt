@@ -101,6 +101,7 @@ public class StringMatcher {
 	 * specifying if case should be ignored
 	 * @deprecated Use StringMatcher(pattern, ignoreCase, ignoreWildCards).
 	 */
+	@Deprecated
 	public StringMatcher(String aPattern, boolean ignoreCase) {
 		this(aPattern, ignoreCase, false);
 	}
@@ -248,7 +249,7 @@ public class StringMatcher {
 			}
 		}
 
-		Vector<String> temp= new Vector<String>();
+		Vector<String> temp= new Vector<>();
 
 		int pos= 0;
 		StringBuffer buf= new StringBuffer();

@@ -68,7 +68,7 @@ public class AutoconfOutlineErrorHandler {
 		
 		int lineNumber = e.getLineNumber();
 		
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		MarkerUtilities.setLineNumber(map, lineNumber);
 		MarkerUtilities.setMessage(map, e.getMessage());
 		map.put(IMarker.MESSAGE, e.getMessage());

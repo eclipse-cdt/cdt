@@ -72,7 +72,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 		super(startSequence, endSequence, token, escapeCharacter, breaksOnEOF);
 		this.startSequence = startSequence;
 		this.endSequence = endSequence;
-		rules = new ArrayList<IRule>();
+		rules = new ArrayList<>();
 		startIndex = 0;
 		endIndex = 0;
 	}
@@ -99,7 +99,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 		super(startSequence, endSequence, token, escapeCharacter, breaksOnEOF, escapeContinuesLine);
 		this.startSequence = startSequence;
 		this.endSequence = endSequence;
-		rules = new ArrayList<IRule>();
+		rules = new ArrayList<>();
 		startIndex = 0;
 		endIndex = 0;
 	}
@@ -108,6 +108,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 		rules.add(rule);
 	}
 	
+	@Override
 	public IToken getSuccessToken() {
 		// We need to be aware of what success token we are referring to.
 		// The current internal rule index will help us determine which
@@ -125,6 +126,7 @@ public class RecursiveSingleLineRule extends SingleLineRule {
 			scanner.unread();
 	}
 	
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		int column = scanner.getColumn();
 		// Check if we are at EOF, in which case rules don't hold

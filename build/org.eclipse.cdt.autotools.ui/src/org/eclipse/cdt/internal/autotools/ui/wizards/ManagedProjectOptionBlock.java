@@ -36,9 +36,7 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 		super(parent, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#addTabs()
-	 */
+	@Override
 	protected void addTabs() {
 		errParserBlock = new ErrorParserBlock(null);
 		addTab(errParserBlock);
@@ -53,6 +51,7 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 		return errParserBlock;
 	}
 	
+	@Override
 	public Control createContents(Composite parent) {
 		Control control = super.createContents( parent );
 		((GridLayout)((Composite)control).getLayout()).marginWidth = 1;
@@ -75,6 +74,7 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 		}
 	}
 
+	@Override
 	public void update() {
 		super.update();
 	}

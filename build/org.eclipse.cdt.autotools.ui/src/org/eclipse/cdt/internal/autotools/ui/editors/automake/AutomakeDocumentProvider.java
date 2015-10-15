@@ -32,16 +32,12 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 		public IMakefile fCopy;
 	}
 	
-    /*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
-	 */
+	@Override
 	protected FileInfo createEmptyFileInfo() {
 		return new AutomakefileFileInfo();
 	}
 	
-    /*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
-	 */
+	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		IMakefile original = null;
 		if (element instanceof IFileEditorInput) {	
@@ -81,9 +77,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 		return makefile;
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IMakefileDocumentProvider#getWorkingCopy(java.lang.Object)
-	 */
+	@Override
 	public IMakefile getWorkingCopy(Object element) {
 		FileInfo fileInfo= getFileInfo(element);		
 		if (fileInfo instanceof AutomakefileFileInfo) {
@@ -93,9 +87,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 		return null;
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IMakefileDocumentProvider#shutdown()
-	 */
+	@Override
 	public void shutdown() {
 		@SuppressWarnings("rawtypes")
 		Iterator e= getConnectedElementsIterator();
@@ -103,6 +95,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 			disconnect(e.next());
 	}
 	
+	@Override
 	public void connect(Object element) throws CoreException {
 		super.connect(element);
 		IMakefile makefile = getWorkingCopy(element);
@@ -110,8 +103,9 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 		errorHandler.update(makefile);
 	}
 	
+	@Override
 	public IDocument getDocument(Object element) {
-		FileInfo info= (FileInfo) getFileInfo(element);
+		FileInfo info= getFileInfo(element);
 		if (info != null)
 			return info.fTextFileBuffer.getDocument();
 		return getParentProvider().getDocument(element);

@@ -24,9 +24,7 @@ public class InferenceRule extends Rule {
 		super(parent, target, cmds);
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getTarget().toString()).append(":\n"); //$NON-NLS-1$

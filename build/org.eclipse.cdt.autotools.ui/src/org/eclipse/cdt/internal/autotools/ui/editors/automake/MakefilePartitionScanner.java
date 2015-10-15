@@ -56,7 +56,7 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 		IToken tDef = new Token(MAKEFILE_DEF_BLOCK_PARTITION);
 		IToken tOther = new Token(MAKEFILE_OTHER_PARTITION);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 
 		// Add rule for single line comments.
 
@@ -86,9 +86,7 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 
 	}
 
-	/*
-	 * @see ICharacterScanner#getLegalLineDelimiters
-	 */
+	@Override
 	public char[][] getLegalLineDelimiters() {
 		return fModDelimiters.clone();
 	}

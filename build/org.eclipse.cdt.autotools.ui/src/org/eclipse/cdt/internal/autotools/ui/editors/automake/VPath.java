@@ -21,6 +21,7 @@ public class VPath extends Directive implements IVPath {
 		directories = dirs.clone();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.DIRECTIVE_VPATH);
 		if (pattern != null && pattern.length() > 0) {
@@ -32,10 +33,12 @@ public class VPath extends Directive implements IVPath {
 		return sb.toString();
 	}
 
+	@Override
 	public String[] getDirectories() {
 		return directories.clone();
 	}
 
+	@Override
 	public String getPattern() {
 		return pattern;
 	}

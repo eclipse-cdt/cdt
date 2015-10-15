@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,10 +40,6 @@ public class DsfPlugin extends Plugin {
 		fgPlugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
@@ -51,10 +47,6 @@ public class DsfPlugin extends Plugin {
         DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf/debug"));  //$NON-NLS-1$//$NON-NLS-2$
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
     public void stop(BundleContext context) throws Exception {
         fgBundleContext = null;
@@ -111,7 +103,4 @@ public class DsfPlugin extends Plugin {
         traceBuilder.append(millis);
         return traceBuilder.toString();
     }
-
-
-
 }

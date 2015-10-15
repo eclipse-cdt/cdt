@@ -31,10 +31,12 @@ public class StringConfigureOption extends AbstractConfigurationOption {
 		this.value = value;
 	}
 	
+	@Override
 	public String getValue() {
 		return value;
 	}
 	
+	@Override
 	public void setValue(String newValue) {
 		if (!newValue.equals(value)) {
 			cfg.setDirty(true);
@@ -42,20 +44,24 @@ public class StringConfigureOption extends AbstractConfigurationOption {
 		}
 	}
 
+	@Override
 	public boolean isParmSet() {
 		return value.length() > 0;
 	}
 	
+	@Override
 	public String getParameter() {
 		if (isParmSet())
 			return getParameterName() + "=" + getValue(); // $NON-NLS-1$
 		return "";
 	}
 	
+	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new StringConfigureOption(name, config, value);
 	}
 
+	@Override
 	public int getType() {
 		return STRING;
 	}

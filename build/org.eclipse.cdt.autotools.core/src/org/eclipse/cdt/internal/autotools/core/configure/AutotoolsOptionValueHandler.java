@@ -27,9 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 
 public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler 
 	implements IOptionApplicability {
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler#handleValue(IConfiguration,IToolChain,IOption,String,int)
-	 */
 	
 	public final static String DEFAULT_BUILD_DIR = "build"; //$NON-NLS-1$
 	public final static String CONFIGURE_TOOL_ID = "org.eclipse.linuxtools.cdt.autotools.core.gnu.toolchain.tool.configure"; //$NON-NLS-1$
@@ -40,6 +37,7 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 	public final static String BUILD_DIR_NO = "BuildDir.no"; //$NON-NLS-1$
 
 	//FIXME: Use holder to set option value, not the "option" parameter
+	@Override
 	public boolean handleValue(IBuildObject buildObject, 
                    IHoldsOptions holder, 
                    IOption option,
@@ -104,16 +102,19 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler
 	
 	// IOptionApplicability methods
 	
+	@Override
 	public boolean isOptionEnabled(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
+	@Override
 	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return false;
 	}
 
+	@Override
 	public boolean isOptionVisible(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return true;

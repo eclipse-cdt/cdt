@@ -12,16 +12,13 @@
 
 package org.eclipse.cdt.internal.autotools.core.wizards;
 
-import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.process.ProcessArgument;
-import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
 import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfigurationManager;
 import org.eclipse.cdt.internal.autotools.core.configure.IAConfiguration;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -31,7 +28,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class SetAutotoolsStringOptionValue extends ProcessRunner {
 
-	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
+	@Override
+	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -48,11 +46,7 @@ public class SetAutotoolsStringOptionValue extends ProcessRunner {
 			ProcessArgument[] resourcePathObject = resourcePathObjects[i];
 			String id = resourcePathObject[0].getSimpleValue();
 			String value = resourcePathObject[1].getSimpleValue();
-			try {
 				setOptionValue(projectHandle, id, value);
-			} catch (BuildException e) {
-				throw new ProcessFailureException(AutotoolsPlugin.getFormattedString("SetAutotoolsStringOptionValue.error", new String[]{e.getMessage()}), e); //$NON-NLS-1$
-			}
 		}
 
 		workspaceDesc.setAutoBuilding(autoBuilding);
@@ -62,8 +56,7 @@ public class SetAutotoolsStringOptionValue extends ProcessRunner {
 		}
 	}
 	
-	private void setOptionValue(IProject projectHandle, String id, String
-			value) throws BuildException, ProcessFailureException {
+	private void setOptionValue(IProject projectHandle, String id, String value) {
 
 		AutotoolsConfigurationManager.getInstance().syncConfigurations(projectHandle);
 		ICConfigurationDescription[] cfgds =

@@ -35,10 +35,12 @@ public class MultiArgConfigureOption extends AbstractConfigurationOption {
 		this.value = value;
 	}
 	
+	@Override
 	public String getValue() {
 		return value;
 	}
 	
+	@Override
 	public void setValue(String newValue) {
 		if (!newValue.equals(value)) {
 			cfg.setDirty(true);
@@ -47,25 +49,29 @@ public class MultiArgConfigureOption extends AbstractConfigurationOption {
 		}
 	}
 
+	@Override
 	public boolean isParmSet() {
 		return value.length() > 0;
 	}
 	
+	@Override
 	public boolean isMultiArg() {
 		return true;
 	}
 	
+	@Override
 	public String getParameter() {
 		return value;
 	}
 	
+	@Override
 	public ArrayList<String> getParameters() {
 		// May be multiple user-specified options in which case we
 		// need to split them up into individual options
 		if (!isDirty && userArgs != null)
 			return userArgs;
 		// Otherwise, we need to calculate userArgs
-		userArgs = new ArrayList<String>();
+		userArgs = new ArrayList<>();
 		isDirty = false;
 		int lastArgIndex = -1;
 		int i = 0;
@@ -109,10 +115,12 @@ public class MultiArgConfigureOption extends AbstractConfigurationOption {
 		return userArgs;
 	}
 
+	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new MultiArgConfigureOption(name, config, value);
 	}
 
+	@Override
 	public int getType() {
 		return MULTIARG;
 	}

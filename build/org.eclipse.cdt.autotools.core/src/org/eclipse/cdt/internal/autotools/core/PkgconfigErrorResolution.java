@@ -42,14 +42,14 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 		}
 
 		@Override
-		public synchronized void write(int c) throws IOException {
+		public synchronized void write(int c) {
 			byte ascii[] = new byte[1];
 			ascii[0] = (byte) c;
 			fBuffer.append(new String(ascii));
 		}
 		    
 	    @Override
-		public synchronized void write(byte[] b, int off, int len) throws IOException {
+		public synchronized void write(byte[] b, int off, int len) {
 	        fBuffer.append(new String(b, off, len));
 	    }
 	}

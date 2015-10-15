@@ -151,9 +151,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 		if (!file.exists())
 			return null;
 
-		LineNumberReader reader = null;
-		try {
-			reader = new LineNumberReader(new FileReader(file));
+		try (LineNumberReader reader = new LineNumberReader(new FileReader(file))) {
 
 			// look for something like:
 			// if test "${ac_cv_prog_WINDRES+set}" = set; then :
@@ -184,14 +182,6 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// Ignore.
-				}
-			}
 		}
 
 		return null;

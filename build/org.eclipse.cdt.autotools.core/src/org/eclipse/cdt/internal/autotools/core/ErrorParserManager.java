@@ -80,18 +80,7 @@ public class ErrorParserManager extends OutputStream {
 	 * @param markerGenerator - marker generator able to create markers.
 	 */
 	public ErrorParserManager(IProject project, MarkerGenerator markerGenerator) {
-		this(project, markerGenerator, null);
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param project - project being built.
-	 * @param markerGenerator - marker generator able to create markers.
-	 * @param parsersIDs - array of error parsers' IDs.
-	 */
-	public ErrorParserManager(IProject project, MarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, project.getLocationURI(), markerGenerator, parsersIDs);
+		this(project, project.getLocationURI(), markerGenerator);
 	}
 
 
@@ -101,15 +90,14 @@ public class ErrorParserManager extends OutputStream {
 	 * @param project - project being built.
 	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed. 
 	 * @param markerGenerator - marker generator able to create markers.
-	 * @param parsersIDs - array of error parsers' IDs.
 	 * @since 5.1
 	 */
-	public ErrorParserManager(IProject project, URI baseDirectoryURI, MarkerGenerator markerGenerator, String[] parsersIDs) {
+	public ErrorParserManager(IProject project, URI baseDirectoryURI, MarkerGenerator markerGenerator) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
-		fDirectoryStack = new Vector<URI>();
-		fErrors = new ArrayList<ProblemMarkerInfo>();
-		fErrorParsers = new LinkedHashMap<String, ErrorParser>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
+		fErrorParsers = new LinkedHashMap<>();
 
 		if (baseDirectoryURI != null)
 			fBaseDirectoryURI = baseDirectoryURI;
@@ -364,7 +352,7 @@ public class ErrorParserManager extends OutputStream {
 	 * close it explicitly 
 	 */
 	@Override
-	public synchronized void close() throws IOException {
+	public synchronized void close() {
 		if (nOpens > 0 && --nOpens == 0) {
 			checkLine(true);
 			fDirectoryStack.removeAllElements();
@@ -380,17 +368,14 @@ public class ErrorParserManager extends OutputStream {
 			outputStream.flush();
 	}
 
-	/**
-	 * @see java.io.OutputStream#write(int)
-	 */
 	@Override
-	public synchronized void write(int b) throws IOException {
+	public synchronized void write(int b) {
 		currentLine.append((char) b);
 		checkLine(false);
 	}
 
 	@Override
-	public synchronized void write(byte[] b, int off, int len) throws IOException {
+	public synchronized void write(byte[] b, int off, int len) {
 		if (b == null) {
 			throw new NullPointerException();
 		} else if (off != 0 || (len < 0) || (len > b.length)) {

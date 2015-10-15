@@ -42,14 +42,15 @@ public class AutotoolsEnvironmentVariableSupplier implements IConfigurationEnvir
 					: name.equals(VerboseEnvironmentVariable.VERBOSE_VAR_NAME);
 		}
 
-		private static IBuildEnvironmentVariable create(IConfiguration configuration) {
+		private static IBuildEnvironmentVariable create() {
 			return new VerboseEnvironmentVariable(VERBOSE_VAR_NAME, VERBOSE_VAR_VALUE, IEnvironmentVariable.ENVVAR_PREPEND, null);
 		}
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
-		IBuildEnvironmentVariable path = VerboseEnvironmentVariable.create(configuration);
+		IBuildEnvironmentVariable path = VerboseEnvironmentVariable.create();
 		return new IBuildEnvironmentVariable[] { path };
 	}
 
@@ -57,7 +58,7 @@ public class AutotoolsEnvironmentVariableSupplier implements IConfigurationEnvir
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		if (VerboseEnvironmentVariable.isVar(variableName)) {
-			return VerboseEnvironmentVariable.create(configuration);
+			return VerboseEnvironmentVariable.create();
 		} else {
 			return null;
 		}

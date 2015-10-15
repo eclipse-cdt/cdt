@@ -47,33 +47,21 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	private IProject project;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#configure()
-	 */
 	@Override
 	public void configure() throws CoreException {
 		addAutotoolsBuilder(project, new NullProgressMonitor());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
-	 */
 	@Override
 	public void deconfigure() throws CoreException {
 		// TODO remove builder from here
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#getProject()
-	 */
 	@Override
 	public IProject getProject() {
 		return project;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
-	 */
 	@Override
 	public void setProject(IProject project) {
 		this.project = project;
@@ -161,7 +149,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	static ICommand[] getBuildCommandsList(IProjectDescription description,
 			ICommand[] commands) {
-		ArrayList<ICommand> commandList = new ArrayList<ICommand>();
+		ArrayList<ICommand> commandList = new ArrayList<>();
 
 		// Make sure the Autotools Configuration builder just precedes the Common Builder
 		for (int i = 0; i < commands.length; i++) {
@@ -257,7 +245,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] prevNatures = description.getNatureIds();
-		List<String> newNatures = new ArrayList<String>(Arrays.asList(prevNatures));
+		List<String> newNatures = new ArrayList<>(Arrays.asList(prevNatures));
 		newNatures.remove(natureId);
 		description.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
 		project.setDescription(description, monitor);

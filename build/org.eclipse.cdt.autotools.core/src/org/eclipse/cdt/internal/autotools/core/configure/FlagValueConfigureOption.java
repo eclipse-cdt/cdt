@@ -29,26 +29,32 @@ public class FlagValueConfigureOption extends BinConfigureOption implements IFla
 		this.flags = flags;
 	}
 
+	@Override
 	public ArrayList<String> getParameters() {
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 	
+	@Override
 	public String getParameter() {
 		return "";
 	}
 
+	@Override
 	public IConfigureOption copy(AutotoolsConfiguration cfg) {
 		return new FlagValueConfigureOption(name, cfg, getValue(), flags);
 	}
 
+	@Override
 	public int getType() {
 		return FLAGVALUE;
 	}
 
+	@Override
 	public String getFlags() {
 		return flags;
 	}
 
+	@Override
 	public boolean isFlagValue() {
 		return true;
 	}

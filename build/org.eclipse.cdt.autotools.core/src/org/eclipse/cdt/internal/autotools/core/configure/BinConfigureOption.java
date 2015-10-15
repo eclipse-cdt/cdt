@@ -27,10 +27,12 @@ public class BinConfigureOption extends AbstractConfigurationOption {
 		this.value = value;
 	}
 	
+	@Override
 	public boolean isParmSet() {
 		return value;
 	}
 	
+	@Override
 	public String getParameter() {
 	   if (isParmSet())
 		   return getParameterName();
@@ -38,10 +40,12 @@ public class BinConfigureOption extends AbstractConfigurationOption {
 		   return ""; // $NON-NLS-1$
 	}
 
+	@Override
 	public String getValue() {
 		return Boolean.toString(value);
 	}
 	
+	@Override
 	public void setValue(String value) {
 		boolean oldValue = this.value;
 		if (value.equals("true")) // $NON-NLS-1$
@@ -52,10 +56,12 @@ public class BinConfigureOption extends AbstractConfigurationOption {
 			cfg.setDirty(true);
 	}
 	
+	@Override
 	public IConfigureOption copy(AutotoolsConfiguration config) {
 		return new BinConfigureOption(name, config, value);
 	}
 
+	@Override
 	public int getType() {
 		return BIN;
 	}

@@ -103,7 +103,7 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 	}
 	
 	@Override
-	protected void clean(IProgressMonitor monitor) throws CoreException {
+	protected void clean(IProgressMonitor monitor) {
 		IProject project = getProject();
 		final IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (shouldBuild(CLEAN_BUILD, info)) {
@@ -123,7 +123,7 @@ public class AutotoolsConfigurationBuilder extends ACBuilder {
 	}
 
 	protected MultiStatus performMakefileGeneration(IProject project, IManagedBuildInfo info,
-			IProgressMonitor monitor) throws CoreException {
+			IProgressMonitor monitor) {
 		MultiStatus result;
 		
 		try {

@@ -44,9 +44,7 @@ public class StaticTargetRule extends InferenceRule implements IInferenceRule {
 		targetPattern = target_pattern;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getTarget()).append(':');

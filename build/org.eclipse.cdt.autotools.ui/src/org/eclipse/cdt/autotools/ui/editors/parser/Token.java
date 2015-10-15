@@ -50,6 +50,7 @@ public class Token implements ITokenConstants {
 		this.length = length;
 	}
 	
+	@Override
 	public String toString() {
 		return text;
 	}

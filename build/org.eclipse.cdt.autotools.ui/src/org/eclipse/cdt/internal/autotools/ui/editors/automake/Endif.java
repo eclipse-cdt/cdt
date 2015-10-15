@@ -17,11 +17,13 @@ public class Endif extends Terminal {
 		super(parent);
 	}
 
+	@Override
 	public boolean isEndif() {
 		return true;
 	}
 	
-    public String toString() {
+    @Override
+	public String toString() {
         return GNUMakefileConstants.TERMINAL_ENDIF;
     }
 }

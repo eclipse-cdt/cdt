@@ -19,6 +19,7 @@ import org.eclipse.jface.text.IDocumentListener;
 public class AutoconfDocumentSetupParticipant implements
 		IDocumentSetupParticipant, IDocumentListener {
 
+	@Override
 	public void setup(IDocument document) {
 		AutoconfPartitioner partitioner =
 			new AutoconfPartitioner(
@@ -34,17 +35,12 @@ public class AutoconfDocumentSetupParticipant implements
 //		document.addDocumentListener(this);
 	}
 	
-	/*
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
-
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		// do nothing
 	}
 	
-	/*
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
+	@Override
 	public void documentChanged(DocumentEvent e) {
 		// do nothing
 	}

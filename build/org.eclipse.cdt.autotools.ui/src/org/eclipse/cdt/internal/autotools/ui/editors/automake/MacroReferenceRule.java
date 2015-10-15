@@ -32,11 +32,13 @@ public class MacroReferenceRule extends PatternRule {
 		}
 	}
 	
+	@Override
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		nOfBrackets = 1;
 		return super.doEvaluate(scanner, resume);
 	}
 
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters = scanner.getLegalLineDelimiters();

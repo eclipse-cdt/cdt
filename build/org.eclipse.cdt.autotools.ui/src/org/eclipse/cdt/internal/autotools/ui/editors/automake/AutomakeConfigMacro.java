@@ -25,6 +25,7 @@ public class AutomakeConfigMacro extends Directive {
 		return name;
 	}
 	
+	@Override
 	public String toString() {
 		return name + "\n";
 	}

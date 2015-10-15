@@ -43,5 +43,6 @@ public interface IDirective {
 	 */
 	IMakefile getMakefile();
 
+	@Override
 	String toString();
 }

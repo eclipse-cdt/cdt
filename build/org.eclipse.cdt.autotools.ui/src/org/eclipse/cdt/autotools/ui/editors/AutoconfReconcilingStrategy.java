@@ -33,6 +33,7 @@ public class AutoconfReconcilingStrategy implements IReconcilingStrategy {
 		documentProvider = editor.getDocumentProvider();
 	}
 	
+	@Override
 	public void reconcile(IRegion partition) {
 		try {
 			AutoconfParser parser = editor.getAutoconfParser();
@@ -45,11 +46,13 @@ public class AutoconfReconcilingStrategy implements IReconcilingStrategy {
 		}
 	}
 
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setDocument(IDocument document) {
 		// TODO Auto-generated method stub
 

@@ -17,10 +17,12 @@ public class Endef extends Terminal {
 		super(parent);
 	}
 
+	@Override
 	public boolean isEndef() {
 		return true;
 	}
 	
+	@Override
 	public String toString() {
        return GNUMakefileConstants.TERMINAL_ENDEF;
     }

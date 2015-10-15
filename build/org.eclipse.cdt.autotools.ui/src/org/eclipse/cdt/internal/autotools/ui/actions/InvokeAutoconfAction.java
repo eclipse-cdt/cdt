@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IAction;
 public class InvokeAutoconfAction extends InvokeAction {
 
 	private final static String DEFAULT_COMMAND = "autoconf"; //$NON-NLS-1$
+	@Override
 	public void run(IAction action) {
 		IContainer container = getSelectedContainer();
 		if (container == null)
@@ -52,6 +53,7 @@ public class InvokeAutoconfAction extends InvokeAction {
 	}
 
 
+	@Override
 	public void dispose() {
 	}
 }

@@ -37,6 +37,7 @@ public class Command extends Directive implements ICommand {
 	 * target as a prerequisite or has no prerequisites, any error
 	 * found while executing the command will be ignored.
 	 */
+	@Override
 	public boolean shouldIgnoreError() {
 		// Check for the prefix hyphen in the command.
 		if (getPrefix() == HYPHEN) {
@@ -52,6 +53,7 @@ public class Command extends Directive implements ICommand {
 	 * target as a prerequisite or has no prerequisites, the command
 	 * will not be written to standard output before it is executed.
 	 */
+	@Override
 	public boolean shouldBeSilent() {
 		// Check for the prefix at sign
 		if (getPrefix() == AT) {
@@ -65,6 +67,7 @@ public class Command extends Directive implements ICommand {
 	 * command line that will be executed even if -n, -q or -t is
 	 * specified.
 	 */
+	@Override
 	public boolean shouldExecute() {
 		// Check for the prefix at sign
 		if (getPrefix() == PLUS) {
@@ -73,6 +76,7 @@ public class Command extends Directive implements ICommand {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer cmd = new StringBuffer();
 		cmd.append( '\t');
@@ -83,12 +87,14 @@ public class Command extends Directive implements ICommand {
 		return cmd.toString();
 	}
 
+	@Override
 	public boolean equals(Object cmd) {
 		if (cmd instanceof Command)
 			return cmd.toString().equals(toString());
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}
@@ -108,9 +114,7 @@ public class Command extends Directive implements ICommand {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.ICommand#execute(java.lang.String[], java.io.File)
-	 */
+	@Override
 	public Process execute(String shell, String[] envp, File dir) throws IOException {
 		String[] cmdArray = new String[] { shell, "-c", command}; //$NON-NLS-1$
 		return Runtime.getRuntime().exec(cmdArray, envp, dir);

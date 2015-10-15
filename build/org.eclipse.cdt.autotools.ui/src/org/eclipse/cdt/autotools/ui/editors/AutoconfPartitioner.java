@@ -30,6 +30,7 @@ public class AutoconfPartitioner extends FastPartitioner {
 	// To optionally show partitions, we must do so by overriding the computePartitioning
 	// method.  We cannot do it at connect time because the document may be zero length
 	// at the time and we will end up getting default partitioning from then on.
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, 
 			boolean includeZeroLength) {
 		ITypedRegion[] regions = super.computePartitioning(offset, length, includeZeroLength);

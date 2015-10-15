@@ -20,11 +20,12 @@ public class EmptyLine extends Directive implements IEmptyLine {
 		super(parent);
 	}
 
+	@Override
 	public String toString() {
 		return NL_STRING;
 	}
 
-	public boolean equals(IEmptyLine stmt) {
+	public boolean equals() {
 		return true;
 	}
 }

@@ -23,18 +23,21 @@ public class Comment extends Directive implements IComment {
 		}
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(POUND_STRING).append(comment).append('\n');
 		return buffer.toString();
 	}
 
+	@Override
 	public boolean equals(Object cmt) {
 		if (cmt instanceof Comment)
 			return cmt.toString().equals(toString());
 		return false;
 	}
 	
+	@Override
 	public int hashCode() {
 		return toString().hashCode();
 	}

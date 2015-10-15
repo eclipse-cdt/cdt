@@ -30,9 +30,7 @@ public class AutotoolsPreferencePage extends FieldEditorPreferencePage implement
 		setPreferenceStore(AutotoolsPlugin.getDefault().getPreferenceStore());
 	}
 
-	/**
-	 * @see FieldEditorPreferencePage#createControl(Composite)
-	 */
+	@Override
 	protected void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
 
@@ -56,6 +54,7 @@ public class AutotoolsPreferencePage extends FieldEditorPreferencePage implement
 		prefs.setDefault(PREF_BUILD_TARGET_IN_BACKGROUND, true);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 }

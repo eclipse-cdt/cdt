@@ -50,10 +50,12 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		return (IProject)getCfg().getManagedProject().getOwner();
 	}
 
+	@Override
 	public boolean canBeVisible() {
 		return AutotoolsPlugin.hasTargetBuilder(getProject());
 	}
 
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		Composite composite= usercomp;
@@ -101,30 +103,35 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		fCleanMakeTarget.setLayoutData(gd);
 		
 		fCleanDelete.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCleanMake.setSelection(false);
 				fCleanDelete.setSelection(true);
 				fCleanMakeTarget.setEnabled(false);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 		});
 		
 		fCleanMake.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCleanDelete.setSelection(false);
 				fCleanMake.setSelection(true);
 				fCleanMakeTarget.setEnabled(true);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 		});
 		
 		fCleanMakeTarget.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (fCleanMakeTarget.getText().equals("")) { // $NON-NLS-1$
 					// FIXME: should probably issue warning here, but how?
@@ -143,6 +150,7 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		initialize();
 	}
 
+	@Override
 	protected void performOK() {
 		IProject project = getProject();
 		if (fCleanDelete.getSelection()) {
@@ -180,10 +188,12 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		performOK();
 	}
 	
+	@Override
 	protected void performDefaults() {
 		fCleanDelete.setSelection(false);
 		fCleanMake.setSelection(true);
@@ -192,14 +202,17 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 		fAutoName.setEnabled(true);
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		// what to do here?
 	}
 	
+	@Override
 	public void updateButtons() {
 		// what to do here?
 	}
 
+	@Override
 	public void setVisible (boolean b) {
 		super.setVisible(b);
 	}

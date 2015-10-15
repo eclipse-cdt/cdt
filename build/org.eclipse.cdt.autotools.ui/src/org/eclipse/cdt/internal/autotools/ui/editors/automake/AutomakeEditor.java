@@ -51,7 +51,8 @@ public class AutomakeEditor extends MakefileEditor {
     	return fgInstance;
     }
 
-    protected void doSetInput(IEditorInput newInput) throws CoreException
+    @Override
+	protected void doSetInput(IEditorInput newInput) throws CoreException
 	{
 		super.doSetInput(newInput);
 		this.input = newInput;
@@ -59,9 +60,7 @@ public class AutomakeEditor extends MakefileEditor {
 		getOutlinePage().setInput(input);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
-	 */
+	@Override
 	protected void initializeEditor() {
 		setRangeIndicator(new DefaultRangeIndicator());
 		setEditorContextMenuId("#MakefileEditorContext"); //$NON-NLS-1$
@@ -93,16 +92,12 @@ public class AutomakeEditor extends MakefileEditor {
 		return ampage;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IAdaptable
-	 */
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			return getAutomakeOutlinePage();
@@ -114,6 +109,7 @@ public class AutomakeEditor extends MakefileEditor {
 		return sourceViewerConfiguration;
 	}
 	
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		super.handlePreferenceStoreChanged(event);
 	}

@@ -31,9 +31,7 @@ public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticip
 	public MakefileDocumentSetupParticipant() {
 	}
 	
-	/*
-	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void setup(IDocument document) {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;

@@ -45,6 +45,7 @@ public class AutoconfMacroRule implements IRule {
 		fStartingSequence = startingSequence;
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		fBuffer.setLength(0);

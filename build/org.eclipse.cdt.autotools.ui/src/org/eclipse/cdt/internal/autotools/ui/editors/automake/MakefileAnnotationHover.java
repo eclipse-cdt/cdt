@@ -89,8 +89,8 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 		if (model == null)
 			return null;
 			
-		List<Annotation> exact= new ArrayList<Annotation>();
-		List<Annotation> including= new ArrayList<Annotation>();
+		List<Annotation> exact= new ArrayList<>();
+		List<Annotation> including= new ArrayList<>();
 		
 		@SuppressWarnings("rawtypes")
 		Iterator e= model.getAnnotationIterator();
@@ -115,6 +115,7 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 	/*
 	 * @see IVerticalRulerHover#getHoverInfo(ISourceViewer, int)
 	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		List<Annotation> annotations = getAnnotationsForLine(sourceViewer, lineNumber);
 		if (annotations != null && annotations.size() > 0) {
@@ -122,25 +123,25 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 			if (annotations.size() == 1) {
 				
 				// optimization
-				Annotation annotation = (Annotation) annotations.get(0);
+				Annotation annotation = annotations.get(0);
 				String message= annotation.getText();
 				if (message != null && message.trim().length() > 0)
 					return formatSingleMessage(message);
 					
 			} else {
 					
-				List<String> messages= new ArrayList<String>();
+				List<String> messages= new ArrayList<>();
 				
 				Iterator<Annotation> e= annotations.iterator();
 				while (e.hasNext()) {
-					Annotation annotation = (Annotation) e.next();
+					Annotation annotation = e.next();
 					String message= annotation.getText();
 					if (message != null && message.trim().length() > 0)
 						messages.add(message.trim());
 				}
 				
 				if (messages.size() == 1)
-					return formatSingleMessage((String) messages.get(0));
+					return formatSingleMessage(messages.get(0));
 					
 				if (messages.size() > 1)
 					return formatMultipleMessages(messages);
@@ -172,7 +173,7 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 		HTMLPrinter.startBulletList(buffer);
 		Iterator<String> e= messages.iterator();
 		while (e.hasNext())
-			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent((String) e.next()));
+			HTMLPrinter.addBullet(buffer, HTMLPrinter.convertToHTMLContent(e.next()));
 		HTMLPrinter.endBulletList(buffer);	
 		
 		HTMLPrinter.addPageEpilog(buffer);
@@ -184,22 +185,27 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 	// handles html.
 	
 	
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, false);
 			}
 		};
 	}
 	
+	@Override
 	public boolean canHandleMouseCursor() {
 		return false;
 	}
 	
+	@Override
 	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
 		return new LineRange(lineNumber, 1);
 	}
 	
+	@Override
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 		return getHoverInfo(sourceViewer, lineRange.getStartLine());
 	}

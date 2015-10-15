@@ -109,6 +109,7 @@ public class MessageLine {
 			if (fErrorColor == null) {
 				fErrorColor= new Color(clabel.getDisplay(), fErrorRGB);
 				clabel.addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						fErrorColor.dispose();
 					}
@@ -132,23 +133,14 @@ public class MessageLine {
 		}
 	}
 	
-	/**
-	 * @see org.eclipse.swt.custom.CLabel#isDisposed()
-	 */
 	public boolean isDisposed() {
 		return clabel.isDisposed();
 	}
 	
-	/**
-	 * @see org.eclipse.swt.custom.CLabel#setAlignment(int)
-	 */
 	public void setAlignment(int left) {
 		clabel.setAlignment(left);
 	}
 	
-	/**
-	 * @see org.eclipse.swt.widgets.Control#setLayoutData(Object)
-	 */
 	public void setLayoutData(GridData gridData) {
 		clabel.setLayoutData(gridData);
 	}

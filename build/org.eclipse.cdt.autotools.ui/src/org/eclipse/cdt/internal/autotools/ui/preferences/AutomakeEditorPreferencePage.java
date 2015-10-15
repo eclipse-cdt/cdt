@@ -56,7 +56,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	private String[][] fSyntaxColorListModel;
 
 	private TableViewer fHighlightingColorListViewer;
-	private final List<HighlightingColorListItem> fHighlightingColorList= new ArrayList<HighlightingColorListItem>(5);
+	private final List<HighlightingColorListItem> fHighlightingColorList= new ArrayList<>(5);
 
 	ColorEditor fSyntaxForegroundColorEditor;
 	Button fBoldCheckBox;
@@ -145,6 +145,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		/*
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			return ((HighlightingColorListItem)element).getDisplayName();
 		}
@@ -152,6 +153,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		/*
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
+		@Override
 		public Color getForeground(Object element) {
 			return ((HighlightingColorListItem)element).getItemColor();
 		}
@@ -159,6 +161,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		/*
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
+		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
@@ -174,6 +177,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		/*
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object inputElement) {
 			return ((List<Object>)inputElement).toArray();
@@ -182,12 +186,14 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		/*
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/*
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -201,6 +207,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		super();
 	}
 
+	@Override
 	protected OverlayPreferenceStore createOverlayStore() {
 		fSyntaxColorListModel= new String[][] {
 				{AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_comment"), ColorManager.MAKE_COMMENT_COLOR, null}, //$NON-NLS-1$
@@ -210,7 +217,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 				{AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_keyword"),  ColorManager.MAKE_KEYWORD_COLOR, null},  //$NON-NLS-1$
 				{AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_default"),  ColorManager.MAKE_DEFAULT_COLOR, null},  //$NON-NLS-1$
 			};
-		ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys= new ArrayList<OverlayPreferenceStore.OverlayKey>();
+		ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys= new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_CONDITIONAL));
@@ -236,6 +243,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		AutotoolsUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
@@ -288,6 +296,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.autotools.ui.preferences.AbstractAutomakeEditorPreferencePage#handleDefaults()
 	 */
+	@Override
 	protected void handleDefaults() {
 		handleSyntaxColorListSelection();
 		initializeDefaultFolding();
@@ -354,15 +363,18 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		fItalicCheckBox.setLayoutData(gd);
 
 		fHighlightingColorListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSyntaxColorListSelection();
 			}
 		});
 
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
@@ -370,9 +382,11 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		});
 
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getOverlayStore().setValue(item.getBoldKey(), fBoldCheckBox.getSelection());
@@ -380,9 +394,11 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		});
 				
 		fItalicCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getOverlayStore().setValue(item.getItalicKey(), fItalicCheckBox.getSelection());
@@ -411,11 +427,13 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fFoldingCheckbox.setLayoutData(gd);
 		fFoldingCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled= fFoldingCheckbox.getSelection(); 
 				getOverlayStore().setValue(AutotoolsEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, enabled);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -445,6 +463,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		return super.performOk();
 	}

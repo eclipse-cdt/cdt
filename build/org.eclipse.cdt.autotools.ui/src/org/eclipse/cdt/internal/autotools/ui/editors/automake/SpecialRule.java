@@ -22,10 +22,12 @@ public abstract class SpecialRule extends Rule implements ISpecialRule {
 		prerequisites = reqs.clone();
 	}
 
+	@Override
 	public String[] getPrerequisites() {
 		return prerequisites.clone();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(target).append(':');

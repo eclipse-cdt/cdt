@@ -17,6 +17,7 @@ public class ExportVariable extends GNUVariableDef {
 		super(parent, name, value, type);
 	}
 
+	@Override
 	public boolean isExport() {
 		return true;
 	}

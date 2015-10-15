@@ -30,6 +30,7 @@ import org.eclipse.jface.action.IAction;
 
 public class ReconfigureAction extends InvokeAction {
 
+	@Override
 	public void run(IAction action) {
 		IContainer container = getSelectedContainer();
 		if (container == null)
@@ -40,14 +41,13 @@ public class ReconfigureAction extends InvokeAction {
 		final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
 		
 		Job backgroundJob = new Job("Reconfigure Action"){  //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
-						public void run(IProgressMonitor monitor) throws CoreException {
+						@Override
+						public void run(IProgressMonitor monitor) {
 							IProject project = getSelectedContainer().getProject();
 							AutotoolsNewMakeGenerator m = new AutotoolsNewMakeGenerator();
 							IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -72,6 +72,7 @@ public class ReconfigureAction extends InvokeAction {
 		backgroundJob.schedule();
 	}
 
+	@Override
 	public void dispose() {
 
 	}

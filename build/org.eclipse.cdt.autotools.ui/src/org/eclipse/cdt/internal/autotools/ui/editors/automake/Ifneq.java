@@ -17,10 +17,12 @@ public class Ifneq extends Conditional {
 		super(parent, cond);
 	}
 
+	@Override
 	public boolean isIfneq() {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.CONDITIONAL_IFNEQ);
 		sb.append(' ').append(getConditional());

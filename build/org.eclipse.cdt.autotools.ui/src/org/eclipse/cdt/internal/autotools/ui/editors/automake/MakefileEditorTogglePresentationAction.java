@@ -30,9 +30,7 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 		update();
 	}
 
-	/**
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
 		editor.resetHighlightRange();
@@ -41,9 +39,7 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 		editor.showHighlightRangeOnly(!show);
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		setChecked(getTextEditor() != null && getTextEditor().showsHighlightRangeOnly());
 		setEnabled(true);

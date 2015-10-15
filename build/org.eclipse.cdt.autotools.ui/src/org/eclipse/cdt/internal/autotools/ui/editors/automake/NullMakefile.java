@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 
@@ -38,10 +37,12 @@ public class NullMakefile extends AbstractMakefile {
 		super(null);
 	}
 
+	@Override
 	public IDirective[] getDirectives() {
 		return EMPTY_DIRECTIVES;
 	}
 
+	@Override
 	public IDirective[] getBuiltins() {
 		return EMPTY_DIRECTIVES;
 	}
@@ -49,19 +50,19 @@ public class NullMakefile extends AbstractMakefile {
 	public void addDirective(IDirective directive) {
 	}
 
+	@Override
 	public String toString() {
 		return "";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.io.Reader)
-	 */
-	public void parse(String name, Reader makefile) throws IOException {
+	@Override
+	public void parse(String name, Reader makefile) {
 	}
 	
-	public void parse(URI fileURI, Reader reader) throws IOException {
+	@Override
+	public void parse(URI fileURI, Reader reader) {
 	}
 	
-	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
+	protected void parse(URI fileURI, MakefileReader reader) {
 	}
 }

@@ -20,6 +20,7 @@ public class Target implements ITarget {
 		target = t;
 	}
 
+	@Override
 	public String toString() {
 		return target;
 	}

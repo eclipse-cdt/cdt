@@ -24,6 +24,7 @@ public class ConfigurationLabelProvider	extends LabelProvider implements ITableL
 		AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_BUILD_CONFIG);
 
 	// 
+	@Override
 	public String getColumnText(Object obj, int index) {
 		if (obj instanceof IConfiguration) {
 			IConfiguration tmpConfig = (IConfiguration) obj;
@@ -36,6 +37,7 @@ public class ConfigurationLabelProvider	extends LabelProvider implements ITableL
 		return "";
 	}
 
+	@Override
 	public Image getColumnImage(Object obj, int index) {
 		return IMG_CFG;
 	}

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import java.io.File;
-import java.io.IOException;
 
 public class If extends Conditional implements IAutomakeConditional, ICommand {
     private static final String EMPTY = ""; //$NON-NLS-1$
@@ -26,12 +25,14 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 		}
 	}
 
+	@Override
 	public Rule[] getRules() {
 		if (rules != null)
 			return rules.clone();
 		return null;
 	}
 	
+	@Override
 	public void setRules(Rule[] rules) {
 		if (rules != null)
 			this.rules = rules.clone();
@@ -39,18 +40,22 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 			this.rules = rules;
 	}
 	
+	@Override
 	public boolean isIf() {
 		return true;
 	}
 
+	@Override
 	public boolean isAutomake() {
 		return true;
 	}
 	
+	@Override
 	public void setAutomake(boolean value) {
 		// ignore value
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.CONDITIONAL_IF);
 		sb.append(' ').append(getVariable());
@@ -62,19 +67,22 @@ public class If extends Conditional implements IAutomakeConditional, ICommand {
 	}
 	
 	// ICommand methods so Automake if can be a child of an IRule
-	public Process execute(String shell, String[] envp, File dir)
-			throws IOException {
+	@Override
+	public Process execute(String shell, String[] envp, File dir) {
 		return null;
 	}
 	
+	@Override
 	public boolean shouldBeSilent() {
 		return false;
 	}
 	
+	@Override
 	public boolean shouldIgnoreError() {
 		return false;
 	}
 	
+	@Override
 	public boolean shouldExecute() {
 		return false;
 	}

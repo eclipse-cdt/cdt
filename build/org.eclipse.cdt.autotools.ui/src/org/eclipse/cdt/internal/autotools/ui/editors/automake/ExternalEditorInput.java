@@ -37,8 +37,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	private ITranslationUnit unit;
 	private IPath location;
 
-	/*
-	*/
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -52,75 +51,58 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 		}
 	}
 	
+	@Override
 	public int hashCode() {
 		return externalFile.hashCode();
 	}
 
-	/*
-	* @see IEditorInput#exists()
-	*/
+	@Override
 	public boolean exists() {
 		// External file can not be deleted
 		return true;
 	}
 
-	/*
-	* @see IAdaptable#getAdapter(Class)
-	*/
-	@SuppressWarnings({ "unchecked" })
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
 		if (ILocationProvider.class.equals(adapter)) {
-			return this;
+			return (T) this;
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
-	/*
-	* @see IEditorInput#getImageDescriptor()
-	*/
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
 		return registry.getImageDescriptor(externalFile.getFullPath().getFileExtension());
 	}
 
-	/*
-	* @see IEditorInput#getName()
-	*/
+	@Override
 	public String getName() {
 		return externalFile.getName();
 	}
 
-	/*
-	* @see IEditorInput#getPersistable()
-	*/
+	@Override
 	public IPersistableElement getPersistable() {
 		return this;
 	}
 
-	/*
-	* see IStorageEditorInput#getStorage()
-	*/
+	@Override
 	public IStorage getStorage() {
 		return externalFile;
 	}
 
-	/*
-	* @see IEditorInput#getToolTipText()
-	*/
+	@Override
 	public String getToolTipText() {
 		return externalFile.getFullPath().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.ITranslationUnitEditorInput#getTranslationUnit()
-	 */
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		return unit;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
-	 */
+	@Override
 	public IPath getPath(Object element) {
 		return location;
 	}
@@ -156,16 +138,12 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 		return markerResource;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
-	 */
+	@Override
 	public String getFactoryId() {
 		return ExternalEditorInputFactory.ID;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
-	 */
+	@Override
 	public void saveState(IMemento memento) {
 		ExternalEditorInputFactory.saveState(memento, this);
 	}

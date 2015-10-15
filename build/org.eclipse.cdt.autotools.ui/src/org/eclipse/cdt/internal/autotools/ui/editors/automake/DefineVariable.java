@@ -17,10 +17,12 @@ public class DefineVariable extends GNUVariableDef {
 		super(parent, name, value);
 	}
 
+	@Override
 	public boolean isMultiLine() {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.VARIABLE_DEFINE);
 		sb.append(getName()).append('\n');

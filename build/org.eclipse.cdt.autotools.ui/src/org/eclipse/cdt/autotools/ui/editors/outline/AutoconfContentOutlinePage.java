@@ -43,7 +43,7 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 	}
 
 	protected ISelection updateSelection(ISelection sel) {
-		ArrayList<AutoconfElement> newSelection= new ArrayList<AutoconfElement>();
+		ArrayList<AutoconfElement> newSelection= new ArrayList<>();
 		if (sel instanceof IStructuredSelection) {
 			@SuppressWarnings("rawtypes")
 			Iterator iter= ((IStructuredSelection)sel).iterator();
@@ -69,6 +69,7 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 			if (control != null && !control.isDisposed())
 			{
 				control.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (!control.isDisposed()) {
 //							control.setRedraw(false);
@@ -86,6 +87,7 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 		}
 	}
 	
+	@Override
 	public void createControl(Composite parent) {
 
 		super.createControl(parent);
@@ -102,6 +104,7 @@ public class AutoconfContentOutlinePage extends ContentOutlinePage {
 	/*
 	 * Change in selection
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event)
 	{
 		super.selectionChanged(event);

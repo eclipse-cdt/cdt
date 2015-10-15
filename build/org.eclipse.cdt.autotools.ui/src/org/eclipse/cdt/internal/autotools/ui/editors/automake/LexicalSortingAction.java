@@ -44,6 +44,7 @@ public class LexicalSortingAction extends Action {
 		valueChanged(checked, false);
 	}
 	
+	@Override
 	public void run() {
 		valueChanged(isChecked(), true);
 	}
@@ -66,6 +67,7 @@ public class LexicalSortingAction extends Action {
 			return true;
 		}
 		
+		@Override
 		public int category(Object obj) {
 			if (obj instanceof ICElement) {
 				ICElement elem= (ICElement)obj;

@@ -89,9 +89,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 		return (i == length ? line : line.substring(0, i)) + " "; //$NON-NLS-1$
 	}
 	
-	/*
-	 * @see IHoverInformationPresenter#updatePresentation(Display display, String, TextPresentation, int, int)
-	 */
+	@Override
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 		
 		if (hoverInfo == null)

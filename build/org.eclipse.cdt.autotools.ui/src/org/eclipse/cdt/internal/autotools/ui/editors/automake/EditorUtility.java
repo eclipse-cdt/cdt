@@ -15,9 +15,6 @@
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -34,21 +31,15 @@ import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.action.Action;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -70,135 +61,6 @@ public class EditorUtility {
 	private EditorUtility () {
 	}
 
-	/** 
-	 * Tests if a cu is currently shown in an editor
-	 * @return the IEditorPart if shown, null if element is not open in an editor
-	 */     
-	public static IEditorPart isOpenInEditor(Object inputElement) {
-		IEditorInput input = null;
-                
-		try {
-			input = getEditorInput(inputElement);
-		} catch (CModelException x) {
-			//CUIPlugin.log(x.getStatus());
-		}
-                
-		if (input != null) {
-			IWorkbenchPage p= CUIPlugin.getActivePage();
-			if (p != null) {
-				return p.findEditor(input);
-			}
-		}
-                
-		return null;
-	}
-
-	/**
-	 * Opens an editor for an element such as <code>ICElement</code>, 
-	 * <code>IFile</code>, or <code>IStorage</code>.
-	 * The editor is activated by default.
-	 * @return the IEditorPart or null if wrong element type or opening failed
-	 */
-	public static IEditorPart openInEditor(Object inputElement) throws CModelException, PartInitException {
-		return openInEditor(inputElement, true);
-	}
-
-	/**
-	 * Opens an editor for an element (ICElement, IFile, IStorage...)
-	 * @return the IEditorPart or null if wrong element type or opening failed
-	 */
-	public static IEditorPart openInEditor(Object inputElement, boolean activate) throws CModelException, PartInitException {
-                
-		if (inputElement instanceof IFile) {
-			return openInEditor((IFile) inputElement, activate);
-		}
-                
-		IEditorInput input = getEditorInput(inputElement);
-                
-		if (input != null) {
-			return openInEditor(input, getEditorID(input, inputElement), activate);
-		}
-		
-		return null;
-	}
-
-	// Following is not needed and drags in internal reference to CEditor.
-	
-//	/** 
-//	 * Selects a C Element in an editor
-//	 */     
-//	public static void revealInEditor(IEditorPart part, ICElement element) {
-//		if (element != null && part instanceof CEditor) {
-//			((CEditor) part).setSelection(element);
-//		}
-//	}
-
-	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
-		if (!file.getProject().isAccessible()){
-			closedProject(file.getProject());
-			return null;
-		}
-		
-		if (file != null) {
-		try {
-				if (!isLinked(file)) {
-					File tempFile = file.getRawLocation().toFile();
-				
-					if (tempFile != null){
-						String canonicalPath = null;
-						try {
-							canonicalPath = tempFile.getCanonicalPath();
-						} catch (IOException e1) {}
-						
-						if (canonicalPath != null){
-							IPath path = new Path(canonicalPath);
-							file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
-						}
-					}
-				}
-				
-				IEditorInput input = getEditorInput(file);
-				if (input != null) {
-					return openInEditor(input, getEditorID(input, file), activate);
-				}
-			} catch (CModelException e) {}
-		}
-		return null;
-	}
-	
-	@SuppressWarnings("deprecation")
-	public static boolean isLinked(IFile file) {
-		if (file.isLinked())
-			return true;
-		
-		IPath path = file.getLocation();
-		while (path.segmentCount() > 0) {
-			path = path.removeLastSegments(1);
-			IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
-			
-			for(int i=0; i<containers.length; i++) {
-				if (containers[i] instanceof IFolder && ((IFolder)containers[i]).isLinked()) {
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
-
-	/**
-	 * Open error dialog about closed project.
-	 * @param project
-	 */
-	private static void closedProject(IProject project) {
-		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
-		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
-		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()})); 
-		errorMsg.open();
-		
-	}
-
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
 		if (input != null) {
 			IWorkbenchPage p= CUIPlugin.getActivePage();
@@ -210,7 +72,7 @@ public class EditorUtility {
 		return null;
 	}
 
-	private static IEditorInput getEditorInput(ICElement element) throws CModelException {
+	private static IEditorInput getEditorInput(ICElement element) {
 		while (element != null) {
  			if (element instanceof ISourceReference) {
  				ITranslationUnit tu = ((ISourceReference)element).getTranslationUnit();
@@ -240,7 +102,7 @@ public class EditorUtility {
 		return null;
 	}
 
-	public static IEditorInput getEditorInput(Object input) throws CModelException {
+	public static IEditorInput getEditorInput(Object input) {
 		if (input instanceof ICElement) {
 			return getEditorInput((ICElement) input);
 		}
@@ -369,39 +231,6 @@ public class EditorUtility {
 	}
 
 	/**
-	 * If the current active editor edits a c element return it, else
-	 * return null
-	 */
-	public static ICElement getActiveEditorCInput() {
-		IWorkbenchPage page= CUIPlugin.getActivePage();
-		if (page != null) {
-			IEditorPart part= page.getActiveEditor();
-			if (part != null) {
-				IEditorInput editorInput= part.getEditorInput();
-				if (editorInput != null) {
-					return (ICElement)editorInput.getAdapter(ICElement.class);
-				}
-			}
-		}
-		return null;    
-	}
-        
-	/** 
-	 * Gets the working copy of an compilation unit opened in an editor
-	 * 
-	 * @param cu the original compilation unit (or another working copy)
-	 * @return the working copy of the compilation unit, or null if not found
-	*/     
-	public static ITranslationUnit getWorkingCopy(ITranslationUnit cu) {
-		if (cu == null)
-			return null;
-		if (cu.isWorkingCopy())
-			return cu;
-
-		return cu.findSharedWorkingCopy();
-	}
-
-	/**
 	 * Determine the editor id from the given file name using
 	 * the workspace-wide content-type definitions.
 	 * 
@@ -474,68 +303,6 @@ public class EditorUtility {
 		return editorId;
 	}
 
-	/**
-	 * Maps the localized modifier name to a code in the same
-	 * manner as #findModifier.
-	 * 
-	 * @return the SWT modifier bit, or <code>0</code> if no match was found
-	 */
-	public static int findLocalizedModifier(String token) {
-		if (token == null)
-			return 0;
-		
-		if (token.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
-			return SWT.CTRL;
-		if (token.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
-			return SWT.SHIFT;
-		if (token.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
-			return SWT.ALT;
-		if (token.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
-			return SWT.COMMAND;
-
-		return 0;
-	}
-
-	/**
-	 * Returns the modifier string for the given SWT modifier
-	 * modifier bits.
-	 * 
-	 * @param stateMask	the SWT modifier bits
-	 * @return the modifier string
-	 * @since 2.1.1
-	 */
-	public static String getModifierString(int stateMask) {
-		String modifierString= ""; //$NON-NLS-1$
-		if ((stateMask & SWT.CTRL) == SWT.CTRL)
-			modifierString= appendModifierString(modifierString, SWT.CTRL);
-		if ((stateMask & SWT.ALT) == SWT.ALT)
-			modifierString= appendModifierString(modifierString, SWT.ALT);
-		if ((stateMask & SWT.SHIFT) == SWT.SHIFT)
-			modifierString= appendModifierString(modifierString, SWT.SHIFT);
-		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
-			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
-		
-		return modifierString;
-	}
-
-	/**
-	 * Appends to modifier string of the given SWT modifier bit
-	 * to the given modifierString.
-	 * 
-	 * @param modifierString	the modifier string
-	 * @param modifier			an int with SWT modifier bit
-	 * @return the concatenated modifier string
-	 * @since 2.1.1
-	 */
-	private static String appendModifierString(String modifierString, int modifier) {
-		if (modifierString == null)
-			modifierString= ""; //$NON-NLS-1$
-		String newModifierString= Action.findModifierString(modifier);
-		if (modifierString.length() == 0)
-			return newModifierString;
-		return MakefileMessages.getFormattedString("EditorUtility.concatModifierStrings", new String[] {modifierString, newModifierString}); //$NON-NLS-1$
-	}
-
 	public static IStorage getStorage(IBinary bin) {
 		IStorage store = null;
 		try {
@@ -549,13 +316,4 @@ public class EditorUtility {
 		return store;
 	}
 	
-	public static IStorage getStorage(ITranslationUnit tu) {
-		IStorage store = null;
-		try {
-			store = new FileStorage (new ByteArrayInputStream(tu.getBuffer().getContents().getBytes()), tu.getPath());
-		} catch (CModelException e) {
-			// nothing;
-		}
-		return store;
-	}
 }

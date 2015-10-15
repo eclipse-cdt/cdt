@@ -17,6 +17,7 @@ public class OverrideVariable extends GNUVariableDef {
 		super(parent, name, value, type);
 	}
 
+	@Override
 	public boolean isOverride() {
 		return true;
 	}

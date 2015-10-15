@@ -74,7 +74,8 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
      * Method getWzTitleResource returns the correct Title Label for this class
      * overriding the default in the superclass.
      */
-    protected String getWzTitleResource(){
+    @Override
+	protected String getWzTitleResource(){
         return AutotoolsUIPlugin.getResourceString(WZ_TITLE);
     }
     
@@ -82,7 +83,8 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
      * Method getWzDescriptionResource returns the correct description
      * Label for this class overriding the default in the superclass.
      */
-    protected String getWzDescriptionResource(){
+    @Override
+	protected String getWzDescriptionResource(){
         return AutotoolsUIPlugin.getResourceString(WZ_DESC);
     }
        
@@ -92,7 +94,8 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
      * @param project
      * @return boolean
      */
-    public boolean isCandidate(IProject project) { 
+    @Override
+	public boolean isCandidate(IProject project) { 
 		return true; // all 
     }    
     
@@ -108,6 +111,7 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
     	((ConvertToAutotoolsProjectWizard)getWizard()).applyOptions(project, monitor);
     }
     
+	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
 		monitor.beginTask(AutotoolsUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 7); //$NON-NLS-1$
 		IConfiguration defaultCfg = null;
@@ -223,6 +227,7 @@ public class ConvertToAutotoolsProjectWizardPage extends ConvertProjectWizardPag
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		IStructuredSelection sel = ((BasicNewResourceWizard)getWizard()).getSelection();

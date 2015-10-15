@@ -14,16 +14,12 @@ import org.eclipse.jface.text.rules.IWordDetector;
 
 public class AutoconfKeywordDetector implements IWordDetector {
 
-	/**
-	 * @see IWordDetector#isWordPart(character)
-	 */
+	@Override
 	public boolean isWordPart(char character) {
 		return (Character.isLetter(character) && Character.isLowerCase(character));
 	}
 
-	/**
-	 * @see IWordDetector#isWordStart(char)
-	 */
+	@Override
 	public boolean isWordStart(char character) {
 		return (Character.isLetter(character) && Character.isLowerCase(character));
 	}

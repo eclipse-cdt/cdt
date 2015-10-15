@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_04e7821f",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "There is yet another VerifyProgramPath() in AbstractCLaunchDelegate2 which is used for the Run case.  How about we adapt that one to so that a user can Run As without having to build first?",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_4195ec94",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "This is a great start.  As a follow-up, we could prompt the user for which binary to use in a similar way as we do in CApplicationLaunchShortcut.chooseDebugConfig()",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_8161a42f",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "I suggest we change this message.  This will still hit if the user has the preference to build before launch unset, so let\u0027s tell her that the binary was not built.",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a1bca822",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Move above lines to inside the new if statement",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_8240875f",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/CDebugUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Maybe use Diamond operator to simply\n\nnew ArrayList\u003c\u003e();",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_c1071cd3",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Please include the new bin \u003d\u003d null case in the comment",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_811404d1",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Please add a comment that if we don\u0027t have a binary, the launch delegate will take care of it.",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_4214cf72",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Not related but it seems weird to call done inside the for loop",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_027e578a",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "I believe the above line is needed only when the binary was directly selected, no? If that is the case, please move this up to when elements[0] is an instanceof IBinary.  It will be clearer",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_81e36495",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "I believe the binary can be null if the user pressed cancel in the dialog triggered by chooseBinary().  In that case we probably don\u0027t want to continue with the launch.",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_21ec3887",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "I think the project could be null here, if the selection does is not on an IResource (could that happen?)  So we should check that project[0] !\u003d null before calling launch().\n\nPlease put a comment saying the binary could be null if no binary exists for the selected project, but that we will still handle this case.",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_2183985c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "This is a great start.  As a follow-up, we could prompt the user for which binary to use in a similar way as we do in CApplicationLaunchShortcut.chooseDebugConfig()",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_6100f074",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Move that up to after line 122",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a1f1480a",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "Move that whole check inside the if of line 114",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_4167ac44",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/LaunchUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2015-10-15T14:57:28Z",
+      "side": 1,
+      "message": "I suggest we change this message.  This will still hit if the user has the preference to build before launch unset, so let\u0027s tell her that the binary was not built.",
+      "revId": "be3cf3a1f25a965318b64c64a7b35033bf5ab5c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

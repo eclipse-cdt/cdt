@@ -186,10 +186,12 @@ public class AutotoolsProjectImportWizardPage extends
 		}
 	}
 
+	@Override
 	public boolean isC() {
 		return langc.getSelection();
 	}
 
+	@Override
 	public boolean isCPP() {
 		return langcpp.getSelection();
 	}

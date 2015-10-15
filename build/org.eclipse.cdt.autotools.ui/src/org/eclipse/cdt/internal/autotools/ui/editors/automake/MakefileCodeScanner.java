@@ -56,6 +56,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		initialize();
 	}
 	
+	@Override
 	protected List<IRule> createRules() {
 		IToken keyword = getToken(ColorManager.MAKE_KEYWORD_COLOR);
 		IToken function = getToken(ColorManager.MAKE_FUNCTION_COLOR);
@@ -64,13 +65,14 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		IToken macroDef = getToken(ColorManager.MAKE_MACRO_DEF_COLOR);
 		IToken other = getToken(ColorManager.MAKE_DEFAULT_COLOR);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 
 		// Add rule for single line comments.
 		rules.add(new EndOfLineRule("#", comment, '\\', true)); //$NON-NLS-1$
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {
+			@Override
 			public boolean isWhitespace(char character) {
 				return Character.isWhitespace(character);
 			}
@@ -107,6 +109,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 	/*
 	 * @see AbstractMakefileCodeScanner#getTokenProperties()
 	 */
+	@Override
 	protected String[] getTokenProperties() {
 		return fTokenProperties;
 	}

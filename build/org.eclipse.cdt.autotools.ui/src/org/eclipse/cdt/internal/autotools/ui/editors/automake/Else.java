@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Else extends Conditional implements IAutomakeConditional, ICommand {
 
@@ -23,16 +22,19 @@ public class Else extends Conditional implements IAutomakeConditional, ICommand 
 		super(parent);
 	}
 
+	@Override
 	public boolean isAutomake() {
 		return isAutomake;
 	}
 	
+	@Override
 	public Rule[] getRules() {
 		if (rules != null)
 			return rules.clone();
 		return rules;
 	}
 
+	@Override
 	public void setRules(Rule[] rules) {
 		if (rules != null)
 			this.rules = rules.clone();
@@ -40,32 +42,38 @@ public class Else extends Conditional implements IAutomakeConditional, ICommand 
 			this.rules = rules;
 	}
 	
+	@Override
 	public void setAutomake(boolean value) {
 		isAutomake = value;
 	}
 	
+	@Override
 	public boolean isElse() {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		return GNUMakefileConstants.CONDITIONAL_ELSE;
 	}
 	
 	// ICommand methods so Automake else can be a child of an IRule
-	public Process execute(String shell, String[] envp, File dir)
-			throws IOException {
+	@Override
+	public Process execute(String shell, String[] envp, File dir) {
 		return null;
 	}
 	
+	@Override
 	public boolean shouldBeSilent() {
 		return false;
 	}
 	
+	@Override
 	public boolean shouldIgnoreError() {
 		return false;
 	}
 	
+	@Override
 	public boolean shouldExecute() {
 		return false;
 	}

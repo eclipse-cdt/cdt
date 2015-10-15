@@ -31,54 +31,16 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 	protected Combo fAMVersionCombo;
 	IProject project;
 
-//	private class ACVersionSelectionListener implements SelectionListener {
-//		ICPropertyProvider p;
-//		public ACVersionSelectionListener(ICPropertyProvider p) {
-//			this.p = p;
-//		}
-//		
-//		public void widgetSelected(SelectionEvent e) {
-//			int index = fACVersionCombo.getSelectionIndex();
-//			try {
-//				AutotoolsEditorPropertyTab.getProject(p).setPersistentProperty(AutotoolsPropertyConstants.AUTOCONF_VERSION, fACVersionCombo.getItem(index));
-//			} catch (CoreException ce) {
-//				// FIXME: what can we do here?
-//			}
-//		}
-//
-//		public void widgetDefaultSelected(SelectionEvent e) {
-//			// do nothing
-//		}
-//	}
-//	
-//	private class AMVersionSelectionListener implements SelectionListener {
-//		ICPropertyProvider p;
-//		public AMVersionSelectionListener(ICPropertyProvider p) {
-//			this.p = p;
-//		}
-//		
-//		public void widgetSelected(SelectionEvent e) {
-//			int index = fAMVersionCombo.getSelectionIndex(); 
-//			try {
-//				AutotoolsEditorPropertyTab.getProject(p).setPersistentProperty(AutotoolsPropertyConstants.AUTOMAKE_VERSION, fAMVersionCombo.getItem(index));
-//			} catch (CoreException ce) {
-//				// FIXME: what can we do here?
-//			}
-//		}
-//
-//		public void widgetDefaultSelected(SelectionEvent e) {
-//			// do nothing
-//		}
-//	}
-	
 	private IProject getProject() {
 		return page.getProject();
 	}
 	
+	@Override
 	public boolean canBeVisible() {
 		return true;
 	}
 
+	@Override
 	public void createControls(Composite parent) {
 		// TODO Auto-generated method stub
 		super.createControls(parent);
@@ -124,6 +86,7 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		initialize();
 	}
 
+	@Override
 	public void performOK() {
 		String acVer = null;
 		String amVer = null;
@@ -163,10 +126,12 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 			AutotoolsPropertyManager.getDefault().notifyPropertyListeners(project, AutotoolsPropertyConstants.AUTOCONF_MACRO_VERSIONING);
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		performOK();
 	}
 	
+	@Override
 	public void performDefaults() {
 		// For default Autoconf and Automake versions, use the setting from the
 		// Autotools preference dialog.
@@ -196,34 +161,21 @@ public class AutotoolsEditorPropertyTab extends AbstractAutotoolsCPropertyTab {
 		fAMVersionCombo.select(i);
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		// Nothing to do
 	}
 	
+	@Override
 	public void updateButtons() {
 		// Nothing to do
 	}
 
+	@Override
 	public void setVisible (boolean b) {
 		super.setVisible(b);
 	}
 	
-//	private IProject getProject(ICPropertyProvider provider) {
-//		Object element = provider.getElement();
-//		if (element != null) { 
-//			if (element instanceof IFile ||
-//				element instanceof IProject ||
-//				element instanceof IFolder)
-//				{
-//			IResource f = (IResource) element;
-//			return f.getProject();
-//				}
-//			else if (element instanceof ICProject)
-//				return ((ICProject)element).getProject();
-//		}
-//		return null;
-//	}
-
 	private void initialize() {
 		initializeACVersion();
 		initializeAMVersion();

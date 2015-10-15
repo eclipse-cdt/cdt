@@ -61,6 +61,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		return page.getProject();
 	}
 	
+	@Override
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForPrefs()) {
 			return true;
@@ -82,10 +83,12 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		ap.getAllConfigurationData();
 	}
 	
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		return settingsStore;
 	}
 	
+	@Override
 	public void createControls(Composite parent) {
 		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(getProject());
 		syncClones();
@@ -94,7 +97,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		Composite composite= usercomp;
 		
 		settingsStore = AutotoolsConfigurePrefStore.getInstance();
-		configToPageListMap = new HashMap<String, List<AbstractConfigurePropertyOptionsPage>>();
+		configToPageListMap = new HashMap<>();
 		
 		// assume parent page uses griddata
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL | GridData.FILL_HORIZONTAL
@@ -125,27 +128,10 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		
 	}
 
-//	private void specificResize() {
-//		Point p1 = fTree.getTree().computeSize(-1, -1);
-//		Point p2 = fTree.getTree().getSize();
-//		Point p3 = usercomp.getSize();
-//		p1.x += calcExtra();
-//		if (p3.x >= p1.x && (p1.x < p2.x || (p2.x * 2 < p3.x))) {
-//			fTree.getTree().setSize(p1.x , p2.y);
-//			sashForm.setWeights(new int[] {p1.x, (p3.x - p1.x)});
-//		} 
-//	}
-//
-//	private int calcExtra() {
-//		int x = fTree.getTree().getBorderWidth() * 2;
-//		ScrollBar sb = fTree.getTree().getVerticalBar();
-//		if (sb != null) x += sb.getSize().x;
-//		return x;
-//	}
-	
 	protected void createSelectionArea (Composite parent) {
 		fTree = new TreeViewer(parent, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleOptionSelection();
 			}});
@@ -314,7 +300,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		if (getCfg() == null) return null;
 		List<AbstractConfigurePropertyOptionsPage> pages = configToPageListMap.get(getCfg().getName());
 		if (pages == null) {
-			pages = new ArrayList<AbstractConfigurePropertyOptionsPage>();
+			pages = new ArrayList<>();
 			configToPageListMap.put(getCfg().getName(), pages);	
 		}
 		return pages;
@@ -340,10 +326,11 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		return false;
 	}
 	
+	@Override
 	protected void performOK() {
 		ICConfigurationDescription[] cfgs = page.getCfgsEditable();
 		AutotoolsConfigurePropertyPage ap = (AutotoolsConfigurePropertyPage)page;
-		Map<String, IAConfiguration> cfgList = new HashMap<String, IAConfiguration>();
+		Map<String, IAConfiguration> cfgList = new HashMap<>();
 		for (int i = 0; i < cfgs.length; ++i) {
 			ICConfigurationDescription cd = cfgs[i];
 			IAConfiguration acfg = ap.getConfiguration(cd);
@@ -354,10 +341,12 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(project);
 	}
 	
+	@Override
 	protected void performCancel() {
 		AutotoolsConfigurationManager.getInstance().clearTmpConfigurations(getProject());
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IProject project = getProject();
 		ICConfigurationDescription[] cfgs = page.getCfgsEditable();
@@ -366,18 +355,21 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 		AutotoolsConfigurationManager.getInstance().applyConfigs(project.getName(), cfgs);
 	}
 	
+	@Override
 	protected void performDefaults() {
 		IAConfiguration cfg = getAutotoolsCfg();
 		cfg.setDefaultOptions();
 		setValues();
 	}
 	
+	@Override
 	protected void updateData(ICResourceDescription rd) {
 		if (rd == null) return;
 		icfgd = rd.getConfiguration();
 		setValues();
 	}
 	
+	@Override
 	public void setVisible (boolean b) {
 		super.setVisible(b);
 	}
@@ -385,6 +377,8 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 	// IPreferencePageContainer methods
 	@Override
 	public void updateButtons() {}
+	@Override
 	public void updateMessage() {}
+	@Override
 	public void updateTitle() {}
 }

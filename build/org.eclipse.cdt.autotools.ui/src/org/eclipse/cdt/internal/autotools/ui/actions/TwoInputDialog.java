@@ -43,9 +43,7 @@ public class TwoInputDialog extends InputDialog {
 		this.secondMessage = secondMessage;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			secondValue = secondText.getText();
@@ -55,6 +53,7 @@ public class TwoInputDialog extends InputDialog {
 		super.buttonPressed(buttonId);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		// create composite
@@ -78,6 +77,7 @@ public class TwoInputDialog extends InputDialog {
 		secondText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL));
 		secondText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateInput();
 			}

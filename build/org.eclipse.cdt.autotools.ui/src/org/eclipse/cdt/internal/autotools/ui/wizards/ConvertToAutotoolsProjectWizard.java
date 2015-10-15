@@ -111,6 +111,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	 * 
 	 * @see Wizard#createPages
 	 */
+	@Override
 	public void addPages() {
 		addPage(mainPage = new ConvertToAutotoolsProjectWizardPage(getPrefix(), this));
 		
@@ -135,6 +136,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 		MBSCustomPageManager.addStockPage(optionPage, NewAutotoolsProjectOptionPage.PAGE_ID);
 	}
 
+	@Override
 	public String getProjectID() {
 		return ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID;
 	}
@@ -167,6 +169,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
     	optionPage.performApply(monitor);
     }
 	
+	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(AutotoolsUIPlugin.getResourceString("WizardAutotoolsProjectConversion.monitor.convertingToMakeProject"), 2); //$NON-NLS-1$
 		try {
@@ -177,17 +180,13 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunPrologue(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
 		// Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunEpilogue(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 		// Get my initializer to run
 //		if (project == null)

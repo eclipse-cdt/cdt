@@ -35,19 +35,24 @@ public class AutoconfLabelProvider implements ILabelProvider {
 		super();
 	}
 	
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof AutoconfIfElement)
 			return AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_OBJS_IF);
@@ -74,6 +79,7 @@ public class AutoconfLabelProvider implements ILabelProvider {
 		return null;
 	}
 
+	@Override
 	public String getText(Object element) {
 		if (element instanceof AutoconfElement) {
 			AutoconfElement e = (AutoconfElement)element;

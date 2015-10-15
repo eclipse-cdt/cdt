@@ -77,7 +77,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			public Object[] getChildren(Object element) {
 				if (!(element instanceof IWorkspace))
 					return new Object[0];
-				ArrayList<IProject> aList = new ArrayList<IProject>(15);
+				ArrayList<IProject> aList = new ArrayList<>(15);
 				final IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					if (CoreModel.hasCNature(projects[i])) {
@@ -166,7 +166,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 	}
 
 	@Override
-	public void performApply(IProgressMonitor monitor) throws CoreException {
+	public void performApply(IProgressMonitor monitor) {
 		IProject[] refProjects = getReferencedProjects();
 		if (refProjects != null) {
 			IProject project = getContainer().getProject();

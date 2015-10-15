@@ -46,6 +46,7 @@ public class AutoconfMacroContentAssistProcessor implements
 		return offset;
 	}
 	
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset) {
 		
@@ -62,7 +63,7 @@ public class AutoconfMacroContentAssistProcessor implements
 		}
 		ICompletionProposal[] result = null;
 		if (macros != null) {
-			ArrayList<ICompletionProposal> validList = new ArrayList<ICompletionProposal>();
+			ArrayList<ICompletionProposal> validList = new ArrayList<>();
 			for (int i = 0; i < macros.length; ++i) {
 				String name = macros[i].getName();
 				if (name.length() >= prefix.length()) {
@@ -86,32 +87,37 @@ public class AutoconfMacroContentAssistProcessor implements
 				}
 			}
 			result = new ICompletionProposal[validList.size()];
-			result = (ICompletionProposal[])validList.toArray(result);
+			result = validList.toArray(result);
 		}
 		return result;
 	}
 
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		// TODO Auto-generated method stub
 		return new AutoconfMacroParameterListValidator();
 	}
 
+	@Override
 	public String getErrorMessage() {
 		// TODO Auto-generated method stub
 		return null;

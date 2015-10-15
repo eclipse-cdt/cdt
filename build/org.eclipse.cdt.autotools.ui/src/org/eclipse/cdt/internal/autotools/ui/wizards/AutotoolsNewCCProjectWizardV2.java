@@ -111,6 +111,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 		return PREFIX;
 	}
 
+	@Override
 	public void addPages() {
 		// Add the default page for all new projects 
 		super.addPages();
@@ -137,6 +138,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 		
 	}
 	
+	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls( pageContainer );
 		
@@ -180,6 +182,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 		return projectConfigurationPage.getProjectType();
 	}
 
+	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -284,6 +287,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunPrologue(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
 		// Auto-generated method stub
 
@@ -292,6 +296,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunEpilogue(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 		// Get my initializer to run
 		if(newProject == null)
@@ -325,6 +330,7 @@ public class AutotoolsNewCCProjectWizardV2 extends NewCCProjectWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#getProjectID()
 	 */
+	@Override
 	public String getProjectID() {
 //		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
 		return ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID;

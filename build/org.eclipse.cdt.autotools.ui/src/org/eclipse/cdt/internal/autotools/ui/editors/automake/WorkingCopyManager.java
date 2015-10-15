@@ -41,23 +41,17 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 		fDocumentProvider= provider;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#connect(org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	public void connect(IEditorInput input) throws CoreException {
 		fDocumentProvider.connect(input);
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#disconnect(org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	public void disconnect(IEditorInput input) {
 		fDocumentProvider.disconnect(input);
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#shutdown()
-	 */
+	@Override
 	public void shutdown() {
 		if (!fIsShuttingDown) {
 			fIsShuttingDown= true;
@@ -73,28 +67,22 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	public IMakefile getWorkingCopy(IEditorInput input) {
 		IMakefile unit= fMap == null ? null : (IMakefile) fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.make.core.makefile.IMakefile)
-	 */
+	@Override
 	public void setWorkingCopy(IEditorInput input, IMakefile workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
-				fMap= new HashMap<IEditorInput, IMakefile>();
+				fMap= new HashMap<>();
 			fMap.put(input, workingCopy);
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IWorkingCopyManagerExtension#removeWorkingCopy(org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	public void removeWorkingCopy(IEditorInput input) {
 		fMap.remove(input);
 		if (fMap.isEmpty())

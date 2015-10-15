@@ -35,7 +35,7 @@ import org.eclipse.swt.graphics.RGB;
  */
 public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 
-	private Map<String, Token> fTokenMap= new HashMap<String, Token>();
+	private Map<String, Token> fTokenMap= new HashMap<>();
 	private String[] fPropertyNamesColor;
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>,
@@ -89,7 +89,7 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	}
 
 	protected Token getToken(String key) {
-		return (Token) fTokenMap.get(key);
+		return fTokenMap.get(key);
 	}
 
 	private void addToken(String colorKey, String boldKey, String italicKey) {

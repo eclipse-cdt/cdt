@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -19,10 +22,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * The ExternalEditorInputFactory is used to save and recreate an ExternalEditorInput object.
@@ -42,9 +41,7 @@ public class ExternalEditorInputFactory implements IElementFactory {
     private static final String TAG_PATH = "path";//$NON-NLS-1$
     private static final String TAG_PROJECT = "project";//$NON-NLS-1$
 
-	/*
-	 * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
-	 */
+	@Override
 	public IAdaptable createElement(IMemento memento) {
         // Get the file name.
         String fileName = memento.getString(TAG_PATH);

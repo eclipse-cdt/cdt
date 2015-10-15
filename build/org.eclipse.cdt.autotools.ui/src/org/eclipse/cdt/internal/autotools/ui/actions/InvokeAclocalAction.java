@@ -24,6 +24,7 @@ public class InvokeAclocalAction extends InvokeAction {
 	private static final String DEFAULT_OPTION = ""; //$NON-NLS-1$
 	private static final String DEFAULT_COMMAND = "aclocal"; //$NON-NLS-1$
 
+	@Override
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
@@ -97,6 +98,7 @@ public class InvokeAclocalAction extends InvokeAction {
 		}
 	}
 
+	@Override
 	public void dispose() {
 
 	}

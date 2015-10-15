@@ -17,10 +17,12 @@ public class Ifeq extends Conditional {
 		super(parent, cond);
 	}
 
+	@Override
 	public boolean isIfeq() {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.CONDITIONAL_IFEQ);
 		sb.append(' ').append(getConditional());

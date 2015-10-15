@@ -19,12 +19,14 @@ public class UnExport extends Directive implements IUnExport {
 		variable = var;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.DIRECTIVE_UNEXPORT);
 		sb.append(' ').append(variable);
 		return sb.toString();
 	}
 
+	@Override
 	public String getVariable() {
 		return variable;
 	}

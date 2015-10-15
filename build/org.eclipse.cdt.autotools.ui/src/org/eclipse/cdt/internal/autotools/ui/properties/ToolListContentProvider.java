@@ -22,7 +22,7 @@ public class ToolListContentProvider implements ITreeContentProvider {
 	private ToolListElement[] elements;
 	
 	private ToolListElement[] createElements() {
-		ArrayList<ToolListElement> toolList = new ArrayList<ToolListElement>();
+		ArrayList<ToolListElement> toolList = new ArrayList<>();
 		AutotoolsConfiguration.Option[] options = AutotoolsConfiguration.getTools();
 		for (int i = 0; i < options.length; ++i) {
 			AutotoolsConfiguration.Option opt = options[i];
@@ -40,6 +40,7 @@ public class ToolListContentProvider implements ITreeContentProvider {
 		return toolList.toArray(new ToolListElement[toolList.size()]);
 	}
 	
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof AutotoolsConfiguration) {
 			return elements.clone();
@@ -47,24 +48,29 @@ public class ToolListContentProvider implements ITreeContentProvider {
 		return ((ToolListElement)parentElement).getChildren();	
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return ((ToolListElement)element).getParent();
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return ((ToolListElement)element).hasChildren();
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		if (elements != null)
 			return elements.clone();
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 		// nothing needed
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// TODO Auto-generated method stub
 		elements = createElements();

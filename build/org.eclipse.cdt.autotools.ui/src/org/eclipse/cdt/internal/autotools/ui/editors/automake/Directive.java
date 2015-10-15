@@ -26,32 +26,24 @@ public abstract class Directive implements IDirective {
 		setLines(start, end);
 	}
 
+	@Override
 	public abstract String toString();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getEndLine()
-	 */
+	@Override
 	public int getEndLine() {
 		return endLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getStartLine()
-	 */
+	@Override
 	public int getStartLine() {
 		return startLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getParent()
-	 */
+	@Override
 	public IDirective getParent() {
 		return parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getFileName()
-	 */
 	public String getFileName() {
 		if (filename == null) {
 			if (parent != null) {
@@ -61,9 +53,7 @@ public abstract class Directive implements IDirective {
 		return filename;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getMakefile()
-	 */
+	@Override
 	public IMakefile getMakefile() {
 		if (makefile == null) {
 			if (parent != null) {

@@ -14,16 +14,11 @@ package org.eclipse.cdt.autotools.ui.editors.parser;
 
 import java.util.regex.Pattern;
 
-/**
- *
- */
 public class AutoconfMacroDetector implements IAutoconfMacroDetector {
 
 	private static final Pattern AUTOCONF_MACRO_PATTERN = Pattern.compile("PKG_.*|AC_.*|AM_.*|m4.*"); //$NON-NLS-1$
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.autotools.core.ui.editors.parser.IAutoconfMacroDetector#isMacroIdentifier(java.lang.String)
-	 */
+	@Override
 	public boolean isMacroIdentifier(String name) {
 		return AUTOCONF_MACRO_PATTERN.matcher(name).matches();
 	}

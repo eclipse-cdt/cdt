@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,7 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public abstract class AbstractAutotoolsHandler extends AbstractHandler {
 	
-	protected Object execute(ExecutionEvent event, InvokeAction a) throws ExecutionException {
+	protected Object execute(ExecutionEvent event, InvokeAction a) {
 		ISelection k = HandlerUtil.getCurrentSelection(event);
 		if (!k.isEmpty() && k instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection)k).getFirstElement();

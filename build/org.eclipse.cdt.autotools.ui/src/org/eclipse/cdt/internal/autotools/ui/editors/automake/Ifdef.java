@@ -18,10 +18,12 @@ public class Ifdef extends Conditional {
 		super(parent, var, EMPTY, EMPTY);
 	}
 
+	@Override
 	public boolean isIfdef() {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(GNUMakefileConstants.CONDITIONAL_IFDEF);
 		sb.append(' ').append(getVariable());

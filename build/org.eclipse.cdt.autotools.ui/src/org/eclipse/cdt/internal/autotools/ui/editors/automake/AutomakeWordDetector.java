@@ -17,10 +17,12 @@ public class AutomakeWordDetector implements IWordDetector {
 	private static final String correctStartSpecChars = "$%*().><"; //$NON-NLS-1$
 	private static final String correctSpecChars = "?@$/\\<*%"; //$NON-NLS-1$
 	
+	@Override
 	public boolean isWordStart(char character) {
 		return Character.isLetterOrDigit(character) || (correctStartSpecChars.indexOf(character) >= 0);
 	}
 
+	@Override
 	public boolean isWordPart(char character) {
 		return Character.isLetterOrDigit(character) || (correctSpecChars.indexOf(character) >= 0);
 	}

@@ -44,9 +44,6 @@ import org.eclipse.ui.PlatformUI;
 @SuppressWarnings("deprecation")
 public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 
-	/* (non-Javadoc)
-	 * String constants
-	 */
 	protected static final String PREFIX = "WizardAutotoolsNewCProjectV2";	//$NON-NLS-1$
 	protected static final String OP_ERROR = PREFIX + ".op_error";	//$NON-NLS-1$
 	protected static final String WZ_TITLE = PREFIX + ".title";	//$NON-NLS-1$
@@ -111,6 +108,7 @@ public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 		return PREFIX;
 	}
 
+	@Override
 	public void addPages() {
 		// Add the default page for all new projects 
 		super.addPages();
@@ -137,6 +135,7 @@ public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 		
 	}
 	
+	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls( pageContainer );
 		
@@ -180,6 +179,7 @@ public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 		return projectConfigurationPage.getProjectType();
 	}
 
+	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -284,6 +284,7 @@ public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunPrologue(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
 		// Auto-generated method stub
 
@@ -292,6 +293,7 @@ public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#doRunEpilogue(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 		// Get my initializer to run
 		if(newProject == null)
@@ -325,6 +327,7 @@ public class AutotoolsNewCProjectWizardV2 extends NewCProjectWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#getProjectID()
 	 */
+	@Override
 	public String getProjectID() {
 //		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
 		return ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID;

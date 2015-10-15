@@ -43,16 +43,12 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		fMakefileReconcilingParticipant= (IReconcilingParticipant)fEditor;
 	}
 	
-	/**
-	 * @see IReconcilingStrategy#reconcile(document)
-	 */
+	@Override
 	public void setDocument(IDocument document) {
 	}	
 
 
-	/**
-	 * @see IReconcilingStrategy#reconcile(region)
-	 */
+	@Override
 	public void reconcile(IRegion region) {
 		// We use a trick to avoid running the reconciler multiple times
 		// on a file when it gets changed. This is because this gets called
@@ -64,9 +60,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		fLastRegionOffset = region.getOffset();
 	}
 
-	/**
-	 * @see IReconcilingStrategy#reconcile(dirtyRegion, region)
-	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
 		// FIXME: This seems to generate to much flashing in
 		// the contentouline viewer.

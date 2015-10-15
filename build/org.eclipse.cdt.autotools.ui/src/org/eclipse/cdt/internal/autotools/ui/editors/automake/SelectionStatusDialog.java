@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -22,10 +23,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.dialogs.SelectionDialog;
-
-import org.eclipse.core.runtime.IStatus;
 
 /**
  * An abstract base class for dialogs with a status bar and ok/cancel buttons.
@@ -49,6 +47,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Window.
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fImage != null)
@@ -57,6 +56,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Dialog.
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
@@ -80,6 +80,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/* (non-Javadoc)
 	 * Method declared in Dialog.
 	 */
+	@Override
 	public void create() {
 		super.create();
 		if (fLastStatus != null) {
@@ -115,9 +116,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		super(parent);
 		fInitialSelectionSet= false;
 	}
-	/* (non-Javadoc)
-	 * Method declared in Dialog.
-	 */
+	@Override
 	protected void okPressed() {
 		computeResult();
 		super.okPressed();
@@ -150,6 +149,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 			setInitialSelections(new Object[0]);
 		}
 	}
+	@Override
 	public void setInitialSelections(Object[] selectedElements) {
 		super.setInitialSelections(selectedElements);
 		fInitialSelectionSet= true;

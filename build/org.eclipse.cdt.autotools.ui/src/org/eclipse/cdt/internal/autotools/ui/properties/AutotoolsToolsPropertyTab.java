@@ -45,6 +45,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		return page.getProject();
 	}
 	
+	@Override
 	public boolean canBeVisible() {
 		return true;
 	}
@@ -53,6 +54,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		// Nothing to do
 	}
 	
+	@Override
 	public void createControls(Composite parent) {
 		// TODO Auto-generated method stub
 		super.createControls(parent);
@@ -144,6 +146,7 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		initialize();
 	}
 
+	@Override
 	public void performOK() {
 		String aclocalPath = null;
 		String automakePath = null;
@@ -242,10 +245,12 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		}
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		performOK();
 	}
 	
+	@Override
 	public void performDefaults() {
 		// For default tool settings, simply default the base tool names
 		fAclocalPath.setText(DEFAULT_ACLOCAL);
@@ -256,14 +261,17 @@ public class AutotoolsToolsPropertyTab extends AbstractAutotoolsCPropertyTab {
 		fLibtoolizePath.setText(DEFAULT_LIBTOOLIZE);
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		// Nothing to do
 	}
 	
+	@Override
 	public void updateButtons() {
 		// Nothing to do
 	}
 
+	@Override
 	public void setVisible (boolean b) {
 		super.setVisible(b);
 	}

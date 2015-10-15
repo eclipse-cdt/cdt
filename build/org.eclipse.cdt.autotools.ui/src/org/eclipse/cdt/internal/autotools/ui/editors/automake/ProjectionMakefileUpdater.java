@@ -83,9 +83,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 
 	private class ReconcilerParticipant implements IReconcilingParticipant {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.autotools.ui.editors.automake.IReconcilingParticipant#reconciled()
-		 */
+		@Override
 		public void reconciled() {
 			processReconcile();
 		}
@@ -105,9 +103,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	@SuppressWarnings("unused")
 	private boolean fCollapseConditional = false;
 
-	/*
-	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
-	 */
+	@Override
 	public void projectionEnabled() {
 		// http://home.ott.oti.com/teams/wswb/anon/out/vms/index.html
 		// projectionEnabled messages are not always paired with projectionDisabled
@@ -121,9 +117,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		fEditor.addReconcilingParticipant(fParticipant);
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
-	 */
+	@Override
 	public void projectionDisabled() {
 		fCachedDocument= null;
 		if (fParticipant != null) {
@@ -173,7 +167,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Map<MakefileProjectionAnnotation, Position> computeAdditions(IParent parent) {
-		Map<MakefileProjectionAnnotation, Position> map= new HashMap<MakefileProjectionAnnotation, Position>();
+		Map<MakefileProjectionAnnotation, Position> map= new HashMap<>();
 		computeAdditions(parent.getDirectives(), map);
 		return map;
 	}
@@ -244,9 +238,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			fCachedDocument= provider.getDocument(fEditor.getEditorInput());
 			fAllowCollapsing= false;
 			
-			Map<MakefileProjectionAnnotation, Position> additions= new HashMap<MakefileProjectionAnnotation, Position>();
-			List<MakefileProjectionAnnotation> deletions= new ArrayList<MakefileProjectionAnnotation>();
-			List<MakefileProjectionAnnotation> updates= new ArrayList<MakefileProjectionAnnotation>();
+			Map<MakefileProjectionAnnotation, Position> additions= new HashMap<>();
+			List<MakefileProjectionAnnotation> deletions= new ArrayList<>();
+			List<MakefileProjectionAnnotation> updates= new ArrayList<>();
 			
 			Map<MakefileProjectionAnnotation, Position> updated= computeAdditions((IParent) fInput);
 			Map<IDirective, List<MakefileProjectionAnnotation>> previous= createAnnotationMap(model);
@@ -254,9 +248,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			
 			Iterator<MakefileProjectionAnnotation> e= updated.keySet().iterator();
 			while (e.hasNext()) {
-				MakefileProjectionAnnotation annotation= (MakefileProjectionAnnotation) e.next();
+				MakefileProjectionAnnotation annotation= e.next();
 				IDirective element= annotation.getElement();
-				Position position= (Position) updated.get(annotation);
+				Position position= updated.get(annotation);
 				
 				List<MakefileProjectionAnnotation> annotations= previous.get(element);
 				if (annotations == null) {
@@ -264,7 +258,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 				} else {
 					Iterator<MakefileProjectionAnnotation> x= annotations.iterator();
 					while (x.hasNext()) {
-						MakefileProjectionAnnotation a= (MakefileProjectionAnnotation) x.next();
+						MakefileProjectionAnnotation a= x.next();
 						if (annotation.isComment() == a.isComment()) {
 							Position p= model.getPosition(a);
 							if (p != null && !position.equals(p)) {
@@ -309,19 +303,19 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
 		
-		List<MakefileProjectionAnnotation> newDeletions= new ArrayList<MakefileProjectionAnnotation>();
-		List<MakefileProjectionAnnotation> newChanges= new ArrayList<MakefileProjectionAnnotation>();
+		List<MakefileProjectionAnnotation> newDeletions= new ArrayList<>();
+		List<MakefileProjectionAnnotation> newChanges= new ArrayList<>();
 		
 		Iterator<MakefileProjectionAnnotation> deletionIterator= deletions.iterator();
 		outer: while (deletionIterator.hasNext()) {
-			MakefileProjectionAnnotation deleted= (MakefileProjectionAnnotation) deletionIterator.next();
+			MakefileProjectionAnnotation deleted= deletionIterator.next();
 			Position deletedPosition= model.getPosition(deleted);
 			if (deletedPosition == null)
 				continue;
 			
 			Iterator<MakefileProjectionAnnotation> changesIterator= changes.iterator();
 			while (changesIterator.hasNext()) {
-				MakefileProjectionAnnotation changed= (MakefileProjectionAnnotation) changesIterator.next();
+				MakefileProjectionAnnotation changed= changesIterator.next();
 				if (deleted.isComment() == changed.isComment()) {
 					Position changedPosition= model.getPosition(changed);
 					if (changedPosition == null)
@@ -345,9 +339,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			
 			Iterator<MakefileProjectionAnnotation> additionsIterator= additions.keySet().iterator();
 			while (additionsIterator.hasNext()) {
-				MakefileProjectionAnnotation added= (MakefileProjectionAnnotation) additionsIterator.next();
+				MakefileProjectionAnnotation added= additionsIterator.next();
 				if (deleted.isComment() == added.isComment()) {
-					Position addedPosition= (Position) additions.get(added);
+					Position addedPosition= additions.get(added);
 					
 					if (deletedPosition.getOffset() == addedPosition.getOffset()) {
 						
@@ -370,7 +364,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Map<IDirective, List<MakefileProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
-		Map<IDirective, List<MakefileProjectionAnnotation>> map= new HashMap<IDirective, List<MakefileProjectionAnnotation>>();
+		Map<IDirective, List<MakefileProjectionAnnotation>> map= new HashMap<>();
 		@SuppressWarnings("rawtypes")
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
@@ -379,7 +373,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 				MakefileProjectionAnnotation directive= (MakefileProjectionAnnotation) annotation;
 				List<MakefileProjectionAnnotation> list= map.get(directive.getElement());
 				if (list == null) {
-					list= new ArrayList<MakefileProjectionAnnotation>(2);
+					list= new ArrayList<>(2);
 					map.put(directive.getElement(), list);
 				}
 				list.add(directive);

@@ -30,6 +30,7 @@ public class InvokeAutomakeAction extends InvokeAction {
 	private static final String DEFAULT_OPTION = ""; //$NON-NLS-1$
 	private static final String DEFAULT_COMMAND = "automake"; //$NON-NLS-1$
 
+	@Override
 	public void run(IAction action) {
 
 		IContainer container = getSelectedContainer();
@@ -91,6 +92,7 @@ InvokeMessages
 		}
 	}
 
+	@Override
 	public void dispose() {
 
 	}

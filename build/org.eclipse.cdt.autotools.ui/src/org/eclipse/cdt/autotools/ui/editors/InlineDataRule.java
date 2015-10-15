@@ -60,6 +60,7 @@ public class InlineDataRule implements IRule {
 		scanner.unread();
 		return true;
 	}
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		fBuffer.setLength(0);

@@ -34,16 +34,17 @@ public class AutoconfElement {
 		this.name = name;
 		this.var = var;
 		this.startOffset = 0;
-		this.children = new ArrayList<AutoconfElement>();
+		this.children = new ArrayList<>();
 	}
 	
 
+	@Override
 	public String toString() {
 		String source = getSource();
 		if (source == null) {
 			StringBuffer kids = new StringBuffer();
 			for (Iterator<AutoconfElement> iterator = children.iterator(); iterator.hasNext();) {
-				AutoconfElement kid = (AutoconfElement) iterator.next();
+				AutoconfElement kid = iterator.next();
 				kids.append(kid.toString());
 				kids.append(","); //$NON-NLS-1$
 			}
@@ -64,7 +65,7 @@ public class AutoconfElement {
 	
 	public AutoconfElement getLastChild() {
 		if (hasChildren())
-			return (AutoconfElement)children.get(children.size() - 1);
+			return children.get(children.size() - 1);
 		return null;
 	}
 	
@@ -77,7 +78,7 @@ public class AutoconfElement {
 	}
 	
 	public AutoconfElement[] getChildren() {
-		return (AutoconfElement[]) children.toArray(new AutoconfElement[children.size()]);
+		return children.toArray(new AutoconfElement[children.size()]);
 	}
 	
 	public boolean hasChildren() {

@@ -90,7 +90,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	protected String[] separateTargets(String rawArgList) {
 
 		StringTokenizer st = new StringTokenizer(rawArgList, " "); //$NON-NLS-1$
-		ArrayList<String> targetList = new ArrayList<String>();
+		ArrayList<String> targetList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			String currentWord = st.nextToken().trim();
@@ -136,7 +136,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	}
 
 	protected String[] separateOptions(String rawArgList) {
-		ArrayList<String> argList = new ArrayList<String>();
+		ArrayList<String> argList = new ArrayList<>();
 		// May be multiple user-specified options in which case we
 		// need to split them up into individual options
 		rawArgList = rawArgList.trim();
@@ -162,7 +162,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	}
 
 	protected String[] simpleParseOptions(String rawArgList) {
-		ArrayList<String> argList = new ArrayList<String>();
+		ArrayList<String> argList = new ArrayList<>();
 		int lastArgIndex = -1;
 		int i = 0;
 		while (i < rawArgList.length()) {
@@ -208,7 +208,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	protected IPath getExecDir(IContainer container) {
 		int type = container.getType();
 		IPath execDir = null;
-		if (type == IContainer.FILE) {
+		if (type == IResource.FILE) {
 			execDir = container.getLocation().removeLastSegments(1);
 		} else {
 			execDir = container.getLocation();
@@ -219,7 +219,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 	protected IPath getCWD(IContainer container) {
 		int type = container.getType();
 		IPath cwd = null;
-		if (type == IContainer.FILE) {
+		if (type == IResource.FILE) {
 			cwd = container.getFullPath().removeLastSegments(1);
 		} else {
 			cwd = container.getFullPath();
@@ -244,21 +244,18 @@ public abstract class InvokeAction extends AbstractTargetAction {
 		}
 
 		@Override
-		public void run(IProgressMonitor monitor)
-		throws InvocationTargetException, InterruptedException {
-			ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-			ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+		public void run(IProgressMonitor monitor) throws InvocationTargetException {
+
 			RemoteCommandLauncher cmdL = new RemoteCommandLauncher();
-			outputs = null;
+			outputs = new HashMap<>();
 
 			// invoke command
-			try {
-				monitor.beginTask(
-						InvokeMessages.getFormattedString("InvokeAction.progress.message", // $NON-NLS-1$
-								new String[]{command.toOSString()}), IProgressMonitor.UNKNOWN);
+			try (ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+					ByteArrayOutputStream stderr = new ByteArrayOutputStream()) {
+				monitor.beginTask(InvokeMessages.getFormattedString("InvokeAction.progress.message", // $NON-NLS-1$
+						new String[] { command.toOSString() }), IProgressMonitor.UNKNOWN);
 				monitor.worked(1);
-				Process process = cmdL.execute(command, argumentList, envList,
-						execDir, new NullProgressMonitor());
+				Process process = cmdL.execute(command, argumentList, envList, execDir, new NullProgressMonitor());
 
 				if (cmdL.waitAndRead(stdout, stderr, new NullProgressMonitor()) == ICommandLauncher.OK) {
 					try {
@@ -274,24 +271,15 @@ public abstract class InvokeAction extends AbstractTargetAction {
 					monitor.done();
 					return;
 				}
-			} catch (CoreException e) {
+
+				outputs.put("stdout", stdout.toString()); //$NON-NLS-1$
+				outputs.put("stderr", stderr.toString()); //$NON-NLS-1$
+			} catch (CoreException | IOException e) {
 				monitor.done();
 				throw new InvocationTargetException(e);
 			}
-
-			outputs = new HashMap<String, String>();
-
-			outputs.put("stdout", stdout.toString()); //$NON-NLS-1$
-			outputs.put("stderr", stderr.toString()); //$NON-NLS-1$
-
-			try {
-				stdout.close();
-				stderr.close();
-			} catch (IOException e) {
-				// ignore
-			}
 		}
-			
+
 		public HashMap<String, String> getOutputs() {
 			return outputs;
 		}
@@ -333,9 +321,6 @@ public abstract class InvokeAction extends AbstractTargetAction {
 		final ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
 
 		Job backgroundJob = new Job(actionName) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -371,7 +356,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 								consoleOutStream.write(buf.toString().getBytes());
 								consoleOutStream.flush();
 								
-								ArrayList<String> additionalEnvs = new ArrayList<String>();
+								ArrayList<String> additionalEnvs = new ArrayList<>();
 								String strippedCommand = AutotoolsNewMakeGenerator.stripEnvVars(command, additionalEnvs);
 								// Get a launcher for the config command
 								RemoteCommandLauncher launcher = new RemoteCommandLauncher();
@@ -380,7 +365,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 								IEnvironmentVariable variables[] = ManagedBuildManager
 										.getEnvironmentVariableProvider().getVariables(cfg, true);
 								String[] env = null;
-								ArrayList<String> envList = new ArrayList<String>();
+								ArrayList<String> envList = new ArrayList<>();
 								if (variables != null) {
 									for (int i = 0; i < variables.length; i++) {
 										envList.add(variables[i].getName()
@@ -454,8 +439,7 @@ public abstract class InvokeAction extends AbstractTargetAction {
 				} catch (CoreException e) {
 					return e.getStatus();
 				}
-				IStatus returnStatus = Status.OK_STATUS;
-				return returnStatus;
+				return Status.OK_STATUS;
 			}
 		};
 

@@ -36,11 +36,13 @@ public class AutoconfMacro implements Comparable<Object> {
 		return (parms.length() > 0);
 	}
 
+	@Override
 	public int compareTo(Object x) {
 		AutoconfMacro y = (AutoconfMacro) x;
 		return getName().compareTo(y.getName());
 	}
 	
+	@Override
 	public boolean equals(Object x) {
 		if (x == null)
 			return false;
@@ -48,6 +50,7 @@ public class AutoconfMacro implements Comparable<Object> {
 		return getName().equals(y.getName());
 	}
 	
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}

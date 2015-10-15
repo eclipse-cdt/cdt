@@ -61,6 +61,7 @@ public class SelectionList extends Composite {
 		fList= new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fList.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				fRenderer.dispose();
 			}
@@ -75,6 +76,7 @@ public class SelectionList extends Composite {
 		spec.verticalAlignment= GridData.BEGINNING;
 		fText.setLayoutData(spec);
 		Listener l= new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				filter(false);
 			}
@@ -120,9 +122,9 @@ public class SelectionList extends Composite {
 	 */
 	public List<Object> getSelection() {
 		if (fList == null || fList.isDisposed() || fList.getSelectionCount() == 0)
-			return new ArrayList<Object>(0);
+			return new ArrayList<>(0);
 		int[] listSelection= fList.getSelectionIndices();
-		List<Object> selected= new ArrayList<Object>(listSelection.length);
+		List<Object> selected= new ArrayList<>(listSelection.length);
 		for (int i= 0; i < listSelection.length; i++) {
 			selected.add(fElements[fFilteredElements[listSelection[i]]]);
 		}
@@ -182,9 +184,7 @@ public class SelectionList extends Composite {
 		if (refilter)
 			filter(true);		
 	}
-	/* 
-	 * Non Java-doc
-	 */
+	@Override
 	public void setEnabled(boolean enable) {
 		super.setEnabled(enable);
 		fText.setEnabled(enable);
@@ -198,15 +198,11 @@ public class SelectionList extends Composite {
 		if (refilter)
 			filter(true);
 	}
-	/*
-	 * Non Java-doc
-	 */
+	@Override
 	public boolean setFocus() {
 		return fText.setFocus();
 	}
-	/*
-	 * Non Java-doc
-	 */
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		fText.setFont(font);

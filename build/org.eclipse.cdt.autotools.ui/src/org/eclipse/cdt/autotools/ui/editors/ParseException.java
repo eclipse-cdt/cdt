@@ -30,6 +30,7 @@ public class ParseException extends Exception {
 	public void setLineNumber(int lineNumber) {
 		this.lineNumber = lineNumber;
 	}
+	@Override
 	public String getMessage() {
 		return message;
 	}

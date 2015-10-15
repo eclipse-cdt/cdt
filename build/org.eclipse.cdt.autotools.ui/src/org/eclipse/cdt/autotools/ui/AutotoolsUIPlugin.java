@@ -74,6 +74,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 	}
@@ -81,6 +82,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
@@ -179,6 +181,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 			display = Display.getDefault();
 		final IStatus fstatus = status;
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				ErrorDialog.openError(null, title, null, fstatus);
 			}

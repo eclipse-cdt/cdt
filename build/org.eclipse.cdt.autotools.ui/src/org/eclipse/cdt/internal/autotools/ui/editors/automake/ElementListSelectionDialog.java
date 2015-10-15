@@ -14,13 +14,12 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * A class to select one or more elements out of an indexed property
@@ -29,15 +28,13 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	
 	private List<Object> fElements;
 	
-	/*
-	 * @private
-	 */
+	@Override
 	protected void computeResult() {
 		setResult(getWidgetSelection());
 	}
-	/*
-	 * @private
-	 */	
+	
+
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control result= super.createDialogArea(parent);
 		
@@ -59,9 +56,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 	public Object[] getSelectedElements() {
 		return getResult();
 	}
-	/*
-	 * @private
-	 */	
+	@Override
 	protected void handleDoubleClick() {
 		if (verifyCurrentSelection()) {
 			buttonPressed(IDialogConstants.OK_ID);

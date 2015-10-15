@@ -33,7 +33,7 @@ public class AutoconfPartitionScanner extends RuleBasedPartitionScanner {
 	public AutoconfPartitionScanner() {
 		super();
 		
-		List<IRule> rules= new ArrayList<IRule>();
+		List<IRule> rules= new ArrayList<>();
 		Token macro = new Token(AUTOCONF_MACRO);
 		Token comment = new Token(AUTOCONF_COMMENT);
 

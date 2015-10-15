@@ -38,7 +38,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	
 	static {
 		
-		fgTags= new HashSet<String>();
+		fgTags= new HashSet<>();
 		fgTags.add("b"); //$NON-NLS-1$
 		fgTags.add("br"); //$NON-NLS-1$
 		fgTags.add("h5"); //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		fgTags.add("li"); //$NON-NLS-1$
 		fgTags.add("ul"); //$NON-NLS-1$
 		
-		fgEntityLookup= new HashMap<String, String>(7);
+		fgEntityLookup= new HashMap<>(7);
 		fgEntityLookup.put("lt", "<"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("gt", ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("nbsp", " "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -75,6 +75,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		fTextPresentation= presentation;
 	}
 	
+	@Override
 	public int read() throws IOException {
 		int c= super.read();
 		if (c != -1)
@@ -98,9 +99,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		}
 	}
 	
-	/**
-	 * @see SubstitutionTextReader#computeSubstitution(char)
-	 */
+	@Override
 	protected String computeSubstitution(int c) throws IOException {
 		if (c == '<')
 			return  processHTMLTag();
@@ -230,7 +229,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			} catch (NumberFormatException e) {
 			}
 		} else {
-			String str= (String) fgEntityLookup.get(symbol);
+			String str= fgEntityLookup.get(symbol);
 			if (str != null) {
 				return str;
 			}

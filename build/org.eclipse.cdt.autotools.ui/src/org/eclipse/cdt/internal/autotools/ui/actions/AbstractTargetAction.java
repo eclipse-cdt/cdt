@@ -51,14 +51,17 @@ public abstract class AbstractTargetAction
 		fContainer = container;
 	}
 	
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fPart = targetPart;
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow = window;
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled = false;
 		if (selection instanceof IStructuredSelection) {

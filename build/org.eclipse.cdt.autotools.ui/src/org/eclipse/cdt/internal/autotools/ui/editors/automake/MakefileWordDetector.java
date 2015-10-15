@@ -17,16 +17,12 @@ public class MakefileWordDetector implements IWordDetector {
 	private static final String correctStartSpecChars = "%*().><"; //$NON-NLS-1$
 	private static final String correctSpecChars = "@$/\\"; //$NON-NLS-1$
 
-	/**
-	 * @see IWordDetector#isWordPart(character)
-	 */
+	@Override
 	public boolean isWordPart(char character) {
 		return Character.isLetterOrDigit(character) || (correctSpecChars.indexOf(character) >= 0);
 	}
 
-	/**
-	 * @see IWordDetector#isWordStart(char)
-	 */
+	@Override
 	public boolean isWordStart(char character) {
 		return Character.isLetterOrDigit(character) || (correctStartSpecChars.indexOf(character) >= 0);
 	}

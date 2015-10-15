@@ -22,7 +22,7 @@ public class ToolListElement {
 	public ToolListElement(String name, int type) {
 		this.name = name;
 		this.type = type;
-		this.children = new ArrayList<ToolListElement>();
+		this.children = new ArrayList<>();
 	}
 	
 	public void setParent(ToolListElement p) {

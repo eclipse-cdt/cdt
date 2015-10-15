@@ -22,6 +22,7 @@ public class AutoconfMacroElement extends AutoconfElement {
 		super(name);
 	}
 
+	@Override
 	public String getVar() {
 		if (children.size() > 0)
 			return getParameter(0);
@@ -33,7 +34,7 @@ public class AutoconfMacroElement extends AutoconfElement {
 	}
 
 	public String getParameter(int num) {
-		return ((AutoconfElement) children.get(num)).getName();
+		return children.get(num).getName();
 	}
 
 	/**

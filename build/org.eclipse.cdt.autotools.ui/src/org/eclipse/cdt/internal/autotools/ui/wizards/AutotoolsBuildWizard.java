@@ -44,12 +44,13 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */
+	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		IBuildPropertyManager bpm = ManagedBuildManager.getBuildPropertyManager();
 		IBuildPropertyType bpt = bpm.getPropertyType(MBSWizardHandler.ARTIFACT);
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		Arrays.sort(vs, BuildListComparator.getInstance());
-		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
+		ArrayList<EntryDescriptor> items = new ArrayList<>();
 
 		// look for project types that have a toolchain based on the Autotools toolchain
 		// and if so, add an entry for the project type.
@@ -82,6 +83,6 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 				items.add(new EntryDescriptor(pt.getId(), null, pt.getName(), true, h, null));
 		}
 
-		return (EntryDescriptor[])items.toArray(new EntryDescriptor[items.size()]);
+		return items.toArray(new EntryDescriptor[items.size()]);
 	}
 }

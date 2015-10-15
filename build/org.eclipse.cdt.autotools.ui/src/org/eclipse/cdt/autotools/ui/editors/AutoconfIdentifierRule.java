@@ -26,20 +26,17 @@ public class AutoconfIdentifierRule implements IPredicateRule {
 		fToken = token;
 	}
 
+	@Override
 	public IToken getSuccessToken() {
 		return fToken;
 	}
 
-	/*
-	 * @see IRule#evaluate(ICharacterScanner)
-	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
 	}
 	
-	/*
-	 * @see IPredicateRule#evaluate(ICharacterScanner, resume)
-	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		int c = scanner.read();
 		if (Character.isLetterOrDigit((char)c) || fExtraChars.indexOf((char)c) >= 0) {

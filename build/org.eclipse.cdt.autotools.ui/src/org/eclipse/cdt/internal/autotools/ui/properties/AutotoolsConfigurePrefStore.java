@@ -47,24 +47,17 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 		selectedElement = element;
 	}
 	
-	/* (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
-	 */
+	@Override
 	public boolean contains(String name) {
 		return cfg.getOption(name) != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue,
 			Object newValue) {
 		Object[] listeners = listenerList.getListeners();
@@ -79,9 +72,7 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
-	 */
+	@Override
 	public boolean getBoolean(String name) {
 		IConfigureOption option = cfg.getOption(name);
 		if (option != null && (option.getType() == IConfigureOption.BIN ||
@@ -92,79 +83,57 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 		return getDefaultBoolean(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultBoolean(java.lang.String)
-	 */
+	@Override
 	public boolean getDefaultBoolean(String name) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultDouble(java.lang.String)
-	 */
+	@Override
 	public double getDefaultDouble(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultFloat(java.lang.String)
-	 */
+	@Override
 	public float getDefaultFloat(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultInt(java.lang.String)
-	 */
+	@Override
 	public int getDefaultInt(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultLong(java.lang.String)
-	 */
+	@Override
 	public long getDefaultLong(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultString(java.lang.String)
-	 */
+	@Override
 	public String getDefaultString(String name) {
 		return EMPTY_STRING;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getDouble(java.lang.String)
-	 */
+	@Override
 	public double getDouble(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getFloat(java.lang.String)
-	 */
+	@Override
 	public float getFloat(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getInt(java.lang.String)
-	 */
+	@Override
 	public int getInt(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getLong(java.lang.String)
-	 */
+	@Override
 	public long getLong(String name) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
-	 */
+	@Override
 	public String getString(String name) {
 		if (name.equals(ALL_OPTIONS_ID) && selectedElement.getType() == IConfigureOption.TOOL) {
 			return cfg.getToolParameters(selectedElement.getName());
@@ -177,30 +146,22 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 		return getDefaultString(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#isDefault(java.lang.String)
-	 */
+	@Override
 	public boolean isDefault(String name) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
-	 */
+	@Override
 	public boolean needsSaving() {
 		return isdirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void putValue(String name, String value) {
 		setValue(name, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.remove(listener);
 	}
@@ -209,73 +170,47 @@ public class AutotoolsConfigurePrefStore implements IPreferenceStore {
 		this.isdirty = isdirty;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, double)
-	 */
+	@Override
 	public void setDefault(String name, double value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, float)
-	 */
+	@Override
 	public void setDefault(String name, float value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, int)
-	 */
+	@Override
 	public void setDefault(String name, int value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, long)
-	 */
+	@Override
 	public void setDefault(String name, long value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void setDefault(String name, String defaultObject) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, boolean)
-	 */
+	@Override
 	public void setDefault(String name, boolean value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
-	 */
+	@Override
 	public void setToDefault(String name) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
-	 */
+	@Override
 	public void setValue(String name, double value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
-	 */
+	@Override
 	public void setValue(String name, float value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
-	 */
+	@Override
 	public void setValue(String name, int value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
-	 */
+	@Override
 	public void setValue(String name, long value) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void setValue(String name, String value) {
 		IConfigureOption option = cfg.getOption(name);
 		if (option != null)
 			option.setValue(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
-	 */
+	@Override
 	public void setValue(String name, boolean value) {
 		IConfigureOption option = cfg.getOption(name);
 		if (option != null)

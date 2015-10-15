@@ -45,6 +45,7 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 		m4MacroWordDetector = new AutoconfM4WordDetector();
 	}
 
+	@Override
 	public IToken getSuccessToken() {
 		return token;
 	}
@@ -77,12 +78,14 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 		}
 	}
 	
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 //		if (resume)
 //			return Token.UNDEFINED;
 		return evaluate(scanner);
 	}
 	
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c = scanner.read();
 		fBuffer.setLength(0);

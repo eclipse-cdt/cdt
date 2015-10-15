@@ -124,6 +124,7 @@ public class ResourceLookup {
 	 */
 	public static void sortFilesByRelevance(IFile[] filesToSort, final IProject preferredProject) {
 		Collections.sort(Arrays.asList(filesToSort), new Comparator<IFile>() {
+			@Override
 			public int compare(IFile f1, IFile f2) {
 				int r1= FileRelevance.getRelevance(f1, preferredProject);
 				int r2= FileRelevance.getRelevance(f2, preferredProject);

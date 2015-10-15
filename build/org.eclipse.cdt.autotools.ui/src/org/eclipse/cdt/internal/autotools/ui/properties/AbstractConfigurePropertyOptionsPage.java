@@ -52,6 +52,7 @@ public abstract class AbstractConfigurePropertyOptionsPage extends
 	/**
 	 * Method called when the value of a dialog field changes
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 	    super.propertyChange(event);
 		if (event.getProperty().equals(FieldEditor.VALUE)) {

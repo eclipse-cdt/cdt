@@ -28,7 +28,6 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -58,9 +57,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		colorManager = ColorManager.getDefault();
 	}
 
-	/**
-	 * @see SourceViewerConfiguration#getConfiguredContentTypes(ISourceViewer)
-	 */
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer v) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
@@ -73,9 +70,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
-	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = new ContentAssistant();
 		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
@@ -103,6 +98,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer v) {
 
 		PresentationReconciler reconciler = new PresentationReconciler();
@@ -138,9 +134,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		return reconciler;
 	}
 
-	/**
-	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
-	 */
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fEditor != null && fEditor.isEditable()) {
 			MonoReconciler reconciler= new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
@@ -151,22 +145,16 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
+	@Override
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[]{"#"}; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new MakefileTextHover(fEditor);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
-	 */
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new MakefileAnnotationHover(fEditor);
 	}

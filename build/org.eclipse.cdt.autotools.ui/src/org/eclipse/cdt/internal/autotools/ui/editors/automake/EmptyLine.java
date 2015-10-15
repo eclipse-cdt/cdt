@@ -20,6 +20,7 @@ public class EmptyLine extends Directive implements IEmptyLine {
 		super(parent);
 	}
 
+	@Override
 	public String toString() {
 		return NL_STRING;
 	}

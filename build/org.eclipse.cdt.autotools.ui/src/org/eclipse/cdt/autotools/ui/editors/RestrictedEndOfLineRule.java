@@ -71,7 +71,7 @@ public class RestrictedEndOfLineRule extends EndOfLineRule {
 		super(startSequence, token, escapeCharacter, breaksOnEOF);
 		this.startSequence = startSequence;
 		this.restrictedChars = restrictedChars;
-		rules = new ArrayList<IRule>();
+		rules = new ArrayList<>();
 		startIndex = 0;
 		endIndex = 0;
 	}
@@ -88,6 +88,7 @@ public class RestrictedEndOfLineRule extends EndOfLineRule {
 			scanner.unread();
 	}
 	
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		int column = scanner.getColumn();
 		// Check if we are at EOF, in which case rules don't hold

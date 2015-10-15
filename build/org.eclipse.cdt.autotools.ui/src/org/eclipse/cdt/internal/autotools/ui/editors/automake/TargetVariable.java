@@ -26,6 +26,7 @@ public class TargetVariable extends GNUVariableDef {
 		this.override = override;
 	}
 
+	@Override
 	public boolean isOverride() {
 		return override;
 	}

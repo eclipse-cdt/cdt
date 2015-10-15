@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.internal.autotools.ui.MakeUIImages;
 import org.eclipse.jface.action.IMenuListener;
@@ -24,7 +23,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -38,13 +36,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 
 /**
  * MakefileContentOutlinePage
  */
-public class MakefileContentOutlinePage extends ContentOutlinePage implements IContentOutlinePage {
+public class MakefileContentOutlinePage extends ContentOutlinePage {
 
 	private class MakefileContentProvider implements ITreeContentProvider {
 
@@ -56,9 +53,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		protected IMakefile makefile;
 		protected IMakefile nullMakefile = new NullMakefile();
 
-		/* (non-Javadoc)
-		* @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		*/
+		@Override
 		public Object[] getChildren(Object element) {
 			if (element == fInput) {
 				return getElements(makefile);
@@ -68,9 +63,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IMakefile) {
 				return fInput;
@@ -80,9 +73,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			return fInput;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element == fInput) {
 				return true;
@@ -96,9 +87,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			IDirective[] directives;
 			if (inputElement == fInput) {
@@ -114,7 +103,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			} else {
 				directives = new IDirective[0];
 			}
-			List<Object> list = new ArrayList<Object>(directives.length);
+			List<Object> list = new ArrayList<>(directives.length);
 			for (int i = 0; i < directives.length; i++) {
 				if (showMacroDefinition && directives[i] instanceof IMacroDefinition) {
 					list.add(directives[i]);
@@ -134,15 +123,11 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			return list.toArray();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null) {
 				makefile = nullMakefile;
@@ -159,11 +144,9 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 
 	}
 
-	private static class MakefileLabelProvider extends LabelProvider implements ILabelProvider {
+	private static class MakefileLabelProvider extends LabelProvider {
 
-		/* (non-Javadoc)
-		* @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		*/
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ITargetRule) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_TARGET_RULE);
@@ -183,9 +166,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			return super.getImage(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
+		@Override
 		public String getText(Object element) {
 			String name;
 			if (element instanceof IRule) {
@@ -216,9 +197,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		fOpenIncludeAction = new OpenIncludeAction(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		TreeViewer viewer = getTreeViewer();
@@ -231,6 +210,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		MenuManager manager= new MenuManager("#MakefileOutlinerContext"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				contextMenuAboutToShow(m);
 			}
@@ -240,9 +220,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		tree.setMenu(menu);
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-			 */
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (fOpenIncludeAction != null) {
 					fOpenIncludeAction.run();
@@ -290,6 +268,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			final Control control = viewer.getControl();
 			if (control != null && !control.isDisposed()) {
 				control.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (!control.isDisposed()) {
 							control.setRedraw(false);
@@ -306,6 +285,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void setActionBars(IActionBars actionBars) {
 		super.setActionBars(actionBars);
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();

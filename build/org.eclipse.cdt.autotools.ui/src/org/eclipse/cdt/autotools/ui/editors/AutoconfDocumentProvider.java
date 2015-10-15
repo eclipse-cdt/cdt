@@ -25,6 +25,7 @@ public class AutoconfDocumentProvider extends TextFileDocumentProvider {
 			disconnect(e.next());
 	}
 	
+	@Override
 	public void connect(Object element) throws CoreException {
 		super.connect(element);
 		// Remove all error markers for file as we will parse
@@ -33,8 +34,9 @@ public class AutoconfDocumentProvider extends TextFileDocumentProvider {
 //		h.removeAllExistingMarkers();
 	}
 	
+	@Override
 	public IDocument getDocument(Object element) {
-		FileInfo info= (FileInfo) getFileInfo(element);
+		FileInfo info= getFileInfo(element);
 		if (info != null)
 			return info.fTextFileBuffer.getDocument();
 		return getParentProvider().getDocument(element);

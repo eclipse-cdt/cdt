@@ -37,14 +37,17 @@ public abstract class Conditional extends Parent implements IConditional {
 	}
 
 
+	@Override
 	public String getConditional() {
 		return cond;
 	}
 
+	@Override
 	public String getArg1() {
 		return arg1;
 	}
 
+	@Override
 	public String getArg2() {
 		return arg2;
 	}
@@ -53,22 +56,27 @@ public abstract class Conditional extends Parent implements IConditional {
 		return false;
 	}
 
+	@Override
 	public boolean isIfdef() {
 		return false;
 	}
 
+	@Override
 	public boolean isIfndef() {
 		return false;
 	}
 
+	@Override
 	public boolean isIfeq() {
 		return false;
 	}
 
+	@Override
 	public boolean isIfneq() {
 		return false;
 	}
 
+	@Override
 	public boolean isElse() {
 		return false;
 	}

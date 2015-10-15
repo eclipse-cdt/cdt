@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_42f20f5c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Continuation lines have to be indented.",
+      "range": {
+        "startLine": 246,
+        "startChar": 4,
+        "endLine": 246,
+        "endChar": 25
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_c238bf89",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Better to break after the \u003d sign.",
+      "range": {
+        "startLine": 260,
+        "startChar": 20,
+        "endLine": 260,
+        "endChar": 21
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_6212b311",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Why not for(Variable v : typeMatches) ?",
+      "range": {
+        "startLine": 307,
+        "startChar": 16,
+        "endLine": 307,
+        "endChar": 24
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_e21ea320",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "This method doesn\u0027t do what it name implies. Please rename.",
+      "range": {
+        "startLine": 343,
+        "startChar": 24,
+        "endLine": 343,
+        "endChar": 49
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_2208bbe3",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Redundant parentheses around condition.",
+      "range": {
+        "startLine": 346,
+        "startChar": 23,
+        "endLine": 346,
+        "endChar": 57
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_c221df5d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Redundant parentheses around condition.",
+      "range": {
+        "startLine": 347,
+        "startChar": 22,
+        "endLine": 347,
+        "endChar": 43
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_0203f7c7",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuesser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Avoid double hash lookup.",
+      "range": {
+        "startLine": 363,
+        "startChar": 3,
+        "endLine": 364,
+        "endChar": 35
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_a2666b9e",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/ParameterGuessingProposal.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2015-10-15T00:29:17Z",
+      "side": 1,
+      "message": "Change to: status.getSeverity() \u003d\u003d IStatus.CANCEL",
+      "range": {
+        "startLine": 194,
+        "startChar": 6,
+        "endLine": 194,
+        "endChar": 12
+      },
+      "revId": "fd9180473f6e5e03685e6626a7e03bfbe3426afb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

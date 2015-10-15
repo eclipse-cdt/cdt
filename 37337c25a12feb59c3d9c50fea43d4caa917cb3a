@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_750ee674",
+        "filename": "build/org.eclipse.cdt.autotools.core/src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-10-15T23:04:15Z",
+      "side": 1,
+      "message": "This changes API.  While specifying less exceptions is valid, anybody extending this class can no longer override and throw CoreException (at least that\u0027s what my experiment with a checked IOException shows).  I didn\u0027t flag the internal classes because they could be changed back if needed.",
+      "revId": "37337c25a12feb59c3d9c50fea43d4caa917cb3a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

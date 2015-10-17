@@ -131,6 +131,9 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public MultiStatus generateMakefiles()
 			throws CoreException {
 		return regenerateMakefiles(false);
@@ -171,11 +174,17 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		return project;
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	public boolean isGeneratedResource() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public void regenerateDependencies() {
 		// TODO Auto-generated method stub
 

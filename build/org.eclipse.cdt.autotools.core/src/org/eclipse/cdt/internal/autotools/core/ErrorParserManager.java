@@ -90,7 +90,7 @@ public class ErrorParserManager extends OutputStream {
 	 * @param project - project being built.
 	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed. 
 	 * @param markerGenerator - marker generator able to create markers.
-	 * @since 5.1
+	 * @since 2.0
 	 */
 	public ErrorParserManager(IProject project, URI baseDirectoryURI, MarkerGenerator markerGenerator) {
 		fProject = project;

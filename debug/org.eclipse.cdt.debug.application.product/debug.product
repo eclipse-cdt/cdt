@@ -177,7 +177,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
    </license>
 
    <plugins>
-      <plugin id="com.ibm.icu"/>
+      <plugin id="com.ibm.icu.base"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.el"/>
       <plugin id="javax.inject"/>

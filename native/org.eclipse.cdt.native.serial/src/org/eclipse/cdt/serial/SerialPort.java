@@ -50,7 +50,7 @@ public class SerialPort {
 		private byte[] rbuff = new byte[256];
 		private int rpos = 0;
 		private int rlen = 0;
-		
+
 		@Override
 		public int read() throws IOException {
 			if (isOpen()) {
@@ -120,7 +120,7 @@ public class SerialPort {
 			SerialPort.this.close();
 		}
 	};
-	
+
 	private OutputStream outputStream = new OutputStream() {
 		@Override
 		public void write(int b) throws IOException {
@@ -175,7 +175,8 @@ public class SerialPort {
 	/**
 	 * Create a serial port that connect to the given serial device.
 	 * 
-	 * @param portName name for the serial device.
+	 * @param portName
+	 *            name for the serial device.
 	 */
 	public SerialPort(String portName) {
 		this.portName = portName;
@@ -188,9 +189,9 @@ public class SerialPort {
 	private native int read1(long handle, byte[] b, int off, int len) throws IOException;
 
 	private native void write0(long handle, int b) throws IOException;
-	
+
 	private native void write1(long handle, byte[] b, int off, int len) throws IOException;
-	
+
 	private static native String getPortName(int i) throws IOException;
 
 	private static String[] listDevs(final Pattern pattern) {
@@ -201,7 +202,7 @@ public class SerialPort {
 				return pattern.matcher(name).matches();
 			}
 		});
-		
+
 		if (files == null) {
 			return new String[0];
 		}
@@ -221,10 +222,10 @@ public class SerialPort {
 	public static String[] list() throws IOException {
 		String osName = System.getProperty("os.name"); //$NON-NLS-1$
 		if (osName.equals("Mac OS X")) { //$NON-NLS-1$
-			return listDevs(Pattern.compile("tty\\.(usbserial|usbmodem).*")); //$NON-NLS-1$
+			return listDevs(Pattern.compile("tty\\..*(usbserial|usbmodem).*")); //$NON-NLS-1$
 		} else if (osName.equals("Linux")) { //$NON-NLS-1$
 			return listDevs(Pattern.compile("ttyUSB.*")); //$NON-NLS-1$
-		} else if (osName.startsWith("Windows")) {  //$NON-NLS-1$
+		} else if (osName.startsWith("Windows")) { //$NON-NLS-1$
 			List<String> ports = new ArrayList<>();
 			int i = 0;
 			for (String name = getPortName(i++); name != null; name = getPortName(i++)) {

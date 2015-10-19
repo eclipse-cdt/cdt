@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_5914b401",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/parser/AutoconfParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1023,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-10-19T20:46:31Z",
+      "side": 1,
+      "message": "You are changing API.  This is a public class.  I don\u0027t see the point of this.  If you want, add additional APIs without the parameter and have the previous APIs call without the parameter if you deem it unnecessary.  You have changed other APIs as well in this file.",
+      "revId": "40a98d694cdf8e4fa91652fa06fb24070d7402ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_393e2077",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/editors/automake/EmptyLine.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-10-19T20:46:31Z",
+      "side": 1,
+      "message": "Why would you remove the parameter?  You need to compare with an existing class to determine equality.",
+      "revId": "40a98d694cdf8e4fa91652fa06fb24070d7402ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

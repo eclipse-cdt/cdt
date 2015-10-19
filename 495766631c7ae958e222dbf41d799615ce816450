@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_f90c88f7",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/editors/automake/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2015-10-19T20:46:31Z",
+      "side": 0,
+      "message": "What is your justification for removing static methods?",
+      "revId": "495766631c7ae958e222dbf41d799615ce816450",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -84,9 +84,6 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 		final IProject proj = project;
 
 		Job backgroundJob = new Job("Autotools Set Project Description") {
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {

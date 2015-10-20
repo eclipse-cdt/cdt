@@ -32,4 +32,4 @@ Export-Package: org.eclipse.cdt.autotools.core,
  org.eclipse.cdt.internal.autotools.core;x-internal:=true,
  org.eclipse.cdt.internal.autotools.core.configure;x-internal:=true,
  org.eclipse.cdt.internal.autotools.core.wizards;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

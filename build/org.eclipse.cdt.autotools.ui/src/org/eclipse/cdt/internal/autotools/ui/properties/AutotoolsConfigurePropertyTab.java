@@ -29,9 +29,7 @@ import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -130,11 +128,7 @@ public class AutotoolsConfigurePropertyTab extends AbstractAutotoolsCPropertyTab
 
 	protected void createSelectionArea (Composite parent) {
 		fTree = new TreeViewer(parent, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
-		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleOptionSelection();
-			}});
+		fTree.addSelectionChangedListener(event -> handleOptionSelection());
 		fTree.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Create a temporary default AutotoolsConfiguration to use for label info
 		IAConfiguration tmp = AutotoolsConfigurationManager.getInstance().createDefaultConfiguration(getProject(), "");

@@ -35,8 +35,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -228,24 +226,19 @@ public class OpenIncludeAction extends Action {
 	 * @throws CoreException
 	 */
 	private void findFile(IContainer parent, final IPath name, final ArrayList<Object> list) throws CoreException {
-		parent.accept(new IResourceProxyVisitor() {
-
-			@Override
-			public boolean visit(IResourceProxy proxy) {
-				if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
-					IPath rPath = proxy.requestResource().getLocation();
-					int numSegToRemove = rPath.segmentCount() - name.segmentCount();
-					IPath sPath = rPath.removeFirstSegments(numSegToRemove);
-					sPath = sPath.setDevice(name.getDevice());
-					if (Platform.getOS().equals(Platform.OS_WIN32) ?
-							sPath.toOSString().equalsIgnoreCase(name.toOSString()) :
-							sPath.equals(name)) {
-						list.add(rPath);
-					}
-					return false;
+		parent.accept(proxy -> {
+			if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
+				IPath rPath = proxy.requestResource().getLocation();
+				int numSegToRemove = rPath.segmentCount() - name.segmentCount();
+				IPath sPath = rPath.removeFirstSegments(numSegToRemove);
+				sPath = sPath.setDevice(name.getDevice());
+				if (Platform.getOS().equals(Platform.OS_WIN32) ? sPath.toOSString().equalsIgnoreCase(name.toOSString())
+						: sPath.equals(name)) {
+					list.add(rPath);
 				}
-				return true;
+				return false;
 			}
+			return true;
 		}, 0);
 	}
 

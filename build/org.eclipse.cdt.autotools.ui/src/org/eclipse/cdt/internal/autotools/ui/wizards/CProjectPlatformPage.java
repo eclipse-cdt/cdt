@@ -28,14 +28,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -125,13 +121,7 @@ public class CProjectPlatformPage extends WizardPage {
 		tableViewer = new CheckboxTableViewer(table);
 		tableViewer.setLabelProvider(new ConfigurationLabelProvider());
 		tableViewer.setContentProvider(new ConfigurationContentProvider());
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent e) {
-				// will default to false until a selection is made
-				handleConfigurationSelectionChange();
-			}
-		});
+		tableViewer.addSelectionChangedListener(e -> handleConfigurationSelectionChange());
 
 	}
 	
@@ -184,12 +174,7 @@ public class CProjectPlatformPage extends WizardPage {
 		platformSelection.setFont(composite.getFont());
 		platformSelection.setToolTipText(AutotoolsWizardMessages.getResourceString(TARGET_TIP));
 		platformSelection.setText("GNU Autotools"); //$NON-NLS-1$
-		platformSelection.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				platformSelection = null;
-			}
-		});
+		platformSelection.addDisposeListener(e -> platformSelection = null);
 		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		// Make this the same as NewCProjectWizardPage.SIZING_TEXT_FIELD_WIDTH
@@ -197,9 +182,6 @@ public class CProjectPlatformPage extends WizardPage {
 		platformSelection.setLayoutData(gd);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
-	 */
 	public IProject getProject() {
 		return ((NewCProjectWizard)getWizard()).getNewProject();
 	}

@@ -79,6 +79,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 {
 	private static final String MI_TRACE_IDENTIFIER = "[MI]"; //$NON-NLS-1$
 	private static final int NUMBER_CONCURRENT_COMMANDS = 3;
+	private static final int DEVELOPMENT_TRACE_LIMIT = 5000;
 	
     /*
 	 *  Thread control variables for the transmit and receive threads.
@@ -730,9 +731,18 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
-                    	//Write Gdb response to sysout or file
+                    	// Write Gdb response to sysout or file
                     	if(GdbDebugOptions.DEBUG) {
-                    		GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, line)); //$NON-NLS-1$
+                    		if (line.length() < DEVELOPMENT_TRACE_LIMIT) {
+                    			GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER, line)); //$NON-NLS-1$
+                    		} else {
+                    			// "-list-thread-groups --available" give a very large output that is not very useful but that makes
+                    			// looking at the traces much more difficult.  Don't show the full output in the traces.
+                    			// If we really need to see that output, it will still be in the 'gdb traces'.
+                    			GdbDebugOptions.trace(String.format( "%s %s  %s\n", GdbPlugin.getDebugTime(), MI_TRACE_IDENTIFIER,  //$NON-NLS-1$
+                    					line.substring(0, DEVELOPMENT_TRACE_LIMIT) + 
+                    					" [remaining output truncated. Refer to 'gdb traces' if full output needed.]")); //$NON-NLS-1$
+                    		}
                     	}
                         
                         final String finalLine = line;

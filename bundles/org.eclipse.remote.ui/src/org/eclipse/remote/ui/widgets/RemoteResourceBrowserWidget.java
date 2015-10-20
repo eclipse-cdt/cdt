@@ -280,7 +280,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fRootPath.isRoot()) {
-					setRoot(fRootPath.removeLastSegments(1).toOSString());
+					setRoot(fRootPath.removeLastSegments(1).toString());
 				}
 			}
 		});

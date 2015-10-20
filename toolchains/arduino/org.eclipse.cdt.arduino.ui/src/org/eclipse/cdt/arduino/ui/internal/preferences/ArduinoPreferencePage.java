@@ -43,7 +43,7 @@ public class ArduinoPreferencePage extends PreferencePage implements IWorkbenchP
 		desc.setBackground(parent.getBackground());
 		desc.setText(Messages.ArduinoPreferencePage_desc);
 
-		urlsText = new Text(control, SWT.BORDER);
+		urlsText = new Text(control, SWT.BORDER | SWT.MULTI);
 		urlsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		urlsText.setText(ArduinoPreferences.getBoardUrls());
 

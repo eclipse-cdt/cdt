@@ -29,7 +29,6 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -64,21 +63,13 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	};
 	
 	Map<Text, String> fTextFields= new HashMap<>();
-	private ModifyListener fTextFieldListener= new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			Text text= (Text) e.widget;
-			fOverlayStore.setValue(fTextFields.get(text), text.getText());
-		}
+	private ModifyListener fTextFieldListener = e -> {
+		Text text = (Text) e.widget;
+		fOverlayStore.setValue(fTextFields.get(text), text.getText());
 	};
 
 	private Map<Text, Object> fNumberFields= new HashMap<>();
-	private ModifyListener fNumberFieldListener= new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			numberFieldChanged((Text) e.widget);
-		}
-	};
+	private ModifyListener fNumberFieldListener = e -> numberFieldChanged((Text) e.widget);
 			
 	public AbstractEditorPreferencePage() {
 		super();
@@ -88,9 +79,6 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	
 	protected abstract OverlayPreferenceStore createOverlayStore();
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}
@@ -113,9 +101,6 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		getOverlayStore().propagate();
@@ -149,9 +134,6 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 		return fNumberFields;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		getOverlayStore().loadDefaults();
@@ -162,9 +144,6 @@ public abstract class AbstractEditorPreferencePage extends PreferencePage implem
 	
 	protected abstract void handleDefaults();
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (getOverlayStore() != null) {

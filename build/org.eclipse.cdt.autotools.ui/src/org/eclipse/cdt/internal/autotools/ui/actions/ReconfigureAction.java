@@ -44,20 +44,16 @@ public class ReconfigureAction extends InvokeAction {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-
-						@Override
-						public void run(IProgressMonitor monitor) {
-							IProject project = getSelectedContainer().getProject();
-							AutotoolsNewMakeGenerator m = new AutotoolsNewMakeGenerator();
-							IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-							CUIPlugin.getDefault().startGlobalConsole();
-							m.initialize(project, info, monitor);
-							try {
-								m.reconfigure();
-							} catch (CoreException e) {
-								// do nothing for now
-							}
+					ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor1 -> {
+						IProject project = getSelectedContainer().getProject();
+						AutotoolsNewMakeGenerator m = new AutotoolsNewMakeGenerator();
+						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+						CUIPlugin.getDefault().startGlobalConsole();
+						m.initialize(project, info, monitor1);
+						try {
+							m.reconfigure();
+						} catch (CoreException e) {
+							// do nothing for now
 						}
 					}, rule, IWorkspace.AVOID_UPDATE, monitor);
 				} catch (CoreException e) {

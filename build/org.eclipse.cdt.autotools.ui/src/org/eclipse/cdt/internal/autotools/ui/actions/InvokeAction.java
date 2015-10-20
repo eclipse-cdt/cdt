@@ -324,116 +324,126 @@ public abstract class InvokeAction extends AbstractTargetAction {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+					ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor1 -> {
+						try {
+							String errMsg = null;
+							IProject project = getSelectedContainer().getProject();
+							// Get a build console for the project
+							IConsole console = CCorePlugin.getDefault()
+									.getConsole("org.eclipse.cdt.autotools.ui.autotoolsConsole"); //$NON-NLS-1$
+							console.start(project);
+							CUIPlugin.getDefault().startGlobalConsole();
+							ConsoleOutputStream consoleOutStream = console.getOutputStream();
+							// FIXME: we want to remove need for
+							// ManagedBuilderManager, but how do we
+							// get environment variables.
+							IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+							IConfiguration cfg = info.getDefaultConfiguration();
 
-						@Override
-						public void run(IProgressMonitor monitor) throws CoreException {
-							try {
-								String errMsg = null;
-								IProject project = getSelectedContainer().getProject();
-								// Get a build console for the project
-								IConsole console = CCorePlugin.getDefault().getConsole("org.eclipse.cdt.autotools.ui.autotoolsConsole"); //$NON-NLS-1$
-								console.start(project);
-								CUIPlugin.getDefault().startGlobalConsole();
-								ConsoleOutputStream consoleOutStream = console.getOutputStream();
-								// FIXME: we want to remove need for ManagedBuilderManager, but how do we
-								// get environment variables.
-								IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-								IConfiguration cfg = info.getDefaultConfiguration();
+							StringBuffer buf = new StringBuffer();
+							String[] consoleHeader = new String[3];
 
-								StringBuffer buf = new StringBuffer();
-								String[] consoleHeader = new String[3];
+							consoleHeader[0] = actionName;
+							consoleHeader[1] = cfg.getName();
+							consoleHeader[2] = project.getName();
+							buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+							String invokeMsg = InvokeMessages.getFormattedString("InvokeAction.console.message", //$NON-NLS-1$
+									new String[] { actionName, execDir.toString() }); // $NON-NLS-1$
+							buf.append(invokeMsg);
+							buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+							buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+							consoleOutStream.write(buf.toString().getBytes());
+							consoleOutStream.flush();
 
-								consoleHeader[0] = actionName;
-								consoleHeader[1] = cfg.getName();
-								consoleHeader[2] = project.getName();
-								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
-								String invokeMsg = InvokeMessages.getFormattedString("InvokeAction.console.message", //$NON-NLS-1$
-										new String[]{actionName, execDir.toString()}); //$NON-NLS-1$
-								buf.append(invokeMsg);
-								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
-								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$	//$NON-NLS-2$
-								consoleOutStream.write(buf.toString().getBytes());
-								consoleOutStream.flush();
-								
-								ArrayList<String> additionalEnvs = new ArrayList<>();
-								String strippedCommand = AutotoolsNewMakeGenerator.stripEnvVars(command, additionalEnvs);
-								// Get a launcher for the config command
-								RemoteCommandLauncher launcher = new RemoteCommandLauncher();
-								launcher.setProject(project);
-								// Set the environment
-								IEnvironmentVariable variables[] = ManagedBuildManager
-										.getEnvironmentVariableProvider().getVariables(cfg, true);
-								String[] env = null;
-								ArrayList<String> envList = new ArrayList<>();
-								if (variables != null) {
-									for (int i = 0; i < variables.length; i++) {
-										envList.add(variables[i].getName()
-												+ "=" + variables[i].getValue()); //$NON-NLS-1$
-									}
-									if (additionalEnvs.size() > 0)
-										envList.addAll(additionalEnvs); // add any additional environment variables specified ahead of script
-									env = envList.toArray(new String[envList.size()]);
+							ArrayList<String> additionalEnvs = new ArrayList<>();
+							String strippedCommand = AutotoolsNewMakeGenerator.stripEnvVars(command, additionalEnvs);
+							// Get a launcher for the config command
+							RemoteCommandLauncher launcher = new RemoteCommandLauncher();
+							launcher.setProject(project);
+							// Set the environment
+							IEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider()
+									.getVariables(cfg, true);
+							String[] env = null;
+							ArrayList<String> envList = new ArrayList<>();
+							if (variables != null) {
+								for (int i = 0; i < variables.length; i++) {
+									envList.add(variables[i].getName() + "=" + variables[i].getValue()); //$NON-NLS-1$
 								}
-								
-								String[] newArgumentList;
-								
-								// Fix for bug #343905 and bug #371277
-                                // For Windows and Mac, we cannot run a script directly (in this case,
-                                // autotools are scripts).  We need to run "sh -c command args where command
-								// plus args is represented in a single string.  The same applies for
-								// some Linux shells such as dash.  Using sh -c will work on all Linux
-								// POSIX-compliant shells.
-								StringBuffer command = new StringBuffer(strippedCommand);
-								for (String arg : argumentList) {
-									command.append(" " + arg);
-								}
-								newArgumentList = new String[] { "-c", command.toString() };
+								if (additionalEnvs.size() > 0)
+									envList.addAll(additionalEnvs); // add any
+																	// additional
+																	// environment
+																	// variables
+																	// specified
+																	// ahead of
+																	// script
+								env = envList.toArray(new String[envList.size()]);
+							}
+
+							String[] newArgumentList;
+
+							// Fix for bug #343905 and bug #371277
+							// For Windows and Mac, we cannot run a script
+							// directly (in this case,
+							// autotools are scripts). We need to run "sh -c
+							// command args where command
+							// plus args is represented in a single string. The
+							// same applies for
+							// some Linux shells such as dash. Using sh -c will
+							// work on all Linux
+							// POSIX-compliant shells.
+							StringBuffer command1 = new StringBuffer(strippedCommand);
+							for (String arg : argumentList) {
+								command1.append(" " + arg);
+							}
+							newArgumentList = new String[] { "-c", command1.toString() };
    
-						        OutputStream stdout = consoleOutStream;
-								OutputStream stderr = consoleOutStream;
+							OutputStream stdout = consoleOutStream;
+							OutputStream stderr = consoleOutStream;
 
-								launcher.showCommand(true);
-								// Run the shell script via shell command.
-								Process proc = launcher.execute(new Path(SHELL_COMMAND), newArgumentList, env,
-										execDir, new NullProgressMonitor());
-								if (proc != null) {
-									try {
-										// Close the input of the process since we will never write to
-										// it
-										proc.getOutputStream().close();
-									} catch (IOException e) {
-									}
+							launcher.showCommand(true);
+							// Run the shell script via shell command.
+							Process proc = launcher.execute(new Path(SHELL_COMMAND), newArgumentList, env, execDir,
+									new NullProgressMonitor());
+							if (proc != null) {
+								try {
+									// Close the input of the process since we
+									// will never write to
+									// it
+									proc.getOutputStream().close();
+								} catch (IOException e1) {
+								}
 
-									if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-											monitor, IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
-										errMsg = launcher.getErrorMessage();
-									}
-
-									// Force a resync of the projects without allowing the user to
-									// cancel.
-									// This is probably unkind, but short of this there is no way to
-									// ensure
-									// the UI is up-to-date with the build results
-									// monitor.subTask(ManagedMakeMessages
-									// .getResourceString(REFRESH));
-									monitor.subTask(AutotoolsUIPlugin.getResourceString("MakeGenerator.refresh")); //$NON-NLS-1$
-									try {
-										project.refreshLocal(IResource.DEPTH_INFINITE, null);
-									} catch (CoreException e) {
-										monitor.subTask(AutotoolsUIPlugin
-												.getResourceString("MakeGenerator.refresh.error")); //$NON-NLS-1$
-									}
-								} else {
+								if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor1,
+										IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 									errMsg = launcher.getErrorMessage();
 								}
-								
-								if (errMsg != null)
-									AutotoolsUIPlugin.logErrorMessage(errMsg);
-								
-							} catch (IOException e) {
-								AutotoolsUIPlugin.log(e);
+
+								// Force a resync of the projects without
+								// allowing the user to
+								// cancel.
+								// This is probably unkind, but short of this
+								// there is no way to
+								// ensure
+								// the UI is up-to-date with the build results
+								// monitor.subTask(ManagedMakeMessages
+								// .getResourceString(REFRESH));
+								monitor1.subTask(AutotoolsUIPlugin.getResourceString("MakeGenerator.refresh")); //$NON-NLS-1$
+								try {
+									project.refreshLocal(IResource.DEPTH_INFINITE, null);
+								} catch (CoreException e2) {
+									monitor1.subTask(
+											AutotoolsUIPlugin.getResourceString("MakeGenerator.refresh.error")); //$NON-NLS-1$
+								}
+							} else {
+								errMsg = launcher.getErrorMessage();
 							}
+
+							if (errMsg != null)
+								AutotoolsUIPlugin.logErrorMessage(errMsg);
+
+						} catch (IOException e3) {
+							AutotoolsUIPlugin.log(e3);
 						}
 					}, rule, IWorkspace.AVOID_UPDATE, monitor);
 				} catch (CoreException e) {

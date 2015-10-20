@@ -17,8 +17,6 @@ import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -130,12 +128,9 @@ public class AutotoolsBuildPropertyPage extends AbstractCBuildPropertyTab {
 			}
 		});
 		
-		fCleanMakeTarget.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (fCleanMakeTarget.getText().equals("")) { // $NON-NLS-1$
-					// FIXME: should probably issue warning here, but how?
-				}
+		fCleanMakeTarget.addModifyListener(e -> {
+			if (fCleanMakeTarget.getText().equals("")) { // $NON-NLS-1$
+				// FIXME: should probably issue warning here, but how?
 			}
 		});
 		

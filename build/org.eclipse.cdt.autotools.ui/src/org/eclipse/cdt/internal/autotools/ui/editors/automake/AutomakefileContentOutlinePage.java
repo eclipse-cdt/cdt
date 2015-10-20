@@ -216,15 +216,12 @@ public class AutomakefileContentOutlinePage extends ContentOutlinePage {
 		if (viewer != null) {
 			final Control control = viewer.getControl();
 			if (control != null && !control.isDisposed()) {
-				control.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!control.isDisposed()) {
-							control.setRedraw(false);
-							viewer.setInput(fInput);
-							viewer.expandAll();
-							control.setRedraw(true);
-						}
+				control.getDisplay().asyncExec(() -> {
+					if (!control.isDisposed()) {
+						control.setRedraw(false);
+						viewer.setInput(fInput);
+						viewer.expandAll();
+						control.setRedraw(true);
 					}
 				});
 			}

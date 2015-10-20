@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -108,12 +106,7 @@ public class MessageLine {
 		} else {
 			if (fErrorColor == null) {
 				fErrorColor= new Color(clabel.getDisplay(), fErrorRGB);
-				clabel.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						fErrorColor.dispose();
-					}
-				});
+				clabel.addDisposeListener(e -> fErrorColor.dispose());
 			}
 			clabel.setForeground(fErrorColor);
 			clabel.setText(message);

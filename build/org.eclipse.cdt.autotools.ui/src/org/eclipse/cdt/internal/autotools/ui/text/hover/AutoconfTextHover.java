@@ -49,7 +49,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
@@ -57,7 +56,6 @@ import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
@@ -506,9 +504,6 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		return hoverInfo;
 	}
 
-	/*
-	 * @see ITextHover#getHoverRegion(ITextViewer, int)
-	 */
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 
@@ -535,26 +530,16 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	 */
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, getTooltipAffordanceString(),
-						new HTMLTextPresenter(false));
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, getTooltipAffordanceString(),
+				new HTMLTextPresenter(false));
 	}
 
 	/*
 	 * Static member function to allow content assist to add hover help.
 	 */
 	public static IInformationControlCreator getInformationControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, getTooltipAffordanceString(),
-						new HTMLTextPresenter(false));
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, getTooltipAffordanceString(),
+				new HTMLTextPresenter(false));
 	}
 
 	protected static String getTooltipAffordanceString() {

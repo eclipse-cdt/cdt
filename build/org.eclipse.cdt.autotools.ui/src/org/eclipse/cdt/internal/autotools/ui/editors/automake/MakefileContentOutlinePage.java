@@ -16,13 +16,10 @@ import java.util.List;
 
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.internal.autotools.ui.MakeUIImages;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -209,22 +206,14 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 
 		MenuManager manager= new MenuManager("#MakefileOutlinerContext"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager m) {
-				contextMenuAboutToShow(m);
-			}
-		});
+		manager.addMenuListener(m -> contextMenuAboutToShow(m));
 		Control tree = viewer.getControl();
 		Menu menu = manager.createContextMenu(tree);
 		tree.setMenu(menu);
 
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (fOpenIncludeAction != null) {
-					fOpenIncludeAction.run();
-				}
+		viewer.addDoubleClickListener(event -> {
+			if (fOpenIncludeAction != null) {
+				fOpenIncludeAction.run();
 			}
 		});
 
@@ -267,24 +256,18 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		if (viewer != null) {
 			final Control control = viewer.getControl();
 			if (control != null && !control.isDisposed()) {
-				control.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (!control.isDisposed()) {
-							control.setRedraw(false);
-							viewer.setInput(fInput);
-							viewer.expandAll();
-							control.setRedraw(true);
-						}
+				control.getDisplay().asyncExec(() -> {
+					if (!control.isDisposed()) {
+						control.setRedraw(false);
+						viewer.setInput(fInput);
+						viewer.expandAll();
+						control.setRedraw(true);
 					}
 				});
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
 	@Override
 	public void setActionBars(IActionBars actionBars) {
 		super.setActionBars(actionBars);

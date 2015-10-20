@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -60,12 +58,7 @@ public class SelectionList extends Composite {
 	private void createList(int style) {
 		fList= new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fList.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				fRenderer.dispose();
-			}
-		});
+		fList.addDisposeListener(e -> fRenderer.dispose());
 	}
 	private void createText() {
 		fText= new Text(this, SWT.BORDER);
@@ -75,12 +68,7 @@ public class SelectionList extends Composite {
 		spec.horizontalAlignment= GridData.FILL;
 		spec.verticalAlignment= GridData.BEGINNING;
 		fText.setLayoutData(spec);
-		Listener l= new Listener() {
-			@Override
-			public void handleEvent(Event evt) {
-				filter(false);
-			}
-		};
+		Listener l = evt -> filter(false);
 		fText.addListener(SWT.Modify, l);
 	}
 	/**

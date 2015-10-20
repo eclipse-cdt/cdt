@@ -180,12 +180,7 @@ public class AutotoolsUIPlugin extends AbstractUIPlugin {
 		if (display == null)
 			display = Display.getDefault();
 		final IStatus fstatus = status;
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog.openError(null, title, null, fstatus);
-			}
-		});
+		display.asyncExec(() -> ErrorDialog.openError(null, title, null, fstatus));
 	}
 
 	public static void logException(Throwable e) {

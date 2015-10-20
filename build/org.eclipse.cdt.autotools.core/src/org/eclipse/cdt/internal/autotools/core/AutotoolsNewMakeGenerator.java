@@ -76,7 +76,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteResource;
@@ -220,10 +220,10 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		// Create the file if it does not exist
 		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
 		try {
-			newFile.create(contents, false, new SubProgressMonitor(monitor, 1));
+			newFile.create(contents, false, SubMonitor.convert(monitor, 1));
 			// Make sure the new file is marked as derived
 			if (!newFile.isDerived()) {
-				newFile.setDerived(true);
+				newFile.setDerived(true, SubMonitor.convert(monitor, 1));
 			}
 			// if successful, refresh any remote projects to notify them of the new file
 			refresh();
@@ -264,7 +264,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	private void refresh() throws CoreException{
 		IRemoteResource remRes = getProject().getAdapter(IRemoteResource.class);
 		if (remRes != null) {
-			remRes.refresh(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+			remRes.refresh(SubMonitor.convert(monitor));
 		}
 	}
 
@@ -925,8 +925,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			OutputStream stderr = stdout;
 
 			launcher.showCommand(true);
-			Process proc = launcher.execute(commandPath, configTargets, env,
-					runPath, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+			Process proc = launcher.execute(commandPath, configTargets, env, runPath, SubMonitor.convert(monitor));
 			int exitValue = 0;
 			if (proc != null) {
 				try {
@@ -936,8 +935,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				} catch (IOException e) {
 				}
 
-				if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-						monitor, IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
+				if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
 				}
 
@@ -1056,7 +1054,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
 						env,
 						new Path("."), //$NON-NLS-1$
-						new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+						SubMonitor.convert(monitor));
 				if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 					winOSType = out.toString().trim();
 			} catch (CoreException e) {
@@ -1078,7 +1076,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
     			if (conn != null) {
     				if (!conn.isOpen()) {
     					try {
-							conn.open(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+							conn.open(SubMonitor.convert(monitor));
 						} catch (RemoteConnectionException e) {
 							// Ignore and return platform OS
 						}
@@ -1264,8 +1262,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 			launcher.showCommand(true);
 			// Run the shell script via shell command.
-			Process proc = launcher.execute(new Path(SHELL_COMMAND), configTargets, env,
-					runPath, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+			Process proc = launcher.execute(new Path(SHELL_COMMAND), configTargets, env, runPath,
+					SubMonitor.convert(monitor));
 			
 			int exitValue = 0;
 			if (proc != null) {
@@ -1276,8 +1274,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				} catch (IOException e) {
 				}
 
-				if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(
-						monitor, IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
+				if (launcher.waitAndRead(stdout, stderr, SubMonitor.convert(monitor)) != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
 				}
 				

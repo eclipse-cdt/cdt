@@ -16,6 +16,24 @@
       "revId": "495766631c7ae958e222dbf41d799615ce816450",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_b4a69741",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/editors/automake/EditorUtility.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2015-10-20T07:06:10Z",
+      "side": 0,
+      "message": "Unused code. It\u0027s a pain reading/looking at so many things which are not used at all.",
+      "parentUuid": "0724e3f1_f90c88f7",
+      "revId": "495766631c7ae958e222dbf41d799615ce816450",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

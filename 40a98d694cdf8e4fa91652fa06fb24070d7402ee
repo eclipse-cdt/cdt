@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0724e3f1_34a2a72b",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/autotools/ui/editors/parser/AutoconfParser.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1023,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2015-10-20T07:06:10Z",
+      "side": 1,
+      "message": "The goal is to simplify the api so one doesn\u0027t have to come up with ways finding/passing parameters when not needing them.\nFor the API breakage comment - bumped the bundle version to 2.0 (like core was done). It makes even more sense with the Java 8 patch coming.",
+      "parentUuid": "0724e3f1_5914b401",
+      "revId": "40a98d694cdf8e4fa91652fa06fb24070d7402ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0724e3f1_393e2077",
         "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/editors/automake/EmptyLine.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-10-19T20:46:31Z",
       "side": 1,
       "message": "Why would you remove the parameter?  You need to compare with an existing class to determine equality.",
+      "revId": "40a98d694cdf8e4fa91652fa06fb24070d7402ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0724e3f1_14b68370",
+        "filename": "build/org.eclipse.cdt.autotools.ui/src/org/eclipse/cdt/internal/autotools/ui/editors/automake/EmptyLine.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 726
+      },
+      "writtenOn": "2015-10-20T07:06:10Z",
+      "side": 1,
+      "message": "Reverted. Although I find having equals that always return true suspicious at best. And it also doesn\u0027t implement/override anything so probably not needed at all.",
+      "parentUuid": "0724e3f1_393e2077",
       "revId": "40a98d694cdf8e4fa91652fa06fb24070d7402ee",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -42,9 +41,6 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * Internal resource change listener.
 	 */
 	class ResourceChangeListener implements IResourceChangeListener {
-		/*
-		 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-		 */
 		@Override
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
@@ -76,9 +72,6 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		fWorkspace= resource.getWorkspace();
 	}
 
-	/*
-	 * @see AbstractMarkerAnnotationModel#isAcceptable(IMarker)
-	 */
 	@Override
 	protected boolean isAcceptable(IMarker marker) {
 		return marker != null && fResource.equals(marker.getResource());
@@ -179,12 +172,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 
 	@Override
 	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
-		fWorkspace.run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i= 0; i < markers.length; ++i) {
-					markers[i].delete();
-				}
+		fWorkspace.run((IWorkspaceRunnable) monitor -> {
+			for (int i= 0; i < markers.length; ++i) {
+				markers[i].delete();
 			}
 		}, null, IWorkspace.AVOID_UPDATE, null);
 	}

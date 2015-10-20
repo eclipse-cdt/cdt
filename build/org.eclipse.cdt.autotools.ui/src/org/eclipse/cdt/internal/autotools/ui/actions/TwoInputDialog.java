@@ -15,8 +15,6 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -76,12 +74,7 @@ public class TwoInputDialog extends InputDialog {
 		secondText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		secondText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL));
-		secondText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validateInput();
-			}
-		});
+		secondText.addModifyListener(e -> validateInput());
 
 		// remove error message dialog from focusing.
 		composite.getTabList()[2].setVisible(false);

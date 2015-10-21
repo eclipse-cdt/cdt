@@ -247,7 +247,7 @@ public class ArduinoBuildConfiguration {
 			HierarchicalProperties menus = board.getMenus();
 			if (menus != null) {
 				for (String menuId : menus.getChildren().keySet()) {
-					String value = settings.get(ArduinoBoard.MENU_QUALIFIER, ""); //$NON-NLS-1$
+					String value = settings.get(ArduinoBoard.MENU_QUALIFIER + menuId, ""); //$NON-NLS-1$
 					if (!value.isEmpty()) {
 						properties.putAll(board.getMenuProperties(menuId, value));
 					}

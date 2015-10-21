@@ -34,14 +34,14 @@ LIBRARIES_OBJS = \
 <#list libraries_srcs as file>
 <#assign cpp = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.cpp")>
 <#if !cpp>
-<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/.*?/(.*)\\.cpp")>
+<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 	${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o \
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.c")>
 <#if !c>
-<#assign c = file?matches("${platform_path}/libraries/(.*?)/.*?/(.*)\\.c")>
+<#assign c = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 	${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o \
@@ -107,7 +107,7 @@ ${build_path}/platform/${S?groups[1]}.S.o: ${file}
 <#list libraries_srcs as file>
 <#assign cpp = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.cpp")>
 <#if !cpp>
-<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/.*?/(.*)\\.cpp")>
+<#assign cpp = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.cpp")>
 </#if>
 <#if cpp>
 ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o: ${file}
@@ -117,7 +117,7 @@ ${build_path}/libraries/${cpp?groups[1]}/${cpp?groups[2]}.cpp.o: ${file}
 </#if>
 <#assign c = file?matches("${libraries_path}/(.*?)/.*?/(.*)\\.c")>
 <#if !c>
-<#assign c = file?matches("${platform_path}/libraries/(.*?)/.*?/(.*)\\.c")>
+<#assign c = file?matches("${platform_path}/libraries/(.*?)/(.*)\\.c")>
 </#if>
 <#if c>
 ${build_path}/libraries/${c?groups[1]}/${c?groups[2]}.c.o: ${file}

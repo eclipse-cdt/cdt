@@ -346,7 +346,7 @@ public class PropertyManager {
 	}
 	
 	protected Preferences getInstNode(IManagedProject mProject){
-		Preferences prefs = new InstanceScope().getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
+		Preferences prefs = InstanceScope.INSTANCE.getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
 		if(prefs != null){
 			prefs = prefs.node(NODE_NAME);
 			if(prefs != null)

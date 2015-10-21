@@ -91,11 +91,11 @@ public class XlcLanguagePreferences  {
 	
 	
 	private static Preferences getDefaultPreferences() {
-		return getPreferences(new DefaultScope());
+		return getPreferences(DefaultScope.INSTANCE);
 	}
 	
 	private static Preferences getWorkspacePreferences() {
-		return getPreferences(new InstanceScope());
+		return getPreferences(InstanceScope.INSTANCE);
 	}
 	
 	private static Preferences getProjectPreferences(IProject project) {

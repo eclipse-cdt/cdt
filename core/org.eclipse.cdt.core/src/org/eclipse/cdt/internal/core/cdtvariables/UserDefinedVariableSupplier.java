@@ -482,7 +482,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	}
 	
 	private Preferences getWorkspaceNode(){
-		Preferences prefNode = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+		Preferences prefNode = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		if(prefNode == null)
 			return null;
 		

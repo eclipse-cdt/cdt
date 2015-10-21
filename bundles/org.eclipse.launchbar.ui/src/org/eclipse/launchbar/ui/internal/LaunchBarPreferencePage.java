@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
+ *     Torkild U. Resheim - add preference to control target selector
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -31,6 +32,7 @@ public class LaunchBarPreferencePage extends FieldEditorPreferencePage implement
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_LAUNCHBAR, Messages.LaunchBarPreferencePage_1, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(Activator.PREF_ENABLE_TARGETSELECTOR, Messages.LaunchBarPreferencePage_EnableTargetSelector, getFieldEditorParent()));
 	}
 	
 }

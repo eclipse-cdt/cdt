@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
+ *     Torkild U. Resheim - add preference to control target selector     
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal.controls;
 
@@ -14,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.eclipse.debug.core.ILaunchMode;
-
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.internal.LaunchBarManager;
 import org.eclipse.launchbar.core.internal.LaunchBarManager.Listener;
@@ -75,13 +76,17 @@ public class LaunchBarControl implements Listener {
 		configSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		configSelector.setInput(manager);
 
-		Label label = new Label(container, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		label.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$
-
-		targetSelector = new TargetSelector(container, SWT.NONE);
-		targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		targetSelector.setInput(manager);
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		boolean enabled = store.getBoolean(Activator.PREF_ENABLE_TARGETSELECTOR);
+		if (enabled) {
+			Label label = new Label(container, SWT.NONE);
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+			label.setText(Messages.LaunchBarControl_0 + ":"); //$NON-NLS-1$
+	
+			targetSelector = new TargetSelector(container, SWT.NONE);
+			targetSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+			targetSelector.setInput(manager);
+		}
 
 		syncSelectors();
 	}
@@ -147,7 +152,9 @@ public class LaunchBarControl implements Listener {
 
 	@Override
 	public void launchTargetsChanged() {
-		targetSelector.refresh();
+		if (targetSelector!=null){
+			targetSelector.refresh();
+		}
 	}
 
 	public ConfigSelector getConfigSelector() {

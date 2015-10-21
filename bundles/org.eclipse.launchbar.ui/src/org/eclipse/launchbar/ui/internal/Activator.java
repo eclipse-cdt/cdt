@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
+ *     Torkild U. Resheim - add preference to control target selector
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -53,6 +54,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// Preference ids
 	public static final String PREF_ENABLE_LAUNCHBAR = "enableLaunchBar"; //$NON-NLS-1$
+	public static final String PREF_ENABLE_TARGETSELECTOR = "enableTargetSelector"; //$NON-NLS-1$
 	public static final String PREF_LAUNCH_HISTORY_SIZE = "launchHistorySize"; //$NON-NLS-1$
 
 	// The shared instance

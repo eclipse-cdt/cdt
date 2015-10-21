@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
+ *     Torkild U. Resheim - add preference to control target selector     
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -19,6 +20,7 @@ public class LaunchBarPreferenceInitializer extends AbstractPreferenceInitialize
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(Activator.PREF_ENABLE_LAUNCHBAR, true);
+		store.setDefault(Activator.PREF_ENABLE_TARGETSELECTOR, true);
 		store.setDefault(Activator.PREF_LAUNCH_HISTORY_SIZE, 3);
 	}
 

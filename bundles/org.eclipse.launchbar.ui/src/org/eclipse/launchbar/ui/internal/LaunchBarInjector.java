@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2014 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
+ *     Torkild U. Resheim - add preference to control target selector
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -70,6 +71,14 @@ public class LaunchBarInjector {
 				if (event.getProperty().equals(Activator.PREF_ENABLE_LAUNCHBAR)) {
 					boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
 					injectIntoAll(enabled);
+				}
+				if (event.getProperty().equals(Activator.PREF_ENABLE_TARGETSELECTOR)) {
+					IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+					boolean enabled = store.getBoolean(Activator.PREF_ENABLE_LAUNCHBAR); 
+					if (enabled){
+						injectIntoAll(false);
+						injectIntoAll(true);
+					}					
 				}
 			}
 		});

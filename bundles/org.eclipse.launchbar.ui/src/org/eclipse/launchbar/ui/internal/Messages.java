@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 QNX Software Systems and others.
+ * Copyright (c) 2014, 2015 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer
+ *     Torkild U. Resheim - add preference to control target selector     
  *******************************************************************************/
 package org.eclipse.launchbar.ui.internal;
 
@@ -32,6 +33,7 @@ public class Messages extends NLS {
 	public static String LaunchBarListViewer_0;
 	public static String LaunchBarPreferencePage_0;
 	public static String LaunchBarPreferencePage_1;
+	public static String LaunchBarPreferencePage_EnableTargetSelector;
 	public static String LaunchConfigurationEditDialog_0;
 	public static String LaunchConfigurationEditDialog_1;
 	public static String LaunchConfigurationEditDialog_2;

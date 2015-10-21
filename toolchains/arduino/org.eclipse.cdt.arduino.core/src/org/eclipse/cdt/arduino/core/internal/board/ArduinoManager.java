@@ -228,9 +228,18 @@ public class ArduinoManager {
 		}.getType();
 		Set<String> libraryNames = new Gson().fromJson(librarySetting, stringSet);
 		LibraryIndex index = ArduinoManager.instance.getLibraryIndex();
+
+		ArduinoPlatform platform = project.getActiveBuildConfig().getAdapter(ArduinoBuildConfiguration.class).getBoard()
+				.getPlatform();
 		List<ArduinoLibrary> libraries = new ArrayList<>(libraryNames.size());
 		for (String name : libraryNames) {
-			libraries.add(index.getLibrary(name));
+			ArduinoLibrary lib = index.getLibrary(name);
+			if (lib == null) {
+				lib = platform.getLibrary(name);
+			}
+			if (lib != null) {
+				libraries.add(lib);
+			}
 		}
 		return libraries;
 	}

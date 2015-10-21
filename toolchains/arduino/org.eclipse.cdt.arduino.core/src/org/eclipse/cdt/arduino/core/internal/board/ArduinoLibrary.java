@@ -228,4 +228,18 @@ public class ArduinoLibrary {
 		return sources;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ArduinoLibrary) {
+			return getName().equals(((ArduinoLibrary) obj).getName());
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+
 }

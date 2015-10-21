@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
+import org.eclipse.cdt.arduino.core.internal.board.ArduinoPlatform;
 import org.eclipse.cdt.arduino.core.internal.board.LibraryIndex;
+import org.eclipse.cdt.arduino.core.internal.build.ArduinoBuildConfiguration;
 import org.eclipse.cdt.arduino.ui.internal.Activator;
 import org.eclipse.cdt.arduino.ui.internal.Messages;
 import org.eclipse.core.resources.IProject;
@@ -33,7 +35,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class LibrariesPropertyPage extends PropertyPage {
 
-	private static class ContentProvider implements ITreeContentProvider {
+	private class ContentProvider implements ITreeContentProvider {
 		private LibraryIndex index;
 
 		@Override
@@ -51,6 +53,13 @@ public class LibrariesPropertyPage extends PropertyPage {
 				return !index.getCategories().isEmpty();
 			} else if (element instanceof String) { // category
 				return !index.getLibraries((String) element).isEmpty();
+			} else if (element instanceof ArduinoPlatform) {
+				try {
+					return !((ArduinoPlatform) element).getLibraries().isEmpty();
+				} catch (CoreException e) {
+					Activator.log(e);
+					return false;
+				}
 			} else if (element instanceof ArduinoLibrary) {
 				return false;
 			} else {
@@ -61,8 +70,22 @@ public class LibrariesPropertyPage extends PropertyPage {
 		@Override
 		public Object getParent(Object element) {
 			if (element instanceof ArduinoLibrary) {
-				return ((ArduinoLibrary) element).getCategory();
-			} else if (element instanceof String) {
+				ArduinoLibrary lib = (ArduinoLibrary) element;
+				String category = lib.getCategory();
+				if (category != null) {
+					return category;
+				}
+
+				try {
+					ArduinoPlatform platform = getPlatform();
+					if (platform.getLibrary(lib.getName()) != null) {
+						return platform;
+					}
+				} catch (CoreException e) {
+					Activator.log(e);
+				}
+				return null;
+			} else if (element instanceof String || element instanceof ArduinoPlatform) {
 				return index;
 			} else {
 				return null;
@@ -71,15 +94,32 @@ public class LibrariesPropertyPage extends PropertyPage {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return ((LibraryIndex) inputElement).getCategories().toArray(new String[0]);
+			List<Object> categories = new ArrayList<>();
+
+			try {
+				ArduinoPlatform platform = getPlatform();
+				categories.add(platform);
+			} catch (CoreException e) {
+				Activator.log(e);
+			}
+
+			categories.addAll(((LibraryIndex) inputElement).getCategories());
+			return categories.toArray();
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof String) {
 				return index.getLibraries((String) parentElement).toArray(new ArduinoLibrary[0]);
+			} else if (parentElement instanceof ArduinoPlatform) {
+				try {
+					return ((ArduinoPlatform) parentElement).getLibraries().toArray();
+				} catch (CoreException e) {
+					Activator.log(e);
+					return new Object[0];
+				}
 			} else {
-				return null;
+				return new Object[0];
 			}
 		}
 	}
@@ -94,6 +134,8 @@ public class LibrariesPropertyPage extends PropertyPage {
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof String) {
 				return columnIndex == 0 ? (String) element : null;
+			} else if (element instanceof ArduinoPlatform) {
+				return columnIndex == 0 ? ((ArduinoPlatform) element).getName() : null;
 			} else if (element instanceof ArduinoLibrary) {
 				switch (columnIndex) {
 				case 0:
@@ -139,6 +181,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 						}
 					}
 				}, true) {
+
 			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 				return new ContainerCheckedTreeViewer(parent, style);
@@ -171,8 +214,16 @@ public class LibrariesPropertyPage extends PropertyPage {
 		} catch (CoreException e) {
 			Activator.log(e);
 		}
-
 		return comp;
+
+	}
+
+	private IProject getProject() {
+		return getElement().getAdapter(IProject.class);
+	}
+
+	private ArduinoPlatform getPlatform() throws CoreException {
+		return getProject().getActiveBuildConfig().getAdapter(ArduinoBuildConfiguration.class).getBoard().getPlatform();
 	}
 
 	@Override
@@ -187,7 +238,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 			}
 		}
 		try {
-			ArduinoManager.instance.setLibraries(getElement().getAdapter(IProject.class), libs);
+			ArduinoManager.instance.setLibraries(getProject(), libs);
 		} catch (CoreException e) {
 			Activator.log(e);
 		}

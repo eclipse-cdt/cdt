@@ -1,8 +1,6 @@
 package org.eclipse.cdt.arduino.core.internal.board;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,25 +20,6 @@ public class LibraryIndex {
 	private Map<String, ArduinoLibrary> latestLibs = new HashMap<>();
 
 	public void resolve() throws IOException {
-		// Add in platform libraries
-		for (PackageIndex index : ArduinoManager.instance.getPackageIndices()) {
-			for (ArduinoPackage pkg : index.getPackages()) {
-				for (ArduinoPlatform platform : pkg.getPlatforms()) {
-					if (platform.isInstalled()) {
-						File[] libraryDirs = platform.getInstallPath().resolve("libraries").toFile().listFiles(); //$NON-NLS-1$
-						if (libraryDirs != null) {
-							for (File libraryDir : libraryDirs) {
-								Path propsPath = libraryDir.toPath().resolve("library.properties"); //$NON-NLS-1$
-								if (propsPath.toFile().exists()) {
-									libraries.add(new ArduinoLibrary(propsPath));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 		for (ArduinoLibrary library : libraries) {
 			String name = library.getName();
 

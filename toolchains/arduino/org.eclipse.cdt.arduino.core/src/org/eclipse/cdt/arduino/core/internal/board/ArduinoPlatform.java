@@ -51,6 +51,7 @@ public class ArduinoPlatform {
 	private HierarchicalProperties boardsProperties;
 	private Properties platformProperties;
 	private Map<String, String> menus = new HashMap<>();
+	private Map<String, ArduinoLibrary> libraries;
 
 	void setOwner(ArduinoPackage pkg) {
 		this.pkg = pkg;
@@ -218,6 +219,39 @@ public class ArduinoPlatform {
 		return sources;
 	}
 
+	private void initLibraries() throws CoreException {
+		libraries = new HashMap<>();
+		File[] libraryDirs = getInstallPath().resolve("libraries").toFile().listFiles(); //$NON-NLS-1$
+		if (libraryDirs != null) {
+			for (File libraryDir : libraryDirs) {
+				Path propsPath = libraryDir.toPath().resolve("library.properties"); //$NON-NLS-1$
+				if (propsPath.toFile().exists()) {
+					try {
+						ArduinoLibrary lib = new ArduinoLibrary(propsPath);
+						libraries.put(lib.getName(), lib);
+					} catch (IOException e) {
+						throw new CoreException(
+								new Status(IStatus.ERROR, Activator.getId(), "Loading " + propsPath, e)); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+	}
+
+	public synchronized Collection<ArduinoLibrary> getLibraries() throws CoreException {
+		if (libraries == null && isInstalled()) {
+			initLibraries();
+		}
+		return libraries.values();
+	}
+
+	public synchronized ArduinoLibrary getLibrary(String name) throws CoreException {
+		if (libraries == null && isInstalled()) {
+			initLibraries();
+		}
+		return libraries != null ? libraries.get(name) : null;
+	}
+
 	public IStatus install(IProgressMonitor monitor) {
 		// Check if we're installed already
 		if (isInstalled()) {
@@ -252,9 +286,6 @@ public class ArduinoPlatform {
 		if (!status.isOK()) {
 			return status;
 		}
-
-		// Reload the library index to pick up platform libraries
-		ArduinoManager.instance.loadLibraryIndex(false);
 
 		return Status.OK_STATUS;
 	}

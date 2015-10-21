@@ -116,12 +116,12 @@ public class Elf {
 		public final static int EM_IA_64 = 50;
 		public final static int EM_COLDFIRE = 52;
 		public final static int EM_STARCORE = 58;
-		public final static int EM_X86_64 = 62;		
+		public final static int EM_X86_64 = 62;
 		public final static int EM_ST100 = 60;
-		
+
 		/** @since 5.2 */
 		public final static int EM_68HC08 = 71;	/* Freescale MC68HC08 Microcontroller */
-		
+
 		public final static int EM_AVR = 83;
 		public final static int EM_FR30 = 84; /* Fujitsu FR30 */
 		public final static int EM_V850 = 87;
@@ -137,18 +137,20 @@ public class Elf {
 		public final static int EM_NIOSII = 113;
 		public final static int EM_C166 = 116;
 		public final static int EM_M16C = 117;
-		
+
 		/** @since 5.2 */
 		public final static int EM_RS08 = 132;	 /* Freescale RS08 embedded processor */
-		
+
 		public final static int EM_MMDSP = 160;
-		
+
 		/** @since 5.4 */
 		public final static int EM_RX = 173; /* Renesas RX Microcontroller */
-		
+
 		/** @since 5.4 */
 		public final static int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
-		
+		/** @since 5.12 */
+		public final static int EM_AARCH64 = 183;
+
 		public final static int EM_NIOS = 0xFEBB;
 		public final static int EM_CYGNUS_POWERPC = 0x9025;
 		public final static int EM_CYGNUS_M32R = 0x9041;
@@ -161,8 +163,8 @@ public class Elf {
 		public final static int EM_IQ2000 = 0xFEBA;
 		public static final int EM_XILINX_MICROBLAZE = 0xbaab;
 		public static final int EM_SDMA = 0xcafe;
-		public static final int EM_CRADLE = 0x4d55; 
-			
+		public static final int EM_CRADLE = 0x4d55;
+
 		public byte e_ident[] = new byte[EI_NDENT];
 		public int e_type; /* file type (Elf32_Half) */
 		public int e_machine; /* machine type (Elf32_Half) */
@@ -300,7 +302,7 @@ public class Elf {
 		public final static int SHF_WRITE = 1;
 		public final static int SHF_ALLOC = 2;
 		public final static int SHF_EXECINTR = 4;
-		
+
 		/* note_types */
 		/**
 		 * @since 5.7
@@ -364,11 +366,11 @@ public class Elf {
 		if (index > section.sh_size) {
 			return EMPTY_STRING;
 		}
-		
+
 		StringBuffer str = new StringBuffer();
 		//Most string symbols will be less than 50 bytes in size
-		byte [] tmp = new byte[50];		
-		
+		byte [] tmp = new byte[50];
+
 		efile.seek(section.sh_offset + index);
 		while(true) {
 			int len = efile.read(tmp);
@@ -378,7 +380,7 @@ public class Elf {
 					break;
 				}
 				str.append((char)tmp[i]);
-			}			
+			}
 			if(len <= 0) {
 				break;
 			}
@@ -769,6 +771,9 @@ public class Elf {
 			case Elf.ELFhdr.EM_ARM :
 				attrib.cpu = "arm"; //$NON-NLS-1$
 				break;
+			case Elf.ELFhdr.EM_AARCH64 :
+				attrib.cpu = "aarch64"; //$NON-NLS-1$
+				break;
 			case Elf.ELFhdr.EM_MIPS_RS3_LE :
 			case Elf.ELFhdr.EM_MIPS :
 				attrib.cpu = "mips"; //$NON-NLS-1$
@@ -950,7 +955,7 @@ public class Elf {
 			if (efile != null) {
 				efile.close();
 				efile = null;
-				
+
 				// ensure the mappings get cleaned up
 				if (sections_mapped)
 					System.gc();
@@ -1170,7 +1175,7 @@ public class Elf {
 	 * 0x00ff); tmp[1] = (short)((val >> 8) & 0x00ff); tmp[2] = (short)((val >>
 	 * 16) & 0x00ff); tmp[3] = (short)((val >> 24) & 0x00ff); return ((tmp[0] < <
 	 * 24) + (tmp[1] < < 16) + (tmp[2] < < 8) + tmp[3]); } return val; }
-	 * 
+	 *
 	 * public int swapShort( short val ) { if ( ehdr.e_ident[ELFhdr.EI_DATA] ==
 	 * ELFhdr.ELFDATA2LSB ) { short tmp[] = new short[2]; tmp[0] = (short)(val &
 	 * 0x00ff); tmp[1] = (short)((val >> 8) & 0x00ff); return (short)((tmp[0] < <

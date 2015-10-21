@@ -41,75 +41,158 @@ module.exports = function(acorn) {
 	// QML parser methods
 	var pp = acorn.Parser.prototype;
 
+	/*
+	* Parses a set of QML Header Statements which can either be of
+	* the type import or pragma
+	*/
 	pp.qml_parseHeaderStatements = function() {
 		var node = this.startNode()
 		node.statements = [];
 
-		loop: {
+		var loop = true;
+		while (loop) {
 			switch (this.type) {
 				case tt._import:
 					var qmlImport = this.qml_parseImportStatement();
 					node.statements.push(qmlImport);
-					break loop;
+					break;
 				case tt._pragma:
-					// TODO: parse QML pragma statement
+					var qmlPragma = this.qml_parsePragmaStatement();
+					node.statements.push(qmlPragma);
+					break;
+				default:
+					loop = false;
 			}
 		}
 
-		return this.finishNode(node, "QMLHeaderStatements")
+		return this.finishNode(node, "QMLHeaderStatements");
 	}
 
+	/*
+	* Parses a QML Pragma statement of the form:
+	*    'pragma' <Identifier>
+	*/
+	pp.qml_parsePragmaStatement = function() {
+		var node = this.startNode();
+		this.next();
+		node.identifier = this.parseIdent(false);
+		this.semicolon();
+		return this.finishNode(node, "QMLPragmaStatement");
+	}
+
+	/*
+	* Parses a QML Import statement of the form:
+	*    'import' <ModuleIdentifier> <Version.Number> [as <Qualifier>]
+	*    'import' <DirectoryPath> [as <Qualifier>]
+	*
+	* as specified by http://doc.qt.io/qt-5/qtqml-syntax-imports.html
+	*/
 	pp.qml_parseImportStatement = function() {
 		var node = this.startNode();
-
-		// Advance to the next token since this method should only be called
-		// when the current token is 'import'
 		this.next();
-		node.module = this.qml_parseModuleIdentifier();
-		// TODO: parse the 'as Identifier' portion of an import statement
+
+		// The type of import varies solely on the next token
+		switch(this.type) {
+			case tt.name:
+				node.module = this.qml_parseModule();
+				break;
+			case tt.string:
+				node.directoryPath = this.parseLiteral(this.value);
+				break;
+			default:
+				this.unexpected();
+				break;
+		}
+
+		// Parse the qualifier, if any
+		if (this.type === tt._as) {
+			node.qualifier = this.qml_parseQualifier();
+		}
+
 		this.semicolon();
 		return this.finishNode(node, "QMLImportStatement");
 	};
 
-	pp.qml_parseModuleIdentifier = function() {
+	/*
+	* Parses a QML Module of the form:
+	*    <QualifiedId> <VersionLiteral>
+	*/
+	pp.qml_parseModule = function() {
 		var node = this.startNode();
 
-		// Parse the qualified id/string
-		if (this.type == tt.name)
-			node.qualifiedId = this.qml_parseQualifiedId();
-		else if (this.type == tt.string) {
-			node.file = this.value;
-			this.next();
-		} else
+		node.qualifiedId = this.qml_parseQualifiedId();
+		if (this.type === tt.num) {
+			node.version = this.qml_parseVersionLiteral();
+		} else {
 			this.unexpected();
+		}
 
-		// Parse the version number
-		if (this.type == tt.num) {
-			node.version = this.parseLiteral(this.value);
-			// TODO: check that version number has major and minor
-		} else
-			this.unexpected();
-		return this.finishNode(node, "QMLModuleIdentifier");
+		return this.finishNode(node, "QMLModule");
 	};
 
-	pp.qml_parseQualifiedId = function() {
-		var id = this.value;
+	/*
+	* Parses a QML Version Literal which consists of a major and minor
+	* version separated by a '.'
+	*/
+	pp.qml_parseVersionLiteral = function() {
+		var node = this.startNode();
+
+		node.raw = this.input.slice(this.start, this.end);
+		node.value = this.value;
+		var matches;
+		if (matches = /(\d+)\.(\d+)/.exec(node.raw)) {
+			node.major = parseInt(matches[1]);
+			node.minor = parseInt(matches[2]);
+		} else {
+			this.raise(this.start, "QML module must specify major and minor version");
+		}
+
 		this.next();
-		while(this.type == tt.dot) {
+		return this.finishNode(node, "QMLVersionLiteral");
+	}
+
+	/*
+	* Parses a QML Qualifier of the form:
+	*    'as' <Identifier>
+	*/
+	pp.qml_parseQualifier = function() {
+		var node = this.startNode();
+		this.next();
+		node.identifier = this.parseIdent(false);
+		return this.finishNode(node, "QMLQualifier");
+	}
+
+	/*
+	* Parses a Qualified ID of the form:
+	*    <Identifier> ('.' <Identifier>)*
+	*/
+	pp.qml_parseQualifiedId = function() {
+		var node = this.startNode();
+
+		node.parts = [];
+		var id = this.value;
+		node.parts.push(this.value);
+		this.next();
+		while(this.type === tt.dot) {
 			id += '.';
 			this.next();
-			if (this.type == tt.name)
+			if (this.type === tt.name) {
 				id += this.value;
-			else
+				node.parts.push(this.value);
+			} else {
 				this.unexpected();
+			}
 			this.next();
 		}
-		return id;
+		node.raw = id;
+
+		return this.finishNode(node, "QMLQualifiedID");
 	}
 
 	/*
 	* Returns a TokenType that matches the given word or undefined if
-	* no such TokenType could be found.
+	* no such TokenType could be found.  This method only matches
+	* QML-specific keywords.
 	*
 	* Uses contextual information to determine whether or not a keyword
 	* such as 'color' is being used as an identifier.  If this is found
@@ -125,7 +208,7 @@ module.exports = function(acorn) {
 				return tt._readonly;
 			case "import":
 				// Make sure that 'import' is recognized as a keyword
-				// regardless of ecma version set in acorn.
+				// regardless of the ecma version set in acorn.
 				return tt._import;
 			case "color":
 				return tt._color;
@@ -150,7 +233,7 @@ module.exports = function(acorn) {
 					node.body = [];
 
 				var headerStmts = this.qml_parseHeaderStatements();
-				node.body.push(headerStmts)
+				node.body.push(headerStmts);
 
 				// TODO: Parse QML object root
 
@@ -166,8 +249,9 @@ module.exports = function(acorn) {
 				var word = this.readWord1();
 				var type = this.qml_getTokenType(word);
 
-				if (type !== undefined)
+				if (type !== undefined) {
 					return this.finishToken(type, word);
+				}
 
 				// If we were unable to find a QML keyword, call acorn's implementation
 				// of the readWord method.  Since we don't have access to _tokentype, and
@@ -181,5 +265,5 @@ module.exports = function(acorn) {
 		});
 	}
 
-	return acorn
+	return acorn;
 };

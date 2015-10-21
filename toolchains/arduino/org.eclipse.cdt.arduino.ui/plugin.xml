@@ -44,11 +44,13 @@
             name="Arduino"
             selectionFilter="single">
          <enabledWhen>
-            <test
-                  forcePluginActivation="false"
-                  property="org.eclipse.cdt.arduino.ui.isArduinoRemote">
-            </test>
-         </enabledWhen>
+             <adapt type="org.eclipse.remote.core.IRemoteConnection">
+                <test
+                      forcePluginActivation="false"
+                      property="org.eclipse.cdt.arduino.ui.isArduinoRemote">
+                </test>
+             </adapt>
+          </enabledWhen>
       </page>
       <page
             class="org.eclipse.cdt.arduino.ui.internal.project.LibrariesPropertyPage"

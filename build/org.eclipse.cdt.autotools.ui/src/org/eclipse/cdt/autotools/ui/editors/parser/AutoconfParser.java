@@ -933,10 +933,14 @@ public class AutoconfParser {
 	}
 
 	/**
-	 * Parse the arguments for the given macro.  These are not interpreted as shell
-	 * constructs but just as text with possibly more macro expansions inside.
+	 * Parse the arguments for the given macro. These are not interpreted as
+	 * shell constructs but just as text with possibly more macro expansions
+	 * inside.
+	 * 
 	 * @param macro
 	 * @return final token (')')
+	 *
+	 * @since 2.0
 	 */
 	protected Token parseMacroArguments(AutoconfMacroElement macro) {
 		Token argStart = null;
@@ -1018,14 +1022,17 @@ public class AutoconfParser {
 		return token;
 	}
 	
-
-	
+	/** @since 2.0 */
 	protected void handleError(Token token, String message) {
 		handleMessage(token, message, IMarker.SEVERITY_ERROR);
 	}
+	
+	/** @since 2.0 */
 	protected void handleWarning(Token token, String message) {
 		handleMessage(token, message, IMarker.SEVERITY_WARNING);
 	}
+
+	/** @since 2.0 */
 	protected void handleMessage(Token token, String message, int severity) {
 		if (errorHandler != null) {
 			int lineNumber = 0;

@@ -26,8 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This class is responsible for generating the Makefile for the current build
- * config.
+ * This class is responsible for generating the Makefile for the current build config.
  */
 public class ArduinoBuilder extends IncrementalProjectBuilder {
 
@@ -97,7 +96,7 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			String codeSizeRegex = config.getCodeSizeRegex();
 			Pattern codeSizePattern = codeSizeRegex != null ? Pattern.compile(codeSizeRegex) : null;
 			String dataSizeRegex = config.getDataSizeRegex();
-			Pattern dataSizePattern = codeSizeRegex != null ? Pattern.compile(dataSizeRegex) : null;
+			Pattern dataSizePattern = dataSizeRegex != null ? Pattern.compile(dataSizeRegex) : null;
 
 			if (codeSizePattern == null && dataSizePattern == null) {
 				return;
@@ -133,11 +132,13 @@ public class ArduinoBuilder extends IncrementalProjectBuilder {
 			}
 			console.writeOutput(" bytes\n");
 
-			console.writeOutput("Initial RAM usage: " + dataSize);
-			if (maxCodeSize > 0) {
-				console.writeOutput(" of maximum " + maxDataSize);
+			if (maxDataSize >= 0) {
+				console.writeOutput("Initial RAM usage: " + dataSize);
+				if (maxCodeSize > 0) {
+					console.writeOutput(" of maximum " + maxDataSize);
+				}
+				console.writeOutput(" bytes\n");
 			}
-			console.writeOutput(" bytes\n");
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Checking sizes", e));
 		}

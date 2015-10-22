@@ -9,8 +9,11 @@ package org.eclipse.cdt.arduino.core.internal.board;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
@@ -102,7 +105,9 @@ public class ArduinoPlatform {
 	public List<ArduinoBoard> getBoards() throws CoreException {
 		if (isInstalled() && boardsProperties == null) {
 			Properties boardProps = new Properties();
-			try (Reader reader = new FileReader(getInstallPath().resolve("boards.txt").toFile())) { //$NON-NLS-1$
+			
+			try (InputStream is = new FileInputStream(getInstallPath().resolve("boards.txt").toFile());
+					Reader reader = new InputStreamReader(is, "UTF-8")) { //$NON-NLS-1$
 				boardProps.load(reader);
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, Activator.getId(), "Loading boards.txt", e)); //$NON-NLS-1$

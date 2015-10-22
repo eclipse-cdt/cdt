@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_08865af4",
+        "filename": "core/org.eclipse.cdt.core.native/src/org/eclipse/cdt/utils/pty/PTYOutputStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-22T22:40:41Z",
+      "side": 1,
+      "message": "Does this really close the pipe? I can still call write and it returns \u003e 0. I don\u0027t know if it matters and it could disturb the running application?",
+      "range": {
+        "startLine": 82,
+        "startChar": 3,
+        "endLine": 82,
+        "endChar": 8
+      },
+      "revId": "37e01e629d0662a2e7b85cc269411718f5508189",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

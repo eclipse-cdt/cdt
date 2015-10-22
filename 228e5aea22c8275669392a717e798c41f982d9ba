@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0724e3f1_9469c99b",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/BuildRunnerHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2015-10-22T04:06:20Z",
+      "side": 1,
+      "message": "I\u0027m not sure this won\u0027t break implementations of EFSExtensionProvider. I\u0027ll continue the discussion on the bug.",
+      "range": {
+        "startLine": 253,
+        "startChar": 18,
+        "endLine": 253,
+        "endChar": 34
+      },
+      "revId": "228e5aea22c8275669392a717e798c41f982d9ba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -48,14 +48,34 @@ LIBRARIES_OBJS = \
 </#if>
 </#list>
 
-all: ${build_path}/${project_name}.hex ${build_path}/${project_name}.eep
+TARGETS = \
+<#if recipe_objcopy_hex_pattern??>
+	${build_path}/${project_name}.hex \
+</#if>
+<#if recipe_objcopy_epp_pattern??>
+	${build_path}/${project_name}.eep \
+</#if>
+<#if recipe_objcopy_bin_pattern??>
+	${build_path}/${project_name}.bin \
+</#if>
 
+all: $(TARGETS)
+
+<#if recipe_objcopy_hex_pattern??>
 ${build_path}/${project_name}.hex: ${build_path}/${project_name}.elf
 	${recipe_objcopy_hex_pattern}
 
+</#if>
+<#if recipe_objcopy_epp_pattern??>
 ${build_path}/${project_name}.eep: ${build_path}/${project_name}.elf
 	${recipe_objcopy_eep_pattern}
 
+</#if>
+<#if recipe_objcopy_bin_pattern??>
+${build_path}/${project_name}.bin: ${build_path}/${project_name}.elf
+	${recipe_objcopy_bin_pattern}
+
+</#if>
 ${build_path}/${project_name}.elf: $(PROJECT_OBJS) $(LIBRARIES_OBJS) ${build_path}/core.a
 	${recipe_c_combine_pattern}
 

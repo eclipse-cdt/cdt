@@ -210,11 +210,15 @@ public class ArduinoPlatform {
 		}
 	}
 
-	public Collection<String> getSources(String core) {
+	public Collection<String> getSources(String core, String variant) {
 		List<String> sources = new ArrayList<>();
 		Path srcPath = getInstallPath().resolve("cores").resolve(core); //$NON-NLS-1$
 		if (srcPath.toFile().isDirectory()) {
 			getSources(sources, srcPath, true);
+		}
+		Path variantPath = getInstallPath().resolve("variants").resolve(variant); //$NON-NLS-1$
+		if (variantPath.toFile().isDirectory()) {
+			getSources(sources, variantPath, true);
 		}
 		return sources;
 	}

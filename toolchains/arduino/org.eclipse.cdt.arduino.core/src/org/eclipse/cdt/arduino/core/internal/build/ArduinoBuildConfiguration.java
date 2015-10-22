@@ -236,11 +236,30 @@ public class ArduinoBuildConfiguration {
 		return board;
 	}
 
-	private Properties getProperties() throws CoreException {
+	private synchronized Properties getProperties() throws CoreException {
 		if (properties == null) {
+			ArduinoPlatform platform = board.getPlatform();
+
+			// IDE generated properties
+			properties = new Properties();
+			properties.put("runtime.platform.path", platform.getInstallPath().toString()); //$NON-NLS-1$
+			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
+			properties.put("build.path", config.getName()); //$NON-NLS-1$
+			properties.put("build.variant.path", //$NON-NLS-1$
+					platform.getInstallPath().resolve("variants").resolve("{build.variant}").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+
+			// Platform
+			properties.putAll(board.getPlatform().getPlatformProperties());
+
+			// Tools
+			for (ToolDependency toolDep : platform.getToolsDependencies()) {
+				properties.putAll(toolDep.getTool().getToolProperties());
+			}
+
 			// Board
 			ArduinoBoard board = getBoard();
-			properties = board.getBoardProperties();
+			properties.putAll(board.getBoardProperties());
 
 			// Menus
 			IEclipsePreferences settings = getSettings();
@@ -253,21 +272,8 @@ public class ArduinoBuildConfiguration {
 					}
 				}
 			}
-
-			// Platform
-			ArduinoPlatform platform = board.getPlatform();
-			properties.putAll(board.getPlatform().getPlatformProperties());
-
-			// Tools
-			for (ToolDependency toolDep : platform.getToolsDependencies()) {
-				properties.putAll(toolDep.getTool().getToolProperties());
-			}
-
-			properties.put("runtime.platform.path", platform.getInstallPath().toString()); //$NON-NLS-1$
-			properties.put("runtime.ide.version", "10607"); //$NON-NLS-1$ //$NON-NLS-2$
-			properties.put("build.arch", platform.getArchitecture().toUpperCase()); //$NON-NLS-1$
-			properties.put("build.path", config.getName()); //$NON-NLS-1$
 		}
+
 		// always do this in case the project changes names
 		properties.put("build.project_name", config.getProject().getName()); //$NON-NLS-1$
 		return properties;
@@ -364,7 +370,8 @@ public class ArduinoBuildConfiguration {
 
 		Path platformPath = platform.getInstallPath();
 		buildModel.put("platform_path", pathString(platformPath)); //$NON-NLS-1$
-		buildModel.put("platform_srcs", platform.getSources(properties.getProperty("build.core"))); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("platform_srcs", //$NON-NLS-1$
+				platform.getSources(properties.getProperty("build.core"), properties.getProperty("build.variant"))); //$NON-NLS-1$ //$NON-NLS-2$
 
 		properties.put("object_file", "$@"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("source_file", "$<"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -378,6 +385,7 @@ public class ArduinoBuildConfiguration {
 		buildModel.put("recipe_c_combine_pattern", resolveProperty("recipe.c.combine.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("recipe_objcopy_eep_pattern", resolveProperty("recipe.objcopy.eep.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("recipe_objcopy_hex_pattern", resolveProperty("recipe.objcopy.hex.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
+		buildModel.put("recipe_objcopy_bin_pattern", resolveProperty("recipe.objcopy.bin.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 		buildModel.put("recipe_size_pattern", resolveProperty("recipe.size.pattern", properties)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();

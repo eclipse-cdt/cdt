@@ -23,6 +23,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.dsf.debug.internal.provisional.service.IExecutionContextTranslator;
 import org.eclipse.cdt.dsf.debug.service.AbstractDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
@@ -88,6 +89,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_7_VERSION = "7.7"; //$NON-NLS-1$
 	/** @since 4.8 */
 	public static final String GDB_7_10_VERSION = "7.10"; //$NON-NLS-1$
+
+	private static final String ITSET_PROTOTYPE = "7.9.50-itsets"; //$NON-NLS-1$
 
 	private final String fVersion;
 	
@@ -274,6 +277,14 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	@Override
 	protected IStack createStackService(DsfSession session) {
 		return new MIStack(session);
+	}
+
+	@Override
+	protected IExecutionContextTranslator createExecutionContextTranslator(DsfSession session) {
+		if (getVersion().equals(ITSET_PROTOTYPE)) {
+			return new GDBGrouping_7_11(session);
+		}
+		return new GDBGrouping(session);
 	}
 	
 	/** @since 3.0 */

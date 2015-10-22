@@ -193,8 +193,12 @@ public class ArduinoLibrary {
 		if (srcPath.toFile().isDirectory()) {
 			return Collections.singletonList(srcPath);
 		} else {
-			// TODO do I need the 'utility' directory?
-			return Collections.singletonList(installPath);
+			Path utilityPath = installPath.resolve("utility"); //$NON-NLS-1$
+			if (utilityPath.toFile().isDirectory()) {
+				return Arrays.asList(installPath, utilityPath);
+			} else {
+				return Collections.singletonList(installPath);
+			}
 		}
 	}
 

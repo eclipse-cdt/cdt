@@ -8,3 +8,6 @@ org.eclipse.cdt.managedbuilder.core/debug/pathEntry=false
 
 # Reports builder activity
 org.eclipse.cdt.managedbuilder.core/debug/builder=false
+
+# Reports build model activity
+org.eclipse.cdt.managedbuilder.core/debug/buildModel=false

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.arduino.core.internal;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoBoard;
@@ -64,7 +65,16 @@ public class ArduinoProjectGenerator {
 		IBuildConfiguration config = project.getBuildConfig("uno"); //$NON-NLS-1$
 		ArduinoBuildConfiguration arduinoConfig = config.getAdapter(ArduinoBuildConfiguration.class);
 		ArduinoBoard board = ArduinoManager.instance.getBoard("Arduino/Genuino Uno", "Arduino AVR Boards", "arduino"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		arduinoConfig.setBoard(board);
+		if (board == null) {
+			// Just find one
+			List<ArduinoBoard> boards = ArduinoManager.instance.getInstalledBoards();
+			if (!boards.isEmpty()) {
+				board = boards.get(0);
+			}
+		}
+		if (board != null) {
+			arduinoConfig.setBoard(board);
+		}
 
 		// Generate files
 		ArduinoTemplateGenerator templateGen = new ArduinoTemplateGenerator();

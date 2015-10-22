@@ -251,7 +251,7 @@ public class EFSExtensionTests extends TestCase {
 			fail(e.getMessage());
 		}
 		
-		String path = EFSExtensionManager.getDefault().getMappedPath(originalURI);
+		String path = EFSExtensionManager.getDefault().getPathFromURI(originalURI);
 		
 		if (Platform.getOS().equals(Platform.WS_WIN32)) {
 			assertEquals(path, "c:/foo");

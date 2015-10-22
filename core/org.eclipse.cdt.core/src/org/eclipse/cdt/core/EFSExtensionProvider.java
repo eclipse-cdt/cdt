@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
@@ -33,7 +34,7 @@ import org.eclipse.core.runtime.URIUtil;
  * methods where appropriate.
  *
  * Clients should not typically call methods on this class or its descendants directly. Instead, they should
- * call the appropriate method in FileSystemUtilityManager so that said manager can properly route calls to
+ * call the appropriate method in EFSExtensionManager so that said manager can properly route calls to
  * the proper utility, depending on the file-system.
  *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added to CDT 7.0 as part of a work in progress.
@@ -56,6 +57,11 @@ public abstract class EFSExtensionProvider {
 	 *         physical file.
 	 */
 	public String getPathFromURI(URI locationURI) {
+		IPath localPath = org.eclipse.core.filesystem.URIUtil.toPath(locationURI);
+		if (localPath == null) {
+			return null;
+		}
+		
 		String path = locationURI.getPath();
 		String schema = locationURI.getScheme();
 		if (schema != null && schema.equals(EFS.SCHEME_FILE) && Platform.getOS().equals(Platform.WS_WIN32)) {

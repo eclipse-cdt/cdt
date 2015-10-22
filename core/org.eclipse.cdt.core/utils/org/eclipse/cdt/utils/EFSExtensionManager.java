@@ -87,6 +87,13 @@ public class EFSExtensionManager {
 		}
 
 	}
+	
+	/**
+	 * @since 5.12
+	 */
+	public boolean hasProvider(URI locationURI) {
+		return fSchemeToExtensionProviderMap.get(locationURI.getScheme()) != null;
+	}
 
 	public synchronized static EFSExtensionManager getDefault() {
 		if (instance == null) {

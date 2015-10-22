@@ -35,6 +35,8 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -249,9 +251,27 @@ public class BuildRunnerHelper implements Closeable {
 
 			isCancelled = false;
 			String pathFromURI = null;
-			if (workingDirectoryURI != null) {
+			URI locationURI = project.getLocationURI();
+			
+			URI uri = new URI("sourcecontrol://jazz/4/home/projects/mp2.1/sandbox/Platform?file:/home/projects/mp2.1/sandbox/Platform");
+//			UNCPathConverter.isUNC(uri);
+			String test = EFSExtensionManager.getDefault().getPathFromURI(uri);
+			String test2 = UNCPathConverter.toPath(uri).toString();
+			URI uri2 = UNCPathConverter.getInstance().toURI(test2);
+
+			String test5 = UNCPathConverter.toPath(workingDirectoryURI).toString();
+			String test6 = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+			IPath test3 = new Path(test2);
+//			String test4 = URIUtil.toPath(uri).toString();
+			if (EFSExtensionManager.getDefault().hasProvider(workingDirectoryURI)) {
 				pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+			} else {
+				IPath path = UNCPathConverter.toPath(workingDirectoryURI);
+				if (path != null) {
+					pathFromURI = path.toString();
+				}
 			}
+
 			if (pathFromURI == null) {
 				// fallback to CWD
 				pathFromURI = System.getProperty("user.dir"); //$NON-NLS-1$

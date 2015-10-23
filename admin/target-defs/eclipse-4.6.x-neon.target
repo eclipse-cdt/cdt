@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="TM Eclipse 4.6.x (Neon)" sequenceNumber="102">
+<locations>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
+<repository location="http://download.eclipse.org/cbi/updates/license"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.test.feature.group" version="3.7.0.v20150826-1546"/>
+<unit id="org.eclipse.sdk.ide" version="4.6.0.I20150916-2000"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.6milestones"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.apache.commons.net" version="3.2.0.v201305141515"/>
+<unit id="org.apache.commons.net.source" version="3.2.0.v201305141515"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.12.0.v20150928-0952"/>
+<repository location="http://download.eclipse.org/releases/neon"/>
+</location>
+</locations>
+</target>

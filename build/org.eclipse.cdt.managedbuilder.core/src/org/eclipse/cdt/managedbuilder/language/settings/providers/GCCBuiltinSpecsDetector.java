@@ -11,14 +11,19 @@
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.EFSExtensionProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.internal.core.Cygwin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Language settings provider to detect built-in compiler settings for GCC compiler.
@@ -35,6 +40,7 @@ import org.eclipse.core.runtime.CoreException;
 public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
+	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 
 	private enum State {NONE, EXPECTING_LOCAL_INCLUDE, EXPECTING_SYSTEM_INCLUDE, EXPECTING_FRAMEWORKS}
 	private State state = State.NONE;
@@ -127,6 +133,47 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		state = State.NONE;
 
 		super.shutdown();
+	}
+
+	/**
+	 * EFSExtensionProvider for Cygwin translations
+	 */
+	private class CygwinEFSExtensionProvider extends EFSExtensionProvider {
+		private String envPathValue;
+
+		/**
+		 * Constructor.
+		 * @param envPathValue - Value of environment variable $PATH.
+		 */
+		public CygwinEFSExtensionProvider(String envPathValue) {
+			this.envPathValue = envPathValue;
+		}
+
+		@Override
+		public String getMappedPath(URI locationURI) {
+			String windowsPath = null;
+			try {
+				String cygwinPath = getPathFromURI(locationURI);
+				windowsPath = Cygwin.cygwinToWindowsPath(cygwinPath, envPathValue);
+			} catch (Exception e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+			if (windowsPath != null) {
+				return windowsPath;
+			}
+
+			return super.getMappedPath(locationURI);
+		}
+	}
+
+	@Override
+	protected EFSExtensionProvider getEFSProvider() {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			String envPathValue = environmentMap != null ? environmentMap.get(ENV_PATH) : null;
+			return new CygwinEFSExtensionProvider(envPathValue);
+		} else {
+			return super.getEFSProvider();
+		}
 	}
 
 	@Override

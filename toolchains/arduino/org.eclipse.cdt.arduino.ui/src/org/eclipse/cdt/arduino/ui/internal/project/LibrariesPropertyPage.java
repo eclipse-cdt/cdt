@@ -84,7 +84,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 				} catch (CoreException e) {
 					Activator.log(e);
 				}
-				return null;
+				return LibraryIndex.UNCATEGORIZED;
 			} else if (element instanceof String || element instanceof ArduinoPlatform) {
 				return index;
 			} else {

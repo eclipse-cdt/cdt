@@ -13,6 +13,7 @@ import java.util.Set;
 public class LibraryIndex {
 
 	private List<ArduinoLibrary> libraries;
+	public static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 
 	// category name to library name
 	private Map<String, Set<String>> categories = new HashMap<>();
@@ -25,7 +26,7 @@ public class LibraryIndex {
 
 			String category = library.getCategory();
 			if (category == null) {
-				category = "Uncategorized"; //$NON-NLS-1$
+				category = UNCATEGORIZED;
 			}
 
 			Set<String> categoryLibs = categories.get(category);

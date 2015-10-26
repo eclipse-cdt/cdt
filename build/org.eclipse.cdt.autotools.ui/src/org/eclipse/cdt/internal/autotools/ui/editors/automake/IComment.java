@@ -18,8 +18,8 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
  */
 public interface IComment  extends IDirective {
 
-	final public static char POUND = '#';
+	char POUND = '#';
 
-	final public static String POUND_STRING = "#"; //$NON-NLS-1$
+	String POUND_STRING = "#"; //$NON-NLS-1$
 
 }

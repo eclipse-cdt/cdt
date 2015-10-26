@@ -24,19 +24,19 @@ import java.io.IOException;
  */
 public interface ICommand extends IDirective {
 	
-	final public static char HYPHEN = '-';
+	char HYPHEN = '-';
 
-	final public static String HYPHEN_STRING = "-"; //$NON-NLS-1$
+	String HYPHEN_STRING = "-"; //$NON-NLS-1$
 
-	final public static char AT = '@';
+	char AT = '@';
 
-	final public static String AT_STRING = "@"; //$NON-NLS-1$
+	String AT_STRING = "@"; //$NON-NLS-1$
 
-	final public static char PLUS = '+';
+	char PLUS = '+';
 
-	final public static String PLUS_STRING = "+"; //$NON-NLS-1$
+	String PLUS_STRING = "+"; //$NON-NLS-1$
 
-	final public static char TAB = '\t';
+	char TAB = '\t';
 
 	/**
 	 * -    If the command prefix contains a hyphen, or the -i option is

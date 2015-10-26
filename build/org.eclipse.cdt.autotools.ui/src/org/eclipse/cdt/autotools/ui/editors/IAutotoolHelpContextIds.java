@@ -13,8 +13,8 @@ package org.eclipse.cdt.autotools.ui.editors;
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 
 public interface IAutotoolHelpContextIds {
-	public static final String PREFIX = AutotoolsUIPlugin.getUniqueIdentifier();
-	public static final String AC_EDITOR_VIEW = PREFIX + "autoconf_editor"; //$NON-NLS-1$
-	public static final String SHOW_TOOLTIP_ACTION = PREFIX + "show_tooltip_action"; //$NON-NLS-1$
-	public static final String CONTENT_ASSIST = PREFIX + "content_assist"; //$NON-NLS-1$
+	String PREFIX = AutotoolsUIPlugin.getUniqueIdentifier();
+	String AC_EDITOR_VIEW = PREFIX + "autoconf_editor"; //$NON-NLS-1$
+	String SHOW_TOOLTIP_ACTION = PREFIX + "show_tooltip_action"; //$NON-NLS-1$
+	String CONTENT_ASSIST = PREFIX + "content_assist"; //$NON-NLS-1$
 }

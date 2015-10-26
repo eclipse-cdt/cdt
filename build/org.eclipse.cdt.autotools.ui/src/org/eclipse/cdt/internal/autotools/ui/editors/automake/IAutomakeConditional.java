@@ -12,8 +12,11 @@ package org.eclipse.cdt.internal.autotools.ui.editors.automake;
 
 public interface IAutomakeConditional {
 	
-	public boolean isAutomake();
-	public void setAutomake(boolean value);
-	public Rule[] getRules();
-	public void setRules(Rule[] rules);
+	boolean isAutomake();
+
+	void setAutomake(boolean value);
+
+	Rule[] getRules();
+
+	void setRules(Rule[] rules);
 }

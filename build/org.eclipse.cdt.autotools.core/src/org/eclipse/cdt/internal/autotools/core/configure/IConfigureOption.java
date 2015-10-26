@@ -16,26 +16,40 @@ import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 
 public interface IConfigureOption {
 	
-	public final static int CATEGORY = IAutotoolsOption.CATEGORY;
-	public final static int BIN = IAutotoolsOption.BIN;
-	public final static int STRING = IAutotoolsOption.STRING;
-	public final static int INTERNAL = IAutotoolsOption.INTERNAL;
-	public final static int MULTIARG = IAutotoolsOption.MULTIARG;
-	public final static int TOOL = IAutotoolsOption.TOOL;
-	public final static int FLAG = IAutotoolsOption.FLAG;
-	public final static int FLAGVALUE = IAutotoolsOption.FLAGVALUE;
-	public String getName();
-	public String getParameter();
-	public ArrayList<String> getParameters();
-	public boolean isParmSet();
-	public String getDescription();
-	public String getToolTip();
-	public void setValue(String value);
-	public IConfigureOption copy(AutotoolsConfiguration cfg);
-	public String getValue();
-	public boolean isCategory();
-	public boolean isMultiArg();
-	public boolean isFlag();
-	public boolean isFlagValue();
-	public int getType();
+	int CATEGORY = IAutotoolsOption.CATEGORY;
+	int BIN = IAutotoolsOption.BIN;
+	int STRING = IAutotoolsOption.STRING;
+	int INTERNAL = IAutotoolsOption.INTERNAL;
+	int MULTIARG = IAutotoolsOption.MULTIARG;
+	int TOOL = IAutotoolsOption.TOOL;
+	int FLAG = IAutotoolsOption.FLAG;
+	int FLAGVALUE = IAutotoolsOption.FLAGVALUE;
+
+	String getName();
+
+	String getParameter();
+
+	ArrayList<String> getParameters();
+
+	boolean isParmSet();
+
+	String getDescription();
+
+	String getToolTip();
+
+	void setValue(String value);
+
+	IConfigureOption copy(AutotoolsConfiguration cfg);
+
+	String getValue();
+
+	boolean isCategory();
+
+	boolean isMultiArg();
+
+	boolean isFlag();
+
+	boolean isFlagValue();
+
+	int getType();
 }

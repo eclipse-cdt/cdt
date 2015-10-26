@@ -14,17 +14,29 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public interface IAConfiguration {
-	public IConfigureOption getOption(String name);
-	public String getId();
-	public boolean isDirty();
-	public void setDirty(boolean value);
-	public Map<String, IConfigureOption> getOptions();
-	public String getToolParameters(String name);
-	public ArrayList<String> getToolArgs(String name);
-	public void setOption(String name, String value);
-	public void setConfigToolDirectory(String configToolDirectory);
-	public String getConfigToolDirectory();
-	public IAConfiguration copy();
-	public IAConfiguration copy(String id);
-	public void setDefaultOptions();
+	IConfigureOption getOption(String name);
+
+	String getId();
+
+	boolean isDirty();
+
+	void setDirty(boolean value);
+
+	Map<String, IConfigureOption> getOptions();
+
+	String getToolParameters(String name);
+
+	ArrayList<String> getToolArgs(String name);
+
+	void setOption(String name, String value);
+
+	void setConfigToolDirectory(String configToolDirectory);
+
+	String getConfigToolDirectory();
+
+	IAConfiguration copy();
+
+	IAConfiguration copy(String id);
+
+	void setDefaultOptions();
 }

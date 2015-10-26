@@ -39,9 +39,13 @@ import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -261,7 +265,18 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 		// To solve this, we use a bufferedCommandControl that will delay the command
 		// result by two scheduling of the executor.
 		// See bug 280461
-        fRegisterValueCache = new CommandCache(getSession(), bufferedCommandControl);
+		// Override commandDone in order to add processing of gdb commands those have no notifications  
+		// See bug 474834
+        fRegisterValueCache = new CommandCache(getSession(), bufferedCommandControl) {
+       	  @Override
+       	  public void commandDone(ICommandToken token, ICommandResult result) {
+       		 if (result instanceof MIInfo) {
+       			 if (((MIInfo)result).isDone()) {  
+       	           onConsoleCommandDone(token);
+       			 }
+       		 }
+       	   }
+         };
         fRegisterValueCache.setContextAvailable(commandControl.getContext(), true);
 
         // This cache is not affected by events so does not need the bufferedCommandControl
@@ -802,4 +817,71 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         fRegisterNameCache.reset(context);
         fRegisterValueCache.reset(context);
     }
+    /**
+     * 
+     * */ 
+    private void onConsoleCommandDone(final ICommandToken token) {
+    	  final ICommand<? extends ICommandResult> command = token.getCommand();
+    	  if (command instanceof MIInterpreterExecConsole<?>) {     		
+    		final String regName = processCommand((MIInterpreterExecConsole<?>)command);	       
+            final int groups = fContainerToGroupMap.size();
+            if (groups > 0) { 
+              final MIRegisterGroupDMC[] regGroups = fContainerToGroupMap.values().toArray(new MIRegisterGroupDMC[groups]);                     
+              fRegisterValueCache.reset();
+              updateRegisterByName(regGroups[0], regName);
+            }
+    	  }    	
+    }
+		
+    /**
+     * 
+     * */
+    private String processCommand(final MIInterpreterExecConsole<?> com) {
+    	 final String[] params = com.getParameters();
+         if (params != null && params.length > 1) {
+           if(isSetCommand(params[1])) {
+        	 return extractRegisterName(params[1]);   
+           }           
+         }
+    	return null;
+    }
+    
+    /**
+     * 
+     * */
+    private String extractRegisterName(final String operation) {
+    	 final int indx1 = operation.indexOf('$');
+    	 final int indx2 = operation.indexOf('=');
+         String name;
+         if (indx1 != -1 && indx2 != -1) {
+           name = operation.substring(indx1+1, indx2).trim();
+          } else {
+           name = "unknown"; //$NON-NLS-1$
+          } 
+		 return name;
+	}
+
+	/***
+     * 
+     */
+    private boolean isSetCommand(final String operation) {
+      // Get the command name.
+      int indx = operation.indexOf(' ');
+      String name;
+      if (indx != -1) {
+        name = operation.substring(0, indx).trim();
+       } else {
+        name = operation.trim();
+       } 
+      if (name.equals("set")) { //$NON-NLS-1$
+    	  return true;
+      }
+      return false;
+    }
+    
+	/**
+	 * Update register value displayed in view.
+	 * @since 4.9
+	 * */
+	protected void updateRegisterByName(final MIRegisterGroupDMC regGroup, final String regName) {}
 }

@@ -1133,5 +1133,17 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 		rm.setData(true);
 		rm.done();
 	}
+	
+	/**
+	 * 
+	 * */
+	@Override
+	protected void updateRegisterByName(final MIRegisterGroupDMC regGroup, final String regName) {
+		Map<String, MIRegisterDMC> dmc = fGroupToRegistersMap.getIndexedRegisters(regGroup);
+		final IRegisterDMContext regContext= dmc.get(regName);
+		if (regContext != null) {
+		 generateRegisterChangedEvent(regContext);
+		}		
+	}
 
 }

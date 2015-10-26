@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.autotools.ui.wizards;
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.autotools.core.AutotoolsNewMakeGenerator;
 import org.eclipse.cdt.internal.autotools.core.AutotoolsPropertyConstants;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -24,11 +25,12 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.ui.wizards.NewMakeProjFromExistingPage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -115,14 +117,11 @@ public class AutotoolsProjectImportWizardPage extends
 		try {
 			monitor.subTask(AutotoolsUIPlugin
 					.getResourceString("adding project nature"));
-			ManagedCProjectNature.addManagedNature(project,
-					new SubProgressMonitor(monitor, 1));
-			AutotoolsNewProjectNature.addAutotoolsNature(project,
-					new SubProgressMonitor(monitor, 1));
+			ManagedCProjectNature.addManagedNature(project, SubMonitor.convert(monitor, 1));
+			AutotoolsNewProjectNature.addAutotoolsNature(project, SubMonitor.convert(monitor, 1));
 			monitor.subTask(AutotoolsUIPlugin
 					.getResourceString("adding builder"));
-			AutotoolsNewProjectNature.addAutotoolsBuilder(project,
-					new SubProgressMonitor(monitor, 1));
+			AutotoolsNewProjectNature.addAutotoolsBuilder(project, SubMonitor.convert(monitor, 1));
 			project.setPersistentProperty(
 					AutotoolsPropertyConstants.SCANNER_USE_MAKE_W,
 					AutotoolsPropertyConstants.TRUE);
@@ -169,6 +168,14 @@ public class AutotoolsProjectImportWizardPage extends
 								defaultCfg);
 					}
 					ManagedBuildManager.setNewProjectVersion(project);
+					AutotoolsNewMakeGenerator m = new AutotoolsNewMakeGenerator();
+					CUIPlugin.getDefault().startGlobalConsole();
+					m.initialize(project, info, SubMonitor.convert(monitor));
+					try {
+						m.reconfigure();
+					} catch (CoreException e) {
+						// do nothing for now
+					}
 				}
 			} catch (BuildException e) {
 				AutotoolsUIPlugin.log(e);

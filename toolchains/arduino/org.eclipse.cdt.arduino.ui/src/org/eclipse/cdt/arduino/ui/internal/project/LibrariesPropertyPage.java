@@ -2,7 +2,9 @@ package org.eclipse.cdt.arduino.ui.internal.project;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoLibrary;
 import org.eclipse.cdt.arduino.core.internal.board.ArduinoManager;
@@ -50,16 +52,9 @@ public class LibrariesPropertyPage extends PropertyPage {
 		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof LibraryIndex) {
-				return !index.getCategories().isEmpty();
+				return true;
 			} else if (element instanceof String) { // category
-				return !index.getLibraries((String) element).isEmpty();
-			} else if (element instanceof ArduinoPlatform) {
-				try {
-					return !((ArduinoPlatform) element).getLibraries().isEmpty();
-				} catch (CoreException e) {
-					Activator.log(e);
-					return false;
-				}
+				return true;
 			} else if (element instanceof ArduinoLibrary) {
 				return false;
 			} else {
@@ -72,19 +67,7 @@ public class LibrariesPropertyPage extends PropertyPage {
 			if (element instanceof ArduinoLibrary) {
 				ArduinoLibrary lib = (ArduinoLibrary) element;
 				String category = lib.getCategory();
-				if (category != null) {
-					return category;
-				}
-
-				try {
-					ArduinoPlatform platform = getPlatform();
-					if (platform.getLibrary(lib.getName()) != null) {
-						return platform;
-					}
-				} catch (CoreException e) {
-					Activator.log(e);
-				}
-				return LibraryIndex.UNCATEGORIZED;
+				return category != null ? category : LibraryIndex.UNCATEGORIZED;
 			} else if (element instanceof String || element instanceof ArduinoPlatform) {
 				return index;
 			} else {
@@ -94,30 +77,42 @@ public class LibrariesPropertyPage extends PropertyPage {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			List<Object> categories = new ArrayList<>();
+			Set<String> categories = new HashSet<>();
+			categories.addAll(((LibraryIndex) inputElement).getCategories());
 
 			try {
-				ArduinoPlatform platform = getPlatform();
-				categories.add(platform);
+				for (ArduinoLibrary lib : getPlatform().getLibraries()) {
+					String category = lib.getCategory();
+					categories.add(category != null ? category : LibraryIndex.UNCATEGORIZED);
+				}
 			} catch (CoreException e) {
 				Activator.log(e);
 			}
 
-			categories.addAll(((LibraryIndex) inputElement).getCategories());
 			return categories.toArray();
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof String) {
-				return index.getLibraries((String) parentElement).toArray(new ArduinoLibrary[0]);
-			} else if (parentElement instanceof ArduinoPlatform) {
+				String category = (String) parentElement;
+				List<ArduinoLibrary> libs = new ArrayList<>();
+				libs.addAll(index.getLibraries(category));
 				try {
-					return ((ArduinoPlatform) parentElement).getLibraries().toArray();
+					for (ArduinoLibrary lib : getPlatform().getLibraries()) {
+						String cat = lib.getCategory();
+						if (cat != null) {
+							if (cat.equals(category)) {
+								libs.add(lib);
+							}
+						} else if (category.equals(LibraryIndex.UNCATEGORIZED)) { // cat == null
+							libs.add(lib);
+						}
+					}
 				} catch (CoreException e) {
 					Activator.log(e);
-					return new Object[0];
 				}
+				return libs.toArray();
 			} else {
 				return new Object[0];
 			}
@@ -134,8 +129,6 @@ public class LibrariesPropertyPage extends PropertyPage {
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof String) {
 				return columnIndex == 0 ? (String) element : null;
-			} else if (element instanceof ArduinoPlatform) {
-				return columnIndex == 0 ? ((ArduinoPlatform) element).getName() : null;
 			} else if (element instanceof ArduinoLibrary) {
 				switch (columnIndex) {
 				case 0:

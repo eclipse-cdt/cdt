@@ -326,7 +326,12 @@ public class ArduinoManager {
 						if (entry.isDirectory()) {
 							continue;
 						}
-
+						
+						// Skip git metadata
+						if (entry.getName().contains("pax_global_header")) {
+							continue;
+						}
+						
 						Path entryPath = installPath.resolve(entry.getName());
 						Files.createDirectories(entryPath.getParent());
 

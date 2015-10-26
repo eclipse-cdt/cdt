@@ -8,5 +8,5 @@ public interface IConfigurationCloneListener {
 	 * @param cloneName - name of the cloned configuration
 	 * @param c - the clone
 	 */
-	public void cloneCfg(String cloneName, IConfiguration c);
+	void cloneCfg(String cloneName, IConfiguration c);
 }

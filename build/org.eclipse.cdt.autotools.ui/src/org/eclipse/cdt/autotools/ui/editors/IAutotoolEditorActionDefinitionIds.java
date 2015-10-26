@@ -13,5 +13,5 @@ package org.eclipse.cdt.autotools.ui.editors;
 import org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin;
 
 public interface IAutotoolEditorActionDefinitionIds {
-	public static final String SHOW_TOOLTIP = AutotoolsUIPlugin.getUniqueIdentifier() + ".editors.text.show.tooltip"; //$NON-NLS-1$
+	String SHOW_TOOLTIP = AutotoolsUIPlugin.getUniqueIdentifier() + ".editors.text.show.tooltip"; //$NON-NLS-1$
 }

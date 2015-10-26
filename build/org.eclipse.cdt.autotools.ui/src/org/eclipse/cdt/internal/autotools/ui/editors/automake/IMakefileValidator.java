@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMakefileValidator {
-	public abstract void setMarkerGenerator(IMarkerGenerator errorHandler);
-	public abstract void checkFile(IFile file, IProgressMonitor monitor);
+	void setMarkerGenerator(IMarkerGenerator errorHandler);
+
+	void checkFile(IFile file, IProgressMonitor monitor);
 }
